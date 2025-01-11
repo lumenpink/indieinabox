@@ -1,0 +1,13 @@
+base: /
+title: The Passage # Site title
+support: [md, txt, html, htm] # File extensions which will be parsed
+buildall: true # Whether to build pages without frontmatter
+output-dir: _site # Output directory
+default-category: General # Default category
+footer: "Hi, I am Lumen" # Footer text, Implemented by template
+date-format: "d F, Y" # Date display format, Implemented by template
+lang: [pt-br, en, es] # Supported languages (first is the default)
+fqdn: https://lumen.pink # FQDN without trailing slash
+author: ~lumen # Author name
+sitename: Lumen Pink # Site name
+htmlpostprocessing: minify # minify or beautify

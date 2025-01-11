@@ -1,0 +1,41 @@
+{
+  "name": "indie-in-a-box-standard-theme",
+  "version": "1.0.0",
+  "description": "Starter Theme based on gohugo-starter-theme by jimfrenette",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "keywords": [
+    "indieweb"
+  ],
+  "author": "lumenpink",
+  "license": "MIT",
+  "scripts": {
+    "dev": "wp --config webpack/dev.config.js",
+    "build": "wp --config webpack/prod.config.js",
+    "start": "npm run build"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.26.0",
+    "@babel/preset-env": "^7.26.0",
+    "autoprefixer": "^10.4.20",
+    "babel-loader": "^9.2.1",
+    "css-loader": "^7.1.2",
+    "css-minimizer-webpack-plugin": "^7.0.0",
+    "mini-css-extract-plugin": "^2.9.2",
+    "postcss-loader": "^8.1.1",
+    "style-loader": "^4.0.0",
+    "terser-webpack-plugin": "^5.3.11",
+    "webpack": "^5.97.1",
+    "webpack-cli": "^6.0.1",
+    "webpack-merge": "^6.0.1",
+    "webpack-nano": "^1.1.1"
+  },
+  "dependencies": {
+    "caniuse-lite": "^1.0.30001692",
+    "sass": "^1.83.0",
+    "sass-loader": "^16.0.4"
+  }
+}

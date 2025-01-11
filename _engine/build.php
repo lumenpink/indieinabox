@@ -74,7 +74,8 @@ if (!isset($site["lang"])) {
         $site["default-lang"] = $site["lang"];
     }
 }
-$site["copyright"] = $copyright ?: "ISC";
+
+$site["copyright"] = $copyright ?? "ISC";
 
 define("ASSETS", $site["base"] . "/assets");
 

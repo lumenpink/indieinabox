@@ -1,0 +1,34 @@
+{
+  "name": "indieinabox",
+  "version": "0.0.1",
+  "description": "Indieweb in a Box",
+  "keywords": [
+    "Indieweb",
+    "PHP"
+  ],
+  "homepage": "https://github.com/lumenpink/passage#readme",
+  "bugs": {
+    "url": "https://github.com/lumenpink/passage/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lumenpink/passage.git"
+  },
+  "license": "GPL-3.0-or-later",
+  "author": "Lumen Pink (hi@lumen.pink)",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "serve": "http-server _site",
+    "build": "php _engine/build.php",
+    "builddev": "php _engine/build.php -d",
+    "dev": "chokidar _template/**/* _engine/**/* _content/**/* -c \"php _engine/build.php -d\"",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "devDependencies": {
+    "chokidar-cli": "^3.0.0"
+  },
+  "dependencies": {
+    "http-server": "^14.1.1"
+  }
+}

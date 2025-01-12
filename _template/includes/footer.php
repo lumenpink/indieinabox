@@ -65,6 +65,10 @@
         <a href="https://xn--sr8hvo.ws/next">→</a>
     </div>
     <p class="copyright">
-        <?= $site["copyright"][$page["lang"]] ?>
+        <!-- //TODO FIX COPYRIGHT
+         $site["copyright"][$page["lang"]]
+
+-->
+        COPYRIGHT
     </p>
 </footer>

@@ -8,8 +8,14 @@ function localizeddate($page)
     if (is_float($epoch)) {
         $epoch = intval($epoch);
     }
-    $epoch = strval($epoch);
-    $date = DateTime::createFromFormat("U", $epoch);
+    if (is_int($epoch)) {
+        $epoch = strval($epoch);
+        $date = DateTime::createFromFormat("U", $epoch);
+    } else {
+        $date = new DateTime($epoch);
+    }
+
+
     $date->setTimezone(new DateTimeZone("America/Sao_Paulo"));
     $isoformat = date_format($date, 'c');
     $longformat = date_format($date, $intl[$page["lang"]]["localizeddate"]["full"]);

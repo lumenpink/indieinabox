@@ -1,5 +1,9 @@
 <?php
-function createHTMLFile($page)
+
+/*
+* @var array<string>
+*/
+function createHTMLFile(array $page): void
 {
     global $base, $site, $pages, $p, $kinds;
 
@@ -12,20 +16,20 @@ function createHTMLFile($page)
     $destination = str_replace("/", DS, $page["slug"]);
     $destination = trim($destination, DS);
     $destination = preg_replace(
-        "/^" . $site["content-dir"] . "/",
+        "/^" . $site->contentdir . "/",
         "",
         $destination
     );
     $destination = trim($destination, DS);
 
-    if (!is_dir($base . DS . $site["output-dir"] . DS . $destination)) {
-        mkdir($base . DS . $site["output-dir"] . DS . $destination, 0777, true); // true for recursive create
+    if (!is_dir($base . DS . $site->outputdir . DS . $destination)) {
+        mkdir($base . DS . $site->outputdir . DS . $destination, 0777, true); // true for recursive create
     }
 
     $destination =
         $base .
         DS .
-        $site["output-dir"] .
+        $site->outputdir .
         DS .
         $destination .
         DS .
@@ -35,11 +39,11 @@ function createHTMLFile($page)
     ob_start();
     include $base . DS . "_template/" . $page["layout"] . ".php";
     $fileContent = ob_get_clean();
-    if (isset($site["htmlpostprocessing"])) {
-        if ($site["htmlpostprocessing"] == "beautify" || $site["dev"] == true) {
+    if (isset($site->htmlpostprocessing)) {
+        if ($site->htmlpostprocessing == "beautify" || $site->dev == true) {
             $fileContent = beautifyhtml($fileContent);
         }
-        if ($site["htmlpostprocessing"] == "minify" && $site["dev"] == false) {
+        if ($site->htmlpostprocessing == "minify" && $site->dev == false) {
             $fileContent = minifyhtml($fileContent);
         }
     }

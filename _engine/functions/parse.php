@@ -1,24 +1,24 @@
 <?php
 // Function to serve a Markdown file as HTML
-use Symfony\Component\Yaml\Yaml;
 
 function parse($file)
 {
     global $parsedown, $site, $kinds, $urltranslations, $pages;
-    global $base, $supported_extensions, $front, $http_base;
+    global $base, $front, $http_base;
 
     $ext = pathinfo($file, PATHINFO_EXTENSION);
     $filename = pathinfo($file, PATHINFO_FILENAME);
 
     if (file_exists($file) && is_readable($file)) {
-        if (!in_array($ext, $supported_extensions)) {
+        if (!in_array($ext, $site->support)) {
             return false;
         }
         $content = file_get_contents($file);
 
         $frontMatter = [];
         if (preg_match('/^---\s*\n(.*?\n)---\s*\n/sm', $content, $matches)) {
-            $frontMatter = Yaml::parse($matches[1]);
+            $yaml = new \Alchemy\Component\Yaml\Yaml();
+            $frontMatter = $yaml->loadString($matches[1]);
             $content = substr($content, strlen($matches[0]));
         }
         $page = $frontMatter;
@@ -28,7 +28,7 @@ function parse($file)
                 $page["title"] = $matches[1];
                 $content = substr($content, strlen($matches[0]));
             } else {
-                $page["title"] = $site["default-title"];
+                $page["title"] = $site->defaulttitle;
             }
         }
 
@@ -79,7 +79,7 @@ function parse($file)
 
         $content = $parsedown->text($content);
         $page["content"] = trim($content, " \n\r\t");
-        if (!$site["buildall"]) {
+        if (!$site->buildall) {
             /* Only parse if file has front matter */
             if (sizeof($page) == 0) {
                 return;
@@ -87,7 +87,7 @@ function parse($file)
         }
         $slug = str_replace($base, "", $file);
         $slug = ltrim($slug, DS);
-        $slug = preg_replace("/^" . $site["content-dir"] . "/", "", $slug);
+        $slug = preg_replace("/^" . $site->contentdir . "/", "", $slug);
 
 
         if ($filename == "index") {
@@ -124,11 +124,7 @@ function parse($file)
         $fileContent = "";
 
         /* Making page as default layout */
-        if (isset($site["default-layout"])) {
-            $layout = $site["default-layout"];
-        } else {
-            $layout = "page";
-        }
+        $layout = "page";
 
         if (isset($page["layout"])) {
             $file = $base . DS . "_template" . DS . $page["layout"] . ".php";
@@ -158,43 +154,43 @@ function parse($file)
         }
 
         if (!isset($page["lang"])) {
-            if (!isset($site["lang"]) || empty($site["lang"])) {
+            if (!isset($site->lang) || empty($site->lang)) {
                 $page["lang"] = "en";
-            } elseif (is_array($site["lang"])) {
-                if (count($site["lang"]) == 1) {
-                    $page["lang"] = $site["lang"][0];
+            } elseif (is_array($site->lang)) {
+                if (count($site->lang) == 1) {
+                    $page["lang"] = $site->lang[0];
                 } else {
                     if ($page["slug"] == "/") {
-                        $page["lang"] = $site["lang"][0];
+                        $page["lang"] = $site->lang[0];
                     } else {
                         $first = explode("/", $page["slug"])[0];
-                        if (in_array($first, $site["lang"])) {
+                        if (in_array($first, $site->lang)) {
                             $page["lang"] = $first;
                         } else {
-                            $page["lang"] = $site["lang"][0];
+                            $page["lang"] = $site->lang[0];
                         }
                     }
                 }
             } else {
-                $page["lang"] = $site["lang"];
+                $page["lang"] = $site->lang;
             }
 
 
-            if (is_array($site["lang"])) {
-                $page["otherlang"] = $site["lang"];
+            if (is_array($site->lang)) {
+                $page["otherlang"] = $site->lang;
                 array_splice($page["otherlang"], array_search($page["lang"], $page["otherlang"]), 1);
                 foreach ($page["otherlang"] as $key => $value) {
-                    if ($value == $site["default-lang"]) {
+                    if ($value == $site->defaultlang) {
                         $page["otherlangpath"][$key] = "";
                     } else {
                         $page["otherlangpath"][$key] = $value . "/";
                     }
                 }
             } else {
-                $page["otherlang"][] = $site["lang"];
+                $page["otherlang"][] = $site->lang;
                 $page["otherlangpath"][] = "";
             }
-            if ($page["lang"] == $site["default-lang"]) {
+            if ($page["lang"] == $site->defaultlang) {
                 $page["langpath"] = "";
             } else {
                 $page["langpath"] = $page["lang"] . "/";
@@ -206,7 +202,7 @@ function parse($file)
 
 
             if (!isset($page["originalcontent"])) {
-                if ($page["lang"] == $site["default-lang"]) {
+                if ($page["lang"] == $site->defaultlang) {
                     if ($page["slug"] == "/") {
                         $page["originalcontent"] = "index";
                     } else {
@@ -221,7 +217,7 @@ function parse($file)
 
             if (!isset($page["langslug"])) {
                 foreach ($page["otherlang"] as $key => $value) {
-                    if ($value == $site["default-lang"]) {
+                    if ($value == $site->defaultlang) {
                         $page["langslug"][] = $page["originalcontent"];
                     } elseif ($page["originalcontent"] == "index") {
                         $page["langslug"][] = "";
@@ -242,6 +238,9 @@ function parse($file)
                 "long" => $page["localizeddate"],
                 "iso" => $page["isodate"]
             ] = localizeddate($page);
+        }
+        foreach ($page as $key => $value) {
+            $site->types[$key] = "";
         }
         return $page;
     }

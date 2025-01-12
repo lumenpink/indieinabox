@@ -13,11 +13,11 @@
         </a>
     </div>
     <div>
-        <?php if (isset($site["author"]) && (isset($page["noauthor"]) && $page["noauthor"] !== true)) : ?>
-            <span class="p-author h-card"><a href="<?= $site["fqdn"] ?>" class="u-id u-url" rel="author"><img
-                        alt="<?= $site["sitename"] ?>"
+        <?php if (isset($site->author) && (isset($page["noauthor"]) && $page["noauthor"] !== true)) : ?>
+            <span class="p-author h-card"><a href="<?= $site->fqdn ?>" class="u-id u-url" rel="author"><img
+                        alt="<?= $site->sitename ?>"
                         class="u-photo icon-24 icon-round p-given-name"
-                        src="<?= $page["relpath"] ?>/images/thumb250.jpg" /><span class="post-meta p-name"><?= $site["author"] ?></span></a></span>
+                        src="<?= $page["relpath"] ?>/images/thumb250.jpg" /><span class="post-meta p-name"><?= $site->author ?></span></a></span>
         <?php endif; ?>
     </div>
     <div>

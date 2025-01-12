@@ -1,5 +1,5 @@
 <?php
-function copyAssets($dir)
+function copyAssets(string $dir): void
 {
     global $base, $site;
     $entries = scandir($dir);
@@ -16,11 +16,11 @@ function copyAssets($dir)
 
                     if (
                         !is_dir(
-                            $base . DS . $site["output-dir"] . DS . "assets"
+                            $base . DS . $site->outputdir . DS . "assets"
                         )
                     ) {
                         mkdir(
-                            $base . DS . $site["output-dir"] . DS . "assets",
+                            $base . DS . $site->outputdir . DS . "assets",
                             0777,
                             true
                         ); // true for recursive create
@@ -30,7 +30,7 @@ function copyAssets($dir)
                         $path,
                         $base .
                             DS .
-                            $site["output-dir"] .
+                            $site->outputdir .
                             DS .
                             "assets" .
                             DS .

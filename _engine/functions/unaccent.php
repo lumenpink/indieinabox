@@ -1,7 +1,7 @@
 <?php
 // Remove accents from a string
 // From https://github.com/Behat/Transliterator/blob/master/src/Transliterator.php
-function unaccent($string)
+function unaccent(string $string): string
 {
     if (!preg_match('/[\x80-\xff]/', $string)) {
         return $string;

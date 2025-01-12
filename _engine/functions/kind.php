@@ -7,7 +7,7 @@ function kind($page): array
         $localizedkind = $page["kind"];
     } else {
         $localizedkind = explode("/", $page["slug"]);
-        if ($page["lang"] == $site["default-lang"]) {
+        if ($page["lang"] == $site->defaultlang) {
             $localizedkind = $localizedkind[0];
         } else {
             $localizedkind = $localizedkind[1];

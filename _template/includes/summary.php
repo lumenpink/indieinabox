@@ -13,7 +13,7 @@
                             continue;
                         }
                         if (!isset($image["alt"])) {
-                            $image["alt"] = t("Imagem criada por ") . $site["author"];
+                            $image["alt"] = t("Imagem criada por ") . $site->author;
                         }
                 ?>
 

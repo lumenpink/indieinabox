@@ -10,24 +10,24 @@ function copyStatic($dir)
                 $path = str_replace($dir . DS, "", $entry);
                 $filepath = pathinfo($path, PATHINFO_DIRNAME);
                 $fullfilename = pathinfo($path, PATHINFO_BASENAME);
-                $destination = $base . DS . $site["output-dir"] . DS . $filepath .
+                $destination = $base . DS . $site->outputdir . DS . $filepath .
                     DS .
                     $fullfilename;
                 if (
                     is_file($entry) &&
                     (!is_file($destination) ||
                         filemtime($entry) > filemtime($destination) ||
-                        $site["forcestaticoverride"])
+                        $site->forcestaticoverride)
                 ) {
                     $filepath = pathinfo($path, PATHINFO_DIRNAME);
                     $fullfilename = pathinfo($path, PATHINFO_BASENAME);
                     if (
                         !is_dir(
-                            $base . DS . $site["output-dir"] . DS . $filepath
+                            $base . DS . $site->outputdir . DS . $filepath
                         )
                     ) {
                         mkdir(
-                            $base . DS . $site["output-dir"] . DS . $filepath,
+                            $base . DS . $site->outputdir . DS . $filepath,
                             0777,
                             true
                         ); // true for recursive create
@@ -36,7 +36,7 @@ function copyStatic($dir)
                         $entry,
                         $base .
                             DS .
-                            $site["output-dir"] .
+                            $site->outputdir .
                             DS .
                             $filepath .
                             DS .
@@ -45,13 +45,13 @@ function copyStatic($dir)
                 }
             }
         }
-        if ($site["dev"]) {
-            if (!is_dir($base . DS . $site["output-dir"] . DS . "js")) {
-                mkdir($base . DS . $site["output-dir"] . DS . "js", 0777, true); // true for recursive create
+        if ($site->dev) {
+            if (!is_dir($base . DS . $site->outputdir . DS . "js")) {
+                mkdir($base . DS . $site->outputdir . DS . "js", 0777, true); // true for recursive create
             }
             copy(
                 $base . "/_template/livejs/live.js",
-                $base . DS . $site["output-dir"] . DS . "js/live.js"
+                $base . DS . $site->outputdir . DS . "js/live.js"
             );
         }
     }

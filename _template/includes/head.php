@@ -1,4 +1,4 @@
-    <?php if ($site["dev"]) {
+    <?php if ($site->dev) {
         echo "<!-- dev mode" . PHP_EOL;
         echo "************* site *************" . PHP_EOL;
         echo json_encode($site, JSON_PRETTY_PRINT);
@@ -11,15 +11,15 @@
     <meta name="generator" content="IndieInABox v0.1.0" />
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <?php if ($site["dev"] == false): ?>
+    <?php if ($site->dev == false): ?>
         <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self'; object-src 'none'" />
     <?php endif; ?>
     <meta property="og:title" content="~lumen" />
     <meta property="og:site_name" content="~lumen">
-    <title><?= empty($page["title"]) || $page["title"] == "Untitled" ? $site["author"] : $page["title"] . " | " . $site["author"] ?></title>
+    <title><?= empty($page["title"]) || $page["title"] == "Untitled" ? $site->author : $page["title"] . " | " . $site->author ?></title>
     <meta property="og:description"
         content="Blog pessoal, notas e pensamentos de Lumen Pink" />
-    <meta property="og:site_name" content="<?= empty($page["title"]) || $page["title"] == "Untitled" ? $site["author"] : $page["title"] . " | " . $site["author"] ?>">
+    <meta property="og:site_name" content="<?= empty($page["title"]) || $page["title"] == "Untitled" ? $site->author : $page["title"] . " | " . $site->author ?>">
     <meta property="og:url" content="https://lumen.pink/">
     <meta property="og:type" content="website">
     <meta property="og:image" content="https://lumen.pink/android-chrome-192x192.png" />
@@ -41,11 +41,11 @@
 
     if (is_array($page["otherlang"])) {
         echo '<link rel="alternate" hreflang="' . $page["lang"] .
-            '"href="' . $site["fqdn"] . "/" . ($page["slug"] == "/" ? "" : $page["slug"]) . '">' . PHP_EOL;
+            '"href="' . $site->fqdn . "/" . ($page["slug"] == "/" ? "" : $page["slug"]) . '">' . PHP_EOL;
 
         foreach ($page["otherlang"] as $i => $lang) {
             echo '    <link rel="alternate" hreflang="' . $lang .
-                ' "href="' . $site["fqdn"] . "/" . $page["otherlangpath"][$i] . $page["langslug"][$i] . '">' . PHP_EOL;
+                ' "href="' . $site->fqdn . "/" . $page["otherlangpath"][$i] . $page["langslug"][$i] . '">' . PHP_EOL;
         }
     } ?>
     <link rel="manifest" href="<?= $page["relpath"] ?>site.webmanifest">
@@ -66,7 +66,7 @@
     <link rel="webmention" href="https://webmention.io/lumen.pink/webmention" />
     <link rel="pingback" href="https://webmention.io/lumen.pink/xmlrpc" />
     <link rel="stylesheet" href="<?= $page["relpath"] ?>dist/app.css" />
-    <?php if ($site["dev"]): ?>
+    <?php if ($site->dev): ?>
         <script src="<?= $page["relpath"] ?>js/live.js"></script>
     <?php endif; ?>
     <script src="<?= $page["relpath"] ?>js/app.js"></script>

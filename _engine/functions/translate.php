@@ -6,7 +6,7 @@ function t($text, $lang = null)
     if ($lang == null) {
         $lang = $p["lang"];
     }
-    if ($lang == $site["default-lang"]) {
+    if ($lang == $site->defaultlang) {
         return $text;
     }
     if (isset($t[$lang])) {
@@ -46,7 +46,7 @@ function ts($text)
 function updateTranslations()
 {
     global $t, $site;
-    $file = $site["basedir"] . DS . "_data/translations.php";
+    $file = $site->basedir . DS . "_data/translations.php";
     recursive_ksort($t);
     file_put_contents(
         $file,

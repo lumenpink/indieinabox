@@ -2,3 +2,8 @@ parameters:
   level: 6
   paths:
     - _engine
+  excludePaths:
+    - _engine/functions/yaml.php
+    - _engine/functions/parsedown.php
+    - _engine/functions/beautify-html.php
+    - _engine/functions/TinyHtmlMinifier.php

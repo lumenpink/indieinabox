@@ -1,6 +1,31 @@
 {
+    "name": "lumenpink/indieinabox",
+    "description": "Social Personal Website Swiss Knife",
+    "type": "project",
+    "license": "GPL-3.0-or-later",
+    "authors": [
+        {
+            "name": "Lumen Pink",
+            "email": "hi@lumen.pink"
+        }
+    ],
+    "minimum-stability": "dev",
     "require-dev": {
-        "vimeo/psalm": "^4.30",
-        "phpstan/phpstan": "^2.1"
-    }
+        "phpcompatibility/php-compatibility": "^10.0@dev",
+        "squizlabs/php_codesniffer": "^3.0@dev",
+        "phpstan/phpstan": "2.1.x-dev"
+    },
+    "config": {
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        }
+    },
+    "scripts": {
+        "sniffer:php74": "phpcs -p ./_engine --standard=vendor/phpcompatibility/php-compatibility/PHPCompatibility --runtime-set testVersion 7.4",
+        "sniffer:php80": "phpcs -p ./_engine --standard=vendor/phpcompatibility/php-compatibility/PHPCompatibility --runtime-set testVersion 8.0",
+        "sniffer:php81": "phpcs -p ./_engine --standard=vendor/phpcompatibility/php-compatibility/PHPCompatibility --runtime-set testVersion 8.1",
+        "sniffer:php82": "phpcs -p ./_engine --standard=vendor/phpcompatibility/php-compatibility/PHPCompatibility --runtime-set testVersion 8.2",
+        "sniffer:php83": "phpcs -p ./_engine --standard=vendor/phpcompatibility/php-compatibility/PHPCompatibility --runtime-set testVersion 8.3",
+        "sniffer:php84": "phpcs -p ./_engine --standard=vendor/phpcompatibility/php-compatibility/PHPCompatibility --runtime-set testVersion 8.4"
+    }   
 }

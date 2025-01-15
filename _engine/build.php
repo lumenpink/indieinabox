@@ -13,16 +13,12 @@ $options = getopt("sdf"); // Get the options passed to the script
 $base = dirname(__DIR__);
 define("DS", DIRECTORY_SEPARATOR);
 
-use Symfony\Component\Yaml\Yaml;
-
 mb_internal_encoding("UTF-8");
 
 $parsedown = new Parsedown();
 
-// $config = Yaml::parseFile($base . DS . "config.yml");
 $yaml = new \Alchemy\Component\Yaml\Yaml();
 $config = $yaml->loadFile($base . DS . "config.yml");
-var_dump($config);
 if (isset($options["d"])) {
     $config["dev"] = true;
 }
@@ -42,6 +38,7 @@ if (isset($options["f"])) {
 }
 
 if (!isset($config["lang"])) {
+    $config["lang"] = "en";
     $config["defaultlang"] = "en";
 } else {
     if (is_array($config["lang"])) {
@@ -55,7 +52,7 @@ if (!isset($config["lang"])) {
 define("ASSETS", $config["base"] . "/assets");
 
 echo "Building at " . $config["base"] . "\n";
-echo "Assests are at " . ASSETS . "\n";
+echo "Assets are at " . ASSETS . "\n";
 
 $site = new Site();
 $site->basedir = $base;
@@ -84,6 +81,7 @@ $p = [];
 
 /* Main functions */
 
+recursive_rmdir($base . DS . "_site");
 scan($base . DS . "_content");
 generateHTMLFiles($pages);
 generateFeed();
@@ -92,8 +90,5 @@ if ($site->skipstatic) {
     echo "Skipping static files\n";
 } else {
     copyStatic($base . DS . "_static");
-}
-foreach ($site->types as $type => $value) {
-    echo $type . PHP_EOL;
 }
 echo "Build complete\n";

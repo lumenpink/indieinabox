@@ -6,8 +6,9 @@
         echo json_encode($page, JSON_PRETTY_PRINT);
         echo "************* pages *************" . PHP_EOL;
         echo json_encode($pages, JSON_PRETTY_PRINT);
+        echo "-->";
     }
-    echo "-->"; ?>
+    ?>
     <meta name="generator" content="IndieInABox v0.1.0" />
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1" />

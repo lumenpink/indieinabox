@@ -78,17 +78,25 @@ function parse($file)
         );
 
         $content = $parsedown->text($content);
-        $page["content"] = trim($content, " \n\r\t");
-        if (!$site->buildall) {
-            /* Only parse if file has front matter */
-            if (sizeof($page) == 0) {
-                return;
-            }
+        $page["content"] = trim($content, " \n\r\t")
+            /* Only parse if file has front matter */;
+        if (!$site->buildall && empty($page)) {
+            return;
         }
-        $slug = str_replace($base, "", $file);
+        $slug = str_replace($base . DS . '_content', "", $file);
+
         $slug = ltrim($slug, DS);
         $slug = preg_replace("/^" . $site->contentdir . "/", "", $slug);
-
+        $slug2 =  explode(DS, $slug);
+        $page["lang2"] = $slug2;
+        if (str_starts_with($slug2[0], 'lang_')) {
+            $lang = preg_replace("/^lang_/", "", $slug2[0]);
+            if (in_array($lang, $site->lang)) {
+                $page["lang2"] = $lang;
+                array_shift($slug2);
+                $page["slug2"] = $slug2;
+            }
+        }
 
         if ($filename == "index") {
             $slug = str_replace($filename . "." . $ext, "", $slug);
@@ -238,9 +246,6 @@ function parse($file)
                 "long" => $page["localizeddate"],
                 "iso" => $page["isodate"]
             ] = localizeddate($page);
-        }
-        foreach ($page as $key => $value) {
-            $site->types[$key] = "";
         }
         return $page;
     }

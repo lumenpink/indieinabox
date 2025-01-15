@@ -54,9 +54,6 @@ class Site
     public $forcestaticoverride;
 
 
-    /** @var array */
-    public $types;
-
     public function __construct(
         string $basedir = "/",
         string $title = "My Site",
@@ -74,8 +71,7 @@ class Site
         string $htmlpostprocessing = "minify",
         bool $dev = false,
         bool $skipstatic = false,
-        bool $forcestaticoverride = false,
-        array $types = [],
+        bool $forcestaticoverride = false
     ) {
         $this->basedir = $basedir;
         $this->title = $title;
@@ -94,6 +90,5 @@ class Site
         $this->dev = $dev;
         $this->skipstatic = $skipstatic;
         $this->forcestaticoverride = $forcestaticoverride;
-        $this->types = $types;
     }
 }

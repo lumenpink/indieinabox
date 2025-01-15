@@ -8,7 +8,8 @@ function scan($dir)
         if (
             $entry !== "." &&
             $entry !== ".." &&
-            !str_starts_with($entry, "_")
+            substr($entry, 0, 1) !== "_" &&
+            substr($entry, 0, 1) !== "."
         ) {
             $path = $dir . DS . $entry;
             if (is_file($path)) {
@@ -20,8 +21,8 @@ function scan($dir)
                 }
             } elseif (is_dir($path)) {
                 if (
-                    !str_contains($dir, "_engine") and
-                    !str_contains($dir, "_site")
+                    !strpos($dir, "_engine") &&
+                    !strpos($dir, "_site")
                 ) {
                     scan($path);
                 }
@@ -176,4 +177,73 @@ function minifyhtml($html)
         'disable_comments' => true,
     ]);
     return $minifier->minify($html);
+}
+if (!function_exists('str_starts_with')) {
+    /**
+     * Checks if a string starts with a given prefix
+     * 
+     * @param string $haystack The string to search in
+     * @param string $needle The prefix to search for
+     * @return bool Returns true if the string starts with the prefix, false otherwise
+     */
+    function str_starts_with($haystack, $needle)
+    {
+        return substr_compare($haystack, $needle, 0, strlen($needle)) === 0;
+    }
+}
+
+/**
+ * Recursively removes a directory and all its contents
+ *
+ * @param string $dir The directory path to remove
+ * @param bool $keepRootDir If true, keeps the root directory but removes all contents
+ * @return bool Returns true on success, false on failure
+ * @throws RuntimeException If directory cannot be removed due to permissions or other issues
+ */
+function recursive_rmdir($dir, $keepRootDir = false)
+{
+    if (!file_exists($dir)) {
+        return true;
+    }
+
+    if (!is_dir($dir)) {
+        throw new RuntimeException("'$dir' is not a directory");
+    }
+
+    // Ensure the path has a trailing slash
+    $dir = rtrim($dir, '/\\') . DIRECTORY_SEPARATOR;
+
+    try {
+        $items = new DirectoryIterator($dir);
+
+        foreach ($items as $item) {
+            // Skip dot files
+            if ($item->isDot()) {
+                continue;
+            }
+
+            $path = $item->getPathname();
+
+            if ($item->isDir()) {
+                // Recursively remove subdirectory
+                if (!recursive_rmdir($path)) {
+                    return false;
+                }
+            } else {
+                // Remove file
+                if (!unlink($path)) {
+                    throw new RuntimeException("Failed to delete file: $path");
+                }
+            }
+        }
+
+        // Remove the root directory itself if not keeping it
+        if (!$keepRootDir && !rmdir($dir)) {
+            throw new RuntimeException("Failed to remove directory: $dir");
+        }
+
+        return true;
+    } catch (Exception $e) {
+        throw new RuntimeException("Error while removing directory: " . $e->getMessage());
+    }
 }

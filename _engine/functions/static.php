@@ -1,4 +1,5 @@
 <?php
+
 function copyStatic($dir)
 {
     global $base, $site;
@@ -14,10 +15,10 @@ function copyStatic($dir)
                     DS .
                     $fullfilename;
                 if (
-                    is_file($entry) &&
-                    (!is_file($destination) ||
-                        filemtime($entry) > filemtime($destination) ||
-                        $site->forcestaticoverride)
+                    is_file($entry)
+                    && (!is_file($destination)
+                    || filemtime($entry) > filemtime($destination)
+                    || $site->forcestaticoverride)
                 ) {
                     $filepath = pathinfo($path, PATHINFO_DIRNAME);
                     $fullfilename = pathinfo($path, PATHINFO_BASENAME);

@@ -1,14 +1,31 @@
 <?php
+
+/**
+ * IndieInABox
+ * All-one-social
+ * php version 7-8
+ *
+ * @category Social
+ * @package  IndieInABox
+ * @author   Lumen Pink <hi@lumen.pink>
+ * @license  https://opensource.org/licenses/MIT MIT License
+ * @version  GIT: 0.0.3
+ * @link     https://IndieInABox.no.site.yet/
+ */
+
+require_once 'autoloader.php'; //NOSONAR
 foreach (glob(__DIR__ . "/functions/*.php") as $filename) {
-    include  $filename;
+    include_once  $filename; //NOSONAR
 }
 foreach (glob(__DIR__ . "/../_data/*.php") as $filename) {
-    include  $filename;
+    include_once  $filename; //NOSONAR
 }
+
+
 $options = getopt("sdf"); // Get the options passed to the script
-# -s - skip the static copy
-# -d - enable dev mode (include live-reload script)
-# -f - force static override
+// -s - skip the static copy
+// -d - enable dev mode (include live-reload script)
+// -f - force static override
 
 $base = dirname(__DIR__);
 define("DS", DIRECTORY_SEPARATOR);

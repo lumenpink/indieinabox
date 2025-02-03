@@ -1,4 +1,5 @@
 <?php
+
 function generateHTMLFiles($pages)
 {
     for ($i = 0; $i < sizeof($pages); $i++) {

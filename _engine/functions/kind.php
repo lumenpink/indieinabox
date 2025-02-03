@@ -1,4 +1,5 @@
 <?php
+
 function kind($page): array
 {
     global $site, $kindspath;

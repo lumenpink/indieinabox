@@ -2,55 +2,89 @@
 
 class Site
 {
-    /** @var string */
+    /**
+     * @var string
+     */
     public $basedir;
 
-    /** @var string */
+    /**
+     * @var string
+     */
     public $title;
 
-    /** @var string */
+    /**
+     * @var string
+     */
     public $sitename;
 
-    /** @var string */
+    /**
+     * @var string
+     */
     public $author;
 
-    /** @var string */
+    /**
+     * @var string
+     */
     public $defaulttitle;
 
-    /** @var array<string> */
+    /**
+     * @var array<string>
+     */
     public $support;
 
-    /** @var bool */
+    /**
+     * @var bool
+     */
     public $buildall;
 
-    /** @var string */
+    /**
+     * @var string
+     */
     public $outputdir;
 
-    /** @var string */
+    /**
+     * @var string
+     */
     public $contentdir;
 
-    /** @var string */
+    /**
+     * @var string
+     */
     public $defaultcategory;
 
-    /** @var array<string> */
+    /**
+     * @var array<string>
+     */
     public $lang;
 
-    /** @var string */
+    /**
+     * @var string
+     */
     public $defaultlang;
 
-    /** @var string */
+    /**
+     * @var string
+     */
     public $fqdn;
 
-    /** @var string */
+    /**
+     * @var string
+     */
     public $htmlpostprocessing;
 
-    /** @var bool */
+    /**
+     * @var bool
+     */
     public $dev;
 
-    /** @var bool */
+    /**
+     * @var bool
+     */
     public $skipstatic;
 
-    /** @var bool */
+    /**
+     * @var bool
+     */
     public $forcestaticoverride;
 
 

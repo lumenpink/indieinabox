@@ -1,12 +1,16 @@
 <?php
+
 function listposts()
 {
     global $base, $pages;
     $localpages = $pages;
     $localpages = array_filter($localpages, "removegeneric");
-    usort($localpages, function ($a, $b) {
-        return $b['date'] <=> $a['date'];
-    });
+    usort(
+        $localpages,
+        function ($a, $b) {
+            return $b['date'] <=> $a['date'];
+        }
+    );
     $count = 0;
     ob_start();
     foreach ($localpages as $page) {

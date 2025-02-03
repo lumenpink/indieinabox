@@ -1,0 +1,123 @@
+<?php
+
+namespace Indieinabox;
+
+class ContentProcessor
+{
+    /**
+     * @var \Parsedown
+     */
+    private $parsedown;
+
+    /**
+     * @param \Parsedown $parsedown
+     */
+    public function __construct(\Parsedown $parsedown)
+    {
+        $this->parsedown = $parsedown;
+    }
+
+    /**
+     * @param string $content
+     *
+     * @return array
+     */
+    public function extractFrontMatter(string &$content): array
+    {
+        $frontMatter = [];
+        if (preg_match('/^---\s*\n(.*?[^\n]*+\n)---\s*\n/sm', $content, $matches)) {
+            $yaml = new \Alchemy\Component\Yaml\Yaml();
+            $frontMatter = $yaml->loadString($matches[1]);
+        }
+        return $frontMatter;
+    }
+
+    /**
+     * @param string $content
+     *
+     * @return string
+     */
+    public function removeYamlFrontMatter(string $content): string
+    {
+        return preg_replace('/^---\s*\n([^\n]*+\n)---\s*\n/sm', '', $content);
+    }
+
+    /**
+     * @param array  $page
+     * @param string $content
+     *
+     * @return array
+     */
+    public function setTitle(array $page, string $content, string $defaultTitle): array
+    {
+        if (!isset($page["title"])) {
+            if (preg_match('/^# (.+)$/m', $content, $matches)) {
+                $page["title"] = trim($matches[1]);
+            } else {
+                $page["title"] = $defaultTitle;
+            }
+        }
+        return $page;
+    }
+
+    /**
+     * @param array  $page
+     * @param string $content
+     *
+     * @return array
+     */
+    public function processTags(array $page, string &$content): array
+    {
+        preg_match_all("/(?<!\\\\)\s#\w+/", $content, $tagmatches);
+
+        $tags = array_map(
+            function (string $tag): string {
+                return strtolower(ltrim(trim($tag), "#"));
+            },
+            $tagmatches[0]
+        );
+
+        if (!isset($page["tags"])) {
+            $page["tags"] = [];
+        } elseif (!is_array($page["tags"])) {
+            $page["tags"] = (array) $page["tags"];
+        }
+
+        $page["tags"] = array_unique(array_merge($page["tags"], $tags));
+        $content = preg_replace('/^(?:\s*#\w+\s*?)*$/m', "", $content);
+
+        return $page;
+    }
+
+    /**
+     * @param string $content
+     *
+     * @return string
+     */
+    public function processContent(string $content): string
+    {
+        $content = $this->addTrailingSlashesToInternalLinks($content);
+        return $this->parsedown->text($content);
+    }
+
+    /**
+     * @param string $content
+     *
+     * @return string
+     */
+    private function addTrailingSlashesToInternalLinks(string $content): string
+    {
+        return preg_replace_callback(
+            "/\[(.*?)\]\((.*?)\)/",
+            function (array $matches): string {
+                $link = $matches[2];
+                $path_info = pathinfo($link);
+                if (!isset($path_info["extension"])) {
+                    $link = rtrim($link, "/") . "/";
+                }
+                return "[" . $matches[1] . "](" . $link . ")";
+            },
+            $content
+        );
+    }
+}

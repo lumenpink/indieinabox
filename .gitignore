@@ -5,3 +5,7 @@ _site
 _static
 fa
 _content/
+.phive
+.phpdoc
+.vscode
+tools

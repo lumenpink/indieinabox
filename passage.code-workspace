@@ -1,0 +1,16 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"intelephense.environment.phpVersion": "7.2.0",
+		"wrap.with.php": {
+			"label": "@php",
+			"description": "@php...@endphp",
+			"disabled": false,
+			"snippet": "@php\n\t$TM_SELECTED_TEXT\n@endphp$0"
+		}
+	}
+}

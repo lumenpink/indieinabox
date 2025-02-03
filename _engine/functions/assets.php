@@ -1,4 +1,5 @@
 <?php
+
 function copyAssets(string $dir): void
 {
     global $base, $site;
@@ -8,8 +9,8 @@ function copyAssets(string $dir): void
             $path = $dir . DS . $entry;
             if (is_file($path)) {
                 if (
-                    pathinfo($path, PATHINFO_EXTENSION) == "js" ||
-                    pathinfo($path, PATHINFO_EXTENSION) == "css"
+                    pathinfo($path, PATHINFO_EXTENSION) == "js"
+                    || pathinfo($path, PATHINFO_EXTENSION) == "css"
                 ) {
                     $ext = pathinfo($path, PATHINFO_EXTENSION);
                     $filename = pathinfo($path, PATHINFO_FILENAME);

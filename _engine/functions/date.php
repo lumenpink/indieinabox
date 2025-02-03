@@ -1,4 +1,5 @@
 <?php
+
 // I know there is intl module but I'm not sure if it's available in all servers
 function localizeddate($page)
 {
@@ -26,5 +27,6 @@ function localizeddate($page)
     return [
         "long" => $longformat,
         "iso" => $isoformat
-    ];;
+    ];
+    ;
 }

@@ -1,74 +1,118 @@
 <?php
 
+namespace Indieinabox;
+
 class Page
 {
-    /** @var array */
+    /**
+     * @var array
+     */
     public $category;
 
-    /** @var string */
+    /**
+     * @var string
+     */
     public $content;
 
-    /** @var DateTime */
+    /**
+     * @var DateTime
+     */
     public $date;
 
-    /** @var array */
+    /**
+     * @var array
+     */
     public $images;
 
-    /** @var string */
+    /**
+     * @var string
+     */
     public $isodate;
 
-    /** @var string */
+    /**
+     * @var string
+     */
     public $kind;
 
-    /** @var string */
+    /**
+     * @var string
+     */
     public $lang;
 
-    /** @var string */
+    /**
+     * @var string
+     */
     public $langpath;
 
-    /** @var string */
+    /**
+     * @var string
+     */
     public $langslug;
 
-    /** @var string */
+    /**
+     * @var string
+     */
     public $layout;
 
-    /** @var string */
+    /**
+     * @var string
+     */
     public $localizeddate;
 
-    /** @var string */
+    /**
+     * @var string
+     */
     public $localizedkind;
 
-    /** @var string */
+    /**
+     * @var string
+     */
     public $nick;
 
-    /** @var bool */
+    /**
+     * @var bool
+     */
     public $noauthor;
 
-    /** @var array */
+    /**
+     * @var array
+     */
     public $otherlang;
 
-    /** @var array */
+    /**
+     * @var array
+     */
     public $otherlangpath;
 
-    /** @var string */
+    /**
+     * @var string
+     */
     public $originalcontent;
 
-    /** @var string */
+    /**
+     * @var string
+     */
     public $relpath;
 
-    /** @var string */
+    /**
+     * @var string
+     */
     public $slug;
 
-    /** @var array */
+    /**
+     * @var array
+     */
     public $tags;
 
-    /** @var string */
+    /**
+     * @var string
+     */
     public $title;
 
     public function __construct(
         array $category = ["No Category"],
         string $content = "Dummy content",
-        ?DateTime $date = null,
+        ?\DateTime $date = null,
         array $images = [],
         string $isodate = "2001-01-01T00:00Z",
         string $kind = "note",
@@ -114,7 +158,9 @@ class Page
 
 class Pages extends ArrayObject
 {
-    /** @var array */
+    /**
+     * @var array
+     */
     public $pages;
 
     public function __construct(array $pages = [])

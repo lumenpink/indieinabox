@@ -1,53 +1,166 @@
 <?php
-// Function to serve a Markdown file as HTML
 
-function parse($file)
+class MarkdownParser
 {
-    global $parsedown, $site, $kinds, $urltranslations, $pages;
-    global $base, $front, $http_base;
+    /**
+     * @var \Parsedown
+     */
+    private $parsedown;
 
-    $ext = pathinfo($file, PATHINFO_EXTENSION);
-    $filename = pathinfo($file, PATHINFO_FILENAME);
+    /**
+     * @var object
+     */
+    private $site;
 
-    if (file_exists($file) && is_readable($file)) {
-        if (!in_array($ext, $site->support)) {
+    /**
+     * @var array
+     */
+    private $urltranslations;
+
+    /**
+     * @var string
+     */
+    private $base;
+
+    /**
+     * @param array $dependencies
+     */
+    public function __construct(array $dependencies)
+    {
+        foreach ($dependencies as $key => $value) {
+            $this->$key = $value;
+        }
+    }
+
+    /**
+     * @param  string $file
+     * @return array|false|null
+     */
+    public function parse(string $file)
+    {
+        if (!$this->isValidFile($file)) {
             return false;
         }
+
+        $fileInfo = $this->getFileInfo($file);
         $content = file_get_contents($file);
 
+        $page = $this->extractFrontMatter($content);
+        $content = $this->removeYamlFrontMatter($content);
+
+        $page = $this->setTitle($page, $content);
+        $page = $this->setDate($page, $file);
+        $page = $this->processTags($page, $content);
+
+        $content = $this->processContent($content);
+        $page['content'] = trim($content, " \n\r\t");
+
+        if (!$this->site->buildall && empty($page)) {
+            return null;
+        }
+
+        $page = $this->processSlug($page, $file, $fileInfo);
+        $page = $this->processLanguage($page);
+        $page = $this->setLayout($page, $fileInfo);
+        $page = $this->setMetadata($page);
+
+        return $page;
+    }
+
+    /**
+     * @param  string $file
+     * @return bool
+     */
+    private function isValidFile(string $file): bool
+    {
+        if (!file_exists($file) || !is_readable($file)) {
+            return false;
+        }
+
+        $ext = pathinfo($file, PATHINFO_EXTENSION);
+        return in_array($ext, $this->site->support, true);
+    }
+
+    /**
+     * @param  string $file
+     * @return array
+     */
+    private function getFileInfo(string $file): array
+    {
+        return [
+            'ext' => pathinfo($file, PATHINFO_EXTENSION),
+            'filename' => pathinfo($file, PATHINFO_FILENAME)
+        ];
+    }
+
+    /**
+     * @param  string $content
+     * @return array
+     */
+    private function extractFrontMatter(string &$content): array
+    {
         $frontMatter = [];
-        if (preg_match('/^---\s*\n(.*?\n)---\s*\n/sm', $content, $matches)) {
+        if (preg_match('/^---\s*\n([^\n]*+\n)---\s*\n/sm', $content, $matches)) {
             $yaml = new \Alchemy\Component\Yaml\Yaml();
             $frontMatter = $yaml->loadString($matches[1]);
-            $content = substr($content, strlen($matches[0]));
         }
-        $page = $frontMatter;
+        return $frontMatter;
+    }
 
+    /**
+     * @param  string $content
+     * @return string
+     */
+    private function removeYamlFrontMatter(string $content): string
+    {
+        return preg_replace('/^---\s*\n([^\n]*+\n)---\s*\n/sm', '', $content);
+    }
+
+    /**
+     * @param  array  $page
+     * @param  string $content
+     * @return array
+     */
+    private function setTitle(array $page, string $content): array
+    {
         if (!isset($page["title"])) {
-            if (preg_match('/^# (.+?)$/m', $content, $matches)) {
-                $page["title"] = $matches[1];
-                $content = substr($content, strlen($matches[0]));
+            if (preg_match('/^# (.+)$/m', $content, $matches)) {
+                $page["title"] = trim($matches[1]);
             } else {
-                $page["title"] = $site->defaulttitle;
+                $page["title"] = $this->site->defaulttitle;
             }
         }
+        return $page;
+    }
 
-        $page["title"] = trim($page["title"]);
-
+    /**
+     * @param  array  $page
+     * @param  string $file
+     * @return array
+     */
+    private function setDate(array $page, string $file): array
+    {
         if (!isset($page["date"])) {
             $page["date"] = filemtime($file);
         }
+        return $page;
+    }
 
-        /* Extract tags */
-
+    /**
+     * @param  array  $page
+     * @param  string $content
+     * @return array
+     */
+    private function processTags(array $page, string &$content): array
+    {
         preg_match_all("/(?<!\\\\)\s#\w+/", $content, $tagmatches);
 
-        // Get tags from the markdown
-        $tags = array_map(function ($tag) {
-            $tag = trim($tag);
-            $tag = ltrim($tag, "#");
-            return $tag;
-        }, $tagmatches[0]);
+        $tags = array_map(
+            function (string $tag): string {
+                return strtolower(ltrim(trim($tag), "#"));
+            },
+            $tagmatches[0]
+        );
 
         if (!isset($page["tags"])) {
             $page["tags"] = [];
@@ -55,104 +168,138 @@ function parse($file)
             $page["tags"] = (array) $page["tags"];
         }
 
-        $page["tags"] = array_merge($page["tags"], $tags);
-        $page["tags"] = array_map("strtolower", $page["tags"]);
-        $page["tags"] = array_unique($page["tags"]);
-        /*Remove lines that contains only tags */
+        $page["tags"] = array_unique(array_merge($page["tags"], $tags));
         $content = preg_replace('/^(?:\s*#\w+\s*?)*$/m', "", $content);
-        /* Add trailing slashes to all internal links for consistence */
-        $content = preg_replace_callback(
+
+        return $page;
+    }
+
+    /**
+     * @param  string $content
+     * @return string
+     */
+    private function processContent(string $content): string
+    {
+        $content = $this->addTrailingSlashesToInternalLinks($content);
+        return $this->parsedown->text($content);
+    }
+
+    /**
+     * @param  string $content
+     * @return string
+     */
+    private function addTrailingSlashesToInternalLinks(string $content): string
+    {
+        return preg_replace_callback(
             "/\[(.*?)\]\((.*?)\)/",
-            function ($matches) {
+            function (array $matches): string {
                 $link = $matches[2];
                 $path_info = pathinfo($link);
-
-                // Check if the link has no extension
                 if (!isset($path_info["extension"])) {
                     $link = rtrim($link, "/") . "/";
                 }
-
                 return "[" . $matches[1] . "](" . $link . ")";
             },
             $content
         );
+    }
 
-        $content = $parsedown->text($content);
-        $page["content"] = trim($content, " \n\r\t")
-            /* Only parse if file has front matter */;
-        if (!$site->buildall && empty($page)) {
-            return;
-        }
-        $slug = str_replace($base . DS . '_content', "", $file);
+    /**
+     * @param  array  $page
+     * @param  string $file
+     * @param  array  $fileInfo
+     * @return array
+     */
+    private function processSlug(array $page, string $file, array $fileInfo): array
+    {
+        $slug = $this->generateBaseSlug($file, $fileInfo);
+        $slug = $this->normalizeSlug($slug, $page, $fileInfo);
+        $page["slug"] = $slug;
+        $page["relpath"] = $this->calculateRelativePath($slug);
+        return $page;
+    }
 
+    /**
+     * @param  string $file
+     * @return string
+     */
+    private function generateBaseSlug(string $file): string
+    {
+        $slug = str_replace($this->base . DS . '_content', "", $file);
         $slug = ltrim($slug, DS);
-        $slug = preg_replace("/^" . $site->contentdir . "/", "", $slug);
-        $slug2 =  explode(DS, $slug);
-        $page["lang2"] = $slug2;
-        if (str_starts_with($slug2[0], 'lang_')) {
-            $lang = preg_replace("/^lang_/", "", $slug2[0]);
-            if (in_array($lang, $site->lang)) {
-                $page["lang2"] = $lang;
-                array_shift($slug2);
-                $page["slug2"] = $slug2;
-            }
-        }
+        return preg_replace("/^" . $this->site->contentdir . "/", "", $slug);
+    }
 
-        if ($filename == "index") {
-            $slug = str_replace($filename . "." . $ext, "", $slug);
+    /**
+     * @param  string $slug
+     * @param  array  $page
+     * @param  array  $fileInfo
+     * @return string
+     */
+    private function normalizeSlug(string $slug, array $page, array $fileInfo): string
+    {
+        if ($fileInfo['filename'] === "index") {
+            $slug = str_replace($fileInfo['filename'] . "." . $fileInfo['ext'], "", $slug);
         } else {
-            $slug = str_replace("." . $ext, "", $slug);
+            $slug = str_replace("." . $fileInfo['ext'], "", $slug);
         }
 
         if (isset($page["slug"])) {
-            $slug = str_replace($filename, $page["slug"], $slug);
+            $slug = str_replace($fileInfo['filename'], $page["slug"], $slug);
         }
+
         $slug = trim($slug, DS);
         $slug = str_replace(DS, "/", $slug);
         $slug = strtolower($slug);
-        /*Adding a trailing slash to be consistent in URL scheme */
-        $slug = rtrim($slug, "/") . "/";
-        $page["slug"] = $slug;
-        echo "Parsing " . $slug . "\n";
-        /*Note on slug
-        Slug is a relative url with trailing slash but not preceded by a slash
-        */
+        return rtrim($slug, "/") . "/";
+    }
 
-        $page["relpath"] = "";
-        $relpath = rtrim($page["slug"], '/');
-        $relpath = explode('/', $relpath);
-        if (count($relpath) == 0 || $page['slug'] == '/') {
-            $page["relpath"] = './';
-        } else {
-            for ($i = 0; $i < count($relpath); $i++) {
-                $page["relpath"] .= '../';
-            }
+    /**
+     * @param  string $slug
+     * @return string
+     */
+    private function calculateRelativePath(string $slug): string
+    {
+        $parts = explode('/', rtrim($slug, '/'));
+
+        if (count($parts) === 0 || $slug === '/') {
+            return './';
         }
 
-        $fileContent = "";
+        return str_repeat('../', count($parts));
+    }
 
-        /* Making page as default layout */
-        $layout = "page";
+    /**
+     * @param  array $page
+     * @return array
+     */
+    private function processLanguage(array $page): array
+    {
+        $page = $this->setDefaultLanguage($page);
+        $page = $this->processOtherLanguages($page);
+        $page = $this->processLanguagePaths($page);
+        $page = $this->processOriginalContent($page);
+        return $page;
+    }
 
-        if (isset($page["layout"])) {
-            $file = $base . DS . "_template" . DS . $page["layout"] . ".php";
-            if (file_exists($file) && is_readable($file)) {
-                $layout = $page["layout"];
-            }
-        } else {
-            /* If page layout is not set, the folder name will be the layout */
-            $slug_parts = explode("/", trim($slug, "/"));
-            if (sizeof($slug_parts) > 1) {
-                $folder_name = trim($slug_parts[sizeof($slug_parts) - 2]);
-                $file = $base . DS . "_template" . DS . $folder_name . ".php";
-                if (file_exists($file) && is_readable($file)) {
-                    $layout = $folder_name;
-                }
-            }
-        }
-
+    /**
+     * @param  array $page
+     * @param  array $fileInfo
+     * @return array
+     */
+    private function setLayout(array $page, array $fileInfo): array
+    {
+        $layout = $this->determineLayout($page, $fileInfo);
         $page["layout"] = $layout;
+        return $page;
+    }
 
+    /**
+     * @param  array $page
+     * @return array
+     */
+    private function setMetadata(array $page): array
+    {
         if (!isset($page["default-category"])) {
             $page["default-category"] = "General";
         }
@@ -161,94 +308,195 @@ function parse($file)
             $page["category"] = $page["default-category"];
         }
 
+        $kindResult = kind($page);
+        $page["localizedkind"] = $kindResult["localized"];
+        $page["kind"] = $kindResult["kind"];
+
+        $dateResult = localizeddate($page);
+        $page["localizeddate"] = $dateResult["long"];
+        $page["isodate"] = $dateResult["iso"];
+
+        return $page;
+    }
+
+    /**
+     * @param  array $page
+     * @return array
+     */
+    private function setDefaultLanguage(array $page): array
+    {
         if (!isset($page["lang"])) {
-            if (!isset($site->lang) || empty($site->lang)) {
+            if (!isset($this->site->lang) || empty($this->site->lang)) {
                 $page["lang"] = "en";
-            } elseif (is_array($site->lang)) {
-                if (count($site->lang) == 1) {
-                    $page["lang"] = $site->lang[0];
-                } else {
-                    if ($page["slug"] == "/") {
-                        $page["lang"] = $site->lang[0];
-                    } else {
-                        $first = explode("/", $page["slug"])[0];
-                        if (in_array($first, $site->lang)) {
-                            $page["lang"] = $first;
-                        } else {
-                            $page["lang"] = $site->lang[0];
-                        }
-                    }
-                }
+            } elseif (is_array($this->site->lang)) {
+                $page["lang"] = $this->determineLanguageFromSite($page);
             } else {
-                $page["lang"] = $site->lang;
+                $page["lang"] = $this->site->lang;
             }
-
-
-            if (is_array($site->lang)) {
-                $page["otherlang"] = $site->lang;
-                array_splice($page["otherlang"], array_search($page["lang"], $page["otherlang"]), 1);
-                foreach ($page["otherlang"] as $key => $value) {
-                    if ($value == $site->defaultlang) {
-                        $page["otherlangpath"][$key] = "";
-                    } else {
-                        $page["otherlangpath"][$key] = $value . "/";
-                    }
-                }
-            } else {
-                $page["otherlang"][] = $site->lang;
-                $page["otherlangpath"][] = "";
-            }
-            if ($page["lang"] == $site->defaultlang) {
-                $page["langpath"] = "";
-            } else {
-                $page["langpath"] = $page["lang"] . "/";
-            }
-
-            $page["nick"] = str_replace($page["lang"], '', $page["slug"]);
-            $page["nick"] = explode("/", $page["nick"]);
-            $page["nick"] = $page["nick"][count($page["nick"]) - 2];
-
-
-            if (!isset($page["originalcontent"])) {
-                if ($page["lang"] == $site->defaultlang) {
-                    if ($page["slug"] == "/") {
-                        $page["originalcontent"] = "index";
-                    } else {
-                        $page["originalcontent"] = $page["slug"];
-                    }
-                } else if ($page["nick"] == "") {
-                    $page["originalcontent"] = "";
-                } else {
-                    $page["originalcontent"] = getoriginalcontent($page["nick"], $page["lang"]);
-                }
-            }
-
-            if (!isset($page["langslug"])) {
-                foreach ($page["otherlang"] as $key => $value) {
-                    if ($value == $site->defaultlang) {
-                        $page["langslug"][] = $page["originalcontent"];
-                    } elseif ($page["originalcontent"] == "index") {
-                        $page["langslug"][] = "";
-                    } else {
-                        if (isset($urltranslations[$page["originalcontent"]][$value])) {
-                            $page["langslug"][] = $urltranslations[$page["originalcontent"]][$value];
-                        } else {
-                            $page["langslug"][] = $page["originalcontent"];
-                        }
-                    }
-                }
-            }
-            [
-                "localized" => $page["localizedkind"],
-                "kind" =>  $page["kind"],
-            ] = kind($page);
-            [
-                "long" => $page["localizeddate"],
-                "iso" => $page["isodate"]
-            ] = localizeddate($page);
         }
         return $page;
     }
 
-    return false;
+    /**
+     * @param  array $page
+     * @return string
+     */
+    private function determineLanguageFromSite(array $page): string
+    {
+        if (count($this->site->lang) === 1 || $page["slug"] === "/") {
+            return $this->site->lang[0];
+        }
+
+        $first = explode("/", $page["slug"])[0];
+        if (in_array($first, $this->site->lang, true)) {
+            return $first;
+        }
+
+        return $this->site->lang[0];
+    }
+    /**
+     * @param  array $page
+     * @return array
+     */
+    private function processOtherLanguages(array $page): array
+    {
+        if (is_array($this->site->lang)) {
+            $page["otherlang"] = $this->site->lang;
+            array_splice($page["otherlang"], array_search($page["lang"], $page["otherlang"], true), 1);
+
+            foreach ($page["otherlang"] as $key => $value) {
+                $page["otherlangpath"][$key] = $value === $this->site->defaultlang ? "" : $value . "/";
+            }
+        } else {
+            $page["otherlang"] = [$this->site->lang];
+            $page["otherlangpath"] = [""];
+        }
+        return $page;
+    }
+
+    /**
+     * @param  array $page
+     * @return array
+     */
+    private function processLanguagePaths(array $page): array
+    {
+        $page["langpath"] = $page["lang"] === $this->site->defaultlang ? "" : $page["lang"] . "/";
+
+        $page["nick"] = str_replace($page["lang"], '', $page["slug"]);
+        $page["nick"] = explode("/", $page["nick"]);
+        $page["nick"] = $page["nick"][count($page["nick"]) - 2];
+
+        return $page;
+    }
+
+    /**
+     * @param  array $page
+     * @return array
+     */
+    private function processOriginalContent(array $page): array
+    {
+        if (!isset($page["originalcontent"])) {
+            $page["originalcontent"] = $this->determineOriginalContent($page);
+        }
+
+        if (!isset($page["langslug"])) {
+            $page["langslug"] = $this->generateLanguageSlugs($page);
+        }
+
+        return $page;
+    }
+
+    /**
+     * @param  array $page
+     * @return string
+     */
+    private function determineOriginalContent(array $page): string
+    {
+        if ($page["lang"] === $this->site->defaultlang) {
+            return $page["slug"] === "/" ? "index" : $page["slug"];
+        }
+
+        if ($page["nick"] === "") {
+            return "";
+        }
+
+        return $this->getOriginalContent($page["nick"], $page["lang"]);
+    }
+
+    /**
+     * @param  string $nick
+     * @param  string $lang
+     * @return string
+     */
+    private function getOriginalContent(string $nick): string
+    {
+        // This should be implemented based on your specific content management system
+        // Here's a basic implementation assuming URL translations are stored in $this->urltranslations
+        if (isset($this->urltranslations[$nick][$this->site->defaultlang])) {
+            return $this->urltranslations[$nick][$this->site->defaultlang];
+        }
+        return $nick;
+    }
+
+    /**
+     * @param  array $page
+     * @return array
+     */
+    private function generateLanguageSlugs(array $page): array
+    {
+        $slugs = [];
+        foreach ($page["otherlang"] as $lang) {
+            if ($lang === $this->site->defaultlang) {
+                $slugs[] = $page["originalcontent"];
+            } elseif ($page["originalcontent"] === "index") {
+                $slugs[] = "";
+            } else {
+                $slugs[] = $this->getTranslatedSlug($page["originalcontent"], $lang);
+            }
+        }
+        return $slugs;
+    }
+
+    /**
+     * @param  string $originalContent
+     * @param  string $lang
+     * @return string
+     */
+    private function getTranslatedSlug(string $originalContent, string $lang): string
+    {
+        if (isset($this->urltranslations[$originalContent][$lang])) {
+            return $this->urltranslations[$originalContent][$lang];
+        }
+        return $originalContent;
+    }
+
+    /**
+     * @param  array $page
+     * @return string
+     */
+    private function determineLayout(array $page): string
+    {
+        // Default layout
+        $layout = "page";
+
+        // Check if layout is specified in page metadata
+        if (isset($page["layout"])) {
+            $layoutFile = $this->base . DS . "_template" . DS . $page["layout"] . ".php";
+            if (file_exists($layoutFile) && is_readable($layoutFile)) {
+                return $page["layout"];
+            }
+        }
+
+        // Try to determine layout from folder structure
+        $slugParts = explode("/", trim($page["slug"], "/"));
+        if (count($slugParts) > 1) {
+            $folderName = trim($slugParts[count($slugParts) - 2]);
+            $layoutFile = $this->base . DS . "_template" . DS . $folderName . ".php";
+            if (file_exists($layoutFile) && is_readable($layoutFile)) {
+                return $folderName;
+            }
+        }
+
+        return $layout;
+    }
 }

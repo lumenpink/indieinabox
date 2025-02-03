@@ -1,4 +1,5 @@
 <?php
+
 function scan($dir)
 {
     global $base, $site, $pages, $counter;
@@ -6,10 +7,10 @@ function scan($dir)
     $entries = scandir($dir);
     foreach ($entries as $entry) {
         if (
-            $entry !== "." &&
-            $entry !== ".." &&
-            substr($entry, 0, 1) !== "_" &&
-            substr($entry, 0, 1) !== "."
+            $entry !== "."
+            && $entry !== ".."
+            && substr($entry, 0, 1) !== "_"
+            && substr($entry, 0, 1) !== "."
         ) {
             $path = $dir . DS . $entry;
             if (is_file($path)) {
@@ -21,8 +22,8 @@ function scan($dir)
                 }
             } elseif (is_dir($path)) {
                 if (
-                    !strpos($dir, "_engine") &&
-                    !strpos($dir, "_site")
+                    !strpos($dir, "_engine")
+                    && !strpos($dir, "_site")
                 ) {
                     scan($path);
                 }
@@ -50,17 +51,20 @@ function getDirContents($dir, &$results = [])
 
 function sortByDate($pages)
 {
-    usort($pages, function ($a, $b) {
-        if (!isset($a["date"])) {
-            $a["date"] = -1;
-        }
+    usort(
+        $pages,
+        function ($a, $b) {
+            if (!isset($a["date"])) {
+                $a["date"] = -1;
+            }
 
-        if (!isset($b["date"])) {
-            $b["date"] = -1;
-        }
+            if (!isset($b["date"])) {
+                $b["date"] = -1;
+            }
 
-        return $b["date"] - $a["date"];
-    });
+            return $b["date"] - $a["date"];
+        }
+    );
 
     return $pages;
 }
@@ -68,8 +72,9 @@ function sortByDate($pages)
 function recursive_ksort(&$array)
 {
     foreach ($array as &$value) {
-        if (is_array($value))
+        if (is_array($value)) {
             recursive_ksort($value);
+        }
     }
     ksort($array, SORT_STRING | SORT_FLAG_CASE);
 }
@@ -155,7 +160,8 @@ function beautifyhtml($html)
     if (empty($html)) {
         return "";
     }
-    $beautify = new Beautify_Html(array(
+    $beautify = new Beautify_Html(
+        array(
         'indent_inner_html' => false,
         'indent_char' => " ",
         'indent_size' => 2,
@@ -164,7 +170,8 @@ function beautifyhtml($html)
         'preserve_newlines' => false,
         'max_preserve_newlines' => 32786,
         'indent_scripts'    => 'normal', // keep|separate|normal
-    ));
+        )
+    );
     return ($beautify->beautify($html));
 }
 function minifyhtml($html)
@@ -172,18 +179,20 @@ function minifyhtml($html)
     if (empty($html)) {
         return "";
     }
-    $minifier = new TinyHtmlMinifier([
+    $minifier = new TinyHtmlMinifier(
+        [
         'collapse_whitespace' => true,
         'disable_comments' => true,
-    ]);
+        ]
+    );
     return $minifier->minify($html);
 }
 if (!function_exists('str_starts_with')) {
     /**
      * Checks if a string starts with a given prefix
-     * 
-     * @param string $haystack The string to search in
-     * @param string $needle The prefix to search for
+     *
+     * @param  string $haystack The string to search in
+     * @param  string $needle   The prefix to search for
      * @return bool Returns true if the string starts with the prefix, false otherwise
      */
     function str_starts_with($haystack, $needle)
@@ -195,8 +204,8 @@ if (!function_exists('str_starts_with')) {
 /**
  * Recursively removes a directory and all its contents
  *
- * @param string $dir The directory path to remove
- * @param bool $keepRootDir If true, keeps the root directory but removes all contents
+ * @param  string $dir         The directory path to remove
+ * @param  bool   $keepRootDir If true, keeps the root directory but removes all contents
  * @return bool Returns true on success, false on failure
  * @throws RuntimeException If directory cannot be removed due to permissions or other issues
  */

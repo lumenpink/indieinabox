@@ -12,7 +12,7 @@
     <meta name="generator" content="IndieInABox v0.1.0" />
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <?php if ($site->dev == false): ?>
+    <?php if (!$site->dev): ?>
         <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self'; object-src 'none'" />
     <?php endif; ?>
     <meta property="og:title" content="~lumen" />

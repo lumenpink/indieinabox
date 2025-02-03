@@ -24,21 +24,21 @@ namespace Alchemy\Component\Yaml;
  *   $array = $yaml->load($file);
  * </code>
  *
- * @author Vlad Andersen <vlad.andersen@gmail.com>
- * @author Chris Wanstrath <chris@ozmm.org>
- * @author Erik Amaru Ortiz <aortiz.erik@gmail.com>
- * @link   (origin) http://code.google.com/p/spyc/ last rev. 2011
- * @link   (current) https://github.com/eriknyk/Yaml
+ * @author    Vlad Andersen <vlad.andersen@gmail.com>
+ * @author    Chris Wanstrath <chris@ozmm.org>
+ * @author    Erik Amaru Ortiz <aortiz.erik@gmail.com>
+ * @link      (origin) http://code.google.com/p/spyc/ last rev. 2011
+ * @link      (current) https://github.com/eriknyk/Yaml
  * @copyright Copyright 2005-2006 Chris Wanstrath,
  * @copyright 2006-2011 Vlad Andersen
  * @copyright 2012 Erik Amaru Ortiz <aortiz.erik@gmail.com>
- * @license http://www.opensource.org/licenses/mit-license.php MIT License
- * @package Yaml
- * @version 1.0
+ * @license   http://www.opensource.org/licenses/mit-license.php MIT License
+ * @package   Yaml
+ * @version   1.0
  */
 class Yaml
 {
-    const REMPTY = "\0\0\0\0\0";
+    public const REMPTY = "\0\0\0\0\0";
 
     /**
      * Setting this to true will force YAMLDump to enclose any string value in
@@ -50,6 +50,7 @@ class Yaml
 
     /**
      * Private vars.
+     *
      * @var mixed
      */
     private $dumpIndent;
@@ -64,18 +65,22 @@ class Yaml
 
     /**
      * Path modifier that should be applied after adding current element.
+     *
      * @var array
      */
     private $delayedPath = array();
 
-    /**#@+
+    /**
+     * #@+
+     *
      * @access public
-     * @var mixed
+     * @var    mixed
      */
     public $nodeId;
 
     /**
      * Yaml Construct
+     *
      * @param string $file (alternative) path of yaml file
      */
     public function __construct($file = '')
@@ -109,7 +114,8 @@ class Yaml
 
     /**
      * Load a valid YAML file to Spyc.
-     * @param string $file
+     *
+     * @param  string $file
      * @return array
      */
     public function loadFile($file)
@@ -117,9 +123,10 @@ class Yaml
         return $this->load($file);
     }
 
-    /** 
+    /**
      * Strip comments from YAML
-     * @param array $array
+     *
+     * @param  array $array
      * @return array
      */
     public function removeComments($array)
@@ -148,9 +155,9 @@ class Yaml
      *
      * @access public
      * @return string
-     * @param array $array PHP array
-     * @param int $indent Pass in false to use the default, which is 2
-     * @param int $wordwrap Pass in 0 for no wordwrap, false for default (40)
+     * @param  array $array    PHP array
+     * @param  int   $indent   Pass in false to use the default, which is 2
+     * @param  int   $wordwrap Pass in 0 for no wordwrap, false for default (40)
      */
     public function dump($array, $indent = false, $wordwrap = false)
     {
@@ -191,11 +198,12 @@ class Yaml
 
     /**
      * Attempts to convert a key / value array item to YAML
+     *
      * @access private
      * @return string
-     * @param $key The name of the key
-     * @param $value The value of the item
-     * @param $indent The indent of the current node
+     * @param  $key    The name of the key
+     * @param  $value  The value of the item
+     * @param  $indent The indent of the current node
      */
     private function yamlize($key, $value, $indent, $previous_key = -1, $first_key = 0, $source_array = null)
     {
@@ -220,10 +228,11 @@ class Yaml
 
     /**
      * Attempts to convert an array to YAML
+     *
      * @access private
      * @return string
-     * @param $array The array you want to convert
-     * @param $indent The indent of the current level
+     * @param  $array  The array you want to convert
+     * @param  $indent The indent of the current level
      */
     private function yamlizeArray($array, $indent)
     {
@@ -248,22 +257,23 @@ class Yaml
 
     /**
      * Returns YAML from a key and a value
+     *
      * @access private
      * @return string
-     * @param $key The name of the key
-     * @param $value The value of the item
-     * @param $indent The indent of the current node
+     * @param  $key    The name of the key
+     * @param  $value  The value of the item
+     * @param  $indent The indent of the current node
      */
     private function dumpNode($key, $value, $indent, $previous_key = -1, $first_key = 0, $source_array = null)
     {
         // do some folding here, for blocks
         if (
-            is_string($value) && ((strpos($value, "\n") !== false || strpos($value, ": ") !== false ||
-                strpos($value, "- ") !== false || strpos($value, "*") !== false || strpos($value, "#") !== false ||
-                strpos($value, "<") !== false || strpos($value, ">") !== false || strpos($value, '  ') !== false ||
-                strpos($value, "[") !== false || strpos($value, "]") !== false || strpos($value, "{") !== false ||
-                strpos($value, "}") !== false) || strpos($value, "&") !== false || strpos($value, "'") !== false ||
-                strpos($value, "!") === 0 || substr($value, -1, 1) == ':')
+            is_string($value) && ((strpos($value, "\n") !== false || strpos($value, ": ") !== false
+            || strpos($value, "- ") !== false || strpos($value, "*") !== false || strpos($value, "#") !== false
+            || strpos($value, "<") !== false || strpos($value, ">") !== false || strpos($value, '  ') !== false
+            || strpos($value, "[") !== false || strpos($value, "]") !== false || strpos($value, "{") !== false
+            || strpos($value, "}") !== false) || strpos($value, "&") !== false || strpos($value, "'") !== false
+            || strpos($value, "!") === 0 || substr($value, -1, 1) == ':')
         ) {
             $value = $this->doLiteralBlock($value, $indent);
         } else {
@@ -312,10 +322,11 @@ class Yaml
 
     /**
      * Creates a literal block for dumping
+     *
      * @access private
      * @return string
-     * @param $value
-     * @param $indent int The value of the indent
+     * @param  $value
+     * @param  $indent int The value of the indent
      */
     private function doLiteralBlock($value, $indent)
     {
@@ -343,9 +354,10 @@ class Yaml
 
     /**
      * Folds a string of text, if necessary
+     *
      * @access private
      * @return string
-     * @param $value The string you wish to fold
+     * @param  $value The string you wish to fold
      */
     private function doFolding($value, $indent)
     {
@@ -463,9 +475,10 @@ class Yaml
 
     /**
      * Parses YAML code and returns an array for a node
+     *
      * @access private
      * @return array
-     * @param string $line A line from the YAML file
+     * @param  string $line A line from the YAML file
      */
     private function parseLine($line)
     {
@@ -504,8 +517,9 @@ class Yaml
 
     /**
      * Finds the type of the passed value, returns the value as the new type.
+     *
      * @access private
-     * @param string $value
+     * @param  string $value
      * @return mixed
      */
     private function toType($value)
@@ -638,6 +652,7 @@ class Yaml
 
     /**
      * Used in inlines to check for more inlines or quoted strings
+     *
      * @access private
      * @return array
      */

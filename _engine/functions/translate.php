@@ -1,4 +1,5 @@
 <?php
+
 // Just translate the text
 function t($text, $lang = null)
 {

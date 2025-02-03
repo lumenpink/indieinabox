@@ -1,4 +1,5 @@
 <?php
+
 // Remove accents from a string
 // From https://github.com/Behat/Transliterator/blob/master/src/Transliterator.php
 function unaccent(string $string): string

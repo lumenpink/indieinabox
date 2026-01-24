@@ -36,7 +36,7 @@ class Pages extends ArrayObject
      * @param Page $page
      * @param string|null $id
      */
-    public function add(Page $page, string $id = null): void
+    public function add(Page $page, ?string $id = null): void
     {
         if ($id === null) {
             $this->pages[$page->slug] = $page;

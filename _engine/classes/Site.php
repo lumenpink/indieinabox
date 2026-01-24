@@ -27,11 +27,11 @@ class Site
      * @param Support $support
      */
     public function __construct(
-        Metadata $metadata = null,
-        Paths $paths = null,
-        Options $options = null,
-        Localization $localization = null,
-        Support $support = null
+        ?Metadata $metadata = null,
+        ?Paths $paths = null,
+        ?Options $options = null,
+        ?Localization $localization = null,
+        ?Support $support = null
     ) {
         $this->metadata = $metadata ?? new Metadata();
         $this->paths = $paths ?? new Paths();

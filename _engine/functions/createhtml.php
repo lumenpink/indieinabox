@@ -1,19 +1,23 @@
 <?php
 
-/*
-* @var array<string>
-*/
-function createHTMLFile(array $page): void
+declare(strict_types=1);
+
+use Indieinabox\Page;
+
+/**
+ * @param Page $page
+ */
+function createHTMLFile(Page $page): void
 {
-    global $base, $site, $pages, $p, $kinds;
+    global $base, $site, $p, $kinds;
 
     $p = $page;
 
-    if (in_array("draft", $page["tags"])) {
+    if (in_array("draft", $page->metadata->tags)) {
         return;
     }
 
-    $destination = str_replace("/", DS, $page["slug"]);
+    $destination = str_replace("/", DS, $page->slug);
     $destination = trim($destination, DS);
     $destination = preg_replace(
         "/^" . $site->contentdir . "/",
@@ -35,15 +39,16 @@ function createHTMLFile(array $page): void
         DS .
         "index.html";
 
-    echo "Built " . $page["slug"] . "index.html" . "\n";
+    echo "Built " . $page->slug . "index.html" . "\n";
     ob_start();
-    include $base . DS . "_template/" . $page["layout"] . ".php";
+    // phpcs:ignore Generic.PHP.ForbiddenFunctions.FoundWithAlternative
+    include_once $base . DS . "_template/" . $page->metadata->layout . ".php"; // NOSONAR
     $fileContent = ob_get_clean();
     if (isset($site->htmlpostprocessing)) {
-        if ($site->htmlpostprocessing == "beautify" || $site->dev == true) {
+        if ($site->htmlpostprocessing == "beautify" || $site->dev) {
             $fileContent = beautifyhtml($fileContent);
         }
-        if ($site->htmlpostprocessing == "minify" && $site->dev == false) {
+        if ($site->htmlpostprocessing == "minify" && !$site->dev) {
             $fileContent = minifyhtml($fileContent);
         }
     }

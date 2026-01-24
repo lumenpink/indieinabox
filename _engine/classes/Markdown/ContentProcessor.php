@@ -1,18 +1,23 @@
 <?php
 
-namespace Indieinabox;
+declare(strict_types=1);
+
+namespace Indieinabox\Markdown;
+
+use Indieinabox\Parsedown;
+use Indieinabox\Yaml;
 
 class ContentProcessor
 {
     /**
-     * @var \Parsedown
+     * @var Parsedown
      */
     private $parsedown;
 
     /**
-     * @param \Parsedown $parsedown
+     * @param Parsedown $parsedown
      */
-    public function __construct(\Parsedown $parsedown)
+    public function __construct(Parsedown $parsedown)
     {
         $this->parsedown = $parsedown;
     }
@@ -26,7 +31,7 @@ class ContentProcessor
     {
         $frontMatter = [];
         if (preg_match('/^---\s*\n(.*?[^\n]*+\n)---\s*\n/sm', $content, $matches)) {
-            $yaml = new \Alchemy\Component\Yaml\Yaml();
+            $yaml = new Yaml();
             $frontMatter = $yaml->loadString($matches[1]);
         }
         return $frontMatter;

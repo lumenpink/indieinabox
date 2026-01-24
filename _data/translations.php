@@ -1,24 +1,7 @@
 <?php
-$t = array(
-  '' =>
-  array(
-    'agora' => '',
-    'Agora' => '',
-    'Anel de Sites Indieweb' => '',
-    'Artigos' => '',
-    'Confirmações' => '',
-    'Conteúdo em Português' => '',
-    'Curtidas' => '',
-    'Diários' => '',
-    'Fotos' => '',
-    'Marcadores' => '',
-    'Notas' => '',
-    'pensamentos' => '',
-    'Pensamentos' => '',
-    'Republicações' => '',
-    'Respostas' => '',
-    'Um' => '',
-  ),
+
+declare(strict_types=1);
+$translatios = array(
   'en' =>
   array(
     'Agora' => 'Now',

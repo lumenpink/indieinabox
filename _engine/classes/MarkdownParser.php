@@ -1,6 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Indieinabox;
+
+use Indieinabox\Markdown\FileProcessor;
+use Indieinabox\Markdown\ContentProcessor;
+use Indieinabox\Markdown\LanguageProcessor;
 
 class MarkdownParser
 {

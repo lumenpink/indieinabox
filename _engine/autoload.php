@@ -1,15 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Autoload Function
  * php version 7-8
  *
  * @category Core
- * @package  IndieInABox
+ * @package  Indieinabox
  * @author   Lumen Pink <hi@lumen.pink>
  * @license  https://opensource.org/licenses/MIT MIT License
  * @version  GIT: 0.0.3
- * @link     https://IndieInABox.no.site.yet/
+ * @link     https://Indieinabox.no.site.yet/
  */
 
 /**

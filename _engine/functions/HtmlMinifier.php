@@ -1,25 +1,30 @@
 <?php
 
-// TODO: use namespace:
-// namespace Minifier;
+declare(strict_types=1);
 
-class TinyHtmlMinifier
+namespace Indieinabox;
+
+class HtmlMinifier
 {
-    private $options;
-    private $output;
-    private $build;
-    private $skip;
-    private $skipName;
-    private $head;
-    private $elements;
+    /** @var array<string, mixed> */
+    private array $options;
+    private string $output;
+    /** @var array<int, array<string, string>> */
+    private array $build;
+    private int $skip;
+    private bool $head;
+    /** @var array<string, string[]> */
+    private array $elements;
 
+    public const PATTERN = '/\s+/';
+
+    /** @param array<string, mixed> $options */
     public function __construct(array $options)
     {
         $this->options = $options;
         $this->output = '';
         $this->build = [];
         $this->skip = 0;
-        $this->skipName = '';
         $this->head = false;
         $this->elements = [
             'skip' => [
@@ -59,7 +64,7 @@ class TinyHtmlMinifier
                 '!doctype',
                 'body',
                 'html',
-            ]
+            ],
         ];
     }
 
@@ -78,43 +83,41 @@ class TinyHtmlMinifier
         while (!empty($rest)) {
             $parts = explode('<', $rest, 2);
             $this->walk($parts[0]);
-            $rest = (isset($parts[1])) ? $parts[1] : '';
+            $rest = $parts[1] ?? '';
         }
 
         return $this->output;
     }
 
-    // Walk trough html
-    private function walk(&$part)
+    // Walk through html
+    private function walk(string &$part): void
     {
-        $tag_parts = explode('>', $part);
-        $tag_content = $tag_parts[0];
+        $tagParts = explode('>', $part);
+        $tagContent = $tagParts[0];
 
-        if (!empty($tag_content)) {
-            $name = $this->findName($tag_content);
-            $element = $this->toElement($tag_content, $part, $name);
+        if (!empty($tagContent)) {
+            $name = $this->findName($tagContent);
+            $element = $this->toElement($tagContent, $part, $name);
             $type = $this->toType($element);
 
-            if ($name == 'head') {
+            if ($name === 'head') {
                 $this->head = $type === 'open';
             }
 
             $this->build[] = [
                 'name' => $name,
                 'content' => $element,
-                'type' => $type
+                'type' => $type,
             ];
 
             $this->setSkip($name, $type);
 
-            if (!empty($tag_content)) {
-                $content = (isset($tag_parts[1])) ? $tag_parts[1] : '';
-                if ($content !== '') {
-                    $this->build[] = [
-                        'content' => $this->compact($content, $name, $element),
-                        'type' => 'content'
-                    ];
-                }
+            $content = $tagParts[1] ?? '';
+            if ($content !== '') {
+                $this->build[] = [
+                    'content' => $this->compact($content, $name),
+                    'type' => 'content',
+                ];
             }
 
             $this->buildHtml();
@@ -122,25 +125,25 @@ class TinyHtmlMinifier
     }
 
     // Remove comments
-    private function removeComments($content = '')
+    private function removeComments(string $content = ''): string
     {
         return preg_replace('/(?=<!--)([\s\S]*?)-->/', '', $content);
     }
 
     // Check if string contains string
-    private function contains($needle, $haystack)
+    private function contains(string $needle, string $haystack): bool
     {
         return strpos($haystack, $needle) !== false;
     }
 
     // Return type of element
-    private function toType($element)
+    private function toType(string $element): string
     {
-        return (substr($element, 1, 1) == '/') ? 'close' : 'open';
+        return (substr($element, 1, 1) === '/') ? 'close' : 'open';
     }
 
     // Create element
-    private function toElement($element, $noll, $name)
+    private function toElement(string $element, string $noll, string $name): string
     {
         $element = $this->stripWhitespace($element);
         $element = $this->addChevrons($element, $noll);
@@ -150,22 +153,22 @@ class TinyHtmlMinifier
     }
 
     // Remove unneeded element meta
-    private function removeMeta($element, $name)
+    private function removeMeta(string $element, string $name): string
     {
-        if ($name == 'style') {
+        if ($name === 'style') {
             $element = str_replace(
                 [
                     ' type="text/css"',
-                    "' type='text/css'"
+                    "' type='text/css'",
                 ],
                 ['', ''],
                 $element
             );
-        } elseif ($name == 'script') {
+        } elseif ($name === 'script') {
             $element = str_replace(
                 [
                     ' type="text/javascript"',
-                    " type='text/javascript'"
+                    " type='text/javascript'",
                 ],
                 ['', ''],
                 $element
@@ -175,16 +178,16 @@ class TinyHtmlMinifier
     }
 
     // Strip whitespace from element
-    private function stripWhitespace($element)
+    private function stripWhitespace(string $element): string
     {
-        if ($this->skip == 0) {
-            $element = preg_replace('/\s+/', ' ', $element);
+        if ($this->skip === 0) {
+            $element = preg_replace(self::PATTERN, ' ', $element);
         }
         return trim($element);
     }
 
     // Add chevrons around element
-    private function addChevrons($element, $noll)
+    private function addChevrons(string $element, string $noll): string
     {
         if (empty($element)) {
             return $element;
@@ -195,44 +198,41 @@ class TinyHtmlMinifier
     }
 
     // Remove unneeded self slash
-    private function removeSelfSlash($element)
+    private function removeSelfSlash(string $element): string
     {
-        if (substr($element, -3) == ' />') {
+        if (substr($element, -3) === ' />') {
             $element = substr($element, 0, -3) . '>';
         }
         return $element;
     }
 
     // Compact content
-    private function compact($content, $name, $element)
+    private function compact(string $content, string $name): string
     {
-        if ($this->skip != 0) {
-            $name = $this->skipName;
-        } else {
-            $content = preg_replace('/\s+/', ' ', $content);
+        $result = $content;
+
+        if ($this->skip === 0) {
+            $result = preg_replace(self::PATTERN, ' ', $content);
+
+            if (!in_array($name, $this->elements['skip'])) {
+                $result = (in_array($name, $this->elements['hard']) || $this->head)
+                    ? $this->minifyHard($result)
+                    : $this->minifyKeepSpaces($result);
+            }
         }
 
-        if (in_array($name, $this->elements['skip'])) {
-            return $content;
-        } elseif (
-            in_array($name, $this->elements['hard'])
-            || $this->head
-        ) {
-            return $this->minifyHard($content);
-        } else {
-            return $this->minifyKeepSpaces($content);
-        }
+        return $result;
     }
 
     // Build html
-    private function buildHtml()
+    private function buildHtml(): void
     {
         foreach ($this->build as $build) {
             if (!empty($this->options['collapse_whitespace'])) {
-                if (strlen(trim($build['content'])) == 0) {
+                if (strlen(trim($build['content'])) === 0) {
                     continue;
-                } elseif ($build['type'] != 'content' && !in_array($build['name'], $this->elements['inline'])) {
-                    trim($build['content']);
+                } elseif ($build['type'] !== 'content' && !in_array($build['name'], $this->elements['inline'])) {
+                    $build['content'] = trim($build['content']);
                 }
             }
 
@@ -243,36 +243,31 @@ class TinyHtmlMinifier
     }
 
     // Find name by part
-    private function findName($part)
+    private function findName(string $part): string
     {
-        $name_cut = explode(" ", $part, 2)[0];
-        $name_cut = explode(">", $name_cut, 2)[0];
-        $name_cut = explode("\n", $name_cut, 2)[0];
-        $name_cut = preg_replace('/\s+/', '', $name_cut);
-        $name_cut = strtolower(str_replace('/', '', $name_cut));
-        return $name_cut;
+        $nameCut = explode(" ", $part, 2)[0];
+        $nameCut = explode(">", $nameCut, 2)[0];
+        $nameCut = explode("\n", $nameCut, 2)[0];
+        $nameCut = preg_replace(self::PATTERN, '', $nameCut);
+        $nameCut = strtolower(str_replace('/', '', $nameCut));
+        return $nameCut;
     }
 
     // Set skip if elements are blocked from minification
-    private function setSkip($name, $type)
+    private function setSkip(string $name, string $type): void
     {
-        foreach ($this->elements['skip'] as $element) {
-            if ($element == $name && $this->skip == 0) {
-                $this->skipName = $name;
-            }
-        }
         if (in_array($name, $this->elements['skip'])) {
-            if ($type == 'open') {
+            if ($type === 'open') {
                 $this->skip++;
             }
-            if ($type == 'close') {
+            if ($type === 'close') {
                 $this->skip--;
             }
         }
     }
 
     // Minify all, even spaces between elements
-    private function minifyHard($element)
+    private function minifyHard(string $element): string
     {
         $element = preg_replace('!\s+!', ' ', $element);
         $element = trim($element);
@@ -280,7 +275,7 @@ class TinyHtmlMinifier
     }
 
     // Strip but keep one space
-    private function minifyKeepSpaces($element)
+    private function minifyKeepSpaces(string $element): string
     {
         return preg_replace('!\s+!', ' ', $element);
     }

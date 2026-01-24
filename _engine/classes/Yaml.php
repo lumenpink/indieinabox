@@ -1,6 +1,8 @@
 <?php
 
-namespace Alchemy\Component\Yaml;
+declare(strict_types=1);
+
+namespace Indieinabox;
 
 /**
  * Yaml Class
@@ -269,11 +271,11 @@ class Yaml
         // do some folding here, for blocks
         if (
             is_string($value) && ((strpos($value, "\n") !== false || strpos($value, ": ") !== false
-            || strpos($value, "- ") !== false || strpos($value, "*") !== false || strpos($value, "#") !== false
-            || strpos($value, "<") !== false || strpos($value, ">") !== false || strpos($value, '  ') !== false
-            || strpos($value, "[") !== false || strpos($value, "]") !== false || strpos($value, "{") !== false
-            || strpos($value, "}") !== false) || strpos($value, "&") !== false || strpos($value, "'") !== false
-            || strpos($value, "!") === 0 || substr($value, -1, 1) == ':')
+                || strpos($value, "- ") !== false || strpos($value, "*") !== false || strpos($value, "#") !== false
+                || strpos($value, "<") !== false || strpos($value, ">") !== false || strpos($value, '  ') !== false
+                || strpos($value, "[") !== false || strpos($value, "]") !== false || strpos($value, "{") !== false
+                || strpos($value, "}") !== false) || strpos($value, "&") !== false || strpos($value, "'") !== false
+                || strpos($value, "!") === 0 || substr($value, -1, 1) == ':')
         ) {
             $value = $this->doLiteralBlock($value, $indent);
         } else {
@@ -1128,12 +1130,12 @@ class Yaml
 
     private function startsMappedValue($line)
     {
-        return (substr($line, -1, 1) == ':');
+        return substr($line, -1, 1) == ':';
     }
 
     private function isPlainArray($line)
     {
-        return ($line[0] == '[' && substr($line, -1, 1) == ']');
+        return $line[0] == '[' && substr($line, -1, 1) == ']';
     }
 
     private function returnPlainArray($line)

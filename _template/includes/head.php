@@ -1,4 +1,6 @@
     <?php if ($site->dev) {
+
+        declare(strict_types=1);
         echo "<!-- dev mode" . PHP_EOL;
         echo "************* site *************" . PHP_EOL;
         echo json_encode($site, JSON_PRETTY_PRINT);
@@ -9,7 +11,7 @@
         echo "-->";
     }
     ?>
-    <meta name="generator" content="IndieInABox v0.1.0" />
+    <meta name="generator" content="Indieinabox v0.1.0" />
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <?php if (!$site->dev): ?>

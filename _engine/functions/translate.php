@@ -1,58 +1,54 @@
 <?php
 
+declare(strict_types=1);
+
 // Just translate the text
-function t($text, $lang = null)
+function translate(string $text, ?string $lang = null): string
 {
-    global $t, $p, $site;
+    global $translations, $page, $site;
     if ($lang == null) {
-        $lang = $p["lang"];
+        $lang = $page["lang"];
     }
-    if ($lang == $site->defaultlang) {
+    if ($lang == $site->localization->defaultLang) {
         return $text;
     }
-    if (isset($t[$lang])) {
-        foreach ($t[$lang] as $o => $v) {
-            if (mb_stripos($o, $text) !== false) {
-                if (!empty($v)) {
-                    $found = $o;
-                    break;
-                }
+    if (isset($translations[$lang])) {
+        foreach ($translations[$lang] as $o => $v) {
+            if (mb_stripos($o, $text) !== false && !empty($v)) {
+                $found = $o;
+                break;
             }
         }
-    } else {
-        // No translations for $lang;
-        $t[$lang][$text] = '';
+    }
+    // Empty translation for $text in $lang or no translations for $lang;
+    if (!isset($found) || empty($found)) {
+
+        $translations[$lang][$text] = '';
         updateTranslations();
         return $text;
     }
-    if (!isset($found)) {
-        // Empty translation for $text in $lang;
-        $t[$lang][$text] = '';
-        updateTranslations();
-        return $text;
-    }
-    return $t[$lang][$found];
+    return $translations[$lang][$found];
 }
 // Translate the text and make it lowercase
-function tl($text)
+function translateLowercase(string $text): string
 {
-    return strtolower(T($text));
+    return strtolower(translate($text));
 }
-// Translate the text ans slugize
-function ts($text)
+// Translate the text and slugize
+function translateSlugize(string $text): string
 {
-    return slugize(T($text));
+    return slugize(translate($text));
 }
 // Update the translations file
-function updateTranslations()
+function updateTranslations(): void
 {
-    global $t, $site;
-    $file = $site->basedir . DS . "_data/translations.php";
-    recursive_ksort($t);
+    global $translations, $site;
+    $file = $site->paths->baseDir . DIRECTORY_SEPARATOR . "_data/translations.php";
+    recursive_ksort($translations);
     file_put_contents(
         $file,
-        "<?php\nglobal \$t;\n\$t = "
-            . var_export($t, true)
+        "<?php\nglobal \$translations;\n\$translations= "
+            . var_export($translations, true)
             . ";\n?>"
     );
 }

@@ -1,6 +1,8 @@
 <?php
 
-namespace Indieinabox;
+declare(strict_types=1);
+
+namespace Indieinabox\Markdown;
 
 class FileProcessor
 {
@@ -56,8 +58,8 @@ class FileProcessor
      */
     public function generateBaseSlug(string $file): string
     {
-        $slug = str_replace($this->base . DS . '_content', "", $file);
-        $slug = ltrim($slug, DS);
+        $slug = str_replace($this->base . DIRECTORY_SEPARATOR . '_content', "", $file);
+        $slug = ltrim($slug, DIRECTORY_SEPARATOR);
         return preg_replace("/^" . $this->site->contentdir . "/", "", $slug);
     }
 
@@ -70,7 +72,7 @@ class FileProcessor
         $layout = "page";
 
         if (isset($page["layout"])) {
-            $layoutFile = $this->base . DS . "_template" . DS . $page["layout"] . ".php";
+            $layoutFile = $this->base . DIRECTORY_SEPARATOR . "_template" . DIRECTORY_SEPARATOR . $page["layout"] . ".php";
             if (file_exists($layoutFile) && is_readable($layoutFile)) {
                 return $page["layout"];
             }
@@ -79,7 +81,7 @@ class FileProcessor
         $slugParts = explode("/", trim($page["slug"], "/"));
         if (count($slugParts) > 1) {
             $folderName = trim($slugParts[count($slugParts) - 2]);
-            $layoutFile = $this->base . DS . "_template" . DS . $folderName . ".php";
+            $layoutFile = $this->base . DIRECTORY_SEPARATOR . "_template" . DIRECTORY_SEPARATOR . $folderName . ".php";
             if (file_exists($layoutFile) && is_readable($layoutFile)) {
                 return $folderName;
             }

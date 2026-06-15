@@ -225,7 +225,7 @@ class MarkdownParser
      */
     private function generateBaseSlug(string $file): string
     {
-        $slug = str_replace($this->base . DS . '_content', "", $file);
+        $slug = str_replace($this->base . DS . $this->site->contentdir, "", $file);
         $slug = ltrim($slug, DS);
         return preg_replace("/^" . $this->site->contentdir . "/", "", $slug);
     }
@@ -481,7 +481,7 @@ class MarkdownParser
 
         // Check if layout is specified in page metadata
         if (isset($page["layout"])) {
-            $layoutFile = $this->base . DS . "_template" . DS . $page["layout"] . ".php";
+            $layoutFile = $this->base . DS . "resources" . DS . "views" . DS . $page["layout"] . ".php";
             if (file_exists($layoutFile) && is_readable($layoutFile)) {
                 return $page["layout"];
             }
@@ -491,7 +491,7 @@ class MarkdownParser
         $slugParts = explode("/", trim($page["slug"], "/"));
         if (count($slugParts) > 1) {
             $folderName = trim($slugParts[count($slugParts) - 2]);
-            $layoutFile = $this->base . DS . "_template" . DS . $folderName . ".php";
+            $layoutFile = $this->base . DS . "resources" . DS . "views" . DS . $folderName . ".php";
             if (file_exists($layoutFile) && is_readable($layoutFile)) {
                 return $folderName;
             }

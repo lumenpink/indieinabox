@@ -7,7 +7,8 @@ support: # File extensions which will be parsed (must be an array)
   - html
   - htm
 buildall: true # Whether to build pages without frontmatter
-outputdir: _site # Output directory
+outputdir: public # Output directory
+contentdir: content # Content directory
 #  (there's a bug in the YAML interpreter that prevents 
 # parsing when comments are in the same line as short arrays) 
 defaultcategory: "General" # Default category 

@@ -26,14 +26,21 @@ This document tracks completed refactoring phases and future directions.
 
 ## Future Roadmap
 
-### 📦 Phase 3: Documentation Restructuring (Current Phase)
-*   Clean the main `README.md` file from detailed codebase mappings, configurations, and roadmaps.
-*   Move technical details into dedicated Markdown files inside `docs/` (`architecture.md`, `classes.md`, `functions.md`, `configuration.md`, `roadmap.md`).
+### 🏗️ Phase 3: Directory Structure Refactoring (June 2026)
+*   **PSR-4 Autoloading**: Configured Composer to autoload classes under the `Indieinabox\` namespace directly from the `app/` folder.
+*   **Unified Bootstrap**: Created `bootstrap/app.php` to initialize autoloader and procedural helpers/data files, replacing custom loaders.
+*   **Standardized Paths**: Realigned target workspaces to modern conventions (`public/`, `content/`, `data/`, `resources/views/`, `resources/static/`).
+*   **Root Build Runner**: Migrated the main site compilation script to a root-level `build.php` executing the generation pipeline.
+*   **Documentation Refactoring**: Cleaned the main `README.md` and updated all documentation under `docs/` to reflect the new structure.
+
+---
+
+## Future Roadmap
 
 ### ⚙️ Phase 4: Full Procedural Helpers Migration
-*   Migrate procedural functions inside `_engine/functions/` (such as `kind()`, `translate()`, `localizeddate()`) to static helper methods or namespaced classes (e.g., `Helper`).
+*   Migrate procedural functions inside `app/functions/` (such as `kind()`, `translate()`, `localizeddate()`) to static helper methods or namespaced classes (e.g., `Helper`).
 *   Transition from procedural require/include loading blocks inside `build.php` to structured service classes.
 
 ### 🔍 Phase 5: Parser Transition
-*   Replace procedural `MarkdownParser` class inside `_engine/functions/parse.php` with namespaced parser `MarkdownParser` inside `_engine/classes/MarkdownParser.php`.
+*   Replace legacy procedural `MarkdownParser` bridge function inside `app/functions/parse.php` with namespaced parser `MarkdownParser` inside `app/MarkdownParser.php`.
 *   Enable pipeline to directly run modularized namespaced processor classes (`FileProcessor`, `ContentProcessor`, `LanguageProcessor`).

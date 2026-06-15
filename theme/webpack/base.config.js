@@ -9,7 +9,7 @@ module.exports = {
     app: ['./js/index.js']
   },
   output: {
-    path: path.resolve(__dirname, '../../_static/dist')
+    path: path.resolve(__dirname, '../../resources/static/dist')
   },
   module: {
     rules: [

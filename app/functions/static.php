@@ -74,5 +74,5 @@ function copyLiveJsFile(string $base, object $site): void
         mkdir($jsDir, 0777, true); // true for recursive create
     }
 
-    copy($base . "/_template/livejs/live.js", $jsDir . "/live.js");
+    copy($base . "/resources/views/livejs/live.js", $jsDir . "/live.js");
 }

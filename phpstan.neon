@@ -1,9 +1,11 @@
 parameters:
   level: 6
   paths:
-    - _engine
+    - app
+    - bootstrap
+    - build.php
   excludePaths:
-    - _engine/functions/yaml.php
-    - _engine/functions/parsedown.php
-    - _engine/functions/beautify-html.php
-    - _engine/functions/TinyHtmlMinifier.php
+    - app/Yaml.php
+    - app/functions/parsedown.php
+    - app/functions/beautify-html.php
+    - app/functions/HtmlMinifier.php

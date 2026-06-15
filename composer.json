@@ -16,6 +16,11 @@
         "phpstan/phpstan": "2.1.5",
         "pestphp/pest": "3.7.4"
     },
+    "autoload": {
+        "psr-4": {
+            "Indieinabox\\": "app/"
+        }
+    },
     "config": {
         "allow-plugins": {
             "dealerdirect/phpcodesniffer-composer-installer": true,
@@ -25,11 +30,11 @@
     "scripts": {
         "test": "pest",
         "sniffer": "composer sniffer:php74 && composer sniffer:php80 && composer sniffer:php81 && composer sniffer:php82 && composer sniffer:php83 && composer sniffer:php84",
-        "sniffer:php74": "phpcs -p ./_engine --standard=vendor/phpcompatibility/php-compatibility/PHPCompatibility --runtime-set testVersion 7.4",
-        "sniffer:php80": "phpcs -p ./_engine --standard=vendor/phpcompatibility/php-compatibility/PHPCompatibility --runtime-set testVersion 8.0",
-        "sniffer:php81": "phpcs -p ./_engine --standard=vendor/phpcompatibility/php-compatibility/PHPCompatibility --runtime-set testVersion 8.1",
-        "sniffer:php82": "phpcs -p ./_engine --standard=vendor/phpcompatibility/php-compatibility/PHPCompatibility --runtime-set testVersion 8.2",
-        "sniffer:php83": "phpcs -p ./_engine --standard=vendor/phpcompatibility/php-compatibility/PHPCompatibility --runtime-set testVersion 8.3",
-        "sniffer:php84": "phpcs -p ./_engine --standard=vendor/phpcompatibility/php-compatibility/PHPCompatibility --runtime-set testVersion 8.4"
+        "sniffer:php74": "phpcs -p ./app ./bootstrap ./build.php --standard=vendor/phpcompatibility/php-compatibility/PHPCompatibility --runtime-set testVersion 7.4",
+        "sniffer:php80": "phpcs -p ./app ./bootstrap ./build.php --standard=vendor/phpcompatibility/php-compatibility/PHPCompatibility --runtime-set testVersion 8.0",
+        "sniffer:php81": "phpcs -p ./app ./bootstrap ./build.php --standard=vendor/phpcompatibility/php-compatibility/PHPCompatibility --runtime-set testVersion 8.1",
+        "sniffer:php82": "phpcs -p ./app ./bootstrap ./build.php --standard=vendor/phpcompatibility/php-compatibility/PHPCompatibility --runtime-set testVersion 8.2",
+        "sniffer:php83": "phpcs -p ./app ./bootstrap ./build.php --standard=vendor/phpcompatibility/php-compatibility/PHPCompatibility --runtime-set testVersion 8.3",
+        "sniffer:php84": "phpcs -p ./app ./bootstrap ./build.php --standard=vendor/phpcompatibility/php-compatibility/PHPCompatibility --runtime-set testVersion 8.4"
     }
 }

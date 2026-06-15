@@ -26,8 +26,12 @@ function scan(string $dir)
                 }
             } elseif (is_dir($path)) {
                 if (
-                    !strpos($dir, "_engine")
-                    && !strpos($dir, "_site")
+                    strpos($path, DIRECTORY_SEPARATOR . "app") === false
+                    && strpos($path, DIRECTORY_SEPARATOR . "bootstrap") === false
+                    && strpos($path, DIRECTORY_SEPARATOR . "vendor") === false
+                    && strpos($path, DIRECTORY_SEPARATOR . "resources") === false
+                    && strpos($path, DIRECTORY_SEPARATOR . "data") === false
+                    && strpos($path, DIRECTORY_SEPARATOR . $site->outputdir) === false
                 ) {
                     scan($path);
                 }

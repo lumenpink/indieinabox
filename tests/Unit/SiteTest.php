@@ -22,8 +22,8 @@ it(
         ]);
         expect($site->paths)->toMatchObject([
             'baseDir' => '/',
-            'outputDir' => '_site',
-            'contentDir' => '_content'
+            'outputDir' => 'public',
+            'contentDir' => 'content'
         ]);
         expect($site->localization)->toMatchObject([
             'lang' => ['en'],

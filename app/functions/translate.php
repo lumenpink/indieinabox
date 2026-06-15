@@ -49,7 +49,7 @@ function translateSlugize(string $text): string
 function updateTranslations(): void
 {
     global $translations, $site;
-    $file = $site->paths->baseDir . DIRECTORY_SEPARATOR . "_data/translations.php";
+    $file = $site->paths->baseDir . DIRECTORY_SEPARATOR . "data/translations.php";
     recursive_ksort($translations);
     file_put_contents(
         $file,

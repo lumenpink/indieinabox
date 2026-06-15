@@ -19,10 +19,10 @@
   "type": "commonjs",
   "main": "index.js",
   "scripts": {
-    "serve": "http-server _site",
-    "build": "php _engine/build.php",
-    "builddev": "php _engine/build.php -d",
-    "dev": "chokidar _template/**/* _engine/**/* _content/**/* -c \"php _engine/build.php -d\"",
+    "serve": "http-server public",
+    "build": "php build.php",
+    "builddev": "php build.php -d",
+    "dev": "chokidar resources/views/**/* app/**/* content/**/* -c \"php build.php -d\"",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "devDependencies": {

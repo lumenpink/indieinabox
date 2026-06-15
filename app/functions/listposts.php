@@ -18,7 +18,7 @@ function listposts()
     $count = 0;
     ob_start();
     foreach ($localpages as $page) {
-        include $base . DS . "_template/includes/summary.php";
+        include $base . DS . "resources/views/includes/summary.php";
         $count++;
         if ($count >= 10) {
             break;

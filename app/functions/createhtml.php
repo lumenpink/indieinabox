@@ -42,7 +42,7 @@ function createHTMLFile(Page $page): void
     echo "Built " . $page->slug . "index.html" . "\n";
     ob_start();
     // phpcs:ignore Generic.PHP.ForbiddenFunctions.FoundWithAlternative
-    include_once $base . DS . "_template/" . $page->metadata->layout . ".php"; // NOSONAR
+    include_once $base . DS . "resources/views/" . $page->metadata->layout . ".php"; // NOSONAR
     $fileContent = ob_get_clean();
     if (isset($site->htmlpostprocessing)) {
         if ($site->htmlpostprocessing == "beautify" || $site->dev) {

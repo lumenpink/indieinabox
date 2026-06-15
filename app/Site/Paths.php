@@ -24,8 +24,8 @@ class Paths
      */
     public function __construct(
         string $baseDir = "/",
-        string $outputDir = "_site",
-        string $contentDir = "_content"
+        string $outputDir = "public",
+        string $contentDir = "content"
     ) {
         $this->baseDir = $baseDir;
         $this->outputDir = $outputDir;

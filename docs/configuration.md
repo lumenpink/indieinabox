@@ -14,8 +14,8 @@ The primary generator settings are loaded from `config.yml` in the project root:
 | `sitename` | `string` | General website site name. |
 | `author` | `string` | Owner/Author name. |
 | `fqdn` | `string` | Absolute URL (FQDN) of the deployed site (e.g. `https://lumen.pink`). |
-| `contentdir` | `string` | Root folder containing source documents (default: `_content`). |
-| `outputdir` | `string` | Output folder where generation is written (default: `_site`). |
+| `contentdir` | `string` | Root folder containing source documents (default: `content`). |
+| `outputdir` | `string` | Output folder where generation is written (default: `public`). |
 | `buildall` | `bool` | If true, compiles all documents. |
 | `htmlpostprocessing` | `string` | Minification / Beautification mode (`"minify"` or `"beautify"`). |
 | `lang` | `array` | Supported language locales list (e.g. `[pt-br, en, es]`). |
@@ -25,12 +25,12 @@ The primary generator settings are loaded from `config.yml` in the project root:
 
 ---
 
-## 🚀 CLI switches (`_engine/build.php`)
+## 🚀 CLI switches (`build.php`)
 
 When running the pipeline via terminal, flags modify compilation options:
 
 ```bash
-php _engine/build.php [-d] [-s] [-f]
+php build.php [-d] [-s] [-f]
 ```
 
 *   **`-d` (Development Mode)**: 
@@ -38,7 +38,7 @@ php _engine/build.php [-d] [-s] [-f]
     - Automatically injects the `live.js` live-reload script in headers.
     - Forces HTML post-processing to `"beautify"` format.
 *   **`-s` (Skip Static Files)**: 
-    - Skips copying assets from `_static/` directory to save build time.
+    - Skips copying assets from `resources/static/` directory to save build time.
 *   **`-f` (Force Overwrites)**: 
     - Overwrites generated layout templates and outputs forcefully.
 
@@ -46,7 +46,7 @@ php _engine/build.php [-d] [-s] [-f]
 
 ## 📦 Global Runtime Variables
 
-The following variables are loaded into the global scope and available inside all layout templates (`_template/*.php`):
+The following variables are loaded into the global scope and available inside all layout templates (`resources/views/*.php`):
 
 *   **`$site`** (`\Indieinabox\Site`): Central configuration settings object.
 *   **`$page` / `$p`** (`\Indieinabox\Page`): Current parsed page class representation being processed in the loop.

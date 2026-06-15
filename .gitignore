@@ -1,10 +1,9 @@
 node_modules
 vendor
-_content/.obsidian
-_site
-_static
+content/.obsidian
+public
+resources/static/dist
 fa
-_content/
 .phive
 .phpdoc
 .vscode

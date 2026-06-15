@@ -11,8 +11,8 @@ it(
         $paths = new Paths();
 
         expect($paths->baseDir)->toBe('/');
-        expect($paths->outputDir)->toBe('_site');
-        expect($paths->contentDir)->toBe('_content');
+        expect($paths->outputDir)->toBe('public');
+        expect($paths->contentDir)->toBe('content');
     }
 );
 

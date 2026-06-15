@@ -3,7 +3,7 @@
 class MarkdownParser
 {
     /**
-     * @var \Parsedown
+     * @var \Indieinabox\Parsedown
      */
     private $parsedown;
 
@@ -78,7 +78,7 @@ class MarkdownParser
         }
 
         $ext = pathinfo($file, PATHINFO_EXTENSION);
-        return in_array($ext, $this->site->support, true);
+        return in_array($ext, $this->site->support->support, true);
     }
 
     /**
@@ -101,7 +101,7 @@ class MarkdownParser
     {
         $frontMatter = [];
         if (preg_match('/^---\s*\n([^\n]*+\n)---\s*\n/sm', $content, $matches)) {
-            $yaml = new \Alchemy\Component\Yaml\Yaml();
+            $yaml = new \Indieinabox\Yaml();
             $frontMatter = $yaml->loadString($matches[1]);
         }
         return $frontMatter;
@@ -212,7 +212,7 @@ class MarkdownParser
      */
     private function processSlug(array $page, string $file, array $fileInfo): array
     {
-        $slug = $this->generateBaseSlug($file, $fileInfo);
+        $slug = $this->generateBaseSlug($file);
         $slug = $this->normalizeSlug($slug, $page, $fileInfo);
         $page["slug"] = $slug;
         $page["relpath"] = $this->calculateRelativePath($slug);
@@ -289,7 +289,7 @@ class MarkdownParser
      */
     private function setLayout(array $page, array $fileInfo): array
     {
-        $layout = $this->determineLayout($page, $fileInfo);
+        $layout = $this->determineLayout($page);
         $page["layout"] = $layout;
         return $page;
     }
@@ -428,7 +428,7 @@ class MarkdownParser
      * @param  string $lang
      * @return string
      */
-    private function getOriginalContent(string $nick): string
+    private function getOriginalContent(string $nick, string $lang = ""): string
     {
         // This should be implemented based on your specific content management system
         // Here's a basic implementation assuming URL translations are stored in $this->urltranslations
@@ -499,4 +499,29 @@ class MarkdownParser
 
         return $layout;
     }
+}
+
+/**
+ * Global bridge function to parse markdown files using the legacy parser
+ *
+ * @param string $file Path to markdown file
+ * @return \Indieinabox\Page|false|null
+ */
+function parse(string $file)
+{
+    global $site, $base, $parsedown, $urltranslations;
+    static $parser = null;
+    if ($parser === null) {
+        $parser = new MarkdownParser([
+            'site' => $site,
+            'base' => $base,
+            'parsedown' => $parsedown,
+            'urltranslations' => $urltranslations ?? []
+        ]);
+    }
+    $pageData = $parser->parse($file);
+    if ($pageData === false || $pageData === null) {
+        return $pageData;
+    }
+    return \Indieinabox\Page::fromArray($pageData);
 }

@@ -1,6 +1,6 @@
 <?php
 
-function scan($dir)
+function scan(string $dir)
 {
     global $base, $site, $pages, $counter;
 
@@ -18,7 +18,11 @@ function scan($dir)
                 if ($page) {
                     // echo "Pushing ".$page['slug']."\n";
                     // echo "Total pages pushed: ".sizeof($pages)."\n";
-                    array_push($pages, $page);
+                    if ($pages instanceof \Indieinabox\Pages) {
+                        $pages->add($page);
+                    } else {
+                        $pages[] = $page;
+                    }
                 }
             } elseif (is_dir($path)) {
                 if (
@@ -32,7 +36,7 @@ function scan($dir)
     }
 }
 
-function getDirContents($dir, &$results = [])
+function getDirContents(string $dir, array &$results = [])
 {
     $files = scandir($dir);
 
@@ -49,7 +53,7 @@ function getDirContents($dir, &$results = [])
     return $results;
 }
 
-function sortByDate($pages)
+function sortByDate(array $pages)
 {
     usort(
         $pages,
@@ -69,7 +73,7 @@ function sortByDate($pages)
     return $pages;
 }
 
-function recursive_ksort(&$array)
+function recursive_ksort(array &$array)
 {
     foreach ($array as &$value) {
         if (is_array($value)) {
@@ -78,7 +82,7 @@ function recursive_ksort(&$array)
     }
     ksort($array, SORT_STRING | SORT_FLAG_CASE);
 }
-function utf8ToAscii($str, $unknown = '?')
+function utf8ToAscii(string $str, string $unknown = '?')
 {
     static $UTF8_TO_ASCII;
 
@@ -93,6 +97,7 @@ function utf8ToAscii($str, $unknown = '?')
         if (ord($c[0]) >= 0 && ord($c[0]) <= 127) {
             continue;
         } // ASCII - next please
+        $ord = 0;
         if (ord($c[0]) >= 192 && ord($c[0]) <= 223) {
             $ord = (ord($c[0]) - 192) * 64 + (ord($c[1]) - 128);
         }
@@ -134,7 +139,7 @@ function utf8ToAscii($str, $unknown = '?')
 
     return implode('', $chars);
 }
-function slugize($str)
+function slugize(string $str)
 {
     $str = urldecode($str);
     $str = str_replace(' ', '-', trim($str));
@@ -145,7 +150,7 @@ function slugize($str)
     $str = trim($str);
     return $str;
 }
-function getoriginalcontent($slug, $lang)
+function getoriginalcontent(string $slug, string $lang)
 {
     global $urltranslations;
     foreach ($urltranslations as $key => $val) {
@@ -155,7 +160,7 @@ function getoriginalcontent($slug, $lang)
     }
     return "";
 }
-function beautifyhtml($html)
+function beautifyhtml(string $html)
 {
     if (empty($html)) {
         return "";
@@ -174,12 +179,12 @@ function beautifyhtml($html)
     );
     return ($beautify->beautify($html));
 }
-function minifyhtml($html)
+function minifyhtml(string $html)
 {
     if (empty($html)) {
         return "";
     }
-    $minifier = new TinyHtmlMinifier(
+    $minifier = new \Indieinabox\HtmlMinifier(
         [
         'collapse_whitespace' => true,
         'disable_comments' => true,

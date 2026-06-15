@@ -42,6 +42,9 @@ class Localization
      */
     public function __get(string $name)
     {
+        if (strtolower($name) === 'defaultlang') {
+            return $this->defaultLang;
+        }
         return $this->$name;
     }
     /**
@@ -50,11 +53,11 @@ class Localization
      */
     public function __set(string $name, $value)
     {
-        switch ($name) {
+        switch (strtolower($name)) {
             case 'lang':
                 $this->lang = $this->createArrayFromValue($value);
                 return;
-            case 'defaultLang':
+            case 'defaultlang':
                 $this->defaultLang = $value;
                 return;
             default:

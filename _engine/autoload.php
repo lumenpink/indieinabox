@@ -23,12 +23,14 @@ declare(strict_types=1);
  */
 function autoloader($completeNamespace)
 {
+    // remove the indieinabox prefix from the namespace
+    $completeNamespace = str_replace('Indieinabox\\', '', $completeNamespace);
+
     // Convert namespace separators to directory separators
     $file = str_replace('\\', DIRECTORY_SEPARATOR, $completeNamespace);
 
     // Define the base directory for classes
-    $base_dir = __DIR__ . DIRECTORY_SEPARATOR . '_engine' .
-        DIRECTORY_SEPARATOR . 'classes' . DIRECTORY_SEPARATOR;
+    $base_dir = __DIR__ . DIRECTORY_SEPARATOR . 'classes' . DIRECTORY_SEPARATOR;
 
     // Complete file path
     $file = $base_dir . $file . '.php';

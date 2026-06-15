@@ -39,4 +39,31 @@ class Site
         $this->localization = $localization ?? new Localization();
         $this->support = $support ?? new Support();
     }
+
+    /**
+     * @param string $name
+     * @return mixed
+     */
+    public function __get(string $name)
+    {
+        switch (strtolower($name)) {
+            case 'dev':
+                return $this->options->dev;
+            case 'forcestaticoverride':
+                return $this->options->forceStaticOverride;
+            case 'htmlpostprocessing':
+                return $this->options->htmlpostprocessing;
+            case 'outputdir':
+                return $this->paths->outputDir;
+            case 'contentdir':
+                return $this->paths->contentDir;
+            case 'defaultlang':
+                return $this->localization->defaultLang;
+            case 'lang':
+                return $this->localization->lang;
+            case 'defaulttitle':
+                return $this->metadata->defaultTitle;
+        }
+        return null;
+    }
 }

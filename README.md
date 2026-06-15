@@ -92,26 +92,25 @@ indieinabox2026/
 
 ---
 
-## 🛠️ Current Status & Technical Debt (Ongoing Refactoring)
+## 🛠️ Current Status & Next Refactoring Steps
 
-> [!WARNING]
-> The project is currently in an incomplete architectural transition phase. There are several type mismatches and bugs in the integration between the legacy procedural codebase and the newly introduced typed classes, which prevent the build from running out of the box.
+> [!NOTE]
+> The build pipeline has been successfully repaired and the generator now builds the static site warning-free. However, the project is still in a transitional state between procedural and OOP architecture. An `ArrayAccess` compatibility bridge is active on the `Page` class to allow legacy templates and helper functions to operate seamlessly.
 
-The main issues found in the codebase are:
+### Completed in Phase 1 (June 2026):
+- **Bootstrap Repair**: Fixed the autoloader loading path in `build.php` (referencing `autoload.php` instead of `autoloader.php`) and defined the `DS` global constant.
+- **Config Mappings**: Aligned case mismatches between config keys and class attributes (e.g., `defaultLang`, `buildAll`). Added `htmlpostprocessing` support in options.
+- **Legacy Compatibility Bridge**: Implemented `ArrayAccess` on the `Page` class to enable templates (like `home.php` and `page.php`) and procedural scripts to access parameters using bracket notation (e.g., `$page['lang']`).
+- **Collection Handling**: Updated `Pages` to accept both arrays/objects and dynamically populate its internal `ArrayObject` storage. Fixed the loop in `generateHTMLFiles` to support associative collections.
+- **Bug Fixes**: Resolved the `require_once` pitfall in `unaccent.php` which caused a type error inside `strtr()`, and added shorthand helpers `t()`, `ts()`, and `tl()` to `translate.php`.
 
-1.  **Broken Autoloader Path**:
-    *   The `build.php` script attempts to require `_engine/autoloader.php` on line 25, but the actual file in the repository is named `_engine/autoload.php`. This results in an immediate fatal error (`Uncaught Error: Failed opening required ...autoloader.php`) when trying to run the build.
-2.  **Case-Sensitive Configurations & Magic Method Switch Mismatch**:
-    *   The property assignment loop in `build.php` (line 106) tries to set all-lowercase properties (e.g., `$site->localization->defaultlang`), but the `Localization` class expects camelCase (`defaultLang`) in its magic `__set` switch. This throws an exception (`Property defaultlang does not exist`).
-    *   Similar issues occur with other properties like `$site->options->buildall` vs `$site->options->buildAll`.
-3.  **Objects Accessed as Arrays Type Mismatch**:
-    *   **Templates**: Files inside `_template/` (such as `home.php` and `page.php`) attempt to read `$page["lang"]` by accessing the `$page` variable as an array. However, the generator now passes a typed `Page` object. Since the `Page` class does not implement `ArrayAccess`, this causes a fatal error.
-    *   **Helper Functions**: Global functions such as `kind()` (in `kind.php`), `listposts()` (in `listposts.php`), and `translate()` (in `translate.php`) still use array access notation (e.g., `$page["slug"]`) for properties, whereas the updated OOP pipeline passes the `Page` object instance.
-    *   **LanguageProcessor**: The namespaced class `Indieinabox\Markdown\LanguageProcessor` accepts `Page $page` in its `processLanguage` method, but starting from line 152 accesses it as an array (e.g., `$page["lang"]`, `$page["slug"]`), throwing a type error.
-4.  **Collection Manipulation in `Pages`**:
-    *   The `build.php` script instantiates `$pages = new Pages();`. However, during file scanning (`general.php:21`), the engine tries to push elements using `array_push($pages, $page);`. PHP throws a `TypeError` because `array_push` expects a native array, but `$pages` is an object of type `Pages`.
-5.  **Array vs Object Mismatch in `FileProcessor`**:
-    *   The `FileProcessor` class performs extension validation using `in_array($ext, $this->site->support, true)`. However, `$this->site->support` holds an instance of the `Support` class rather than a native array. The list of allowed extensions actually resides inside `$this->site->support->support`.
+### Remaining Refactoring Debt (Next Phases):
+1. **Remove the Compatibility Bridge**:
+   - Refactor templates (under `_template/`) and legacy functions (under `_engine/functions/`) to access properties directly using OOP arrow syntax (e.g., `$page->localization->lang` instead of `$page["lang"]`). Once completed, `ArrayAccess` can be removed from the `Page` class.
+2. **Align Namespaced Class Implementations**:
+   - The namespaced `Markdown\FileProcessor` class still performs extension validation using `in_array($ext, $this->site->support, true)`. This needs to be updated to `$this->site->support->support` to match the namespaced `Support` class object structure.
+3. **Full Migration of Procedural Scripts**:
+   - Migrate global helper functions inside `_engine/functions/` (such as `kind()`, `translate()`, `localizeddate()`) into namespaced classes or static methods on existing classes (e.g., `Helper`).
 
 ---
 

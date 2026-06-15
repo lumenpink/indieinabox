@@ -1,6 +1,5 @@
     <?php if ($site->dev) {
 
-        declare(strict_types=1);
         echo "<!-- dev mode" . PHP_EOL;
         echo "************* site *************" . PHP_EOL;
         echo json_encode($site, JSON_PRETTY_PRINT);

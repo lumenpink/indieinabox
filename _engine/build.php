@@ -2,6 +2,10 @@
 
 declare(strict_types=1);
 
+if (!defined('DS')) {
+    define('DS', DIRECTORY_SEPARATOR);
+}
+
 
 use Indieinabox\Parsedown;
 use Indieinabox\Yaml;
@@ -22,7 +26,7 @@ use Indieinabox\Pages;
  */
 
 // phpcs:ignore Generic.PHP.ForbiddenFunctions.FoundWithAlternative
-require_once __DIR__ . '/autoloader.php'; //NOSONAR
+require_once __DIR__ . '/autoload.php'; //NOSONAR
 foreach (glob(__DIR__ . "/functions/*.php") as $filename) {
     include_once  $filename; //NOSONAR
 }
@@ -99,11 +103,28 @@ $configs = [
     "fqdn" => "metadata",
     "htmlpostprocessing" => "options",
     "dev" => "options",
-    "skipstatic" => "options"
+    "skipstatic" => "options",
+    "forcestaticoverride" => "options"
 ];
 foreach ($configs as $property => $prefix) {
     if (isset($config[$property])) {
-        $site->$prefix->$property = $config[$property];
+        $mappedProperty = $property;
+        if ($property === 'buildall') {
+            $mappedProperty = 'buildAll';
+        } elseif ($property === 'outputdir') {
+            $mappedProperty = 'outputDir';
+        } elseif ($property === 'contentdir') {
+            $mappedProperty = 'contentDir';
+        } elseif ($property === 'defaultcategory') {
+            $mappedProperty = 'defaultCategory';
+        } elseif ($property === 'defaultlang') {
+            $mappedProperty = 'defaultLang';
+        } elseif ($property === 'skipstatic') {
+            $mappedProperty = 'skipStatic';
+        } elseif ($property === 'forcestaticoverride') {
+            $mappedProperty = 'forceStaticOverride';
+        }
+        $site->$prefix->$mappedProperty = $config[$property];
     }
 }
 

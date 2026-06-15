@@ -60,7 +60,7 @@ class Localization
     public function __construct(
         string $lang = "en",
         string $langpath = "",
-        string $langslug = "untitled",
+        $langslug = "untitled",
         array $otherlang = [],
         array $otherlangpath = [],
         string $localizeddate = "Saturday, January 1 of 2001, 00:00 UTC",

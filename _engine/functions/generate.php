@@ -2,9 +2,8 @@
 
 function generateHTMLFiles($pages)
 {
-    for ($i = 0; $i < sizeof($pages); $i++) {
-        // echo "Building no. " . $i . " - " . $pages[$i]['slug'] . "\n";
-        createHTMLFile($pages[$i]);
+    foreach ($pages as $page) {
+        createHTMLFile($page);
     }
 }
 

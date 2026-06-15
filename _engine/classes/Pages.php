@@ -33,16 +33,18 @@ class Pages extends ArrayObject
     }
 
     /**
-     * @param Page $page
+     * @param Page|array $page
      * @param string|null $id
      */
-    public function add(Page $page, ?string $id = null): void
+    public function add($page, ?string $id = null): void
     {
+        $slug = ($page instanceof Page) ? $page->slug : $page['slug'];
         if ($id === null) {
-            $this->pages[$page->slug] = $page;
+            $this->pages[$slug] = $page;
+            $this->offsetSet($slug, $page);
         } else {
-            // id must be a string
             $this->pages[(string) $id] = $page;
+            $this->offsetSet((string) $id, $page);
         }
     }
 

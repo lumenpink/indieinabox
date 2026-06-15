@@ -13,7 +13,7 @@ function unaccent(string $string): string
 
     static $chars = null;
     if ($chars === null) {
-        $chars = require_once dirname(__DIR__, 2) . '/_data/chars.php'; //NOSONAR
+        $chars = require dirname(__DIR__, 2) . '/_data/chars.php'; //NOSONAR
     }
 
     return strtr($string, $chars);

@@ -5,9 +5,9 @@ declare(strict_types=1);
 // Just translate the text
 function translate(string $text, ?string $lang = null): string
 {
-    global $translations, $page, $site;
+    global $translations, $page, $p, $site;
     if ($lang == null) {
-        $lang = $page["lang"];
+        $lang = isset($p["lang"]) ? $p["lang"] : (isset($page["lang"]) ? $page["lang"] : "en");
     }
     if ($lang == $site->localization->defaultLang) {
         return $text;
@@ -51,4 +51,20 @@ function updateTranslations(): void
             . var_export($translations, true)
             . ";\n?>"
     );
+}
+
+// Shorthand aliases for templates
+function t(string $text, ?string $lang = null): string
+{
+    return translate($text, $lang);
+}
+
+function ts(string $text): string
+{
+    return translateSlugize($text);
+}
+
+function tl(string $text): string
+{
+    return translateLowercase($text);
 }

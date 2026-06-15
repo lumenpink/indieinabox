@@ -100,7 +100,7 @@ class MarkdownParser
     private function extractFrontMatter(string &$content): array
     {
         $frontMatter = [];
-        if (preg_match('/^---\s*\n([^\n]*+\n)---\s*\n/sm', $content, $matches)) {
+        if (preg_match('/^---\s*\n((?:[^\n]*+\n)*)---\s*\n/sm', $content, $matches)) {
             $yaml = new \Indieinabox\Yaml();
             $frontMatter = $yaml->loadString($matches[1]);
         }
@@ -113,7 +113,7 @@ class MarkdownParser
      */
     private function removeYamlFrontMatter(string $content): string
     {
-        return preg_replace('/^---\s*\n([^\n]*+\n)---\s*\n/sm', '', $content);
+        return preg_replace('/^---\s*\n((?:[^\n]*+\n)*)---\s*\n/sm', '', $content);
     }
 
     /**

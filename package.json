@@ -22,8 +22,11 @@
     "serve": "http-server public",
     "build": "php build.php",
     "builddev": "php build.php -d",
-    "dev": "chokidar resources/views/**/* app/**/* content/**/* -c \"php build.php -d\"",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "chokidar resources/**/* app/**/* content/**/* -c \"php build.php -d\"",
+    "compile": "php compile.php",
+    "test": "composer test",
+    "test:compiled": "composer test:compiled",
+    "test:all": "composer test:all"
   },
   "devDependencies": {
     "chokidar-cli": "^3.0.0"

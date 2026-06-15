@@ -125,10 +125,20 @@ function utf8ToAscii(string $str, string $unknown = '?')
         $bank = $ord >> 8;
 
         if (!array_key_exists($bank, (array) $UTF8_TO_ASCII)) {
-            $bankfile = __DIR__ . '/data/' . sprintf('x%02x', $bank) . '.php';
-            if (file_exists($bankfile)) {
-                include $bankfile;
-            } else {
+            $paths = [
+                __DIR__ . '/data/' . sprintf('x%02x', $bank) . '.php',
+                dirname(__DIR__, 2) . '/data/' . sprintf('x%02x', $bank) . '.php',
+                dirname(__DIR__) . '/data/' . sprintf('x%02x', $bank) . '.php',
+            ];
+            $found = false;
+            foreach ($paths as $path) {
+                if (file_exists($path)) {
+                    include $path;
+                    $found = true;
+                    break;
+                }
+            }
+            if (!$found) {
                 $UTF8_TO_ASCII[$bank] = array();
             }
         }

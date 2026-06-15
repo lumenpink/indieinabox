@@ -1,7 +1,11 @@
 <?php
 
 declare(strict_types=1);
-require_once __DIR__ . '/../bootstrap/app.php'; // NOSONAR
+if (getenv('TEST_COMPILED') === 'true' || getenv('TEST_COMPILED') === '1') {
+    require_once __DIR__ . '/../indieinabox.php'; // NOSONAR
+} else {
+    require_once __DIR__ . '/../bootstrap/app.php'; // NOSONAR
+}
 
 /*
 |--------------------------------------------------------------------------

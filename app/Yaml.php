@@ -288,7 +288,7 @@ class Yaml
         if (in_array($value, array('true', 'TRUE', 'false', 'FALSE', 'y', 'Y', 'n', 'N', 'null', 'NULL'), true)) {
             $value = $this->doLiteralBlock($value, $indent);
         }
-        if (trim($value) != $value) {
+        if (is_string($value) && trim($value) != $value) {
             $value = $this->doLiteralBlock($value, $indent);
         }
         if (is_bool($value)) {

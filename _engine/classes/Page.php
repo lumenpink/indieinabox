@@ -13,8 +13,26 @@ use Indieinabox\Page\Localization;
  * Class Page
  *
  * This class represents a page and composes metadata, content, and localization.
+ *
+ * @property string $lang
+ * @property string $langpath
+ * @property array|string $langslug
+ * @property array $otherlang
+ * @property array $otherlangpath
+ * @property string $localizeddate
+ * @property string $localizedkind
+ * @property string $title
+ * @property array $tags
+ * @property array $category
+ * @property string $nick
+ * @property bool $noauthor
+ * @property string $kind
+ * @property string $layout
+ * @property string $originalcontent
+ * @property array $images
+ * @property string $isodate
  */
-class Page implements \ArrayAccess
+class Page
 {
     /**
      * @var Metadata
@@ -70,6 +88,135 @@ class Page implements \ArrayAccess
         $this->date = $date ?? new DateTime('now');
         $this->relpath = $relpath;
         $this->slug = $slug;
+    }
+
+    /**
+     * Magic getter to expose shortcut properties.
+     *
+     * @param string $name
+     * @return mixed
+     */
+    public function __get(string $name)
+    {
+        switch ($name) {
+            case 'lang':
+                return $this->localization->lang;
+            case 'langpath':
+                return $this->localization->langpath;
+            case 'langslug':
+                return $this->localization->langslug;
+            case 'otherlang':
+                return $this->localization->otherlang;
+            case 'otherlangpath':
+                return $this->localization->otherlangpath;
+            case 'localizeddate':
+                return $this->localization->localizeddate;
+            case 'localizedkind':
+                return $this->localization->localizedkind;
+            case 'title':
+                return $this->metadata->title;
+            case 'tags':
+                return $this->metadata->tags;
+            case 'category':
+                return $this->metadata->category;
+            case 'nick':
+                return $this->metadata->nick;
+            case 'noauthor':
+                return $this->metadata->noauthor;
+            case 'kind':
+                return $this->metadata->kind;
+            case 'layout':
+                return $this->metadata->layout;
+            case 'content':
+                return $this->content->content;
+            case 'originalcontent':
+                return $this->content->originalcontent;
+            case 'images':
+                return $this->content->images;
+            case 'isodate':
+                return $this->date instanceof DateTime ? $this->date->format('c') : '';
+        }
+        return null;
+    }
+
+    /**
+     * Magic setter to modify shortcut properties.
+     *
+     * @param string $name
+     * @param mixed $value
+     * @return void
+     */
+    public function __set(string $name, $value): void
+    {
+        switch ($name) {
+            case 'lang':
+                $this->localization->lang = $value;
+                break;
+            case 'langpath':
+                $this->localization->langpath = $value;
+                break;
+            case 'langslug':
+                $this->localization->langslug = $value;
+                break;
+            case 'otherlang':
+                $this->localization->otherlang = $value;
+                break;
+            case 'otherlangpath':
+                $this->localization->otherlangpath = $value;
+                break;
+            case 'localizeddate':
+                $this->localization->localizeddate = $value;
+                break;
+            case 'localizedkind':
+                $this->localization->localizedkind = $value;
+                break;
+            case 'title':
+                $this->metadata->title = $value;
+                break;
+            case 'tags':
+                $this->metadata->tags = $value;
+                break;
+            case 'category':
+                $this->metadata->category = $value;
+                break;
+            case 'nick':
+                $this->metadata->nick = $value;
+                break;
+            case 'noauthor':
+                $this->metadata->noauthor = (bool) $value;
+                break;
+            case 'kind':
+                $this->metadata->kind = $value;
+                break;
+            case 'layout':
+                $this->metadata->layout = $value;
+                break;
+            case 'content':
+                $this->content->content = $value;
+                break;
+            case 'originalcontent':
+                $this->content->originalcontent = $value;
+                break;
+            case 'images':
+                $this->content->images = $value;
+                break;
+        }
+    }
+
+    /**
+     * Magic isset check for shortcut properties.
+     *
+     * @param string $name
+     * @return bool
+     */
+    public function __isset(string $name): bool
+    {
+        return in_array($name, [
+            'lang', 'langpath', 'langslug', 'otherlang', 'otherlangpath',
+            'localizeddate', 'localizedkind', 'title', 'tags', 'category',
+            'nick', 'noauthor', 'kind', 'layout', 'content', 'originalcontent',
+            'images', 'isodate'
+        ]);
     }
 
     /**
@@ -133,138 +280,4 @@ class Page implements \ArrayAccess
         );
     }
 
-    // --- ArrayAccess Implementation ---
-
-    public function offsetExists($offset): bool
-    {
-        return in_array($offset, [
-            'lang', 'langpath', 'langslug', 'otherlang', 'otherlangpath',
-            'localizeddate', 'localizedkind', 'title', 'tags', 'category',
-            'nick', 'noauthor', 'kind', 'layout', 'content', 'originalcontent',
-            'images', 'date', 'relpath', 'slug'
-        ]);
-    }
-
-    #[\ReturnTypeWillChange]
-    public function offsetGet($offset)
-    {
-        switch ($offset) {
-            case 'lang':
-                return $this->localization->lang;
-            case 'langpath':
-                return $this->localization->langpath;
-            case 'langslug':
-                return $this->localization->langslug;
-            case 'otherlang':
-                return $this->localization->otherlang;
-            case 'otherlangpath':
-                return $this->localization->otherlangpath;
-            case 'localizeddate':
-                return $this->localization->localizeddate;
-            case 'localizedkind':
-                return $this->localization->localizedkind;
-            case 'title':
-                return $this->metadata->title;
-            case 'tags':
-                return $this->metadata->tags;
-            case 'category':
-                return $this->metadata->category;
-            case 'nick':
-                return $this->metadata->nick;
-            case 'noauthor':
-                return $this->metadata->noauthor;
-            case 'kind':
-                return $this->metadata->kind;
-            case 'layout':
-                return $this->metadata->layout;
-            case 'content':
-                return $this->content->content;
-            case 'originalcontent':
-                return $this->content->originalcontent;
-            case 'images':
-                return $this->content->images;
-            case 'date':
-                return $this->date instanceof DateTime ? $this->date->getTimestamp() : $this->date;
-            case 'relpath':
-                return $this->relpath;
-            case 'slug':
-                return $this->slug;
-        }
-        return null;
-    }
-
-    public function offsetSet($offset, $value): void
-    {
-        switch ($offset) {
-            case 'lang':
-                $this->localization->lang = $value;
-                break;
-            case 'langpath':
-                $this->localization->langpath = $value;
-                break;
-            case 'langslug':
-                $this->localization->langslug = $value;
-                break;
-            case 'otherlang':
-                $this->localization->otherlang = $value;
-                break;
-            case 'otherlangpath':
-                $this->localization->otherlangpath = $value;
-                break;
-            case 'localizeddate':
-                $this->localization->localizeddate = $value;
-                break;
-            case 'localizedkind':
-                $this->localization->localizedkind = $value;
-                break;
-            case 'title':
-                $this->metadata->title = $value;
-                break;
-            case 'tags':
-                $this->metadata->tags = $value;
-                break;
-            case 'category':
-                $this->metadata->category = $value;
-                break;
-            case 'nick':
-                $this->metadata->nick = $value;
-                break;
-            case 'noauthor':
-                $this->metadata->noauthor = (bool) $value;
-                break;
-            case 'kind':
-                $this->metadata->kind = $value;
-                break;
-            case 'layout':
-                $this->metadata->layout = $value;
-                break;
-            case 'content':
-                $this->content->content = $value;
-                break;
-            case 'originalcontent':
-                $this->content->originalcontent = $value;
-                break;
-            case 'images':
-                $this->content->images = $value;
-                break;
-            case 'date':
-                if ($value instanceof DateTime) {
-                    $this->date = $value;
-                } else {
-                    $this->date = new DateTime(is_numeric($value) ? "@{$value}" : $value);
-                }
-                break;
-            case 'relpath':
-                $this->relpath = $value;
-                break;
-            case 'slug':
-                $this->slug = $value;
-                break;
-        }
-    }
-
-    public function offsetUnset($offset): void
-    {
-        // No-op for safety
-    }
 }

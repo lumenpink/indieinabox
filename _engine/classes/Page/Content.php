@@ -42,4 +42,14 @@ class Content
         $this->originalcontent = $originalcontent;
         $this->images = $images;
     }
+
+    /**
+     * Convert Content object to its string representation.
+     *
+     * @return string
+     */
+    public function __toString(): string
+    {
+        return $this->content;
+    }
 }

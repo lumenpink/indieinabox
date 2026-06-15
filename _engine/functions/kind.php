@@ -1,14 +1,23 @@
 <?php
 
+/**
+ * @param \Indieinabox\Page|array $page
+ * @return array
+ */
 function kind($page): array
 {
     global $site, $kindspath;
-    if (isset($page["kind"])) {
-        $kind = $page["kind"];
-        $localizedkind = $page["kind"];
+    $isObject = $page instanceof \Indieinabox\Page;
+    $pageKind = $isObject ? $page->kind : ($page["kind"] ?? null);
+    $pageSlug = $isObject ? $page->slug : ($page["slug"] ?? "");
+    $pageLang = $isObject ? $page->lang : ($page["lang"] ?? "en");
+
+    if ($pageKind !== null && $pageKind !== "") {
+        $kind = $pageKind;
+        $localizedkind = $pageKind;
     } else {
-        $localizedkind = explode("/", $page["slug"]);
-        if ($page["lang"] == $site->defaultlang) {
+        $localizedkind = explode("/", $pageSlug);
+        if ($pageLang == $site->defaultlang) {
             $localizedkind = $localizedkind[0];
         } else {
             $localizedkind = $localizedkind[1];

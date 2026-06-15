@@ -37,7 +37,7 @@ class FileProcessor
         }
 
         $ext = pathinfo($file, PATHINFO_EXTENSION);
-        return in_array($ext, $this->site->support, true);
+        return in_array($ext, $this->site->support->support, true);
     }
 
     /**

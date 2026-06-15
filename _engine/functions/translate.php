@@ -7,7 +7,13 @@ function translate(string $text, ?string $lang = null): string
 {
     global $translations, $page, $p, $site;
     if ($lang == null) {
-        $lang = isset($p["lang"]) ? $p["lang"] : (isset($page["lang"]) ? $page["lang"] : "en");
+        if (isset($p)) {
+            $lang = $p instanceof \Indieinabox\Page ? $p->lang : ($p["lang"] ?? "en");
+        } elseif (isset($page)) {
+            $lang = $page instanceof \Indieinabox\Page ? $page->lang : ($page["lang"] ?? "en");
+        } else {
+            $lang = "en";
+        }
     }
     if ($lang == $site->localization->defaultLang) {
         return $text;

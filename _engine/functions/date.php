@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 use Indieinabox\Page;
 // I know there is intl module but I'm not sure if it's available in all servers
+/**
+ * @param Page|array $page
+ * @return array
+ */
 function localizeddate($page): array
 {
     global $originaldaysofweek, $originalmonths, $intl;
@@ -11,7 +15,7 @@ function localizeddate($page): array
     
     if ($page instanceof Page) {
         $epoch = $page->date;
-        $lang = $page->localization->lang;
+        $lang = $page->lang;
     } else {
         $epoch = $page["date"] ?? time();
         $lang = $page["lang"] ?? "en";

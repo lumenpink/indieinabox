@@ -95,7 +95,7 @@ indieinabox2026/
 ## 🛠️ Current Status & Next Refactoring Steps
 
 > [!NOTE]
-> The build pipeline has been successfully repaired and the generator now builds the static site warning-free. However, the project is still in a transitional state between procedural and OOP architecture. An `ArrayAccess` compatibility bridge is active on the `Page` class to allow legacy templates and helper functions to operate seamlessly.
+> The build pipeline has been successfully repaired and the generator now builds the static site warning-free using modern OOP properties and shortcut magic getters. The legacy `ArrayAccess` bridge has been completely removed.
 
 ### Completed in Phase 1 (June 2026):
 - **Bootstrap Repair**: Fixed the autoloader loading path in `build.php` (referencing `autoload.php` instead of `autoloader.php`) and defined the `DS` global constant.
@@ -104,12 +104,14 @@ indieinabox2026/
 - **Collection Handling**: Updated `Pages` to accept both arrays/objects and dynamically populate its internal `ArrayObject` storage. Fixed the loop in `generateHTMLFiles` to support associative collections.
 - **Bug Fixes**: Resolved the `require_once` pitfall in `unaccent.php` which caused a type error inside `strtr()`, and added shorthand helpers `t()`, `ts()`, and `tl()` to `translate.php`.
 
+### Completed in Phase 2 (June 2026):
+- **Magic Property Shortcuts**: Implemented `__get()`, `__set()`, and `__isset()` in the `Page` class, introducing flat property shortcuts (e.g., `$page->lang`, `$page->title`, `$page->isodate`) to avoid nested 3-level deep accesses (like `$page->localization->lang`) in templates.
+- **Template and Helper Migration**: Refactored all templates under `_template/` and helper functions under `_engine/functions/` to use OOP property syntax, fully resolving previous static analysis undefined variable warnings using PHPDoc variable annotations.
+- **ArrayAccess Removal**: Cleanly removed `ArrayAccess` from `Page.php` since all brackets accesses have been fully migrated.
+- **FileProcessor Mismatch**: Updated namespaced `Markdown\FileProcessor` class to perform validation check using `$this->site->support->support`.
+
 ### Remaining Refactoring Debt (Next Phases):
-1. **Remove the Compatibility Bridge**:
-   - Refactor templates (under `_template/`) and legacy functions (under `_engine/functions/`) to access properties directly using OOP arrow syntax (e.g., `$page->localization->lang` instead of `$page["lang"]`). Once completed, `ArrayAccess` can be removed from the `Page` class.
-2. **Align Namespaced Class Implementations**:
-   - The namespaced `Markdown\FileProcessor` class still performs extension validation using `in_array($ext, $this->site->support, true)`. This needs to be updated to `$this->site->support->support` to match the namespaced `Support` class object structure.
-3. **Full Migration of Procedural Scripts**:
+1. **Full Migration of Procedural Scripts**:
    - Migrate global helper functions inside `_engine/functions/` (such as `kind()`, `translate()`, `localizeddate()`) into namespaced classes or static methods on existing classes (e.g., `Helper`).
 
 ---

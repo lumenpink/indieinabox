@@ -1,5 +1,9 @@
+<?php
+/** @var \Indieinabox\Page $page */
+/** @var \Indieinabox\Site $site */
+?>
 <!DOCTYPE html>
-<html lang="<?= $page["lang"] ?>">
+<html lang="<?= $page->lang ?>">
 
 <head>
     <?php include 'includes/head.php';  //NOSONAR 

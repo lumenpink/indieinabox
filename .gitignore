@@ -9,3 +9,4 @@ fa
 .vscode
 tools
 indieinabox.php
+tests/Integration/tmp_sandbox/

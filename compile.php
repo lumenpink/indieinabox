@@ -21,6 +21,40 @@ $appFiles = getPhpFiles($base . '/app');
 // Prepare the compiled code
 $compiled = "<?php\n\ndeclare(strict_types=1);\n\n";
 
+$compiled .= "namespace {\n";
+$compiled .= "    if (PHP_VERSION_ID < 80200) {\n";
+$compiled .= "        \$errorMessage = \"Error: IndieInABox requires PHP version 8.2.0 or higher. Your current PHP version is \" . PHP_VERSION . \". Please upgrade your PHP installation.\";\n";
+$compiled .= "        if (PHP_SAPI === 'cli') {\n";
+$compiled .= "            file_put_contents('php://stderr', \"\\033[31;1m\" . \$errorMessage . \"\\033[0m\\n\");\n";
+$compiled .= "            exit(1);\n";
+$compiled .= "        } else {\n";
+$compiled .= "            header('HTTP/1.1 500 Internal Server Error');\n";
+$compiled .= "            header('Content-Type: text/html; charset=utf-8');\n";
+$compiled .= "            echo \"<!DOCTYPE html>\n";
+$compiled .= "<html>\n";
+$compiled .= "<head>\n";
+$compiled .= "    <title>PHP Version Error</title>\n";
+$compiled .= "    <style>\n";
+$compiled .= "        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background-color: #f7fafc; color: #2d3748; padding: 2rem; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }\n";
+$compiled .= "        .card { background: white; padding: 2.5rem; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06); max-width: 500px; width: 100%; border-top: 4px solid #e53e3e; }\n";
+$compiled .= "        h1 { color: #e53e3e; font-size: 1.5rem; margin-top: 0; }\n";
+$compiled .= "        p { line-height: 1.6; margin-bottom: 1.5rem; }\n";
+$compiled .= "        code { background-color: #edf2f7; padding: 0.2rem 0.4rem; border-radius: 4px; font-family: monospace; font-size: 0.9em; }\n";
+$compiled .= "    </style>\n";
+$compiled .= "</head>\n";
+$compiled .= "<body>\n";
+$compiled .= "    <div class='card'>\n";
+$compiled .= "        <h1>PHP Version Error</h1>\n";
+$compiled .= "        <p><strong>IndieInABox</strong> requires PHP version <strong>8.2.0</strong> or higher.</p>\n";
+$compiled .= "        <p>Your current PHP version is <code>\" . htmlspecialchars(PHP_VERSION) . \"</code> which is too old. Please upgrade PHP to run this application.</p>\n";
+$compiled .= "    </div>\n";
+$compiled .= "</body>\n";
+$compiled .= "</html>\";\n";
+$compiled .= "            exit(1);\n";
+$compiled .= "        }\n";
+$compiled .= "    }\n";
+$compiled .= "}\n\n";
+
 $globalFiles = [];
 
 // Output each class file in its own namespace block to prevent use-statement import conflicts

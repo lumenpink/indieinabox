@@ -119,18 +119,9 @@ jobs:
           path: vendor
           key: vendor-php8.4-${{ hashFiles('composer.lock') }}
 
-      - name: "Instalar dependências + Psalm + Security Plugin"
+      - name: "Instalar dependências"
         run: |
           composer install --no-interaction --prefer-dist --no-progress
-          composer require --dev \
-            vimeo/psalm:^5 \
-            psalm/plugin-security-analysis:^0 \
-            --no-interaction --no-update
-          composer update vimeo/psalm psalm/plugin-security-analysis \
-            --no-interaction --prefer-dist
-
-      - name: "Psalm — Inicializar plugin de segurança"
-        run: ./vendor/bin/psalm-plugin enable psalm/plugin-security-analysis
 
       - name: "Psalm — Análise (taint + erros)"
         run: |

@@ -19,10 +19,7 @@
         </ignoreFiles>
     </projectFiles>
 
-    <plugins>
-        <!-- Segurança: detecta tainted strings em leitura de arquivos Markdown -->
-        <pluginClass class="Psalm\SecurityAnalysis\Plugin" />
-    </plugins>
+
 
     <!--
         Fontes de entrada contaminada (tainted):
@@ -31,10 +28,10 @@
     -->
     <taintAnalysis>
         <!-- file_get_contents é uma source de tainted data -->
-        <ignorePatterns>
+        <ignoreFiles>
             <!-- Excluir legado onde não há injeção de entrada do usuário -->
-            <pattern>/app\/functions\/parsedown\.php/</pattern>
-            <pattern>/app\/Yaml\.php/</pattern>
-        </ignorePatterns>
+            <file name="app/functions/parsedown.php" />
+            <file name="app/Yaml.php" />
+        </ignoreFiles>
     </taintAnalysis>
 </psalm>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<psalm
+    errorLevel="4"
+    resolveFromConfigFile="true"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="https://getpsalm.org/schema/config"
+    xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd"
+>
+    <projectFiles>
+        <directory name="app" />
+        <directory name="bootstrap" />
+        <file name="build.php" />
+        <ignoreFiles>
+            <directory name="vendor" />
+            <file name="app/Yaml.php" />
+            <file name="app/functions/parsedown.php" />
+            <file name="app/functions/beautify-html.php" />
+            <file name="app/functions/HtmlMinifier.php" />
+        </ignoreFiles>
+    </projectFiles>
+
+    <plugins>
+        <!-- Segurança: detecta tainted strings em leitura de arquivos Markdown -->
+        <pluginClass class="Psalm\SecurityAnalysis\Plugin" />
+    </plugins>
+
+    <!--
+        Fontes de entrada contaminada (tainted):
+        - Nomes de arquivos vindos de paths externos (content/)
+        - Dados brutos lidos de arquivos .md via file_get_contents
+    -->
+    <taintAnalysis>
+        <!-- file_get_contents é uma source de tainted data -->
+        <ignorePatterns>
+            <!-- Excluir legado onde não há injeção de entrada do usuário -->
+            <pattern>/app\/functions\/parsedown\.php/</pattern>
+            <pattern>/app\/Yaml\.php/</pattern>
+        </ignorePatterns>
+    </taintAnalysis>
+</psalm>

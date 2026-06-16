@@ -1,0 +1,241 @@
+name: CI
+
+on:
+  push:
+    branches: ["main", "develop"]
+  pull_request:
+    branches: ["main", "develop"]
+
+# Cancela runs concorrentes no mesmo branch (exceto main)
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+jobs:
+  # ─────────────────────────────────────────────────────────────────────────────
+  # JOB 1 — Lint + Testes unitários (Matrix PHP 8.2 → 8.4)
+  # ─────────────────────────────────────────────────────────────────────────────
+  test:
+    name: "PHP ${{ matrix.php }} — Tests & Lint"
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true          # Para ao primeiro erro em qualquer versão
+      matrix:
+        php: ["8.2", "8.3", "8.4"]
+
+    steps:
+      - name: "Checkout (histórico completo para Psalm)"
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: "Setup PHP ${{ matrix.php }}"
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: mbstring, json, fileinfo
+          coverage: xdebug          # Necessário para gerar clover
+          tools: composer:v2
+
+      - name: "Cache vendor/"
+        id: cache-vendor
+        uses: actions/cache@v4
+        with:
+          path: vendor
+          key: vendor-php${{ matrix.php }}-${{ hashFiles('composer.lock') }}
+          restore-keys: |
+            vendor-php${{ matrix.php }}-
+
+      - name: "Instalar dependências Composer"
+        if: steps.cache-vendor.outputs.cache-hit != 'true'
+        run: composer install --no-interaction --prefer-dist --no-progress
+
+      # ── Segurança ────────────────────────────────────────────────────────────
+      - name: "composer audit — Vulnerabilidades conhecidas"
+        # Substituto ao roave/security-advisories (conflita com pest v3)
+        run: composer audit --format=plain
+
+      # ── Compatibilidade de versão PHP ────────────────────────────────────────
+      - name: "PHP Compatibility Sniffer (${{ matrix.php }})"
+        run: |
+          composer sniffer:php${{ matrix.php == '8.2' && '82' || matrix.php == '8.3' && '83' || '84' }}
+
+      # ── Compilação do bundle (necessário para test:compiled) ─────────────────
+      - name: "Compilar bundle (php compile.php)"
+        run: php compile.php
+
+      # ── Testes PEST ──────────────────────────────────────────────────────────
+      - name: "PEST — Suite padrão (source) + cobertura Clover"
+        run: |
+          mkdir -p coverage
+          ./vendor/bin/pest \
+            --coverage-clover coverage/clover.xml \
+            --log-junit coverage/junit.xml
+
+      - name: "PEST — Suite compilada"
+        run: TEST_COMPILED=true ./vendor/bin/pest
+
+      # ── Artefatos de cobertura ───────────────────────────────────────────────
+      - name: "Upload relatório Clover"
+        if: matrix.php == '8.2'          # Evita uploads duplicados
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-clover
+          path: coverage/clover.xml
+          retention-days: 7
+
+      - name: "Upload relatório JUnit"
+        if: matrix.php == '8.2'
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-junit
+          path: coverage/junit.xml
+          retention-days: 7
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # JOB 2 — Análise estática de segurança com Psalm
+  # ─────────────────────────────────────────────────────────────────────────────
+  psalm:
+    name: "Psalm — Static Security Analysis"
+    runs-on: ubuntu-latest
+    needs: test           # Só roda se os testes passarem
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.2"
+          extensions: mbstring, json, fileinfo
+          coverage: none
+          tools: composer:v2
+
+      - name: "Cache vendor/"
+        id: cache-vendor
+        uses: actions/cache@v4
+        with:
+          path: vendor
+          key: vendor-php8.2-${{ hashFiles('composer.lock') }}
+
+      - name: "Instalar dependências + Psalm + Security Plugin"
+        run: |
+          composer install --no-interaction --prefer-dist --no-progress
+          composer require --dev \
+            vimeo/psalm:^5 \
+            psalm/plugin-security-analysis:^0 \
+            --no-interaction --no-update
+          composer update vimeo/psalm psalm/plugin-security-analysis \
+            --no-interaction --prefer-dist
+
+      - name: "Psalm — Inicializar plugin de segurança"
+        run: ./vendor/bin/psalm-plugin enable psalm/plugin-security-analysis
+
+      - name: "Psalm — Análise (taint + erros)"
+        run: |
+          mkdir -p coverage
+          ./vendor/bin/psalm \
+            --config=psalm.xml \
+            --taint-analysis \
+            --report=coverage/psalm.json \
+            --report-show-info=true \
+            --no-progress \
+            --output-format=github   # Anotações nativas no PR
+
+      - name: "Upload relatório Psalm (JSON)"
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: psalm-report
+          path: coverage/psalm.json
+          retention-days: 30
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # JOB 3 — OWASP Dependency-Check (CVEs em dependências transitivas)
+  # ─────────────────────────────────────────────────────────────────────────────
+  dependency-check:
+    name: "OWASP Dependency-Check"
+    runs-on: ubuntu-latest
+    needs: test
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: "Cache NVD (acelera scans subsequentes)"
+        uses: actions/cache@v4
+        with:
+          path: ~/.dependency-check/data
+          key: nvd-${{ github.run_id }}
+          restore-keys: |
+            nvd-
+
+      - name: "Executar OWASP Dependency-Check"
+        uses: dependency-check/Dependency-Check_Action@main
+        id: depcheck
+        with:
+          project: "indieinabox"
+          path: "."
+          format: "HTML SARIF"
+          out: "coverage/dependency-check"
+          # CVSS >= 7 falha o build (ajustar conforme política de risco)
+          args: >
+            --failOnCVSS 7
+            --enableRetired
+            --exclude "**/vendor/**"
+
+      - name: "Upload relatório Dependency-Check"
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dependency-check-report
+          path: coverage/dependency-check
+          retention-days: 30
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # JOB 4 — SonarQube / SonarCloud
+  # Depende dos jobs anteriores para ter os relatórios disponíveis
+  # ─────────────────────────────────────────────────────────────────────────────
+  sonarqube:
+    name: "SonarQube Analysis"
+    runs-on: ubuntu-latest
+    needs: [test, psalm]      # Precisa dos relatórios de cobertura e Psalm
+    # Só roda no branch principal ou em PRs (evita rodar em feature branches sem SONAR_TOKEN)
+    if: github.actor != 'dependabot[bot]'
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # Necessário para blame e histórico no Sonar
+
+      - name: "Baixar relatório Clover"
+        uses: actions/download-artifact@v4
+        with:
+          name: coverage-clover
+          path: coverage
+
+      - name: "Baixar relatório Psalm"
+        uses: actions/download-artifact@v4
+        with:
+          name: psalm-report
+          path: coverage
+
+      # ── Opção A: SonarCloud (SaaS gratuito para open source) ─────────────────
+      - name: "SonarCloud Scan"
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >
+            -Dsonar.projectKey=${{ vars.SONAR_PROJECT_KEY || 'lumenpink_indieinabox' }}
+            -Dsonar.organization=${{ vars.SONAR_ORG || 'lumenpink' }}
+            -Dsonar.php.coverage.reportPaths=coverage/clover.xml
+            -Dsonar.externalIssuesReportPaths=coverage/psalm.json
+
+      # ── Opção B: SonarQube self-hosted (descomente se preferir) ──────────────
+      # - name: "SonarQube Scan (self-hosted)"
+      #   uses: SonarSource/sonarqube-scan-action@v4
+      #   env:
+      #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      #     SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}

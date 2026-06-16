@@ -308,11 +308,11 @@ class MarkdownParser
             $page["category"] = $page["default-category"];
         }
 
-        $kindResult = kind($page);
+        $kindResult = \Indieinabox\Helper::kind($page);
         $page["localizedkind"] = $kindResult["localized"];
         $page["kind"] = $kindResult["kind"];
 
-        $dateResult = localizeddate($page);
+        $dateResult = \Indieinabox\Helper::localizeddate($page);
         $page["localizeddate"] = $dateResult["long"];
         $page["isodate"] = $dateResult["iso"];
 

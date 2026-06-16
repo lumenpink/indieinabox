@@ -50,7 +50,7 @@ class MarkdownParser
 
     /**
      * @param  string $file
-     * @return array|false|null
+     * @return Page|false|null
      */
     public function parse(string $file)
     {
@@ -74,34 +74,60 @@ class MarkdownParser
             return null;
         }
 
-        $page = $this->languageProcessor->processLanguage($page);
-        $page["layout"] = $this->fileProcessor->determineLayout($page, $fileInfo);
-        $page = $this->setMetadata($page);
+        // Process slug
+        $slug = $this->fileProcessor->generateBaseSlug($file);
+        if ($fileInfo['filename'] === "index") {
+            $slug = str_replace($fileInfo['filename'] . "." . $fileInfo['ext'], "", $slug);
+        } else {
+            $slug = str_replace("." . $fileInfo['ext'], "", $slug);
+        }
 
-        return $page;
+        if (isset($page["slug"])) {
+            $slug = str_replace($fileInfo['filename'], $page["slug"], $slug);
+        }
+
+        $slug = trim($slug, DIRECTORY_SEPARATOR);
+        $slug = str_replace(DIRECTORY_SEPARATOR, "/", $slug);
+        $slug = strtolower($slug);
+        $slug = rtrim($slug, "/") . "/";
+        $page["slug"] = $slug;
+
+        // Calculate relative path
+        $parts = explode('/', rtrim($slug, '/'));
+        if (count($parts) === 0 || $slug === '/') {
+            $page["relpath"] = './';
+        } else {
+            $page["relpath"] = str_repeat('../', count($parts));
+        }
+
+        // Determine layout
+        $layout = $this->fileProcessor->determineLayout($page);
+        $page["layout"] = $layout;
+
+        // Convert to Page object and process language & metadata
+        $pageObj = Page::fromArray($page);
+        $pageObj = $this->languageProcessor->processLanguage($pageObj);
+        $pageObj = $this->setMetadata($pageObj);
+
+        return $pageObj;
     }
 
     /**
-     * @param  array $page
-     * @return array
+     * @param  Page $page
+     * @return Page
      */
-    private function setMetadata(array $page): array
+    private function setMetadata(Page $page): Page
     {
-        if (!isset($page["default-category"])) {
-            $page["default-category"] = "General";
+        if (empty($page->category) || $page->category === ["No Category"]) {
+            $page->category = ["General"];
         }
 
-        if (!isset($page["category"])) {
-            $page["category"] = $page["default-category"];
-        }
+        $kindResult = Helper::kind($page);
+        $page->localizedkind = $kindResult["localized"];
+        $page->kind = $kindResult["kind"];
 
-        $kindResult = kind($page);
-        $page["localizedkind"] = $kindResult["localized"];
-        $page["kind"] = $kindResult["kind"];
-
-        $dateResult = localizeddate($page);
-        $page["localizeddate"] = $dateResult["long"];
-        $page["isodate"] = $dateResult["iso"];
+        $dateResult = Helper::localizeddate($page);
+        $page->localizeddate = $dateResult["long"];
 
         return $page;
     }

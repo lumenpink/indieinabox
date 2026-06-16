@@ -26,7 +26,7 @@ class MarkdownParser
     private $languageProcessor;
 
     /**
-     * @var object
+     * @var \Indieinabox\Site
      */
     private $site;
 
@@ -34,13 +34,13 @@ class MarkdownParser
      * @param FileProcessor     $fileProcessor
      * @param ContentProcessor  $contentProcessor
      * @param LanguageProcessor $languageProcessor
-     * @param object            $site
+     * @param \Indieinabox\Site $site
      */
     public function __construct(
         FileProcessor $fileProcessor,
         ContentProcessor $contentProcessor,
         LanguageProcessor $languageProcessor,
-        object $site
+        \Indieinabox\Site $site
     ) {
         $this->fileProcessor = $fileProcessor;
         $this->contentProcessor = $contentProcessor;
@@ -60,18 +60,23 @@ class MarkdownParser
 
         $fileInfo = $this->fileProcessor->getFileInfo($file);
         $content = file_get_contents($file);
+        if ($content === false) {
+            return false;
+        }
 
         $page = $this->contentProcessor->extractFrontMatter($content);
         $content = $this->contentProcessor->removeYamlFrontMatter($content);
 
-        $page = $this->contentProcessor->setTitle($page, $content, $this->site->defaulttitle);
+        $hasFrontMatter = !empty($page);
+
+        $page = $this->contentProcessor->setTitle($page, $content, $this->site->metadata->defaultTitle);
         $page = $this->contentProcessor->setDate($page, $file);
         $page = $this->contentProcessor->processTags($page, $content);
 
         $content = $this->contentProcessor->processContent($content);
         $page['content'] = trim($content, " \n\r\t");
 
-        if (!$this->site->buildall && empty($page)) {
+        if (!$this->site->options->buildAll && !$hasFrontMatter) {
             return null;
         }
 
@@ -95,7 +100,7 @@ class MarkdownParser
 
         // Calculate relative path
         $parts = explode('/', rtrim($slug, '/'));
-        if (count($parts) === 0 || $slug === '/') {
+        if ($slug === '/') {
             $page["relpath"] = './';
         } else {
             $page["relpath"] = str_repeat('../', count($parts));

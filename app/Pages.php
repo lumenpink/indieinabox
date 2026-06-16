@@ -33,7 +33,7 @@ class Pages extends ArrayObject
     }
 
     /**
-     * @param Page|array $page
+     * @param Page|array<string, mixed> $page
      * @param string|null $id
      */
     public function add($page, ?string $id = null): void

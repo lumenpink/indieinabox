@@ -25,7 +25,7 @@ class ContentProcessor
     /**
      * @param string $content
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function extractFrontMatter(string &$content): array
     {
@@ -50,9 +50,9 @@ class ContentProcessor
     /**
      * Set the date from file modification time if not provided in frontmatter.
      *
-     * @param array  $page
+     * @param array<string, mixed>  $page
      * @param string $file
-     * @return array
+     * @return array<string, mixed>
      */
     public function setDate(array $page, string $file): array
     {
@@ -63,10 +63,11 @@ class ContentProcessor
     }
 
     /**
-     * @param array  $page
+     * @param array<string, mixed>  $page
      * @param string $content
+     * @param string $defaultTitle
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function setTitle(array $page, string $content, string $defaultTitle): array
     {
@@ -81,10 +82,10 @@ class ContentProcessor
     }
 
     /**
-     * @param array  $page
+     * @param array<string, mixed>  $page
      * @param string $content
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function processTags(array $page, string &$content): array
     {
@@ -104,7 +105,7 @@ class ContentProcessor
         }
 
         $page["tags"] = array_unique(array_merge($page["tags"], $tags));
-        $content = preg_replace('/^(?:\s*#\w+\s*?)*$/m', "", $content);
+        $content = (string) preg_replace('/^(?:\s*#\w+\s*?)*$/m', "", $content);
 
         return $page;
     }

@@ -9,7 +9,7 @@ class Helper
     /**
      * Helper function to get a value from nested array with default
      *
-     * @param  array  $array
+     * @param  array<string, mixed>  $array
      * @param  string $key
      * @param  mixed  $default
      * @return mixed
@@ -22,8 +22,8 @@ class Helper
     /**
      * Helper function to determine the kind of content
      *
-     * @param  Page|array $page
-     * @return array
+     * @param  Page|array<string, mixed> $page
+     * @return array{localized: string, kind: string}
      */
     public static function kind($page): array
     {
@@ -63,8 +63,8 @@ class Helper
     /**
      * Helper function to format dates
      *
-     * @param  Page|array $page
-     * @return array
+     * @param  Page|array<string, mixed> $page
+     * @return array{long: string, iso: string}
      */
     public static function localizeddate($page): array
     {
@@ -150,7 +150,7 @@ class Helper
         $chars = $ar[0];
 
         foreach ($chars as $i => $c) {
-            if (ord($c[0]) >= 0 && ord($c[0]) <= 127) {
+            if (ord($c[0]) <= 127) {
                 continue;
             } // ASCII - next please
             $ord = 0;
@@ -169,7 +169,7 @@ class Helper
             if (ord($c[0]) >= 252 && ord($c[0]) <= 253) {
                 $ord = (ord($c[0]) - 252) * 1073741824 + (ord($c[1]) - 128) * 16777216 + (ord($c[2]) - 128) * 262144 + (ord($c[3]) - 128) * 4096 + (ord($c[4]) - 128) * 64 + (ord($c[5]) - 128);
             }
-            if (ord($c[0]) >= 254 && ord($c[0]) <= 255) {
+            if (ord($c[0]) >= 254) {
                 $chars[$i] = $unknown;
                 continue;
             } //error
@@ -217,8 +217,8 @@ class Helper
     /**
      * Sorts pages by date descending
      *
-     * @param  array $pages
-     * @return array
+     * @param  array<int, array<string, mixed>|Page> $pages
+     * @return array<int, array<string, mixed>|Page>
      */
     public static function sortByDate(array $pages): array
     {
@@ -243,7 +243,7 @@ class Helper
     /**
      * Recursively sorts an array by keys
      *
-     * @param  array $array
+     * @param  array<string, mixed> $array
      * @return void
      */
     public static function recursive_ksort(array &$array): void
@@ -260,8 +260,8 @@ class Helper
      * Get directory contents recursively
      *
      * @param  string $dir
-     * @param  array $results
-     * @return array
+     * @param  array<int, string> $results
+     * @return array<int, string>
      */
     public static function getDirContents(string $dir, array &$results = []): array
     {
@@ -269,11 +269,13 @@ class Helper
 
         foreach ($files as $key => $value) {
             $path = realpath($dir . DIRECTORY_SEPARATOR . $value);
-            if (!is_dir($path)) {
-                $results[] = $path;
-            } elseif ($value != "." && $value != "..") {
-                self::getDirContents($path, $results);
-                $results[] = $path;
+            if ($path !== false) {
+                if (!is_dir($path)) {
+                    $results[] = $path;
+                } elseif ($value != "." && $value != "..") {
+                    self::getDirContents($path, $results);
+                    $results[] = $path;
+                }
             }
         }
 

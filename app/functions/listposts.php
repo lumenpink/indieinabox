@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * @return string|false
+ */
 function listposts()
 {
     global $base, $pages;

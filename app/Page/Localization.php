@@ -22,7 +22,7 @@ class Localization
     public $langpath;
 
     /**
-     * @var string
+     * @var array<string>|string
      */
     public $langslug;
 
@@ -51,7 +51,7 @@ class Localization
      *
      * @param string $lang
      * @param string $langpath
-     * @param string $langslug
+     * @param array<string>|string $langslug
      * @param array<string> $otherlang
      * @param array<string> $otherlangpath
      * @param string $localizeddate

@@ -7,7 +7,7 @@ namespace Indieinabox\Markdown;
 class FileProcessor
 {
     /**
-     * @var object
+     * @var \Indieinabox\Site
      */
     private $site;
 
@@ -17,10 +17,10 @@ class FileProcessor
     private $base;
 
     /**
-     * @param object $site
+     * @param \Indieinabox\Site $site
      * @param string $base
      */
-    public function __construct(object $site, string $base)
+    public function __construct(\Indieinabox\Site $site, string $base)
     {
         $this->site = $site;
         $this->base = $base;
@@ -42,7 +42,7 @@ class FileProcessor
 
     /**
      * @param  string $file
-     * @return array
+     * @return array{ext: string, filename: string}
      */
     public function getFileInfo(string $file): array
     {
@@ -58,13 +58,13 @@ class FileProcessor
      */
     public function generateBaseSlug(string $file): string
     {
-        $slug = str_replace($this->base . DIRECTORY_SEPARATOR . $this->site->contentdir, "", $file);
+        $slug = str_replace($this->base . DIRECTORY_SEPARATOR . $this->site->paths->contentDir, "", $file);
         $slug = ltrim($slug, DIRECTORY_SEPARATOR);
-        return preg_replace("/^" . $this->site->contentdir . "/", "", $slug);
+        return (string) preg_replace("/^" . $this->site->paths->contentDir . "/", "", $slug);
     }
 
     /**
-     * @param  array $page
+     * @param  array<string, mixed> $page
      * @return string
      */
     public function determineLayout(array $page): string

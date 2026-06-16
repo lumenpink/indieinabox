@@ -40,16 +40,29 @@ function scan(string $dir): void
     }
 }
 
+/**
+ * @param string $dir
+ * @param array<int, string> $results
+ * @return array<int, string>
+ */
 function getDirContents(string $dir, array &$results = []): array
 {
     return \Indieinabox\Helper::getDirContents($dir, $results);
 }
 
+/**
+ * @param array<int, array<string, mixed>|\Indieinabox\Page> $pages
+ * @return array<int, array<string, mixed>|\Indieinabox\Page>
+ */
 function sortByDate(array $pages): array
 {
     return \Indieinabox\Helper::sortByDate($pages);
 }
 
+/**
+ * @param array<string, mixed> $array
+ * @return void
+ */
 function recursive_ksort(array &$array): void
 {
     \Indieinabox\Helper::recursive_ksort($array);

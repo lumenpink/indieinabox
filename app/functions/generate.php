@@ -14,7 +14,10 @@ function generateHTMLFiles(iterable $pages): void
 
 
 
-function generateFeed()
+/**
+ * @return void
+ */
+function generateFeed(): void
 {
     global $base, $pages, $site;
 

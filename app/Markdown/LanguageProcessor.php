@@ -73,37 +73,19 @@ class LanguageProcessor
      */
     private function processOtherLanguages(Page $page): Page
     {
-        $page->localization->otherlang = [$this->site->localization->lang];
+        $siteLangs = $this->site->localization->lang;
+        $page->localization->otherlang = $siteLangs;
         $page->localization->otherlangpath = [""];
-        if (is_array($this->site->localization->lang)) {
-            $page->localization->otherlang = $this->site->localization->lang;
-            array_splice($page->localization->otherlang, array_search($page->localization->lang, $page->localization->otherlang, true), 1);
+        
+        $langIndex = array_search($page->localization->lang, $page->localization->otherlang, true);
+        if ($langIndex !== false) {
+            array_splice($page->localization->otherlang, (int) $langIndex, 1);
+        }
 
-            foreach ($page->localization->otherlang as $key => $value) {
-                $page->localization->otherlangpath[$key] = $value === $this->site->localization->defaultLang ? "" : $value . "/";
-            }
+        foreach ($page->localization->otherlang as $key => $value) {
+            $page->localization->otherlangpath[$key] = $value === $this->site->localization->defaultLang ? "" : $value . "/";
         }
         return $page;
-    }
-
-    /**
-     * Determine the language from the site configuration.
-     *
-     * @param Page $page
-     * @return string
-     */
-    private function determineLanguageFromSite(Page $page): string
-    {
-        if (count($this->site->localization->lang) === 1 || $page->slug === "/") {
-            return $this->site->localization->lang[0];
-        }
-
-        $first = explode("/", $page->slug)[0];
-        if (in_array($first, $this->site->localization->lang, true)) {
-            return $first;
-        }
-
-        return $this->site->localization->lang[0];
     }
 
     /**
@@ -132,11 +114,11 @@ class LanguageProcessor
      */
     private function processOriginalContent(Page $page): Page
     {
-        if (!isset($page->content->originalcontent)) {
+        if ($page->content->originalcontent === "Hello World" || $page->content->originalcontent === "") {
             $page->content->originalcontent = $this->determineOriginalContent($page);
         }
 
-        if (!isset($page->localization->langslug)) {
+        if ($page->localization->langslug === "untitled" || empty($page->localization->langslug)) {
             $page->localization->langslug = $this->generateLanguageSlugs($page);
         }
 
@@ -166,7 +148,7 @@ class LanguageProcessor
      * Generate language slugs for the page.
      *
      * @param Page $page
-     * @return array
+     * @return array<int, string>
      */
     private function generateLanguageSlugs(Page $page): array
     {

@@ -16,20 +16,20 @@ use Indieinabox\Page\Localization;
  *
  * @property string $lang
  * @property string $langpath
- * @property array|string $langslug
- * @property array $otherlang
- * @property array $otherlangpath
+ * @property array<string>|string $langslug
+ * @property array<string> $otherlang
+ * @property array<string> $otherlangpath
  * @property string $localizeddate
  * @property string $localizedkind
  * @property string $title
- * @property array $tags
- * @property array $category
+ * @property array<string> $tags
+ * @property array<string> $category
  * @property string $nick
  * @property bool $noauthor
  * @property string $kind
  * @property string $layout
  * @property string $originalcontent
- * @property array $images
+ * @property array<string> $images
  * @property string $isodate
  */
 class Page
@@ -134,7 +134,7 @@ class Page
             case 'images':
                 return $this->content->images;
             case 'isodate':
-                return $this->date instanceof DateTime ? $this->date->format('c') : '';
+                return $this->date->format('c');
         }
         return null;
     }
@@ -222,7 +222,7 @@ class Page
     /**
      * Create a Page object from a raw array structure.
      *
-     * @param array $data
+     * @param array<string, mixed> $data
      * @return self
      */
     public static function fromArray(array $data): self

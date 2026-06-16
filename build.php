@@ -27,9 +27,21 @@ $parsedown = new Parsedown();
 $yaml = new Yaml();
 /** @var array{
  *     base: string,
- *     forcestaticoverride?: bool,
+ *     title?: string,
+ *     sitename?: string,
+ *     support?: string[],
+ *     buildall?: bool,
+ *     outputdir?: string,
+ *     contentdir?: string,
+ *     defaultcategory?: string,
  *     lang?: string|string[],
- *     defaultlang?: string
+ *     defaultlang?: string,
+ *     fqdn?: string,
+ *     author?: string,
+ *     htmlpostprocessing?: string,
+ *     dev?: bool,
+ *     skipstatic?: bool,
+ *     forcestaticoverride?: bool
  * } $config
  */
 $config = $yaml->loadFile($base . DIRECTORY_SEPARATOR . "config.yml");
@@ -67,43 +79,46 @@ echo "Assets are at " . ASSETS . "\n";
 
 $site = new Site();
 $site->paths->baseDir = $base;
-$configs = [
-    "title" => "metadata",
-    "sitename" => "metadata",
-    "author" => "metadata",
-    "support" => "support",
-    "buildall" => "options",
-    "outputdir" => "paths",
-    "contentdir" => "paths",
-    "defaultcategory" => "support",
-    "lang" => "localization",
-    "defaultlang" => "localization",
-    "fqdn" => "metadata",
-    "htmlpostprocessing" => "options",
-    "dev" => "options",
-    "skipstatic" => "options",
-    "forcestaticoverride" => "options"
-];
-foreach ($configs as $property => $prefix) {
-    if (isset($config[$property])) {
-        $mappedProperty = $property;
-        if ($property === 'buildall') {
-            $mappedProperty = 'buildAll';
-        } elseif ($property === 'outputdir') {
-            $mappedProperty = 'outputDir';
-        } elseif ($property === 'contentdir') {
-            $mappedProperty = 'contentDir';
-        } elseif ($property === 'defaultcategory') {
-            $mappedProperty = 'defaultCategory';
-        } elseif ($property === 'defaultlang') {
-            $mappedProperty = 'defaultLang';
-        } elseif ($property === 'skipstatic') {
-            $mappedProperty = 'skipStatic';
-        } elseif ($property === 'forcestaticoverride') {
-            $mappedProperty = 'forceStaticOverride';
-        }
-        $site->$prefix->$mappedProperty = $config[$property];
-    }
+if (isset($config['title'])) {
+    $site->metadata->title = $config['title'];
+}
+if (isset($config['sitename'])) {
+    $site->metadata->sitename = $config['sitename'];
+}
+if (isset($config['author'])) {
+    $site->metadata->author = $config['author'];
+}
+if (isset($config['fqdn'])) {
+    $site->metadata->fqdn = $config['fqdn'];
+}
+if (isset($config['support'])) {
+    $site->support->support = $config['support'];
+}
+if (isset($config['buildall'])) {
+    $site->options->buildAll = $config['buildall'];
+}
+if (isset($config['outputdir'])) {
+    $site->paths->outputDir = $config['outputdir'];
+}
+if (isset($config['contentdir'])) {
+    $site->paths->contentDir = $config['contentdir'];
+}
+if (isset($config['defaultcategory'])) {
+    $site->support->defaultCategory = $config['defaultcategory'];
+}
+$site->localization->lang = $config['lang'];
+$site->localization->defaultLang = $config['defaultlang'];
+if (isset($config['htmlpostprocessing'])) {
+    $site->options->htmlpostprocessing = $config['htmlpostprocessing'];
+}
+if (isset($config['dev'])) {
+    $site->options->dev = $config['dev'];
+}
+if (isset($config['skipstatic'])) {
+    $site->options->skipStatic = $config['skipstatic'];
+}
+if (isset($config['forcestaticoverride'])) {
+    $site->options->forceStaticOverride = $config['forcestaticoverride'];
 }
 
 $pages = new Pages();

@@ -24,6 +24,9 @@ class TranslatedUrlCollection
      */
     public array $urls;
 
+    /**
+     * @param array<string, TranslatedUrl> $urls
+     */
     public function __construct(array $urls)
     {
         $this->urls = $urls;

@@ -1,25 +1,22 @@
 ---
-title: Agora
+title: Now
 menu: "main"
-slug: agora
+slug: now
 noauthor: true
-date: 2024-04-07T15:08:23-03:00
+date: 2026-06-15T22:21:58-03:00
 kind: page
 ---
 
-Esta é uma lista não exaustiva do que estou fazendo agora
+This is a non-exhaustive list of what I am doing right now.
 
-Atualizada em 2024-04-07
+# Personally
 
-# Pessoalmente
+- Reading classic science fiction and interesting biographies
+- Practicing morning jogs and outdoor workouts
+- Experimenting with new vegetarian recipes on weekends
 
-- Entendendo e implementando a [Indieweb](/pensamentos/indieweb) neste blog
-- Organizando meu Jardim Digital [pensamentos](/pensamentos)
-- Mantendo a rotina diária e o autocuidado
-- Melhorando meus recursos na cozinha
+# Professionally
 
-# Profissionalmente
-
-- Estudando Rust como se não houvesse amanhã
-- Lutando para não ser aposentada compulsoriamente e também para ser promovida
-- Abandonando o projeto de leilões online
+- Enhancing software engineering skills and design patterns
+- Contributing to open-source projects related to semantic web
+- Developing simple personal productivity tools

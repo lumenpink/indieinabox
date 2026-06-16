@@ -38,21 +38,20 @@ The project currently has a basic suite of unit tests located in `tests/Unit/`. 
 
 ---
 
-## ⚙️ 2. Missing Functional Tests
+## 🧪 2. Implemented Functional Tests (Completed)
 
-Functional tests verify specific features or business rules within isolated subsystems.
+Functional tests verify specific features or business rules within isolated subsystems. The following have been fully implemented under `tests/Functional/`:
 
-- **Translation Engine Auto-Update (`app/functions/translate.php`)**:
-  - Test that calling `translate("New String", "es")` when the string is missing dynamically writes the new key back to the dictionary file `data/translations.php` and alphabetizes the array.
-- **Post Classification (`app/functions/kind.php`)**:
-  - Test that the generator correctly classifies a page's kind (e.g., photo, note, reply, article) based on the presence of specific metadata fields (like `photo`, `reply-to`, or title content length).
-- **Date Localization (`app/functions/date.php`)**:
-  - Test localized date formats for Portuguese (`pt-br`), English (`en`), and Spanish (`es`) using mock timestamps.
-- **Tag Extraction (`app/functions/parse.php`)**:
-  - Test that inline hashtags (e.g. `Hello #world`) are parsed out of the text, cleaned of special characters, and appended as lowercase array values to the page's `$page->tags` array.
-- **HTML Beautification / Minification (`app/functions/general.php`)**:
-  - Test that `minifyhtml()` correctly removes comments/whitespace when `htmlpostprocessing` config is set to `"minify"`.
-  - Test that `beautifyhtml()` correctly formats layout code when `htmlpostprocessing` config is set to `"beautify"`.
+- **[x] Translation Engine Auto-Update (`app/functions/translate.php`)**:
+  - Covered in [TranslateTest.php](file:///home/lumen/indieinabox2026/tests/Functional/TranslateTest.php). Verified lookup, shorthand macros (`t`, `ts`, `tl`), and writing of dynamically registered keys to virtual translations path.
+- **[x] Post Classification (`app/functions/kind.php`)**:
+  - Covered in [KindTest.php](file:///home/lumen/indieinabox2026/tests/Functional/KindTest.php). Verified explicit categories, folder-based slugs mapping from `$kindspath`, and generic fallbacks.
+- **[x] Date Localization (`app/functions/date.php`)**:
+  - Covered in [DateTest.php](file:///home/lumen/indieinabox2026/tests/Functional/DateTest.php). Verified locales `en`, `pt-br`, `es`, timezones, and various input types (ints, floats, strings, DateTime).
+- **[x] Tag Extraction (`app/functions/parse.php`)**:
+  - Covered in [ParseTest.php](file:///home/lumen/indieinabox2026/tests/Functional/ParseTest.php). Verified frontmatter loading, link formatting adjustments, and hashtag parser.
+- **[x] HTML Beautification / Minification (`app/functions/general.php`)**:
+  - Covered in [GeneralTest.php](file:///home/lumen/indieinabox2026/tests/Functional/GeneralTest.php). Verified minifier formatting whitespace rules and HTML beautifier container indentation.
 
 ---
 

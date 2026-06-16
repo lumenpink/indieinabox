@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use org\bovigo\vfs\vfsStream;
+use bovigo\vfs\vfsStream;
 use Indieinabox\Site;
 use Indieinabox\Site\Paths;
 use Indieinabox\Site\Localization;
@@ -10,17 +10,18 @@ use Indieinabox\Page;
 
 beforeEach(function () {
     global $site, $translations, $page, $p;
+    global $backupTranslations, $backupSite, $backupPage, $backupP;
 
-    $this->vfsRoot = vfsStream::setup('root', null, [
+    vfsStream::setup('root', null, [
         'data' => [
             'translations.php' => "<?php\nglobal \$translations;\n\$translations = [];\n?>"
         ]
     ]);
 
-    $this->originalTranslations = $translations ?? [];
-    $this->originalSite = $site ?? null;
-    $this->originalPage = $page ?? null;
-    $this->originalP = $p ?? null;
+    $backupTranslations = $translations ?? [];
+    $backupSite = $site ?? null;
+    $backupPage = $page ?? null;
+    $backupP = $p ?? null;
 
     $translations = [
         'es' => [
@@ -43,10 +44,12 @@ beforeEach(function () {
 
 afterEach(function () {
     global $site, $translations, $page, $p;
-    $translations = $this->originalTranslations;
-    $site = $this->originalSite;
-    $page = $this->originalPage;
-    $p = $this->originalP;
+    global $backupTranslations, $backupSite, $backupPage, $backupP;
+
+    $translations = $backupTranslations;
+    $site = $backupSite;
+    $page = $backupPage;
+    $p = $backupP;
 });
 
 it('translates existing keys for non-default languages', function () {

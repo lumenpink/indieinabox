@@ -8,8 +8,9 @@ use Indieinabox\Site\Localization;
 
 beforeEach(function () {
     global $site, $kindspath;
+    global $backupSite, $backupKindspath;
 
-    $this->originalSite = $site ?? null;
+    $backupSite = $site ?? null;
     $site = new Site(
         null,
         null,
@@ -18,7 +19,7 @@ beforeEach(function () {
         null
     );
 
-    $this->originalKindspath = $kindspath ?? null;
+    $backupKindspath = $kindspath ?? null;
     if (empty($kindspath)) {
         $kindspath = [
             "article" => ["artigos", "articles", "articulos"],
@@ -30,9 +31,11 @@ beforeEach(function () {
 
 afterEach(function () {
     global $site, $kindspath;
-    $site = $this->originalSite;
-    if ($this->originalKindspath !== null) {
-        $kindspath = $this->originalKindspath;
+    global $backupSite, $backupKindspath;
+
+    $site = $backupSite;
+    if ($backupKindspath !== null) {
+        $kindspath = $backupKindspath;
     }
 });
 

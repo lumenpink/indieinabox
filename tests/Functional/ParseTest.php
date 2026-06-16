@@ -2,19 +2,20 @@
 
 declare(strict_types=1);
 
-use org\bovigo\vfs\vfsStream;
+use bovigo\vfs\vfsStream;
 use Indieinabox\Site;
 use Indieinabox\Site\Paths;
 use Indieinabox\Site\Support;
 
 beforeEach(function () {
     global $site, $base, $parsedown, $urltranslations, $originaldaysofweek, $originalmonths, $intl;
+    global $backupSite, $backupBase, $backupParsedown, $backupUrltranslations;
 
     if (empty($intl)) {
         include __DIR__ . '/../../data/intl.php';
     }
 
-    $this->vfsRoot = vfsStream::setup('root', null, [
+    vfsStream::setup('root', null, [
         'content' => [
             'blog' => [
                 'my-post.md' => "---\ntitle: My Cool Post\ndate: 1609459200\ntags:\n  - news\n---\nHello #world, this is a test. Check out [my link](/blog/other-post).\nAlso #anotherTag and #world."
@@ -22,10 +23,10 @@ beforeEach(function () {
         ]
     ]);
 
-    $this->originalSite = $site ?? null;
-    $this->originalBase = $base ?? null;
-    $this->originalParsedown = $parsedown ?? null;
-    $this->originalUrltranslations = $urltranslations ?? null;
+    $backupSite = $site ?? null;
+    $backupBase = $base ?? null;
+    $backupParsedown = $parsedown ?? null;
+    $backupUrltranslations = $urltranslations ?? null;
 
     $site = new Site(
         null,
@@ -42,10 +43,12 @@ beforeEach(function () {
 
 afterEach(function () {
     global $site, $base, $parsedown, $urltranslations;
-    $site = $this->originalSite;
-    $base = $this->originalBase;
-    $parsedown = $this->originalParsedown;
-    $urltranslations = $this->originalUrltranslations;
+    global $backupSite, $backupBase, $backupParsedown, $backupUrltranslations;
+
+    $site = $backupSite;
+    $base = $backupBase;
+    $parsedown = $backupParsedown;
+    $urltranslations = $backupUrltranslations;
 });
 
 it('parses markdown file and extracts tags and formats links', function () {

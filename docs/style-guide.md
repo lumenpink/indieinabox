@@ -18,8 +18,8 @@ The codebase generally adheres to the standard **PSR-12** formatting guidelines:
 
 ### Indentation and Spacing
 *   Use **4 spaces** for indentation. Do not use tabs.
-*   Lines should not contain trailing whitespace.
-*   All PHP files must end with a single empty newline.
+*   Lines must not contain trailing whitespace (spaces or tabs at the end of lines).
+*   All files must end with exactly one trailing newline (`\n`) character. Useless trailing empty lines and spaces at the end of files must be removed.
 
 ### Strict Types
 *   Every PHP file must declare strict types at the very top of the file:

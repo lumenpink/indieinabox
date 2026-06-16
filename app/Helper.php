@@ -70,7 +70,7 @@ class Helper
     {
         global $originaldaysofweek, $originalmonths, $intl;
         setlocale(LC_TIME, 'en-us');
-        
+
         if ($page instanceof Page) {
             $epoch = $page->date;
             $lang = $page->lang;

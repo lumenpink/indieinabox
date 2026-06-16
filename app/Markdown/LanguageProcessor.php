@@ -76,7 +76,7 @@ class LanguageProcessor
         $siteLangs = $this->site->localization->lang;
         $page->localization->otherlang = $siteLangs;
         $page->localization->otherlangpath = [""];
-        
+
         $langIndex = array_search($page->localization->lang, $page->localization->otherlang, true);
         if ($langIndex !== false) {
             array_splice($page->localization->otherlang, (int) $langIndex, 1);

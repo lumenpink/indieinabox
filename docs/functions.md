@@ -16,7 +16,7 @@ The core generator pipeline incorporates several procedural functions under `app
 
 ## 🛠️ Page Renderer (`app/functions/createhtml.php`)
 
-*   **`createHTMLFile(Page $page)`**: 
+*   **`createHTMLFile(Page $page)`**:
     - Verifies the page is not marked as `draft` in tags.
     - Generates target folder path inside `public/` mirroring the page slug.
     - Uses PHP output buffering (`ob_start()`) to include the page's requested template layout (e.g. `resources/views/page.php` or `resources/views/home.php`).

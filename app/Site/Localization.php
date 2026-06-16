@@ -8,7 +8,7 @@ namespace Indieinabox\Site;
  * Class Localization
  *
  * Holds language and localization-related configurations.
- * 
+ *
  * @property array<string> $lang
  * @property string $defaultLang
  */

@@ -33,13 +33,13 @@ When running the pipeline via terminal, flags modify compilation options:
 php build.php [-d] [-s] [-f]
 ```
 
-*   **`-d` (Development Mode)**: 
+*   **`-d` (Development Mode)**:
     - Enables dev flags in templates.
     - Automatically injects the `live.js` live-reload script in headers.
     - Forces HTML post-processing to `"beautify"` format.
-*   **`-s` (Skip Static Files)**: 
+*   **`-s` (Skip Static Files)**:
     - Skips copying assets from `resources/static/` directory to save build time.
-*   **`-f` (Force Overwrites)**: 
+*   **`-f` (Force Overwrites)**:
     - Overwrites generated layout templates and outputs forcefully.
 
 ---

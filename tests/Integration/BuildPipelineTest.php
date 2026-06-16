@@ -114,9 +114,9 @@ PHP
 
     // 5. Setup symlinks to app, bootstrap, data, vendor
     symlink(dirname(dirname(__DIR__)) . '/vendor', $sandbox . '/vendor');
-    
+
     $isCompiled = getenv('TEST_COMPILED') === 'true' || getenv('TEST_COMPILED') === '1';
-    
+
     if ($isCompiled) {
         // Test compiled build runner
         copy(dirname(dirname(__DIR__)) . '/indieinabox.php', $sandbox . '/build.php');
@@ -203,9 +203,9 @@ PHP
 
     // 4. Setup symlinks to app, bootstrap, data, vendor
     symlink(dirname(dirname(__DIR__)) . '/vendor', $sandbox . '/vendor');
-    
+
     $isCompiled = getenv('TEST_COMPILED') === 'true' || getenv('TEST_COMPILED') === '1';
-    
+
     if ($isCompiled) {
         copy(dirname(dirname(__DIR__)) . '/indieinabox.php', $sandbox . '/build.php');
         symlink(dirname(dirname(__DIR__)) . '/data', $sandbox . '/data');

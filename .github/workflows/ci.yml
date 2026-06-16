@@ -193,19 +193,30 @@ jobs:
     needs: [test, psalm]      # Precisa dos relatórios de cobertura e Psalm
     # Só roda no branch principal ou em PRs (evita rodar em feature branches sem SONAR_TOKEN)
     if: github.actor != 'dependabot[bot]'
+    env:
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
     steps:
+      - name: "Verificar SONAR_TOKEN"
+        run: |
+          if [ -z "$SONAR_TOKEN" ]; then
+            echo "::warning::SONAR_TOKEN não configurado. Pulando análise do SonarQube."
+          fi
+
       - uses: actions/checkout@v6
+        if: env.SONAR_TOKEN != ''
         with:
           fetch-depth: 0   # Necessário para blame e histórico no Sonar
 
       - name: "Baixar relatório Clover"
+        if: env.SONAR_TOKEN != ''
         uses: actions/download-artifact@v6
         with:
           name: coverage-clover
           path: coverage
 
       - name: "Baixar relatório Psalm"
+        if: env.SONAR_TOKEN != ''
         uses: actions/download-artifact@v6
         with:
           name: psalm-report
@@ -213,10 +224,10 @@ jobs:
 
       # ── Opção A: SonarCloud (SaaS gratuito para open source) ─────────────────
       - name: "SonarCloud Scan"
+        if: env.SONAR_TOKEN != ''
         uses: SonarSource/sonarqube-scan-action@v5
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
           args: >
             -Dsonar.projectKey=${{ vars.SONAR_PROJECT_KEY || 'lumenpink_indieinabox' }}
@@ -226,7 +237,7 @@ jobs:
 
       # ── Opção B: SonarQube self-hosted (descomente se preferir) ──────────────
       # - name: "SonarQube Scan (self-hosted)"
+      #   if: env.SONAR_TOKEN != ''
       #   uses: SonarSource/sonarqube-scan-action@v5
       #   env:
-      #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       #     SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}

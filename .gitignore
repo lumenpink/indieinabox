@@ -10,3 +10,5 @@ fa
 tools
 indieinabox.php
 tests/Integration/tmp_sandbox/
+coverage/
+docs/coverage/

@@ -59,7 +59,9 @@ class LanguageProcessor
      */
     private function setDefaultLanguage(Page $page): Page
     {
-        $page->localization->lang = $this->site->localization->defaultLang;
+        if (empty($page->localization->lang)) {
+            $page->localization->lang = $this->site->localization->defaultLang;
+        }
         return $page;
     }
 
@@ -71,15 +73,14 @@ class LanguageProcessor
      */
     private function processOtherLanguages(Page $page): Page
     {
-        $page->localization->otherLang = [$this->site->localization->lang];
-        $page->localization->otherLangPath = [""];
+        $page->localization->otherlang = [$this->site->localization->lang];
+        $page->localization->otherlangpath = [""];
         if (is_array($this->site->localization->lang)) {
-            $page->localization->otherLang = $this->site->localization->lang;
-            array_splice($page->localization->otherLang, array_search($page->localization->lang, $page->localization->otherLang, true), 1);
+            $page->localization->otherlang = $this->site->localization->lang;
+            array_splice($page->localization->otherlang, array_search($page->localization->lang, $page->localization->otherlang, true), 1);
 
-            foreach ($page->localization->otherLang as $key => $value) {
-                $page->localization->otherLangPath[$key] = $value . "/";
-                $page->localization->otherLangPath[$key] = $value === $this->site->localization->defaultLang ?: "";
+            foreach ($page->localization->otherlang as $key => $value) {
+                $page->localization->otherlangpath[$key] = $value === $this->site->localization->defaultLang ? "" : $value . "/";
             }
         }
         return $page;
@@ -115,9 +116,10 @@ class LanguageProcessor
     {
         $page->localization->langpath = $page->localization->lang === $this->site->localization->defaultLang ? "" : $page->localization->lang . "/";
 
-        $page->localization->nick = str_replace($page->localization->lang, '', $page->slug);
-        $page->localization->nick = explode("/", $page->localization->nick);
-        $page->localization->nick = $page->localization->nick[count($page->localization->nick) - 2];
+        $nick = str_replace($page->localization->lang, '', $page->slug);
+        $nick = explode("/", $nick);
+        $nick = $nick[count($nick) - 2];
+        $page->metadata->nick = $nick;
 
         return $page;
     }
@@ -149,15 +151,15 @@ class LanguageProcessor
      */
     private function determineOriginalContent(Page $page): string
     {
-        if ($page["lang"] === $this->site->defaultlang) {
-            return $page["slug"] === "/" ? "index" : $page["slug"];
+        if ($page->localization->lang === $this->site->localization->defaultLang) {
+            return $page->slug === "/" ? "index" : $page->slug;
         }
 
-        if ($page["nick"] === "") {
+        if ($page->metadata->nick === "") {
             return "";
         }
 
-        return $this->urlTranslations->getOriginalContent($page["nick"], $page["lang"]);
+        return $this->urlTranslations->getOriginalContent($page->metadata->nick, $page->localization->lang);
     }
 
     /**
@@ -169,12 +171,13 @@ class LanguageProcessor
     private function generateLanguageSlugs(Page $page): array
     {
         $slugs = [];
-        foreach ($page["otherlang"] as $lang) {
-            $slugs[] = $this->urlTranslations->getTranslatedSlug($page["originalcontent"], $lang);
-            if ($lang === $this->site->defaultlang) {
-                $slugs[] = $page["originalcontent"];
-            } elseif ($page["originalcontent"] === "index") {
+        foreach ($page->localization->otherlang as $lang) {
+            if ($lang === $this->site->localization->defaultLang) {
+                $slugs[] = $page->content->originalcontent;
+            } elseif ($page->content->originalcontent === "index") {
                 $slugs[] = "";
+            } else {
+                $slugs[] = $this->urlTranslations->getTranslatedSlug($page->content->originalcontent, $lang);
             }
         }
         return $slugs;

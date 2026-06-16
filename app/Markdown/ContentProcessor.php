@@ -30,7 +30,7 @@ class ContentProcessor
     public function extractFrontMatter(string &$content): array
     {
         $frontMatter = [];
-        if (preg_match('/^---\s*\n(.*?[^\n]*+\n)---\s*\n/sm', $content, $matches)) {
+        if (preg_match('/^---\s*\n((?:[^\n]*+\n)*)---\s*\n/sm', $content, $matches)) {
             $yaml = new Yaml();
             $frontMatter = $yaml->loadString($matches[1]);
         }
@@ -44,7 +44,22 @@ class ContentProcessor
      */
     public function removeYamlFrontMatter(string $content): string
     {
-        return preg_replace('/^---\s*\n([^\n]*+\n)---\s*\n/sm', '', $content);
+        return preg_replace('/^---\s*\n((?:[^\n]*+\n)*)---\s*\n/sm', '', $content);
+    }
+
+    /**
+     * Set the date from file modification time if not provided in frontmatter.
+     *
+     * @param array  $page
+     * @param string $file
+     * @return array
+     */
+    public function setDate(array $page, string $file): array
+    {
+        if (!isset($page["date"])) {
+            $page["date"] = filemtime($file);
+        }
+        return $page;
     }
 
     /**

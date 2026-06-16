@@ -49,6 +49,8 @@ class Site
         switch (strtolower($name)) {
             case 'dev':
                 return $this->options->dev;
+            case 'buildall':
+                return $this->options->buildAll;
             case 'forcestaticoverride':
                 return $this->options->forceStaticOverride;
             case 'htmlpostprocessing':

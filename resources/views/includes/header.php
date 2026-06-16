@@ -28,8 +28,13 @@
             </li>
 
             <li>
-                <a class="upper-flag" href="<?= $page->relpath . $p->otherlangpath[0] ?>"><img src="<?= $page->relpath ?>flags/<?= $p->otherlang[0] ?>.gif" alt='<?= t("Conteúdo em Português", $p->otherlang[0]) ?>'></a>
-                <a class="bottom-flag" href="<?= $page->relpath . $p->otherlangpath[1] ?>"><img src="<?= $page->relpath ?>flags/<?= $p->otherlang[1] ?>.gif" alt="<?= t("Conteúdo em Português", $p->otherlang[1]) ?>"></a>
+                <?php foreach ($p->otherlang as $i => $otherLang) : ?>
+                    <?php if (isset($p->otherlangpath[$i])) : ?>
+                        <a class="<?= $i === 0 ? 'upper-flag' : 'bottom-flag' ?>" href="<?= $page->relpath . $p->otherlangpath[$i] ?>">
+                            <img src="<?= $page->relpath ?>flags/<?= $otherLang ?>.gif" alt='<?= t("Conteúdo em Português", $otherLang) ?>'>
+                        </a>
+                    <?php endif; ?>
+                <?php endforeach; ?>
             </li>
         </ul>
         <ul class="menu">
@@ -39,8 +44,13 @@
                 </a>
             </li>
             <li class="menu-item-small">
-                <a class="upper-flag" href="<?= $page->relpath . $p->otherlangpath[0] ?>"><img src="<?= $page->relpath ?>flags/<?= $p->otherlang[0] ?>.gif " alt='<?= t("Conteúdo em Português", $p->otherlang[0]) ?>'></a>
-                <a class="bottom-flag" href="<?= $page->relpath . $p->otherlangpath[1] ?>"><img src="<?= $page->relpath ?>flags/<?= $p->otherlang[1] ?>.gif" alt="<?= t("Conteúdo em Português", $p->otherlang[1]) ?>"></a>
+                <?php foreach ($p->otherlang as $i => $otherLang) : ?>
+                    <?php if (isset($p->otherlangpath[$i])) : ?>
+                        <a class="<?= $i === 0 ? 'upper-flag' : 'bottom-flag' ?>" href="<?= $page->relpath . $p->otherlangpath[$i] ?>">
+                            <img src="<?= $page->relpath ?>flags/<?= $otherLang ?>.gif" alt='<?= t("Conteúdo em Português", $otherLang) ?>'>
+                        </a>
+                    <?php endif; ?>
+                <?php endforeach; ?>
             </li>
 
             <?php foreach ($kinds as $kind => $icon) : ?>

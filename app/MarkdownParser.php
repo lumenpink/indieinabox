@@ -65,6 +65,7 @@ class MarkdownParser
         $content = $this->contentProcessor->removeYamlFrontMatter($content);
 
         $page = $this->contentProcessor->setTitle($page, $content, $this->site->defaulttitle);
+        $page = $this->contentProcessor->setDate($page, $file);
         $page = $this->contentProcessor->processTags($page, $content);
 
         $content = $this->contentProcessor->processContent($content);

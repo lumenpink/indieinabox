@@ -26,6 +26,7 @@ $translations= array (
     'Anel de Sites Indieweb' => '',
     'Artigos' => '',
     'Confirmações' => '',
+    'Conteúdo em Português' => '',
     'Curtidas' => '',
     'Diários' => '',
     'Fotos' => '',

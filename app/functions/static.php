@@ -54,7 +54,10 @@ function getDestinationPath(string $entry, string $dir, string $base, object $si
 
 function shouldCopyFile(string $source, string $destination, object $site): bool
 {
-    return is_file($source) && (!is_file($destination) || filemtime($source) > filemtime($destination) || $site->forcestaticoverride);
+    return is_file($source)
+        && (!is_file($destination)
+            || filemtime($source) > filemtime($destination)
+            || $site->forcestaticoverride);
 }
 
 function ensureDestinationDirectoryExists(string $destination): void

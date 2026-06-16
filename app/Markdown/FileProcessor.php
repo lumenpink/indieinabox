@@ -72,7 +72,9 @@ class FileProcessor
         $layout = "page";
 
         if (isset($page["layout"])) {
-            $layoutFile = $this->base . DIRECTORY_SEPARATOR . "resources" . DIRECTORY_SEPARATOR . "views" . DIRECTORY_SEPARATOR . $page["layout"] . ".php";
+            $layoutFile = $this->base . DIRECTORY_SEPARATOR . "resources"
+                . DIRECTORY_SEPARATOR . "views"
+                . DIRECTORY_SEPARATOR . $page["layout"] . ".php";
             if (file_exists($layoutFile) && is_readable($layoutFile)) {
                 return $page["layout"];
             }
@@ -81,7 +83,9 @@ class FileProcessor
         $slugParts = explode("/", trim($page["slug"], "/"));
         if (count($slugParts) > 1) {
             $folderName = trim($slugParts[count($slugParts) - 2]);
-            $layoutFile = $this->base . DIRECTORY_SEPARATOR . "resources" . DIRECTORY_SEPARATOR . "views" . DIRECTORY_SEPARATOR . $folderName . ".php";
+            $layoutFile = $this->base . DIRECTORY_SEPARATOR . "resources"
+                . DIRECTORY_SEPARATOR . "views"
+                . DIRECTORY_SEPARATOR . $folderName . ".php";
             if (file_exists($layoutFile) && is_readable($layoutFile)) {
                 return $folderName;
             }

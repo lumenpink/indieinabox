@@ -55,7 +55,10 @@ it('executes the build pipeline and generates the static site correctly', functi
     file_put_contents($sandbox . '/config.yml', $yaml->dump($config));
 
     // 2. Create markdown content
-    file_put_contents($sandbox . '/content/index.md', "---\ntitle: Home Page\nlayout: page\n---\nWelcome home! #welcome");
+    file_put_contents(
+        $sandbox . '/content/index.md',
+        "---\ntitle: Home Page\nlayout: page\n---\nWelcome home! #welcome"
+    );
     file_put_contents($sandbox . '/content/about.md', "---\ntitle: About Page\nlayout: page\n---\nAbout me.");
 
     // 3. Create views
@@ -104,7 +107,10 @@ PHP
 
     // 4. Create static asset and live.js symlink
     file_put_contents($sandbox . '/resources/static/app.css', 'body { color: red; }');
-    symlink(dirname(dirname(__DIR__)) . '/resources/views/livejs/live.js', $sandbox . '/resources/views/livejs/live.js');
+    symlink(
+        dirname(dirname(__DIR__)) . '/resources/views/livejs/live.js',
+        $sandbox . '/resources/views/livejs/live.js'
+    );
 
     // 5. Setup symlinks to app, bootstrap, data, vendor
     symlink(dirname(dirname(__DIR__)) . '/vendor', $sandbox . '/vendor');
@@ -190,7 +196,10 @@ it('injects live-reload script when building with -d (dev mode)', function () us
 </html>
 PHP
     );
-    symlink(dirname(dirname(__DIR__)) . '/resources/views/livejs/live.js', $sandbox . '/resources/views/livejs/live.js');
+    symlink(
+        dirname(dirname(__DIR__)) . '/resources/views/livejs/live.js',
+        $sandbox . '/resources/views/livejs/live.js'
+    );
 
     // 4. Setup symlinks to app, bootstrap, data, vendor
     symlink(dirname(dirname(__DIR__)) . '/vendor', $sandbox . '/vendor');

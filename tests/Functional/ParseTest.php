@@ -18,7 +18,14 @@ beforeEach(function () {
     vfsStream::setup('root', null, [
         'content' => [
             'blog' => [
-                'my-post.md' => "---\ntitle: My Cool Post\ndate: 1609459200\ntags:\n  - news\n---\nHello #world, this is a test. Check out [my link](/blog/other-post).\nAlso #anotherTag and #world."
+                'my-post.md' => "---\n"
+                    . "title: My Cool Post\n"
+                    . "date: 1609459200\n"
+                    . "tags:\n"
+                    . "  - news\n"
+                    . "---\n"
+                    . "Hello #world, this is a test. Check out [my link](/blog/other-post).\n"
+                    . "Also #anotherTag and #world."
             ]
         ]
     ]);

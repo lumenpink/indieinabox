@@ -83,7 +83,8 @@ class LanguageProcessor
         }
 
         foreach ($page->localization->otherlang as $key => $value) {
-            $page->localization->otherlangpath[$key] = $value === $this->site->localization->defaultLang ? "" : $value . "/";
+            $page->localization->otherlangpath[$key] =
+                $value === $this->site->localization->defaultLang ? "" : $value . "/";
         }
         return $page;
     }
@@ -96,7 +97,10 @@ class LanguageProcessor
      */
     private function processLanguagePaths(Page $page): Page
     {
-        $page->localization->langpath = $page->localization->lang === $this->site->localization->defaultLang ? "" : $page->localization->lang . "/";
+        $page->localization->langpath =
+            $page->localization->lang === $this->site->localization->defaultLang
+            ? ""
+            : $page->localization->lang . "/";
 
         $nick = str_replace($page->localization->lang, '', $page->slug);
         $nick = explode("/", $nick);

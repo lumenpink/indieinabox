@@ -5,14 +5,14 @@
 		}
 	],
 	"settings": {
-		"intelephense.environment.phpVersion": "7.4.0",
+		"intelephense.environment.phpVersion": "8.2.0",
 		"wrap.with.php": {
 			"label": "@php",
 			"description": "@php...@endphp",
 			"disabled": false,
 			"snippet": "@php\n\t$TM_SELECTED_TEXT\n@endphp$0"
 		},
-		"php.version": "7.4",
+		"php.version": "8.2",
 		"intelephense.environment.includePaths": [
 			"./vendor/pestphp",
 			"./vendor/phpunit/phpunit"

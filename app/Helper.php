@@ -523,4 +523,54 @@ class Helper
                 . ";\n?>"
         );
     }
+
+    /**
+     * List posts, sorting by date descending, up to 10 posts
+     *
+     * @return string
+     */
+    public static function listposts(): string
+    {
+        global $base, $pages, $site;
+        $localpages = $pages instanceof Pages ? $pages->all() : $pages;
+        $localpages = array_filter($localpages, [self::class, 'removegeneric']);
+        usort(
+            $localpages,
+            function ($a, $b) {
+                $dateA = $a instanceof Page ? $a->date : ($a['date'] ?? 0);
+                $dateB = $b instanceof Page ? $b->date : ($b['date'] ?? 0);
+                $timeA = $dateA instanceof \DateTime ? $dateA->getTimestamp() : $dateA;
+                $timeB = $dateB instanceof \DateTime ? $dateB->getTimestamp() : $dateB;
+                return $timeB <=> $timeA;
+            }
+        );
+        $count = 0;
+        ob_start();
+        foreach ($localpages as $page) {
+            include $base . DIRECTORY_SEPARATOR . "resources/views/includes/summary.php";
+            $count++;
+            if ($count >= 10) {
+                break;
+            }
+        }
+        return (string)ob_get_clean();
+    }
+
+    /**
+     * Remove generic/page items from filter list
+     *
+     * @param  mixed $var
+     * @return bool
+     */
+    public static function removegeneric($var): bool
+    {
+        $kind = $var instanceof Page ? $var->kind : ($var["kind"] ?? null);
+        if ($kind !== null) {
+            if ($kind !== "generic" && $kind !== "page") {
+                return true;
+            }
+        }
+        return false;
+    }
 }
+

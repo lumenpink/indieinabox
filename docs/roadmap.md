@@ -24,8 +24,6 @@ This document tracks completed refactoring phases and future directions.
 
 ---
 
-## Future Roadmap
-
 ### 🏗️ Phase 3: Directory Structure Refactoring (June 2026)
 *   **PSR-4 Autoloading**: Configured Composer to autoload classes under the `Indieinabox\` namespace directly from the `app/` folder.
 *   **Unified Bootstrap**: Created `bootstrap/app.php` to initialize autoloader and procedural helpers/data files, replacing custom loaders.
@@ -33,13 +31,14 @@ This document tracks completed refactoring phases and future directions.
 *   **Root Build Runner**: Migrated the main site compilation script to a root-level `build.php` executing the generation pipeline.
 *   **Documentation Refactoring**: Cleaned the main `README.md` and updated all documentation under `docs/` to reflect the new structure.
 
+### ⚙️ Phase 4: Full Procedural Helpers Migration (June 2026)
+*   **Namespaced Helpers**: Migrated procedural functions inside `app/functions/` to namespaced classes like `Helper` and static helper methods.
+*   **Unified Global Wrappers**: Replaced scattered procedural files in `app/functions/` with a single `helpers.php` wrapper file for backward-compatibility with template variables.
+*   **Structured SiteBuilder**: Migrated the build pipeline execution and static copying logic from procedural functions inside `build.php` to the new `SiteBuilder` class.
+
 ---
 
 ## Future Roadmap
-
-### ⚙️ Phase 4: Full Procedural Helpers Migration
-*   Migrate procedural functions inside `app/functions/` (such as `kind()`, `translate()`, `localizeddate()`) to static helper methods or namespaced classes (e.g., `Helper`).
-*   Transition from procedural require/include loading blocks inside `build.php` to structured service classes.
 
 ### 🔍 Phase 5: Parser Transition
 *   Replace legacy procedural `MarkdownParser` bridge function inside `app/functions/parse.php` with namespaced parser `MarkdownParser` inside `app/MarkdownParser.php`.

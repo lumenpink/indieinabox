@@ -121,19 +121,8 @@ if (isset($config['forcestaticoverride'])) {
     $site->options->forceStaticOverride = $config['forcestaticoverride'];
 }
 
-$pages = new Pages();
+$builder = new \Indieinabox\SiteBuilder($site);
+$builder->build();
+$pages = $builder->getPages();
 
-
-/* Main functions */
-
-recursive_rmdir($base . DIRECTORY_SEPARATOR . $site->paths->outputDir);
-scan($base . DIRECTORY_SEPARATOR . $site->paths->contentDir);
-generateHTMLFiles($pages);
-generateFeed();
-copyAssets($base . DIRECTORY_SEPARATOR . "resources" . DIRECTORY_SEPARATOR . "views");
-if ($site->options->skipStatic) {
-    echo "Skipping static files\n";
-} else {
-    copyStatic($base . DIRECTORY_SEPARATOR . "resources" . DIRECTORY_SEPARATOR . "static");
-}
 echo "Build complete\n";

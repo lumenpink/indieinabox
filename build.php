@@ -47,7 +47,11 @@ $yaml = new Yaml();
  *     forcestaticoverride?: bool
  * } $config
  */
-$config = $yaml->loadFile($base . DIRECTORY_SEPARATOR . "config.yml");
+$configFile = $base . DIRECTORY_SEPARATOR . "config.yml";
+if (file_exists($base . DIRECTORY_SEPARATOR . ".config.yml")) {
+    $configFile = $base . DIRECTORY_SEPARATOR . ".config.yml";
+}
+$config = $yaml->loadFile($configFile);
 if (isset($options["d"])) {
     $config["dev"] = true;
 }
@@ -95,6 +99,9 @@ if (isset($config['author'])) {
 }
 if (isset($config['fqdn'])) {
     $site->metadata->fqdn = $config['fqdn'];
+}
+if (isset($config['indieauth_password'])) {
+    $site->metadata->indieauthPassword = (string)$config['indieauth_password'];
 }
 if (isset($config['support'])) {
     $site->support->support = $config['support'];

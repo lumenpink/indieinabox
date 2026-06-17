@@ -16,6 +16,7 @@ class Metadata
     public string $author;
     public string $defaultTitle;
     public string $fqdn;
+    public ?string $indieauthPassword = null;
 
     /**
      * SiteMetadata constructor.

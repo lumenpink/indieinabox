@@ -28,12 +28,29 @@ class WebRouter
             return;
         }
 
+        $isAuthParam = isset($_GET['auth']);
+        $isAuthPath = (preg_match('#/auth$#i', $requestUriClean) === 1);
+        $isTokenParam = isset($_GET['token']);
+        $isTokenPath = (preg_match('#/token$#i', $requestUriClean) === 1);
+        $isMetadataPath = ($requestUriClean === '/.well-known/oauth-authorization-server');
+
+        if ($isAuthParam || $isAuthPath || $isTokenParam || $isTokenPath || $isMetadataPath) {
+            $handler = $this->createIndieAuthHandler();
+            $handler->handle();
+            return;
+        }
+
         $this->serveStatic();
     }
 
     protected function createWebmentionHandler(): WebmentionHandler
     {
         return new WebmentionHandler($this->site);
+    }
+
+    protected function createIndieAuthHandler(): IndieAuthHandler
+    {
+        return new IndieAuthHandler($this->site);
     }
 
     private function serveStatic(): void

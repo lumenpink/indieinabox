@@ -101,3 +101,17 @@ The `WebmentionHandler` manages the reception, validation, and storage of incomi
     3.  Confirms the `target` page exists as a generated file in the output directory.
     4.  Fetches the `source` page and parses its HTML to verify it contains a valid absolute or relative link to the `target`.
     5.  Stores successfully verified webmention data in JSON format under `data/webmentions/<md5_slug>.json`, aggregating mentions without duplicating sources.
+
+---
+
+## 🔑 IndieAuth Handler (`Indieinabox\IndieAuthHandler`)
+
+The `IndieAuthHandler` handles dynamic metadata serving, user login presentation, authorization code verification with PKCE, and token issuing.
+*   **Metadata Discovery**: Responds to `/.well-known/oauth-authorization-server` requests with compliant endpoints mapping JSON.
+*   **GET `/auth`**: Serves a highly aesthetic login form showing requesting client credentials and requesting scopes.
+*   **POST `/auth`**:
+    - Generates and stores 10-minute temporary auth code credentials under `data/indieauth/codes/<md5>.json` upon successful password / bcrypt verification.
+    - Verifies generated authorization codes using client ID matching and PKCE checks (supporting S256/plain methods).
+*   **POST `/token`**: Exchanges validated codes for secure access tokens stored under `data/indieauth/tokens/<md5>.json`.
+*   **GET `/token`**: Validates bearer tokens (sent in headers) and returns client/scopes metadata for external services integration.
+

@@ -50,7 +50,17 @@ This document tracks completed refactoring phases and future directions.
 
 ---
 
+### 🔑 Phase 7: Simple IndieAuth Endpoint (June 2026)
+*   **Hidden Configuration Priority**: Updated configuration loader in `build.php` to prioritize loading settings from `.config.yml` if it exists, securing secrets like passwords in production.
+*   **Metadata Endpoint Discovery**: Implemented compliant OAuth 2.0 authorization server metadata discovery served dynamically from the site FQDN.
+*   **Authorization Code & PKCE Validation**: Developed a stateless authorization flow supporting PKCE `S256` and `plain` code challenges and verification.
+*   **Token Issue & Bearer Verification**: Developed token exchange capabilities and bearer token validation via HTTP `Authorization` headers.
+*   **Premium Presentation Layer**: Created an aesthetically rich, responsive login layout utilizing Google Fonts, backdrop blur filters, and smooth CSS animations.
+
+---
+
 ## Future Roadmap
 
-All scheduled phases of the refactoring roadmap, including single-file CLI/Web execution and Webmention endpoints, are now complete.
+All scheduled phases of the refactoring roadmap, including single-file CLI/Web execution, Webmention endpoints, secure config file priority, and IndieAuth support, are now complete.
+
 

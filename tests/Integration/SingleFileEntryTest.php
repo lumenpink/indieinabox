@@ -91,7 +91,16 @@ PHP
 
     // 3. Symlink dependencies into sandbox and copy compiled single-file script as build.php
     symlink($root . '/vendor', $integrationSandbox . '/vendor');
-    symlink($root . '/data', $integrationSandbox . '/data');
+    mkdir($integrationSandbox . '/data', 0777, true);
+    foreach (scandir($root . '/data') as $item) {
+        if ($item === '.' || $item === '..') {
+            continue;
+        }
+        $sourcePath = $root . '/data/' . $item;
+        if (!is_dir($sourcePath)) {
+            symlink($sourcePath, $integrationSandbox . '/data/' . $item);
+        }
+    }
     copy($root . '/indieinabox.php', $integrationSandbox . '/build.php');
 
     // 4. Test CLI Mode: Run build process

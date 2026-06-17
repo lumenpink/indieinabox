@@ -25,12 +25,12 @@ jobs:
 
     steps:
       - name: "Checkout (histórico completo para Psalm)"
-        uses: actions/checkout@v6
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         with:
           fetch-depth: 0
 
       - name: "Setup PHP ${{ matrix.php }}"
-        uses: shivammathur/setup-php@v2
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2.37.2
         with:
           php-version: ${{ matrix.php }}
           extensions: mbstring, json, fileinfo
@@ -39,7 +39,7 @@ jobs:
 
       - name: "Cache vendor/"
         id: cache-vendor
-        uses: actions/cache@v5
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
         with:
           path: vendor
           key: vendor-php${{ matrix.php }}-${{ hashFiles('composer.lock') }}
@@ -78,7 +78,7 @@ jobs:
       # ── Artefatos de cobertura ───────────────────────────────────────────────
       - name: "Upload relatório Clover"
         if: matrix.php == '8.4'          # Evita uploads duplicados
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: coverage-clover
           path: coverage/clover.xml
@@ -86,7 +86,7 @@ jobs:
 
       - name: "Upload relatório JUnit"
         if: matrix.php == '8.4'
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: coverage-junit
           path: coverage/junit.xml
@@ -101,11 +101,11 @@ jobs:
     needs: test           # Só roda se os testes passarem
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         with:
           fetch-depth: 0
 
-      - uses: shivammathur/setup-php@v2
+      - uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2.37.2
         with:
           php-version: "8.4"
           extensions: mbstring, json, fileinfo
@@ -114,7 +114,7 @@ jobs:
 
       - name: "Cache vendor/"
         id: cache-vendor
-        uses: actions/cache@v5
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
         with:
           path: vendor
           key: vendor-php8.4-${{ hashFiles('composer.lock') }}
@@ -136,7 +136,7 @@ jobs:
 
       - name: "Upload relatório Psalm (JSON)"
         if: always()
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: psalm-report
           path: coverage/psalm.json
@@ -151,10 +151,10 @@ jobs:
     needs: test
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
 
       - name: "Cache NVD (acelera scans subsequentes)"
-        uses: actions/cache@v5
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
         with:
           path: ~/.dependency-check/data
           key: nvd-${{ github.run_id }}
@@ -162,7 +162,7 @@ jobs:
             nvd-
 
       - name: "Executar OWASP Dependency-Check"
-        uses: dependency-check/Dependency-Check_Action@main
+        uses: dependency-check/Dependency-Check_Action@75ba02d6183445fe0761d26e836bde58b1560600 # v1.1.0
         id: depcheck
         with:
           project: "indieinabox"
@@ -177,7 +177,7 @@ jobs:
 
       - name: "Upload relatório Dependency-Check"
         if: always()
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: dependency-check-report
           path: coverage/dependency-check
@@ -203,21 +203,21 @@ jobs:
             echo "::warning::SONAR_TOKEN não configurado. Pulando análise do SonarQube."
           fi
 
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         if: env.SONAR_TOKEN != ''
         with:
           fetch-depth: 0   # Necessário para blame e histórico no Sonar
 
       - name: "Baixar relatório Clover"
         if: env.SONAR_TOKEN != ''
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: coverage-clover
           path: coverage
 
       - name: "Baixar relatório Psalm"
         if: env.SONAR_TOKEN != ''
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: psalm-report
           path: coverage
@@ -225,7 +225,7 @@ jobs:
       # ── Opção A: SonarCloud (SaaS gratuito para open source) ─────────────────
       - name: "SonarCloud Scan"
         if: env.SONAR_TOKEN != ''
-        uses: SonarSource/sonarqube-scan-action@v5
+        uses: SonarSource/sonarqube-scan-action@713881670b6b3676cda39549040e2d88c70d582e # v8.2.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -238,6 +238,6 @@ jobs:
       # ── Opção B: SonarQube self-hosted (descomente se preferir) ──────────────
       # - name: "SonarQube Scan (self-hosted)"
       #   if: env.SONAR_TOKEN != ''
-      #   uses: SonarSource/sonarqube-scan-action@v5
+      #   uses: SonarSource/sonarqube-scan-action@713881670b6b3676cda39549040e2d88c70d582e # v8.2.0
       #   env:
       #     SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}

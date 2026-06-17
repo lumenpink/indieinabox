@@ -133,6 +133,15 @@ if (isset($config['forcestaticoverride'])) {
     $site->options->forceStaticOverride = $config['forcestaticoverride'];
 }
 
+if (isset($config['twtxt'])) {
+    $twtxtData = $config['twtxt'];
+    $site->twtxt->nick = (string) ($twtxtData['nick'] ?? '');
+    $site->twtxt->description = (string) ($twtxtData['description'] ?? '');
+    $site->twtxt->avatar = (string) ($twtxtData['avatar'] ?? '');
+    $site->twtxt->following = (array) ($twtxtData['following'] ?? []);
+    $site->twtxt->hubs = (array) ($twtxtData['hubs'] ?? []);
+}
+
 if (php_sapi_name() === 'cli') {
     $builder = new \Indieinabox\SiteBuilder($site);
     $builder->build();

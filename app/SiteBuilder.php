@@ -56,6 +56,7 @@ class SiteBuilder
 
         // Generate files
         $this->generateHTMLFiles();
+        $this->generateTwtxt();
         $this->generateFeed();
 
         // Copy assets
@@ -409,5 +410,60 @@ class SiteBuilder
         $gopherContent .= "1Back to Home\t/\t{$host}\t70\r\n";
 
         file_put_contents($destinationFile, $gopherContent);
+    }
+
+    public function generateTwtxt(): void
+    {
+        $base = $this->site->paths->baseDir;
+        $outDir = $base . DIRECTORY_SEPARATOR . $this->site->paths->outputDir;
+
+        // 1. Generate local feed: public/twtxt.txt
+        $twtxtManager = new \Indieinabox\Twtxt\TwtxtManager();
+        $feedFile = $outDir . DIRECTORY_SEPARATOR . 'twtxt.txt';
+
+        echo "Generating twtxt.txt feed...\n";
+        $twtxtManager->generateFeed(
+            iterator_to_array($this->pages),
+            $feedFile,
+            $this->site->metadata->fqdn,
+            $this->site->twtxt
+        );
+
+        // 2. Fetch aggregated timeline & mentions if subscriptions/hubs are configured
+        echo "Fetching twtxt timeline and mentions...\n";
+        $cacheDir = $base . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'twtxt_cache';
+
+        $timelineEntries = [];
+        $mentionEntries = [];
+
+        if (!empty($this->site->twtxt->following)) {
+            $timelineEntries = $twtxtManager->fetchTimeline($this->site->twtxt->following, $cacheDir);
+        }
+        if (!empty($this->site->twtxt->hubs)) {
+            $mentionEntries = $twtxtManager->fetchHubMentions($this->site->twtxt->hubs, $this->site->metadata->fqdn);
+        }
+
+        // 3. Compile the static timeline page: public/timeline/index.html
+        echo "Compiling timeline static page...\n";
+        $timelinePage = Page::fromArray([
+            'title' => 'Timeline',
+            'layout' => 'timeline',
+            'slug' => 'timeline/',
+            'date' => time(),
+            'content' => '',
+            'originalcontent' => ''
+        ]);
+
+        // Expose timeline & mentions globally for timeline.php view template
+        global $timeline, $mentions;
+        $timeline = $timelineEntries;
+        $mentions = $mentionEntries;
+
+        $layoutFile = $base . DIRECTORY_SEPARATOR . 'resources' . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR . 'timeline.php';
+        if (file_exists($layoutFile) && is_readable($layoutFile)) {
+            $this->createHTMLFile($timelinePage);
+        } else {
+            echo "Skipping timeline static page compilation: timeline layout not found.\n";
+        }
     }
 }

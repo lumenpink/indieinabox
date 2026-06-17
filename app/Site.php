@@ -9,6 +9,7 @@ use Indieinabox\Site\Paths;
 use Indieinabox\Site\Options;
 use Indieinabox\Site\Localization;
 use Indieinabox\Site\Support;
+use Indieinabox\Site\Twtxt;
 
 class Site
 {
@@ -17,6 +18,8 @@ class Site
     public Options $options;
     public Localization $localization;
     public Support $support;
+    public Twtxt $twtxt;
+
     /**
      * Config constructor.
      *
@@ -25,19 +28,22 @@ class Site
      * @param Options $options
      * @param Localization $localization
      * @param Support $support
+     * @param Twtxt $twtxt
      */
     public function __construct(
         ?Metadata $metadata = null,
         ?Paths $paths = null,
         ?Options $options = null,
         ?Localization $localization = null,
-        ?Support $support = null
+        ?Support $support = null,
+        ?Twtxt $twtxt = null
     ) {
         $this->metadata = $metadata ?? new Metadata();
         $this->paths = $paths ?? new Paths();
         $this->options = $options ?? new Options();
         $this->localization = $localization ?? new Localization();
         $this->support = $support ?? new Support();
+        $this->twtxt = $twtxt ?? new Twtxt();
     }
 
     /**

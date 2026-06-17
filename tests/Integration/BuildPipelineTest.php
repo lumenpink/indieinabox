@@ -24,6 +24,79 @@ function cleanSandbox(string $dir): void
     @rmdir($dir);
 }
 
+/**
+ * Writes the default config.yml to the sandbox.
+ */
+function writeSandboxConfig(string $sandbox): void
+{
+    $config = [
+        'base'               => 'testbase',
+        'title'              => 'Integration Site',
+        'sitename'           => 'My Integration Site',
+        'author'             => 'Agent Antigravity',
+        'fqdn'               => 'https://example.com/testbase',
+        'outputdir'          => 'public',
+        'contentdir'         => 'content',
+        'lang'               => 'en',
+        'htmlpostprocessing' => 'beautify',
+    ];
+    $yaml = new Yaml();
+    file_put_contents($sandbox . '/config.yml', $yaml->dump($config));
+}
+
+/**
+ * Creates the minimal page.php view (no live.js support) in the sandbox.
+ */
+function writeBasePageView(string $sandbox): void
+{
+    file_put_contents($sandbox . '/resources/views/page.php', <<<PHP
+<!DOCTYPE html>
+<html>
+<head>
+    <title><?= \$page->title ?></title>
+</head>
+<body>
+    <h1><?= \$page->title ?></h1>
+    <article><?= \$page->content ?></article>
+</body>
+</html>
+PHP
+    );
+}
+
+/**
+ * Symlinks the live.js file into the sandbox livejs view directory.
+ */
+function linkLiveJs(string $sandbox): void
+{
+    symlink(
+        dirname(dirname(__DIR__)) . '/resources/views/livejs/live.js',
+        $sandbox . '/resources/views/livejs/live.js'
+    );
+}
+
+/**
+ * Sets up vendor/app/bootstrap/data symlinks and copies the build script
+ * into the sandbox, respecting the TEST_COMPILED environment variable.
+ */
+function setupSandboxRunner(string $sandbox): void
+{
+    $root        = dirname(dirname(__DIR__));
+    $isCompiled  = getenv('TEST_COMPILED') === 'true' || getenv('TEST_COMPILED') === '1';
+
+    symlink($root . '/vendor', $sandbox . '/vendor');
+
+    if ($isCompiled) {
+        copy($root . '/indieinabox.php', $sandbox . '/build.php');
+        symlink($root . '/data', $sandbox . '/data');
+    } else {
+        copy($root . '/build.php', $sandbox . '/build.php');
+        symlink($root . '/bootstrap', $sandbox . '/bootstrap');
+        symlink($root . '/app', $sandbox . '/app');
+        symlink($root . '/data', $sandbox . '/data');
+    }
+}
+
 beforeEach(function () use ($sandbox) {
     cleanSandbox($sandbox);
     mkdir($sandbox, 0777, true);
@@ -40,19 +113,7 @@ afterEach(function () use ($sandbox) {
 
 it('executes the build pipeline and generates the static site correctly', function () use ($sandbox, $outputDir) {
     // 1. Create config.yml
-    $config = [
-        'base' => 'testbase',
-        'title' => 'Integration Site',
-        'sitename' => 'My Integration Site',
-        'author' => 'Agent Antigravity',
-        'fqdn' => 'https://example.com/testbase',
-        'outputdir' => 'public',
-        'contentdir' => 'content',
-        'lang' => 'en',
-        'htmlpostprocessing' => 'beautify'
-    ];
-    $yaml = new Yaml();
-    file_put_contents($sandbox . '/config.yml', $yaml->dump($config));
+    writeSandboxConfig($sandbox);
 
     // 2. Create markdown content
     file_put_contents(
@@ -62,19 +123,7 @@ it('executes the build pipeline and generates the static site correctly', functi
     file_put_contents($sandbox . '/content/about.md', "---\ntitle: About Page\nlayout: page\n---\nAbout me.");
 
     // 3. Create views
-    file_put_contents($sandbox . '/resources/views/page.php', <<<PHP
-<!DOCTYPE html>
-<html>
-<head>
-    <title><?= \$page->title ?></title>
-</head>
-<body>
-    <h1><?= \$page->title ?></h1>
-    <article><?= \$page->content ?></article>
-</body>
-</html>
-PHP
-    );
+    writeBasePageView($sandbox);
 
     file_put_contents($sandbox . '/resources/views/feed.php', <<<PHP
 <?php
@@ -107,28 +156,10 @@ PHP
 
     // 4. Create static asset and live.js symlink
     file_put_contents($sandbox . '/resources/static/app.css', 'body { color: red; }');
-    symlink(
-        dirname(dirname(__DIR__)) . '/resources/views/livejs/live.js',
-        $sandbox . '/resources/views/livejs/live.js'
-    );
+    linkLiveJs($sandbox);
 
     // 5. Setup symlinks to app, bootstrap, data, vendor
-    symlink(dirname(dirname(__DIR__)) . '/vendor', $sandbox . '/vendor');
-
-    $isCompiled = getenv('TEST_COMPILED') === 'true' || getenv('TEST_COMPILED') === '1';
-
-    if ($isCompiled) {
-        // Test compiled build runner
-        copy(dirname(dirname(__DIR__)) . '/indieinabox.php', $sandbox . '/build.php');
-        // Compiled script needs data directory to load global dictionary arrays
-        symlink(dirname(dirname(__DIR__)) . '/data', $sandbox . '/data');
-    } else {
-        // Test source runner
-        copy(dirname(dirname(__DIR__)) . '/build.php', $sandbox . '/build.php');
-        symlink(dirname(dirname(__DIR__)) . '/bootstrap', $sandbox . '/bootstrap');
-        symlink(dirname(dirname(__DIR__)) . '/app', $sandbox . '/app');
-        symlink(dirname(dirname(__DIR__)) . '/data', $sandbox . '/data');
-    }
+    setupSandboxRunner($sandbox);
 
     // 6. Run the build pipeline
     $cmd = 'php ' . escapeshellarg($sandbox . '/build.php');
@@ -162,24 +193,12 @@ PHP
 
 it('injects live-reload script when building with -d (dev mode)', function () use ($sandbox, $outputDir) {
     // 1. Create config.yml
-    $config = [
-        'base' => 'testbase',
-        'title' => 'Integration Site',
-        'sitename' => 'My Integration Site',
-        'author' => 'Agent Antigravity',
-        'fqdn' => 'https://example.com/testbase',
-        'outputdir' => 'public',
-        'contentdir' => 'content',
-        'lang' => 'en',
-        'htmlpostprocessing' => 'beautify'
-    ];
-    $yaml = new Yaml();
-    file_put_contents($sandbox . '/config.yml', $yaml->dump($config));
+    writeSandboxConfig($sandbox);
 
     // 2. Create markdown content
     file_put_contents($sandbox . '/content/index.md', "---\ntitle: Home Page\nlayout: page\n---\nWelcome home!");
 
-    // 3. Create views with livejs folder and live.js symlink
+    // 3. Create views with livejs support and live.js symlink
     file_put_contents($sandbox . '/resources/views/page.php', <<<PHP
 <!DOCTYPE html>
 <html>
@@ -196,25 +215,10 @@ it('injects live-reload script when building with -d (dev mode)', function () us
 </html>
 PHP
     );
-    symlink(
-        dirname(dirname(__DIR__)) . '/resources/views/livejs/live.js',
-        $sandbox . '/resources/views/livejs/live.js'
-    );
+    linkLiveJs($sandbox);
 
     // 4. Setup symlinks to app, bootstrap, data, vendor
-    symlink(dirname(dirname(__DIR__)) . '/vendor', $sandbox . '/vendor');
-
-    $isCompiled = getenv('TEST_COMPILED') === 'true' || getenv('TEST_COMPILED') === '1';
-
-    if ($isCompiled) {
-        copy(dirname(dirname(__DIR__)) . '/indieinabox.php', $sandbox . '/build.php');
-        symlink(dirname(dirname(__DIR__)) . '/data', $sandbox . '/data');
-    } else {
-        copy(dirname(dirname(__DIR__)) . '/build.php', $sandbox . '/build.php');
-        symlink(dirname(dirname(__DIR__)) . '/bootstrap', $sandbox . '/bootstrap');
-        symlink(dirname(dirname(__DIR__)) . '/app', $sandbox . '/app');
-        symlink(dirname(dirname(__DIR__)) . '/data', $sandbox . '/data');
-    }
+    setupSandboxRunner($sandbox);
 
     // 5. Run build pipeline with -d (dev mode option)
     $cmd = 'php ' . escapeshellarg($sandbox . '/build.php') . ' -d';

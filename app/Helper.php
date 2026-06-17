@@ -150,62 +150,98 @@ class Helper
         $chars = $ar[0];
 
         foreach ($chars as $i => $c) {
-            if (ord($c[0]) <= 127) {
-                continue;
-            } // ASCII - next please
-            $ord = 0;
-            if (ord($c[0]) >= 192 && ord($c[0]) <= 223) {
-                $ord = (ord($c[0]) - 192) * 64 + (ord($c[1]) - 128);
-            }
-            if (ord($c[0]) >= 224 && ord($c[0]) <= 239) {
-                $ord = (ord($c[0]) - 224) * 4096 + (ord($c[1]) - 128) * 64 + (ord($c[2]) - 128);
-            }
-            if (ord($c[0]) >= 240 && ord($c[0]) <= 247) {
-                $ord = (ord($c[0]) - 240) * 262144
-                    + (ord($c[1]) - 128) * 4096
-                    + (ord($c[2]) - 128) * 64
-                    + (ord($c[3]) - 128);
-            }
-            if (ord($c[0]) >= 248 && ord($c[0]) <= 251) {
-                $ord = (ord($c[0]) - 248) * 16777216
-                    + (ord($c[1]) - 128) * 262144
-                    + (ord($c[2]) - 128) * 4096
-                    + (ord($c[3]) - 128) * 64
-                    + (ord($c[4]) - 128);
-            }
-            if (ord($c[0]) >= 252 && ord($c[0]) <= 253) {
-                $ord = (ord($c[0]) - 252) * 1073741824
-                    + (ord($c[1]) - 128) * 16777216
-                    + (ord($c[2]) - 128) * 262144
-                    + (ord($c[3]) - 128) * 4096
-                    + (ord($c[4]) - 128) * 64
-                    + (ord($c[5]) - 128);
-            }
-            if (ord($c[0]) >= 254) {
-                $chars[$i] = $unknown;
-                continue;
-            } //error
+            $byte = ord($c[0]);
 
+            if ($byte <= 127) {
+                continue; // ASCII - next please
+            }
+
+            if ($byte >= 254) {
+                $chars[$i] = $unknown;
+                continue; // error
+            }
+
+            $ord  = self::decodeUtf8Codepoint($c);
             $bank = $ord >> 8;
 
-            if (!array_key_exists($bank, $UTF8_TO_ASCII)) {
-                $path = dirname(__DIR__) . '/data/' . sprintf('x%02x', $bank) . '.php';
-                if (file_exists($path)) {
-                    include $path;
-                } else {
-                    $UTF8_TO_ASCII[$bank] = array();
-                }
-            }
+            self::loadUtf8Bank($bank, $UTF8_TO_ASCII);
 
             $newchar = $ord & 255;
-            if (array_key_exists($newchar, $UTF8_TO_ASCII[$bank])) {
-                $chars[$i] = $UTF8_TO_ASCII[$bank][$newchar];
-            } else {
-                $chars[$i] = $unknown;
-            }
+            $chars[$i] = array_key_exists($newchar, $UTF8_TO_ASCII[$bank])
+                ? $UTF8_TO_ASCII[$bank][$newchar]
+                : $unknown;
         }
 
         return implode('', $chars);
+    }
+
+    /**
+     * Decode a multi-byte UTF-8 character sequence into its Unicode codepoint.
+     *
+     * @param  string $c  Raw multi-byte character (up to 6 bytes)
+     * @return int        Unicode codepoint value
+     */
+    private static function decodeUtf8Codepoint(string $c): int
+    {
+        $b0 = ord($c[0]);
+
+        if ($b0 >= 252) {
+            // 6-byte sequence (U+4000000 – U+7FFFFFFF)
+            return ($b0 - 252) * 1073741824
+                + (ord($c[1]) - 128) * 16777216
+                + (ord($c[2]) - 128) * 262144
+                + (ord($c[3]) - 128) * 4096
+                + (ord($c[4]) - 128) * 64
+                + (ord($c[5]) - 128);
+        }
+
+        if ($b0 >= 248) {
+            // 5-byte sequence (U+200000 – U+3FFFFFF)
+            return ($b0 - 248) * 16777216
+                + (ord($c[1]) - 128) * 262144
+                + (ord($c[2]) - 128) * 4096
+                + (ord($c[3]) - 128) * 64
+                + (ord($c[4]) - 128);
+        }
+
+        if ($b0 >= 240) {
+            // 4-byte sequence (U+10000 – U+1FFFFF)
+            return ($b0 - 240) * 262144
+                + (ord($c[1]) - 128) * 4096
+                + (ord($c[2]) - 128) * 64
+                + (ord($c[3]) - 128);
+        }
+
+        if ($b0 >= 224) {
+            // 3-byte sequence (U+800 – U+FFFF)
+            return ($b0 - 224) * 4096
+                + (ord($c[1]) - 128) * 64
+                + (ord($c[2]) - 128);
+        }
+
+        // 2-byte sequence (U+80 – U+7FF)
+        return ($b0 - 192) * 64 + (ord($c[1]) - 128);
+    }
+
+    /**
+     * Lazily load a UTF-8 translation bank from disk into the static cache.
+     *
+     * @param  int                      $bank         Bank index (high byte of codepoint)
+     * @param  array<int, array<int, string>> &$cache Reference to the static lookup table
+     * @return void
+     */
+    private static function loadUtf8Bank(int $bank, array &$cache): void
+    {
+        if (array_key_exists($bank, $cache)) {
+            return;
+        }
+
+        $path = dirname(__DIR__) . '/data/' . sprintf('x%02x', $bank) . '.php';
+        if (file_exists($path)) {
+            include $path;
+        } else {
+            $cache[$bank] = [];
+        }
     }
 
     /**

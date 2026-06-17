@@ -61,6 +61,38 @@ This document tracks completed refactoring phases and future directions.
 
 ## Future Roadmap
 
-All scheduled phases of the refactoring roadmap, including single-file CLI/Web execution, Webmention endpoints, secure config file priority, and IndieAuth support, are now complete.
+The following next-generation features are scheduled for development:
+
+### 🛠️ Phase 8: Custom AST-based Markdown Parser
+*   **Recreation of Parser**: Replace the current Parsedown library with a lightweight, clean-room custom Markdown parser designed specifically for Indieinabox.
+*   **Abstract Syntax Tree (AST)**: Implement a two-pass parser architecture (block parsing and inline parsing) that constructs a structured Abstract Syntax Tree (AST) representing the document structure (nodes, blockquotes, codeblocks, lists, formatting, links, microformats).
+*   **Type Safety**: Use clean OOP node classes to ensure strict type safety and extensibility for custom markdown block/inline types.
+
+### 📤 Phase 9: AST-driven Multi-Format Output Engine
+*   **Flexible Rendering Engine**: Develop a modular renderer that consumes the custom Markdown AST to compile the site's content into multiple protocols/formats simultaneously:
+    *   **HTML**: Render semantic, responsive HTML structures for traditional web browsers.
+    *   **Gemini (gemproto)**: Generate lightweight line-oriented `.gmi` pages for the Gemini protocol.
+    *   **Gopher (gophermap)**: Build structured `gophermap` selectors for retro Gopher protocol browsers.
+*   **Static Exporter**: Integrate the output engine into `SiteBuilder` to compile the site for all three formats during the build pipeline.
+
+### 📡 Phase 10: Twtxt Publishing & Consuming
+*   **Twtxt Feed Generation**: Create a builder/renderer that automatically formats site posts/updates into a standard flat-text `twtxt.txt` feed (a simple `<timestamp>\t<text>` format) and publishes it at the root of the static site.
+*   **Feed Aggregator & Consumer**: Build a local twtxt parser that fetches and reads remote twtxt feeds, parsing user mentions, hashtags, and timestamps for localized display.
+*   **Hub Integration**: Integrate with federated twtxt hubs to search, query, and retrieve mentions, replies, and updates beyond the local subscription list, expanding the reach of the site's microblogging footprint.
+
+### ✍️ Phase 11: Micropub API Support
+*   **Micropub Endpoint**: Implement a fully compliant W3C Micropub endpoint to allow writing/creating, updating, and deleting content on the site using external IndieWeb clients (such as Quill or Indigenous).
+*   **Authentication Guard**: Integrate with the existing IndieAuth handler to validate incoming HTTP requests via Bearer access tokens, enforcing scopes like `create`, `update`, `delete`, and `media`.
+*   **Media Endpoint**: Develop a Micropub Media Endpoint to support direct image/file uploads, automatically organizing media files and returning their absolute URLs.
+
+### 📬 Phase 12: Microsub Endpoint & Reader (with Twtxt)
+*   **Microsub Server**: Implement a W3C Microsub endpoint to manage feeds, channels (e.g., Inbox, Friends, Tech), and read states (read, unread, archived).
+*   **Twtxt Feeds Bridging**: Enable subscription to standard `twtxt.txt` feeds alongside traditional RSS, Atom, and Microformats-parsed feeds, converting microblog posts into unified Microsub timeline entries.
+*   **Token Verification**: Verify bearer tokens using the local IndieAuth endpoint to authorize feed readers/clients.
+
+### 🌐 Phase 13: ActivityPub Federated Protocol (Publishing & Reading)
+*   **Actor Profiles & WebFinger**: Implement WebFinger query routing (`/.well-known/webfinger`) and JSON-LD ActivityPub Actor profiles so the site can be searched and followed on the Fediverse (e.g., Mastodon).
+*   **Inbox & Outbox Handling**: Create an ActivityPub Inbox/Outbox system supporting HTTP Signatures verification.
+*   **Publishing & Reading**: Publish new site posts automatically to followers' inboxes, and utilize the local Microsub endpoint as a centralized hub to fetch, store, and display incoming feed items from the Fediverse.
 
 

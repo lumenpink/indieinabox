@@ -80,3 +80,24 @@ Extends and modularizes markdown parsing into specific classes:
 * **`Indieinabox\Yaml`**: Reads/writes configuration and frontmatter YAML files.
 * **`Indieinabox\Helper`**: General utilities (slug conversion, localized date maps).
 * **`Indieinabox\Translations\UrlTranslations`**: Resolves translated paths and nicks for multilang pages.
+
+---
+
+## 🔀 Web Router (`Indieinabox\WebRouter`)
+
+The `WebRouter` orchestrates requests when the application runs under a Web SAPI (e.g. `cli-server`, `fpm-fcgi`).
+*   **Routing**: Detects requests to beauty URLs (like `/webmention` or `/webmentions`) and parameter requests (like `?webmention`). These are passed to `WebmentionHandler`.
+*   **Static Asset Server**: Serves static pages and assets (HTML, CSS, JS, images, SVG, XML, JSON) directly from the output directory (`public/`) to function as a live dev/production server.
+
+---
+
+## 📩 Webmention Handler (`Indieinabox\WebmentionHandler`)
+
+The `WebmentionHandler` manages the reception, validation, and storage of incoming webmentions.
+*   **GET Requests**: Serves an aesthetically premium instruction and form page allowing users to manually submit webmentions.
+*   **POST Requests**:
+    1.  Validates formats of `source` and `target` URLs.
+    2.  Verifies the `target` URL points to the configured FQDN domain of this site.
+    3.  Confirms the `target` page exists as a generated file in the output directory.
+    4.  Fetches the `source` page and parses its HTML to verify it contains a valid absolute or relative link to the `target`.
+    5.  Stores successfully verified webmention data in JSON format under `data/webmentions/<md5_slug>.json`, aggregating mentions without duplicating sources.

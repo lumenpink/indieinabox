@@ -13,7 +13,10 @@ use Indieinabox\Pages;
 
 require_once __DIR__ . '/bootstrap/app.php';
 
-$options = getopt("sdf"); // Get the options passed to the script
+$options = [];
+if (php_sapi_name() === 'cli') {
+    $options = getopt("sdf"); // Get the options passed to the script
+}
 // -s - skip the static copy
 // -d - enable dev mode (include live-reload script)
 // -f - force static override
@@ -74,8 +77,10 @@ if (!isset($config["lang"])) {
 
 define("ASSETS", $config["base"] . "/assets");
 
-echo "Building at " . $config["base"] . "\n";
-echo "Assets are at " . ASSETS . "\n";
+if (php_sapi_name() === 'cli') {
+    echo "Building at " . $config["base"] . "\n";
+    echo "Assets are at " . ASSETS . "\n";
+}
 
 $site = new Site();
 $site->paths->baseDir = $base;
@@ -121,8 +126,12 @@ if (isset($config['forcestaticoverride'])) {
     $site->options->forceStaticOverride = $config['forcestaticoverride'];
 }
 
-$builder = new \Indieinabox\SiteBuilder($site);
-$builder->build();
-$pages = $builder->getPages();
-
-echo "Build complete\n";
+if (php_sapi_name() === 'cli') {
+    $builder = new \Indieinabox\SiteBuilder($site);
+    $builder->build();
+    $pages = $builder->getPages();
+    echo "Build complete\n";
+} else {
+    $router = new \Indieinabox\WebRouter($site);
+    $router->handleRequest();
+}

@@ -27,20 +27,28 @@ class Content
     public $images;
 
     /**
+     * @var string|null
+     */
+    public $rawBody;
+
+    /**
      * PageContent constructor.
      *
      * @param string $content
      * @param string $originalcontent
      * @param array<string> $images
+     * @param string|null $rawBody
      */
     public function __construct(
         string $content = "Hello World",
         string $originalcontent = "Hello World",
-        array $images = []
+        array $images = [],
+        ?string $rawBody = null
     ) {
         $this->content = $content;
         $this->originalcontent = $originalcontent;
         $this->images = $images;
+        $this->rawBody = $rawBody;
     }
 
     /**

@@ -30,6 +30,7 @@ use Indieinabox\Page\Localization;
  * @property string $layout
  * @property string $originalcontent
  * @property array<string> $images
+ * @property string $rawBody
  * @property string $isodate
  */
 class Page
@@ -133,6 +134,8 @@ class Page
                 return $this->content->originalcontent;
             case 'images':
                 return $this->content->images;
+            case 'rawBody':
+                return $this->content->rawBody;
             case 'isodate':
                 return $this->date->format('c');
         }
@@ -200,6 +203,9 @@ class Page
             case 'images':
                 $this->content->images = $value;
                 break;
+            case 'rawBody':
+                $this->content->rawBody = $value;
+                break;
         }
     }
 
@@ -215,7 +221,7 @@ class Page
             'lang', 'langpath', 'langslug', 'otherlang', 'otherlangpath',
             'localizeddate', 'localizedkind', 'title', 'tags', 'category',
             'nick', 'noauthor', 'kind', 'layout', 'content', 'originalcontent',
-            'images', 'isodate'
+            'images', 'rawBody', 'isodate'
         ]);
     }
 
@@ -240,7 +246,8 @@ class Page
         $content = new Content(
             (string) ($data['content'] ?? 'Hello World'),
             (string) ($data['originalcontent'] ?? 'Hello World'),
-            (array) ($data['images'] ?? [])
+            (array) ($data['images'] ?? []),
+            (string) ($data['rawBody'] ?? '')
         );
 
         $localization = new Localization(

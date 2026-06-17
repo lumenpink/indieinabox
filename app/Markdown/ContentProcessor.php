@@ -4,22 +4,27 @@ declare(strict_types=1);
 
 namespace Indieinabox\Markdown;
 
-use Indieinabox\Parsedown;
 use Indieinabox\Yaml;
 
 class ContentProcessor
 {
     /**
-     * @var Parsedown
+     * @var ASTParser
      */
-    private $parsedown;
+    private ASTParser $astParser;
 
     /**
-     * @param Parsedown $parsedown
+     * @var HtmlRenderer
      */
-    public function __construct(Parsedown $parsedown)
+    private HtmlRenderer $htmlRenderer;
+
+    /**
+     * @param mixed $parsedown
+     */
+    public function __construct($parsedown = null)
     {
-        $this->parsedown = $parsedown;
+        $this->astParser = new ASTParser();
+        $this->htmlRenderer = new HtmlRenderer();
     }
 
     /**
@@ -118,7 +123,8 @@ class ContentProcessor
     public function processContent(string $content): string
     {
         $content = $this->addTrailingSlashesToInternalLinks($content);
-        return $this->parsedown->text($content);
+        $ast = $this->astParser->parse($content);
+        return $this->htmlRenderer->render($ast);
     }
 
     /**

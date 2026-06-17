@@ -13,6 +13,9 @@ use Indieinabox\Markdown\StrongNode;
 use Indieinabox\Markdown\EmphasisNode;
 use Indieinabox\Markdown\CodeInlineNode;
 use Indieinabox\Markdown\WikilinkNode;
+use Indieinabox\Markdown\LinkNode;
+use Indieinabox\Markdown\GemtextRenderer;
+use Indieinabox\Markdown\GophermapRenderer;
 
 it('parses headings correctly and extracts their levels', function () {
     $markdown = "# Level 1\n## Level 2\n###### Level 6";
@@ -181,4 +184,66 @@ it('handles recursive nested inline nodes correctly', function () {
     expect($strong->children[1])->toBeInstanceOf(EmphasisNode::class)
         ->and($strong->children[1]->children[0]->text)->toBe('italic');
     expect($strong->children[2]->text)->toBe(' format');
+});
+
+it('parses standard Markdown links correctly', function () {
+    $markdown = "Check out [my link](/blog/other-post) or [another link](https://example.com).";
+    $parser = new ASTParser();
+    $ast = $parser->parse($markdown);
+
+    $p = $ast->children[0];
+    expect($p->children)->toHaveCount(5);
+
+    $link1 = $p->children[1];
+    expect($link1)->toBeInstanceOf(LinkNode::class)
+        ->and($link1->target)->toBe('/blog/other-post')
+        ->and($link1->label)->toBe('my link');
+
+    $link2 = $p->children[3];
+    expect($link2)->toBeInstanceOf(LinkNode::class)
+        ->and($link2->target)->toBe('https://example.com')
+        ->and($link2->label)->toBe('another link');
+});
+
+it('renders standard Markdown links to HTML correctly', function () {
+    $markdown = "This is [my link](/blog/other-post).";
+    $parser = new ASTParser();
+    $ast = $parser->parse($markdown);
+    
+    $renderer = new HtmlRenderer();
+    $html = $renderer->render($ast);
+    
+    expect($html)->toBe("<p>This is <a href=\"/blog/other-post\">my link</a>.</p>\n");
+});
+
+it('compiles Markdown to Gemini Gemtext correctly', function () {
+    $markdown = "# Main Title\n## Sub Title\n\nThis is a **bold** paragraph with [a link](https://example.com) and [[Obsidian Wikilink]].\n\n- First item\n- Second item";
+    $parser = new ASTParser();
+    $ast = $parser->parse($markdown);
+
+    $renderer = new GemtextRenderer();
+    $gmi = $renderer->render($ast);
+
+    expect($gmi)->toContain("# Main Title")
+        ->and($gmi)->toContain("## Sub Title")
+        ->and($gmi)->toContain("This is a bold paragraph with a link and Obsidian Wikilink.")
+        ->and($gmi)->toContain("* First item")
+        ->and($gmi)->toContain("* Second item")
+        ->and($gmi)->toContain("=> https://example.com a link")
+        ->and($gmi)->toContain("=> Obsidian Wikilink Obsidian Wikilink");
+});
+
+it('compiles Markdown to Gophermap correctly', function () {
+    $markdown = "# Main Title\n\nThis is a paragraph with [a link](https://example.com) and [[Obsidian Wikilink]].\n\n- First item";
+    $parser = new ASTParser();
+    $ast = $parser->parse($markdown);
+
+    $renderer = new GophermapRenderer('gopher.example.com', 70);
+    $gopher = $renderer->render($ast);
+
+    expect($gopher)->toContain("i=== Main Title ===\t\t(null)\t0")
+        ->and($gopher)->toContain("iThis is a paragraph with a link and Obsidian Wikilink.\t\t(null)\t0")
+        ->and($gopher)->toContain("i* First item\t\t(null)\t0")
+        ->and($gopher)->toContain("ha link\tURL:https://example.com\tgopher.example.com\t70")
+        ->and($gopher)->toContain("0Obsidian Wikilink\t/Obsidian Wikilink\tgopher.example.com\t70");
 });

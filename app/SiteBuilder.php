@@ -8,6 +8,9 @@ use Indieinabox\Markdown\FileProcessor;
 use Indieinabox\Markdown\ContentProcessor;
 use Indieinabox\Markdown\LanguageProcessor;
 use Indieinabox\Translations\UrlTranslations;
+use Indieinabox\Markdown\ASTParser;
+use Indieinabox\Markdown\GemtextRenderer;
+use Indieinabox\Markdown\GophermapRenderer;
 
 class SiteBuilder
 {
@@ -21,11 +24,10 @@ class SiteBuilder
         $this->pages = $pages ?? new Pages();
 
         $base = $this->site->paths->baseDir;
-        $parsedown = new Parsedown();
         global $urltranslations;
 
         $fileProcessor     = new FileProcessor($this->site, $base);
-        $contentProcessor  = new ContentProcessor($parsedown);
+        $contentProcessor  = new ContentProcessor();
         $urlTranslationsObj   = new UrlTranslations($urltranslations ?? []);
         $languageProcessor = new LanguageProcessor($this->site, $urlTranslationsObj);
 
@@ -107,6 +109,8 @@ class SiteBuilder
     {
         foreach ($this->pages as $page) {
             $this->createHTMLFile($page);
+            $this->createGeminiFile($page);
+            $this->createGopherFile($page);
         }
     }
 
@@ -284,5 +288,126 @@ class SiteBuilder
         }
 
         copy($base . "/resources/views/livejs/live.js", $jsDir . "/live.js");
+    }
+
+    private function createGeminiFile(Page $page): void
+    {
+        if (in_array("draft", $page->metadata->tags)) {
+            return;
+        }
+
+        $base = $this->site->paths->baseDir;
+        $destination = str_replace("/", DIRECTORY_SEPARATOR, $page->slug);
+        $destination = trim($destination, DIRECTORY_SEPARATOR);
+        $destination = preg_replace(
+            "/^" . preg_quote($this->site->paths->contentDir, '/') . "/",
+            "",
+            $destination
+        );
+        $destination = trim($destination, DIRECTORY_SEPARATOR);
+
+        $outDir = $base . DIRECTORY_SEPARATOR . $this->site->paths->outputDir;
+        if (!is_dir($outDir . DIRECTORY_SEPARATOR . $destination)) {
+            mkdir($outDir . DIRECTORY_SEPARATOR . $destination, 0777, true);
+        }
+
+        $destinationFile = $outDir
+            . DIRECTORY_SEPARATOR
+            . $destination
+            . DIRECTORY_SEPARATOR
+            . "index.gmi";
+
+        echo "Built " . $page->slug . "index.gmi\n";
+
+        $astParser = new ASTParser();
+        $gemtextRenderer = new GemtextRenderer();
+
+        $rawBody = $page->rawBody ?? '';
+        $ast = $astParser->parse($rawBody);
+        
+        $title = $page->title;
+        $dateStr = $page->localizeddate;
+        $author = $this->site->metadata->author;
+
+        $gmiContent = "# {$title}\n";
+        if ($dateStr) {
+            $gmiContent .= "Published: {$dateStr}";
+            if ($author) {
+                $gmiContent .= " by {$author}";
+            }
+            $gmiContent .= "\n";
+        }
+        $gmiContent .= "\n";
+
+        $gmiContent .= $gemtextRenderer->render($ast);
+        $gmiContent .= "\n=> / Back to Home\n";
+
+        file_put_contents($destinationFile, $gmiContent);
+    }
+
+    private function createGopherFile(Page $page): void
+    {
+        if (in_array("draft", $page->metadata->tags)) {
+            return;
+        }
+
+        $base = $this->site->paths->baseDir;
+        $destination = str_replace("/", DIRECTORY_SEPARATOR, $page->slug);
+        $destination = trim($destination, DIRECTORY_SEPARATOR);
+        $destination = preg_replace(
+            "/^" . preg_quote($this->site->paths->contentDir, '/') . "/",
+            "",
+            $destination
+        );
+        $destination = trim($destination, DIRECTORY_SEPARATOR);
+
+        $outDir = $base . DIRECTORY_SEPARATOR . $this->site->paths->outputDir;
+        if (!is_dir($outDir . DIRECTORY_SEPARATOR . $destination)) {
+            mkdir($outDir . DIRECTORY_SEPARATOR . $destination, 0777, true);
+        }
+
+        $destinationFile = $outDir
+            . DIRECTORY_SEPARATOR
+            . $destination
+            . DIRECTORY_SEPARATOR
+            . "gophermap";
+
+        echo "Built " . $page->slug . "gophermap\n";
+
+        $host = 'gopher.example.com';
+        if ($this->site->metadata->fqdn) {
+            $parsedUrl = parse_url($this->site->metadata->fqdn);
+            $host = $parsedUrl['host'] ?? $host;
+        }
+
+        $astParser = new ASTParser();
+        $gophermapRenderer = new GophermapRenderer($host, 70);
+
+        $rawBody = $page->rawBody ?? '';
+        $ast = $astParser->parse($rawBody);
+
+        $title = $page->title;
+        $dateStr = $page->localizeddate;
+        $author = $this->site->metadata->author;
+
+        $formatInfo = function(string $text): string {
+            return "i{$text}\t\t(null)\t0\r\n";
+        };
+
+        $gopherContent = $formatInfo("=== {$title} ===");
+        if ($dateStr) {
+            $meta = "Published: {$dateStr}";
+            if ($author) {
+                $meta .= " by {$author}";
+            }
+            $gopherContent .= $formatInfo($meta);
+        }
+        $gopherContent .= $formatInfo("");
+
+        $gopherContent .= $gophermapRenderer->render($ast);
+        $gopherContent .= $formatInfo("");
+        $gopherContent .= "1Back to Home\t/\t{$host}\t70\r\n";
+
+        file_put_contents($destinationFile, $gopherContent);
     }
 }

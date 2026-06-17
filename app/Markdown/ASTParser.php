@@ -88,6 +88,15 @@ class WikilinkNode extends InlineNode
     }
 }
 
+class LinkNode extends InlineNode
+{
+    public function __construct(
+        public string $target,
+        public string $label
+    ) {
+    }
+}
+
 /**
  * --------------------------------------------------------------------------
  * AST Parser
@@ -220,6 +229,29 @@ class ASTParser
                 }
             }
 
+            // 1.5. Standard Links: [Label](URL)
+            if ($text[$i] === '[') {
+                if ($i + 1 < $len && $text[$i + 1] !== '[') {
+                    if ($i > $plainStart) {
+                        $nodes[] = new TextNode(substr($text, $plainStart, $i - $plainStart));
+                    }
+
+                    $closeBracket = strpos($text, ']', $i + 1);
+                    if ($closeBracket !== false && $closeBracket + 1 < $len && $text[$closeBracket + 1] === '(') {
+                        $closeParen = strpos($text, ')', $closeBracket + 2);
+                        if ($closeParen !== false) {
+                            $label = substr($text, $i + 1, $closeBracket - ($i + 1));
+                            $target = substr($text, $closeBracket + 2, $closeParen - ($closeBracket + 2));
+
+                            $nodes[] = new LinkNode($target, $label);
+                            $i = $closeParen + 1;
+                            $plainStart = $i;
+                            continue;
+                        }
+                    }
+                }
+            }
+
             // 2. Bold / Strong: **text**
             if ($i + 1 < $len && $text[$i] === '*' && $text[$i + 1] === '*') {
                 if ($i > $plainStart) {
@@ -289,95 +321,6 @@ class ASTParser
 
 /**
  * --------------------------------------------------------------------------
- * HTML Renderer (Visitor Pattern)
- * --------------------------------------------------------------------------
- */
-class HtmlRenderer
-{
-    /**
-     * Recursively walks the AST and returns the generated HTML.
-     *
-     * @param Node $node
-     * @return string
-     */
-    public function render(Node $node): string
-    {
-        if ($node instanceof RootNode) {
-            $html = '';
-            foreach ($node->children as $child) {
-                $html .= $this->render($child);
-            }
-            return $html;
-        }
-
-        if ($node instanceof HeadingNode) {
-            $inner = '';
-            foreach ($node->children as $child) {
-                $inner .= $this->render($child);
-            }
-            return "<h{$node->level}>{$inner}</h{$node->level}>\n";
-        }
-
-        if ($node instanceof ParagraphNode) {
-            $inner = '';
-            foreach ($node->children as $child) {
-                $inner .= $this->render($child);
-            }
-            return "<p>{$inner}</p>\n";
-        }
-
-        if ($node instanceof ListNode) {
-            $inner = '';
-            foreach ($node->children as $child) {
-                $inner .= $this->render($child);
-            }
-            return "<ul>\n{$inner}</ul>\n";
-        }
-
-        if ($node instanceof ListItemNode) {
-            $inner = '';
-            foreach ($node->children as $child) {
-                $inner .= $this->render($child);
-            }
-            return "  <li>{$inner}</li>\n";
-        }
-
-        if ($node instanceof TextNode) {
-            return htmlspecialchars($node->text, ENT_QUOTES | ENT_HTML5);
-        }
-
-        if ($node instanceof StrongNode) {
-            $inner = '';
-            foreach ($node->children as $child) {
-                $inner .= $this->render($child);
-            }
-            return "<strong>{$inner}</strong>";
-        }
-
-        if ($node instanceof EmphasisNode) {
-            $inner = '';
-            foreach ($node->children as $child) {
-                $inner .= $this->render($child);
-            }
-            return "<em>{$inner}</em>";
-        }
-
-        if ($node instanceof CodeInlineNode) {
-            return "<code>" . htmlspecialchars($node->code, ENT_QUOTES | ENT_HTML5) . "</code>";
-        }
-
-        if ($node instanceof WikilinkNode) {
-            $targetEsc = htmlspecialchars($node->target, ENT_QUOTES | ENT_HTML5);
-            $labelEsc = htmlspecialchars($node->label, ENT_QUOTES | ENT_HTML5);
-            return "<a href=\"{$targetEsc}\">{$labelEsc}</a>";
-        }
-
-        return '';
-    }
-}
-
-/**
- * --------------------------------------------------------------------------
  * AST Utility Dumper
  * --------------------------------------------------------------------------
  */
@@ -395,6 +338,8 @@ function dumpAST(Node $node, int $indent = 0): string
         $extra = ": " . json_encode($node->code);
     } elseif ($node instanceof WikilinkNode) {
         $extra = " (target: " . json_encode($node->target) . ", label: " . json_encode($node->label) . ")";
+    } elseif ($node instanceof LinkNode) {
+        $extra = " (target: " . json_encode($node->target) . ", label: " . json_encode($node->label) . ")";
     }
 
     $output = $indentation . $className . $extra . "\n";
@@ -402,33 +347,4 @@ function dumpAST(Node $node, int $indent = 0): string
         $output .= dumpAST($child, $indent + 1);
     }
     return $output;
-}
-
-/**
- * --------------------------------------------------------------------------
- * Test block (only runs when script is executed directly from CLI)
- * --------------------------------------------------------------------------
- */
-if (php_sapi_name() === 'cli' && realpath($_SERVER['SCRIPT_FILENAME'] ?? '') === __FILE__) {
-    $testMarkdown = <<<MARKDOWN
-# Obsidian Custom Parser Test
-
-Este é um parágrafo de teste demonstrando **negrito** e *itálico*, além de `code inline` e links.
-Temos também links normais e os famosos wikilinks do Obsidian, como [[Minha Nota]] simples ou [[Nota com Alias|Texto Customizado]].
-
-- Primeiro item da lista com **negrito importante**
-- Segundo item da lista contendo um link para [[Sobre Mim]]
-- Terceiro item com _ênfase em itálico_
-MARKDOWN;
-
-    $parser = new ASTParser();
-    $ast = $parser->parse($testMarkdown);
-
-    $renderer = new HtmlRenderer();
-    $html = $renderer->render($ast);
-
-    echo "=== AST STRUCTURE ===\n";
-    echo dumpAST($ast);
-    echo "\n=== RENDERED HTML ===\n";
-    echo $html;
 }

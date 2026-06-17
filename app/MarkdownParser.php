@@ -73,6 +73,8 @@ class MarkdownParser
         $page = $this->contentProcessor->setDate($page, $file);
         $page = $this->contentProcessor->processTags($page, $content);
 
+        $page['rawBody'] = trim($content, " \n\r\t");
+
         $content = $this->contentProcessor->processContent($content);
         $page['content'] = trim($content, " \n\r\t");
 

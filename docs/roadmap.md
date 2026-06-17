@@ -36,10 +36,12 @@ This document tracks completed refactoring phases and future directions.
 *   **Unified Global Wrappers**: Replaced scattered procedural files in `app/functions/` with a single `helpers.php` wrapper file for backward-compatibility with template variables.
 *   **Structured SiteBuilder**: Migrated the build pipeline execution and static copying logic from procedural functions inside `build.php` to the new `SiteBuilder` class.
 
+### 🔍 Phase 5: Parser Transition (June 2026)
+*   **MarkdownParser Integration**: Swapped out the legacy procedural `parse()` bridge function (previously in `app/functions/parse.php`) for the direct object-oriented usage of `MarkdownParser` in the `SiteBuilder` scanning pipeline and functional tests.
+*   **Modular Processors**: Cleanly enabled the pipeline to instantiate and call modular namespaced processor classes (`FileProcessor`, `ContentProcessor`, `LanguageProcessor`).
+
 ---
 
 ## Future Roadmap
 
-### 🔍 Phase 5: Parser Transition
-*   Replace legacy procedural `MarkdownParser` bridge function inside `app/functions/parse.php` with namespaced parser `MarkdownParser` inside `app/MarkdownParser.php`.
-*   Enable pipeline to directly run modularized namespaced processor classes (`FileProcessor`, `ContentProcessor`, `LanguageProcessor`).
+All scheduled phases of the refactoring roadmap from procedural to namespaced object-oriented structures are now complete.

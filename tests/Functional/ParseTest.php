@@ -6,6 +6,11 @@ use bovigo\vfs\vfsStream;
 use Indieinabox\Site;
 use Indieinabox\Site\Paths;
 use Indieinabox\Site\Support;
+use Indieinabox\MarkdownParser;
+use Indieinabox\Markdown\FileProcessor;
+use Indieinabox\Markdown\ContentProcessor;
+use Indieinabox\Markdown\LanguageProcessor;
+use Indieinabox\Translations\UrlTranslations;
 
 beforeEach(function () {
     global $site, $base, $parsedown, $urltranslations, $originaldaysofweek, $originalmonths, $intl;
@@ -59,8 +64,22 @@ afterEach(function () {
 });
 
 it('parses markdown file and extracts tags and formats links', function () {
+    global $site, $base, $parsedown, $urltranslations;
+
+    $fileProcessor     = new FileProcessor($site, $base);
+    $contentProcessor  = new ContentProcessor($parsedown);
+    $urlTranslationsObj   = new UrlTranslations($urltranslations ?? []);
+    $languageProcessor = new LanguageProcessor($site, $urlTranslationsObj);
+
+    $parser = new MarkdownParser(
+        $fileProcessor,
+        $contentProcessor,
+        $languageProcessor,
+        $site
+    );
+
     $filePath = 'vfs://root/content/blog/my-post.md';
-    $page = parse($filePath);
+    $page = $parser->parse($filePath);
 
     expect($page)->toBeInstanceOf(\Indieinabox\Page::class);
     expect($page->title)->toBe('My Cool Post');

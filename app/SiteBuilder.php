@@ -4,15 +4,37 @@ declare(strict_types=1);
 
 namespace Indieinabox;
 
+use Indieinabox\Markdown\FileProcessor;
+use Indieinabox\Markdown\ContentProcessor;
+use Indieinabox\Markdown\LanguageProcessor;
+use Indieinabox\Translations\UrlTranslations;
+
 class SiteBuilder
 {
     private Site $site;
     private Pages $pages;
+    private MarkdownParser $parser;
 
     public function __construct(Site $site, ?Pages $pages = null)
     {
         $this->site = $site;
         $this->pages = $pages ?? new Pages();
+
+        $base = $this->site->paths->baseDir;
+        $parsedown = new Parsedown();
+        global $urltranslations;
+
+        $fileProcessor     = new FileProcessor($this->site, $base);
+        $contentProcessor  = new ContentProcessor($parsedown);
+        $urlTranslationsObj   = new UrlTranslations($urltranslations ?? []);
+        $languageProcessor = new LanguageProcessor($this->site, $urlTranslationsObj);
+
+        $this->parser = new MarkdownParser(
+            $fileProcessor,
+            $contentProcessor,
+            $languageProcessor,
+            $this->site
+        );
     }
 
     public function getPages(): Pages
@@ -61,7 +83,7 @@ class SiteBuilder
             ) {
                 $path = $dir . DIRECTORY_SEPARATOR . $entry;
                 if (is_file($path)) {
-                    $page = parse($path);
+                    $page = $this->parser->parse($path);
                     if ($page) {
                         $this->pages->add($page);
                     }

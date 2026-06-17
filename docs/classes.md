@@ -76,6 +76,22 @@ Extends and modularizes markdown parsing into specific classes:
 * **`Parsedown\InlinesParser`**: Handles inline styles (bold, links, images).
 * **`Parsedown\ElementsHandler`**: Handles markup escaping.
 
+### `Indieinabox\Markdown\ASTParser` & `Indieinabox\Markdown\HtmlRenderer`
+A lightweight, clean-room custom Markdown parser designed specifically for Indieinabox. It implements a two-pass parser architecture that constructs a structured Abstract Syntax Tree (AST):
+* **`ASTParser::parse(string $markdown)`**: Parses Markdown block and inline formatting into a typed tree structure starting with `RootNode`.
+* **`HtmlRenderer::render(Node $node)`**: Walks the AST and renders semantic HTML.
+* **AST Nodes (`Indieinabox\Markdown\Node` subclasses)**:
+  - **`RootNode`**: The root container of the AST.
+  - **`HeadingNode`**: Represents header lines, storing a `$level` (1-6).
+  - **`ParagraphNode`**: Groups inline content into a block paragraph.
+  - **`ListNode`**: Represents lists.
+  - **`ListItemNode`**: Represents individual items in a list.
+  - **`TextNode`**: Standard plain text node, storing a `$text` string.
+  - **`StrongNode`**: Represents **bold** formatting wrapper.
+  - **`EmphasisNode`**: Represents *italic* / _emphasis_ formatting wrapper.
+  - **`CodeInlineNode`**: Represents `inline code` formatting, storing a `$code` string.
+  - **`WikilinkNode`**: Represents Obsidian-style double bracket internal links (`[[Target|Label]]`), storing `$target` and `$label` strings.
+
 ### Utility Classes:
 * **`Indieinabox\Yaml`**: Reads/writes configuration and frontmatter YAML files.
 * **`Indieinabox\Helper`**: General utilities (slug conversion, localized date maps).

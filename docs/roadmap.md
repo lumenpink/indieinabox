@@ -57,16 +57,17 @@ This document tracks completed refactoring phases and future directions.
 *   **Token Issue & Bearer Verification**: Developed token exchange capabilities and bearer token validation via HTTP `Authorization` headers.
 *   **Premium Presentation Layer**: Created an aesthetically rich, responsive login layout utilizing Google Fonts, backdrop blur filters, and smooth CSS animations.
 
+### 🛠️ Phase 8: Custom AST-based Markdown Parser (June 2026)
+*   **Recreation of Parser**: Replaced the legacy Parsedown library with a lightweight, clean-room custom Markdown parser design (`ASTParser`).
+*   **Abstract Syntax Tree (AST)**: Implemented a two-pass parser architecture (block parsing and inline parsing) that constructs a structured Abstract Syntax Tree (AST) representing the document structure using strongly typed Node classes.
+*   **Type Safety**: Created concrete namespaced OOP node classes (`RootNode`, `HeadingNode`, `ParagraphNode`, `ListNode`, `ListItemNode`, `InlineNode`, `TextNode`, `StrongNode`, `EmphasisNode`, `CodeInlineNode`, `WikilinkNode`) to ensure type safety.
+*   **Visitor-pattern HTML Renderer**: Created `HtmlRenderer` to walk the AST nodes and output clean semantic HTML markup.
+
 ---
 
 ## Future Roadmap
 
 The following next-generation features are scheduled for development:
-
-### 🛠️ Phase 8: Custom AST-based Markdown Parser
-*   **Recreation of Parser**: Replace the current Parsedown library with a lightweight, clean-room custom Markdown parser designed specifically for Indieinabox.
-*   **Abstract Syntax Tree (AST)**: Implement a two-pass parser architecture (block parsing and inline parsing) that constructs a structured Abstract Syntax Tree (AST) representing the document structure (nodes, blockquotes, codeblocks, lists, formatting, links, microformats).
-*   **Type Safety**: Use clean OOP node classes to ensure strict type safety and extensibility for custom markdown block/inline types.
 
 ### 📤 Phase 9: AST-driven Multi-Format Output Engine
 *   **Flexible Rendering Engine**: Develop a modular renderer that consumes the custom Markdown AST to compile the site's content into multiple protocols/formats simultaneously:

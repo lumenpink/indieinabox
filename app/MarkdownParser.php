@@ -79,37 +79,71 @@ class MarkdownParser implements ParserInterface
             return null;
         }
 
-        // Process slug
-        $slug = $this->fileProcessor->generateBaseSlug($file);
-        if ($fileInfo['filename'] === "index") {
-            $slug = str_replace($fileInfo['filename'] . "." . $fileInfo['ext'], "", $slug);
-        } else {
-            $slug = str_replace("." . $fileInfo['ext'], "", $slug);
+        // Active languages mapping
+        $langs = $this->site->localization->lang;
+        if (!is_array($langs)) {
+            $langs = [$langs];
+        }
+        $defaultLang = $this->site->localization->defaultLang ?? 'en';
+
+        // Calculate path relative to the content directory
+        $contentDir = $this->site->paths->contentDir;
+        $baseDir = $this->site->paths->baseDir;
+        $relPath = str_replace($baseDir . DIRECTORY_SEPARATOR . $contentDir, "", $file);
+        $relPath = ltrim($relPath, DIRECTORY_SEPARATOR);
+        $relPath = str_replace(DIRECTORY_SEPARATOR, "/", $relPath);
+
+        // Detect language only from path top-level subdirectory
+        $segments = explode('/', $relPath);
+        $detectedLang = $defaultLang;
+        $cleanRelPath = $relPath;
+        if (isset($segments[0]) && in_array($segments[0], $langs, true)) {
+            $detectedLang = $segments[0];
+            array_shift($segments);
+            $cleanRelPath = implode('/', $segments);
+        }
+
+        // Process base slug from clean relative path
+        $cleanFilename = $fileInfo['filename'];
+        $slugBase = $cleanRelPath;
+        if (str_ends_with($slugBase, '.' . $fileInfo['ext'])) {
+            $slugBase = substr($slugBase, 0, -(strlen($fileInfo['ext']) + 1));
+        }
+
+        if ($cleanFilename === "index") {
+            if (str_ends_with($slugBase, 'index')) {
+                $slugBase = substr($slugBase, 0, -5);
+            }
         }
 
         if (isset($page["slug"])) {
-            $slug = str_replace($fileInfo['filename'], $page["slug"], $slug);
+            $slugBase = str_replace($cleanFilename, $page["slug"], $slugBase);
         }
 
-        $slug = trim($slug, DIRECTORY_SEPARATOR);
-        $slug = str_replace(DIRECTORY_SEPARATOR, "/", $slug);
-        $slug = strtolower($slug);
+        $slugBase = trim($slugBase, '/');
+        $slugBase = strtolower($slugBase);
+
+        // Build final slug with language prefix if non-default
+        $finalSlug = $slugBase;
+        if ($detectedLang !== $defaultLang) {
+            $finalSlug = $detectedLang . ($finalSlug !== '' ? '/' . $slugBase : '');
+        }
 
         $isIndex = ($fileInfo['filename'] === "index" || (isset($page["slug"]) && str_starts_with($page["slug"], "index")));
         $prettylinks = $this->site->options->prettylinks ?? true;
         if ($prettylinks) {
-            $slug = rtrim($slug, "/") . "/";
+            $finalSlug = $finalSlug !== '' ? rtrim($finalSlug, "/") . "/" : "/";
         } else {
             if ($isIndex) {
-                $slug = rtrim($slug, "/") . "/";
+                $finalSlug = $finalSlug !== '' ? rtrim($finalSlug, "/") . "/" : "/";
             } else {
-                $slug = rtrim($slug, "/") . ".html";
+                $finalSlug = $finalSlug !== '' ? rtrim($finalSlug, "/") . ".html" : "index.html";
             }
         }
-        $page["slug"] = $slug;
+        $page["slug"] = $finalSlug;
 
         // Calculate relative path
-        $cleanSlug = ltrim($slug, '/');
+        $cleanSlug = ltrim($finalSlug, '/');
         if ($cleanSlug === '' || $cleanSlug === 'index.html') {
             $page["relpath"] = './';
         } else {
@@ -122,9 +156,7 @@ class MarkdownParser implements ParserInterface
         $page["layout"] = $layout;
 
         // Convert to Page object and process language & metadata
-        if (!isset($page['lang'])) {
-            $page['lang'] = $this->site->localization->defaultLang;
-        }
+        $page['lang'] = $detectedLang;
         $pageObj = Page::fromArray($page);
         $pageObj->filepath = $file;
         $pageObj = $this->languageProcessor->processLanguage($pageObj);

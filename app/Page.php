@@ -306,4 +306,19 @@ class Page
         );
     }
 
+    public function __clone()
+    {
+        if ($this->metadata !== null) {
+            $this->metadata = clone $this->metadata;
+        }
+        if ($this->content !== null) {
+            $this->content = clone $this->content;
+        }
+        if ($this->localization !== null) {
+            $this->localization = clone $this->localization;
+        }
+        if ($this->date !== null) {
+            $this->date = clone $this->date;
+        }
+    }
 }

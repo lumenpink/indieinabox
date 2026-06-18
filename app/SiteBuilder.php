@@ -59,6 +59,9 @@ class SiteBuilder
         // Scan content
         $this->scan($base . DIRECTORY_SEPARATOR . $this->site->paths->contentDir);
 
+        // Virtualize missing translations
+        $this->virtualizeMissingLanguages();
+
         // Generate files
         $this->generateHTMLFiles();
         $this->generateTwtxt();
@@ -72,6 +75,116 @@ class SiteBuilder
             echo "Skipping static files\n";
         } else {
             $this->copyStatic($base . DIRECTORY_SEPARATOR . $themeDir . DIRECTORY_SEPARATOR . "static");
+        }
+    }
+
+    private function virtualizeMissingLanguages(): void
+    {
+        $langs = $this->site->localization->lang;
+        if (!is_array($langs) || count($langs) <= 1) {
+            return;
+        }
+
+        $defaultLang = $this->site->localization->defaultLang ?? 'en';
+        $prettylinks = $this->site->options->prettylinks ?? true;
+
+        // Collect existing pages to quickly look them up by kind + nick + language
+        $existing = [];
+        $defaultLangPages = [];
+        foreach ($this->pages as $page) {
+            $lang = $page->lang ?? $defaultLang;
+            $nick = $page->nick ?? '';
+            $kind = $page->kind ?? '';
+            
+            $existing["{$kind}:{$nick}:{$lang}"] = $page;
+            
+            if ($lang === $defaultLang) {
+                $defaultLangPages[] = $page;
+            }
+        }
+
+        // For each page in the default language, check if it has a localized version in other languages
+        foreach ($defaultLangPages as $page) {
+            // Only virtualize user content kinds, not generic index/home pages
+            if (in_array($page->kind, ['generic', 'page', 'home'], true)) {
+                continue;
+            }
+
+            foreach ($langs as $lang) {
+                if ($lang === $defaultLang) {
+                    continue;
+                }
+
+                $key = "{$page->kind}:{$page->nick}:{$lang}";
+                if (!isset($existing[$key])) {
+                    // No translation exists for this language! Let's virtualize it!
+                    $cloned = clone $page;
+                    
+                    // Update language of the cloned page
+                    $cloned->lang = $lang;
+                    
+                    // Adjust title or text
+                    $prefix = '[' . strtoupper($lang) . '] ';
+                    $hasTitle = !empty($cloned->title) && $cloned->title !== 'Untitled' && $cloned->title !== 'untitled';
+                    
+                    // Check if the kind config allows a title
+                    $kindConfig = \Indieinabox\Helper::getKindConfig($cloned->kind);
+                    if (isset($kindConfig['has_title']) && !$kindConfig['has_title']) {
+                        $hasTitle = false;
+                    }
+
+                    if ($hasTitle) {
+                        $cloned->title = $prefix . $cloned->title;
+                    } else {
+                        // Prepend language code directly to text
+                        $cloned->content->content = $prefix . $cloned->content->content;
+                        $cloned->content->rawBody = $prefix . $cloned->content->rawBody;
+                    }
+
+                    // Build its slug preserving subfolder structure
+                    $kindFolder = $this->getKindFolder($cloned->kind, $lang);
+                    
+                    $defaultKindFolder = $this->getKindFolder($page->kind, $defaultLang);
+                    $cleanSlug = trim($page->slug, '/');
+                    // Remove defaultKindFolder prefix if present
+                    if (str_starts_with($cleanSlug, $defaultKindFolder . '/')) {
+                        $cleanSlug = substr($cleanSlug, strlen($defaultKindFolder . '/'));
+                    } elseif ($cleanSlug === $defaultKindFolder) {
+                        $cleanSlug = '';
+                    }
+
+                    if ($prettylinks) {
+                        $cloned->slug = $lang . '/' . $kindFolder . '/' . ($cleanSlug !== '' ? $cleanSlug . '/' : '');
+                    } else {
+                        // For non-prettylinks, it ends in .html
+                        if (str_ends_with($cleanSlug, '.html')) {
+                            $cleanSlug = substr($cleanSlug, 0, -5);
+                        }
+                        $cloned->slug = $lang . '/' . $kindFolder . '/' . $cleanSlug . '.html';
+                    }
+
+                    // Recalculate relative path
+                    $cleanSlugPath = ltrim($cloned->slug, '/');
+                    if ($cleanSlugPath === '' || $cleanSlugPath === 'index.html') {
+                        $cloned->relpath = './';
+                    } else {
+                        $slashCount = substr_count($cleanSlugPath, '/');
+                        $cloned->relpath = $slashCount > 0 ? str_repeat('../', $slashCount) : './';
+                    }
+
+                    // Process other language pathways through LanguageProcessor
+                    global $urltranslations;
+                    $urlTranslationsObj = new UrlTranslations($urltranslations ?? []);
+                    $languageProcessor = new LanguageProcessor($this->site, $urlTranslationsObj);
+                    $cloned = $languageProcessor->processLanguage($cloned);
+
+                    // Add to our pages collection
+                    $this->pages->add($cloned);
+                    
+                    // Mark as existing so we don't duplicate
+                    $existing[$key] = $cloned;
+                }
+            }
         }
     }
 
@@ -541,7 +654,7 @@ class SiteBuilder
         if (!is_array($langs)) {
             $langs = [$langs];
         }
-        $defaultLang = $this->site->localization->defaultLang;
+        $defaultLang = $this->site->localization->defaultLang ?? 'en';
         $prettylinks = $this->site->options->prettylinks ?? true;
 
         $slug = $page->slug;
@@ -595,6 +708,11 @@ class SiteBuilder
             }
         }
 
+        // If no translation mapping is found, treat the current $nick as the baseKey
+        if ($baseKey === null) {
+            $baseKey = $nick;
+        }
+
         $links = [];
         foreach ($langs as $l) {
             if ($l === $defaultLang) {
@@ -604,13 +722,20 @@ class SiteBuilder
             }
         }
 
-        if ($translationGroup !== null && $baseKey !== null) {
+        if ($baseKey !== null && $baseKey !== '') {
             $kind = $page->kind;
 
             foreach ($langs as $l) {
-                $folder = $this->getKindFolder($kind, $l);
+                $folder = '';
+                if ($kind !== 'generic' && $kind !== 'page' && $kind !== 'home') {
+                    $folder = $this->getKindFolder($kind, $l);
+                }
                 
-                $localizedSlugPart = ($l === 'pt') ? $baseKey : ($translationGroup[$l] ?? $baseKey);
+                // Get the translated slug part, fallback to baseKey (which is the english/default nick)
+                $localizedSlugPart = $baseKey;
+                if ($translationGroup !== null) {
+                    $localizedSlugPart = ($l === $defaultLang) ? $baseKey : ($translationGroup[$l] ?? $baseKey);
+                }
                 
                 if ($localizedSlugPart === 'index') {
                     if ($l === $defaultLang) {
@@ -630,32 +755,6 @@ class SiteBuilder
                             $links[$l] = '/' . ($folder ? $folder . '/' : '') . $localizedSlugPart . '.html';
                         } else {
                             $links[$l] = '/' . $l . '/' . ($folder ? $folder . '/' : '') . $localizedSlugPart . '.html';
-                        }
-                    }
-                }
-            }
-        } else {
-            if ($nick === 'index') {
-                foreach ($langs as $l) {
-                    if ($l === $defaultLang) {
-                        $links[$l] = '/';
-                    } else {
-                        $links[$l] = '/' . $l . '/';
-                    }
-                }
-            } elseif ($nick === 'indice') {
-                foreach ($langs as $l) {
-                    if ($prettylinks) {
-                        if ($l === $defaultLang) {
-                            $links[$l] = '/indice/';
-                        } else {
-                            $links[$l] = '/' . $l . '/indice/';
-                        }
-                    } else {
-                        if ($l === $defaultLang) {
-                            $links[$l] = '/indice.html';
-                        } else {
-                            $links[$l] = '/' . $l . '/indice.html';
                         }
                     }
                 }

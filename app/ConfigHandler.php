@@ -469,6 +469,7 @@ class ConfigHandler
                     margin-bottom: 0.5rem;
                     background: linear-gradient(90deg, #ffffff, #eccb00);
                     -webkit-background-clip: text;
+                    background-clip: text;
                     -webkit-text-fill-color: transparent;
                     letter-spacing: -0.02em;
                 }
@@ -659,6 +660,7 @@ class ConfigHandler
                     font-weight: 800;
                     background: linear-gradient(90deg, #ffffff, #eccb00);
                     -webkit-background-clip: text;
+                    background-clip: text;
                     -webkit-text-fill-color: transparent;
                 }
 

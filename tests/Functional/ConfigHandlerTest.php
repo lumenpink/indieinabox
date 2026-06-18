@@ -222,3 +222,115 @@ it('formats slugs correctly for pretty links and ugly links', function () use ($
     $page2 = $parser2->parse($contentFile);
     expect($page2->slug)->toBe('about.html');
 });
+
+it('saves config and processes lang/kind removals and fallbacks', function () use ($configTestTempDir) {
+    $site = new Site();
+    $site->paths->baseDir = $configTestTempDir;
+    $site->metadata->indieauthPassword = 'configured_password';
+    $site->metadata->fqdn = 'https://mysite.com';
+
+    // Mock initial config
+    $yaml = new Yaml();
+    $initialConfig = [
+        'indieauth_password' => 'configured_password',
+        'fqdn' => 'https://mysite.com',
+        'lang' => ['pt', 'en'],
+        'kinds' => [
+            'photo' => [
+                'content_dir' => 'fotos',
+                'display_mode' => 'thumbnail_snippet'
+            ],
+            'note' => [
+                'content_dir' => 'notas',
+                'display_mode' => 'full_content'
+            ]
+        ]
+    ];
+    file_put_contents($configTestTempDir . '/.config.yml', $yaml->dump($initialConfig));
+
+    // Authenticated session
+    $_SESSION['admin_authenticated'] = true;
+
+    // Simulate POST request to save settings, also requesting to remove language 'pt'
+    $_SERVER['REQUEST_METHOD'] = 'POST';
+    $_SERVER['REQUEST_URI'] = '/config';
+    $_POST = [
+        'title' => 'My Site',
+        'sitename' => 'My Site Name',
+        'fqdn' => 'https://mysite.com',
+        'lang' => ['pt', 'en'],
+        'remove_lang' => 'pt',
+        'kinds' => [
+            'photo' => [
+                'content_dir' => 'fotos',
+                'display_mode' => 'thumbnail_snippet'
+            ],
+            'note' => [
+                'content_dir' => 'notas',
+                'display_mode' => 'full_content'
+            ]
+        ]
+    ];
+
+    $router = new WebRouter($site);
+    ob_start();
+    try {
+        $router->handleRequest();
+    } catch (\Exception $e) {
+        // Redirect or build pipeline might exit/throw
+    }
+    ob_get_clean();
+
+    // Verify .config.yml after removing language 'pt'
+    $data = $yaml->loadFile($configTestTempDir . '/.config.yml');
+    expect($data['lang'])->toBe(['en']);
+
+    // Now let's remove the remaining language 'en' (which will result in zero languages, defaulting to ['en'])
+    $_POST = [
+        'title' => 'My Site',
+        'sitename' => 'My Site Name',
+        'fqdn' => 'https://mysite.com',
+        'lang' => ['en'],
+        'remove_lang' => 'en',
+        'kinds' => [
+            'photo' => [
+                'content_dir' => 'fotos',
+                'display_mode' => 'thumbnail_snippet'
+            ]
+        ]
+    ];
+
+    ob_start();
+    try {
+        $router->handleRequest();
+    } catch (\Exception $e) {}
+    ob_get_clean();
+
+    $data = $yaml->loadFile($configTestTempDir . '/.config.yml');
+    expect($data['lang'])->toBe(['en']); // Default fallback to ['en']
+
+    // Now let's remove the remaining kind 'photo' (which will result in zero kinds, defaulting to 'article')
+    $_POST = [
+        'title' => 'My Site',
+        'sitename' => 'My Site Name',
+        'fqdn' => 'https://mysite.com',
+        'lang' => ['en'],
+        'remove_kind' => 'photo',
+        'kinds' => [
+            'photo' => [
+                'content_dir' => 'fotos',
+                'display_mode' => 'thumbnail_snippet'
+            ]
+        ]
+    ];
+
+    ob_start();
+    try {
+        $router->handleRequest();
+    } catch (\Exception $e) {}
+    ob_get_clean();
+
+    $data = $yaml->loadFile($configTestTempDir . '/.config.yml');
+    expect(array_keys($data['kinds']))->toBe(['article']);
+    expect($data['kinds']['article']['content_dir'])->toBe('articles');
+});

@@ -3,9 +3,40 @@
 declare(strict_types=1);
 
 use Indieinabox\Page;
+use Indieinabox\Site;
 use Indieinabox\Site\Twtxt as TwtxtConfig;
 use Indieinabox\Twtxt\TwtxtManager;
 use Indieinabox\Twtxt\TwtxtEntry;
+
+beforeEach(function () {
+    global $site;
+    global $backupSite;
+
+    $backupSite = $site ?? null;
+    $site = new Site();
+    $site->config = [
+        'kinds' => [
+            'note' => [
+                'display_mode' => 'full_content',
+                'show_on_home' => true
+            ],
+            'photo' => [
+                'display_mode' => 'thumbnail_snippet',
+                'show_on_home' => true
+            ],
+            'article' => [
+                'display_mode' => 'default',
+                'show_on_home' => true
+            ]
+        ]
+    ];
+});
+
+afterEach(function () {
+    global $site;
+    global $backupSite;
+    $site = $backupSite;
+});
 
 it('cleans messages correctly by removing markdown and formatting to single line', function () {
     $raw = "This is a **bold** and *italic* note.\n"

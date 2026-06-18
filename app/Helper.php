@@ -31,7 +31,9 @@ class Helper
         if (!$config) {
             static $warned = [];
             if (!isset($warned[$kind]) && !in_array($kind, ['generic', 'page', 'home'])) {
-                echo "[WARNING] Missing config for kind '{$kind}'. Using defaults.\n";
+                if (php_sapi_name() === 'cli') {
+                    echo "[WARNING] Missing config for kind '{$kind}'. Using defaults.\n";
+                }
                 $warned[$kind] = true;
             }
             $config = [];
@@ -121,7 +123,7 @@ class Helper
     {
         global $site;
         $config = self::getKindConfig($kind);
-        $targetLang = $lang ?? $site->localization->lang ?? 'en';
+        $targetLang = $lang ?? $site->localization->defaultLang ?? 'en';
         
         if (!empty($config['title']) && is_array($config['title'])) {
             if (isset($config['title'][$targetLang])) {

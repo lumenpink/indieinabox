@@ -192,9 +192,9 @@ class ConfigHandler
         $basePath = $this->site->paths->baseDir;
         $yaml = new Yaml();
 
-        $configFile = $basePath . DIRECTORY_SEPARATOR . "config.yml";
-        if (file_exists($basePath . DIRECTORY_SEPARATOR . ".config.yml")) {
-            $configFile = $basePath . DIRECTORY_SEPARATOR . ".config.yml";
+        $configFile = $basePath . DIRECTORY_SEPARATOR . ".config.yml";
+        if (!file_exists($configFile)) {
+            $configFile = $basePath . DIRECTORY_SEPARATOR . "config.yml";
         }
         
         $currentConfig = [];
@@ -202,74 +202,76 @@ class ConfigHandler
             $currentConfig = $yaml->loadFile($configFile);
         }
 
-        // Parse directories with defaults/fallbacks
-        $contentDir = !empty($_POST['contentdir']) ? trim($_POST['contentdir']) : 'content';
-        $outputDir = !empty($_POST['outputdir']) ? trim($_POST['outputdir']) : 'public';
-
-        // Format base path
-        $base = trim($_POST['base'] ?? '', '/');
-        if (strlen($base) > 0) {
-            $base = '/' . $base;
+        // --- Core Settings ---
+        $currentConfig['base'] = trim($_POST['base'] ?? '', '/');
+        if (strlen($currentConfig['base']) > 0 && $currentConfig['base'] !== '/') {
+            $currentConfig['base'] = '/' . ltrim($currentConfig['base'], '/');
         } else {
-            $base = '/';
+            $currentConfig['base'] = '/';
         }
-
-        // Support extensions array
-        $supportVal = $_POST['support'] ?? 'md, txt, html, htm';
-        $support = array_map('trim', explode(',', $supportVal));
-
-        // Languages array
-        $langVal = $_POST['lang'] ?? 'en';
-        $lang = array_map('trim', explode(',', $langVal));
-
-        // Update core config values
-        $currentConfig['base'] = $base;
+        
         $currentConfig['title'] = trim($_POST['title'] ?? 'My Site');
         $currentConfig['sitename'] = trim($_POST['sitename'] ?? 'My Site Name');
         $currentConfig['fqdn'] = rtrim(trim($_POST['fqdn'] ?? ''), '/');
         $currentConfig['author'] = trim($_POST['author'] ?? '');
-        $currentConfig['contentdir'] = $contentDir;
-        $currentConfig['outputdir'] = $outputDir;
+        $currentConfig['contentdir'] = !empty($_POST['contentdir']) ? trim($_POST['contentdir']) : 'content';
+        $currentConfig['outputdir'] = !empty($_POST['outputdir']) ? trim($_POST['outputdir']) : 'public';
         $currentConfig['defaultcategory'] = trim($_POST['defaultcategory'] ?? 'General');
         $currentConfig['htmlpostprocessing'] = $_POST['htmlpostprocessing'] ?? 'minify';
+        
+        // --- Booleans ---
         $currentConfig['buildall'] = isset($_POST['buildall']);
         $currentConfig['dev'] = isset($_POST['dev']);
         $currentConfig['prettylinks'] = isset($_POST['prettylinks']);
-        $currentConfig['support'] = $support;
-        $currentConfig['lang'] = $lang;
 
-        // Save Twtxt configs
+        // --- Arrays ---
+        $supportVal = $_POST['support'] ?? 'md, txt, html, htm';
+        $currentConfig['support'] = array_filter(array_map('trim', explode(',', $supportVal)));
+        
+        $langs = [];
+        if (isset($_POST['lang'])) {
+            if (is_array($_POST['lang'])) {
+                $langs = array_values(array_filter(array_map('trim', $_POST['lang'])));
+            } else {
+                $langs = array_values(array_filter(array_map('trim', explode(',', $_POST['lang']))));
+            }
+        }
+        
+        if (isset($_POST['remove_lang'])) {
+            $removeLang = trim($_POST['remove_lang']);
+            $langs = array_filter($langs, function ($l) use ($removeLang) {
+                return $l !== $removeLang;
+            });
+            $langs = array_values($langs);
+        }
+
+        if (empty($langs)) {
+            $langs = ['en'];
+        }
+        $currentConfig['lang'] = $langs;
+        $currentConfig['defaultlang'] = $langs[0];
+
+        // --- Twtxt ---
         $twtxtNick = trim($_POST['twtxt_nick'] ?? '');
         $twtxtDesc = trim($_POST['twtxt_description'] ?? '');
         $twtxtAvatar = trim($_POST['twtxt_avatar'] ?? '');
 
-        // Subscriptions
         $following = [];
         $followText = $_POST['twtxt_following'] ?? '';
-        $lines = explode("\n", $followText);
-        foreach ($lines as $line) {
+        foreach (explode("\n", $followText) as $line) {
             $line = trim($line);
-            if ($line === '') {
-                continue;
-            }
+            if ($line === '') continue;
             $parts = preg_split('/\s+/', $line, 2);
             if (count($parts) === 2) {
-                $following[] = [
-                    'nick' => $parts[0],
-                    'url' => $parts[1]
-                ];
+                $following[] = ['nick' => $parts[0], 'url' => $parts[1]];
             }
         }
 
-        // Hubs
         $hubs = [];
         $hubsText = $_POST['twtxt_hubs'] ?? '';
-        $lines = explode("\n", $hubsText);
-        foreach ($lines as $line) {
+        foreach (explode("\n", $hubsText) as $line) {
             $line = trim($line);
-            if ($line !== '') {
-                $hubs[] = $line;
-            }
+            if ($line !== '') $hubs[] = $line;
         }
 
         $currentConfig['twtxt'] = [
@@ -280,7 +282,79 @@ class ConfigHandler
             'hubs' => $hubs
         ];
 
-        // Process security password change
+        // --- Kinds ---
+        $removeKind = isset($_POST['remove_kind']) ? trim($_POST['remove_kind']) : null;
+        if (isset($_POST['kinds']) && is_array($_POST['kinds'])) {
+            $newKinds = [];
+            foreach ($_POST['kinds'] as $k => $data) {
+                // Ignore empty __new__ row
+                if ($k === '__new__') {
+                    if (empty($data['content_dir']) || empty($data['key'])) {
+                        continue;
+                    }
+                    $k = trim($data['key']);
+                    if (empty($k)) continue;
+                }
+                
+                // Process deletion via remove button
+                if ($removeKind !== null && $k === $removeKind) {
+                    continue;
+                }
+
+                $newKinds[$k] = [
+                    'content_dir' => trim($data['content_dir'] ?? ''),
+                    'title' => $data['title'] ?? [],
+                    'palette' => [
+                        'bg' => trim($data['palette']['bg'] ?? '#ffffff'),
+                        'fg' => trim($data['palette']['fg'] ?? '#000000'),
+                    ],
+                    'has_title' => isset($data['has_title']),
+                    'show_on_home' => isset($data['show_on_home']),
+                    'display_mode' => trim($data['display_mode'] ?? 'default'),
+                ];
+            }
+            
+            if (empty($newKinds)) {
+                $defaultKindTitle = [];
+                foreach ($langs as $l) {
+                    $defaultKindTitle[$l] = 'Articles';
+                }
+                $newKinds['article'] = [
+                    'content_dir' => 'articles',
+                    'title' => $defaultKindTitle,
+                    'palette' => [
+                        'bg' => '#ffffff',
+                        'fg' => '#000000',
+                    ],
+                    'has_title' => true,
+                    'show_on_home' => true,
+                    'display_mode' => 'default',
+                ];
+            }
+            $currentConfig['kinds'] = $newKinds;
+        }
+
+        if (empty($currentConfig['kinds'])) {
+            $defaultKindTitle = [];
+            foreach ($langs as $l) {
+                $defaultKindTitle[$l] = 'Articles';
+            }
+            $currentConfig['kinds'] = [
+                'article' => [
+                    'content_dir' => 'articles',
+                    'title' => $defaultKindTitle,
+                    'palette' => [
+                        'bg' => '#ffffff',
+                        'fg' => '#000000',
+                    ],
+                    'has_title' => true,
+                    'show_on_home' => true,
+                    'display_mode' => 'default',
+                ]
+            ];
+        }
+
+        // --- Security ---
         if (!empty($_POST['new_password'])) {
             $currentConfig['indieauth_password'] = password_hash($_POST['new_password'], PASSWORD_BCRYPT);
         }
@@ -292,7 +366,11 @@ class ConfigHandler
         // Rebuild the site using newly saved settings
         $this->rebuildSite();
 
-        header('Location: ' . rtrim($currentConfig['fqdn'], '/') . '/config?saved=1');
+        $fqdn = rtrim($currentConfig['fqdn'] ?? '', '/');
+        if (empty($fqdn)) {
+            $fqdn = '';
+        }
+        header('Location: ' . $fqdn . '/config?saved=1');
         return;
     }
 
@@ -314,6 +392,7 @@ class ConfigHandler
 
         $newSite = new Site();
         $newSite->paths->baseDir = $basePath;
+        $newSite->config = $config;
 
         if (isset($config['title'])) {
             $newSite->metadata->title = $config['title'];
@@ -406,182 +485,91 @@ class ConfigHandler
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <title>Bootstrap Setup - Indieinabox</title>
-            <link rel="preconnect" href="https://fonts.googleapis.com">
-            <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-            <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
             <style>
                 :root {
-                    --bg-gradient: linear-gradient(135deg, #090d16 0%, #111827 50%, #1e1b4b 100%);
-                    --card-bg: rgba(17, 24, 39, 0.7);
-                    --accent: #eccb00;
-                    --accent-glow: rgba(236, 203, 0, 0.35);
-                    --text-primary: #f9fafb;
-                    --text-secondary: #9ca3af;
-                    --border: rgba(255, 255, 255, 0.08);
-                    --input-bg: rgba(3, 7, 18, 0.6);
-                    --input-focus: rgba(236, 203, 0, 0.15);
-                    --error-color: #ef4444;
+                    --bg: #F4F1EA;
+                    --fg: #2C2E2F;
+                    --accent: #ef4444;
                 }
-
                 body {
-                    font-family: 'Outfit', sans-serif;
-                    background: var(--bg-gradient);
-                    background-attachment: fixed;
-                    color: var(--text-primary);
-                    min-height: 100vh;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    margin: 0;
-                    padding: 2rem 1.5rem;
+                    background-color: var(--bg);
+                    color: var(--fg);
+                    font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+                    line-height: 1.6;
+                    max-width: 650px;
+                    margin: 40px auto;
+                    padding: 0 16px;
+                }
+                h1 {
+                    color: var(--accent);
+                }
+                .error-message {
+                    color: var(--accent);
+                    margin-bottom: 1em;
+                    font-weight: bold;
+                }
+                .form-group {
+                    margin-bottom: 1.5em;
+                }
+                label {
+                    display: block;
+                    font-weight: bold;
+                    margin-bottom: 0.5em;
+                }
+                input {
+                    background: rgba(0, 0, 0, 0.05);
+                    border: 1px solid var(--fg);
+                    color: var(--fg);
+                    padding: 8px 12px;
+                    font-family: inherit;
+                    width: 100%;
                     box-sizing: border-box;
                 }
-
-                .container {
-                    backdrop-filter: blur(20px);
-                    -webkit-backdrop-filter: blur(20px);
-                    background: var(--card-bg);
-                    border: 1px solid var(--border);
-                    border-radius: 28px;
-                    padding: 3rem;
-                    max-width: 500px;
-                    width: 100%;
-                    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7),
-                                0 0 50px rgba(236, 203, 0, 0.03);
-                    position: relative;
-                    overflow: hidden;
-                }
-
-                .container::before {
-                    content: '';
-                    position: absolute;
-                    top: 0;
-                    left: 0;
-                    right: 0;
-                    height: 4px;
-                    background: linear-gradient(90deg, #eccb00, #f59e0b);
-                }
-
-                h1 {
-                    font-size: 2rem;
-                    font-weight: 800;
-                    margin-top: 0;
-                    margin-bottom: 0.5rem;
-                    background: linear-gradient(90deg, #ffffff, #eccb00);
-                    -webkit-background-clip: text;
-                    background-clip: text;
-                    -webkit-text-fill-color: transparent;
-                    letter-spacing: -0.02em;
-                }
-
-                .subtitle {
-                    color: var(--text-secondary);
-                    font-size: 0.95rem;
-                    line-height: 1.5;
-                    margin-bottom: 2rem;
-                }
-
-                .error-message {
-                    background: rgba(239, 68, 68, 0.1);
-                    border: 1px solid rgba(239, 68, 68, 0.2);
-                    border-radius: 12px;
-                    padding: 0.85rem 1rem;
-                    font-size: 0.95rem;
-                    color: var(--error-color);
-                    margin-bottom: 1.5rem;
-                }
-
-                form {
-                    display: flex;
-                    flex-direction: column;
-                    gap: 1.25rem;
-                }
-
-                .form-group {
-                    display: flex;
-                    flex-direction: column;
-                    gap: 0.4rem;
-                }
-
-                label {
-                    font-weight: 600;
-                    font-size: 0.85rem;
-                    color: var(--text-secondary);
-                    text-transform: uppercase;
-                    letter-spacing: 0.05em;
-                }
-
-                input {
-                    background: var(--input-bg);
-                    border: 1px solid var(--border);
-                    border-radius: 12px;
-                    padding: 0.85rem 1rem;
-                    font-size: 1rem;
-                    color: var(--text-primary);
-                    transition: all 0.2s ease;
-                }
-
-                input:focus {
-                    outline: none;
-                    border-color: var(--accent);
-                    box-shadow: 0 0 0 4px var(--input-focus);
-                    background: rgba(3, 7, 18, 0.8);
-                }
-
                 button {
-                    background: linear-gradient(135deg, #eccb00 0%, #d8b600 100%);
-                    color: #030712;
+                    background: var(--fg);
+                    color: var(--bg);
                     border: none;
-                    padding: 0.95rem 1.5rem;
-                    border-radius: 12px;
-                    font-size: 1.05rem;
-                    font-weight: 600;
+                    padding: 10px 16px;
+                    font-family: inherit;
                     cursor: pointer;
-                    transition: all 0.2s ease;
-                    box-shadow: 0 4px 12px var(--accent-glow);
-                    margin-top: 1rem;
+                    font-weight: bold;
                 }
-
                 button:hover {
-                    transform: translateY(-1px);
-                    box-shadow: 0 6px 20px var(--accent-glow);
-                    background: linear-gradient(135deg, #fce029 0%, #eccb00 100%);
+                    background: var(--accent);
                 }
             </style>
         </head>
         <body>
-            <div class="container">
-                <h1>Setup Setup Setup!</h1>
-                <p class="subtitle">Indieinabox is not configured yet. Choose your password and site identity to get started.</p>
+            <h1>Setup Setup Setup!</h1>
+            <p>Indieinabox is not configured yet. Choose your password and site identity to get started.</p>
 
-                <?php if ($error): ?>
-                    <div class="error-message"><?= htmlspecialchars($error) ?></div>
-                <?php endif; ?>
+            <?php if ($error): ?>
+                <div class="error-message"><?= htmlspecialchars($error) ?></div>
+            <?php endif; ?>
 
-                <form action="" method="POST">
-                    <div class="form-group">
-                        <label for="indieauth_password">IndieAuth Password</label>
-                        <input type="password" name="indieauth_password" id="indieauth_password" required placeholder="••••••••" autofocus>
-                    </div>
+            <form action="" method="POST">
+                <div class="form-group">
+                    <label for="indieauth_password">IndieAuth Password</label>
+                    <input type="password" name="indieauth_password" id="indieauth_password" required placeholder="••••••••" autofocus>
+                </div>
 
-                    <div class="form-group">
-                        <label for="title">Site Title</label>
-                        <input type="text" name="title" id="title" value="Lumen Pink" required>
-                    </div>
+                <div class="form-group">
+                    <label for="title">Site Title</label>
+                    <input type="text" name="title" id="title" value="Lumen Pink" required>
+                </div>
 
-                    <div class="form-group">
-                        <label for="sitename">Site Name</label>
-                        <input type="text" name="sitename" id="sitename" value="A nova rede social da Lumen" required>
-                    </div>
+                <div class="form-group">
+                    <label for="sitename">Site Name</label>
+                    <input type="text" name="sitename" id="sitename" value="A nova rede social da Lumen" required>
+                </div>
 
-                    <div class="form-group">
-                        <label for="fqdn">Site FQDN (URL)</label>
-                        <input type="url" name="fqdn" id="fqdn" value="<?= htmlspecialchars($detectedFqdn) ?>" required>
-                    </div>
+                <div class="form-group">
+                    <label for="fqdn">Site FQDN (URL)</label>
+                    <input type="url" name="fqdn" id="fqdn" value="<?= htmlspecialchars($detectedFqdn) ?>" required>
+                </div>
 
-                    <button type="submit">Configure & Rebuild</button>
-                </form>
-            </div>
+                <button type="submit">Configure & Rebuild</button>
+            </form>
         </body>
         </html>
         <?php
@@ -602,6 +590,12 @@ class ConfigHandler
             $config = $yaml->loadFile($configFile);
         }
 
+        $langArr = $config['lang'] ?? ['en'];
+        if (!is_array($langArr)) {
+            $langArr = [$langArr];
+        }
+        $langStr = implode(', ', $langArr);
+        
         $prettyLinksActive = $config['prettylinks'] ?? $this->detectPrettyLinksSupport();
 
         header('HTTP/1.1 200 OK');
@@ -613,189 +607,82 @@ class ConfigHandler
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <title>Web Settings - Indieinabox</title>
-            <link rel="preconnect" href="https://fonts.googleapis.com">
-            <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-            <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
             <style>
                 :root {
-                    --bg-gradient: linear-gradient(135deg, #090d16 0%, #111827 50%, #1e1b4b 100%);
-                    --card-bg: rgba(17, 24, 39, 0.7);
-                    --accent: #eccb00;
-                    --accent-glow: rgba(236, 203, 0, 0.35);
-                    --text-primary: #f9fafb;
-                    --text-secondary: #9ca3af;
-                    --border: rgba(255, 255, 255, 0.08);
-                    --input-bg: rgba(3, 7, 18, 0.6);
-                    --input-focus: rgba(236, 203, 0, 0.15);
-                    --tab-inactive: rgba(255, 255, 255, 0.04);
-                    --tab-hover: rgba(255, 255, 255, 0.08);
+                    --bg: #F4F1EA;
+                    --fg: #2C2E2F;
+                    --accent: #ef4444; /* red accent to signify config area */
+                    --border-color: rgba(44, 46, 47, 0.2);
                 }
-
                 body {
-                    font-family: 'Outfit', sans-serif;
-                    background: var(--bg-gradient);
-                    background-attachment: fixed;
-                    color: var(--text-primary);
-                    margin: 0;
-                    padding: 2rem 1.5rem;
-                    box-sizing: border-box;
-                    min-height: 100vh;
-                    display: flex;
-                    flex-direction: column;
-                    align-items: center;
+                    background-color: var(--bg);
+                    color: var(--fg);
+                    font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+                    line-height: 1.6;
+                    max-width: 800px;
+                    margin: 40px auto;
+                    padding: 0 16px;
                 }
-
                 .nav-header {
                     display: flex;
                     justify-content: space-between;
-                    align-items: center;
-                    width: 100%;
-                    max-width: 800px;
-                    margin-bottom: 2rem;
+                    align-items: baseline;
+                    margin-bottom: 2em;
+                    border-bottom: 1px solid var(--fg);
+                    padding-bottom: 0.5em;
                 }
-
-                .nav-header h1 {
-                    margin: 0;
-                    font-size: 1.8rem;
-                    font-weight: 800;
-                    background: linear-gradient(90deg, #ffffff, #eccb00);
-                    -webkit-background-clip: text;
-                    background-clip: text;
-                    -webkit-text-fill-color: transparent;
-                }
-
-                .logout-btn {
-                    text-decoration: none;
-                    font-size: 0.9rem;
-                    font-weight: 600;
-                    color: var(--text-secondary);
-                    border: 1px solid var(--border);
-                    padding: 0.5rem 1rem;
-                    border-radius: 8px;
-                    transition: all 0.2s ease;
-                    background: rgba(255, 255, 255, 0.02);
-                }
-
-                .logout-btn:hover {
-                    color: var(--text-primary);
-                    background: rgba(239, 68, 68, 0.15);
-                    border-color: rgba(239, 68, 68, 0.3);
-                }
-
-                .main-card {
-                    backdrop-filter: blur(20px);
-                    -webkit-backdrop-filter: blur(20px);
-                    background: var(--card-bg);
-                    border: 1px solid var(--border);
-                    border-radius: 24px;
-                    width: 100%;
-                    max-width: 800px;
-                    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
-                    overflow: hidden;
-                    position: relative;
-                }
-
-                .main-card::before {
-                    content: '';
-                    position: absolute;
-                    top: 0;
-                    left: 0;
-                    right: 0;
-                    height: 4px;
-                    background: linear-gradient(90deg, #eccb00, #f59e0b);
-                }
-
-                .tabs-header {
-                    display: flex;
-                    border-bottom: 1px solid var(--border);
-                    background: rgba(0, 0, 0, 0.2);
-                }
-
-                .tab-btn {
-                    flex: 1;
-                    background: none;
-                    border: none;
-                    padding: 1.25rem 1rem;
-                    font-family: inherit;
-                    font-size: 0.95rem;
-                    font-weight: 600;
-                    color: var(--text-secondary);
-                    cursor: pointer;
-                    transition: all 0.2s ease;
-                    border-bottom: 2px solid transparent;
-                    text-align: center;
-                }
-
-                .tab-btn:hover {
-                    color: var(--text-primary);
-                    background: var(--tab-hover);
-                }
-
-                .tab-btn.active {
+                h1 {
                     color: var(--accent);
-                    border-bottom-color: var(--accent);
-                    background: rgba(236, 203, 0, 0.03);
+                    margin: 0;
                 }
-
-                .tab-content {
-                    display: none;
-                    padding: 2.5rem;
+                a.logout-btn {
+                    color: var(--fg);
+                    text-decoration: underline;
                 }
-
-                .tab-content.active {
-                    display: block;
+                a.logout-btn:hover {
+                    text-decoration: none;
+                    color: var(--accent);
                 }
-
-                .form-section {
-                    display: flex;
-                    flex-direction: column;
-                    gap: 1.5rem;
+                .alert-saved {
+                    background: rgba(0, 255, 0, 0.1);
+                    border: 1px dashed var(--fg);
+                    padding: 1em;
+                    margin-bottom: 1.5em;
+                    font-weight: bold;
                 }
-
+                fieldset {
+                    border: 1px solid var(--border-color);
+                    margin-bottom: 2em;
+                    padding: 1.5em;
+                    background: rgba(0,0,0,0.02);
+                }
+                legend {
+                    font-weight: bold;
+                    background: var(--bg);
+                    padding: 0 8px;
+                    color: var(--accent);
+                }
                 .form-group {
-                    display: flex;
-                    flex-direction: column;
-                    gap: 0.5rem;
+                    margin-bottom: 1.2em;
                 }
-
-                .form-row {
-                    display: grid;
-                    grid-template-columns: 1fr 1fr;
-                    gap: 1.5rem;
-                }
-
                 label {
-                    font-weight: 600;
-                    font-size: 0.8rem;
-                    color: var(--text-secondary);
-                    text-transform: uppercase;
-                    letter-spacing: 0.05em;
+                    display: block;
+                    font-weight: bold;
+                    margin-bottom: 0.3em;
                 }
-
-                .desc {
-                    font-size: 0.85rem;
-                    color: var(--text-secondary);
-                    margin-top: -0.25rem;
-                    margin-bottom: 0.25rem;
-                }
-
                 input[type="text"],
                 input[type="url"],
                 input[type="password"],
                 select,
                 textarea {
-                    font-family: inherit;
-                    background: var(--input-bg);
-                    border: 1px solid var(--border);
-                    border-radius: 12px;
-                    padding: 0.85rem 1rem;
-                    font-size: 1rem;
-                    color: var(--text-primary);
-                    transition: all 0.2s ease;
                     width: 100%;
+                    font-family: inherit;
+                    background: var(--bg);
+                    border: 1px solid var(--border-color);
+                    color: var(--fg);
+                    padding: 8px 12px;
                     box-sizing: border-box;
                 }
-
                 input[type="text"]:focus,
                 input[type="url"]:focus,
                 input[type="password"]:focus,
@@ -803,94 +690,73 @@ class ConfigHandler
                 textarea:focus {
                     outline: none;
                     border-color: var(--accent);
-                    box-shadow: 0 0 0 4px var(--input-focus);
-                    background: rgba(3, 7, 18, 0.8);
                 }
-
                 textarea {
                     resize: vertical;
-                    min-height: 120px;
-                    font-family: 'JetBrains Mono', monospace;
-                    font-size: 0.9rem;
+                    min-height: 80px;
                 }
-
                 .checkbox-group {
                     display: flex;
                     align-items: center;
-                    gap: 0.75rem;
-                    margin-top: 0.5rem;
+                    gap: 0.5em;
                     cursor: pointer;
+                    margin-bottom: 0.5em;
                 }
-
-                .checkbox-group input[type="checkbox"] {
-                    width: 20px;
-                    height: 20px;
-                    accent-color: var(--accent);
+                .checkbox-group input {
+                    margin: 0;
+                }
+                .checkbox-group label {
+                    display: inline;
+                    margin: 0;
+                    font-weight: normal;
+                }
+                button {
+                    background: var(--fg);
+                    color: var(--bg);
+                    border: none;
+                    padding: 10px 16px;
+                    font-family: inherit;
                     cursor: pointer;
+                    font-weight: bold;
                 }
-
-                .checkbox-label {
-                    font-weight: 600;
-                    font-size: 0.95rem;
-                    color: var(--text-primary);
-                    user-select: none;
+                button:hover {
+                    background: var(--accent);
                 }
-
-                .alert-saved {
-                    background: rgba(16, 185, 129, 0.1);
-                    border: 1px solid rgba(16, 185, 129, 0.2);
-                    border-radius: 12px;
-                    padding: 1rem;
-                    color: #10b981;
-                    font-size: 0.95rem;
-                    font-weight: 600;
-                    margin-bottom: 1.5rem;
-                    width: 100%;
-                    max-width: 800px;
-                    box-sizing: border-box;
+                .btn-secondary {
+                    background: transparent;
+                    color: var(--fg);
+                    border: 1px solid var(--fg);
+                    padding: 6px 12px;
+                    margin-top: 5px;
+                }
+                .btn-secondary:hover {
+                    background: rgba(0,0,0,0.05);
+                }
+                .kind-card {
+                    border: 1px solid var(--border-color);
+                    padding: 1em;
+                    margin-bottom: 1.5em;
+                    background: var(--bg);
+                }
+                .kind-card h3 {
+                    margin-top: 0;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                }
+                .grid-2 {
+                    display: grid;
+                    grid-template-columns: 1fr 1fr;
+                    gap: 1em;
+                }
+                .color-picker {
                     display: flex;
                     align-items: center;
-                    gap: 0.5rem;
+                    gap: 0.5em;
                 }
-
-                .footer-bar {
-                    display: flex;
-                    justify-content: flex-end;
-                    padding: 1.5rem 2.5rem;
-                    background: rgba(0, 0, 0, 0.2);
-                    border-top: 1px solid var(--border);
-                }
-
-                .save-btn {
-                    background: linear-gradient(135deg, #eccb00 0%, #d8b600 100%);
-                    color: #030712;
-                    border: none;
-                    padding: 0.9rem 2rem;
-                    border-radius: 12px;
-                    font-size: 1rem;
-                    font-weight: 600;
-                    cursor: pointer;
-                    transition: all 0.2s ease;
-                    box-shadow: 0 4px 12px var(--accent-glow);
-                }
-
-                .save-btn:hover {
-                    transform: translateY(-1px);
-                    box-shadow: 0 6px 20px var(--accent-glow);
-                    background: linear-gradient(135deg, #fce029 0%, #eccb00 100%);
-                }
-
-                @media (max-width: 600px) {
-                    .form-row {
-                        grid-template-columns: 1fr;
-                    }
-                    .tabs-header {
-                        flex-wrap: wrap;
-                    }
-                    .tab-btn {
-                        flex: unset;
-                        width: 50%;
-                    }
+                .color-picker input[type="color"] {
+                    height: 38px;
+                    padding: 2px;
                 }
             </style>
         </head>
@@ -902,192 +768,284 @@ class ConfigHandler
 
             <?php if (isset($_GET['saved'])): ?>
                 <div class="alert-saved">
-                    <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
                     Settings saved successfully! Site has been automatically rebuilt.
                 </div>
             <?php endif; ?>
 
-            <div class="main-card">
-                <div class="tabs-header">
-                    <button class="tab-btn active" onclick="switchTab(event, 'general')">🌐 General</button>
-                    <button class="tab-btn" onclick="switchTab(event, 'build')">⚙️ Build</button>
-                    <button class="tab-btn" onclick="switchTab(event, 'twtxt')">📡 Twtxt</button>
-                    <button class="tab-btn" onclick="switchTab(event, 'security')">🔒 Security</button>
-                </div>
-
-                <form action="" method="POST" id="configForm">
-                    <!-- Tab: General -->
-                    <div id="general" class="tab-content active">
-                        <div class="form-section">
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="title">Site Title</label>
-                                    <input type="text" name="title" id="title" value="<?= htmlspecialchars($config['title'] ?? '') ?>" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="sitename">Site Name</label>
-                                    <input type="text" name="sitename" id="sitename" value="<?= htmlspecialchars($config['sitename'] ?? '') ?>" required>
-                                </div>
-                            </div>
-
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="author">Author Name</label>
-                                    <input type="text" name="author" id="author" value="<?= htmlspecialchars($config['author'] ?? '') ?>">
-                                </div>
-                                <div class="form-group">
-                                    <label for="fqdn">Site FQDN (URL)</label>
-                                    <input type="url" name="fqdn" id="fqdn" value="<?= htmlspecialchars($config['fqdn'] ?? '') ?>" required>
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="base">Base Path</label>
-                                <p class="desc">Subdirectory path if not hosted at the domain root (e.g. <code>/blog</code>). Use <code>/</code> for root.</p>
-                                <input type="text" name="base" id="base" value="<?= htmlspecialchars($config['base'] ?? '/') ?>">
-                            </div>
+            <form action="" method="POST" id="configForm">
+                
+                <fieldset>
+                    <legend>General Settings</legend>
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label>Site Title</label>
+                            <input type="text" name="title" value="<?= htmlspecialchars($config['title'] ?? '') ?>" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Site Name</label>
+                            <input type="text" name="sitename" value="<?= htmlspecialchars($config['sitename'] ?? '') ?>" required>
                         </div>
                     </div>
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label>Author Name</label>
+                            <input type="text" name="author" value="<?= htmlspecialchars($config['author'] ?? '') ?>">
+                        </div>
+                        <div class="form-group">
+                            <label>Site FQDN (URL)</label>
+                            <input type="url" name="fqdn" value="<?= htmlspecialchars($config['fqdn'] ?? '') ?>" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Base Path</label>
+                        <input type="text" name="base" value="<?= htmlspecialchars($config['base'] ?? '/') ?>">
+                    </div>
+                </fieldset>
 
-                    <!-- Tab: Build -->
-                    <div id="build" class="tab-content">
-                        <div class="form-section">
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="contentdir">Content Directory</label>
-                                    <p class="desc">Where source posts and notes reside (default: <code>content</code>).</p>
-                                    <input type="text" name="contentdir" id="contentdir" value="<?= htmlspecialchars($config['contentdir'] ?? 'content') ?>" placeholder="content">
-                                </div>
-                                <div class="form-group">
-                                    <label for="outputdir">Publish Directory</label>
-                                    <p class="desc">Where static HTML outputs are built (default: <code>public</code>).</p>
-                                    <input type="text" name="outputdir" id="outputdir" value="<?= htmlspecialchars($config['outputdir'] ?? 'public') ?>" placeholder="public">
-                                </div>
-                            </div>
+                <fieldset>
+                    <legend>Build Options</legend>
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label>Content Directory</label>
+                            <input type="text" name="contentdir" value="<?= htmlspecialchars($config['contentdir'] ?? 'content') ?>">
+                        </div>
+                        <div class="form-group">
+                            <label>Publish Directory</label>
+                            <input type="text" name="outputdir" value="<?= htmlspecialchars($config['outputdir'] ?? 'public') ?>">
+                        </div>
+                    </div>
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label>Default Category</label>
+                            <input type="text" name="defaultcategory" value="<?= htmlspecialchars($config['defaultcategory'] ?? 'General') ?>">
+                        </div>
+                        <div class="form-group">
+                            <label>HTML Postprocessing</label>
+                            <select name="htmlpostprocessing">
+                                <option value="none" <?= ($config['htmlpostprocessing'] ?? '') === 'none' ? 'selected' : '' ?>>None</option>
+                                <option value="minify" <?= ($config['htmlpostprocessing'] ?? 'minify') === 'minify' ? 'selected' : '' ?>>Minify</option>
+                                <option value="beautify" <?= ($config['htmlpostprocessing'] ?? '') === 'beautify' ? 'selected' : '' ?>>Beautify</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Supported File Extensions (comma separated)</label>
+                        <input type="text" name="support" value="<?= htmlspecialchars(implode(', ', $config['support'] ?? ['md', 'txt', 'html', 'htm'])) ?>">
+                    </div>
+                    <div class="form-group">
+                        <label>Languages</label>
+                        <table style="width: 100%; border-collapse: collapse; margin-bottom: 1em; border: 1px solid var(--border-color);">
+                            <thead>
+                                <tr style="border-bottom: 1px solid var(--fg); text-align: left; background: rgba(0,0,0,0.05);">
+                                    <th style="padding: 8px;">Language Code</th>
+                                    <th style="padding: 8px; width: 100px; text-align: right;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($langArr as $l): ?>
+                                <tr style="border-bottom: 1px solid var(--border-color);">
+                                    <td style="padding: 8px;">
+                                        <?= htmlspecialchars($l) ?>
+                                        <input type="hidden" name="lang[]" value="<?= htmlspecialchars($l) ?>">
+                                    </td>
+                                    <td style="padding: 8px; text-align: right;">
+                                        <button type="submit" name="remove_lang" value="<?= htmlspecialchars($l) ?>" class="btn-secondary" style="margin: 0; padding: 4px 8px; font-size: 0.8rem;">Remove</button>
+                                    </td>
+                                </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                        <button type="button" class="btn-secondary" onclick="addLanguage()">Add Language</button>
+                    </div>
+                    
+                    <div class="form-group">
+                        <div class="checkbox-group">
+                            <input type="checkbox" name="prettylinks" id="prettylinks" <?= $prettyLinksActive ? 'checked' : '' ?>>
+                            <label for="prettylinks">Pretty Links (folder/index.html format)</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" name="buildall" id="buildall" <?= ($config['buildall'] ?? true) ? 'checked' : '' ?>>
+                            <label for="buildall">Build pages without frontmatter</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" name="dev" id="dev" <?= ($config['dev'] ?? false) ? 'checked' : '' ?>>
+                            <label for="dev">Dev mode (live-reload script)</label>
+                        </div>
+                    </div>
+                </fieldset>
 
-                            <div class="form-row">
+                <fieldset>
+                    <legend>Content Kinds</legend>
+                    <?php
+                    $kinds = $config['kinds'] ?? [];
+                    foreach ($kinds as $k => $data) {
+                        ?>
+                        <div class="kind-card">
+                            <h3>
+                                <?= htmlspecialchars($k) ?>
+                                <button type="submit" name="remove_kind" value="<?= htmlspecialchars($k) ?>" class="btn-secondary" style="margin: 0; padding: 4px 8px; font-size: 0.8rem;">Remove</button>
+                            </h3>
+                            <div class="grid-2">
                                 <div class="form-group">
-                                    <label for="defaultcategory">Default Category</label>
-                                    <input type="text" name="defaultcategory" id="defaultcategory" value="<?= htmlspecialchars($config['defaultcategory'] ?? 'General') ?>">
+                                    <label>Content Directory</label>
+                                    <input type="text" name="kinds[<?= htmlspecialchars($k) ?>][content_dir]" value="<?= htmlspecialchars($data['content_dir'] ?? '') ?>">
                                 </div>
                                 <div class="form-group">
-                                    <label for="htmlpostprocessing">HTML Postprocessing</label>
-                                    <select name="htmlpostprocessing" id="htmlpostprocessing">
-                                        <option value="none" <?= ($config['htmlpostprocessing'] ?? '') === 'none' ? 'selected' : '' ?>>None</option>
-                                        <option value="minify" <?= ($config['htmlpostprocessing'] ?? 'minify') === 'minify' ? 'selected' : '' ?>>Minify</option>
-                                        <option value="beautify" <?= ($config['htmlpostprocessing'] ?? '') === 'beautify' ? 'selected' : '' ?>>Beautify</option>
+                                    <label>Display Mode</label>
+                                    <select name="kinds[<?= htmlspecialchars($k) ?>][display_mode]">
+                                        <option value="default" <?= ($data['display_mode'] ?? 'default') === 'default' ? 'selected' : '' ?>>Default</option>
+                                        <option value="full_content" <?= ($data['display_mode'] ?? '') === 'full_content' ? 'selected' : '' ?>>Full Content</option>
+                                        <option value="thumbnail_snippet" <?= ($data['display_mode'] ?? '') === 'thumbnail_snippet' ? 'selected' : '' ?>>Thumbnail Snippet</option>
                                     </select>
                                 </div>
                             </div>
-
+                            
                             <div class="form-group">
-                                <label for="support">Supported File Extensions</label>
-                                <p class="desc">Comma-separated list of formats parsed by the builder.</p>
-                                <input type="text" name="support" id="support" value="<?= htmlspecialchars(implode(', ', $config['support'] ?? ['md', 'txt', 'html', 'htm'])) ?>">
-                            </div>
-
-                            <div class="form-group">
-                                <label for="lang">Supported Languages</label>
-                                <p class="desc">Comma-separated languages (first one is the default).</p>
-                                <input type="text" name="lang" id="lang" value="<?= htmlspecialchars(implode(', ', (array)($config['lang'] ?? 'en'))) ?>">
-                            </div>
-
-                            <div class="form-group">
-                                <label class="checkbox-group">
-                                    <input type="checkbox" name="prettylinks" id="prettylinks" <?= $prettyLinksActive ? 'checked' : '' ?>>
-                                    <span class="checkbox-label">Pretty Links (use <code>folder/index.html</code> format)</span>
-                                </label>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="checkbox-group">
-                                    <input type="checkbox" name="buildall" id="buildall" <?= ($config['buildall'] ?? true) ? 'checked' : '' ?>>
-                                    <span class="checkbox-label">Build pages without frontmatter</span>
-                                </label>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="checkbox-group">
-                                    <input type="checkbox" name="dev" id="dev" <?= ($config['dev'] ?? false) ? 'checked' : '' ?>>
-                                    <span class="checkbox-label">Dev mode (enables live-reload script)</span>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Tab: Twtxt -->
-                    <div id="twtxt" class="tab-content">
-                        <div class="form-section">
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="twtxt_nick">Twtxt Nickname</label>
-                                    <input type="text" name="twtxt_nick" id="twtxt_nick" value="<?= htmlspecialchars($config['twtxt']['nick'] ?? '') ?>">
-                                </div>
-                                <div class="form-group">
-                                    <label for="twtxt_avatar">Twtxt Avatar URL</label>
-                                    <input type="url" name="twtxt_avatar" id="twtxt_avatar" value="<?= htmlspecialchars($config['twtxt']['avatar'] ?? '') ?>">
+                                <label>Translations</label>
+                                <div class="grid-2">
+                                    <?php foreach ($langArr as $l): ?>
+                                    <div class="color-picker" style="margin-bottom: 5px;">
+                                        <span style="width: 50px;"><?= htmlspecialchars($l) ?></span>
+                                        <input type="text" name="kinds[<?= htmlspecialchars($k) ?>][title][<?= htmlspecialchars($l) ?>]" value="<?= htmlspecialchars($data['title'][$l] ?? '') ?>">
+                                    </div>
+                                    <?php endforeach; ?>
                                 </div>
                             </div>
 
-                            <div class="form-group">
-                                <label for="twtxt_description">Twtxt Description</label>
-                                <input type="text" name="twtxt_description" id="twtxt_description" value="<?= htmlspecialchars($config['twtxt']['description'] ?? '') ?>">
+                            <div class="grid-2">
+                                <div class="form-group color-picker">
+                                    <label>BG Color</label>
+                                    <input type="color" name="kinds[<?= htmlspecialchars($k) ?>][palette][bg]" value="<?= htmlspecialchars($data['palette']['bg'] ?? '#ffffff') ?>">
+                                </div>
+                                <div class="form-group color-picker">
+                                    <label>FG Color</label>
+                                    <input type="color" name="kinds[<?= htmlspecialchars($k) ?>][palette][fg]" value="<?= htmlspecialchars($data['palette']['fg'] ?? '#000000') ?>">
+                                </div>
                             </div>
 
-                            <div class="form-group">
-                                <label for="twtxt_following">Subscribed Feeds</label>
-                                <p class="desc">Format: <code>nickname feed_url</code> (one per line).</p>
-                                <?php
-                                $followLines = [];
-                                foreach (($config['twtxt']['following'] ?? []) as $f) {
-                                    $followLines[] = "{$f['nick']} {$f['url']}";
-                                }
-                                ?>
-                                <textarea name="twtxt_following" id="twtxt_following" placeholder="bob https://bob.com/twtxt.txt"><?= htmlspecialchars(implode("\n", $followLines)) ?></textarea>
+                            <div class="checkbox-group">
+                                <input type="checkbox" name="kinds[<?= htmlspecialchars($k) ?>][has_title]" id="kinds_<?= htmlspecialchars($k) ?>_ht" <?= !empty($data['has_title']) ? 'checked' : '' ?>>
+                                <label for="kinds_<?= htmlspecialchars($k) ?>_ht">Has Title</label>
                             </div>
-
-                            <div class="form-group">
-                                <label for="twtxt_hubs">Configured Hubs</label>
-                                <p class="desc">List of Twtxt aggregation hubs (one URL per line).</p>
-                                <textarea name="twtxt_hubs" id="twtxt_hubs" placeholder="https://hub.twtxt.org"><?= htmlspecialchars(implode("\n", $config['twtxt']['hubs'] ?? [])) ?></textarea>
+                            <div class="checkbox-group">
+                                <input type="checkbox" name="kinds[<?= htmlspecialchars($k) ?>][show_on_home]" id="kinds_<?= htmlspecialchars($k) ?>_soh" <?= !empty($data['show_on_home']) ? 'checked' : '' ?>>
+                                <label for="kinds_<?= htmlspecialchars($k) ?>_soh">Show on Home</label>
                             </div>
                         </div>
-                    </div>
-
-                    <!-- Tab: Security -->
-                    <div id="security" class="tab-content">
-                        <div class="form-section">
+                        <?php
+                    }
+                    ?>
+                    
+                    <div class="kind-card" style="border: 2px dashed var(--border-color);">
+                        <h3>➕ Add New Kind</h3>
+                        <div class="grid-2">
                             <div class="form-group">
-                                <label for="new_password">New IndieAuth Password</label>
-                                <p class="desc">Leave blank to keep the current administrative password.</p>
-                                <input type="password" name="new_password" id="new_password" placeholder="••••••••">
+                                <label>Kind ID (e.g. video)</label>
+                                <input type="text" name="kinds[__new__][key]" placeholder="video">
+                            </div>
+                            <div class="form-group">
+                                <label>Content Directory</label>
+                                <input type="text" name="kinds[__new__][content_dir]" placeholder="videos">
                             </div>
                         </div>
+                        <div class="form-group">
+                            <label>Display Mode</label>
+                            <select name="kinds[__new__][display_mode]">
+                                <option value="default">Default</option>
+                                <option value="full_content">Full Content</option>
+                                <option value="thumbnail_snippet">Thumbnail Snippet</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Translations</label>
+                            <div class="grid-2">
+                                <?php foreach ($langArr as $l): ?>
+                                <div class="color-picker" style="margin-bottom: 5px;">
+                                    <span style="width: 50px;"><?= htmlspecialchars($l) ?></span>
+                                    <input type="text" name="kinds[__new__][title][<?= htmlspecialchars($l) ?>]">
+                                </div>
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
+                        <div class="grid-2">
+                            <div class="form-group color-picker">
+                                <label>BG Color</label>
+                                <input type="color" name="kinds[__new__][palette][bg]" value="#ffffff">
+                            </div>
+                            <div class="form-group color-picker">
+                                <label>FG Color</label>
+                                <input type="color" name="kinds[__new__][palette][fg]" value="#000000">
+                            </div>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" name="kinds[__new__][has_title]" id="kinds_new_ht">
+                            <label for="kinds_new_ht">Has Title</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" name="kinds[__new__][show_on_home]" id="kinds_new_soh">
+                            <label for="kinds_new_soh">Show on Home</label>
+                        </div>
                     </div>
+                </fieldset>
 
-                    <div class="footer-bar">
-                        <button type="submit" class="save-btn">Rebuild & Save Settings</button>
+                <fieldset>
+                    <legend>TwTxt / Social Settings</legend>
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label>Twtxt Nickname</label>
+                            <input type="text" name="twtxt_nick" value="<?= htmlspecialchars($config['twtxt']['nick'] ?? '') ?>">
+                        </div>
+                        <div class="form-group">
+                            <label>Twtxt Avatar URL</label>
+                            <input type="url" name="twtxt_avatar" value="<?= htmlspecialchars($config['twtxt']['avatar'] ?? '') ?>">
+                        </div>
                     </div>
-                </form>
-            </div>
+                    <div class="form-group">
+                        <label>Twtxt Description</label>
+                        <input type="text" name="twtxt_description" value="<?= htmlspecialchars($config['twtxt']['description'] ?? '') ?>">
+                    </div>
+                    <div class="form-group">
+                        <label>Subscribed Feeds (Format: `nickname feed_url` one per line)</label>
+                        <?php
+                        $followLines = [];
+                        foreach (($config['twtxt']['following'] ?? []) as $f) {
+                            $followLines[] = "{$f['nick']} {$f['url']}";
+                        }
+                        ?>
+                        <textarea name="twtxt_following" placeholder="bob https://bob.com/twtxt.txt"><?= htmlspecialchars(implode("\n", $followLines)) ?></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Configured Hubs (one URL per line)</label>
+                        <textarea name="twtxt_hubs" placeholder="https://hub.twtxt.org"><?= htmlspecialchars(implode("\n", $config['twtxt']['hubs'] ?? [])) ?></textarea>
+                    </div>
+                </fieldset>
+
+                <fieldset style="border-color: var(--accent);">
+                    <legend>Security</legend>
+                    <div class="form-group">
+                        <label>Change Admin Password (Optional)</label>
+                        <input type="password" name="new_password" placeholder="Leave blank to keep current password">
+                    </div>
+                </fieldset>
+
+                <button type="submit" class="save-btn" style="width: 100%; font-size: 1.2rem; padding: 15px;">Save Settings & Rebuild</button>
+            </form>
 
             <script>
-                function switchTab(evt, tabId) {
-                    // Hide all tab content
-                    const tabContents = document.getElementsByClassName('tab-content');
-                    for (let i = 0; i < tabContents.length; i++) {
-                        tabContents[i].classList.remove('active');
+                function addLanguage() {
+                    let langCode = prompt("Enter the new language code (e.g. fr, de):");
+                    if (langCode) {
+                        langCode = langCode.trim();
+                        if (langCode.length > 0) {
+                            let form = document.getElementById('configForm');
+                            let input = document.createElement('input');
+                            input.type = 'hidden';
+                            input.name = 'lang[]';
+                            input.value = langCode;
+                            form.appendChild(input);
+                            form.submit();
+                        }
                     }
-
-                    // Remove active class from all tab buttons
-                    const tabButtons = document.getElementsByClassName('tab-btn');
-                    for (let i = 0; i < tabButtons.length; i++) {
-                        tabButtons[i].classList.remove('active');
-                    }
-
-                    // Show active tab, make button active
-                    document.getElementById(tabId).classList.add('active');
-                    evt.currentTarget.classList.add('active');
                 }
             </script>
         </body>

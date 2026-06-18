@@ -30,13 +30,18 @@ $translations= array (
     'Curtidas' => '',
     'Diários' => '',
     'Fotos' => '',
+    'Início' => '',
+    'Jardim' => '',
     'Marcadores' => '',
     'Notas' => '',
     'pensamentos' => '',
     'Pensamentos' => '',
+    'Publicações recentes' => '',
     'Republicações' => '',
     'Respostas' => '',
+    'Sobre' => '',
     'Um' => '',
+    'Índice' => '',
   ),
   'es' => 
   array (

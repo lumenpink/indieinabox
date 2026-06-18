@@ -16,27 +16,31 @@ class SiteBuilder
 {
     private Site $site;
     private Pages $pages;
-    private MarkdownParser $parser;
+    private ParserInterface $parser;
 
-    public function __construct(Site $site, ?Pages $pages = null)
+    public function __construct(Site $site, ?Pages $pages = null, ?ParserInterface $parser = null)
     {
         $this->site = $site;
         $this->pages = $pages ?? new Pages();
 
-        $base = $this->site->paths->baseDir;
-        global $urltranslations;
+        if ($parser !== null) {
+            $this->parser = $parser;
+        } else {
+            $base = $this->site->paths->baseDir;
+            global $urltranslations;
 
-        $fileProcessor     = new FileProcessor($this->site, $base);
-        $contentProcessor  = new ContentProcessor();
-        $urlTranslationsObj   = new UrlTranslations($urltranslations ?? []);
-        $languageProcessor = new LanguageProcessor($this->site, $urlTranslationsObj);
+            $fileProcessor     = new FileProcessor($this->site, $base);
+            $contentProcessor  = new ContentProcessor();
+            $urlTranslationsObj   = new UrlTranslations($urltranslations ?? []);
+            $languageProcessor = new LanguageProcessor($this->site, $urlTranslationsObj);
 
-        $this->parser = new MarkdownParser(
-            $fileProcessor,
-            $contentProcessor,
-            $languageProcessor,
-            $this->site
-        );
+            $this->parser = new MarkdownParser(
+                $fileProcessor,
+                $contentProcessor,
+                $languageProcessor,
+                $this->site
+            );
+        }
     }
 
     public function getPages(): Pages
@@ -47,6 +51,7 @@ class SiteBuilder
     public function build(): void
     {
         $base = $this->site->paths->baseDir;
+        $themeDir = $this->site->paths->themeDir ?? 'theme';
 
         // Clean output directory
         Helper::recursive_rmdir($base . DIRECTORY_SEPARATOR . $this->site->paths->outputDir);
@@ -60,13 +65,13 @@ class SiteBuilder
         $this->generateFeed();
 
         // Copy assets
-        $this->copyAssets($base . DIRECTORY_SEPARATOR . "resources" . DIRECTORY_SEPARATOR . "views");
+        $this->copyAssets($base . DIRECTORY_SEPARATOR . $themeDir . DIRECTORY_SEPARATOR . "views");
 
         // Copy static files
         if ($this->site->options->skipStatic) {
             echo "Skipping static files\n";
         } else {
-            $this->copyStatic($base . DIRECTORY_SEPARATOR . "resources" . DIRECTORY_SEPARATOR . "static");
+            $this->copyStatic($base . DIRECTORY_SEPARATOR . $themeDir . DIRECTORY_SEPARATOR . "static");
         }
     }
 
@@ -91,11 +96,14 @@ class SiteBuilder
                         $this->pages->add($page);
                     }
                 } elseif (is_dir($path)) {
+                    $themeDir = $this->site->paths->themeDir ?? 'theme';
                     if (
                         strpos($path, DIRECTORY_SEPARATOR . "app") === false
                         && strpos($path, DIRECTORY_SEPARATOR . "bootstrap") === false
                         && strpos($path, DIRECTORY_SEPARATOR . "vendor") === false
                         && strpos($path, DIRECTORY_SEPARATOR . "resources") === false
+                        && strpos($path, DIRECTORY_SEPARATOR . $themeDir) === false
+                        && strpos($path, DIRECTORY_SEPARATOR . "theme") === false
                         && strpos($path, DIRECTORY_SEPARATOR . "data") === false
                         && strpos($path, DIRECTORY_SEPARATOR . $this->site->paths->outputDir) === false
                     ) {
@@ -108,21 +116,30 @@ class SiteBuilder
 
     public function generateHTMLFiles(): void
     {
+        $notes = [];
+
         foreach ($this->pages as $page) {
+            if ($page->kind === 'note') {
+                $notes[] = $page;
+                continue;
+            }
             $this->createHTMLFile($page);
             $this->createGeminiFile($page);
             $this->createGopherFile($page);
         }
+
+        $this->compileConsolidatedNotes($notes);
     }
 
     private function createHTMLFile(Page $page): void
     {
         $base = $this->site->paths->baseDir;
         $site = $this->site;
-        // Expose $p, $pages and $site to the global scope for view template compatibility
-        global $p, $site, $pages;
+        // Expose $p, $pages, $site and $langLinks to the global scope for view template compatibility
+        global $p, $site, $pages, $langLinks;
         $p = $page;
         $pages = $this->pages;
+        $langLinks = $this->getLanguageLinks($page);
 
         if (in_array("draft", $page->metadata->tags)) {
             return;
@@ -157,9 +174,10 @@ class SiteBuilder
                 . "index.html";
             echo "Built " . $page->slug . "index.html" . "\n";
         }
+        $themeDir = $this->site->paths->themeDir ?? 'theme';
         ob_start();
         // phpcs:ignore Generic.PHP.ForbiddenFunctions.FoundWithAlternative
-        include $base . DIRECTORY_SEPARATOR . "resources/views/" . $page->metadata->layout . ".php"; // NOSONAR
+        include $base . DIRECTORY_SEPARATOR . $themeDir . "/views/" . $page->metadata->layout . ".php"; // NOSONAR
         $fileContent = ob_get_clean();
 
         if (isset($this->site->options->htmlpostprocessing)) {
@@ -182,7 +200,8 @@ class SiteBuilder
         // Expose to global scope for view template compatibility
         global $pages, $site;
 
-        $file = $base . DIRECTORY_SEPARATOR . "resources" . DIRECTORY_SEPARATOR . "views" . DIRECTORY_SEPARATOR . "feed" . ".php";
+        $themeDir = $this->site->paths->themeDir ?? 'theme';
+        $file = $base . DIRECTORY_SEPARATOR . $themeDir . DIRECTORY_SEPARATOR . "views" . DIRECTORY_SEPARATOR . "feed" . ".php";
         if (file_exists($file) && is_readable($file)) {
             include $file;
         }
@@ -293,13 +312,17 @@ class SiteBuilder
 
     private function copyLiveJsFile(string $base): void
     {
+        $themeDir = $this->site->paths->themeDir ?? 'theme';
         $jsDir = $base . DIRECTORY_SEPARATOR . $this->site->paths->outputDir . DIRECTORY_SEPARATOR . "js";
 
         if (!is_dir($jsDir)) {
             mkdir($jsDir, 0777, true);
         }
 
-        copy($base . "/resources/views/livejs/live.js", $jsDir . "/live.js");
+        $liveJsFile = $base . "/" . $themeDir . "/views/livejs/live.js";
+        if (file_exists($liveJsFile)) {
+            copy($liveJsFile, $jsDir . "/live.js");
+        }
     }
 
     private function createGeminiFile(Page $page): void
@@ -319,20 +342,28 @@ class SiteBuilder
         $destination = trim($destination, DIRECTORY_SEPARATOR);
 
         $outDir = $base . DIRECTORY_SEPARATOR . $this->site->paths->outputDir;
-        if (!is_dir($outDir . DIRECTORY_SEPARATOR . $destination)) {
-            mkdir($outDir . DIRECTORY_SEPARATOR . $destination, 0777, true);
+        if (str_ends_with($destination, '.html') || str_ends_with($destination, '.htm')) {
+            $ext = str_ends_with($destination, '.html') ? '.html' : '.htm';
+            $dir = dirname($outDir . DIRECTORY_SEPARATOR . $destination);
+            if (!is_dir($dir)) {
+                mkdir($dir, 0777, true);
+            }
+            $destinationFile = $outDir . DIRECTORY_SEPARATOR . dirname($destination) . DIRECTORY_SEPARATOR . basename($destination, $ext) . '.gmi';
+        } else {
+            if (!is_dir($outDir . DIRECTORY_SEPARATOR . $destination)) {
+                mkdir($outDir . DIRECTORY_SEPARATOR . $destination, 0777, true);
+            }
+            $destinationFile = $outDir
+                . DIRECTORY_SEPARATOR
+                . $destination
+                . DIRECTORY_SEPARATOR
+                . "index.gmi";
         }
 
-        $destinationFile = $outDir
-            . DIRECTORY_SEPARATOR
-            . $destination
-            . DIRECTORY_SEPARATOR
-            . "index.gmi";
-
-        echo "Built " . $page->slug . "index.gmi\n";
+        echo "Built " . str_replace($outDir . DIRECTORY_SEPARATOR, '', $destinationFile) . "\n";
 
         $astParser = new ASTParser();
-        $gemtextRenderer = new GemtextRenderer();
+        $gemtextRenderer = new GemtextRenderer($page);
 
         $rawBody = $page->rawBody ?? '';
         $ast = $astParser->parse($rawBody);
@@ -374,17 +405,25 @@ class SiteBuilder
         $destination = trim($destination, DIRECTORY_SEPARATOR);
 
         $outDir = $base . DIRECTORY_SEPARATOR . $this->site->paths->outputDir;
-        if (!is_dir($outDir . DIRECTORY_SEPARATOR . $destination)) {
-            mkdir($outDir . DIRECTORY_SEPARATOR . $destination, 0777, true);
+        if (str_ends_with($destination, '.html') || str_ends_with($destination, '.htm')) {
+            $ext = str_ends_with($destination, '.html') ? '.html' : '.htm';
+            $dir = dirname($outDir . DIRECTORY_SEPARATOR . $destination);
+            if (!is_dir($dir)) {
+                mkdir($dir, 0777, true);
+            }
+            $destinationFile = $outDir . DIRECTORY_SEPARATOR . dirname($destination) . DIRECTORY_SEPARATOR . basename($destination, $ext) . '.gophermap';
+        } else {
+            if (!is_dir($outDir . DIRECTORY_SEPARATOR . $destination)) {
+                mkdir($outDir . DIRECTORY_SEPARATOR . $destination, 0777, true);
+            }
+            $destinationFile = $outDir
+                . DIRECTORY_SEPARATOR
+                . $destination
+                . DIRECTORY_SEPARATOR
+                . "gophermap";
         }
 
-        $destinationFile = $outDir
-            . DIRECTORY_SEPARATOR
-            . $destination
-            . DIRECTORY_SEPARATOR
-            . "gophermap";
-
-        echo "Built " . $page->slug . "gophermap\n";
+        echo "Built " . str_replace($outDir . DIRECTORY_SEPARATOR, '', $destinationFile) . "\n";
 
         $host = 'gopher.example.com';
         if ($this->site->metadata->fqdn) {
@@ -393,7 +432,7 @@ class SiteBuilder
         }
 
         $astParser = new ASTParser();
-        $gophermapRenderer = new GophermapRenderer($host, 70);
+        $gophermapRenderer = new GophermapRenderer($host, 70, $page);
 
         $rawBody = $page->rawBody ?? '';
         $ast = $astParser->parse($rawBody);
@@ -473,11 +512,224 @@ class SiteBuilder
         $timeline = $timelineEntries;
         $mentions = $mentionEntries;
 
-        $layoutFile = $base . DIRECTORY_SEPARATOR . 'resources' . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR . 'timeline.php';
+        $themeDir = $this->site->paths->themeDir ?? 'theme';
+        $layoutFile = $base . DIRECTORY_SEPARATOR . $themeDir . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR . 'timeline.php';
         if (file_exists($layoutFile) && is_readable($layoutFile)) {
             $this->createHTMLFile($timelinePage);
         } else {
             echo "Skipping timeline static page compilation: timeline layout not found.\n";
+        }
+    }
+
+    private function getLanguageLinks(Page $page): array
+    {
+        global $urltranslations;
+        if (!is_array($urltranslations)) {
+            $urltranslations = [];
+        }
+
+        $slug = $page->slug;
+        $parts = explode('/', trim($slug, '/'));
+        if (isset($parts[0]) && in_array($parts[0], ['en', 'es'])) {
+            array_shift($parts);
+        }
+        if (isset($parts[0]) && in_array($parts[0], ['artigos', 'articles', 'articulos', 'notas', 'notes', 'fotos', 'photos', 'garden', 'jardim', 'pensamentos', 'thoughts', 'pensamientos'])) {
+            array_shift($parts);
+        }
+        $nick = end($parts);
+        if ($nick === false) {
+            $nick = '';
+        }
+
+        $translationGroup = null;
+        $baseKey = null;
+        foreach ($urltranslations as $key => $langs) {
+            if ($nick === $key) {
+                $translationGroup = $langs;
+                $baseKey = $key;
+                break;
+            }
+            foreach ($langs as $lang => $translatedNick) {
+                if ($nick === $translatedNick) {
+                    $translationGroup = $langs;
+                    $baseKey = $key;
+                    break 2;
+                }
+            }
+        }
+
+        $links = [
+            'pt' => '/',
+            'en' => '/en/',
+            'es' => '/es/',
+        ];
+
+        if ($translationGroup !== null && $baseKey !== null) {
+            $kind = $page->kind;
+
+            // PT URL
+            $folderPt = $this->getKindFolder($kind, 'pt');
+            $links['pt'] = '/' . ($folderPt ? $folderPt . '/' : '') . $baseKey . '/';
+            if ($baseKey === 'index') {
+                $links['pt'] = '/';
+            }
+
+            // EN URL
+            if (isset($translationGroup['en'])) {
+                $folderEn = $this->getKindFolder($kind, 'en');
+                $links['en'] = '/en/' . ($folderEn ? $folderEn . '/' : '') . $translationGroup['en'] . '/';
+                if ($translationGroup['en'] === 'index') {
+                    $links['en'] = '/en/';
+                }
+            }
+
+            // ES URL
+            if (isset($translationGroup['es'])) {
+                $folderEs = $this->getKindFolder($kind, 'es');
+                $links['es'] = '/es/' . ($folderEs ? $folderEs . '/' : '') . $translationGroup['es'] . '/';
+                if ($translationGroup['es'] === 'index') {
+                    $links['es'] = '/es/';
+                }
+            }
+        } else {
+            if ($nick === 'index' || $nick === 'indice') {
+                $links['pt'] = '/';
+                $links['en'] = '/en/';
+                $links['es'] = '/es/';
+            } elseif ($nick === 'indice') {
+                $links['pt'] = '/indice/';
+                $links['en'] = '/en/index/';
+                $links['es'] = '/es/indice/';
+            }
+        }
+
+        foreach ($links as $lang => $url) {
+            $links[$lang] = '/' . ltrim(preg_replace('#/+#', '/', $url), '/');
+        }
+
+        return $links;
+    }
+
+    private function getKindFolder(string $kind, string $lang): string
+    {
+        switch ($kind) {
+            case 'article':
+                if ($lang === 'en') return 'articles';
+                if ($lang === 'es') return 'articulos';
+                return 'artigos';
+            case 'note':
+                if ($lang === 'en') return 'notes';
+                if ($lang === 'es') return 'notas';
+                return 'notas';
+            case 'photo':
+                if ($lang === 'en') return 'photos';
+                if ($lang === 'es') return 'fotos';
+                return 'fotos';
+            case 'jardim':
+                if ($lang === 'en') return 'garden';
+                if ($lang === 'es') return 'jardim';
+                return 'jardim';
+            default:
+                return '';
+        }
+    }
+
+    /**
+     * @param \Indieinabox\Page[] $notes
+     */
+    private function compileConsolidatedNotes(array $notes): void
+    {
+        $grouped = [];
+        foreach ($notes as $note) {
+            $lang = $note->lang ?? 'en';
+            $date = $note->date;
+            $yearMonth = $date->format('Y-m');
+
+            $grouped[$lang][$yearMonth][] = $note;
+        }
+
+        foreach ($grouped as $lang => &$months) {
+            krsort($months);
+            foreach ($months as $yearMonth => &$monthNotes) {
+                usort($monthNotes, function ($a, $b) {
+                    return $b->date->getTimestamp() <=> $a->date->getTimestamp();
+                });
+            }
+            unset($monthNotes);
+        }
+        unset($months);
+
+        foreach ($grouped as $lang => $months) {
+            /** @var \Indieinabox\Page[] $allNotesForLang */
+            $allNotesForLang = [];
+
+            foreach ($months as $yearMonth => $monthNotes) {
+                $monthContent = '';
+                foreach ($monthNotes as $idx => $note) {
+                    if ($idx > 0) {
+                        $monthContent .= "\n<hr class=\"divisor-bloco\">\n";
+                    }
+                    $monthContent .= $note->content;
+                }
+
+                $monthRaw = '';
+                foreach ($monthNotes as $idx => $note) {
+                    if ($idx > 0) {
+                        $monthRaw .= "\n\n---\n\n";
+                    }
+                    $monthRaw .= $note->rawBody;
+                }
+
+                $monthSlug = ($lang === $this->site->localization->defaultLang ? '' : $lang . '/') . $this->getKindFolder('note', $lang) . '/' . $yearMonth . '/';
+                $monthPage = Page::fromArray([
+                    'title' => "Notas - " . $yearMonth,
+                    'layout' => 'timeline',
+                    'slug' => $monthSlug,
+                    'date' => new \DateTime($yearMonth . '-01'),
+                    'content' => $monthContent,
+                    'rawBody' => $monthRaw,
+                    'lang' => $lang,
+                    'kind' => 'note'
+                ]);
+
+                $allNotesForLang = array_merge($allNotesForLang, $monthNotes);
+
+                $this->createHTMLFile($monthPage);
+                $this->createGeminiFile($monthPage);
+                $this->createGopherFile($monthPage);
+            }
+
+            $indexContent = '';
+            foreach ($allNotesForLang as $idx => $note) {
+                if ($idx > 0) {
+                    $indexContent .= "\n<hr class=\"divisor-bloco\">\n";
+                }
+                $indexContent .= $note->content;
+            }
+
+            $indexRaw = '';
+            foreach ($allNotesForLang as $idx => $note) {
+                if ($idx > 0) {
+                    $indexRaw .= "\n\n---\n\n";
+                }
+                $indexRaw .= $note->rawBody;
+            }
+
+            $indexSlug = ($lang === $this->site->localization->defaultLang ? '' : $lang . '/') . $this->getKindFolder('note', $lang) . '/';
+            $indexPage = Page::fromArray([
+                'title' => "Notas",
+                'layout' => 'timeline',
+                'slug' => $indexSlug,
+                'date' => time(),
+                'content' => $indexContent,
+                'rawBody' => $indexRaw,
+                'lang' => $lang,
+                'kind' => 'note'
+            ]);
+
+            $this->createHTMLFile($indexPage);
+            $this->createGeminiFile($indexPage);
+            $this->createGopherFile($indexPage);
         }
     }
 }

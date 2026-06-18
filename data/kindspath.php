@@ -43,7 +43,10 @@ $kindspath = [
         "rsvps",
         "confirmaciones",
     ],
-    "thought" => [
+    "jardim" => [
+        "garden",
+        "jardim",
+        "jardim_digital",
         "pensamentos",
         "thoughts",
         "pensamientos",

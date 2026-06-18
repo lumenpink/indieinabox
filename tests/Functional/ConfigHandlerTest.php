@@ -194,6 +194,7 @@ it('authenticates user and sets session on valid authorization callback', functi
 });
 
 it('formats slugs correctly for pretty links and ugly links', function () use ($configTestTempDir) {
+    global $site;
     $site = new Site();
     $site->paths->baseDir = $configTestTempDir;
     $site->paths->contentDir = 'content';

@@ -117,13 +117,17 @@ class ContentProcessor
 
     /**
      * @param string $content
+     * @param \Indieinabox\Page|null $page
      *
      * @return string
      */
-    public function processContent(string $content): string
+    public function processContent(string $content, ?\Indieinabox\Page $page = null): string
     {
         $content = $this->addTrailingSlashesToInternalLinks($content);
         $ast = $this->astParser->parse($content);
+        if ($page !== null) {
+            $this->htmlRenderer->setPage($page);
+        }
         return $this->htmlRenderer->render($ast);
     }
 

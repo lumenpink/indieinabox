@@ -97,6 +97,15 @@ class LinkNode extends InlineNode
     }
 }
 
+class ImageNode extends InlineNode
+{
+    public function __construct(
+        public string $target,
+        public string $label
+    ) {
+    }
+}
+
 /**
  * --------------------------------------------------------------------------
  * AST Parser
@@ -229,6 +238,27 @@ class ASTParser
                 }
             }
 
+            // 1.4. Images: ![Label](URL)
+            if ($i + 1 < $len && $text[$i] === '!' && $text[$i + 1] === '[') {
+                if ($i > $plainStart) {
+                    $nodes[] = new TextNode(substr($text, $plainStart, $i - $plainStart));
+                }
+
+                $closeBracket = strpos($text, ']', $i + 2);
+                if ($closeBracket !== false && $closeBracket + 1 < $len && $text[$closeBracket + 1] === '(') {
+                    $closeParen = strpos($text, ')', $closeBracket + 2);
+                    if ($closeParen !== false) {
+                        $label = substr($text, $i + 2, $closeBracket - ($i + 2));
+                        $target = substr($text, $closeBracket + 2, $closeParen - ($closeBracket + 2));
+
+                        $nodes[] = new ImageNode($target, $label);
+                        $i = $closeParen + 1;
+                        $plainStart = $i;
+                        continue;
+                    }
+                }
+            }
+
             // 1.5. Standard Links: [Label](URL)
             if ($text[$i] === '[') {
                 if ($i + 1 < $len && $text[$i + 1] !== '[') {
@@ -339,6 +369,8 @@ function dumpAST(Node $node, int $indent = 0): string
     } elseif ($node instanceof WikilinkNode) {
         $extra = " (target: " . json_encode($node->target) . ", label: " . json_encode($node->label) . ")";
     } elseif ($node instanceof LinkNode) {
+        $extra = " (target: " . json_encode($node->target) . ", label: " . json_encode($node->label) . ")";
+    } elseif ($node instanceof ImageNode) {
         $extra = " (target: " . json_encode($node->target) . ", label: " . json_encode($node->label) . ")";
     }
 

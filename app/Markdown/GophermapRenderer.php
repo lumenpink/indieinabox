@@ -13,10 +13,16 @@ class GophermapRenderer implements RendererInterface
     private string $host;
     private int $port;
 
-    public function __construct(string $host = 'gopher.example.com', int $port = 70)
+    /**
+     * @var \Indieinabox\Page|null
+     */
+    private ?\Indieinabox\Page $page = null;
+
+    public function __construct(string $host = 'gopher.example.com', int $port = 70, ?\Indieinabox\Page $page = null)
     {
         $this->host = $host;
         $this->port = $port;
+        $this->page = $page;
     }
 
     /**
@@ -65,18 +71,31 @@ class GophermapRenderer implements RendererInterface
         }
 
         if ($node instanceof ParagraphNode) {
-            $inner = '';
-            foreach ($node->children as $child) {
-                $inner .= $this->renderNode($child);
-            }
-
-            // Word wrap paragraph to 70 chars for retro clients
-            $wrapped = wordwrap($inner, 70, "\n");
-            $lines = explode("\n", $wrapped);
             $text = '';
-            foreach ($lines as $line) {
-                $text .= $this->formatLine('i', $line);
+            $currentTextGroup = '';
+            
+            foreach ($node->children as $child) {
+                if ($child instanceof ImageNode) {
+                    if ($currentTextGroup !== '') {
+                        $wrapped = wordwrap($currentTextGroup, 70, "\n");
+                        foreach (explode("\n", $wrapped) as $line) {
+                            $text .= $this->formatLine('i', $line);
+                        }
+                        $currentTextGroup = '';
+                    }
+                    $text .= $this->renderNode($child);
+                } else {
+                    $currentTextGroup .= $this->renderNode($child);
+                }
             }
+            
+            if ($currentTextGroup !== '') {
+                $wrapped = wordwrap($currentTextGroup, 70, "\n");
+                foreach (explode("\n", $wrapped) as $line) {
+                    $text .= $this->formatLine('i', $line);
+                }
+            }
+            
             return $text . $this->formatLine('i', '');
         }
 
@@ -144,6 +163,26 @@ class GophermapRenderer implements RendererInterface
                 'target' => $target
             ];
             return $node->label;
+        }
+
+        if ($node instanceof ImageNode) {
+            $alt = $node->label;
+            $target = $node->target;
+
+            // Resolve selector path to the generated GIF
+            $pathInfo = pathinfo($target);
+            $gifName = $pathInfo['filename'] . '.gif';
+
+            $slug = $this->page ? trim($this->page->slug, '/') : '';
+            if (str_ends_with($slug, '.html')) {
+                $dir = dirname($slug);
+                $gifPath = ($dir === '.' || $dir === '') ? '/' . $gifName : '/' . $dir . '/' . $gifName;
+            } else {
+                $gifPath = '/' . $slug . '/' . $gifName;
+            }
+            $gifPath = preg_replace('#/+#', '/', $gifPath);
+
+            return $this->formatLine('I', "[Foto: {$alt}]", $gifPath, $this->host, $this->port);
         }
 
         return '';

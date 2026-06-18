@@ -62,6 +62,7 @@ if (file_exists($configFile)) {
         'fqdn' => 'http://localhost:8080',
         'outputdir' => 'public',
         'contentdir' => 'content',
+        'themedir' => 'theme',
         'lang' => 'en',
         'defaultlang' => 'en',
         'support' => ['md', 'txt', 'html', 'htm']
@@ -129,6 +130,9 @@ if (isset($config['outputdir'])) {
 }
 if (isset($config['contentdir'])) {
     $site->paths->contentDir = $config['contentdir'];
+}
+if (isset($config['themedir'])) {
+    $site->paths->themeDir = $config['themedir'];
 }
 if (isset($config['defaultcategory'])) {
     $site->support->defaultCategory = $config['defaultcategory'];

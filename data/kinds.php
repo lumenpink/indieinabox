@@ -9,6 +9,5 @@ $kinds = [
     "Respostas" => "fa/reply",
     "Republicações" => "fa/retweet",
     "Confirmações" => "fa/calendar",
-    "Pensamentos" => "fa/brain",
-
+    "Jardim" => "fa/seedling",
 ];

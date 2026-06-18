@@ -66,6 +66,11 @@ class Page
     public $slug;
 
     /**
+     * @var string|null
+     */
+    public ?string $filepath = null;
+
+    /**
      * Page constructor.
      *
      * @param Metadata $metadata

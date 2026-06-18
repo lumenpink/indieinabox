@@ -8,7 +8,7 @@ use Indieinabox\Markdown\FileProcessor;
 use Indieinabox\Markdown\ContentProcessor;
 use Indieinabox\Markdown\LanguageProcessor;
 
-class MarkdownParser
+class MarkdownParser implements ParserInterface
 {
     /**
      * @var FileProcessor
@@ -75,9 +75,6 @@ class MarkdownParser
 
         $page['rawBody'] = trim($content, " \n\r\t");
 
-        $content = $this->contentProcessor->processContent($content);
-        $page['content'] = trim($content, " \n\r\t");
-
         if (!$this->site->options->buildAll && !$hasFrontMatter) {
             return null;
         }
@@ -125,23 +122,28 @@ class MarkdownParser
 
         // Convert to Page object and process language & metadata
         $pageObj = Page::fromArray($page);
+        $pageObj->filepath = $file;
         $pageObj = $this->languageProcessor->processLanguage($pageObj);
-        $pageObj = $this->setMetadata($pageObj);
+        $pageObj = $this->setMetadata($pageObj, $page);
+
+        $renderedContent = $this->contentProcessor->processContent($content, $pageObj);
+        $pageObj->content->content = trim($renderedContent, " \n\r\t");
 
         return $pageObj;
     }
 
     /**
      * @param  Page $page
+     * @param  array $rawPage
      * @return Page
      */
-    private function setMetadata(Page $page): Page
+    private function setMetadata(Page $page, array $rawPage): Page
     {
         if (empty($page->category) || $page->category === ["No Category"]) {
             $page->category = ["General"];
         }
 
-        $kindResult = Helper::kind($page);
+        $kindResult = Helper::kind($rawPage);
         $page->localizedkind = $kindResult["localized"];
         $page->kind = $kindResult["kind"];
 

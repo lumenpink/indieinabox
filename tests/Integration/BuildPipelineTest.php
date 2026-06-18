@@ -49,7 +49,7 @@ function writeSandboxConfig(string $sandbox): void
  */
 function writeBasePageView(string $sandbox): void
 {
-    file_put_contents($sandbox . '/resources/views/page.php', <<<PHP
+    file_put_contents($sandbox . '/theme/views/page.php', <<<PHP
 <!DOCTYPE html>
 <html>
 <head>
@@ -70,8 +70,8 @@ PHP
 function linkLiveJs(string $sandbox): void
 {
     symlink(
-        dirname(dirname(__DIR__)) . '/resources/views/livejs/live.js',
-        $sandbox . '/resources/views/livejs/live.js'
+        dirname(dirname(__DIR__)) . '/theme/views/livejs/live.js',
+        $sandbox . '/theme/views/livejs/live.js'
     );
 }
 
@@ -101,10 +101,10 @@ beforeEach(function () use ($sandbox) {
     cleanSandbox($sandbox);
     mkdir($sandbox, 0777, true);
     mkdir($sandbox . '/content', 0777, true);
-    mkdir($sandbox . '/resources', 0777, true);
-    mkdir($sandbox . '/resources/views', 0777, true);
-    mkdir($sandbox . '/resources/views/livejs', 0777, true);
-    mkdir($sandbox . '/resources/static', 0777, true);
+    mkdir($sandbox . '/theme', 0777, true);
+    mkdir($sandbox . '/theme/views', 0777, true);
+    mkdir($sandbox . '/theme/views/livejs', 0777, true);
+    mkdir($sandbox . '/theme/static', 0777, true);
 });
 
 afterEach(function () use ($sandbox) {
@@ -125,7 +125,7 @@ it('executes the build pipeline and generates the static site correctly', functi
     // 3. Create views
     writeBasePageView($sandbox);
 
-    file_put_contents($sandbox . '/resources/views/feed.php', <<<PHP
+    file_put_contents($sandbox . '/theme/views/feed.php', <<<PHP
 <?php
 ob_start();
 echo '<?xml version="1.0" encoding="utf-8"?>';
@@ -155,7 +155,7 @@ PHP
     );
 
     // 4. Create static asset and live.js symlink
-    file_put_contents($sandbox . '/resources/static/app.css', 'body { color: red; }');
+    file_put_contents($sandbox . '/theme/static/app.css', 'body { color: red; }');
     linkLiveJs($sandbox);
 
     // 5. Setup symlinks to app, bootstrap, data, vendor
@@ -170,7 +170,7 @@ PHP
     expect(is_file($outputDir . '/index.html'))->toBeTrue();
     expect(is_file($outputDir . '/about/index.html'))->toBeTrue();
     expect(is_file($outputDir . '/feed.xml'))->toBeTrue();
-    expect(is_file($outputDir . '/app.css'))->toBeTrue(); // copied from resources/static
+    expect(is_file($outputDir . '/app.css'))->toBeTrue(); // copied from theme/static
 
     $indexHtml = file_get_contents($outputDir . '/index.html');
     expect($indexHtml)->toContain('<title>Home Page</title>');
@@ -199,7 +199,7 @@ it('injects live-reload script when building with -d (dev mode)', function () us
     file_put_contents($sandbox . '/content/index.md', "---\ntitle: Home Page\nlayout: page\n---\nWelcome home!");
 
     // 3. Create views with livejs support and live.js symlink
-    file_put_contents($sandbox . '/resources/views/page.php', <<<PHP
+    file_put_contents($sandbox . '/theme/views/page.php', <<<PHP
 <!DOCTYPE html>
 <html>
 <head>

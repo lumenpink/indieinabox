@@ -38,9 +38,9 @@ beforeEach(function () use ($integrationSandbox) {
     cleanIntegrationSandbox($integrationSandbox);
     mkdir($integrationSandbox, 0777, true);
     mkdir($integrationSandbox . '/content', 0777, true);
-    mkdir($integrationSandbox . '/resources', 0777, true);
-    mkdir($integrationSandbox . '/resources/views', 0777, true);
-    mkdir($integrationSandbox . '/resources/static', 0777, true);
+    mkdir($integrationSandbox . '/theme', 0777, true);
+    mkdir($integrationSandbox . '/theme/views', 0777, true);
+    mkdir($integrationSandbox . '/theme/static', 0777, true);
 });
 
 afterEach(function () use ($integrationSandbox) {
@@ -75,7 +75,7 @@ it('compiles the app and runs both CLI build and Web routing from the single-fil
     file_put_contents($integrationSandbox . '/content/about.md', "---\ntitle: About Page\nlayout: page\n---\nAbout page content.");
 
     // Simple page view template
-    file_put_contents($integrationSandbox . '/resources/views/page.php', <<<PHP
+    file_put_contents($integrationSandbox . '/theme/views/page.php', <<<PHP
 <!DOCTYPE html>
 <html>
 <head>

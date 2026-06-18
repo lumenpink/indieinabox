@@ -531,7 +531,8 @@ class Helper
      */
     public static function listposts(): string
     {
-        global $base, $pages, $site;
+        global $pages, $site;
+        $base = $site->paths->baseDir;
         $localpages = $pages instanceof Pages ? $pages->all() : $pages;
         $localpages = array_filter($localpages, [self::class, 'removegeneric']);
         usort(
@@ -546,8 +547,9 @@ class Helper
         );
         $count = 0;
         ob_start();
+        $themeDir = $site->paths->themeDir ?? 'theme';
         foreach ($localpages as $page) {
-            include $base . DIRECTORY_SEPARATOR . "resources/views/includes/summary.php";
+            include $base . DIRECTORY_SEPARATOR . $themeDir . DIRECTORY_SEPARATOR . "views/includes/summary.php";
             $count++;
             if ($count >= 10) {
                 break;
@@ -571,6 +573,135 @@ class Helper
             }
         }
         return false;
+    }
+
+    /**
+     * Atkinson adaptive dithering using GD to index 8-bit GIF
+     *
+     * @param string $caminhoOriginal
+     * @param string $caminhoDestino
+     * @param int $larguraFocal
+     * @param array $corBG
+     * @param array $corFG
+     * @param bool $aplicarAutomacao
+     * @return bool
+     */
+    public static function ditherImageToGif(
+        string $caminhoOriginal,
+        string $caminhoDestino,
+        int $larguraFocal,
+        array $corBG,
+        array $corFG,
+        bool $aplicarAutomacao = true
+    ): bool {
+        if (!is_dir(dirname($caminhoDestino))) {
+            mkdir(dirname($caminhoDestino), 0777, true);
+        }
+
+        $ext = strtolower(pathinfo($caminhoOriginal, PATHINFO_EXTENSION));
+        if ($ext === 'png') {
+            $imgOriginal = @imagecreatefrompng($caminhoOriginal);
+        } elseif ($ext === 'gif') {
+            $imgOriginal = @imagecreatefromgif($caminhoOriginal);
+        } elseif ($ext === 'webp') {
+            $imgOriginal = function_exists('imagecreatefromwebp') ? @imagecreatefromwebp($caminhoOriginal) : false;
+        } else {
+            $imgOriginal = @imagecreatefromjpeg($caminhoOriginal);
+            if ($imgOriginal && function_exists('exif_read_data')) {
+                $exif = @exif_read_data($caminhoOriginal);
+                if (!empty($exif['Orientation'])) {
+                    switch ($exif['Orientation']) {
+                        case 3: $imgOriginal = imagerotate($imgOriginal, 180, 0); break;
+                        case 6: $imgOriginal = imagerotate($imgOriginal, -90, 0); break;
+                        case 8: $imgOriginal = imagerotate($imgOriginal, 90, 0); break;
+                    }
+                }
+            }
+        }
+
+        if (!$imgOriginal) {
+            return false;
+        }
+
+        $larguraOrig = imagesx($imgOriginal);
+        $alturaOrig = imagesy($imgOriginal);
+        $alturaFocal = (int)(($alturaOrig / $larguraOrig) * $larguraFocal);
+
+        $imgRedimensionada = imagecreatetruecolor($larguraFocal, $alturaFocal);
+        imagecopyresampled($imgRedimensionada, $imgOriginal, 0, 0, 0, 0, $larguraFocal, $alturaFocal, $larguraOrig, $alturaOrig);
+        imagedestroy($imgOriginal);
+
+        $brilhoTotal = 0;
+        $amostras = 0;
+        for ($y = 0; $y < $alturaFocal; $y += 10) {
+            for ($x = 0; $x < $larguraFocal; $x += 10) {
+                $rgb = imagecolorat($imgRedimensionada, $x, $y);
+                $brilhoTotal += ((($rgb >> 16) & 0xFF) * 0.299 + (($rgb >> 8) & 0xFF) * 0.587 + ($rgb & 0xFF) * 0.114);
+                $amostras++;
+            }
+        }
+        $luminanciaMedia = ($brilhoTotal / $amostras) / 255;
+
+        $fatorGamma = 1.0; 
+        $fatorContraste = 1.0;
+
+        if ($aplicarAutomacao) {
+            $alvoLuminancia = 0.40;
+            $desvio = $luminanciaMedia - $alvoLuminancia;
+            $fatorGamma = 1.0 + ($desvio * 0.65); 
+            $fatorContraste = 1.0 + (abs($desvio) * 0.20);
+        }
+
+        $matriz = [];
+        for ($y = 0; $y < $alturaFocal; $y++) {
+            for ($x = 0; $x < $larguraFocal; $x++) {
+                $rgb = imagecolorat($imgRedimensionada, $x, $y);
+                $v = ((($rgb >> 16) & 0xFF) * 0.299 + (($rgb >> 8) & 0xFF) * 0.587 + ($rgb & 0xFF) * 0.114) / 255;
+
+                if ($aplicarAutomacao) {
+                    $v = pow($v, $fatorGamma);
+                    $v = (($v - 0.5) * $fatorContraste) + 0.5;
+                }
+                
+                $matriz[$y][$x] = max(0, min(1, $v)) * 255;
+            }
+        }
+        imagedestroy($imgRedimensionada);
+
+        for ($y = 0; $y < $alturaFocal; $y++) {
+            for ($x = 0; $x < $larguraFocal; $x++) {
+                $velhoPixel = $matriz[$y][$x];
+                $novoPixel = ($velhoPixel > 128) ? 255 : 0;
+                $matriz[$y][$x] = $novoPixel;
+
+                $erro = ($velhoPixel - $novoPixel) / 8;
+
+                if ($x + 1 < $larguraFocal)  $matriz[$y][$x+1]     += $erro;
+                if ($x + 2 < $larguraFocal)  $matriz[$y][$x+2]     += $erro;
+                if ($y + 1 < $alturaFocal) {
+                    if ($x - 1 >= 0)         $matriz[$y+1][$x-1]   += $erro;
+                                             $matriz[$y+1][$x]     += $erro;
+                    if ($x + 1 < $larguraFocal)  $matriz[$y+1][$x+1]   += $erro;
+                }
+                if ($y + 2 < $alturaFocal)   $matriz[$y+2][$x]     += $erro;
+            }
+        }
+
+        $imgFinal = imagecreate($larguraFocal, $alturaFocal);
+        $alocadaBG = imagecolorallocate($imgFinal, $corBG[0], $corBG[1], $corBG[2]);
+        $alocadaFG = imagecolorallocate($imgFinal, $corFG[0], $corFG[1], $corFG[2]);
+
+        for ($y = 0; $y < $alturaFocal; $y++) {
+            for ($x = 0; $x < $larguraFocal; $x++) {
+                $cor = ($matriz[$y][$x] > 128) ? $alocadaBG : $alocadaFG;
+                imagesetpixel($imgFinal, $x, $y, $cor);
+            }
+        }
+
+        $result = imagegif($imgFinal, $caminhoDestino);
+        imagedestroy($imgFinal);
+
+        return $result;
     }
 }
 

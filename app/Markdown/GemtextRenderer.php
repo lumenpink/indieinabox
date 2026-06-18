@@ -12,6 +12,16 @@ class GemtextRenderer implements RendererInterface
     private array $links = [];
 
     /**
+     * @var \Indieinabox\Page|null
+     */
+    private ?\Indieinabox\Page $page = null;
+
+    public function __construct(?\Indieinabox\Page $page = null)
+    {
+        $this->page = $page;
+    }
+
+    /**
      * Renders a Node AST to Gemini/Gemtext format.
      *
      * @param Node $node
@@ -106,6 +116,27 @@ class GemtextRenderer implements RendererInterface
                 'label' => $node->label
             ];
             return $node->label;
+        }
+
+        if ($node instanceof ImageNode) {
+            $alt = $node->label;
+            $target = $node->target;
+
+            // Resolve target path to the generated GIF
+            $pathInfo = pathinfo($target);
+            $gifName = $pathInfo['filename'] . '.gif';
+
+            // Get absolute GIF path from slug
+            $slug = $this->page ? trim($this->page->slug, '/') : '';
+            if (str_ends_with($slug, '.html')) {
+                $dir = dirname($slug);
+                $gifPath = ($dir === '.' || $dir === '') ? '/' . $gifName : '/' . $dir . '/' . $gifName;
+            } else {
+                $gifPath = '/' . $slug . '/' . $gifName;
+            }
+            $gifPath = preg_replace('#/+#', '/', $gifPath);
+
+            return "\n=> {$gifPath} [Foto: {$alt}]\n";
         }
 
         return '';

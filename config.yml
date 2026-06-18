@@ -66,3 +66,52 @@ kinds:
     has_title: true
     show_on_home: false
     display_mode: default
+translations:
+  Home:
+    pt: Início
+    en: Home
+    es: Inicio
+  Index:
+    pt: Índice
+    en: Index
+    es: Índice
+  Now:
+    pt: Agora
+    en: Now
+    es: Ahora
+  Recent posts:
+    pt: Publicações recentes
+    en: Recent posts
+    es: Publicaciones recientes
+  "Browse the sections of the site in Gopher style:":
+    pt: "Navegue pelas seções do site no estilo Gopher:"
+    en: "Browse the sections of the site in Gopher style:"
+    es: "Navegue por las secciones del sitio en estilo Gopher:"
+  Articles:
+    pt: Artigos
+    en: Articles
+    es: Artículos
+  Notes:
+    pt: Notas
+    en: Notes
+    es: Notas
+  Photos:
+    pt: Fotos
+    en: Photos
+    es: Fotos
+  Garden:
+    pt: Jardim
+    en: Garden
+    es: Jardín
+  About:
+    pt: Sobre
+    en: About
+    es: Sobre
+  Maturity:
+    pt: Maturidade
+    en: Maturity
+    es: Madurez
+  Reliability:
+    pt: Confiabilidade
+    en: Reliability
+    es: Confiabilidad

@@ -616,9 +616,23 @@ class Helper
                 $lang = "en";
             }
         }
+
+        // 1. Try config-based translations first
+        if ($site && !empty($site->config['translations'])) {
+            foreach ($site->config['translations'] as $original => $langs) {
+                if (strcasecmp($original, $text) === 0) {
+                    if (isset($langs[$lang]) && $langs[$lang] !== '') {
+                        return $langs[$lang];
+                    }
+                }
+            }
+        }
+
         if ($lang == $site->localization->defaultLang) {
             return $text;
         }
+
+        // 2. Fallback to translations.php array
         if (isset($translations[$lang])) {
             foreach ($translations[$lang] as $o => $v) {
                 if (mb_stripos($o, $text) !== false && !empty($v)) {

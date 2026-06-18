@@ -15,7 +15,7 @@
         <h1><?= htmlspecialchars($page->title) ?></h1>
         
         <div class="sitemap-gopher">
-            <p><?= \Indieinabox\Helper::translate('Navegue pelas seções do site no estilo Gopher:') ?></p>
+            <p><?= \Indieinabox\Helper::translate('Browse the sections of the site in Gopher style:') ?></p>
             <ul style="list-style-type: none; padding-left: 0;">
                 <?php
                 // Get all non-draft pages

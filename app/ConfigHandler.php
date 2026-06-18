@@ -354,6 +354,19 @@ class ConfigHandler
             ];
         }
 
+        // --- Translations ---
+        if (isset($_POST['translations']) && is_array($_POST['translations'])) {
+            $newTranslations = [];
+            foreach ($_POST['translations'] as $origText => $langsData) {
+                if (is_array($langsData)) {
+                    foreach ($langsData as $langCode => $val) {
+                        $newTranslations[trim($origText)][trim($langCode)] = trim($val);
+                    }
+                }
+            }
+            $currentConfig['translations'] = $newTranslations;
+        }
+
         // --- Security ---
         if (!empty($_POST['new_password'])) {
             $currentConfig['indieauth_password'] = password_hash($_POST['new_password'], PASSWORD_BCRYPT);
@@ -1018,6 +1031,39 @@ class ConfigHandler
                         <label>Configured Hubs (one URL per line)</label>
                         <textarea name="twtxt_hubs" placeholder="https://hub.twtxt.org"><?= htmlspecialchars(implode("\n", $config['twtxt']['hubs'] ?? [])) ?></textarea>
                     </div>
+                </fieldset>
+
+                <fieldset>
+                    <legend>Global Translations</legend>
+                    <?php
+                    $globalStrings = [
+                        'Home' => 'Home link',
+                        'Index' => 'Index link',
+                        'Now' => 'Now link',
+                        'Recent posts' => 'Recent posts header',
+                        'Browse the sections of the site in Gopher style:' => 'Gopher section description',
+                        'About' => 'About link',
+                        'Maturity' => 'Maturity label',
+                        'Reliability' => 'Reliability label',
+                        'Articles' => 'Articles footer link / kind label fallback',
+                        'Notes' => 'Notes footer link / kind label fallback',
+                        'Photos' => 'Photos footer link / kind label fallback',
+                        'Garden' => 'Garden footer link / kind label fallback'
+                    ];
+                    foreach ($globalStrings as $origText => $desc):
+                    ?>
+                        <div style="margin-bottom: 1.5em; border-bottom: 1px dashed var(--border-color); padding-bottom: 1em;">
+                            <strong><?= htmlspecialchars($origText) ?></strong> <span style="font-size: 0.9em; opacity: 0.7;">(<?= htmlspecialchars($desc) ?>)</span>
+                            <div class="grid-2" style="margin-top: 0.5em;">
+                                <?php foreach ($langArr as $l): ?>
+                                    <div class="color-picker" style="margin-bottom: 5px;">
+                                        <span style="width: 50px;"><?= htmlspecialchars($l) ?></span>
+                                        <input type="text" name="translations[<?= htmlspecialchars($origText) ?>][<?= htmlspecialchars($l) ?>]" value="<?= htmlspecialchars($config['translations'][$origText][$l] ?? '') ?>">
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
                 </fieldset>
 
                 <fieldset style="border-color: var(--accent);">

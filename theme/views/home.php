@@ -25,7 +25,7 @@
         
         <hr>
         
-        <h2><?= \Indieinabox\Helper::translate('Publicações recentes') ?></h2>
+        <h2><?= \Indieinabox\Helper::translate('Recent posts') ?></h2>
         <div class="catalogue">
             <?= \Indieinabox\Helper::listposts() ?>
         </div>

@@ -30,11 +30,11 @@ if ($prettylinks) {
 <footer>
     <hr>
     <div class="footer-links" style="text-align: center;">
-        <a href="<?= $articlesLink ?>"><?= \Indieinabox\Helper::translate('Artigos') ?></a> |
-        <a href="<?= $notesLink ?>"><?= \Indieinabox\Helper::translate('Notas') ?></a> |
-        <a href="<?= $photosLink ?>"><?= \Indieinabox\Helper::translate('Fotos') ?></a> |
-        <a href="<?= $gardenLink ?>"><?= \Indieinabox\Helper::translate('Jardim') ?></a> |
-        <a href="<?= $sobreLink ?>"><?= \Indieinabox\Helper::translate('Sobre') ?></a> |
+        <a href="<?= $articlesLink ?>"><?= \Indieinabox\Helper::translate('Articles') ?></a> |
+        <a href="<?= $notesLink ?>"><?= \Indieinabox\Helper::translate('Notes') ?></a> |
+        <a href="<?= $photosLink ?>"><?= \Indieinabox\Helper::translate('Photos') ?></a> |
+        <a href="<?= $gardenLink ?>"><?= \Indieinabox\Helper::translate('Garden') ?></a> |
+        <a href="<?= $sobreLink ?>"><?= \Indieinabox\Helper::translate('About') ?></a> |
         <a href="<?= $page->relpath ?>feed.xml">RSS</a>
     </div>
 </footer>

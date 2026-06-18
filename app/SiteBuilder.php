@@ -537,12 +537,40 @@ class SiteBuilder
             $urltranslations = [];
         }
 
+        $langs = $this->site->localization->lang;
+        if (!is_array($langs)) {
+            $langs = [$langs];
+        }
+        $defaultLang = $this->site->localization->defaultLang;
+        $prettylinks = $this->site->options->prettylinks ?? true;
+
         $slug = $page->slug;
         $parts = explode('/', trim($slug, '/'));
-        if (isset($parts[0]) && in_array($parts[0], ['en', 'es'])) {
+        if (isset($parts[0]) && in_array($parts[0], $langs, true) && $parts[0] !== $defaultLang) {
             array_shift($parts);
         }
-        if (isset($parts[0]) && in_array($parts[0], ['artigos', 'articles', 'articulos', 'notas', 'notes', 'fotos', 'photos', 'garden', 'jardim', 'pensamentos', 'thoughts', 'pensamientos'])) {
+
+        // Get localized folder names of all kinds in all active languages
+        $kindFolders = [];
+        if (!empty($this->site->config['kinds'])) {
+            foreach ($this->site->config['kinds'] as $k => $conf) {
+                foreach ($langs as $l) {
+                    $kindFolders[] = \Indieinabox\Helper::getKindFolder($k, $l);
+                }
+            }
+        }
+        // Also legacy folder names for backup
+        global $kindspath;
+        if (!empty($kindspath)) {
+            foreach ($kindspath as $key => $values) {
+                foreach ($values as $val) {
+                    $kindFolders[] = $val;
+                }
+            }
+        }
+        $kindFolders = array_unique($kindFolders);
+
+        if (isset($parts[0]) && in_array($parts[0], $kindFolders, true)) {
             array_shift($parts);
         }
         $nick = end($parts);
@@ -552,63 +580,85 @@ class SiteBuilder
 
         $translationGroup = null;
         $baseKey = null;
-        foreach ($urltranslations as $key => $langs) {
+        foreach ($urltranslations as $key => $langsList) {
             if ($nick === $key) {
-                $translationGroup = $langs;
+                $translationGroup = $langsList;
                 $baseKey = $key;
                 break;
             }
-            foreach ($langs as $lang => $translatedNick) {
+            foreach ($langsList as $lang => $translatedNick) {
                 if ($nick === $translatedNick) {
-                    $translationGroup = $langs;
+                    $translationGroup = $langsList;
                     $baseKey = $key;
                     break 2;
                 }
             }
         }
 
-        $links = [
-            'pt' => '/',
-            'en' => '/en/',
-            'es' => '/es/',
-        ];
+        $links = [];
+        foreach ($langs as $l) {
+            if ($l === $defaultLang) {
+                $links[$l] = '/';
+            } else {
+                $links[$l] = '/' . $l . '/';
+            }
+        }
 
         if ($translationGroup !== null && $baseKey !== null) {
             $kind = $page->kind;
 
-            // PT URL
-            $folderPt = $this->getKindFolder($kind, 'pt');
-            $links['pt'] = '/' . ($folderPt ? $folderPt . '/' : '') . $baseKey . '/';
-            if ($baseKey === 'index') {
-                $links['pt'] = '/';
-            }
-
-            // EN URL
-            if (isset($translationGroup['en'])) {
-                $folderEn = $this->getKindFolder($kind, 'en');
-                $links['en'] = '/en/' . ($folderEn ? $folderEn . '/' : '') . $translationGroup['en'] . '/';
-                if ($translationGroup['en'] === 'index') {
-                    $links['en'] = '/en/';
-                }
-            }
-
-            // ES URL
-            if (isset($translationGroup['es'])) {
-                $folderEs = $this->getKindFolder($kind, 'es');
-                $links['es'] = '/es/' . ($folderEs ? $folderEs . '/' : '') . $translationGroup['es'] . '/';
-                if ($translationGroup['es'] === 'index') {
-                    $links['es'] = '/es/';
+            foreach ($langs as $l) {
+                $folder = $this->getKindFolder($kind, $l);
+                
+                $localizedSlugPart = ($l === 'pt') ? $baseKey : ($translationGroup[$l] ?? $baseKey);
+                
+                if ($localizedSlugPart === 'index') {
+                    if ($l === $defaultLang) {
+                        $links[$l] = '/';
+                    } else {
+                        $links[$l] = '/' . $l . '/';
+                    }
+                } else {
+                    if ($prettylinks) {
+                        if ($l === $defaultLang) {
+                            $links[$l] = '/' . ($folder ? $folder . '/' : '') . $localizedSlugPart . '/';
+                        } else {
+                            $links[$l] = '/' . $l . '/' . ($folder ? $folder . '/' : '') . $localizedSlugPart . '/';
+                        }
+                    } else {
+                        if ($l === $defaultLang) {
+                            $links[$l] = '/' . ($folder ? $folder . '/' : '') . $localizedSlugPart . '.html';
+                        } else {
+                            $links[$l] = '/' . $l . '/' . ($folder ? $folder . '/' : '') . $localizedSlugPart . '.html';
+                        }
+                    }
                 }
             }
         } else {
-            if ($nick === 'index' || $nick === 'indice') {
-                $links['pt'] = '/';
-                $links['en'] = '/en/';
-                $links['es'] = '/es/';
+            if ($nick === 'index') {
+                foreach ($langs as $l) {
+                    if ($l === $defaultLang) {
+                        $links[$l] = '/';
+                    } else {
+                        $links[$l] = '/' . $l . '/';
+                    }
+                }
             } elseif ($nick === 'indice') {
-                $links['pt'] = '/indice/';
-                $links['en'] = '/en/index/';
-                $links['es'] = '/es/indice/';
+                foreach ($langs as $l) {
+                    if ($prettylinks) {
+                        if ($l === $defaultLang) {
+                            $links[$l] = '/indice/';
+                        } else {
+                            $links[$l] = '/' . $l . '/indice/';
+                        }
+                    } else {
+                        if ($l === $defaultLang) {
+                            $links[$l] = '/indice.html';
+                        } else {
+                            $links[$l] = '/' . $l . '/indice.html';
+                        }
+                    }
+                }
             }
         }
 

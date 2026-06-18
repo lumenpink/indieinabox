@@ -28,10 +28,10 @@
                 <time class="dt-published" datetime="<?= $page->isodate ?>"><?= $page->localizeddate ?></time>
                 <?php if ($page->kind === 'jardim'): ?>
                     <?php if (isset($page->metadata->maturity)): ?>
-                        • <?= \Indieinabox\Helper::translate('Maturidade') ?>: <?= htmlspecialchars($page->metadata->maturity) ?>
+                        • <?= \Indieinabox\Helper::translate('Maturity') ?>: <?= htmlspecialchars($page->metadata->maturity) ?>
                     <?php endif; ?>
                     <?php if (isset($page->metadata->reliability)): ?>
-                        • <?= \Indieinabox\Helper::translate('Confiabilidade') ?>: <?= htmlspecialchars($page->metadata->reliability) ?>
+                        • <?= \Indieinabox\Helper::translate('Reliability') ?>: <?= htmlspecialchars($page->metadata->reliability) ?>
                     <?php endif; ?>
                 <?php endif; ?>
             </div>

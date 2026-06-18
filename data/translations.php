@@ -59,7 +59,16 @@ $translations= array (
   ),
   'pt' => 
   array (
+    'Agora' => '',
+    'Artigos' => '',
     'Conteúdo em Português' => '',
+    'Fotos' => '',
+    'Início' => '',
+    'Jardim' => '',
+    'Navegue pelas seções do site no estilo Gopher:' => '',
+    'Notas' => '',
+    'Sobre' => '',
+    'Índice' => '',
   ),
 );
 ?>

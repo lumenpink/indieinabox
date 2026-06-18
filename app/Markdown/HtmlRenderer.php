@@ -179,6 +179,34 @@ class HtmlRenderer implements RendererInterface
                     $corBG = $colors['bg'];
                     $corFG = $colors['fg'];
 
+                    $globalColors = [
+                        'bg' => [244, 241, 234], // #F4F1EA
+                        'fg' => [44, 46, 47],    // #2C2E2F
+                    ];
+
+                    $gifNameGlobal = $pathInfo['filename'] . '_global.gif';
+                    $caminhoDestinoGlobal = $outputHtmlDir . DIRECTORY_SEPARATOR . $gifNameGlobal;
+
+                    \Indieinabox\Helper::ditherImageToGif(
+                        $caminhoOriginal,
+                        $caminhoDestinoGlobal,
+                        512,
+                        $globalColors['bg'],
+                        $globalColors['fg'],
+                        true
+                    );
+
+                    $gifNameThumb = $pathInfo['filename'] . '_thumb.gif';
+                    $caminhoDestinoThumb = $outputHtmlDir . DIRECTORY_SEPARATOR . $gifNameThumb;
+
+                    \Indieinabox\Helper::createThumbnail(
+                        $caminhoOriginal,
+                        $caminhoDestinoThumb,
+                        64,
+                        $globalColors['bg'],
+                        $globalColors['fg']
+                    );
+
                     $success = \Indieinabox\Helper::ditherImageToGif(
                         $caminhoOriginal,
                         $caminhoDestino,

@@ -121,7 +121,6 @@ class SiteBuilder
         foreach ($this->pages as $page) {
             if ($page->kind === 'note') {
                 $notes[] = $page;
-                continue;
             }
             $this->createHTMLFile($page);
             $this->createGeminiFile($page);
@@ -660,38 +659,51 @@ class SiteBuilder
         }
         unset($months);
 
+        $base = $this->site->paths->baseDir;
+        $themeDir = $this->site->paths->themeDir ?? 'theme';
+        $summaryFile = $base . DIRECTORY_SEPARATOR . $themeDir . DIRECTORY_SEPARATOR . "views" . DIRECTORY_SEPARATOR . "includes" . DIRECTORY_SEPARATOR . "summary.php";
+
         foreach ($grouped as $lang => $months) {
             /** @var \Indieinabox\Page[] $allNotesForLang */
             $allNotesForLang = [];
 
             foreach ($months as $yearMonth => $monthNotes) {
-                $monthContent = '';
-                foreach ($monthNotes as $idx => $note) {
-                    if ($idx > 0) {
-                        $monthContent .= "\n<hr class=\"divisor-bloco\">\n";
-                    }
-                    $monthContent .= $note->content;
-                }
-
-                $monthRaw = '';
-                foreach ($monthNotes as $idx => $note) {
-                    if ($idx > 0) {
-                        $monthRaw .= "\n\n---\n\n";
-                    }
-                    $monthRaw .= $note->rawBody;
-                }
-
                 $monthSlug = ($lang === $this->site->localization->defaultLang ? '' : $lang . '/') . $this->getKindFolder('note', $lang) . '/' . $yearMonth . '/';
                 $monthPage = Page::fromArray([
                     'title' => "Notas - " . $yearMonth,
                     'layout' => 'timeline',
                     'slug' => $monthSlug,
                     'date' => new \DateTime($yearMonth . '-01'),
-                    'content' => $monthContent,
-                    'rawBody' => $monthRaw,
+                    'content' => '',
+                    'rawBody' => '',
                     'lang' => $lang,
                     'kind' => 'note'
                 ]);
+
+                $monthContent = '';
+                $monthRaw = '';
+                foreach ($monthNotes as $idx => $note) {
+                    if ($idx > 0) {
+                        $monthContent .= "\n<hr class=\"divisor-bloco\">\n";
+                        $monthRaw .= "\n\n---\n\n";
+                    }
+                    
+                    if (file_exists($summaryFile)) {
+                        ob_start();
+                        global $site;
+                        $site = $this->site;
+                        $page = clone $note;
+                        $page->relpath = $monthPage->relpath;
+                        include $summaryFile;
+                        $monthContent .= ob_get_clean();
+                    } else {
+                        $monthContent .= $note->content;
+                    }
+                    $monthRaw .= $note->rawBody;
+                }
+
+                $monthPage->content->content = $monthContent;
+                $monthPage->content->rawBody = $monthRaw;
 
                 $allNotesForLang = array_merge($allNotesForLang, $monthNotes);
 
@@ -700,33 +712,42 @@ class SiteBuilder
                 $this->createGopherFile($monthPage);
             }
 
-            $indexContent = '';
-            foreach ($allNotesForLang as $idx => $note) {
-                if ($idx > 0) {
-                    $indexContent .= "\n<hr class=\"divisor-bloco\">\n";
-                }
-                $indexContent .= $note->content;
-            }
-
-            $indexRaw = '';
-            foreach ($allNotesForLang as $idx => $note) {
-                if ($idx > 0) {
-                    $indexRaw .= "\n\n---\n\n";
-                }
-                $indexRaw .= $note->rawBody;
-            }
-
             $indexSlug = ($lang === $this->site->localization->defaultLang ? '' : $lang . '/') . $this->getKindFolder('note', $lang) . '/';
             $indexPage = Page::fromArray([
                 'title' => "Notas",
                 'layout' => 'timeline',
                 'slug' => $indexSlug,
                 'date' => time(),
-                'content' => $indexContent,
-                'rawBody' => $indexRaw,
+                'content' => '',
+                'rawBody' => '',
                 'lang' => $lang,
                 'kind' => 'note'
             ]);
+
+            $indexContent = '';
+            $indexRaw = '';
+            foreach ($allNotesForLang as $idx => $note) {
+                if ($idx > 0) {
+                    $indexContent .= "\n<hr class=\"divisor-bloco\">\n";
+                    $indexRaw .= "\n\n---\n\n";
+                }
+
+                if (file_exists($summaryFile)) {
+                    ob_start();
+                    global $site;
+                    $site = $this->site;
+                    $page = clone $note;
+                    $page->relpath = $indexPage->relpath;
+                    include $summaryFile;
+                    $indexContent .= ob_get_clean();
+                } else {
+                    $indexContent .= $note->content;
+                }
+                $indexRaw .= $note->rawBody;
+            }
+
+            $indexPage->content->content = $indexContent;
+            $indexPage->content->rawBody = $indexRaw;
 
             $this->createHTMLFile($indexPage);
             $this->createGeminiFile($indexPage);
@@ -787,9 +808,18 @@ class SiteBuilder
                 
                 $content = '<ul style="list-style-type: none; padding-left: 0;">';
                 foreach ($kindPages as $p) {
-                    $content .= '<li style="margin-bottom: 1em;">';
-                    $content .= '<strong><a href="' . $p->relpath . $p->slug . '">' . htmlspecialchars($p->title) . '</a></strong>';
-                    $content .= ' <span style="font-size:0.9em; opacity:0.8;">(' . $p->localizeddate . ')</span>';
+                    $content .= '<li style="margin-bottom: 1.5em;">';
+                    if ($kind === 'photo') {
+                        // For photos: show the rendered image then title/date below it
+                        $pContent = preg_replace('/src="([^"]+)\.gif"/', 'src="$1_global.gif"', (string)$p->content);
+                        $content .= '<a href="' . $p->relpath . $p->slug . '">' . $pContent . '</a>';
+                        $content .= '<div style="font-size:0.9em; margin-top: 0.5em;">';
+                        $content .= '<span style="opacity:0.8;">' . $p->localizeddate . '</span>';
+                        $content .= '</div>';
+                    } else {
+                        $content .= '<strong><a href="' . $p->relpath . $p->slug . '">' . htmlspecialchars($p->title) . '</a></strong>';
+                        $content .= ' <span style="font-size:0.9em; opacity:0.8;">(' . $p->localizeddate . ')</span>';
+                    }
                     $content .= '</li>';
                 }
                 $content .= '</ul>';
@@ -801,14 +831,13 @@ class SiteBuilder
                 }
 
                 $indexPage = Page::fromArray([
-                    'title' => $title,
-                    'layout' => 'page',
-                    'slug' => $kindSlug,
-                    'date' => time(),
+                    'title'   => $title,
+                    'layout'  => 'page',
+                    'slug'    => $kindSlug,
+                    'rawBody' => '',
                     'content' => $content,
-                    'rawBody' => $content,
-                    'lang' => $lang,
-                    'kind' => $kind
+                    'lang'    => $lang,
+                    'kind'    => $kind
                 ]);
 
                 $this->createHTMLFile($indexPage);

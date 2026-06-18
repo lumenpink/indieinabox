@@ -18,7 +18,7 @@ if ($prettylinks) {
     $sobreLink = $page->relpath . $sobreSlug . '/';
 } else {
     $articlesLink = $page->relpath . $articlesFolder . '.html';
-    $notesLink = $page->relpath . $notesFolder . '.html';
+    $notesLink = $page->relpath . $notesFolder . '/index.html';
     $photosLink = $page->relpath . $photosFolder . '.html';
     $gardenLink = $page->relpath . $gardenFolder . '.html';
     $sobreLink = $page->relpath . $sobreSlug . '.html';

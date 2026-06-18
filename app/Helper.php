@@ -61,6 +61,39 @@ class Helper
     }
 
     /**
+     * Return a human-readable, localized display label for a post kind.
+     *
+     * Maps internal slugs (article, photo, note, jardim, etc.) to their PT
+     * labels (Artigos, Fotos, Notas, Jardim…) and then runs them through
+     * translate() so they become the correct term in other languages.
+     *
+     * @param  string      $kind Internal kind slug
+     * @param  string|null $lang Target language (defaults to current page lang)
+     * @return string
+     */
+    public static function kindLabel(string $kind, ?string $lang = null): string
+    {
+        // Map internal kind slug → default-language (PT) display label
+        $ptLabels = [
+            'article'  => 'Artigos',
+            'photo'    => 'Fotos',
+            'note'     => 'Notas',
+            'jardim'   => 'Jardim',
+            'bookmark' => 'Marcadores',
+            'journal'  => 'Diários',
+            'like'     => 'Curtidas',
+            'reply'    => 'Respostas',
+            'repost'   => 'Republicações',
+            'rsvp'     => 'Confirmações',
+            'generic'  => '',
+            'page'     => '',
+        ];
+
+        $label = $ptLabels[strtolower($kind)] ?? ucfirst($kind);
+        return self::translate($label, $lang);
+    }
+
+    /**
      * Helper function to format dates
      *
      * @param  Page|array<string, mixed> $page
@@ -578,12 +611,100 @@ class Helper
     {
         $kind = $var instanceof Page ? $var->kind : ($var["kind"] ?? null);
         if ($kind !== null) {
-            if ($kind !== "generic" && $kind !== "page") {
+            if ($kind !== "generic" && $kind !== "page" && $kind !== "jardim") {
                 return true;
             }
         }
         return false;
     }
+    /**
+     * Create a small thumbnail using GD and the global palette.
+     *
+     * @param string $caminhoOriginal
+     * @param string $caminhoDestino
+     * @param int $tamanhoFocal
+     * @param array $corBG
+     * @param array $corFG
+     * @return bool
+     */
+    public static function createThumbnail(
+        string $caminhoOriginal,
+        string $caminhoDestino,
+        int $tamanhoFocal,
+        array $corBG,
+        array $corFG
+    ): bool {
+        if (!is_dir(dirname($caminhoDestino))) {
+            mkdir(dirname($caminhoDestino), 0777, true);
+        }
+
+        $ext = strtolower(pathinfo($caminhoOriginal, PATHINFO_EXTENSION));
+        if ($ext === 'png') {
+            $imgOriginal = @imagecreatefrompng($caminhoOriginal);
+        } elseif ($ext === 'gif') {
+            $imgOriginal = @imagecreatefromgif($caminhoOriginal);
+        } elseif ($ext === 'webp') {
+            $imgOriginal = function_exists('imagecreatefromwebp') ? @imagecreatefromwebp($caminhoOriginal) : false;
+        } else {
+            $imgOriginal = @imagecreatefromjpeg($caminhoOriginal);
+            if ($imgOriginal && function_exists('exif_read_data')) {
+                $exif = @exif_read_data($caminhoOriginal);
+                if (!empty($exif['Orientation'])) {
+                    switch ($exif['Orientation']) {
+                        case 3: $imgOriginal = imagerotate($imgOriginal, 180, 0); break;
+                        case 6: $imgOriginal = imagerotate($imgOriginal, -90, 0); break;
+                        case 8: $imgOriginal = imagerotate($imgOriginal, 90, 0); break;
+                    }
+                }
+            }
+        }
+
+        if (!$imgOriginal) {
+            return false;
+        }
+
+        $larguraOrig = imagesx($imgOriginal);
+        $alturaOrig = imagesy($imgOriginal);
+        
+        $srcX = 0;
+        $srcY = 0;
+        
+        if ($larguraOrig > $alturaOrig) {
+            $srcX = ($larguraOrig - $alturaOrig) / 2;
+            $larguraOrig = $alturaOrig;
+        } else {
+            $srcY = ($alturaOrig - $larguraOrig) / 2;
+            $alturaOrig = $larguraOrig;
+        }
+
+        $imgRedimensionada = imagecreatetruecolor($tamanhoFocal, $tamanhoFocal);
+        imagecopyresampled($imgRedimensionada, $imgOriginal, 0, 0, $srcX, $srcY, $tamanhoFocal, $tamanhoFocal, $larguraOrig, $alturaOrig);
+        imagedestroy($imgOriginal);
+
+        $imgFinal = imagecreate($tamanhoFocal, $tamanhoFocal);
+        $alocadaBG = imagecolorallocate($imgFinal, $corBG[0], $corBG[1], $corBG[2]);
+        $alocadaFG = imagecolorallocate($imgFinal, $corFG[0], $corFG[1], $corFG[2]);
+
+        for ($y = 0; $y < $tamanhoFocal; $y++) {
+            for ($x = 0; $x < $tamanhoFocal; $x++) {
+                $rgb = imagecolorat($imgRedimensionada, $x, $y);
+                $r = ($rgb >> 16) & 0xFF;
+                $g = ($rgb >> 8) & 0xFF;
+                $b = $rgb & 0xFF;
+                $luminosidade = ($r * 0.299 + $g * 0.587 + $b * 0.114);
+                
+                $cor = ($luminosidade > 128) ? $alocadaBG : $alocadaFG;
+                imagesetpixel($imgFinal, $x, $y, $cor);
+            }
+        }
+        imagedestroy($imgRedimensionada);
+
+        $result = imagegif($imgFinal, $caminhoDestino);
+        imagedestroy($imgFinal);
+
+        return $result;
+    }
+
 
     /**
      * Atkinson adaptive dithering using GD to index 8-bit GIF

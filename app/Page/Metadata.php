@@ -49,6 +49,16 @@ class Metadata
     public $layout;
 
     /**
+     * @var string|null
+     */
+    public $maturity;
+
+    /**
+     * @var string|null
+     */
+    public $reliability;
+
+    /**
      * PageMetadata constructor.
      *
      * @param array<string> $category
@@ -58,6 +68,8 @@ class Metadata
      * @param bool $noauthor
      * @param string $kind
      * @param string $layout
+     * @param string|null $maturity
+     * @param string|null $reliability
      */
     public function __construct(
         array $category = ["No Category"],
@@ -66,7 +78,9 @@ class Metadata
         string $nick = "untitled",
         bool $noauthor = false,
         string $kind = "note",
-        string $layout = "page"
+        string $layout = "page",
+        ?string $maturity = null,
+        ?string $reliability = null
     ) {
         $this->category = $category;
         $this->tags = $tags;
@@ -75,5 +89,7 @@ class Metadata
         $this->noauthor = $noauthor;
         $this->kind = $kind;
         $this->layout = $layout;
+        $this->maturity = $maturity;
+        $this->reliability = $reliability;
     }
 }

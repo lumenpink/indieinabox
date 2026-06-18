@@ -142,7 +142,7 @@ class Page
             case 'rawBody':
                 return $this->content->rawBody;
             case 'isodate':
-                return $this->date->format('c');
+                return $this->date !== null ? $this->date->format('c') : '';
         }
         return null;
     }
@@ -245,7 +245,9 @@ class Page
             (string) ($data['nick'] ?? 'untitled'),
             (bool) ($data['noauthor'] ?? false),
             (string) ($data['kind'] ?? 'note'),
-            (string) ($data['layout'] ?? 'page')
+            (string) ($data['layout'] ?? 'page'),
+            isset($data['maturity']) ? (string)$data['maturity'] : null,
+            isset($data['reliability']) ? (string)$data['reliability'] : null
         );
 
         $content = new Content(
@@ -282,13 +284,24 @@ class Page
             }
         }
 
+        $slug = (string) ($data['slug'] ?? 'untitled');
+        $relpath = (string) ($data['relpath'] ?? '');
+        if ($relpath === '') {
+            $parts = explode('/', rtrim($slug, '/'));
+            if ($slug === '/' || $slug === '') {
+                $relpath = './';
+            } else {
+                $relpath = str_repeat('../', count($parts));
+            }
+        }
+
         return new self(
             $metadata,
             $content,
             $localization,
             $date,
-            (string) ($data['relpath'] ?? ''),
-            (string) ($data['slug'] ?? 'untitled')
+            $relpath,
+            $slug
         );
     }
 

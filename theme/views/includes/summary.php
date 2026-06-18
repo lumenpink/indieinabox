@@ -3,7 +3,7 @@
 /** @var \Indieinabox\Site $site */
 $_kindLabel = \Indieinabox\Helper::kindLabel($page->kind);
 ?>
-<article class="h-entry the-summary" style="margin-bottom: 2.5em;">
+<article class="h-entry the-summary" style="margin-bottom: 5em;">
     <header>
         <?php if (!in_array($page->kind, ['note', 'photo'])): ?>
             <h3 style="margin: 0 0 0.5em 0;">
@@ -23,7 +23,7 @@ $_kindLabel = \Indieinabox\Helper::kindLabel($page->kind);
             <?php endif; ?>
         </div>
     </header>
-    <div class="e-content">
+    <div class="e-content" style="margin-left: 2em;">
         <?php
         $content = $page->content;
         $content = preg_replace('/src="([^"]+)\.gif"/', 'src="$1_global.gif"', (string)$content);

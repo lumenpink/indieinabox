@@ -12,7 +12,7 @@
     
     <main>
         <h1><?= htmlspecialchars($page->title) ?></h1>
-        <div class="introduction">
+        <div class="introduction" style="margin-left: 2em; margin-bottom: 5em;">
             <?php
             $introFile = __DIR__ . '/includes/introduction.' . $page->lang . '.php';
             if (file_exists($introFile)) {

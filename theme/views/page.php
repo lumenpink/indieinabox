@@ -37,7 +37,7 @@
             </div>
             <?php endif; ?>
             
-            <div class="e-content">
+            <div class="e-content" style="margin-left: 2em;">
                 <?= $page->content ?>
             </div>
         </article>

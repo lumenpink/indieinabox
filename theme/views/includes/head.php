@@ -8,7 +8,6 @@ $layout = strtolower($page->layout ?? 'page');
 
 $bg = '#F4F1EA';
 $fg = '#2C2E2F';
-$accent = '#A34832';
 
 if (in_array($kind, ['article', 'artigos', 'articles']) || in_array($layout, ['article', 'artigos', 'articles'])) {
     $bg = '#FDF6E3'; $fg = '#3A2E2A';
@@ -30,7 +29,7 @@ if (in_array($kind, ['article', 'artigos', 'articles']) || in_array($layout, ['a
     :root {
         --bg: <?= $bg ?>;
         --fg: <?= $fg ?>;
-        --accent: <?= $accent ?>;
+        --accent: <?= $fg ?>;
     }
     body {
         background-color: var(--bg);
@@ -43,10 +42,10 @@ if (in_array($kind, ['article', 'artigos', 'articles']) || in_array($layout, ['a
     }
     a {
         color: var(--accent);
-        text-decoration: none;
+        text-decoration: underline;
     }
     a:hover {
-        text-decoration: underline;
+        text-decoration: none;
     }
     hr {
         border: none;

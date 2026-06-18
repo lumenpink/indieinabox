@@ -811,8 +811,7 @@ class SiteBuilder
                     $content .= '<li style="margin-bottom: 1.5em;">';
                     if ($kind === 'photo') {
                         // For photos: show the rendered image then title/date below it
-                        $pContent = preg_replace('/src="([^"]+)\.gif"/', 'src="$1_global.gif"', (string)$p->content);
-                        $content .= '<a href="' . $p->relpath . $p->slug . '">' . $pContent . '</a>';
+                        $content .= '<a href="' . $p->relpath . $p->slug . '">' . $p->content . '</a>';
                         $content .= '<div style="font-size:0.9em; margin-top: 0.5em;">';
                         $content .= '<span style="opacity:0.8;">' . $p->localizeddate . '</span>';
                         $content .= '</div>';

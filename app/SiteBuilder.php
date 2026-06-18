@@ -116,19 +116,28 @@ class SiteBuilder
 
     public function generateHTMLFiles(): void
     {
-        $notes = [];
-
+        $pagesByKind = [];
         foreach ($this->pages as $page) {
-            if ($page->kind === 'note') {
-                $notes[] = $page;
-            }
+            $pagesByKind[$page->kind][] = $page;
             $this->createHTMLFile($page);
             $this->createGeminiFile($page);
             $this->createGopherFile($page);
         }
 
-        $this->compileConsolidatedNotes($notes);
-        $this->compileSectionIndexes();
+        // Generate Sitemap
+        $this->compileSitemap();
+
+        $kinds = $this->site->config['kinds'] ?? [];
+        foreach ($kinds as $kind => $config) {
+            $pagesForKind = $pagesByKind[$kind] ?? [];
+            $displayMode = $config['display_mode'] ?? 'default';
+
+            if ($displayMode === 'full_content') {
+                $this->compileTimelineIndexes($kind, $pagesForKind);
+            } else {
+                $this->compileSectionIndexes($kind, $pagesForKind);
+            }
+        }
     }
 
     private function createHTMLFile(Page $page): void
@@ -612,50 +621,39 @@ class SiteBuilder
 
     private function getKindFolder(string $kind, string $lang): string
     {
-        switch ($kind) {
-            case 'article':
-                if ($lang === 'en') return 'articles';
-                if ($lang === 'es') return 'articulos';
-                return 'artigos';
-            case 'note':
-                if ($lang === 'en') return 'notes';
-                if ($lang === 'es') return 'notas';
-                return 'notas';
-            case 'photo':
-                if ($lang === 'en') return 'photos';
-                if ($lang === 'es') return 'fotos';
-                return 'fotos';
-            case 'jardim':
-                if ($lang === 'en') return 'garden';
-                if ($lang === 'es') return 'jardim';
-                return 'jardim';
-            default:
-                return '';
+        $config = \Indieinabox\Helper::getKindConfig($kind);
+        $contentDir = $config['content_dir'] ?? $kind;
+        
+        if (is_array($contentDir)) {
+            return $contentDir[$lang] ?? reset($contentDir) ?? $kind;
         }
+        return (string) $contentDir;
     }
 
     /**
-     * @param \Indieinabox\Page[] $notes
+     * @param \Indieinabox\Page[] $pages
      */
-    private function compileConsolidatedNotes(array $notes): void
+    private function compileTimelineIndexes(string $targetKind, array $pages): void
     {
         $grouped = [];
-        foreach ($notes as $note) {
-            $lang = $note->lang ?? 'en';
-            $date = $note->date;
-            $yearMonth = $date->format('Y-m');
+        foreach ($pages as $p) {
+            $lang = $p->lang ?? 'en';
+            $date = $p->date;
+            $yearMonth = $date instanceof \DateTime ? $date->format('Y-m') : date('Y-m', $date);
 
-            $grouped[$lang][$yearMonth][] = $note;
+            $grouped[$lang][$yearMonth][] = $p;
         }
 
         foreach ($grouped as $lang => &$months) {
             krsort($months);
-            foreach ($months as $yearMonth => &$monthNotes) {
-                usort($monthNotes, function ($a, $b) {
-                    return $b->date->getTimestamp() <=> $a->date->getTimestamp();
+            foreach ($months as $yearMonth => &$monthPages) {
+                usort($monthPages, function ($a, $b) {
+                    $timeA = $a->date instanceof \DateTime ? $a->date->getTimestamp() : $a->date;
+                    $timeB = $b->date instanceof \DateTime ? $b->date->getTimestamp() : $b->date;
+                    return $timeB <=> $timeA;
                 });
             }
-            unset($monthNotes);
+            unset($monthPages);
         }
         unset($months);
 
@@ -664,25 +662,26 @@ class SiteBuilder
         $summaryFile = $base . DIRECTORY_SEPARATOR . $themeDir . DIRECTORY_SEPARATOR . "views" . DIRECTORY_SEPARATOR . "includes" . DIRECTORY_SEPARATOR . "summary.php";
 
         foreach ($grouped as $lang => $months) {
-            /** @var \Indieinabox\Page[] $allNotesForLang */
-            $allNotesForLang = [];
+            /** @var \Indieinabox\Page[] $allPagesForLang */
+            $allPagesForLang = [];
+            $titleBase = \Indieinabox\Helper::kindLabel($targetKind, $lang);
 
-            foreach ($months as $yearMonth => $monthNotes) {
-                $monthSlug = ($lang === $this->site->localization->defaultLang ? '' : $lang . '/') . $this->getKindFolder('note', $lang) . '/' . $yearMonth . '/';
+            foreach ($months as $yearMonth => $monthPages) {
+                $monthSlug = ($lang === $this->site->localization->defaultLang ? '' : $lang . '/') . $this->getKindFolder($targetKind, $lang) . '/' . $yearMonth . '/';
                 $monthPage = Page::fromArray([
-                    'title' => "Notas - " . $yearMonth,
+                    'title' => $titleBase . " - " . $yearMonth,
                     'layout' => 'timeline',
                     'slug' => $monthSlug,
                     'date' => new \DateTime($yearMonth . '-01'),
                     'content' => '',
                     'rawBody' => '',
                     'lang' => $lang,
-                    'kind' => 'note'
+                    'kind' => $targetKind
                 ]);
 
                 $monthContent = '';
                 $monthRaw = '';
-                foreach ($monthNotes as $idx => $note) {
+                foreach ($monthPages as $idx => $p) {
                     if ($idx > 0) {
                         $monthContent .= "\n<hr class=\"divisor-bloco\">\n";
                         $monthRaw .= "\n\n---\n\n";
@@ -692,41 +691,41 @@ class SiteBuilder
                         ob_start();
                         global $site;
                         $site = $this->site;
-                        $page = clone $note;
+                        $page = clone $p;
                         $page->relpath = $monthPage->relpath;
                         include $summaryFile;
                         $monthContent .= ob_get_clean();
                     } else {
-                        $monthContent .= $note->content;
+                        $monthContent .= $p->content;
                     }
-                    $monthRaw .= $note->rawBody;
+                    $monthRaw .= $p->rawBody;
                 }
 
                 $monthPage->content->content = $monthContent;
                 $monthPage->content->rawBody = $monthRaw;
 
-                $allNotesForLang = array_merge($allNotesForLang, $monthNotes);
+                $allPagesForLang = array_merge($allPagesForLang, $monthPages);
 
                 $this->createHTMLFile($monthPage);
                 $this->createGeminiFile($monthPage);
                 $this->createGopherFile($monthPage);
             }
 
-            $indexSlug = ($lang === $this->site->localization->defaultLang ? '' : $lang . '/') . $this->getKindFolder('note', $lang) . '/';
+            $indexSlug = ($lang === $this->site->localization->defaultLang ? '' : $lang . '/') . $this->getKindFolder($targetKind, $lang) . '/';
             $indexPage = Page::fromArray([
-                'title' => "Notas",
+                'title' => $titleBase,
                 'layout' => 'timeline',
                 'slug' => $indexSlug,
                 'date' => time(),
                 'content' => '',
                 'rawBody' => '',
                 'lang' => $lang,
-                'kind' => 'note'
+                'kind' => $targetKind
             ]);
 
             $indexContent = '';
             $indexRaw = '';
-            foreach ($allNotesForLang as $idx => $note) {
+            foreach ($allPagesForLang as $idx => $p) {
                 if ($idx > 0) {
                     $indexContent .= "\n<hr class=\"divisor-bloco\">\n";
                     $indexRaw .= "\n\n---\n\n";
@@ -736,14 +735,14 @@ class SiteBuilder
                     ob_start();
                     global $site;
                     $site = $this->site;
-                    $page = clone $note;
+                    $page = clone $p;
                     $page->relpath = $indexPage->relpath;
                     include $summaryFile;
                     $indexContent .= ob_get_clean();
                 } else {
-                    $indexContent .= $note->content;
+                    $indexContent .= $p->content;
                 }
-                $indexRaw .= $note->rawBody;
+                $indexRaw .= $p->rawBody;
             }
 
             $indexPage->content->content = $indexContent;
@@ -755,7 +754,7 @@ class SiteBuilder
         }
     }
 
-    private function compileSectionIndexes(): void
+    private function compileSitemap(): void
     {
         $defaultLang = $this->site->localization->defaultLang;
         $prettylinks = $this->site->options->prettylinks ?? true;
@@ -766,7 +765,6 @@ class SiteBuilder
         }
 
         foreach ($langs as $lang) {
-            // 1. Sitemap (layout: indice)
             $sitemapSlug = ($lang === $defaultLang ? '' : $lang . '/') . 'indice/';
             if (!$prettylinks) {
                 $sitemapSlug = ($lang === $defaultLang ? '' : $lang . '/') . 'indice.html';
@@ -786,16 +784,23 @@ class SiteBuilder
             $this->createHTMLFile($sitemapPage);
             $this->createGeminiFile($sitemapPage);
             $this->createGopherFile($sitemapPage);
+        }
+    }
 
-            // 2. Kind Indexes (article, photo, jardim)
-            $kinds = ['article', 'photo', 'jardim'];
-            foreach ($kinds as $kind) {
-                $kindPages = [];
-                foreach ($this->pages as $p) {
-                    if ($p->kind === $kind && $p->lang === $lang && !in_array('draft', $p->metadata->tags)) {
-                        $kindPages[] = $p;
-                    }
-                }
+    private function compileSectionIndexes(string $targetKind, array $pages): void
+    {
+        $defaultLang = $this->site->localization->defaultLang;
+        $prettylinks = $this->site->options->prettylinks ?? true;
+        
+        // Group by language
+        $grouped = [];
+        foreach ($pages as $p) {
+            if (!in_array('draft', $p->metadata->tags)) {
+                $grouped[$p->lang ?? $defaultLang][] = $p;
+            }
+        }
+
+        foreach ($grouped as $lang => $kindPages) {
 
                 usort($kindPages, function($a, $b) {
                     $timeA = $a->date instanceof \DateTime ? $a->date->getTimestamp() : $a->date;
@@ -803,14 +808,15 @@ class SiteBuilder
                     return $timeB <=> $timeA;
                 });
 
-                $translatedTitle = $kind === 'jardim' ? 'Jardim' : ($kind === 'article' ? 'Artigos' : 'Fotos');
-                $title = ucfirst(\Indieinabox\Helper::translate($translatedTitle));
+                $title = \Indieinabox\Helper::kindLabel($targetKind, $lang);
                 
+                $displayMode = \Indieinabox\Helper::getKindConfig($targetKind)['display_mode'] ?? 'default';
+
                 $content = '<ul style="list-style-type: none; padding-left: 0;">';
                 foreach ($kindPages as $p) {
                     $content .= '<li style="margin-bottom: 1.5em;">';
-                    if ($kind === 'photo') {
-                        // For photos: show the rendered image then title/date below it
+                    if ($displayMode === 'thumbnail_snippet') {
+                        // For photos/thumbnails
                         $content .= '<a href="' . $p->relpath . $p->slug . '">' . $p->content . '</a>';
                         $content .= '<div style="font-size:0.9em; margin-top: 0.5em;">';
                         $content .= '<span style="opacity:0.8;">' . $p->localizeddate . '</span>';
@@ -823,7 +829,7 @@ class SiteBuilder
                 }
                 $content .= '</ul>';
 
-                $kindFolder = $this->getKindFolder($kind, $lang);
+                $kindFolder = $this->getKindFolder($targetKind, $lang);
                 $kindSlug = ($lang === $defaultLang ? '' : $lang . '/') . $kindFolder . '/';
                 if (!$prettylinks) {
                     $kindSlug = ($lang === $defaultLang ? '' : $lang . '/') . $kindFolder . '.html';
@@ -836,13 +842,12 @@ class SiteBuilder
                     'rawBody' => '',
                     'content' => $content,
                     'lang'    => $lang,
-                    'kind'    => $kind
+                    'kind'    => $targetKind
                 ]);
 
                 $this->createHTMLFile($indexPage);
                 $this->createGeminiFile($indexPage);
                 $this->createGopherFile($indexPage);
             }
-        }
     }
 }

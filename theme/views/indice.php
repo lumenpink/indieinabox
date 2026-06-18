@@ -20,33 +20,37 @@
                 <?php
                 // Get all non-draft pages
                 $allPages = iterator_to_array($pages);
-                $allPages = array_filter($allPages, function($p) use ($page) {
-                    return $p->lang === $page->lang && !in_array('draft', $p->tags) && $p->kind !== 'page' && $p->kind !== 'generic';
+                $pages = iterator_to_array($pages);
+                $pages = array_filter($pages, function($p) use ($page) {
+                    return $p->lang === $page->lang && !in_array('draft', $p->tags);
                 });
-                
-                // Group by kind
+
+                // Sort globally first
+                usort($pages, function($a, $b) {
+                    $timeA = $a->date instanceof \DateTime ? $a->date->getTimestamp() : $a->date;
+                    $timeB = $b->date instanceof \DateTime ? $b->date->getTimestamp() : $b->date;
+                    return $timeB <=> $timeA;
+                });
+
+                // Group by kind, honoring the order in config.yml
                 $grouped = [];
-                foreach ($allPages as $p) {
-                    $grouped[$p->kind][] = $p;
+                if (!empty($site->config['kinds'])) {
+                    foreach ($site->config['kinds'] as $k => $c) {
+                        $grouped[$k] = [];
+                    }
                 }
-                
-                // Sort by date descending
-                foreach ($grouped as $k => &$list) {
-                    usort($list, function($a, $b) {
-                        return $b->date->getTimestamp() <=> $a->date->getTimestamp();
-                    });
+
+                foreach ($pages as $p) {
+                    if ($p->lang === $site->localization->lang) {
+                        if (!isset($grouped[$p->kind])) {
+                            $grouped[$p->kind] = [];
+                        }
+                        $grouped[$p->kind][] = $p;
+                    }
                 }
-                unset($list);
-                
-                // Order groups: notas, fotos, artigos, jardim
-                $order = ['note', 'photo', 'article', 'jardim'];
-                uksort($grouped, function($a, $b) use ($order) {
-                    $posA = array_search($a, $order);
-                    $posB = array_search($b, $order);
-                    if ($posA === false) $posA = 999;
-                    if ($posB === false) $posB = 999;
-                    return $posA <=> $posB;
-                });
+
+                // Remove empty groups
+                $grouped = array_filter($grouped);
 
                 // Print groups
                 foreach ($grouped as $kind => $list):
@@ -56,10 +60,13 @@
                         <ul style="list-style-type: none; padding-left: 20px; margin-top: 0.5em;">
                             <?php foreach ($list as $p): ?>
                                 <li style="margin-bottom: 0.5em;">
-                                    <?php if ($p->kind === 'note'): ?>
+                                    <?php 
+                                        $displayMode = \Indieinabox\Helper::getKindConfig($p->kind)['display_mode'] ?? 'default';
+                                    ?>
+                                    <?php if ($displayMode === 'full_content'): ?>
                                         <div style="margin-bottom: 1em;">
                                             <div style="font-size:0.85em; opacity:0.75; margin-bottom: 0.5em;">=&gt; <a href="<?= $p->relpath ?><?= $p->slug ?>"><?= $p->localizeddate ?></a></div>
-                                            <div style="border-left: 2px solid var(--accent); padding-left: 10px; margin-left: 10px;">
+                                            <div style="border-left: 2px solid var(--fg); padding-left: 10px; margin-left: 10px;">
                                                 <?php 
                                                     $content = $p->content;
                                                     $content = preg_replace('/src="([^"]+)\.gif"/', 'src="$1_global.gif"', (string)$content);
@@ -67,7 +74,7 @@
                                                 ?>
                                             </div>
                                         </div>
-                                    <?php elseif ($p->kind === 'photo'): ?>
+                                    <?php elseif ($displayMode === 'thumbnail_snippet'): ?>
                                         <div style="margin-bottom: 1em; display: flex; align-items: flex-start; gap: 15px;">
                                             <?php
                                                 $thumbSrc = '';
@@ -88,8 +95,8 @@
                                                 <div style="width: 64px; height: 64px; background: rgba(0,0,0,0.05); border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.8em; opacity: 0.5;">img</div>
                                             <?php endif; ?>
                                             <div>
-                                                <div style="font-size:0.85em; opacity:0.75; margin-bottom: 0.25em;">=&gt; <a href="<?= $p->relpath ?><?= $p->slug ?>"><?= $p->localizeddate ?></a></div>
-                                                <div style="font-size:0.95em;"><?= htmlspecialchars($snippet) ?></div>
+                                                <a href="<?= $p->relpath ?><?= $p->slug ?>" style="font-weight: bold; text-decoration: none;"><?= $p->localizeddate ?></a>
+                                                <p style="margin: 0.2em 0 0 0; font-size: 0.9em; opacity: 0.9;"><?= $snippet ?></p>
                                             </div>
                                         </div>
                                     <?php else: ?>

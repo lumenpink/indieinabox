@@ -104,6 +104,7 @@ if (php_sapi_name() === 'cli') {
 
 $site = new Site();
 $site->paths->baseDir = $base;
+$site->config = $config;
 if (isset($config['title'])) {
     $site->metadata->title = $config['title'];
 }

@@ -20,6 +20,34 @@ class Helper
     }
 
     /**
+     * Get the configuration for a specific kind with fallbacks.
+     */
+    public static function getKindConfig(string $kind): array
+    {
+        global $site;
+        $kind = strtolower($kind);
+        $config = $site->config['kinds'][$kind] ?? null;
+
+        if (!$config) {
+            static $warned = [];
+            if (!isset($warned[$kind]) && !in_array($kind, ['generic', 'page', 'home'])) {
+                echo "[WARNING] Missing config for kind '{$kind}'. Using defaults.\n";
+                $warned[$kind] = true;
+            }
+            $config = [];
+        }
+
+        return array_merge([
+            'content_dir' => $kind,
+            'title' => [],
+            'palette' => null,
+            'has_title' => true,
+            'show_on_home' => false,
+            'display_mode' => 'default'
+        ], $config);
+    }
+
+    /**
      * Helper function to determine the kind of content
      *
      * @param  Page|array<string, mixed> $page
@@ -27,7 +55,7 @@ class Helper
      */
     public static function kind($page): array
     {
-        global $site, $kindspath;
+        global $site;
         $isObject = $page instanceof Page;
         $pageKind = $isObject ? $page->kind : ($page["kind"] ?? null);
         $pageSlug = $isObject ? $page->slug : ($page["slug"] ?? "");
@@ -43,12 +71,31 @@ class Helper
             } else {
                 $localizedkind = $localizedkind[1];
             }
-            foreach ($kindspath as $key => $value) {
-                if (in_array($localizedkind, $value)) {
-                    $kind = $key;
-                    break;
+            
+            // Resolve kind from config content_dir
+            if (!empty($site->config['kinds'])) {
+                foreach ($site->config['kinds'] as $k => $conf) {
+                    $cDir = $conf['content_dir'] ?? $k;
+                    if ($cDir === $localizedkind) {
+                        $kind = $k;
+                        break;
+                    }
                 }
             }
+            
+            // Fallback to legacy kindspath if not found
+            if (!isset($kind)) {
+                global $kindspath;
+                if (!empty($kindspath)) {
+                    foreach ($kindspath as $key => $value) {
+                        if (in_array($localizedkind, $value)) {
+                            $kind = $key;
+                            break;
+                        }
+                    }
+                }
+            }
+
             if (!isset($kind)) {
                 $kind = "generic";
                 $localizedkind = "generic";
@@ -63,9 +110,8 @@ class Helper
     /**
      * Return a human-readable, localized display label for a post kind.
      *
-     * Maps internal slugs (article, photo, note, jardim, etc.) to their PT
-     * labels (Artigos, Fotos, Notas, Jardim…) and then runs them through
-     * translate() so they become the correct term in other languages.
+     * Maps internal slugs (article, photo, note, jardim, etc.) to their
+     * translated labels defined in config.yml.
      *
      * @param  string      $kind Internal kind slug
      * @param  string|null $lang Target language (defaults to current page lang)
@@ -73,24 +119,23 @@ class Helper
      */
     public static function kindLabel(string $kind, ?string $lang = null): string
     {
-        // Map internal kind slug → default-language (PT) display label
-        $ptLabels = [
-            'article'  => 'Artigos',
-            'photo'    => 'Fotos',
-            'note'     => 'Notas',
-            'jardim'   => 'Jardim',
-            'bookmark' => 'Marcadores',
-            'journal'  => 'Diários',
-            'like'     => 'Curtidas',
-            'reply'    => 'Respostas',
-            'repost'   => 'Republicações',
-            'rsvp'     => 'Confirmações',
-            'generic'  => '',
-            'page'     => '',
-        ];
-
-        $label = $ptLabels[strtolower($kind)] ?? ucfirst($kind);
-        return self::translate($label, $lang);
+        global $site;
+        $config = self::getKindConfig($kind);
+        $targetLang = $lang ?? $site->localization->lang ?? 'en';
+        
+        if (!empty($config['title']) && is_array($config['title'])) {
+            if (isset($config['title'][$targetLang])) {
+                return $config['title'][$targetLang];
+            }
+            // Fallback to english or the first available translation
+            if (isset($config['title']['en'])) {
+                return $config['title']['en'];
+            }
+            return reset($config['title']);
+        }
+        
+        // Hard fallback to ucfirst of the kind
+        return ucfirst($kind);
     }
 
     /**
@@ -611,9 +656,8 @@ class Helper
     {
         $kind = $var instanceof Page ? $var->kind : ($var["kind"] ?? null);
         if ($kind !== null) {
-            if ($kind !== "generic" && $kind !== "page" && $kind !== "jardim") {
-                return true;
-            }
+            $config = self::getKindConfig($kind);
+            return !empty($config['show_on_home']);
         }
         return false;
     }

@@ -9,14 +9,10 @@ $layout = strtolower($page->layout ?? 'page');
 $bg = '#F4F1EA';
 $fg = '#2C2E2F';
 
-if (in_array($kind, ['article', 'artigos', 'articles']) || in_array($layout, ['article', 'artigos', 'articles'])) {
-    $bg = '#FDF6E3'; $fg = '#3A2E2A';
-} elseif (in_array($kind, ['note', 'notas', 'notes']) || in_array($layout, ['note', 'notas', 'notes'])) {
-    $bg = '#E8EDE7'; $fg = '#2A3B2C';
-} elseif (in_array($kind, ['photo', 'fotos', 'photos']) || in_array($layout, ['photo', 'fotos', 'photos'])) {
-    $bg = '#E6EDF2'; $fg = '#1C3A5A';
-} elseif (in_array($kind, ['jardim', 'garden', 'pensamentos']) || in_array($layout, ['jardim', 'garden', 'pensamentos'])) {
-    $bg = '#F0EAE1'; $fg = '#5C3A21';
+$kindConfig = \Indieinabox\Helper::getKindConfig($kind);
+if (!empty($kindConfig['palette'])) {
+    $bg = $kindConfig['palette']['bg'] ?? $bg;
+    $fg = $kindConfig['palette']['fg'] ?? $fg;
 }
 ?>
 <meta charset="utf-8">

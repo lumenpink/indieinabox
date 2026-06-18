@@ -30,32 +30,17 @@ class HtmlRenderer implements RendererInterface
     private function getColors(): array
     {
         $kind = strtolower($this->page ? $this->page->kind : 'generic');
-        $layout = strtolower($this->page ? $this->page->layout : 'page');
+        $kindConfig = \Indieinabox\Helper::getKindConfig($kind);
 
-        if (in_array($kind, ['article', 'artigos', 'articles']) || in_array($layout, ['article', 'artigos', 'articles'])) {
+        if (!empty($kindConfig['palette'])) {
+            $bgHex = $kindConfig['palette']['bg'] ?? '#F4F1EA';
+            $fgHex = $kindConfig['palette']['fg'] ?? '#2C2E2F';
             return [
-                'bg' => [253, 246, 227], // #FDF6E3
-                'fg' => [58, 46, 42],    // #3A2E2A
+                'bg' => sscanf($bgHex, "#%02x%02x%02x"),
+                'fg' => sscanf($fgHex, "#%02x%02x%02x"),
             ];
         }
-        if (in_array($kind, ['note', 'notas', 'notes']) || in_array($layout, ['note', 'notas', 'notes'])) {
-            return [
-                'bg' => [232, 237, 231], // #E8EDE7
-                'fg' => [42, 59, 44],    // #2A3B2C
-            ];
-        }
-        if (in_array($kind, ['photo', 'fotos', 'photos']) || in_array($layout, ['photo', 'fotos', 'photos'])) {
-            return [
-                'bg' => [230, 237, 242], // #E6EDF2
-                'fg' => [28, 58, 90],    // #1C3A5A
-            ];
-        }
-        if (in_array($kind, ['jardim', 'garden', 'pensamentos']) || in_array($layout, ['jardim', 'garden', 'pensamentos'])) {
-            return [
-                'bg' => [240, 234, 225], // #F0EAE1
-                'fg' => [92, 58, 33],    // #5C3A21
-            ];
-        }
+
         // Global default
         return [
             'bg' => [244, 241, 234], // #F4F1EA

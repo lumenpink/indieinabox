@@ -5,7 +5,7 @@ $_kindLabel = \Indieinabox\Helper::kindLabel($page->kind);
 ?>
 <article class="h-entry the-summary" style="margin-bottom: 5em;">
     <header>
-        <?php if (!in_array($page->kind, ['note', 'photo'])): ?>
+        <?php if (\Indieinabox\Helper::getKindConfig($page->kind)['has_title']): ?>
             <h3 style="margin: 0 0 0.5em 0;">
                 <a href="<?= $page->relpath ?><?= $page->slug ?>"><?= htmlspecialchars($page->title) ?></a>
             </h3>

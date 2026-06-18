@@ -68,12 +68,14 @@ class TwtxtManager
     public static function formatPageToTwtxtMessage(Page $page, string $fqdn): string
     {
         $postUrl = rtrim($fqdn, '/') . '/' . ltrim($page->slug, '/');
+        
+        $displayMode = \Indieinabox\Helper::getKindConfig($page->kind)['display_mode'] ?? 'default';
 
-        if ($page->kind === 'note' || $page->kind === 'pensamento') {
+        if ($displayMode === 'full_content') {
             return self::cleanMessage($page->rawBody ?? '');
         }
 
-        if ($page->kind === 'photo') {
+        if ($displayMode === 'thumbnail_snippet') {
             $caption = self::cleanMessage($page->rawBody ?? '');
             if ($caption === '') {
                 $caption = $page->title;
@@ -144,13 +146,12 @@ class TwtxtManager
             $feedContent .= "\n";
         }
 
-        // Filter: only include kind note, pensamento, article, post, photo
+        // Filter: only include kinds configured to show on home (or remove generic)
         $filteredPages = array_filter($pages, function (Page $page) {
             if (in_array("draft", $page->metadata->tags)) {
                 return false;
             }
-            $kind = strtolower($page->kind);
-            return in_array($kind, ['note', 'pensamento', 'article', 'post', 'photo']);
+            return \Indieinabox\Helper::removegeneric($page);
         });
 
         // Sort chronologically (oldest first)

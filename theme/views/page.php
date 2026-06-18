@@ -12,7 +12,7 @@
     
     <main>
         <article class="h-entry">
-            <?php if (!in_array($page->kind, ['note', 'photo'])): ?>
+            <?php if (\Indieinabox\Helper::getKindConfig($page->kind)['has_title']): ?>
                 <h1 class="p-name"><?= htmlspecialchars($page->title) ?></h1>
             <?php endif; ?>
             

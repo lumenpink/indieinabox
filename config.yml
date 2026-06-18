@@ -16,3 +16,53 @@ lang: [ pt-br, en, es ]  # Supported languages (must be an array - first is the 
 fqdn: https://lumen.pink # FQDN without trailing slash
 author: ~lumen # Author name
 htmlpostprocessing: minify # minify or beautify or none
+
+kinds:
+  note:
+    content_dir: notas
+    title:
+      pt-br: Notas
+      en: Notes
+      es: Notas
+    palette:
+      bg: '#E8EDE7'
+      fg: '#2A3B2C'
+    has_title: false
+    show_on_home: true
+    display_mode: full_content
+  photo:
+    content_dir: fotos
+    title:
+      pt-br: Fotos
+      en: Photos
+      es: Fotos
+    palette:
+      bg: '#E6EDF2'
+      fg: '#1C3A5A'
+    has_title: false
+    show_on_home: true
+    display_mode: thumbnail_snippet
+  article:
+    content_dir: artigos
+    title:
+      pt-br: Artigos
+      en: Articles
+      es: Artículos
+    palette:
+      bg: '#FDF6E3'
+      fg: '#3A2E2A'
+    has_title: true
+    show_on_home: true
+    display_mode: default
+  jardim:
+    content_dir: jardim
+    title:
+      pt-br: Jardim
+      en: Garden
+      es: Jardín
+    palette:
+      bg: '#F0EAE1'
+      fg: '#5C3A21'
+    has_title: true
+    show_on_home: false
+    display_mode: default

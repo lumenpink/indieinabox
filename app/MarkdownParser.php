@@ -151,7 +151,7 @@ class MarkdownParser implements ParserInterface
         $page->kind = $kindResult["kind"];
 
         $dateResult = Helper::localizeddate($page);
-        $page->localizeddate = $dateResult["long"];
+        $page->localizeddate = $page->isodate;
 
         return $page;
     }

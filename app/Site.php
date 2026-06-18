@@ -61,6 +61,8 @@ class Site
                 return $this->options->forceStaticOverride;
             case 'htmlpostprocessing':
                 return $this->options->htmlpostprocessing;
+            case 'prettylinks':
+                return $this->options->prettylinks;
             case 'outputdir':
                 return $this->paths->outputDir;
             case 'contentdir':

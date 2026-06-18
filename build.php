@@ -51,7 +51,22 @@ $configFile = $base . DIRECTORY_SEPARATOR . "config.yml";
 if (file_exists($base . DIRECTORY_SEPARATOR . ".config.yml")) {
     $configFile = $base . DIRECTORY_SEPARATOR . ".config.yml";
 }
-$config = $yaml->loadFile($configFile);
+
+if (file_exists($configFile)) {
+    $config = $yaml->loadFile($configFile);
+} else {
+    $config = [
+        'base' => '/',
+        'title' => 'My Site',
+        'sitename' => 'My Site Name',
+        'fqdn' => 'http://localhost:8080',
+        'outputdir' => 'public',
+        'contentdir' => 'content',
+        'lang' => 'en',
+        'defaultlang' => 'en',
+        'support' => ['md', 'txt', 'html', 'htm']
+    ];
+}
 if (isset($options["d"])) {
     $config["dev"] = true;
 }
@@ -122,6 +137,9 @@ $site->localization->lang = $config['lang'];
 $site->localization->defaultLang = $config['defaultlang'];
 if (isset($config['htmlpostprocessing'])) {
     $site->options->htmlpostprocessing = $config['htmlpostprocessing'];
+}
+if (isset($config['prettylinks'])) {
+    $site->options->prettylinks = (bool)$config['prettylinks'];
 }
 if (isset($config['dev'])) {
     $site->options->dev = $config['dev'];

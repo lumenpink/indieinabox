@@ -138,17 +138,25 @@ class SiteBuilder
         $destination = trim($destination, DIRECTORY_SEPARATOR);
 
         $outDir = $base . DIRECTORY_SEPARATOR . $this->site->paths->outputDir;
-        if (!is_dir($outDir . DIRECTORY_SEPARATOR . $destination)) {
-            mkdir($outDir . DIRECTORY_SEPARATOR . $destination, 0777, true);
+
+        if (str_ends_with($destination, '.html')) {
+            $dir = dirname($outDir . DIRECTORY_SEPARATOR . $destination);
+            if (!is_dir($dir)) {
+                mkdir($dir, 0777, true);
+            }
+            $destinationFile = $outDir . DIRECTORY_SEPARATOR . $destination;
+            echo "Built " . $page->slug . "\n";
+        } else {
+            if (!is_dir($outDir . DIRECTORY_SEPARATOR . $destination)) {
+                mkdir($outDir . DIRECTORY_SEPARATOR . $destination, 0777, true);
+            }
+            $destinationFile = $outDir
+                . DIRECTORY_SEPARATOR
+                . $destination
+                . DIRECTORY_SEPARATOR
+                . "index.html";
+            echo "Built " . $page->slug . "index.html" . "\n";
         }
-
-        $destinationFile = $outDir
-            . DIRECTORY_SEPARATOR
-            . $destination
-            . DIRECTORY_SEPARATOR
-            . "index.html";
-
-        echo "Built " . $page->slug . "index.html" . "\n";
         ob_start();
         // phpcs:ignore Generic.PHP.ForbiddenFunctions.FoundWithAlternative
         include $base . DIRECTORY_SEPARATOR . "resources/views/" . $page->metadata->layout . ".php"; // NOSONAR
@@ -182,6 +190,9 @@ class SiteBuilder
 
     public function copyAssets(string $dir): void
     {
+        if (!is_dir($dir)) {
+            return;
+        }
         $base = $this->site->paths->baseDir;
         $entries = scandir($dir);
         if ($entries === false) {
@@ -416,6 +427,9 @@ class SiteBuilder
     {
         $base = $this->site->paths->baseDir;
         $outDir = $base . DIRECTORY_SEPARATOR . $this->site->paths->outputDir;
+        if (!is_dir($outDir)) {
+            mkdir($outDir, 0777, true);
+        }
 
         // 1. Generate local feed: public/twtxt.txt
         $twtxtManager = new \Indieinabox\Twtxt\TwtxtManager();

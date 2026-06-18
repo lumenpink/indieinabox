@@ -12,3 +12,6 @@ indieinabox.php
 tests/Integration/tmp_sandbox/
 coverage/
 docs/coverage/
+.config.yml
+data/indieauth/
+data/twtxt_cache/

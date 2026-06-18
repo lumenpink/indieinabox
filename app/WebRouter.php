@@ -40,6 +40,15 @@ class WebRouter
             return;
         }
 
+        $isConfigParam = isset($_GET['config']);
+        $isConfigPath = (preg_match('#/config$#i', $requestUriClean) === 1);
+
+        if ($isConfigParam || $isConfigPath) {
+            $handler = $this->createConfigHandler();
+            $handler->handle();
+            return;
+        }
+
         $this->serveStatic();
     }
 
@@ -51,6 +60,11 @@ class WebRouter
     protected function createIndieAuthHandler(): IndieAuthHandler
     {
         return new IndieAuthHandler($this->site);
+    }
+
+    protected function createConfigHandler(): ConfigHandler
+    {
+        return new ConfigHandler($this->site);
     }
 
     private function serveStatic(): void

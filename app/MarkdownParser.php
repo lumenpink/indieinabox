@@ -97,7 +97,18 @@ class MarkdownParser
         $slug = trim($slug, DIRECTORY_SEPARATOR);
         $slug = str_replace(DIRECTORY_SEPARATOR, "/", $slug);
         $slug = strtolower($slug);
-        $slug = rtrim($slug, "/") . "/";
+
+        $isIndex = ($fileInfo['filename'] === "index" || (isset($page["slug"]) && str_starts_with($page["slug"], "index")));
+        $prettylinks = $this->site->options->prettylinks ?? true;
+        if ($prettylinks) {
+            $slug = rtrim($slug, "/") . "/";
+        } else {
+            if ($isIndex) {
+                $slug = rtrim($slug, "/") . "/";
+            } else {
+                $slug = rtrim($slug, "/") . ".html";
+            }
+        }
         $page["slug"] = $slug;
 
         // Calculate relative path

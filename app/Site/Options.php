@@ -16,6 +16,7 @@ class Options
     public bool $skipStatic;
     public bool $forceStaticOverride;
     public ?string $htmlpostprocessing;
+    public bool $prettylinks;
 
     /**
      * SiteOptions constructor.
@@ -25,18 +26,21 @@ class Options
      * @param bool $skipStatic
      * @param bool $forceStaticOverride
      * @param string|null $htmlpostprocessing
+     * @param bool $prettylinks
      */
     public function __construct(
         bool $buildAll = true,
         bool $dev = false,
         bool $skipStatic = false,
         bool $forceStaticOverride = false,
-        ?string $htmlpostprocessing = null
+        ?string $htmlpostprocessing = null,
+        bool $prettylinks = true
     ) {
         $this->buildAll = $buildAll;
         $this->dev = $dev;
         $this->skipStatic = $skipStatic;
         $this->forceStaticOverride = $forceStaticOverride;
         $this->htmlpostprocessing = $htmlpostprocessing;
+        $this->prettylinks = $prettylinks;
     }
 }

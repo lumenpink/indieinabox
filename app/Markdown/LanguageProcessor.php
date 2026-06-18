@@ -102,9 +102,14 @@ class LanguageProcessor
             ? ""
             : $page->localization->lang . "/";
 
-        $nick = str_replace($page->localization->lang, '', $page->slug);
-        $nick = explode("/", $nick);
-        $nick = $nick[count($nick) - 2];
+        $cleanSlug = $page->slug;
+        if (str_ends_with($cleanSlug, '.html')) {
+            $cleanSlug = substr($cleanSlug, 0, -5);
+        }
+        $nick = str_replace($page->localization->lang, '', $cleanSlug);
+        $nick = trim($nick, '/');
+        $parts = explode("/", $nick);
+        $nick = end($parts);
         $page->metadata->nick = $nick;
 
         return $page;

@@ -315,6 +315,7 @@ class TwtxtManager
      */
     public function fetchHubMentions(array $hubs, string $fqdn): array
     {
+        /** @var TwtxtEntry[] $allMentions */
         $allMentions = [];
         $feedUrl = rtrim($fqdn, '/') . '/twtxt.txt';
 

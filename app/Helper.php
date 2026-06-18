@@ -65,20 +65,25 @@ class Helper
 
         if ($pageKind !== null && $pageKind !== "") {
             $kind = $pageKind;
-            $localizedkind = $pageKind;
-        } else {
-            $localizedkind = explode("/", $pageSlug);
-            if ($pageLang == $site->defaultlang) {
-                $localizedkind = $localizedkind[0];
+            $kindConfig = $site->config['kinds'][$kind] ?? null;
+            if ($kindConfig) {
+                $localizedkind = self::getKindFolder($kind, $pageLang);
             } else {
-                $localizedkind = $localizedkind[1];
+                $localizedkind = $kind;
+            }
+        } else {
+            $localizedkindSegment = explode("/", $pageSlug);
+            if ($pageLang == $site->defaultlang) {
+                $localizedkindSegment = $localizedkindSegment[0];
+            } else {
+                $localizedkindSegment = $localizedkindSegment[1] ?? $localizedkindSegment[0];
             }
             
             // Resolve kind from config content_dir
             if (!empty($site->config['kinds'])) {
                 foreach ($site->config['kinds'] as $k => $conf) {
                     $cDir = $conf['content_dir'] ?? $k;
-                    if ($cDir === $localizedkind) {
+                    if ($cDir === $localizedkindSegment) {
                         $kind = $k;
                         break;
                     }
@@ -90,7 +95,7 @@ class Helper
                 global $kindspath;
                 if (!empty($kindspath)) {
                     foreach ($kindspath as $key => $value) {
-                        if (in_array($localizedkind, $value)) {
+                        if (in_array($localizedkindSegment, $value)) {
                             $kind = $key;
                             break;
                         }
@@ -101,12 +106,68 @@ class Helper
             if (!isset($kind)) {
                 $kind = "generic";
                 $localizedkind = "generic";
+            } else {
+                $kindConfig = $site->config['kinds'][$kind] ?? null;
+                if ($kindConfig) {
+                    $localizedkind = self::getKindFolder($kind, $pageLang);
+                } else {
+                    $localizedkind = $localizedkindSegment;
+                }
             }
         }
         return [
             "localized" => $localizedkind,
             "kind" => $kind,
         ];
+    }
+
+    /**
+     * Get the localized folder name for a specific kind and language.
+     *
+     * @param string $kind
+     * @param string $lang
+     * @return string
+     */
+    public static function getKindFolder(string $kind, string $lang): string
+    {
+        $config = self::getKindConfig($kind);
+
+        // If it's a special system kind (generic, page, home) and has no config, just return the kind itself
+        if (in_array($kind, ['generic', 'page', 'home']) && empty($config['title'])) {
+            return $kind;
+        }
+
+        // 1. If content_dir is defined as an array mapped by language, use that
+        if (isset($config['content_dir']) && is_array($config['content_dir'])) {
+            $folder = $config['content_dir'][$lang] ?? reset($config['content_dir']);
+            if ($folder) {
+                return self::slugize((string)$folder);
+            }
+        }
+
+        // 2. Otherwise, check if we have a title translation for this language
+        if (!empty($config['title']) && is_array($config['title'])) {
+            if (isset($config['title'][$lang])) {
+                return self::slugize((string)$config['title'][$lang]);
+            }
+            // Fallback to defaultlang or first title
+            global $site;
+            $defaultLang = $site->localization->defaultLang ?? 'en';
+            if (isset($config['title'][$defaultLang])) {
+                return self::slugize((string)$config['title'][$defaultLang]);
+            }
+            if (isset($config['title']['en'])) {
+                return self::slugize((string)$config['title']['en']);
+            }
+            $first = reset($config['title']);
+            if ($first) {
+                return self::slugize((string)$first);
+            }
+        }
+
+        // 3. Fallback to kind's content_dir if it's a string, or the kind itself
+        $contentDir = $config['content_dir'] ?? $kind;
+        return self::slugize((string)$contentDir);
     }
 
     /**

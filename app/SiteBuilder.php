@@ -621,13 +621,7 @@ class SiteBuilder
 
     private function getKindFolder(string $kind, string $lang): string
     {
-        $config = \Indieinabox\Helper::getKindConfig($kind);
-        $contentDir = $config['content_dir'] ?? $kind;
-        
-        if (is_array($contentDir)) {
-            return $contentDir[$lang] ?? reset($contentDir) ?? $kind;
-        }
-        return (string) $contentDir;
+        return \Indieinabox\Helper::getKindFolder($kind, $lang);
     }
 
     /**

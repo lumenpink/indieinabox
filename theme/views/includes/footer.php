@@ -2,26 +2,29 @@
 /** @var \Indieinabox\Page $page */
 global $site;
 $lang = $page->lang ?? 'en';
-$articlesFolder = ($lang === 'en' ? 'articles' : ($lang === 'es' ? 'articulos' : 'artigos'));
-$notesFolder = ($lang === 'en' ? 'notes' : 'notas');
-$photosFolder = ($lang === 'en' ? 'photos' : 'fotos');
-$gardenFolder = ($lang === 'en' ? 'garden' : 'jardim');
+$defaultLang = $site->localization->defaultLang ?? 'en';
+$langPrefix = ($lang === $defaultLang) ? '' : $lang . '/';
+
+$articlesFolder = \Indieinabox\Helper::getKindFolder('article', $lang);
+$notesFolder = \Indieinabox\Helper::getKindFolder('note', $lang);
+$photosFolder = \Indieinabox\Helper::getKindFolder('photo', $lang);
+$gardenFolder = \Indieinabox\Helper::getKindFolder('garden', $lang);
 $sobreSlug = ($lang === 'en' ? 'about-the-blog' : ($lang === 'es' ? 'sobre-el-blog' : 'sobre-o-blog'));
 
 $prettylinks = $site->options->prettylinks ?? true;
 
 if ($prettylinks) {
-    $articlesLink = $page->relpath . $articlesFolder . '/';
-    $notesLink = $page->relpath . $notesFolder . '/';
-    $photosLink = $page->relpath . $photosFolder . '/';
-    $gardenLink = $page->relpath . $gardenFolder . '/';
-    $sobreLink = $page->relpath . $sobreSlug . '/';
+    $articlesLink = $page->relpath . $langPrefix . $articlesFolder . '/';
+    $notesLink = $page->relpath . $langPrefix . $notesFolder . '/';
+    $photosLink = $page->relpath . $langPrefix . $photosFolder . '/';
+    $gardenLink = $page->relpath . $langPrefix . $gardenFolder . '/';
+    $sobreLink = $page->relpath . $langPrefix . $sobreSlug . '/';
 } else {
-    $articlesLink = $page->relpath . $articlesFolder . '.html';
-    $notesLink = $page->relpath . $notesFolder . '/index.html';
-    $photosLink = $page->relpath . $photosFolder . '.html';
-    $gardenLink = $page->relpath . $gardenFolder . '.html';
-    $sobreLink = $page->relpath . $sobreSlug . '.html';
+    $articlesLink = $page->relpath . $langPrefix . $articlesFolder . '.html';
+    $notesLink = $page->relpath . $langPrefix . $notesFolder . '/index.html';
+    $photosLink = $page->relpath . $langPrefix . $photosFolder . '.html';
+    $gardenLink = $page->relpath . $langPrefix . $gardenFolder . '.html';
+    $sobreLink = $page->relpath . $langPrefix . $sobreSlug . '.html';
 }
 ?>
 <footer>

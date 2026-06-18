@@ -287,11 +287,12 @@ class Page
         $slug = (string) ($data['slug'] ?? 'untitled');
         $relpath = (string) ($data['relpath'] ?? '');
         if ($relpath === '') {
-            $parts = explode('/', rtrim($slug, '/'));
-            if ($slug === '/' || $slug === '') {
+            $cleanSlug = ltrim($slug, '/');
+            if ($cleanSlug === '' || $cleanSlug === 'index.html') {
                 $relpath = './';
             } else {
-                $relpath = str_repeat('../', count($parts));
+                $slashCount = substr_count($cleanSlug, '/');
+                $relpath = $slashCount > 0 ? str_repeat('../', $slashCount) : './';
             }
         }
 

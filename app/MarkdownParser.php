@@ -109,11 +109,12 @@ class MarkdownParser implements ParserInterface
         $page["slug"] = $slug;
 
         // Calculate relative path
-        $parts = explode('/', rtrim($slug, '/'));
-        if ($slug === '/') {
+        $cleanSlug = ltrim($slug, '/');
+        if ($cleanSlug === '' || $cleanSlug === 'index.html') {
             $page["relpath"] = './';
         } else {
-            $page["relpath"] = str_repeat('../', count($parts));
+            $slashCount = substr_count($cleanSlug, '/');
+            $page["relpath"] = $slashCount > 0 ? str_repeat('../', $slashCount) : './';
         }
 
         // Determine layout
@@ -149,6 +150,49 @@ class MarkdownParser implements ParserInterface
         $kindResult = Helper::kind($rawPage);
         $page->localizedkind = $kindResult["localized"];
         $page->kind = $kindResult["kind"];
+
+        // Translate/localize the folder name in the slug if it maps to this kind
+        if ($page->kind !== 'generic' && $page->kind !== 'page' && $page->kind !== 'home') {
+            $slug = $page->slug;
+            $parts = explode('/', $slug);
+            $folderIndex = ($page->lang === $this->site->localization->defaultLang) ? 0 : 1;
+
+            if (isset($parts[$folderIndex])) {
+                $oldFolder = $parts[$folderIndex];
+                $matchedKind = null;
+                global $kindspath;
+                if (!empty($this->site->config['kinds'])) {
+                    foreach ($this->site->config['kinds'] as $k => $conf) {
+                        if (($conf['content_dir'] ?? $k) === $oldFolder) {
+                            $matchedKind = $k;
+                            break;
+                        }
+                    }
+                }
+                if ($matchedKind === null && !empty($kindspath)) {
+                    foreach ($kindspath as $key => $value) {
+                        if (in_array($oldFolder, $value)) {
+                            $matchedKind = $key;
+                            break;
+                        }
+                    }
+                }
+
+                if ($matchedKind === $page->kind) {
+                    $parts[$folderIndex] = $page->localizedkind;
+                    $page->slug = implode('/', $parts);
+
+                    // Re-calculate the relative path based on the updated slug
+                    $cleanSlug = ltrim($page->slug, '/');
+                    if ($cleanSlug === '' || $cleanSlug === 'index.html') {
+                        $page->relpath = './';
+                    } else {
+                        $slashCount = substr_count($cleanSlug, '/');
+                        $page->relpath = $slashCount > 0 ? str_repeat('../', $slashCount) : './';
+                    }
+                }
+            }
+        }
 
         $dateResult = Helper::localizeddate($page);
         $page->localizeddate = $page->isodate;

@@ -25,8 +25,8 @@ if ($prettylinks) {
 }
 ?>
 <footer>
-    <div class="footer-divider">--------------------------------------------------</div>
-    <div class="footer-links">
+    <hr>
+    <div class="footer-links" style="text-align: center;">
         <a href="<?= $articlesLink ?>"><?= \Indieinabox\Helper::translate('Artigos') ?></a> |
         <a href="<?= $notesLink ?>"><?= \Indieinabox\Helper::translate('Notas') ?></a> |
         <a href="<?= $photosLink ?>"><?= \Indieinabox\Helper::translate('Fotos') ?></a> |

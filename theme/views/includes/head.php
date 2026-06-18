@@ -71,10 +71,20 @@ if (!empty($kindConfig['palette'])) {
         margin: 0.5em 0;
         font-size: 0.95em;
     }
-    .header-divider, .footer-divider {
-        color: var(--fg);
-        margin: 1em 0;
-        letter-spacing: -1px;
+    .logo-figlet {
+        text-align: center;
+        font-size: 14px;
+        line-height: 1.2;
+        margin-bottom: 2em;
+        white-space: pre;
+        overflow-x: hidden;
+        background: transparent;
+        padding: 0;
+    }
+    @media (max-width: 600px) {
+        .logo-figlet {
+            font-size: 10px;
+        }
     }
     .footer-links {
         margin-top: 2em;

@@ -189,7 +189,17 @@ class HtmlRenderer implements RendererInterface
                     );
 
                     if ($success) {
-                        $target = $gifName;
+                        // Build a root-relative src so the image loads correctly
+                        // from any page that embeds this content (e.g. home summary).
+                        // e.g. slug = photos/my-first-photo.html → dir = photos/
+                        //      slug = photos/my-first-photo/      → dir = photos/my-first-photo/
+                        $slugTrimmed = trim($slug, '/');
+                        if (str_ends_with($slug, '.html')) {
+                            $slugDir = dirname($slugTrimmed);   // "photos"
+                        } else {
+                            $slugDir = $slugTrimmed;            // "photos/my-first-photo"
+                        }
+                        $target = '/' . ltrim($slugDir . '/' . $gifName, '/');
                     }
                 }
             }

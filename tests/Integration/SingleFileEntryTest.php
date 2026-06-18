@@ -88,6 +88,19 @@ it('compiles the app and runs both CLI build and Web routing from the single-fil
 </html>
 PHP
     );
+    file_put_contents($integrationSandbox . '/theme/views/indice.php', <<<PHP
+<!DOCTYPE html>
+<html>
+<head>
+    <title><?= \$page->title ?></title>
+</head>
+<body>
+    <h1><?= \$page->title ?></h1>
+    <article><?= \$page->content ?></article>
+</body>
+</html>
+PHP
+    );
 
     // 3. Symlink dependencies into sandbox and copy compiled single-file script as build.php
     symlink($root . '/vendor', $integrationSandbox . '/vendor');

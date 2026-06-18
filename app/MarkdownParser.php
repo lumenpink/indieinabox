@@ -121,6 +121,9 @@ class MarkdownParser implements ParserInterface
         $page["layout"] = $layout;
 
         // Convert to Page object and process language & metadata
+        if (!isset($page['lang'])) {
+            $page['lang'] = $this->site->localization->defaultLang;
+        }
         $pageObj = Page::fromArray($page);
         $pageObj->filepath = $file;
         $pageObj = $this->languageProcessor->processLanguage($pageObj);

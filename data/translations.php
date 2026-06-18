@@ -33,6 +33,7 @@ $translations= array (
     'Início' => '',
     'Jardim' => '',
     'Marcadores' => '',
+    'Navegue pelas seções do site no estilo Gopher:' => '',
     'Notas' => '',
     'pensamentos' => '',
     'Pensamentos' => '',
@@ -45,7 +46,16 @@ $translations= array (
   ),
   'es' => 
   array (
+    'Agora' => '',
+    'Artigos' => '',
     'Conteúdo em Português' => '',
+    'Fotos' => '',
+    'Início' => '',
+    'Jardim' => '',
+    'Navegue pelas seções do site no estilo Gopher:' => '',
+    'Notas' => '',
+    'Sobre' => '',
+    'Índice' => '',
   ),
   'pt' => 
   array (

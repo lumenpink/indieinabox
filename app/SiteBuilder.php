@@ -129,6 +129,7 @@ class SiteBuilder
         }
 
         $this->compileConsolidatedNotes($notes);
+        $this->compileSectionIndexes();
     }
 
     private function createHTMLFile(Page $page): void
@@ -730,6 +731,90 @@ class SiteBuilder
             $this->createHTMLFile($indexPage);
             $this->createGeminiFile($indexPage);
             $this->createGopherFile($indexPage);
+        }
+    }
+
+    private function compileSectionIndexes(): void
+    {
+        $defaultLang = $this->site->localization->defaultLang;
+        $prettylinks = $this->site->options->prettylinks ?? true;
+        
+        $langs = $this->site->localization->lang;
+        if (!is_array($langs)) {
+            $langs = [$langs];
+        }
+
+        foreach ($langs as $lang) {
+            // 1. Sitemap (layout: indice)
+            $sitemapSlug = ($lang === $defaultLang ? '' : $lang . '/') . 'indice/';
+            if (!$prettylinks) {
+                $sitemapSlug = ($lang === $defaultLang ? '' : $lang . '/') . 'indice.html';
+            }
+
+            $sitemapPage = Page::fromArray([
+                'title' => "Índice",
+                'layout' => 'indice',
+                'slug' => $sitemapSlug,
+                'date' => time(),
+                'content' => '',
+                'rawBody' => '',
+                'lang' => $lang,
+                'kind' => 'generic'
+            ]);
+
+            $this->createHTMLFile($sitemapPage);
+            $this->createGeminiFile($sitemapPage);
+            $this->createGopherFile($sitemapPage);
+
+            // 2. Kind Indexes (article, photo, jardim)
+            $kinds = ['article', 'photo', 'jardim'];
+            foreach ($kinds as $kind) {
+                $kindPages = [];
+                foreach ($this->pages as $p) {
+                    if ($p->kind === $kind && $p->lang === $lang && !in_array('draft', $p->metadata->tags)) {
+                        $kindPages[] = $p;
+                    }
+                }
+
+                usort($kindPages, function($a, $b) {
+                    $timeA = $a->date instanceof \DateTime ? $a->date->getTimestamp() : $a->date;
+                    $timeB = $b->date instanceof \DateTime ? $b->date->getTimestamp() : $b->date;
+                    return $timeB <=> $timeA;
+                });
+
+                $translatedTitle = $kind === 'jardim' ? 'Jardim' : ($kind === 'article' ? 'Artigos' : 'Fotos');
+                $title = ucfirst(\Indieinabox\Helper::translate($translatedTitle));
+                
+                $content = '<ul style="list-style-type: none; padding-left: 0;">';
+                foreach ($kindPages as $p) {
+                    $content .= '<li style="margin-bottom: 1em;">';
+                    $content .= '<strong><a href="' . $p->relpath . $p->slug . '">' . htmlspecialchars($p->title) . '</a></strong>';
+                    $content .= ' <span style="font-size:0.9em; opacity:0.8;">(' . $p->localizeddate . ')</span>';
+                    $content .= '</li>';
+                }
+                $content .= '</ul>';
+
+                $kindFolder = $this->getKindFolder($kind, $lang);
+                $kindSlug = ($lang === $defaultLang ? '' : $lang . '/') . $kindFolder . '/';
+                if (!$prettylinks) {
+                    $kindSlug = ($lang === $defaultLang ? '' : $lang . '/') . $kindFolder . '.html';
+                }
+
+                $indexPage = Page::fromArray([
+                    'title' => $title,
+                    'layout' => 'page',
+                    'slug' => $kindSlug,
+                    'date' => time(),
+                    'content' => $content,
+                    'rawBody' => $content,
+                    'lang' => $lang,
+                    'kind' => $kind
+                ]);
+
+                $this->createHTMLFile($indexPage);
+                $this->createGeminiFile($indexPage);
+                $this->createGopherFile($indexPage);
+            }
         }
     }
 }

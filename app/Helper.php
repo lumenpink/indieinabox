@@ -79,6 +79,16 @@ class Helper
             $lang = $page["lang"] ?? "en";
         }
 
+        if (!isset($intl[$lang])) {
+            if (($lang === 'pt' || str_starts_with($lang, 'pt-')) && isset($intl['pt-br'])) {
+                $lang = 'pt-br';
+            } elseif (($lang === 'es' || str_starts_with($lang, 'es-')) && isset($intl['es'])) {
+                $lang = 'es';
+            } else {
+                $lang = 'en';
+            }
+        }
+
         if ($epoch instanceof \DateTime) {
             $date = $epoch;
         } else {

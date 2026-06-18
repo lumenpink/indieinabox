@@ -42,5 +42,9 @@ $translations= array (
   array (
     'Conteúdo em Português' => '',
   ),
+  'pt' => 
+  array (
+    'Conteúdo em Português' => '',
+  ),
 );
 ?>

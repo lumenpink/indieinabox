@@ -1,7 +1,8 @@
 ---
 title: Now
 menu: "main"
-slug: agora
+show_in_menu: true
+slug: now
 noauthor: true
 date: 2026-06-15T22:21:58-03:00
 kind: page

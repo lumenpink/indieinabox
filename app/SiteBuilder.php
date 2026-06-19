@@ -105,8 +105,9 @@ class SiteBuilder
 
         // For each page in the default language, check if it has a localized version in other languages
         foreach ($defaultLangPages as $page) {
-            // Only virtualize user content kinds, not generic index/home pages
-            if (in_array($page->kind, ['generic', 'page', 'home'], true)) {
+            // Only virtualize user content kinds, not generic index/home pages. 
+            // Note: 'page' kind is allowed so 'now' and 'about' can be virtualized.
+            if (in_array($page->kind, ['generic', 'home'], true)) {
                 continue;
             }
 
@@ -115,8 +116,18 @@ class SiteBuilder
                     continue;
                 }
 
-                $key = "{$page->kind}:{$page->nick}:{$lang}";
+                // Get translated nick if available
+                global $urltranslations;
+                $translatedNick = $page->nick;
+                if (!empty($urltranslations) && isset($urltranslations[$page->nick][$lang])) {
+                    $translatedNick = $urltranslations[$page->nick][$lang];
+                }
+
+                $key = "{$page->kind}:{$translatedNick}:{$lang}";
                 if (!isset($existing[$key])) {
+                    if (php_sapi_name() === 'cli') {
+                        echo "[WARNING] Missing translation for page '{$page->slug}' in language '{$lang}'. Virtualizing...\n";
+                    }
                     // No translation exists for this language! Let's virtualize it!
                     $cloned = clone $page;
                     
@@ -257,11 +268,12 @@ class SiteBuilder
     {
         $base = $this->site->paths->baseDir;
         $site = $this->site;
-        // Expose $p, $pages, $site and $langLinks to the global scope for view template compatibility
-        global $p, $site, $pages, $langLinks;
+        // Expose $p, $pages, $site, $langLinks and $footerLinks to the global scope for view template compatibility
+        global $p, $site, $pages, $langLinks, $footerLinks;
         $p = $page;
         $pages = $this->pages;
         $langLinks = $this->getLanguageLinks($page);
+        $footerLinks = $this->getFooterLinks($page);
 
         if (in_array("draft", $page->metadata->tags)) {
             return;
@@ -761,6 +773,44 @@ class SiteBuilder
             $links[$lang] = '/' . ltrim(preg_replace('#/+#', '/', $url), '/');
         }
 
+        return $links;
+    }
+
+    private function getFooterLinks(Page $page): array
+    {
+        $links = [];
+        $lang = $page->lang ?? ($this->site->localization->defaultLang ?? 'en');
+        $defaultLang = $this->site->localization->defaultLang ?? 'en';
+        $langPrefix = ($lang === $defaultLang) ? '' : $lang . '/';
+        $prettylinks = $this->site->options->prettylinks ?? true;
+        
+        // 1. Post kinds defined in config
+        if (!empty($this->site->config['kinds'])) {
+            foreach ($this->site->config['kinds'] as $k => $conf) {
+                if (isset($conf['show_on_home']) && !$conf['show_on_home'] && $k !== 'garden') {
+                    // Just in case, usually all config kinds should be in menu according to the request.
+                }
+                $folder = $this->getKindFolder($k, $lang);
+                if ($prettylinks) {
+                    $url = $page->relpath . $langPrefix . $folder . '/';
+                } else {
+                    $url = $page->relpath . $langPrefix . $folder . '/index.html';
+                }
+                $label = \Indieinabox\Helper::kindLabel($k, $lang);
+                $links[] = ['url' => $url, 'label' => $label];
+            }
+        }
+        
+        // 2. MD files with kind: page and show_in_menu: true
+        foreach ($this->pages as $p) {
+            $pLang = $p->lang ?? $defaultLang;
+            if ($pLang === $lang && $p->kind === 'page' && !empty($p->metadata->show_in_menu)) {
+                $url = $page->relpath . ltrim($p->slug, '/');
+                $label = $p->title;
+                $links[] = ['url' => $url, 'label' => $label];
+            }
+        }
+        
         return $links;
     }
 

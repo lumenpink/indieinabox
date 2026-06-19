@@ -165,6 +165,9 @@ if (isset($config['twtxt'])) {
     $site->twtxt->hubs = (array) ($twtxtData['hubs'] ?? []);
 }
 
+global $urltranslations;
+$urltranslations = $config['translations'] ?? [];
+
 if (php_sapi_name() === 'cli') {
     $builder = new \Indieinabox\SiteBuilder($site);
     $builder->build();

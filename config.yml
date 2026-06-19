@@ -104,9 +104,17 @@ translations:
     en: Garden
     es: Jardín
   About:
-    pt: Sobre
+    pt-br: Sobre
     en: About
     es: Sobre
+  now:
+    pt-br: agora
+    en: now
+    es: ahora
+  about-the-blog:
+    pt-br: sobre-o-blog
+    en: about-the-blog
+    es: sobre-el-blog
   Maturity:
     pt: Maturidade
     en: Maturity

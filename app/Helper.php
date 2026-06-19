@@ -696,10 +696,15 @@ class Helper
      */
     public static function listposts(): string
     {
-        global $pages, $site;
+        global $pages, $site, $p;
+        $currentLang = $p instanceof Page ? $p->lang : ($p['lang'] ?? ($site->localization->defaultLang ?? 'en'));
         $base = $site->paths->baseDir;
         $localpages = $pages instanceof Pages ? $pages->all() : $pages;
         $localpages = array_filter($localpages, [self::class, 'removegeneric']);
+        $localpages = array_filter($localpages, function($page) use ($currentLang) {
+            $lang = $page instanceof Page ? $page->lang : ($page['lang'] ?? 'en');
+            return $lang === $currentLang;
+        });
         usort(
             $localpages,
             function ($a, $b) {

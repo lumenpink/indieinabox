@@ -25,9 +25,9 @@ if (!isset($langLinks)) {
 
 $prettylinks = $site->options->prettylinks ?? true;
 
-$agoraSlug = 'agora';
-if ($lang !== 'pt' && isset($urltranslations['agora'][$lang])) {
-    $agoraSlug = $urltranslations['agora'][$lang];
+$agoraSlug = 'now';
+if ($lang !== 'en' && isset($urltranslations['now'][$lang])) {
+    $agoraSlug = $urltranslations['now'][$lang];
 }
 
 $indiceSlug = 'indice';
@@ -53,19 +53,21 @@ if ($prettylinks) {
     </pre>
     <?php if (count($langs) > 1): ?>
         <div class="lang-selector" style="text-align: center;">
-            [
             <?php 
             $langLinksHTML = [];
             foreach ($langs as $l) {
                 $label = strtoupper($l);
-                $url = $links[$l] ?? '';
-                if ($url !== '') {
-                    $langLinksHTML[] = '<a href="' . htmlspecialchars($url) . '">' . htmlspecialchars($label) . '</a>';
+                if ($l === $lang) {
+                    $langLinksHTML[] = '[' . htmlspecialchars($label) . ']';
+                } else {
+                    $url = $links[$l] ?? '';
+                    if ($url !== '') {
+                        $langLinksHTML[] = '<a href="' . htmlspecialchars($url) . '">' . htmlspecialchars($label) . '</a>';
+                    }
                 }
             }
-            echo implode(' | ', $langLinksHTML);
+            echo implode(' ', $langLinksHTML);
             ?>
-            ]
         </div>
     <?php endif; ?>
     <nav class="top-nav" style="text-align: center;">

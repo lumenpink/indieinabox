@@ -34,6 +34,11 @@
         }
     },
     "scripts": {
+        "serve": "php -S localhost:8081 build.php",
+        "dev": "php watch.php",
+        "build": "php build.php",
+        "builddev": "php build.php -d",
+        "compile": "php compile.php",
         "test": "pest",
         "test:compiled": "TEST_COMPILED=true pest",
         "test:all": "composer test && composer test:compiled",

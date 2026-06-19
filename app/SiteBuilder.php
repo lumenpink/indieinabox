@@ -726,7 +726,7 @@ class SiteBuilder
             }
         }
 
-        if ($baseKey !== null && $baseKey !== '') {
+        if ($baseKey !== null) {
             $kind = $page->kind;
 
             foreach ($langs as $l) {
@@ -741,25 +741,17 @@ class SiteBuilder
                     $localizedSlugPart = ($l === $defaultLang) ? $baseKey : ($translationGroup[$l] ?? $baseKey);
                 }
                 
-                if ($localizedSlugPart === 'index') {
+                if ($prettylinks) {
                     if ($l === $defaultLang) {
-                        $links[$l] = '/';
+                        $links[$l] = '/' . ($folder ? $folder . '/' : '') . ($localizedSlugPart !== '' ? $localizedSlugPart . '/' : '');
                     } else {
-                        $links[$l] = '/' . $l . '/';
+                        $links[$l] = '/' . $l . '/' . ($folder ? $folder . '/' : '') . ($localizedSlugPart !== '' ? $localizedSlugPart . '/' : '');
                     }
                 } else {
-                    if ($prettylinks) {
-                        if ($l === $defaultLang) {
-                            $links[$l] = '/' . ($folder ? $folder . '/' : '') . $localizedSlugPart . '/';
-                        } else {
-                            $links[$l] = '/' . $l . '/' . ($folder ? $folder . '/' : '') . $localizedSlugPart . '/';
-                        }
+                    if ($l === $defaultLang) {
+                        $links[$l] = '/' . ($folder ? $folder . '/' : '') . ($localizedSlugPart !== '' ? $localizedSlugPart . '.html' : 'index.html');
                     } else {
-                        if ($l === $defaultLang) {
-                            $links[$l] = '/' . ($folder ? $folder . '/' : '') . $localizedSlugPart . '.html';
-                        } else {
-                            $links[$l] = '/' . $l . '/' . ($folder ? $folder . '/' : '') . $localizedSlugPart . '.html';
-                        }
+                        $links[$l] = '/' . $l . '/' . ($folder ? $folder . '/' : '') . ($localizedSlugPart !== '' ? $localizedSlugPart . '.html' : 'index.html');
                     }
                 }
             }

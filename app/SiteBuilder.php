@@ -690,6 +690,10 @@ class SiteBuilder
         if ($nick === false) {
             $nick = '';
         }
+        // Strip .html extension from nick when prettylinks is off to avoid double .html in links
+        if (!$prettylinks && str_ends_with($nick, '.html')) {
+            $nick = substr($nick, 0, -5);
+        }
 
         $translationGroup = null;
         $baseKey = null;

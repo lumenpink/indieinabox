@@ -22,17 +22,10 @@ class ConfigHandler
         $requestUri = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
         $requestUriClean = rtrim($requestUri, '/');
 
-        // Check if configuration exists
-        $basePath = $this->site->paths->baseDir;
-        $configFile = $basePath . DIRECTORY_SEPARATOR . "config.yml";
-        if (file_exists($basePath . DIRECTORY_SEPARATOR . ".config.yml")) {
-            $configFile = $basePath . DIRECTORY_SEPARATOR . ".config.yml";
-        }
-
         $hasPassword = !empty($this->site->metadata->indieauthPassword);
 
-        // Bootstrap flow: No config file or password exists yet
-        if (!file_exists($configFile) || !$hasPassword) {
+        // Bootstrap flow: No password exists yet
+        if (!$hasPassword) {
             $this->handleBootstrap();
             return;
         }
@@ -110,10 +103,14 @@ class ConfigHandler
                 'prettylinks' => $this->detectPrettyLinksSupport()
             ];
 
-            $yaml = new Yaml();
-            $yamlContent = $yaml->dump($newConfig);
-            $basePath = $this->site->paths->baseDir;
-            file_put_contents($basePath . DIRECTORY_SEPARATOR . '.config.yml', $yamlContent);
+            $db = \Indieinabox\Database::getDb();
+            foreach ($newConfig as $key => $val) {
+                $valStr = is_array($val) ? json_encode($val, JSON_UNESCAPED_UNICODE) : (string)$val;
+                $stmt = $db->prepare('INSERT OR REPLACE INTO settings (key, value) VALUES (:key, :val)');
+                $stmt->bindValue(':key', (string)$key);
+                $stmt->bindValue(':val', $valStr);
+                $stmt->execute();
+            }
 
             // Rebuild site once initial configs are generated
             $this->rebuildSite();
@@ -189,18 +186,10 @@ class ConfigHandler
 
     private function saveConfig(): void
     {
-        $basePath = $this->site->paths->baseDir;
-        $yaml = new Yaml();
-
-        $configFile = $basePath . DIRECTORY_SEPARATOR . ".config.yml";
-        if (!file_exists($configFile)) {
-            $configFile = $basePath . DIRECTORY_SEPARATOR . "config.yml";
-        }
-        
-        $currentConfig = [];
-        if (file_exists($configFile)) {
-            $currentConfig = $yaml->loadFile($configFile);
-        }
+        $currentConfig = \Indieinabox\Database::getAllSettings();
+        $currentConfig['kinds'] = \Indieinabox\Database::getKinds();
+        $currentConfig['translations'] = \Indieinabox\Database::getTranslations();
+        $currentConfig['urltranslations'] = \Indieinabox\Database::getUrlTranslations();
 
         // --- Core Settings ---
         $currentConfig['base'] = trim($_POST['base'] ?? '', '/');
@@ -372,9 +361,55 @@ class ConfigHandler
             $currentConfig['indieauth_password'] = password_hash($_POST['new_password'], PASSWORD_BCRYPT);
         }
 
-        // Save to .config.yml to protect secrets
-        $yamlContent = $yaml->dump($currentConfig);
-        file_put_contents($basePath . DIRECTORY_SEPARATOR . '.config.yml', $yamlContent);
+        // Save to SQLite
+        $db = \Indieinabox\Database::getDb();
+        foreach ($currentConfig as $key => $val) {
+            if ($key === 'kinds' || $key === 'translations' || $key === 'urltranslations') {
+                continue;
+            }
+            $valStr = is_array($val) ? json_encode($val, JSON_UNESCAPED_UNICODE) : (string)$val;
+            $stmt = $db->prepare('INSERT OR REPLACE INTO settings (key, value) VALUES (:key, :val)');
+            $stmt->bindValue(':key', (string)$key);
+            $stmt->bindValue(':val', $valStr);
+            $stmt->execute();
+        }
+
+        $db->exec('DELETE FROM kinds');
+        if (isset($currentConfig['kinds']) && is_array($currentConfig['kinds'])) {
+            foreach ($currentConfig['kinds'] as $k => $v) {
+                $valStr = is_array($v) ? json_encode($v, JSON_UNESCAPED_UNICODE) : (string)$v;
+                $stmt = $db->prepare('INSERT INTO kinds (kind_key, config_json) VALUES (:k, :v)');
+                $stmt->bindValue(':k', (string)$k);
+                $stmt->bindValue(':v', $valStr);
+                $stmt->execute();
+            }
+        }
+
+        if (isset($currentConfig['translations']) && is_array($currentConfig['translations'])) {
+            foreach ($currentConfig['translations'] as $phrase_key => $langs) {
+                if (is_array($langs)) {
+                    foreach ($langs as $lang => $phrase_value) {
+                        $stmt = $db->prepare('SELECT id FROM translations WHERE lang = :lang AND phrase_key = :key');
+                        $stmt->bindValue(':lang', $lang);
+                        $stmt->bindValue(':key', $phrase_key);
+                        $res = $stmt->execute();
+                        $row = $res ? $res->fetchArray(SQLITE3_ASSOC) : false;
+                        if ($row) {
+                            $upd = $db->prepare('UPDATE translations SET phrase_value = :val WHERE id = :id');
+                            $upd->bindValue(':val', $phrase_value);
+                            $upd->bindValue(':id', $row['id']);
+                            $upd->execute();
+                        } else {
+                            $ins = $db->prepare('INSERT INTO translations (lang, phrase_key, phrase_value) VALUES (:lang, :key, :val)');
+                            $ins->bindValue(':lang', $lang);
+                            $ins->bindValue(':key', $phrase_key);
+                            $ins->bindValue(':val', $phrase_value);
+                            $ins->execute();
+                        }
+                    }
+                }
+            }
+        }
 
         // Rebuild the site using newly saved settings
         $this->rebuildSite();
@@ -390,18 +425,10 @@ class ConfigHandler
     private function rebuildSite(): void
     {
         $basePath = $this->site->paths->baseDir;
-        $yaml = new Yaml();
-
-        $configFile = $basePath . DIRECTORY_SEPARATOR . ".config.yml";
-        if (!file_exists($configFile)) {
-            $configFile = $basePath . DIRECTORY_SEPARATOR . "config.yml";
-        }
-
-        if (!file_exists($configFile)) {
-            return;
-        }
-
-        $config = $yaml->loadFile($configFile);
+        $config = \Indieinabox\Database::getAllSettings();
+        $config['kinds'] = \Indieinabox\Database::getKinds();
+        $config['translations'] = \Indieinabox\Database::getTranslations();
+        $config['urltranslations'] = \Indieinabox\Database::getUrlTranslations();
 
         $newSite = new Site();
         $newSite->paths->baseDir = $basePath;
@@ -590,18 +617,9 @@ class ConfigHandler
 
     private function renderConfigForm(): void
     {
-        $basePath = $this->site->paths->baseDir;
-        $yaml = new Yaml();
-
-        $configFile = $basePath . DIRECTORY_SEPARATOR . ".config.yml";
-        if (!file_exists($configFile)) {
-            $configFile = $basePath . DIRECTORY_SEPARATOR . "config.yml";
-        }
-
-        $config = [];
-        if (file_exists($configFile)) {
-            $config = $yaml->loadFile($configFile);
-        }
+        $config = \Indieinabox\Database::getAllSettings();
+        $config['kinds'] = \Indieinabox\Database::getKinds();
+        $config['translations'] = \Indieinabox\Database::getTranslations();
 
         $langArr = $config['lang'] ?? ['en'];
         if (!is_array($langArr)) {

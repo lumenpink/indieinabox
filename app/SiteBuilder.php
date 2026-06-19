@@ -686,6 +686,9 @@ class SiteBuilder
         }
         // Also legacy folder names for backup
         global $kindspath;
+        if ($kindspath === null) {
+            $kindspath = \Indieinabox\Database::getSetting('kindspath', []);
+        }
         if (!empty($kindspath)) {
             foreach ($kindspath as $key => $values) {
                 foreach ($values as $val) {

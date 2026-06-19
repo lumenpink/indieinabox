@@ -201,6 +201,12 @@ class MarkdownParser implements ParserInterface
                         }
                     }
                 }
+                
+                if ($kindspath === null) {
+                    $kindspath = \Indieinabox\Database::getSetting('kindspath', []);
+                }
+                
+                // Fallback to legacy folder names
                 if ($matchedKind === null && !empty($kindspath)) {
                     foreach ($kindspath as $key => $value) {
                         if (in_array($oldFolder, $value)) {

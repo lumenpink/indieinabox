@@ -1,9 +1,0 @@
-[
-    {
-        "source": "http:\/\/127.0.0.1:9200\/source_post.html",
-        "target": "https:\/\/example.com\/about",
-        "title": "Webmention from 127.0.0.1",
-        "text": "",
-        "date": "2026-06-17T12:30:49+00:00"
-    }
-]

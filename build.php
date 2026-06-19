@@ -7,7 +7,6 @@ if (!defined('DS')) {
 }
 
 use Indieinabox\Parsedown;
-use Indieinabox\Yaml;
 use Indieinabox\Site;
 use Indieinabox\Pages;
 
@@ -27,34 +26,12 @@ mb_internal_encoding("UTF-8");
 
 $parsedown = new Parsedown();
 
-$yaml = new Yaml();
-/** @var array{
- *     base: string,
- *     title?: string,
- *     sitename?: string,
- *     support?: string[],
- *     buildall?: bool,
- *     outputdir?: string,
- *     contentdir?: string,
- *     defaultcategory?: string,
- *     lang?: string|string[],
- *     defaultlang?: string,
- *     fqdn?: string,
- *     author?: string,
- *     htmlpostprocessing?: string,
- *     dev?: bool,
- *     skipstatic?: bool,
- *     forcestaticoverride?: bool
- * } $config
- */
-$configFile = $base . DIRECTORY_SEPARATOR . "config.yml";
-if (file_exists($base . DIRECTORY_SEPARATOR . ".config.yml")) {
-    $configFile = $base . DIRECTORY_SEPARATOR . ".config.yml";
-}
+// $yaml = new Yaml(); // Replaced with Database
 
-if (file_exists($configFile)) {
-    $config = $yaml->loadFile($configFile);
-} else {
+$config = \Indieinabox\Database::getAllSettings();
+
+if (empty($config)) {
+    // Default fallback if DB is somehow empty
     $config = [
         'base' => '/',
         'title' => 'My Site',
@@ -124,7 +101,7 @@ if (isset($config['support'])) {
     $site->support->support = $config['support'];
 }
 if (isset($config['buildall'])) {
-    $site->options->buildAll = $config['buildall'];
+    $site->options->buildAll = (bool)$config['buildall'];
 }
 if (isset($config['outputdir'])) {
     $site->paths->outputDir = $config['outputdir'];
@@ -147,13 +124,13 @@ if (isset($config['prettylinks'])) {
     $site->options->prettylinks = (bool)$config['prettylinks'];
 }
 if (isset($config['dev'])) {
-    $site->options->dev = $config['dev'];
+    $site->options->dev = (bool)$config['dev'];
 }
 if (isset($config['skipstatic'])) {
-    $site->options->skipStatic = $config['skipstatic'];
+    $site->options->skipStatic = (bool)$config['skipstatic'];
 }
 if (isset($config['forcestaticoverride'])) {
-    $site->options->forceStaticOverride = $config['forcestaticoverride'];
+    $site->options->forceStaticOverride = (bool)$config['forcestaticoverride'];
 }
 
 if (isset($config['twtxt'])) {
@@ -166,7 +143,7 @@ if (isset($config['twtxt'])) {
 }
 
 global $urltranslations;
-$urltranslations = $config['translations'] ?? [];
+$urltranslations = \Indieinabox\Database::getUrlTranslations();
 
 if (php_sapi_name() === 'cli') {
     $builder = new \Indieinabox\SiteBuilder($site);

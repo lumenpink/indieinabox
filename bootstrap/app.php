@@ -88,7 +88,26 @@ foreach (glob(dirname(__DIR__) . '/app/functions/*.php') as $filename) {
     include_once $filename;
 }
 
-// 4. Glob-load data files (e.g. chars, copyright, translations)
-foreach (glob(dirname(__DIR__) . '/data/*.php') as $filename) {
-    include_once $filename;
+// 4. Check for database configuration
+$configFile = dirname(__DIR__) . '/.config.php';
+if (!file_exists($configFile)) {
+    if (PHP_SAPI === 'cli') {
+        file_put_contents('php://stderr', "\033[31;1mError: Database is not configured. Please run the web installer first.\033[0m\n");
+        exit(1);
+    } else {
+        require_once dirname(__DIR__) . '/install.php';
+        exit;
+    }
+}
+
+$dbConfig = require $configFile;
+if (!isset($dbConfig['db_path'])) {
+    die("Error: Invalid .config.php format.");
+}
+
+// 5. Connect to the SQLite Database
+try {
+    \Indieinabox\Database::connect($dbConfig['db_path']);
+} catch (\Exception $e) {
+    die("Database Connection Error: " . $e->getMessage());
 }

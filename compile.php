@@ -135,9 +135,112 @@ $runnerCode .= "    \$base = __DIR__;\n";
 $runnerCode .= "    if (file_exists(\$base . '/vendor/autoload.php')) {\n";
 $runnerCode .= "        include_once \$base . '/vendor/autoload.php';\n";
 $runnerCode .= "    }\n";
-$runnerCode .= "    foreach (glob(\$base . '/data/*.php') as \$filename) {\n";
-$runnerCode .= "        include_once \$filename;\n";
-$runnerCode .= "    }\n\n";
+
+// Inject SQL schema as a constant or variable string
+$sqlContent = file_get_contents($base . '/database.sql');
+$runnerCode .= "    \$__SQL_SCHEMA__ = <<< 'SQL'\n";
+$runnerCode .= $sqlContent . "\n";
+$runnerCode .= "SQL;\n\n";
+
+// Inject install.php logic adapted for the single file
+$runnerCode .= <<<'EOT'
+    $configFile = $base . DIRECTORY_SEPARATOR . '.config.php';
+    if (!file_exists($configFile)) {
+        if (PHP_SAPI === 'cli') {
+            file_put_contents('php://stderr', "\033[31;1mError: Database is not configured. Please run the web installer first.\033[0m\n");
+            exit(1);
+        } else {
+            if (!extension_loaded('sqlite3')) {
+                die("<h1>Error: SQLite3 extension is not enabled in PHP. Please enable it to continue.</h1>");
+            }
+
+            if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['db_path'])) {
+                $dbPath = $_POST['db_path'];
+                
+                $dir = dirname($dbPath);
+                if (!is_writable($dir) && !is_writable($base)) {
+                    $error = "The directory '$dir' is not writable.";
+                } else {
+                    $configContent = "<?php\n\nreturn [\n    'db_path' => '" . str_replace("'", "\\'", $dbPath) . "'\n];\n";
+                    if (file_put_contents($configFile, $configContent) !== false) {
+                        try {
+                            $db = new \SQLite3($dbPath, SQLITE3_OPEN_READWRITE | SQLITE3_OPEN_CREATE);
+                            $db->exec($__SQL_SCHEMA__);
+                            $db->close();
+                        } catch (\Exception $e) {
+                            die("Database creation failed: " . $e->getMessage());
+                        }
+                        
+                        header("Location: /");
+                        exit;
+                    } else {
+                        $error = "Failed to write .config.php file. Check permissions on root folder.";
+                    }
+                }
+            }
+
+            $defaultDbPath = $base . DIRECTORY_SEPARATOR . 'indieinabox.sqlite';
+            echo <<< 'HTML'
+<!DOCTYPE html>
+<html>
+<head>
+    <title>IndieInABox Installation</title>
+    <style>
+        body { font-family: -apple-system, sans-serif; background: #f4f4f5; color: #333; padding: 2rem; }
+        .container { max-width: 600px; margin: 0 auto; background: #fff; padding: 2rem; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        h1 { margin-top: 0; color: #2563eb; }
+        .form-group { margin-bottom: 1.5rem; }
+        label { display: block; font-weight: bold; margin-bottom: 0.5rem; }
+        input[type="text"] { width: 100%; padding: 0.75rem; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        button { background: #2563eb; color: #fff; border: none; padding: 0.75rem 1.5rem; border-radius: 4px; cursor: pointer; font-size: 1rem; }
+        button:hover { background: #1d4ed8; }
+        .error { color: #dc2626; background: #fef2f2; border: 1px solid #f87171; padding: 1rem; border-radius: 4px; margin-bottom: 1.5rem; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome to IndieInABox</h1>
+        <p>It looks like this is your first time running the application or the database configuration is missing.</p>
+HTML;
+            if (isset($error)) {
+                echo '<div class="error">' . htmlspecialchars($error) . '</div>';
+            }
+            echo <<< 'HTML'
+        <form method="POST">
+            <div class="form-group">
+                <label for="db_path">SQLite Database Absolute Path</label>
+                <input type="text" id="db_path" name="db_path" value="
+HTML;
+            echo htmlspecialchars($defaultDbPath);
+            echo <<< 'HTML'
+" required>
+                <small style="color: #666; display: block; margin-top: 0.5rem;">
+                    This file will be created if it doesn't exist. Ensure the directory is writable by the PHP process.
+                </small>
+            </div>
+            <button type="submit">Install & Migrate Data</button>
+        </form>
+    </div>
+</body>
+</html>
+HTML;
+            exit;
+        }
+    }
+
+    $dbConfig = require $configFile;
+    if (!isset($dbConfig['db_path'])) {
+        die("Error: Invalid .config.php format.");
+    }
+
+    try {
+        \Indieinabox\Database::connect($dbConfig['db_path']);
+    } catch (\Exception $e) {
+        die("Database Connection Error: " . $e->getMessage());
+    }
+
+EOT;
+
 $runnerCode .= $buildContent;
 
 $compiled .= "    // Global Runner Execution\n";

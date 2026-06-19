@@ -93,6 +93,9 @@ class Helper
             // Fallback to legacy kindspath if not found
             if (!isset($kind)) {
                 global $kindspath;
+                if ($kindspath === null) {
+                    $kindspath = \Indieinabox\Database::getSetting('kindspath', []);
+                }
                 if (!empty($kindspath)) {
                     foreach ($kindspath as $key => $value) {
                         if (in_array($localizedkindSegment, $value)) {
@@ -210,6 +213,15 @@ class Helper
     public static function localizeddate($page): array
     {
         global $originaldaysofweek, $originalmonths, $intl;
+        if ($intl === null) {
+            $intl = \Indieinabox\Database::getSetting('intl', []);
+        }
+        if ($originaldaysofweek === null) {
+            $originaldaysofweek = \Indieinabox\Database::getSetting('originaldaysofweek', []);
+        }
+        if ($originalmonths === null) {
+            $originalmonths = \Indieinabox\Database::getSetting('originalmonths', []);
+        }
         setlocale(LC_TIME, 'en-us');
 
         if ($page instanceof Page) {
@@ -271,12 +283,7 @@ class Helper
 
         static $chars = null;
         if ($chars === null) {
-            $path = dirname(__DIR__) . '/data/chars.php';
-            if (file_exists($path)) {
-                $chars = require $path;
-            } else {
-                throw new \RuntimeException("chars.php not found");
-            }
+            $chars = \Indieinabox\Database::getCharacters();
         }
 
         return strtr($string, $chars);
@@ -387,12 +394,7 @@ class Helper
             return;
         }
 
-        $path = dirname(__DIR__) . '/data/' . sprintf('x%02x', $bank) . '.php';
-        if (file_exists($path)) {
-            include $path;
-        } else {
-            $cache[$bank] = [];
-        }
+        $cache[$bank] = [];
     }
 
     /**
@@ -607,6 +609,10 @@ class Helper
     public static function translate(string $text, ?string $lang = null): string
     {
         global $translations, $page, $p, $site;
+        if ($translations === null) {
+            $translations = \Indieinabox\Database::getTranslations();
+        }
+
         if ($lang == null) {
             if (isset($p)) {
                 $lang = $p instanceof Page ? $p->lang : ($p["lang"] ?? "en");
@@ -678,15 +684,34 @@ class Helper
      */
     public static function updateTranslations(): void
     {
-        global $translations, $site;
-        $file = $site->paths->baseDir . DIRECTORY_SEPARATOR . "data/translations.php";
+        global $translations;
         self::recursive_ksort($translations);
-        file_put_contents(
-            $file,
-            "<?php\nglobal \$translations;\n\$translations= "
-                . var_export($translations, true)
-                . ";\n?>"
-        );
+        $db = \Indieinabox\Database::getDb();
+        foreach ($translations as $lang => $phrases) {
+            foreach ($phrases as $key => $val) {
+                // Check if exists
+                $stmt = $db->prepare('SELECT id FROM translations WHERE lang = :lang AND phrase_key = :key');
+                if ($stmt) {
+                    $stmt->bindValue(':lang', $lang);
+                    $stmt->bindValue(':key', $key);
+                    $res = $stmt->execute();
+                    $row = $res ? $res->fetchArray(SQLITE3_ASSOC) : false;
+                    
+                    if ($row) {
+                        $upd = $db->prepare('UPDATE translations SET phrase_value = :val WHERE id = :id');
+                        $upd->bindValue(':val', $val);
+                        $upd->bindValue(':id', $row['id']);
+                        $upd->execute();
+                    } else {
+                        $ins = $db->prepare('INSERT INTO translations (lang, phrase_key, phrase_value) VALUES (:lang, :key, :val)');
+                        $ins->bindValue(':lang', $lang);
+                        $ins->bindValue(':key', $key);
+                        $ins->bindValue(':val', $val);
+                        $ins->execute();
+                    }
+                }
+            }
+        }
     }
 
     /**

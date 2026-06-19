@@ -15,3 +15,5 @@ docs/coverage/
 .config.yml
 data/indieauth/
 data/twtxt_cache/
+*.sqlite
+.config.php

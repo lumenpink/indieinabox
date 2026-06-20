@@ -105,10 +105,10 @@ class SiteBuilder
 
         // For each page in the default language, check if it has a localized version in other languages
         foreach ($defaultLangPages as $page) {
-            // Only virtualize user content kinds, not generic index/home pages. 
-            // Note: 'page' kind is allowed so 'now' and 'about' can be virtualized.
-            if (in_array($page->kind, ['generic', 'home'], true)) {
-                continue;
+            if (in_array($page->kind, ['generic'], true)) {
+                if ($page->slug !== '' && $page->slug !== 'index.html' && $page->slug !== '/') {
+                    continue;
+                }
             }
 
             foreach ($langs as $lang) {
@@ -164,14 +164,18 @@ class SiteBuilder
                         $cleanSlug = '';
                     }
 
-                    if ($prettylinks) {
-                        $cloned->slug = $lang . '/' . $kindFolder . '/' . ($cleanSlug !== '' ? $cleanSlug . '/' : '');
+                    if ($cleanSlug === '' || $cleanSlug === 'index.html') {
+                        $cloned->slug = $lang . '/index.html';
                     } else {
-                        // For non-prettylinks, it ends in .html
-                        if (str_ends_with($cleanSlug, '.html')) {
-                            $cleanSlug = substr($cleanSlug, 0, -5);
+                        if ($prettylinks) {
+                            $cloned->slug = $lang . '/' . $kindFolder . '/' . ($cleanSlug !== '' ? $cleanSlug . '/' : '');
+                        } else {
+                            // For non-prettylinks, it ends in .html
+                            if (str_ends_with($cleanSlug, '.html')) {
+                                $cleanSlug = substr($cleanSlug, 0, -5);
+                            }
+                            $cloned->slug = $lang . '/' . $kindFolder . '/' . $cleanSlug . '.html';
                         }
-                        $cloned->slug = $lang . '/' . $kindFolder . '/' . $cleanSlug . '.html';
                     }
 
                     // Recalculate relative path

@@ -55,7 +55,7 @@ if ($prettylinks) {
             foreach ($langs as $l) {
                 $label = strtoupper($l);
                 if ($l === $lang) {
-                    $langLinksHTML[] = '[' . htmlspecialchars($label) . ']';
+                    $langLinksHTML[] = '<strong>' . htmlspecialchars($label) . '</strong>';
                 } else {
                     $url = $links[$l] ?? '';
                     if ($url !== '') {
@@ -63,7 +63,7 @@ if ($prettylinks) {
                     }
                 }
             }
-            echo implode(' ', $langLinksHTML);
+            echo '[ ' . implode(' &bull; ', $langLinksHTML) . ' ]';
             ?>
         </div>
     <?php endif; ?>

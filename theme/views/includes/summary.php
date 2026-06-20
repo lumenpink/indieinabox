@@ -11,7 +11,7 @@ $_kindLabel = \Indieinabox\Helper::kindLabel($page->kind);
             </h3>
         <?php endif; ?>
         <div class="post-metadata" style="font-size: 0.85em; opacity: 0.8; margin-bottom: 1em;">
-            [<?= strtoupper($_kindLabel) ?>]
+            <?= \Indieinabox\Helper::kindLink($page, $page->kind) ?>
             <?php if (isset($page->date)): ?>
                 • <a href="<?= $page->relpath ?><?= $page->slug ?>"><time class="dt-published" datetime="<?= $page->isodate ?>"><?= $page->localizeddate ?></time></a>
             <?php endif; ?>

@@ -760,6 +760,11 @@ class SiteBuilder
                     $localizedSlugPart = ($l === $defaultLang) ? $baseKey : ($translationGroup[$l] ?? $baseKey);
                 }
                 
+                // Force empty slug part for the home page so it points to the language root
+                if ($kind === 'home') {
+                    $localizedSlugPart = '';
+                }
+                
                 if ($prettylinks) {
                     if ($l === $defaultLang) {
                         $links[$l] = '/' . ($folder ? $folder . '/' : '') . ($localizedSlugPart !== '' ? $localizedSlugPart . '/' : '');

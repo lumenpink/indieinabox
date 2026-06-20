@@ -41,7 +41,7 @@
                 }
 
                 foreach ($pages as $p) {
-                    if ($p->lang === $site->localization->lang) {
+                    if ($p->lang === $page->lang) {
                         if (!isset($grouped[$p->kind])) {
                             $grouped[$p->kind] = [];
                         }
@@ -56,7 +56,7 @@
                 foreach ($grouped as $kind => $list):
                 ?>
                     <li style="margin-bottom: 1.5em;">
-                        <strong>[<?= strtoupper(\Indieinabox\Helper::kindLabel($kind)) ?>]</strong>
+                        <strong><?= \Indieinabox\Helper::kindLink($page, $kind) ?></strong>
                         <ul style="list-style-type: none; padding-left: 20px; margin-top: 0.5em;">
                             <?php foreach ($list as $p): ?>
                                 <li style="margin-bottom: 0.5em;">

@@ -25,7 +25,8 @@
             ?>
             <?php if ($hasRealDate): ?>
             <div class="post-metadata">
-                <time class="dt-published" datetime="<?= $page->isodate ?>"><?= $page->localizeddate ?></time>
+                <?= \Indieinabox\Helper::kindLink($page, $page->kind) ?>
+                <?php if (!in_array($page->kind, ['generic', 'home', 'page'], true)): ?>• <?php endif; ?><time class="dt-published" datetime="<?= $page->isodate ?>"><?= $page->localizeddate ?></time>
                 <?php if ($page->kind === 'jardim'): ?>
                     <?php if (isset($page->metadata->maturity)): ?>
                         • <?= \Indieinabox\Helper::translate('Maturity') ?>: <?= htmlspecialchars($page->metadata->maturity) ?>

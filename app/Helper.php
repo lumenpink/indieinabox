@@ -205,6 +205,42 @@ class Helper
     }
 
     /**
+     * Return a hyperlinked, human-readable display label for a post kind.
+     * The link points to the kind's index page in the corresponding language.
+     *
+     * @param  Page   $page The page context where this link is rendered
+     * @param  string $kind Internal kind slug
+     * @return string
+     */
+    public static function kindLink(Page $page, string $kind): string
+    {
+        global $site;
+        $lang = $page->lang ?? $site->localization->defaultLang ?? 'en';
+        $defaultLang = $site->localization->defaultLang ?? 'en';
+        $prettylinks = $site->options->prettylinks ?? true;
+        
+        $label = self::kindLabel($kind, $lang);
+        
+        // If it's a generic kind, don't link it
+        if (in_array($kind, ['generic', 'home', 'page'], true)) {
+            return '[' . strtoupper(htmlspecialchars($label)) . ']';
+        }
+        
+        $folder = self::getKindFolder($kind, $lang);
+        $langPrefix = ($lang === $defaultLang) ? '' : $lang . '/';
+        
+        if ($prettylinks) {
+            $url = ltrim($langPrefix . $folder . '/', '/');
+        } else {
+            $url = ltrim($langPrefix . $folder . '.html', '/');
+        }
+        
+        $relUrl = $page->relpath . $url;
+        
+        return '<a href="' . $relUrl . '">[' . strtoupper(htmlspecialchars($label)) . ']</a>';
+    }
+
+    /**
      * Helper function to format dates
      *
      * @param  Page|array<string, mixed> $page

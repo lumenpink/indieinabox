@@ -209,7 +209,12 @@ class MicropubHandler
 
         // Rebuild site
         if (class_exists('\\Indieinabox\\ConfigHandler')) {
-            $configHandler = new ConfigHandler($this->site);
+            // Ensure config is fully populated from DB before building
+            $this->site->config = \Indieinabox\Database::getAllSettings();
+            $this->site->config['kinds'] = \Indieinabox\Database::getKinds();
+            $this->site->config['translations'] = \Indieinabox\Database::getTranslations();
+            $this->site->config['urltranslations'] = \Indieinabox\Database::getUrlTranslations();
+            
             // Rebuild can be synchronous for now
             $siteBuilder = new SiteBuilder($this->site);
             $siteBuilder->build();

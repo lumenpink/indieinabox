@@ -29,7 +29,7 @@ $parsedown = new Parsedown();
 // $yaml = new Yaml(); // Replaced with Database
 
 $config = \Indieinabox\Database::getAllSettings();
-
+$config['kinds'] = \Indieinabox\Database::getKinds();
 if (empty($config)) {
     // Default fallback if DB is somehow empty
     $config = [

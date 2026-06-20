@@ -133,17 +133,21 @@ class ConfigHandler
             return;
         }
 
-        $basePath = $this->site->paths->baseDir;
-        $codesDir = $basePath . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'indieauth' . DIRECTORY_SEPARATOR . 'codes';
-        $codeFile = $codesDir . DIRECTORY_SEPARATOR . md5($code) . '.json';
+        $db = \Indieinabox\Database::getDb();
+        $codeHash = hash('sha256', $code);
+        $stmt = $db->prepare('SELECT * FROM indieauth_codes WHERE code_hash = :hash');
+        $stmt->bindValue(':hash', $codeHash);
+        $stmt->execute();
+        $codeData = $stmt->fetch(\PDO::FETCH_ASSOC);
 
-        if (!file_exists($codeFile)) {
+        if (!$codeData) {
             $this->sendError(400, 'Invalid or expired authorization code.');
             return;
         }
 
-        $codeData = json_decode(file_get_contents($codeFile), true);
-        @unlink($codeFile);
+        $stmtDel = $db->prepare('DELETE FROM indieauth_codes WHERE code_hash = :hash');
+        $stmtDel->bindValue(':hash', $codeHash);
+        $stmtDel->execute();
 
         if ($codeData['expires_at'] < time()) {
             $this->sendError(400, 'Authorization code has expired.');
@@ -392,8 +396,8 @@ class ConfigHandler
                         $stmt = $db->prepare('SELECT id FROM translations WHERE lang = :lang AND phrase_key = :key');
                         $stmt->bindValue(':lang', $lang);
                         $stmt->bindValue(':key', $phrase_key);
-                        $res = $stmt->execute();
-                        $row = $res ? $res->fetchArray(SQLITE3_ASSOC) : false;
+                        $stmt->execute();
+                        $row = $stmt->fetch(\PDO::FETCH_ASSOC);
                         if ($row) {
                             $upd = $db->prepare('UPDATE translations SET phrase_value = :val WHERE id = :id');
                             $upd->bindValue(':val', $phrase_value);

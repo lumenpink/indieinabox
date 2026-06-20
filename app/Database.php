@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace Indieinabox;
 
 use Exception;
-use SQLite3;
-use SQLite3Result;
+use \PDO;
+use \PDOResult;
 
 class Database
 {
-    private static ?SQLite3 $db = null;
+    private static ?\PDO $db = null;
 
     /**
      * @throws Exception
@@ -21,15 +21,15 @@ class Database
             return;
         }
 
-        if (!extension_loaded('sqlite3')) {
-            throw new Exception("SQLite3 extension is not loaded.");
+        if (!extension_loaded('pdo_sqlite')) {
+            throw new Exception("PDO extension is not loaded.");
         }
 
         try {
-            self::$db = new SQLite3($path, SQLITE3_OPEN_READWRITE | SQLITE3_OPEN_CREATE);
+            self::$db = new \PDO('sqlite:' . $path, '', '', [\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION]);
             
             // Wait up to 5 seconds if the database is busy (locked) instead of throwing an immediate error
-            self::$db->busyTimeout(5000);
+            self::$db->setAttribute(\PDO::ATTR_TIMEOUT, 5);
             
             // Enable Write-Ahead Logging (WAL) for better concurrent read/write performance
             self::$db->exec('PRAGMA journal_mode = WAL;');
@@ -44,7 +44,7 @@ class Database
         }
     }
 
-    public static function getDb(): SQLite3
+    public static function getDb(): \PDO
     {
         if (self::$db === null) {
             throw new Exception("Database is not connected.");
@@ -66,10 +66,10 @@ class Database
             if (!$stmt) {
                 return $default;
             }
-            $stmt->bindValue(':key', $key, SQLITE3_TEXT);
-            $result = $stmt->execute();
-            if ($result) {
-                $row = $result->fetchArray(SQLITE3_ASSOC);
+            $stmt->bindValue(':key', $key, \PDO::PARAM_STR);
+            $stmt->execute();
+            $row = $stmt->fetch(\PDO::FETCH_ASSOC);
+            if ($row) {
                 if ($row && isset($row['value'])) {
                     $value = $row['value'];
                     
@@ -99,7 +99,7 @@ class Database
         try {
             $result = self::getDb()->query('SELECT key, value FROM settings');
             if ($result) {
-                while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
+                while ($row = $result->fetch(\PDO::FETCH_ASSOC)) {
                     $value = $row['value'];
                     $decoded = json_decode($value, true);
                     if (json_last_error() === JSON_ERROR_NONE) {
@@ -120,7 +120,7 @@ class Database
         try {
             $result = self::getDb()->query('SELECT lang, phrase_key, phrase_value FROM translations');
             if ($result) {
-                while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
+                while ($row = $result->fetch(\PDO::FETCH_ASSOC)) {
                     $lang = $row['lang'];
                     $key = $row['phrase_key'];
                     $val = $row['phrase_value'];
@@ -143,7 +143,7 @@ class Database
         try {
             $result = self::getDb()->query('SELECT lang, slug_key, slug_value FROM url_translations');
             if ($result) {
-                while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
+                while ($row = $result->fetch(\PDO::FETCH_ASSOC)) {
                     $lang = $row['lang'];
                     $key = $row['slug_key'];
                     $val = $row['slug_value'];
@@ -166,7 +166,7 @@ class Database
         try {
             $result = self::getDb()->query('SELECT kind_key, config_json FROM kinds');
             if ($result) {
-                while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
+                while ($row = $result->fetch(\PDO::FETCH_ASSOC)) {
                     $key = $row['kind_key'];
                     $json = $row['config_json'];
                     $decoded = json_decode($json, true);
@@ -185,7 +185,7 @@ class Database
         try {
             $result = self::getDb()->query('SELECT original_char, replacement_char FROM characters');
             if ($result) {
-                while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
+                while ($row = $result->fetch(\PDO::FETCH_ASSOC)) {
                     $chars[$row['original_char']] = $row['replacement_char'];
                 }
             }

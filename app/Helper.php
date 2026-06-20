@@ -694,8 +694,8 @@ class Helper
                 if ($stmt) {
                     $stmt->bindValue(':lang', $lang);
                     $stmt->bindValue(':key', $key);
-                    $res = $stmt->execute();
-                    $row = $res ? $res->fetchArray(SQLITE3_ASSOC) : false;
+                    $stmt->execute();
+                        $row = $stmt->fetch(\PDO::FETCH_ASSOC);
                     
                     if ($row) {
                         $upd = $db->prepare('UPDATE translations SET phrase_value = :val WHERE id = :id');

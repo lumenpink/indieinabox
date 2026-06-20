@@ -35,19 +35,30 @@ To compile the static site from your content files:
 
 ```bash
 # Execute standard build
-php _engine/build.php
+php build.php
 
 # Execute development build (with live-reload script injections)
-php _engine/build.php -d
+php build.php -d
 
 # Skip copying static assets
-php _engine/build.php -s
+php build.php -s
 
 # Force overwrite of static files
-php _engine/build.php -f
+php build.php -f
 ```
 
-The output static files will be compiled and written to the `_site/` directory.
+The output static files will be compiled and written to the `public/` directory.
+
+### Single-File Application
+
+Indieinabox can be compiled into a single drop-in PHP file for easy deployment:
+
+```bash
+# Compile to a single file
+php compile.php
+```
+
+This will create `indieinabox.php` which embeds all logic, the SQLite database configuration, and an installer.
 
 ### Testing and Linting
 

@@ -81,6 +81,7 @@ This document tracks completed refactoring phases and future directions.
 *   **Centralized Configuration:** Extinguished the legacy `data/` folder flat-files (`config.yml`, `chars.php`, `intl.php`, etc) migrating all application configurations, translations, and globalization mappings to a centralized `indieinabox.sqlite` database.
 *   **Installation Interface:** Created a dynamic installer that generates the database schema automatically from `database.sql` if it detects a missing environment configuration.
 *   **Single-File Payload:** Refactored `compile.php` to embed the database SQL and installer logic directly into the generated `indieinabox.php` package, keeping it completely self-contained.
+*   **PDO Driver Upgrade:** Migrated from native `SQLite3` class to the universally available `PDO_SQLite` driver to bulletproof compatibility across custom hosting environments and containerized distributions.
 
 ### ✍️ Phase 11: Micropub API Support (COMPLETED)
 - [x] Create the W3C Micropub Endpoint (`/micropub`).

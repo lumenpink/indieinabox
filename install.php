@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-if (!extension_loaded('sqlite3')) {
-    die("<h1>Error: SQLite3 extension is not enabled in PHP. Please enable it to continue.</h1>");
+if (!extension_loaded('pdo_sqlite')) {
+    die("<h1>Error: PDO_SQLite extension is not enabled in PHP. Please enable it to continue.</h1>");
 }
 
 $baseDir = dirname(__DIR__);
@@ -25,10 +25,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['db_path'])) {
             // Run schema if exists
             if (file_exists($schemaFile)) {
                 try {
-                    $db = new SQLite3($dbPath, SQLITE3_OPEN_READWRITE | SQLITE3_OPEN_CREATE);
+                    $db = new \PDO('sqlite:' . $dbPath);
+                    $db->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
                     $sql = file_get_contents($schemaFile);
                     $db->exec($sql);
-                    $db->close();
+                    $db = null; // Close connection
                     
                     // Cleanup optional: unlink($schemaFile);
                     // Since it's development, we'll keep it or unlink it depending on preferences. Let's keep it.

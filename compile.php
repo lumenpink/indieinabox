@@ -150,8 +150,8 @@ $runnerCode .= <<<'EOT'
             file_put_contents('php://stderr', "\033[31;1mError: Database is not configured. Please run the web installer first.\033[0m\n");
             exit(1);
         } else {
-            if (!extension_loaded('sqlite3')) {
-                die("<h1>Error: SQLite3 extension is not enabled in PHP. Please enable it to continue.</h1>");
+            if (!extension_loaded('pdo_sqlite')) {
+                die("<h1>Error: PDO_SQLite extension is not enabled in PHP. Please enable it to continue.</h1>");
             }
 
             if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['db_path'])) {
@@ -164,9 +164,10 @@ $runnerCode .= <<<'EOT'
                     $configContent = "<?php\n\nreturn [\n    'db_path' => '" . str_replace("'", "\\'", $dbPath) . "'\n];\n";
                     if (file_put_contents($configFile, $configContent) !== false) {
                         try {
-                            $db = new \SQLite3($dbPath, SQLITE3_OPEN_READWRITE | SQLITE3_OPEN_CREATE);
+                            $db = new \PDO('sqlite:' . $dbPath);
+                            $db->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
                             $db->exec($__SQL_SCHEMA__);
-                            $db->close();
+                            $db = null;
                         } catch (\Exception $e) {
                             die("Database creation failed: " . $e->getMessage());
                         }

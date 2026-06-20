@@ -246,21 +246,9 @@ class WebmentionHandler
         return strcasecmp($normalize($resolved), $targetNorm) === 0;
     }
 
-    /**
-     * Save webmention data to JSON file matching the slug hash.
-     *
-     * @param string $source
-     * @param string $target
-     * @param array{title: string, text: string} $meta
-     * @return void
-     */
     public function saveWebmention(string $source, string $target, array $meta): void
     {
-        $base = $this->site->paths->baseDir;
-        $webmentionDir = $base . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'webmentions';
-        if (!is_dir($webmentionDir)) {
-            mkdir($webmentionDir, 0777, true);
-        }
+        $db = \Indieinabox\Database::getDb();
 
         $targetPath = parse_url($target, PHP_URL_PATH) ?? '/';
         $sitePath = parse_url($this->site->metadata->fqdn ?? '', PHP_URL_PATH);
@@ -271,12 +259,16 @@ class WebmentionHandler
         if ($slug === '') {
             $slug = 'home';
         }
-        $filename = md5($slug) . '.json';
-        $filePath = $webmentionDir . DIRECTORY_SEPARATOR . $filename;
+        $hash = md5($slug);
+
+        $stmt = $db->prepare('SELECT payload_json FROM webmentions WHERE hash = :hash');
+        $stmt->bindValue(':hash', $hash, \PDO::PARAM_STR);
+        $stmt->execute();
+        $row = $stmt->fetch(\PDO::FETCH_ASSOC);
 
         $existing = [];
-        if (file_exists($filePath)) {
-            $data = json_decode(file_get_contents($filePath), true);
+        if ($row && isset($row['payload_json'])) {
+            $data = json_decode($row['payload_json'], true);
             if (is_array($data)) {
                 $existing = $data;
             }
@@ -297,7 +289,19 @@ class WebmentionHandler
 
         $existing[] = $newMention;
 
-        file_put_contents($filePath, json_encode(array_values($existing), JSON_PRETTY_PRINT));
+        $json = json_encode(array_values($existing), JSON_PRETTY_PRINT);
+
+        if ($row) {
+            $upd = $db->prepare('UPDATE webmentions SET payload_json = :json WHERE hash = :hash');
+            $upd->bindValue(':hash', $hash, \PDO::PARAM_STR);
+            $upd->bindValue(':json', $json, \PDO::PARAM_STR);
+            $upd->execute();
+        } else {
+            $ins = $db->prepare('INSERT INTO webmentions (hash, payload_json) VALUES (:hash, :json)');
+            $ins->bindValue(':hash', $hash, \PDO::PARAM_STR);
+            $ins->bindValue(':json', $json, \PDO::PARAM_STR);
+            $ins->execute();
+        }
     }
 
     private function sendResponse(int $code, string $message): void

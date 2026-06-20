@@ -88,15 +88,22 @@ This document tracks completed refactoring phases and future directions.
   - [x] Support `POST` creation requests with frontmatter/YAML.
   - [x] Handle standard (`h-entry`, `content`, `category`, `name`, `mp-slug`).
   - [x] Build custom integration for `mp-language`.
-- [x] Create Media Endpoint (`/micropub/media`).
+- [x] Create Media Endpoint (`/micropub/media`) with collision detection.
 - [x] Add `<link rel="micropub">` and Webmention/Microsub links pointing to local/hosted services.
 - [x] Build a local web-based client at `/micropub/client` to allow native dashboard posting! HTTP requests via Bearer access tokens, enforcing scopes like `create`, `update`, `delete`, and `media`.
+- [x] **Advanced Client UI**: Implemented dynamic toggles for Post Types (Article, Note, Photo) and gallery reordering for multiple media uploads.
+- [x] **Dev Server Media Fallback**: Adjusted static routing to serve pre-build media uploads directly from `content/media` to prevent 404s in the client interface.
 
 ---
 
 ## Future Roadmap
 
 The following next-generation features are scheduled for development:
+
+### 🎨 Phase 11.5: Whostyle JSON Integration
+*   **Decentralized Styling**: Integrate the newly updated Whostyle JSON (v1.1) specification into the Indieinabox ecosystem.
+*   **Webmention Rendering**: Apply safely-clamped CSS design tokens to incoming third-party comments and webmentions to preserve the author's visual identity.
+*   **Inline & External Discovery**: Implement both inline `<script type="application/whostyle+json">` extraction and external `<link rel="whostyle">` fetching mechanisms within the webmention processing pipeline.
 
 ### 📬 Phase 12: Microsub Endpoint & Reader (with Twtxt)
 *   **Microsub Server**: Implement a W3C Microsub endpoint to manage feeds, channels (e.g., Inbox, Friends, Tech), and read states (read, unread, archived).

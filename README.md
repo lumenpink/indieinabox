@@ -1,6 +1,9 @@
 # Indieinabox - Social Personal Website Swiss Knife
 
-Indieinabox is a lightweight, modular static site generator (SSG) built in PHP, tailored for personal and social websites with native support for multi-language content, localized date formatting, HTML minification/beautification, and initial support for IndieWeb principles (like structured content feeds and post classification/kinds).
+Indieinabox is a lightweight, modular static site generator (SSG) built in PHP,
+tailored for personal and social websites with native support for multi-language
+ content, localized date formatting, HTML minification/beautification, and full
+support for IndieWeb principles (Micropub API, IndieAuth, Webmentions, and Whostyle JSON).
 
 ---
 

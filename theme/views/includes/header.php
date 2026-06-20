@@ -43,14 +43,11 @@ if ($prettylinks) {
 }
 ?>
 <header>
-    <pre class="logo-figlet">
-       _
-      | |
-   ~  | | _   _ _ __ ___   ___ _ __
-      | || | | | '_ ` _ \ / _ \ '_ \
-      | || |_| | | | | | |  __/ | | |
-      |_| \__,_|_| |_| |_|\___|_| |_|
-    </pre>
+    <pre class="logo-figlet">       _                            
+      | |_   _ _ __ ___   ___ _ __  
+ /\/| | | | | | '_ ` _ \ / _ \ '_ \ 
+|/\/  | | |_| | | | | | |  __/ | | |
+      |_|\__,_|_| |_| |_|\___|_| |_|</pre>
     <?php if (count($langs) > 1): ?>
         <div class="lang-selector" style="text-align: center;">
             <?php 

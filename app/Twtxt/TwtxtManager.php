@@ -72,7 +72,8 @@ class TwtxtManager
         $displayMode = \Indieinabox\Helper::getKindConfig($page->kind)['display_mode'] ?? 'default';
 
         if ($displayMode === 'full_content') {
-            return self::cleanMessage($page->rawBody ?? '');
+            $content = self::cleanMessage($page->rawBody ?? '');
+            return preg_replace('/^\[[A-Z]{2,}\]\s+/', '', $content);
         }
 
         if ($displayMode === 'thumbnail_snippet') {
@@ -80,6 +81,10 @@ class TwtxtManager
             if ($caption === '') {
                 $caption = $page->title;
             }
+            
+            // Remove virtual translation prefix (e.g. "[PT] ")
+            $caption = preg_replace('/^\[[A-Z]{2,}\]\s+/', '', $caption);
+            
             if (strlen($caption) > 140) {
                 $caption = mb_substr($caption, 0, 137) . '...';
             }
@@ -103,7 +108,13 @@ class TwtxtManager
         // Articles / Generic Pages
         $title = $page->title;
         $rawBody = $page->rawBody ?? '';
+        
+        // Remove virtual translation prefix (e.g. "[PT] ") for cleaner language-specific feeds
+        $title = preg_replace('/^\[[A-Z]{2,}\]\s+/', '', $title);
+        
         $snippet = self::cleanMessage($rawBody);
+        $snippet = preg_replace('/^\[[A-Z]{2,}\]\s+/', '', $snippet);
+        
         if (strlen($snippet) > 100) {
             $snippet = mb_substr($snippet, 0, 97) . '...';
         }

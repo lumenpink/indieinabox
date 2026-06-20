@@ -6,7 +6,6 @@ if (!defined('DS')) {
     define('DS', DIRECTORY_SEPARATOR);
 }
 
-use Indieinabox\Parsedown;
 use Indieinabox\Site;
 use Indieinabox\Pages;
 
@@ -23,8 +22,6 @@ if (php_sapi_name() === 'cli') {
 $base = __DIR__;
 
 mb_internal_encoding("UTF-8");
-
-$parsedown = new Parsedown();
 
 // $yaml = new Yaml(); // Replaced with Database
 

@@ -608,17 +608,37 @@ class SiteBuilder
             mkdir($outDir, 0777, true);
         }
 
-        // 1. Generate local feed: public/twtxt.txt
+        // 1. Generate local feeds: public/twtxt.txt (and for each language)
         $twtxtManager = new \Indieinabox\Twtxt\TwtxtManager();
-        $feedFile = $outDir . DIRECTORY_SEPARATOR . 'twtxt.txt';
+        $defaultLang = $this->site->localization->defaultLang ?? 'en';
+        
+        $pagesByLang = [];
+        foreach ($this->pages as $page) {
+            $lang = $page->lang ?? $defaultLang;
+            if (!isset($pagesByLang[$lang])) {
+                $pagesByLang[$lang] = [];
+            }
+            $pagesByLang[$lang][] = $page;
+        }
 
-        echo "Generating twtxt.txt feed...\n";
-        $twtxtManager->generateFeed(
-            iterator_to_array($this->pages),
-            $feedFile,
-            $this->site->metadata->fqdn,
-            $this->site->twtxt
-        );
+        echo "Generating twtxt.txt feeds...\n";
+        foreach ($pagesByLang as $lang => $langPages) {
+            $langDir = $outDir;
+            if ($lang !== $defaultLang) {
+                $langDir .= DIRECTORY_SEPARATOR . $lang;
+                if (!is_dir($langDir)) {
+                    mkdir($langDir, 0777, true);
+                }
+            }
+            
+            $feedFile = $langDir . DIRECTORY_SEPARATOR . 'twtxt.txt';
+            $twtxtManager->generateFeed(
+                $langPages,
+                $feedFile,
+                $this->site->metadata->fqdn,
+                $this->site->twtxt
+            );
+        }
 
         // 2. Fetch aggregated timeline & mentions if subscriptions/hubs are configured
         echo "Fetching twtxt timeline and mentions...\n";

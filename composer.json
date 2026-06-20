@@ -28,6 +28,7 @@
         }
     },
     "config": {
+        "process-timeout": 0,
         "allow-plugins": {
             "dealerdirect/phpcodesniffer-composer-installer": true,
             "pestphp/pest-plugin": true

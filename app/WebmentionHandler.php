@@ -392,6 +392,7 @@ class WebmentionHandler
                     margin-top: 0;
                     margin-bottom: 0.75rem;
                     background: linear-gradient(90deg, #ffffff, #eccb00);
+                    background-clip: text;
                     -webkit-background-clip: text;
                     -webkit-text-fill-color: transparent;
                     letter-spacing: -0.025em;

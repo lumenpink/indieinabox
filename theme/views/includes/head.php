@@ -21,6 +21,7 @@ if (!empty($kindConfig['palette'])) {
 <title><?= empty($page->title) || $page->title == "Untitled" ? $site->metadata->author : $page->title . " | " . $site->metadata->author ?></title>
 <meta name="description" content="<?= htmlspecialchars($page->title) ?>">
 <meta name="author" content="<?= htmlspecialchars($site->metadata->author) ?>">
+<link rel="microsub" href="<?= rtrim($site->metadata->fqdn, '/') ?>/microsub">
 <style>
     :root {
         --bg: <?= $bg ?>;

@@ -59,6 +59,18 @@ class WebRouter
             return;
         }
 
+        if (strpos($requestUriClean, '/microsub/reader') === 0) {
+            $handler = $this->createMicrosubReaderHandler();
+            $handler->handleRequest();
+            return;
+        }
+
+        if (strpos($requestUriClean, '/microsub') === 0) {
+            $handler = $this->createMicrosubHandler();
+            $handler->handleRequest();
+            return;
+        }
+
         $isConfigParam = isset($_GET['config']);
         $isConfigPath = (preg_match('#/config$#i', $requestUriClean) === 1);
 
@@ -94,6 +106,16 @@ class WebRouter
     protected function createMicropubClientHandler(): MicropubClientHandler
     {
         return new MicropubClientHandler($this->site);
+    }
+
+    protected function createMicrosubHandler(): MicrosubHandler
+    {
+        return new MicrosubHandler($this->site);
+    }
+
+    protected function createMicrosubReaderHandler(): MicrosubReaderHandler
+    {
+        return new MicrosubReaderHandler($this->site);
     }
 
     private function serveStatic(): void

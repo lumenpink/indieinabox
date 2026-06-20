@@ -4,6 +4,12 @@ CREATE TABLE IF NOT EXISTS translations (id INTEGER PRIMARY KEY AUTOINCREMENT, l
 CREATE TABLE IF NOT EXISTS url_translations (id INTEGER PRIMARY KEY AUTOINCREMENT, lang TEXT, slug_key TEXT, slug_value TEXT);
 CREATE TABLE IF NOT EXISTS characters (id INTEGER PRIMARY KEY AUTOINCREMENT, original_char TEXT, replacement_char TEXT);
 CREATE TABLE IF NOT EXISTS webmentions (id INTEGER PRIMARY KEY AUTOINCREMENT, hash TEXT UNIQUE, payload_json TEXT);
+CREATE TABLE IF NOT EXISTS microsub_channels (uid TEXT PRIMARY KEY, name TEXT);
+CREATE TABLE IF NOT EXISTS microsub_subscriptions (id INTEGER PRIMARY KEY AUTOINCREMENT, channel_uid TEXT, url TEXT, type TEXT, name TEXT, photo TEXT);
+CREATE TABLE IF NOT EXISTS microsub_items (id TEXT PRIMARY KEY, channel_uid TEXT, url TEXT, content TEXT, published INTEGER, author_name TEXT, author_photo TEXT, is_read INTEGER);
+
+INSERT OR IGNORE INTO microsub_channels (uid, name) VALUES ('inbox', 'Timeline');
+INSERT OR IGNORE INTO microsub_channels (uid, name) VALUES ('notifications', 'Notifications');
 
 INSERT OR REPLACE INTO settings (key, value) VALUES ('base', '/');
 INSERT OR REPLACE INTO settings (key, value) VALUES ('title', 'Lumen Pink');

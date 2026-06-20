@@ -143,10 +143,17 @@ global $urltranslations;
 $urltranslations = \Indieinabox\Database::getUrlTranslations();
 
 if (php_sapi_name() === 'cli') {
-    $builder = new \Indieinabox\SiteBuilder($site);
-    $builder->build();
-    $pages = $builder->getPages();
-    echo "Build complete\n";
+    if (isset($argv[1]) && $argv[1] === 'fetch') {
+        echo "Fetching feeds...\n";
+        $fetcher = new \Indieinabox\FeedFetcher();
+        $fetcher->fetchAll();
+        echo "Feeds fetched successfully.\n";
+    } else {
+        $builder = new \Indieinabox\SiteBuilder($site);
+        $builder->build();
+        $pages = $builder->getPages();
+        echo "Build complete\n";
+    }
 } else {
     $router = new \Indieinabox\WebRouter($site);
     $router->handleRequest();

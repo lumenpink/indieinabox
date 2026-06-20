@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS translations (id INTEGER PRIMARY KEY AUTOINCREMENT, l
 CREATE TABLE IF NOT EXISTS url_translations (id INTEGER PRIMARY KEY AUTOINCREMENT, lang TEXT, slug_key TEXT, slug_value TEXT);
 CREATE TABLE IF NOT EXISTS characters (id INTEGER PRIMARY KEY AUTOINCREMENT, original_char TEXT, replacement_char TEXT);
 CREATE TABLE IF NOT EXISTS webmentions (id INTEGER PRIMARY KEY AUTOINCREMENT, hash TEXT UNIQUE, payload_json TEXT);
-CREATE TABLE IF NOT EXISTS indieauth_codes (id INTEGER PRIMARY KEY AUTOINCREMENT, code TEXT UNIQUE, payload_json TEXT);
+
 INSERT OR REPLACE INTO settings (key, value) VALUES ('base', '/');
 INSERT OR REPLACE INTO settings (key, value) VALUES ('title', 'Lumen Pink');
 INSERT OR REPLACE INTO settings (key, value) VALUES ('sitename', 'Um pouco de cada e um monte de nada');
@@ -356,3 +356,23 @@ INSERT INTO settings (key, value) VALUES ('originaldaysofweek', '["Sunday","Mond
 INSERT INTO settings (key, value) VALUES ('originalmonths', '["January","February","March","April","May","June","July","August","September","October","November","December"]');
 
 INSERT INTO settings (key, value) VALUES ('kindspath', '{"article":["artigos","articles","articulos"],"bookmark":["marcadores","bookmarks"],"journal":["diarios","journals","diaries"],"Like":["Curtidas","likes","me-gusta"],"note":["notes","notas"],"photo":["fotos","photos"],"reply":["respostas","replies","respuestas"],"repost":["republicacoes","reposts","republicaciones"],"rsvp":["confirmacoes","rsvps","confirmaciones"],"jardim":["garden","jardim","jardim_digital","pensamentos","thoughts","pensamientos"]}');
+
+CREATE TABLE IF NOT EXISTS indieauth_codes (
+    code_hash TEXT PRIMARY KEY,
+    client_id TEXT NOT NULL,
+    redirect_uri TEXT NOT NULL,
+    state TEXT,
+    scope TEXT,
+    code_challenge TEXT,
+    code_challenge_method TEXT,
+    expires_at INTEGER NOT NULL,
+    me TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS indieauth_tokens (
+    token_hash TEXT PRIMARY KEY,
+    client_id TEXT NOT NULL,
+    scope TEXT,
+    me TEXT NOT NULL,
+    created_at INTEGER NOT NULL
+);

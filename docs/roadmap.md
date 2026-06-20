@@ -65,26 +65,38 @@ This document tracks completed refactoring phases and future directions.
 
 ---
 
-## Future Roadmap
-
-The following next-generation features are scheduled for development:
-
-### 📤 Phase 9: AST-driven Multi-Format Output Engine
-*   **Flexible Rendering Engine**: Develop a modular renderer that consumes the custom Markdown AST to compile the site's content into multiple protocols/formats simultaneously:
+### 📤 Phase 9: AST-driven Multi-Format Output Engine (June 2026)
+*   **Flexible Rendering Engine**: Developed a modular renderer that consumes the custom Markdown AST to compile the site's content into multiple protocols/formats simultaneously:
     *   **HTML**: Render semantic, responsive HTML structures for traditional web browsers.
     *   **Gemini (gemproto)**: Generate lightweight line-oriented `.gmi` pages for the Gemini protocol.
     *   **Gopher (gophermap)**: Build structured `gophermap` selectors for retro Gopher protocol browsers.
-*   **Static Exporter**: Integrate the output engine into `SiteBuilder` to compile the site for all three formats during the build pipeline.
+*   **Static Exporter**: Integrated the output engine into `SiteBuilder` to compile the site for all three formats during the build pipeline.
 
-### 📡 Phase 10: Twtxt Publishing & Consuming
-*   **Twtxt Feed Generation**: Create a builder/renderer that automatically formats site posts/updates into a standard flat-text `twtxt.txt` feed (a simple `<timestamp>\t<text>` format) and publishes it at the root of the static site.
-*   **Feed Aggregator & Consumer**: Build a local twtxt parser that fetches and reads remote twtxt feeds, parsing user mentions, hashtags, and timestamps for localized display.
-*   **Hub Integration**: Integrate with federated twtxt hubs to search, query, and retrieve mentions, replies, and updates beyond the local subscription list, expanding the reach of the site's microblogging footprint.
+### 📡 Phase 10: Twtxt Publishing & Consuming (June 2026)
+*   **Twtxt Feed Generation**: Created a builder/renderer that automatically formats site posts/updates into a standard flat-text `twtxt.txt` feed (a simple `<timestamp>\t<text>` format) and publishes it at the root of the static site.
+*   **Feed Aggregator & Consumer**: Built a local twtxt parser that fetches and reads remote twtxt feeds, parsing user mentions, hashtags, and timestamps for localized display.
+*   **Hub Integration**: Integrated with federated twtxt hubs to search, query, and retrieve mentions, replies, and updates beyond the local subscription list, expanding the reach of the site's microblogging footprint.
 
-### ✍️ Phase 11: Micropub API Support
-*   **Micropub Endpoint**: Implement a fully compliant W3C Micropub endpoint to allow writing/creating, updating, and deleting content on the site using external IndieWeb clients (such as Quill or Indigenous).
-*   **Authentication Guard**: Integrate with the existing IndieAuth handler to validate incoming HTTP requests via Bearer access tokens, enforcing scopes like `create`, `update`, `delete`, and `media`.
-*   **Media Endpoint**: Develop a Micropub Media Endpoint to support direct image/file uploads, automatically organizing media files and returning their absolute URLs.
+### 🗄️ Phase 10.5: SQLite Database Migration (June 2026)
+*   **Centralized Configuration:** Extinguished the legacy `data/` folder flat-files (`config.yml`, `chars.php`, `intl.php`, etc) migrating all application configurations, translations, and globalization mappings to a centralized `indieinabox.sqlite` database.
+*   **Installation Interface:** Created a dynamic installer that generates the database schema automatically from `database.sql` if it detects a missing environment configuration.
+*   **Single-File Payload:** Refactored `compile.php` to embed the database SQL and installer logic directly into the generated `indieinabox.php` package, keeping it completely self-contained.
+
+### ✍️ Phase 11: Micropub API Support (COMPLETED)
+- [x] Create the W3C Micropub Endpoint (`/micropub`).
+  - [x] Support `q=config` and `q=syndicate-to`.
+  - [x] Support `POST` creation requests with frontmatter/YAML.
+  - [x] Handle standard (`h-entry`, `content`, `category`, `name`, `mp-slug`).
+  - [x] Build custom integration for `mp-language`.
+- [x] Create Media Endpoint (`/micropub/media`).
+- [x] Add `<link rel="micropub">` and Webmention/Microsub links pointing to local/hosted services.
+- [x] Build a local web-based client at `/micropub/client` to allow native dashboard posting! HTTP requests via Bearer access tokens, enforcing scopes like `create`, `update`, `delete`, and `media`.
+
+---
+
+## Future Roadmap
+
+The following next-generation features are scheduled for development:
 
 ### 📬 Phase 12: Microsub Endpoint & Reader (with Twtxt)
 *   **Microsub Server**: Implement a W3C Microsub endpoint to manage feeds, channels (e.g., Inbox, Friends, Tech), and read states (read, unread, archived).

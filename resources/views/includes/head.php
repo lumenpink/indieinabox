@@ -65,9 +65,9 @@
     <link rel="me" href="mailto:hi@lumen.pink">
     <link rel="me" href="https://github.com/lumenpink">
     <link rel="me" href="https://twitter.com/lumenpink">
-    <link rel="authorization_endpoint" href=https://indieauth.com/auth />
-    <link rel="token_endpoint" href=https://tokens.indieauth.com/token />
-    <link rel="micropub" href="https://micropub.lumen.pink" />
+    <link rel="authorization_endpoint" href="<?= $site->fqdn ?>/auth" />
+    <link rel="token_endpoint" href="<?= $site->fqdn ?>/token" />
+    <link rel="micropub" href="<?= $site->fqdn ?>/micropub" />
     <link rel="microsub" href="https://aperture.p3k.io/microsub/795" />
     <link rel="webmention" href="https://webmention.io/lumen.pink/webmention" />
     <link rel="pingback" href="https://webmention.io/lumen.pink/xmlrpc" />

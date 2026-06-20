@@ -40,6 +40,25 @@ class WebRouter
             return;
         }
 
+        // Route: Micropub
+        if ($requestUriClean === '/.well-known/micropub') {
+            header('HTTP/1.1 302 Found');
+            header('Location: /micropub');
+            return;
+        }
+
+        if (strpos($requestUriClean, '/micropub/client') === 0) {
+            $handler = $this->createMicropubClientHandler();
+            $handler->handle();
+            return;
+        }
+
+        if (strpos($requestUriClean, '/micropub') === 0) {
+            $handler = $this->createMicropubHandler();
+            $handler->handle();
+            return;
+        }
+
         $isConfigParam = isset($_GET['config']);
         $isConfigPath = (preg_match('#/config$#i', $requestUriClean) === 1);
 
@@ -67,6 +86,16 @@ class WebRouter
         return new ConfigHandler($this->site);
     }
 
+    protected function createMicropubHandler(): MicropubHandler
+    {
+        return new MicropubHandler($this->site);
+    }
+
+    protected function createMicropubClientHandler(): MicropubClientHandler
+    {
+        return new MicropubClientHandler($this->site);
+    }
+
     private function serveStatic(): void
     {
         $base = $this->site->paths->baseDir;
@@ -80,6 +109,13 @@ class WebRouter
         }
 
         $filePath = $base . DIRECTORY_SEPARATOR . $outputDir . $path;
+
+        if (strpos($path, '/media/') === 0) {
+            $contentMediaPath = rtrim($base, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . 'content' . str_replace('/', DIRECTORY_SEPARATOR, $path);
+            if (file_exists($contentMediaPath) && is_file($contentMediaPath)) {
+                $filePath = $contentMediaPath;
+            }
+        }
 
         if (is_dir($filePath)) {
             $filePath = rtrim($filePath, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . 'index.html';

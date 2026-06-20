@@ -386,26 +386,20 @@ class IndieAuthHandler
         // Generate auth code
         $code = bin2hex(random_bytes(16));
         $expiresAt = time() + 600; // 10 mins
+        $me = rtrim($this->site->metadata->fqdn ?? '', '/') . '/';
 
-        $base = $this->site->paths->baseDir;
-        $codesDir = $base . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'indieauth' . DIRECTORY_SEPARATOR . 'codes';
-        if (!is_dir($codesDir)) {
-            mkdir($codesDir, 0777, true);
-        }
-
-        $codeData = [
-            'code' => $code,
-            'client_id' => $clientId,
-            'redirect_uri' => $redirectUri,
-            'state' => $state,
-            'scope' => $scope,
-            'code_challenge' => $codeChallenge,
-            'code_challenge_method' => $codeChallengeMethod,
-            'expires_at' => $expiresAt,
-            'me' => rtrim($this->site->metadata->fqdn ?? '', '/') . '/'
-        ];
-
-        file_put_contents($codesDir . DIRECTORY_SEPARATOR . md5($code) . '.json', json_encode($codeData, JSON_PRETTY_PRINT));
+        $db = \Indieinabox\Database::getDb();
+        $stmt = $db->prepare('INSERT INTO indieauth_codes (code_hash, client_id, redirect_uri, state, scope, code_challenge, code_challenge_method, expires_at, me) VALUES (:hash, :client_id, :redirect_uri, :state, :scope, :challenge, :method, :expires, :me)');
+        $stmt->bindValue(':hash', md5($code), \SQLITE3_TEXT);
+        $stmt->bindValue(':client_id', $clientId, \SQLITE3_TEXT);
+        $stmt->bindValue(':redirect_uri', $redirectUri, \SQLITE3_TEXT);
+        $stmt->bindValue(':state', $state, \SQLITE3_TEXT);
+        $stmt->bindValue(':scope', $scope, \SQLITE3_TEXT);
+        $stmt->bindValue(':challenge', $codeChallenge, \SQLITE3_TEXT);
+        $stmt->bindValue(':method', $codeChallengeMethod, \SQLITE3_TEXT);
+        $stmt->bindValue(':expires', $expiresAt, \SQLITE3_INTEGER);
+        $stmt->bindValue(':me', $me, \SQLITE3_TEXT);
+        $stmt->execute();
 
         // Redirect back with code and state
         $joinChar = (strpos($redirectUri, '?') === false) ? '?' : '&';
@@ -422,19 +416,21 @@ class IndieAuthHandler
         $redirectUri = $_POST['redirect_uri'] ?? '';
         $codeVerifier = $_POST['code_verifier'] ?? '';
 
-        $base = $this->site->paths->baseDir;
-        $codesDir = $base . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'indieauth' . DIRECTORY_SEPARATOR . 'codes';
-        $codeFile = $codesDir . DIRECTORY_SEPARATOR . md5($code) . '.json';
+        $db = \Indieinabox\Database::getDb();
+        $stmt = $db->prepare('SELECT * FROM indieauth_codes WHERE code_hash = :hash');
+        $stmt->bindValue(':hash', md5($code), \SQLITE3_TEXT);
+        $result = $stmt->execute();
+        $codeData = $result ? $result->fetchArray(\SQLITE3_ASSOC) : false;
 
-        if (!file_exists($codeFile)) {
+        if (!$codeData) {
             $this->sendResponse(400, 'Invalid or expired authorization code.');
             return;
         }
 
-        $codeData = json_decode(file_get_contents($codeFile), true);
-
-        // Cleanup code file (use once)
-        @unlink($codeFile);
+        // Cleanup code (use once)
+        $delStmt = $db->prepare('DELETE FROM indieauth_codes WHERE code_hash = :hash');
+        $delStmt->bindValue(':hash', md5($code), \SQLITE3_TEXT);
+        $delStmt->execute();
 
         if ($codeData['expires_at'] < time()) {
             $this->sendResponse(400, 'Authorization code has expired.');
@@ -504,19 +500,21 @@ class IndieAuthHandler
         $redirectUri = $_POST['redirect_uri'] ?? '';
         $codeVerifier = $_POST['code_verifier'] ?? '';
 
-        $base = $this->site->paths->baseDir;
-        $codesDir = $base . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'indieauth' . DIRECTORY_SEPARATOR . 'codes';
-        $codeFile = $codesDir . DIRECTORY_SEPARATOR . md5($code) . '.json';
+        $db = \Indieinabox\Database::getDb();
+        $stmt = $db->prepare('SELECT * FROM indieauth_codes WHERE code_hash = :hash');
+        $stmt->bindValue(':hash', md5($code), \SQLITE3_TEXT);
+        $result = $stmt->execute();
+        $codeData = $result ? $result->fetchArray(\SQLITE3_ASSOC) : false;
 
-        if (!file_exists($codeFile)) {
+        if (!$codeData) {
             $this->sendResponse(400, 'Invalid or expired authorization code.');
             return;
         }
 
-        $codeData = json_decode(file_get_contents($codeFile), true);
-
-        // Cleanup code file (use once)
-        @unlink($codeFile);
+        // Cleanup code
+        $delStmt = $db->prepare('DELETE FROM indieauth_codes WHERE code_hash = :hash');
+        $delStmt->bindValue(':hash', md5($code), \SQLITE3_TEXT);
+        $delStmt->execute();
 
         if ($codeData['expires_at'] < time()) {
             $this->sendResponse(400, 'Authorization code has expired.');
@@ -555,21 +553,14 @@ class IndieAuthHandler
 
         // Generate Access Token
         $token = 'ia_' . bin2hex(random_bytes(24));
-        
-        $tokensDir = $base . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'indieauth' . DIRECTORY_SEPARATOR . 'tokens';
-        if (!is_dir($tokensDir)) {
-            mkdir($tokensDir, 0777, true);
-        }
 
-        $tokenData = [
-            'access_token' => $token,
-            'me' => $codeData['me'],
-            'client_id' => $clientId,
-            'scope' => $codeData['scope'],
-            'created_at' => time()
-        ];
-
-        file_put_contents($tokensDir . DIRECTORY_SEPARATOR . md5($token) . '.json', json_encode($tokenData, JSON_PRETTY_PRINT));
+        $insStmt = $db->prepare('INSERT INTO indieauth_tokens (token_hash, client_id, scope, me, created_at) VALUES (:hash, :client_id, :scope, :me, :created)');
+        $insStmt->bindValue(':hash', md5($token), \SQLITE3_TEXT);
+        $insStmt->bindValue(':client_id', $clientId, \SQLITE3_TEXT);
+        $insStmt->bindValue(':scope', $codeData['scope'], \SQLITE3_TEXT);
+        $insStmt->bindValue(':me', $codeData['me'], \SQLITE3_TEXT);
+        $insStmt->bindValue(':created', time(), \SQLITE3_INTEGER);
+        $insStmt->execute();
 
         header('HTTP/1.1 200 OK');
         header('Content-Type: application/json; charset=utf-8');
@@ -581,7 +572,7 @@ class IndieAuthHandler
         ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
     }
 
-    private function verifyToken(): void
+    public function validateBearerToken(?string &$tokenOut = null): ?array
     {
         $token = '';
 
@@ -596,20 +587,39 @@ class IndieAuthHandler
         }
 
         if (empty($token)) {
-            $this->sendResponse(401, 'Unauthorized. Missing access token.');
-            return;
+            return null;
         }
 
-        $base = $this->site->paths->baseDir;
-        $tokensDir = $base . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'indieauth' . DIRECTORY_SEPARATOR . 'tokens';
-        $tokenFile = $tokensDir . DIRECTORY_SEPARATOR . md5($token) . '.json';
-
-        if (!file_exists($tokenFile)) {
-            $this->sendResponse(401, 'Unauthorized. Invalid or expired token.');
-            return;
+        if ($tokenOut !== null) {
+            $tokenOut = $token;
         }
 
-        $tokenData = json_decode(file_get_contents($tokenFile), true);
+        $db = \Indieinabox\Database::getDb();
+        $stmt = $db->prepare('SELECT * FROM indieauth_tokens WHERE token_hash = :hash');
+        $stmt->bindValue(':hash', md5($token), \SQLITE3_TEXT);
+        $result = $stmt->execute();
+        $tokenData = $result ? $result->fetchArray(\SQLITE3_ASSOC) : false;
+
+        if (!$tokenData) {
+            return null;
+        }
+
+        return [
+            'me' => $tokenData['me'],
+            'client_id' => $tokenData['client_id'],
+            'scope' => $tokenData['scope']
+        ];
+    }
+
+    private function verifyToken(): void
+    {
+        $tokenOut = null;
+        $tokenData = $this->validateBearerToken($tokenOut);
+
+        if ($tokenData === null) {
+            $this->sendResponse(401, 'Unauthorized. Invalid or missing access token.');
+            return;
+        }
 
         header('HTTP/1.1 200 OK');
         header('Content-Type: application/json; charset=utf-8');

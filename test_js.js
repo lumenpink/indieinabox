@@ -21,6 +21,7 @@
                 }
 
                 function showCompose() {
+                    // Mock function to show compose UI
                 }
 
                 // --- Post Type UI Logic ---

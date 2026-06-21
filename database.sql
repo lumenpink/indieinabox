@@ -16,7 +16,6 @@ INSERT OR REPLACE INTO settings (key, value) VALUES ('title', 'Lumen Pink');
 INSERT OR REPLACE INTO settings (key, value) VALUES ('sitename', 'Um pouco de cada e um monte de nada');
 INSERT OR REPLACE INTO settings (key, value) VALUES ('fqdn', 'http://localhost:8081');
 INSERT OR REPLACE INTO settings (key, value) VALUES ('author', '~lumen');
-INSERT OR REPLACE INTO settings (key, value) VALUES ('indieauth_password', '$2y$12$iETuiQryko5v8nZTmBmOEelFH6Y2OvRU8pIeLeT5dGu2CzOoiWDq2');
 INSERT OR REPLACE INTO settings (key, value) VALUES ('buildall', '1');
 INSERT OR REPLACE INTO settings (key, value) VALUES ('outputdir', 'public');
 INSERT OR REPLACE INTO settings (key, value) VALUES ('contentdir', 'content');
@@ -347,15 +346,7 @@ INSERT INTO characters (original_char, replacement_char) VALUES ('Ø', 'O');
 INSERT INTO characters (original_char, replacement_char) VALUES ('æ', 'a');
 INSERT INTO characters (original_char, replacement_char) VALUES ('ø', 'o');
 INSERT OR REPLACE INTO settings (key, value) VALUES ('copyright', '');
-INSERT OR IGNORE INTO webmentions (hash, payload_json) VALUES ('46b3931b9959c927df4fc65fdee94b07', '[
-    {
-        "source": "http:\/\/127.0.0.1:9200\/source_post.html",
-        "target": "https:\/\/example.com\/about",
-        "title": "Webmention from 127.0.0.1",
-        "text": "",
-        "date": "2026-06-17T12:30:49+00:00"
-    }
-]');
+INSERT OR IGNORE INTO webmentions (hash, payload_json) VALUES ('46b3931b9959c927df4fc65fdee94b07', '[{"source":"http:\/\/127.0.0.1:9200\/source_post.html","target":"https:\/\/example.com\/about","title":"Webmention from 127.0.0.1","text":"","date":"2026-06-17T12:30:49+00:00"}]');
 
 INSERT INTO settings (key, value) VALUES ('intl', '{"pt-br":{"localizeddate":{"date":"d \\d\\e F \\de\\ Y","time":"H:iP","full":"l, d \\d\\e F \\d\\e Y \\à\\s H:i e","shortdate":"d\/m\/Y","shorttime":"H:i","shortfull":"d\/m\/Y H:i","daysofweek":["Domingo","Segunda-feira","Terça-feira","Quarta-feira","Quinta-feira","Sexta-feira","Sábado"],"months":["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"]}},"en":{"localizeddate":{"date":"F d, Y","time":"h:i A","full":"l, F d, Y \\a\\t h:i A","shortdate":"m\/d\/Y","shorttime":"h:i A","shortfull":"m\/d\/Y h:i A","daysofweek":["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],"months":["January","February","March","April","May","June","July","August","September","October","November","December"]}},"es":{"localizeddate":{"date":"d \\d\\e F \\d\\e Y","time":"H:iP","full":"l, d \\d\\e F \\d\\e Y \\à\\s H:iP","shortdate":"d\/m\/Y","shorttime":"H:i","shortfull":"d\/m\/Y H:i","daysofweek":["Domingo","Lunes","Martes","Miércoles","Jueves","Viernes","Sábado"],"months":["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"]}}}');
 INSERT INTO settings (key, value) VALUES ('originaldaysofweek', '["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"]');

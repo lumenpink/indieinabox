@@ -651,7 +651,7 @@ class Beautify_Html
 
     private function get_full_indent(int $level): string
     {
-        $level = $this->indent_level + $level || 0;
+        $level = ($this->indent_level + $level) ?: 0;
         if ($level < 1) {
             return '';
         }

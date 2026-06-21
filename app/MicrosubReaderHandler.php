@@ -274,7 +274,7 @@ class MicrosubReaderHandler
                     if (item.author) {
                         authorHtml = `
                             <div class="item-author">
-                                ${item.author.photo ? `<img src="\${item.author.photo}">` : ''}
+                                \${item.author.photo ? `<img src="\${item.author.photo}">` : ''}
                                 <span class="name">\${item.author.name}</span>
                                 <span class="date">\${new Date(item.published).toLocaleString()}</span>
                             </div>

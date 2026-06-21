@@ -21,19 +21,11 @@ class MicrosubHandler
 
     public function handleRequest(): void
     {
-        $headers = getallheaders();
-        $token = $this->authHandler->extractToken($headers);
+        $tokenData = $this->authHandler->validateBearerToken();
 
-        if (!$token) {
+        if (!$tokenData) {
             http_response_code(401);
             echo json_encode(['error' => 'unauthorized', 'error_description' => 'Missing or invalid token']);
-            return;
-        }
-
-        $isValid = $this->authHandler->verifyToken($token);
-        if (!$isValid) {
-            http_response_code(401);
-            echo json_encode(['error' => 'unauthorized', 'error_description' => 'Invalid token']);
             return;
         }
 

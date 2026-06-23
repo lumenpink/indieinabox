@@ -22,5 +22,9 @@
     "phpstan.suppressWorkspaceMessage": false,
     "phpstan.pro": false,
     "phpstan.tmpDir": "",
-    "phpstan.checkValidity": false
+    "phpstan.checkValidity": false,
+    "sonarlint.connectedMode.project": {
+        "connectionId": "indieinabox",
+        "projectKey": "indieinabox_indieinabox"
+    }
 }

@@ -17,7 +17,7 @@ jobs:
   # ─────────────────────────────────────────────────────────────────────────────
   test:
     name: "PHP ${{ matrix.php }} — Tests & Lint"
-    runs-on: ubuntu-latest
+    runs-on: codeberg-tiny
     strategy:
       fail-fast: true          # Para ao primeiro erro em qualquer versão
       matrix:
@@ -97,7 +97,7 @@ jobs:
   # ─────────────────────────────────────────────────────────────────────────────
   psalm:
     name: "Psalm — Static Security Analysis"
-    runs-on: ubuntu-latest
+    runs-on: codeberg-tiny
     needs: test           # Só roda se os testes passarem
 
     steps:
@@ -147,7 +147,7 @@ jobs:
   # ─────────────────────────────────────────────────────────────────────────────
   dependency-check:
     name: "OWASP Dependency-Check"
-    runs-on: ubuntu-latest
+    runs-on: codeberg-tiny
     needs: test
 
     steps:
@@ -189,7 +189,7 @@ jobs:
   # ─────────────────────────────────────────────────────────────────────────────
   sonarqube:
     name: "SonarQube Analysis"
-    runs-on: ubuntu-latest
+    runs-on: codeberg-tiny
     needs: [test, psalm]      # Precisa dos relatórios de cobertura e Psalm
     # Só roda no branch principal ou em PRs (evita rodar em feature branches sem SONAR_TOKEN)
     if: github.actor != 'dependabot[bot]'

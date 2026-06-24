@@ -34,6 +34,20 @@ beforeEach(function () use ($funcTempDir) {
     $_GET = [];
     $_POST = [];
     $_SERVER = [];
+    
+    // Set up test database
+    $ref = new \ReflectionClass(\Indieinabox\Database::class);
+    $prop = $ref->getProperty('db');
+    $prop->setAccessible(true);
+    $prop->setValue(null);
+    
+    $testDbPath = $funcTempDir . '/test.sqlite';
+    \Indieinabox\Database::connect($testDbPath);
+    $db = \Indieinabox\Database::getDb();
+    $db->exec('CREATE TABLE IF NOT EXISTS webmentions (
+        hash TEXT PRIMARY KEY,
+        payload_json TEXT NOT NULL
+    )');
 });
 
 afterEach(function () use ($funcTempDir) {
@@ -251,14 +265,80 @@ HTML;
     expect($json['status'])->toBe(202)
         ->and($json['message'])->toContain('Webmention accepted and processed');
 
-    // Assert file was saved under data/webmentions/<md5_slug>.json
-    $expectedFilename = md5('about') . '.json';
-    $expectedFile = $funcTempDir . '/data/webmentions/' . $expectedFilename;
-    expect(file_exists($expectedFile))->toBeTrue();
+    $json = json_decode($output, true);
+    expect($json['status'])->toBe(202)
+        ->and($json['message'])->toContain('Webmention accepted and processed');
 
-    $data = json_decode(file_get_contents($expectedFile), true);
+    // Assert webmention was saved to SQLite database
+    $db = \Indieinabox\Database::getDb();
+    $expectedHash = md5('about');
+    $stmt = $db->prepare('SELECT payload_json FROM webmentions WHERE hash = :hash');
+    $stmt->execute([':hash' => $expectedHash]);
+    $row = $stmt->fetch(\PDO::FETCH_ASSOC);
+
+    expect($row)->not->toBeFalse();
+    
+    $data = json_decode($row['payload_json'], true);
     expect($data)->toHaveCount(1);
     expect($data[0]['source'])->toBe('https://external.com/post');
     expect($data[0]['title'])->toBe('External Post Title');
     expect($data[0]['text'])->toContain('I read this great page');
+});
+
+it('accepts webmention and extracts whostyle JSON', function () use ($funcTempDir) {
+    $site = new Site();
+    $site->paths->baseDir = $funcTempDir;
+    $site->paths->outputDir = 'public';
+    $site->metadata->fqdn = 'https://mysite.com';
+
+    $targetFileDir = $funcTempDir . '/public/about';
+    mkdir($targetFileDir, 0777, true);
+    file_put_contents($targetFileDir . '/index.html', '<h1>About Us</h1>');
+
+    $_SERVER['REQUEST_METHOD'] = 'POST';
+    $_SERVER['REQUEST_URI'] = '/webmention';
+    $_POST = [
+        'source' => 'https://external.com/styled-post',
+        'target' => 'https://mysite.com/about'
+    ];
+
+    MockWebmentionHandler::$mockResponses['https://external.com/styled-post'] = <<<HTML
+<html>
+<head>
+    <title>Styled Post Title</title>
+    <script type="application/whostyle+json">
+    {
+        "--whostyle-bg": "#ff0000",
+        "--whostyle-color": "#ffffff"
+    }
+    </script>
+</head>
+<body>
+    <div class="e-content">
+        Styled mention pointing to <a href="https://mysite.com/about">mysite.com</a>!
+    </div>
+</body>
+</html>
+HTML;
+
+    $router = new TestWebRouter($site);
+    ob_start();
+    $router->handleRequest();
+    $output = ob_get_clean();
+
+    $json = json_decode($output, true);
+    expect($json['status'])->toBe(202);
+
+    $db = \Indieinabox\Database::getDb();
+    $stmt = $db->prepare('SELECT payload_json FROM webmentions WHERE hash = :hash');
+    $stmt->execute([':hash' => md5('about')]);
+    $row = $stmt->fetch(\PDO::FETCH_ASSOC);
+
+    expect($row)->not->toBeFalse();
+    $data = json_decode($row['payload_json'], true);
+    
+    // Check that whostyle was correctly parsed and stored
+    expect(isset($data[0]['whostyle']))->toBeTrue();
+    expect($data[0]['whostyle']['--whostyle-bg'])->toBe('#ff0000');
+    expect($data[0]['whostyle']['--whostyle-color'])->toBe('#ffffff');
 });

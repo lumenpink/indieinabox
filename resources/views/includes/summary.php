@@ -34,8 +34,8 @@
             </div>
             <div>
                 <?php include("post-meta.php") ?>
-                <!-- //TODO: Add webmentions
-                {{ partial "webmentions.html" . }} -->
+                <!-- Add webmentions -->
+                <?php include(__DIR__ . '/../partials/webmentions.php'); ?>
             </div>
         </div>
     </div>

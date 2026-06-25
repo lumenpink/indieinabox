@@ -49,7 +49,6 @@ beforeEach(function () {
     );
 
     $base = 'vfs://root';
-    $parsedown = new \Indieinabox\Parsedown();
     $urltranslations = [];
 });
 
@@ -67,7 +66,7 @@ it('parses markdown file and extracts tags and formats links', function () {
     global $site, $base, $parsedown, $urltranslations;
 
     $fileProcessor     = new FileProcessor($site, $base);
-    $contentProcessor  = new ContentProcessor($parsedown);
+    $contentProcessor  = new ContentProcessor();
     $urlTranslationsObj   = new UrlTranslations($urltranslations ?? []);
     $languageProcessor = new LanguageProcessor($site, $urlTranslationsObj);
 
@@ -119,7 +118,7 @@ it('detects language from top-level directory path and sets correct slug/kind', 
     ]);
 
     $fileProcessor     = new FileProcessor($site, $base);
-    $contentProcessor  = new ContentProcessor($parsedown);
+    $contentProcessor  = new ContentProcessor();
     $urlTranslationsObj   = new UrlTranslations($urltranslations ?? []);
     $languageProcessor = new LanguageProcessor($site, $urlTranslationsObj);
 

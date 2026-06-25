@@ -179,19 +179,4 @@ class Database
         return $kinds;
     }
 
-    public static function getCharacters(): array
-    {
-        $chars = [];
-        try {
-            $result = self::getDb()->query('SELECT original_char, replacement_char FROM characters');
-            if ($result) {
-                while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
-                    $chars[$row['original_char']] = $row['replacement_char'];
-                }
-            }
-        } catch (Exception $e) {
-            error_log("Database error in getCharacters: " . $e->getMessage());
-        }
-        return $chars;
-    }
 }

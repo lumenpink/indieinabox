@@ -317,12 +317,12 @@ class Helper
             return $string;
         }
 
-        static $chars = null;
-        if ($chars === null) {
-            $chars = \Indieinabox\Database::getCharacters();
-        }
+        // Custom transliteration rules that iconv typically misses or handles differently depending on locale
+        $custom = ['Ä' => 'Ae', 'ä' => 'ae', 'Ö' => 'Oe', 'ö' => 'oe', 'Ü' => 'Ue', 'ü' => 'ue', 'ß' => 'ss', 'Æ' => 'Ae', 'æ' => 'ae'];
+        $string = str_replace(array_keys($custom), array_values($custom), $string);
 
-        return strtr($string, $chars);
+        $transliterated = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $string);
+        return $transliterated !== false ? $transliterated : $string;
     }
 
     /**

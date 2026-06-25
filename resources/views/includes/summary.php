@@ -12,18 +12,21 @@
         <div class="fullwidth">
             <div class="e-content summary-content summary-kind-<?= $page->kind ?>">
                 <?php if (isset($page->images) && is_array($page->images)) :
-                    foreach ($page->images as $image) :
-                        if (!isset($image["url"])) {
+                    foreach ($page->images as $imgData) :
+                        $img = (array) $imgData;
+                        if (!isset($img["url"])) {
                             continue;
                         }
-                        if (!isset($image["alt"])) {
-                            $image["alt"] = t("Imagem criada por ") . $site->author;
+                        if (!isset($img["alt"])) {
+                            $img["alt"] = t("Criada por ") . $site->author;
                         }
                 ?>
 
                         <div class="text-center">
-                            <a href="<?= $page->relpath . $image["url"] ?>" class="u-photo" rel="nofollow">
-                                <img src="<?= $page->relpath . $image["url"] ?>" alt="<?= $image["alt"] ?>" class="width-75">
+                            <a href="<?= $page->relpath . $img["url"] ?>" class="u-photo" rel="nofollow">
+                                <img src="<?= $page->relpath . $img["url"] ?>"
+                                     alt="<?= $img["alt"] ?>"
+                                     class="width-75">
                             </a>
                         </div>
                 <?php

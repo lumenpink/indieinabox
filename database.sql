@@ -373,3 +373,26 @@ CREATE TABLE IF NOT EXISTS indieauth_tokens (
     me TEXT NOT NULL,
     created_at INTEGER NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS activitypub_followers (
+    actor_url TEXT PRIMARY KEY,
+    inbox_url TEXT NOT NULL,
+    shared_inbox_url TEXT
+);
+
+CREATE TABLE IF NOT EXISTS activitypub_keys (
+    key_id TEXT PRIMARY KEY,
+    private_key TEXT NOT NULL,
+    public_key TEXT NOT NULL,
+    created_at INTEGER NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS activitypub_outbox (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    payload_json TEXT NOT NULL,
+    target_inbox TEXT NOT NULL,
+    status TEXT DEFAULT 'pending',
+    created_at INTEGER NOT NULL
+);
+
+INSERT OR REPLACE INTO settings (key, value) VALUES ('activitypub_handle', 'lumen');

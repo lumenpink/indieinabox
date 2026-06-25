@@ -143,14 +143,20 @@ class MicropubHandler
         $photos = [];
         if (isset($input['photo'])) {
             $photos = is_array($input['photo']) ? $input['photo'] : [$input['photo']];
-            if ($kind === 'note') $kind = 'photo';
+            if ($kind === 'note') {
+                $kind = 'photo';
+            }
         }
 
         // Generate Frontmatter
         $frontmatter = [];
-        if ($name) $frontmatter['title'] = $name;
+        if ($name) {
+            $frontmatter['title'] = $name;
+        }
         $frontmatter['date'] = date('Y-m-d H:i:s');
-        if (!empty($category)) $frontmatter['tags'] = $category;
+        if (!empty($category)) {
+            $frontmatter['tags'] = $category;
+        }
         
         $yaml = "---\n";
         foreach ($frontmatter as $k => $v) {
@@ -221,11 +227,19 @@ class MicropubHandler
         }
 
         // Build the created URL
-        // Example: https://lumen.pink/pt/articles/2026/06/slug.html (depends on the routing of Indieinabox, but roughly)
-        $postUrl = rtrim($this->site->fqdn ?? '', '/') . '/' . $kind . '/' . $year . '/' . $month . '/' . $slug . '.html';
+        // Example: https://lumen.pink/pt/articles/2026/06/slug.html
+        // (depends on the routing of Indieinabox, but roughly)
+        $baseUrl = rtrim($this->site->fqdn ?? '', '/');
+        $postUrl = $baseUrl . '/' . $kind . '/' . $year . '/' . $month . '/' . $slug . '.html';
         
         if ($lang && $lang !== $this->site->localization->defaultLang) {
-            $postUrl = rtrim($this->site->fqdn ?? '', '/') . '/' . $lang . '/' . $kind . '/' . $year . '/' . $month . '/' . $slug . '.html';
+            $postUrl = $baseUrl . '/' . $lang . '/' . $kind . '/' . $year . '/' . $month . '/' . $slug . '.html';
+        }
+
+        // Queue ActivityPub outbox message
+        if (class_exists('\\Indieinabox\\ActivityPubHandler')) {
+            $apHandler = new \Indieinabox\ActivityPubHandler($this->site);
+            $apHandler->queueCreateActivity($postUrl, $content, $name);
         }
 
         header('HTTP/1.1 201 Created');
@@ -247,14 +261,17 @@ class MicropubHandler
 
         $file = $_FILES['file'];
         $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
-        if (empty($ext)) $ext = 'bin';
+        if (empty($ext)) {
+            $ext = 'bin';
+        }
 
         $baseFilename = date('dHis');
         $year = date('Y');
         $month = date('m');
 
         $base = rtrim($this->site->paths->baseDir, DIRECTORY_SEPARATOR);
-        $mediaDir = $base . DIRECTORY_SEPARATOR . 'content' . DIRECTORY_SEPARATOR . 'media' . DIRECTORY_SEPARATOR . $year . DIRECTORY_SEPARATOR . $month;
+        $mediaDir = $base . DIRECTORY_SEPARATOR . 'content' . DIRECTORY_SEPARATOR . 'media';
+        $mediaDir .= DIRECTORY_SEPARATOR . $year . DIRECTORY_SEPARATOR . $month;
 
         if (!is_dir($mediaDir)) {
             mkdir($mediaDir, 0777, true);

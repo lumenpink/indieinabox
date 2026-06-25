@@ -148,6 +148,8 @@ if (php_sapi_name() === 'cli') {
         $fetcher = new \Indieinabox\FeedFetcher();
         $fetcher->fetchAll();
         echo "Feeds fetched successfully.\n";
+    } elseif (isset($argv[1]) && $argv[1] === 'cron') {
+        \Indieinabox\ActivityPubHandler::processOutbox();
     } else {
         $builder = new \Indieinabox\SiteBuilder($site);
         $builder->build();

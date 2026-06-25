@@ -71,6 +71,30 @@ class WebRouter
             return;
         }
 
+        if ($requestUriClean === '/.well-known/webfinger') {
+            $handler = $this->createActivityPubHandler();
+            $handler->handleWebFinger();
+            return;
+        }
+
+        if ($requestUriClean === '/actor') {
+            $handler = $this->createActivityPubHandler();
+            $handler->handleActor();
+            return;
+        }
+
+        if ($requestUriClean === '/inbox') {
+            $handler = $this->createActivityPubHandler();
+            $handler->handleInbox();
+            return;
+        }
+
+        if ($requestUriClean === '/outbox') {
+            $handler = $this->createActivityPubHandler();
+            $handler->handleOutbox();
+            return;
+        }
+
         $isConfigParam = isset($_GET['config']);
         $isConfigPath = (preg_match('#/config$#i', $requestUriClean) === 1);
 
@@ -118,6 +142,11 @@ class WebRouter
         return new MicrosubReaderHandler($this->site);
     }
 
+    protected function createActivityPubHandler(): ActivityPubHandler
+    {
+        return new ActivityPubHandler($this->site);
+    }
+
     private function serveStatic(): void
     {
         $base = $this->site->paths->baseDir;
@@ -133,7 +162,8 @@ class WebRouter
         $filePath = $base . DIRECTORY_SEPARATOR . $outputDir . $path;
 
         if (strpos($path, '/media/') === 0) {
-            $contentMediaPath = rtrim($base, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . 'content' . str_replace('/', DIRECTORY_SEPARATOR, $path);
+            $contentMediaPath = rtrim($base, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . 'content';
+            $contentMediaPath .= str_replace('/', DIRECTORY_SEPARATOR, $path);
             if (file_exists($contentMediaPath) && is_file($contentMediaPath)) {
                 $filePath = $contentMediaPath;
             }

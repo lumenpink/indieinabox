@@ -130,11 +130,7 @@ if (!empty($useStatements)) {
     $compiled .= "\n";
 }
 
-$runnerCode = "\n    // Compiled dynamic loading of composer autoloader and data arrays\n";
-$runnerCode .= "    \$base = __DIR__;\n";
-$runnerCode .= "    if (file_exists(\$base . '/vendor/autoload.php')) {\n";
-$runnerCode .= "        include_once \$base . '/vendor/autoload.php';\n";
-$runnerCode .= "    }\n";
+    $runnerCode = "    \$base = __DIR__;\n";
 
 // Inject SQL schema as a constant or variable string
 $sqlContent = file_get_contents($base . '/database.sql');

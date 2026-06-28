@@ -38,9 +38,9 @@ beforeEach(function () use ($integrationSandbox) {
     cleanIntegrationSandbox($integrationSandbox);
     mkdir($integrationSandbox, 0777, true);
     mkdir($integrationSandbox . '/content', 0777, true);
-    mkdir($integrationSandbox . '/theme', 0777, true);
-    mkdir($integrationSandbox . '/theme/views', 0777, true);
-    mkdir($integrationSandbox . '/theme/static', 0777, true);
+    mkdir($integrationSandbox . '/resources', 0777, true);
+    mkdir($integrationSandbox . '/resources/views', 0777, true);
+    mkdir($integrationSandbox . '/resources/static', 0777, true);
 });
 
 afterEach(function () use ($integrationSandbox) {
@@ -57,25 +57,29 @@ it('compiles the app and runs both CLI build and Web routing from the single-fil
     expect(file_exists($root . '/indieinabox.php'))->toBeTrue();
 
     // 2. Set up sandbox content and configuration
-    $config = [
-        'base'       => '',
-        'title'      => 'Integration Test Title',
-        'sitename'   => 'Integration Test Site',
-        'author'     => 'Antigravity',
-        'fqdn'       => 'https://example.com/',
-        'outputdir'  => 'public',
-        'contentdir' => 'content',
-        'lang'       => 'en',
-    ];
-    $yaml = new Yaml();
-    file_put_contents($integrationSandbox . '/config.yml', $yaml->dump($config));
+    // Initialize database for compiled script
+    file_put_contents($integrationSandbox . '/.config.php', "<?php\nreturn ['db_path' => '" . $integrationSandbox . "/test.sqlite'];\n");
+    $db = new \PDO('sqlite:' . $integrationSandbox . '/test.sqlite');
+    $db->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+    $db->exec(file_get_contents($root . '/database.sql'));
+    
+    $stmt = $db->prepare('UPDATE settings SET value = :value WHERE key = :key');
+    $stmt->execute([':key' => 'base', ':value' => '']);
+    $stmt->execute([':key' => 'title', ':value' => 'Integration Test Title']);
+    $stmt->execute([':key' => 'sitename', ':value' => 'Integration Test Site']);
+    $stmt->execute([':key' => 'author', ':value' => 'Antigravity']);
+    $stmt->execute([':key' => 'fqdn', ':value' => 'https://example.com']);
+    $stmt->execute([':key' => 'outputdir', ':value' => 'public']);
+    $stmt->execute([':key' => 'contentdir', ':value' => 'content']);
+    $stmt->execute([':key' => 'lang', ':value' => '["en"]']);
+    $db = null;
 
     // Simple markdown content
     file_put_contents($integrationSandbox . '/content/index.md', "---\ntitle: Home Page\nlayout: page\n---\nWelcome home!");
     file_put_contents($integrationSandbox . '/content/about.md', "---\ntitle: About Page\nlayout: page\n---\nAbout page content.");
 
     // Simple page view template
-    file_put_contents($integrationSandbox . '/theme/views/page.php', <<<PHP
+    file_put_contents($integrationSandbox . '/resources/views/page.php', <<<PHP
 <!DOCTYPE html>
 <html>
 <head>
@@ -88,7 +92,7 @@ it('compiles the app and runs both CLI build and Web routing from the single-fil
 </html>
 PHP
     );
-    file_put_contents($integrationSandbox . '/theme/views/indice.php', <<<PHP
+    file_put_contents($integrationSandbox . '/resources/views/indice.php', <<<PHP
 <!DOCTYPE html>
 <html>
 <head>
@@ -119,6 +123,12 @@ PHP
     // 4. Test CLI Mode: Run build process
     $cliCmd = 'php ' . escapeshellarg($integrationSandbox . '/build.php');
     $cliOutput = shell_exec($cliCmd);
+    if (!is_dir($integrationSandbox . '/public')) {
+        echo "CLI OUTPUT:\n" . $cliOutput . "\n";
+    }
+    if (!file_exists($integrationSandbox . '/public/about/index.html')) {
+        echo "ABOUT.MD output:\n" . $cliOutput . "\n";
+    }
 
     expect(is_dir($integrationSandbox . '/public'))->toBeTrue();
     expect(file_exists($integrationSandbox . '/public/index.html'))->toBeTrue();
@@ -191,15 +201,20 @@ PHP
         $postResponse = file_get_contents("http://$host1/webmention", false, $postContext);
 
         $json = json_decode($postResponse, true);
+        if ($json['status'] !== 202) {
+            echo "Webmention failed: " . print_r($json, true) . "\n";
+        }
         expect($json)->toBeArray()
             ->and($json['status'])->toBe(202)
             ->and($json['message'])->toContain('Webmention accepted');
 
-        // Check that json data is created correctly in data/webmentions/
-        $expectedFile = $integrationSandbox . '/data/webmentions/' . md5('about') . '.json';
-        expect(file_exists($expectedFile))->toBeTrue();
-
-        $savedData = json_decode(file_get_contents($expectedFile), true);
+        // Check that webmention data is created correctly in SQLite
+        $db = new \PDO('sqlite:' . $integrationSandbox . '/test.sqlite');
+        $stmt = $db->query("SELECT payload_json FROM webmentions WHERE hash = '" . md5('about') . "'");
+        $row = $stmt->fetch(\PDO::FETCH_ASSOC);
+        expect($row)->not->toBeFalse();
+        
+        $savedData = json_decode($row['payload_json'], true);
         expect($savedData)->toHaveCount(1);
         expect($savedData[0]['source'])->toBe($sourceUrl);
         expect($savedData[0]['target'])->toBe($targetUrl);

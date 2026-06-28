@@ -15,6 +15,15 @@ beforeEach(function () use ($authFuncTempDir) {
     $_GET = [];
     $_POST = [];
     $_SERVER = [];
+    
+    $reflection = new \ReflectionClass(\Indieinabox\Database::class);
+    $property = $reflection->getProperty('db');
+    $property->setAccessible(true);
+    $property->setValue(null, null);
+
+    \Indieinabox\Database::connect(':memory:');
+    $sql = file_get_contents(dirname(__DIR__, 2) . '/database.sql');
+    \Indieinabox\Database::getDb()->exec($sql);
 });
 
 afterEach(function () use ($authFuncTempDir) {
@@ -104,15 +113,12 @@ it('renders authorization form and processes login with plain text password', fu
     $router->handleRequest();
     $output = ob_get_clean();
 
-    // Verify redirect headers are generated in PHPUnit environment (can inspect output/headers)
-    // A file should be written under data/indieauth/codes
-    $codesDir = $authFuncTempDir . '/data/indieauth/codes';
-    expect(is_dir($codesDir))->toBeTrue();
+    $db = \Indieinabox\Database::getDb();
+    $stmt = $db->query("SELECT * FROM indieauth_codes");
+    $codes = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    expect($codes)->toHaveCount(1);
     
-    $files = glob($codesDir . '/*.json');
-    expect($files)->toHaveCount(1);
-    
-    $codeData = json_decode(file_get_contents($files[0]), true);
+    $codeData = $codes[0];
     expect($codeData['client_id'])->toBe('https://app.com/')
         ->and($codeData['scope'])->toBe('create update')
         ->and($codeData['code_challenge'])->toBe('E9Melhoa2OwvFrGMTJguCH5KGS2y')
@@ -140,9 +146,10 @@ it('processes login with bcrypt-hashed password', function () use ($authFuncTemp
     $router->handleRequest();
     ob_get_clean();
 
-    $codesDir = $authFuncTempDir . '/data/indieauth/codes';
-    $files = glob($codesDir . '/*.json');
-    expect($files)->toHaveCount(1);
+    $db = \Indieinabox\Database::getDb();
+    $stmt = $db->query("SELECT * FROM indieauth_codes");
+    $codes = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    expect($codes)->toHaveCount(1);
 });
 
 it('verifies authorization code and exchanges it for access token with PKCE S256 validation', function () use ($authFuncTempDir) {
@@ -154,21 +161,18 @@ it('verifies authorization code and exchanges it for access token with PKCE S256
     $code = 'authcode_123';
     $codeChallenge = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode(hash('sha256', 'my_code_verifier_123_abc', true)));
     
-    $codeData = [
-        'code' => $code,
-        'client_id' => 'https://app.com/',
-        'redirect_uri' => 'https://app.com/redirect',
-        'state' => 'xyz123',
-        'scope' => 'create update',
-        'code_challenge' => $codeChallenge,
-        'code_challenge_method' => 'S256',
-        'expires_at' => time() + 600,
-        'me' => 'https://mysite.com/'
-    ];
-    
-    $codesDir = $authFuncTempDir . '/data/indieauth/codes';
-    mkdir($codesDir, 0777, true);
-    file_put_contents($codesDir . '/' . md5($code) . '.json', json_encode($codeData));
+    $db = \Indieinabox\Database::getDb();
+    $stmt = $db->prepare('INSERT INTO indieauth_codes (code_hash, client_id, redirect_uri, state, scope, code_challenge, code_challenge_method, expires_at, me) VALUES (:hash, :client_id, :redirect_uri, :state, :scope, :challenge, :method, :expires, :me)');
+    $stmt->bindValue(':hash', hash('sha256', $code));
+    $stmt->bindValue(':client_id', 'https://app.com/');
+    $stmt->bindValue(':redirect_uri', 'https://app.com/redirect');
+    $stmt->bindValue(':state', 'xyz123');
+    $stmt->bindValue(':scope', 'create update');
+    $stmt->bindValue(':challenge', $codeChallenge);
+    $stmt->bindValue(':method', 'S256');
+    $stmt->bindValue(':expires', time() + 600);
+    $stmt->bindValue(':me', 'https://mysite.com/');
+    $stmt->execute();
 
     // 1. Client app calls auth endpoint to verify the code (POST with 'code' parameter)
     $_SERVER['REQUEST_METHOD'] = 'POST';
@@ -191,11 +195,24 @@ it('verifies authorization code and exchanges it for access token with PKCE S256
         ->and($json['scope'])->toBe('create update');
 
     // Code must be deleted after use
-    expect(file_exists($codesDir . '/' . md5($code) . '.json'))->toBeFalse();
+    $stmt = $db->prepare('SELECT COUNT(*) FROM indieauth_codes WHERE code_hash = :hash');
+    $stmt->bindValue(':hash', hash('sha256', $code));
+    $stmt->execute();
+    expect((int)$stmt->fetchColumn())->toBe(0);
 
     // 2. Token exchange flow
-    // Re-write code file
-    file_put_contents($codesDir . '/' . md5($code) . '.json', json_encode($codeData));
+    // Re-insert code
+    $stmt = $db->prepare('INSERT INTO indieauth_codes (code_hash, client_id, redirect_uri, state, scope, code_challenge, code_challenge_method, expires_at, me) VALUES (:hash, :client_id, :redirect_uri, :state, :scope, :challenge, :method, :expires, :me)');
+    $stmt->bindValue(':hash', hash('sha256', $code));
+    $stmt->bindValue(':client_id', 'https://app.com/');
+    $stmt->bindValue(':redirect_uri', 'https://app.com/redirect');
+    $stmt->bindValue(':state', 'xyz123');
+    $stmt->bindValue(':scope', 'create update');
+    $stmt->bindValue(':challenge', $codeChallenge);
+    $stmt->bindValue(':method', 'S256');
+    $stmt->bindValue(':expires', time() + 600);
+    $stmt->bindValue(':me', 'https://mysite.com/');
+    $stmt->execute();
 
     $_SERVER['REQUEST_METHOD'] = 'POST';
     $_SERVER['REQUEST_URI'] = '/token';

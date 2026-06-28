@@ -391,7 +391,7 @@ class IndieAuthHandler
 
         $db = \Indieinabox\Database::getDb();
         $stmt = $db->prepare('INSERT INTO indieauth_codes (code_hash, client_id, redirect_uri, state, scope, code_challenge, code_challenge_method, expires_at, me) VALUES (:hash, :client_id, :redirect_uri, :state, :scope, :challenge, :method, :expires, :me)');
-        $stmt->bindValue(':hash', md5($code), \PDO::PARAM_STR);
+        $stmt->bindValue(':hash', hash('sha256', $code), \PDO::PARAM_STR);
         $stmt->bindValue(':client_id', $clientId, \PDO::PARAM_STR);
         $stmt->bindValue(':redirect_uri', $redirectUri, \PDO::PARAM_STR);
         $stmt->bindValue(':state', $state, \PDO::PARAM_STR);
@@ -419,7 +419,7 @@ class IndieAuthHandler
 
         $db = \Indieinabox\Database::getDb();
         $stmt = $db->prepare('SELECT * FROM indieauth_codes WHERE code_hash = :hash');
-        $stmt->bindValue(':hash', md5($code), \PDO::PARAM_STR);
+        $stmt->bindValue(':hash', hash('sha256', $code), \PDO::PARAM_STR);
         $stmt->execute();
         $codeData = $stmt->fetch(\PDO::FETCH_ASSOC);
 
@@ -430,7 +430,7 @@ class IndieAuthHandler
 
         // Cleanup code (use once)
         $delStmt = $db->prepare('DELETE FROM indieauth_codes WHERE code_hash = :hash');
-        $delStmt->bindValue(':hash', md5($code), \PDO::PARAM_STR);
+        $delStmt->bindValue(':hash', hash('sha256', $code), \PDO::PARAM_STR);
         $delStmt->execute();
 
         if ($codeData['expires_at'] < time()) {
@@ -503,7 +503,7 @@ class IndieAuthHandler
 
         $db = \Indieinabox\Database::getDb();
         $stmt = $db->prepare('SELECT * FROM indieauth_codes WHERE code_hash = :hash');
-        $stmt->bindValue(':hash', md5($code), \PDO::PARAM_STR);
+        $stmt->bindValue(':hash', hash('sha256', $code), \PDO::PARAM_STR);
         $stmt->execute();
         $codeData = $stmt->fetch(\PDO::FETCH_ASSOC);
 
@@ -514,7 +514,7 @@ class IndieAuthHandler
 
         // Cleanup code
         $delStmt = $db->prepare('DELETE FROM indieauth_codes WHERE code_hash = :hash');
-        $delStmt->bindValue(':hash', md5($code), \PDO::PARAM_STR);
+        $delStmt->bindValue(':hash', hash('sha256', $code), \PDO::PARAM_STR);
         $delStmt->execute();
 
         if ($codeData['expires_at'] < time()) {
@@ -556,7 +556,7 @@ class IndieAuthHandler
         $token = 'ia_' . bin2hex(random_bytes(24));
 
         $insStmt = $db->prepare('INSERT INTO indieauth_tokens (token_hash, client_id, scope, me, created_at) VALUES (:hash, :client_id, :scope, :me, :created)');
-        $insStmt->bindValue(':hash', md5($token), \PDO::PARAM_STR);
+        $insStmt->bindValue(':hash', hash('sha256', $token), \PDO::PARAM_STR);
         $insStmt->bindValue(':client_id', $clientId, \PDO::PARAM_STR);
         $insStmt->bindValue(':scope', $codeData['scope'], \PDO::PARAM_STR);
         $insStmt->bindValue(':me', $codeData['me'], \PDO::PARAM_STR);
@@ -597,7 +597,7 @@ class IndieAuthHandler
 
         $db = \Indieinabox\Database::getDb();
         $stmt = $db->prepare('SELECT * FROM indieauth_tokens WHERE token_hash = :hash');
-        $stmt->bindValue(':hash', md5($token), \PDO::PARAM_STR);
+        $stmt->bindValue(':hash', hash('sha256', $token), \PDO::PARAM_STR);
         $stmt->execute();
         $tokenData = $stmt->fetch(\PDO::FETCH_ASSOC);
 

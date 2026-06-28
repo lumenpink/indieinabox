@@ -3,12 +3,15 @@
 /** @var \Indieinabox\Site $site */
 /** @var array $timeline */
 /** @var array $mentions */
+/** @var string $base */
+/** @var string $themeDir */
 ?>
 <!DOCTYPE html>
 <html lang="<?= $page->lang ?>">
 
 <head>
-    <?php include 'includes/head.php'; //NOSONAR ?>
+    <?php \Indieinabox\ThemeManager::loadView($base . DIRECTORY_SEPARATOR . $themeDir . DIRECTORY_SEPARATOR . 'views/includes/head.php', get_defined_vars()); //NOSONAR 
+    ?>
     <style>
         .timeline-container {
             max-width: 650px;
@@ -129,7 +132,8 @@
 </head>
 
 <body>
-    <?php include 'includes/header.php'; //NOSONAR ?>
+    <?php \Indieinabox\ThemeManager::loadView($base . DIRECTORY_SEPARATOR . $themeDir . DIRECTORY_SEPARATOR . 'views/includes/header.php', get_defined_vars()); //NOSONAR
+    ?>
 
     <div class="timeline-container">
         <div class="timeline-header">
@@ -190,7 +194,8 @@
         }
     </script>
 
-    <?php include 'includes/footer.php'; //NOSONAR ?>
+    <?php \Indieinabox\ThemeManager::loadView($base . DIRECTORY_SEPARATOR . $themeDir . DIRECTORY_SEPARATOR . 'views/includes/footer.php', get_defined_vars()); //NOSONAR 
+    ?>
 </body>
 
 </html>

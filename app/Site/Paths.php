@@ -28,7 +28,7 @@ class Paths
         string $baseDir = "/",
         string $outputDir = "public",
         string $contentDir = "content",
-        string $themeDir = "theme"
+        string $themeDir = "resources"
     ) {
         $this->baseDir = $baseDir;
         $this->outputDir = $outputDir;

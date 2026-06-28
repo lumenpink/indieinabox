@@ -23,6 +23,15 @@ beforeEach(function () {
     $backupPage = $page ?? null;
     $backupP = $p ?? null;
 
+    $reflection = new \ReflectionClass(\Indieinabox\Database::class);
+    $property = $reflection->getProperty('db');
+    $property->setAccessible(true);
+    $property->setValue(null, null);
+
+    \Indieinabox\Database::connect(':memory:');
+    $sql = file_get_contents(dirname(__DIR__, 2) . '/database.sql');
+    \Indieinabox\Database::getDb()->exec($sql);
+
     $translations = [
         'es' => [
             'Welcome Friend' => 'Bienvenido Amigo',
@@ -86,11 +95,12 @@ it('adds missing keys to translations file dynamically', function () {
     expect($translations['es'])->toHaveKey('Missing key example');
     expect($translations['es']['Missing key example'])->toBe('');
 
-    $virtualFilePath = 'vfs://root/data/translations.php';
-    expect(file_exists($virtualFilePath))->toBeTrue();
-
-    $content = file_get_contents($virtualFilePath);
-    expect($content)->toContain('Missing key example');
+    $db = \Indieinabox\Database::getDb();
+    $stmt = $db->query("SELECT * FROM translations WHERE phrase_key = 'Missing key example' AND lang = 'es'");
+    $row = $stmt->fetch(\PDO::FETCH_ASSOC);
+    
+    expect($row)->not->toBeFalse();
+    expect($row['phrase_value'])->toBe('');
 });
 
 it('formats translations using lowercase and slugize helpers', function () {

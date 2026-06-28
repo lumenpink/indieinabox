@@ -29,19 +29,25 @@ function cleanSandbox(string $dir): void
  */
 function writeSandboxConfig(string $sandbox): void
 {
-    $config = [
-        'base'               => 'testbase',
-        'title'              => 'Integration Site',
-        'sitename'           => 'My Integration Site',
-        'author'             => 'Agent Antigravity',
-        'fqdn'               => 'https://example.com/testbase',
-        'outputdir'          => 'public',
-        'contentdir'         => 'content',
-        'lang'               => 'en',
-        'htmlpostprocessing' => 'beautify',
-    ];
-    $yaml = new Yaml();
-    file_put_contents($sandbox . '/config.yml', $yaml->dump($config));
+    // Write database config to bypass installer logic
+    file_put_contents($sandbox . '/.config.php', "<?php\nreturn ['db_path' => '" . $sandbox . "/indieinabox.sqlite'];\n");
+    // Initialize the SQLite DB with the schema
+    $db = new \PDO('sqlite:' . $sandbox . '/indieinabox.sqlite');
+    $db->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+    $db->exec(file_get_contents(dirname(__DIR__, 2) . '/database.sql'));
+    
+    // Configure settings for the test
+    $stmt = $db->prepare('UPDATE settings SET value = :value WHERE key = :key');
+    $stmt->execute([':key' => 'base', ':value' => 'testbase']);
+    $stmt->execute([':key' => 'title', ':value' => 'Integration Site']);
+    $stmt->execute([':key' => 'sitename', ':value' => 'My Integration Site']);
+    $stmt->execute([':key' => 'author', ':value' => 'Agent Antigravity']);
+    $stmt->execute([':key' => 'fqdn', ':value' => 'https://example.com/testbase']);
+    $stmt->execute([':key' => 'outputdir', ':value' => 'public']);
+    $stmt->execute([':key' => 'contentdir', ':value' => 'content']);
+    $stmt->execute([':key' => 'lang', ':value' => '["en"]']);
+    $stmt->execute([':key' => 'htmlpostprocessing', ':value' => 'beautify']);
+    $db = null;
 }
 
 /**
@@ -49,7 +55,7 @@ function writeSandboxConfig(string $sandbox): void
  */
 function writeBasePageView(string $sandbox): void
 {
-    file_put_contents($sandbox . '/theme/views/page.php', <<<PHP
+    file_put_contents($sandbox . '/resources/views/page.php', <<<PHP
 <!DOCTYPE html>
 <html>
 <head>
@@ -62,7 +68,7 @@ function writeBasePageView(string $sandbox): void
 </html>
 PHP
     );
-    file_put_contents($sandbox . '/theme/views/indice.php', <<<PHP
+    file_put_contents($sandbox . '/resources/views/indice.php', <<<PHP
 <!DOCTYPE html>
 <html>
 <head>
@@ -83,8 +89,8 @@ PHP
 function linkLiveJs(string $sandbox): void
 {
     symlink(
-        dirname(dirname(__DIR__)) . '/theme/views/livejs/live.js',
-        $sandbox . '/theme/views/livejs/live.js'
+        dirname(dirname(__DIR__)) . '/resources/views/livejs/live.js',
+        $sandbox . '/resources/views/livejs/live.js'
     );
 }
 
@@ -104,8 +110,8 @@ function setupSandboxRunner(string $sandbox): void
         symlink($root . '/data', $sandbox . '/data');
     } else {
         copy($root . '/build.php', $sandbox . '/build.php');
-        symlink($root . '/bootstrap', $sandbox . '/bootstrap');
-        symlink($root . '/app', $sandbox . '/app');
+        exec("cp -r " . escapeshellarg($root . '/bootstrap') . " " . escapeshellarg($sandbox . '/bootstrap'));
+        exec("cp -r " . escapeshellarg($root . '/app') . " " . escapeshellarg($sandbox . '/app'));
         symlink($root . '/data', $sandbox . '/data');
     }
 }
@@ -114,10 +120,10 @@ beforeEach(function () use ($sandbox) {
     cleanSandbox($sandbox);
     mkdir($sandbox, 0777, true);
     mkdir($sandbox . '/content', 0777, true);
-    mkdir($sandbox . '/theme', 0777, true);
-    mkdir($sandbox . '/theme/views', 0777, true);
-    mkdir($sandbox . '/theme/views/livejs', 0777, true);
-    mkdir($sandbox . '/theme/static', 0777, true);
+    mkdir($sandbox . '/resources', 0777, true);
+    mkdir($sandbox . '/resources/views', 0777, true);
+    mkdir($sandbox . '/resources/views/livejs', 0777, true);
+    mkdir($sandbox . '/resources/static', 0777, true);
 });
 
 afterEach(function () use ($sandbox) {
@@ -138,7 +144,7 @@ it('executes the build pipeline and generates the static site correctly', functi
     // 3. Create views
     writeBasePageView($sandbox);
 
-    file_put_contents($sandbox . '/theme/views/feed.php', <<<PHP
+    file_put_contents($sandbox . '/resources/views/feed.php', <<<PHP
 <?php
 ob_start();
 echo '<?xml version="1.0" encoding="utf-8"?>';
@@ -168,7 +174,7 @@ PHP
     );
 
     // 4. Create static asset and live.js symlink
-    file_put_contents($sandbox . '/theme/static/app.css', 'body { color: red; }');
+    file_put_contents($sandbox . '/resources/static/app.css', 'body { color: red; }');
     linkLiveJs($sandbox);
 
     // 5. Setup symlinks to app, bootstrap, data, vendor
@@ -212,7 +218,7 @@ it('injects live-reload script when building with -d (dev mode)', function () us
     file_put_contents($sandbox . '/content/index.md', "---\ntitle: Home Page\nlayout: page\n---\nWelcome home!");
 
     // 3. Create views with livejs support and live.js symlink
-    file_put_contents($sandbox . '/theme/views/page.php', <<<PHP
+    file_put_contents($sandbox . '/resources/views/page.php', <<<PHP
 <!DOCTYPE html>
 <html>
 <head>
@@ -228,7 +234,7 @@ it('injects live-reload script when building with -d (dev mode)', function () us
 </html>
 PHP
     );
-    file_put_contents($sandbox . '/theme/views/indice.php', 'Dummy');
+    file_put_contents($sandbox . '/resources/views/indice.php', 'Dummy');
     linkLiveJs($sandbox);
 
     // 4. Setup symlinks to app, bootstrap, data, vendor

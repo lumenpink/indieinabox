@@ -315,7 +315,7 @@ class SiteBuilder
         $themeDir = $this->site->paths->themeDir ?? 'theme';
         ob_start();
         // phpcs:ignore Generic.PHP.ForbiddenFunctions.FoundWithAlternative
-        include $base . DIRECTORY_SEPARATOR . $themeDir . "/views/" . $page->metadata->layout . ".php"; // NOSONAR
+        ThemeManager::loadView($base . DIRECTORY_SEPARATOR . $themeDir . "/views/" . $page->metadata->layout . ".php", get_defined_vars());
         $fileContent = ob_get_clean();
 
         if (isset($this->site->options->htmlpostprocessing)) {
@@ -341,56 +341,31 @@ class SiteBuilder
         $themeDir = $this->site->paths->themeDir ?? 'theme';
         $file = $base . DIRECTORY_SEPARATOR . $themeDir . DIRECTORY_SEPARATOR . "views" . DIRECTORY_SEPARATOR . "feed" . ".php";
         if (file_exists($file) && is_readable($file)) {
-            include $file;
+            ThemeManager::loadView($file, get_defined_vars());
         }
     }
 
     public function copyAssets(string $dir): void
     {
-        if (!is_dir($dir)) {
-            return;
-        }
         $base = $this->site->paths->baseDir;
-        $entries = scandir($dir);
-        if ($entries === false) {
+        
+        if (!is_dir($dir) && !class_exists('\\DefaultTheme')) {
             return;
         }
 
-        foreach ($entries as $entry) {
-            if ($entry !== "." && $entry !== "..") {
-                $path = $dir . DIRECTORY_SEPARATOR . $entry;
-                if (is_file($path)) {
-                    $ext = pathinfo($path, PATHINFO_EXTENSION);
-                    if ($ext === "js" || $ext === "css") {
-                        $filename = pathinfo($path, PATHINFO_FILENAME);
-                        $assetsDir = $base . DIRECTORY_SEPARATOR . $this->site->paths->outputDir . DIRECTORY_SEPARATOR . "assets";
-
-                        if (!is_dir($assetsDir)) {
-                            mkdir($assetsDir, 0777, true);
-                        }
-
-                        copy(
-                            $path,
-                            $assetsDir . DIRECTORY_SEPARATOR . $filename . "." . $ext
-                        );
-                    }
-                } else {
-                    $this->copyAssets($path);
-                }
-            }
-        }
+        ThemeManager::copyViewAssets($dir, $base, $this->site->paths->outputDir);
     }
 
     public function copyStatic(string $dir): bool
     {
         $base = $this->site->paths->baseDir;
 
-        if (!is_dir($dir)) {
+        if (!is_dir($dir) && !class_exists('\\DefaultTheme')) {
             return false;
         }
 
         echo "Copying static files\n";
-        $this->copyStaticFiles($dir, $base);
+        ThemeManager::copyStaticFiles($dir, $base, $this->site->paths->outputDir);
 
         if ($this->site->options->dev) {
             $this->copyLiveJsFile($base);
@@ -914,7 +889,7 @@ class SiteBuilder
                         $site = $this->site;
                         $page = clone $p;
                         $page->relpath = $monthPage->relpath;
-                        include $summaryFile;
+                        ThemeManager::loadView($summaryFile, get_defined_vars());
                         $monthContent .= ob_get_clean();
                     } else {
                         $monthContent .= $p->content;
@@ -958,7 +933,7 @@ class SiteBuilder
                     $site = $this->site;
                     $page = clone $p;
                     $page->relpath = $indexPage->relpath;
-                    include $summaryFile;
+                    ThemeManager::loadView($summaryFile, get_defined_vars());
                     $indexContent .= ob_get_clean();
                 } else {
                     $indexContent .= $p->content;

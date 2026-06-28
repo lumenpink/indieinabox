@@ -780,7 +780,7 @@ class Helper
         ob_start();
         $themeDir = $site->paths->themeDir ?? 'theme';
         foreach ($localpages as $page) {
-            include $base . DIRECTORY_SEPARATOR . $themeDir . DIRECTORY_SEPARATOR . "views/includes/summary.php";
+            ThemeManager::loadView($base . DIRECTORY_SEPARATOR . $themeDir . DIRECTORY_SEPARATOR . "views/includes/summary.php", get_defined_vars());
             $count++;
             if ($count >= 10) {
                 break;

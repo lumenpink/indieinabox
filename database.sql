@@ -22,7 +22,7 @@ INSERT OR REPLACE INTO settings (key, value) VALUES ('lang', '["en","pt","es"]')
 INSERT OR REPLACE INTO settings (key, value) VALUES ('defaultlang', 'en');
 INSERT OR REPLACE INTO settings (key, value) VALUES ('support', '["md","txt","html","htm"]');
 INSERT OR REPLACE INTO settings (key, value) VALUES ('htmlpostprocessing', 'minify');
-INSERT OR REPLACE INTO settings (key, value) VALUES ('prettylinks', '');
+INSERT OR REPLACE INTO settings (key, value) VALUES ('prettylinks', '1');
 INSERT OR REPLACE INTO settings (key, value) VALUES ('defaultcategory', 'General');
 INSERT OR REPLACE INTO settings (key, value) VALUES ('dev', '');
 INSERT OR REPLACE INTO settings (key, value) VALUES ('twtxt', '{"nick":"lumen","description":"","avatar":"","following":[],"hubs":["https:\/\/search.twtxt.net\/"]}');
@@ -157,7 +157,7 @@ INSERT INTO url_translations (lang, slug_key, slug_value) VALUES ('es', 'dominio
 INSERT INTO url_translations (lang, slug_key, slug_value) VALUES ('en', 'ideias-de-tatuagens', 'tattoo-ideas');
 INSERT INTO url_translations (lang, slug_key, slug_value) VALUES ('es', 'ideias-de-tatuagens', 'ideas-de-tatuajes');
 INSERT OR REPLACE INTO settings (key, value) VALUES ('copyright', '');
-INSERT OR IGNORE INTO webmentions (hash, payload_json) VALUES ('46b3931b9959c927df4fc65fdee94b07', '[{"source":"http:\/\/127.0.0.1:9200\/source_post.html","target":"https:\/\/example.com\/about","title":"Webmention from 127.0.0.1","text":"","date":"2026-06-17T12:30:49+00:00"}]');
+
 
 INSERT INTO settings (key, value) VALUES ('intl', '{"pt-br":{"localizeddate":{"date":"d \\d\\e F \\de\\ Y","time":"H:iP","full":"l, d \\d\\e F \\d\\e Y \\à\\s H:i e","shortdate":"d\/m\/Y","shorttime":"H:i","shortfull":"d\/m\/Y H:i","daysofweek":["Domingo","Segunda-feira","Terça-feira","Quarta-feira","Quinta-feira","Sexta-feira","Sábado"],"months":["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"]}},"en":{"localizeddate":{"date":"F d, Y","time":"h:i A","full":"l, F d, Y \\a\\t h:i A","shortdate":"m\/d\/Y","shorttime":"h:i A","shortfull":"m\/d\/Y h:i A","daysofweek":["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],"months":["January","February","March","April","May","June","July","August","September","October","November","December"]}},"es":{"localizeddate":{"date":"d \\d\\e F \\d\\e Y","time":"H:iP","full":"l, d \\d\\e F \\d\\e Y \\à\\s H:iP","shortdate":"d\/m\/Y","shorttime":"H:i","shortfull":"d\/m\/Y H:i","daysofweek":["Domingo","Lunes","Martes","Miércoles","Jueves","Viernes","Sábado"],"months":["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"]}}}');
 INSERT INTO settings (key, value) VALUES ('originaldaysofweek', '["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"]');

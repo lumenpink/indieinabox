@@ -11,6 +11,15 @@ beforeEach(function () use ($tempDir) {
     if (!is_dir($tempDir)) {
         mkdir($tempDir, 0777, true);
     }
+    
+    $reflection = new \ReflectionClass(\Indieinabox\Database::class);
+    $property = $reflection->getProperty('db');
+    $property->setAccessible(true);
+    $property->setValue(null, null);
+    
+    \Indieinabox\Database::connect(':memory:');
+    $sql = file_get_contents(dirname(__DIR__, 2) . '/database.sql');
+    \Indieinabox\Database::getDb()->exec($sql);
 });
 
 afterEach(function () use ($tempDir) {
@@ -80,12 +89,15 @@ it('saves webmention data correctly and aggregates mentions without duplicating 
 
     $handler->saveWebmention($source, $target, $meta);
 
-    $expectedFilename = md5('about') . '.json';
-    $expectedFile = $tempDir . '/data/webmentions/' . $expectedFilename;
+    $db = \Indieinabox\Database::getDb();
+    $stmt = $db->query("SELECT payload_json FROM webmentions WHERE hash = '" . md5('about') . "'");
+    $row = $stmt->fetch(\PDO::FETCH_ASSOC);
+    expect($row)->not->toBeFalse();
 
-    expect(file_exists($expectedFile))->toBeTrue();
-
-    $content = json_decode(file_get_contents($expectedFile), true);
+    $content = json_decode($row['payload_json'], true);
+    if (count($content) !== 1) {
+        var_dump($content);
+    }
     expect($content)->toHaveCount(1);
     expect($content[0]['source'])->toBe($source);
     expect($content[0]['title'])->toBe('Great Post!');
@@ -93,12 +105,14 @@ it('saves webmention data correctly and aggregates mentions without duplicating 
 
     // Save another webmention from a different source
     $handler->saveWebmention('https://anotherblog.com/post2', $target, ['title' => 'Reply', 'text' => 'Cool.']);
-    $content = json_decode(file_get_contents($expectedFile), true);
+    $stmt = $db->query("SELECT payload_json FROM webmentions WHERE hash = '" . md5('about') . "'");
+    $content = json_decode($stmt->fetchColumn(), true);
     expect($content)->toHaveCount(2);
 
     // Save again from same source (updates/overwrites the existing one from that source)
     $handler->saveWebmention($source, $target, ['title' => 'Updated Great Post!', 'text' => 'Loved reading this. (v2)']);
-    $content = json_decode(file_get_contents($expectedFile), true);
+    $stmt = $db->query("SELECT payload_json FROM webmentions WHERE hash = '" . md5('about') . "'");
+    $content = json_decode($stmt->fetchColumn(), true);
     expect($content)->toHaveCount(2);
     
     // The one from post1 should be updated

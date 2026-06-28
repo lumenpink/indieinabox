@@ -36,7 +36,7 @@ if (empty($config)) {
         'fqdn' => 'http://localhost:8080',
         'outputdir' => 'public',
         'contentdir' => 'content',
-        'themedir' => 'theme',
+        'themedir' => 'resources',
         'lang' => 'en',
         'defaultlang' => 'en',
         'support' => ['md', 'txt', 'html', 'htm']

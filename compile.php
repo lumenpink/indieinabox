@@ -138,6 +138,54 @@ $runnerCode .= "    \$__SQL_SCHEMA__ = <<< 'SQL'\n";
 $runnerCode .= $sqlContent . "\n";
 $runnerCode .= "SQL;\n\n";
 
+// Inject embedded default theme
+function getThemeFiles(string $dir): array {
+    if (!is_dir($dir)) return [];
+    $files = [];
+    $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($dir));
+    foreach ($iterator as $file) {
+        if ($file->isFile() && $file->getBasename() !== '.gitkeep' && $file->getBasename() !== '.gitignore') {
+            $files[$file->getPathname()] = file_get_contents($file->getPathname());
+        }
+    }
+    return $files;
+}
+
+$themeViews = getThemeFiles($base . '/resources/views');
+$themeStatic = getThemeFiles($base . '/resources/static');
+
+$runnerCode .= "class DefaultTheme {\n";
+$runnerCode .= "    private static \$views = [\n";
+foreach ($themeViews as $path => $content) {
+    $rel = str_replace($base . '/resources/', '', $path);
+    $runnerCode .= "        '" . addslashes(str_replace('\\', '/', $rel)) . "' => '" . base64_encode($content) . "',\n";
+}
+$runnerCode .= "    ];\n";
+$runnerCode .= "    private static \$staticFiles = [\n";
+foreach ($themeStatic as $path => $content) {
+    $rel = str_replace($base . '/resources/', '', $path);
+    $runnerCode .= "        '" . addslashes(str_replace('\\', '/', $rel)) . "' => '" . base64_encode($content) . "',\n";
+}
+$runnerCode .= "    ];\n";
+$runnerCode .= "    public static function getView(string \$path): ?string {
+        return isset(self::\$views[\$path]) ? base64_decode(self::\$views[\$path]) : null;
+    }
+    public static function getViews(): array {
+        \$files = [];
+        foreach (self::\$views as \$path => \$b64) {
+            \$files[\$path] = base64_decode(\$b64);
+        }
+        return \$files;
+    }\n";
+$runnerCode .= "    public static function getStaticFiles(): array {\n";
+$runnerCode .= "        \$files = [];\n";
+$runnerCode .= "        foreach (self::\$staticFiles as \$path => \$b64) {\n";
+$runnerCode .= "            \$files[\$path] = base64_decode(\$b64);\n";
+$runnerCode .= "        }\n";
+$runnerCode .= "        return \$files;\n";
+$runnerCode .= "    }\n";
+$runnerCode .= "}\n\n";
+
 // Inject install.php logic adapted for the single file
 $runnerCode .= <<<'EOT'
     $configFile = $base . DIRECTORY_SEPARATOR . '.config.php';

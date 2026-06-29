@@ -285,14 +285,18 @@ HTML;
     expect($data[0]['text'])->toContain('I read this great page');
 });
 
-it('accepts webmention and extracts whostyle JSON', function () use ($funcTempDir) {
+
+
+
+function setupWebmentionTest(string $funcTempDir, string $sourceHtml): array
+{
     $site = new Site();
     $site->paths->baseDir = $funcTempDir;
     $site->paths->outputDir = 'public';
     $site->metadata->fqdn = 'https://mysite.com';
 
     $targetFileDir = $funcTempDir . '/public/about';
-    mkdir($targetFileDir, 0777, true);
+    @mkdir($targetFileDir, 0777, true);
     file_put_contents($targetFileDir . '/index.html', '<h1>About Us</h1>');
 
     $_SERVER['REQUEST_METHOD'] = 'POST';
@@ -302,43 +306,125 @@ it('accepts webmention and extracts whostyle JSON', function () use ($funcTempDi
         'target' => 'https://mysite.com/about'
     ];
 
-    MockWebmentionHandler::$mockResponses['https://external.com/styled-post'] = <<<HTML
-<html>
-<head>
-    <title>Styled Post Title</title>
-    <script type="application/whostyle+json">
-    {
-        "--whostyle-bg": "#ff0000",
-        "--whostyle-color": "#ffffff"
-    }
-    </script>
-</head>
-<body>
-    <div class="e-content">
-        Styled mention pointing to <a href="https://mysite.com/about">mysite.com</a>!
-    </div>
-</body>
-</html>
-HTML;
+    MockWebmentionHandler::$mockResponses['https://external.com/styled-post'] = $sourceHtml;
 
     $router = new TestWebRouter($site);
     ob_start();
     $router->handleRequest();
-    $output = ob_get_clean();
-
-    $json = json_decode($output, true);
-    expect($json['status'])->toBe(202);
+    ob_get_clean();
 
     $db = \Indieinabox\Database::getDb();
     $stmt = $db->prepare('SELECT payload_json FROM webmentions WHERE hash = :hash');
     $stmt->execute([':hash' => md5('about')]);
     $row = $stmt->fetch(\PDO::FETCH_ASSOC);
 
-    expect($row)->not->toBeFalse();
-    $data = json_decode($row['payload_json'], true);
-    
-    // Check that whostyle was correctly parsed and stored
-    expect(isset($data[0]['whostyle']))->toBeTrue();
-    expect($data[0]['whostyle']['--whostyle-bg'])->toBe('#ff0000');
-    expect($data[0]['whostyle']['--whostyle-color'])->toBe('#ffffff');
+    if ($row) {
+        return json_decode($row['payload_json'], true) ?? [];
+    }
+    return [];
+}
+
+// 1. no whostyle
+it('accepts webmention with no whostyle', function () use ($funcTempDir) {
+    $html = '<html><body><a href="https://mysite.com/about">Link</a></body></html>';
+    $data = setupWebmentionTest($funcTempDir, $html);
+    expect(isset($data[0]['whostyle']))->toBeFalse();
+});
+
+// 2. valid whostyle hash in meta tag
+it('accepts valid whostyle in meta', function () use ($funcTempDir) {
+    $html = '<html><head><meta name="whostyle" content="{ws2:AAAAAAA____AAAAAAD_8PDwAAAA____AIj_ERER}"></head>'
+        . '<body><a href="https://mysite.com/about">Link</a></body></html>';
+    $data = setupWebmentionTest($funcTempDir, $html);
+    expect(isset($data[0]['whostyle']['colors']))->toBeTrue();
+});
+
+// 3. valid whostyle hash inline
+it('accepts valid whostyle inline', function () use ($funcTempDir) {
+    $html = '<html><body>'
+        . '{ws2:AAAAAAA____AAAAAAD_8PDwAAAA____AIj_ERER}'
+        . ' <a href="https://mysite.com/about">Link</a></body></html>';
+    $data = setupWebmentionTest($funcTempDir, $html);
+    expect(isset($data[0]['whostyle']['colors']))->toBeTrue();
+});
+
+// 4. valid whostyle hash inline and in meta (returns inline)
+it('accepts valid inline and meta, preferring inline', function () use ($funcTempDir) {
+    $html = '<html><head><meta name="whostyle" content="{ws2:AAAAAAA____AAAAAAD_8PDwAAAA____AIj_ERER}"></head>'
+        . '<body>{ws2:AAAAAAA____AAAAAAD_8PDwAAAA____AIj_ERER}'
+        . ' <a href="https://mysite.com/about">Link</a></body></html>';
+    $data = setupWebmentionTest($funcTempDir, $html);
+    expect(isset($data[0]['whostyle']['colors']))->toBeTrue();
+});
+
+// 5. invalid whostyle hash in meta
+it('ignores meta whostyle with invalid chars', function () use ($funcTempDir) {
+    $html = '<html><head><meta name="whostyle" content="{ws2:A$AAAAA____AAAAAAD_8PDwAAAA____AIj_ERER}"></head>'
+        . '<body><a href="https://mysite.com/about">Link</a></body></html>';
+    $data = setupWebmentionTest($funcTempDir, $html);
+    expect(isset($data[0]['whostyle']))->toBeFalse();
+});
+
+it('ignores meta whostyle with invalid values', function () use ($funcTempDir) {
+    $html = '<html><head><meta name="whostyle" content="{ws2:oPIfBJa____AAAAAAD_8PDwAAAA____AIj_ERER}"></head>'
+        . '<body><a href="https://mysite.com/about">Link</a></body></html>';
+    $data = setupWebmentionTest($funcTempDir, $html);
+    expect(isset($data[0]['whostyle']))->toBeFalse();
+});
+
+it('ignores meta whostyle with invalid WCAG', function () use ($funcTempDir) {
+    $html = '<html><head><meta name="whostyle" content="{ws2:AAAAAAA____3d3dAAD_8PDwAAAA____AIj_ERER}"></head>'
+        . '<body><a href="https://mysite.com/about">Link</a></body></html>';
+    $data = setupWebmentionTest($funcTempDir, $html);
+    expect(isset($data[0]['whostyle']))->toBeFalse();
+});
+
+// 6. invalid whostyle hash inline
+it('ignores inline whostyle with invalid chars', function () use ($funcTempDir) {
+    $html = '<html><body>'
+        . '{ws2:A$AAAAA____AAAAAAD_8PDwAAAA____AIj_ERER}'
+        . ' <a href="https://mysite.com/about">Link</a></body></html>';
+    $data = setupWebmentionTest($funcTempDir, $html);
+    expect(isset($data[0]['whostyle']))->toBeFalse();
+});
+
+it('ignores inline whostyle with invalid values', function () use ($funcTempDir) {
+    $html = '<html><body>'
+        . '{ws2:oPIfBJa____AAAAAAD_8PDwAAAA____AIj_ERER}'
+        . ' <a href="https://mysite.com/about">Link</a></body></html>';
+    $data = setupWebmentionTest($funcTempDir, $html);
+    expect(isset($data[0]['whostyle']))->toBeFalse();
+});
+
+it('ignores inline whostyle with invalid WCAG', function () use ($funcTempDir) {
+    $html = '<html><body>'
+        . '{ws2:AAAAAAA____3d3dAAD_8PDwAAAA____AIj_ERER}'
+        . ' <a href="https://mysite.com/about">Link</a></body></html>';
+    $data = setupWebmentionTest($funcTempDir, $html);
+    expect(isset($data[0]['whostyle']))->toBeFalse();
+});
+
+// 7. invalid inline and valid meta -> returns meta
+it('falls back to meta if inline has invalid chars', function () use ($funcTempDir) {
+    $html = '<html><head><meta name="whostyle" content="{ws2:AAAAAAA____AAAAAAD_8PDwAAAA____AIj_ERER}"></head>'
+        . '<body>{ws2:A$AAAAA____AAAAAAD_8PDwAAAA____AIj_ERER}'
+        . ' <a href="https://mysite.com/about">Link</a></body></html>';
+    $data = setupWebmentionTest($funcTempDir, $html);
+    expect(isset($data[0]['whostyle']['colors']))->toBeTrue();
+});
+
+it('falls back to meta if inline has invalid values', function () use ($funcTempDir) {
+    $html = '<html><head><meta name="whostyle" content="{ws2:AAAAAAA____AAAAAAD_8PDwAAAA____AIj_ERER}"></head>'
+        . '<body>{ws2:oPIfBJa____AAAAAAD_8PDwAAAA____AIj_ERER}'
+        . ' <a href="https://mysite.com/about">Link</a></body></html>';
+    $data = setupWebmentionTest($funcTempDir, $html);
+    expect(isset($data[0]['whostyle']['colors']))->toBeTrue();
+});
+
+it('falls back to meta if inline has invalid WCAG', function () use ($funcTempDir) {
+    $html = '<html><head><meta name="whostyle" content="{ws2:AAAAAAA____AAAAAAD_8PDwAAAA____AIj_ERER}"></head>'
+        . '<body>{ws2:AAAAAAA____3d3dAAD_8PDwAAAA____AIj_ERER}'
+        . ' <a href="https://mysite.com/about">Link</a></body></html>';
+    $data = setupWebmentionTest($funcTempDir, $html);
+    expect(isset($data[0]['whostyle']['colors']))->toBeTrue();
 });

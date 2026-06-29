@@ -29,13 +29,12 @@ if ($db) {
                 
                 foreach ($mentions as $mention) {
                     $styleStr = "";
-                    if (isset($mention['whostyle']) && is_array($mention['whostyle'])) {
+                    if (isset($mention['whostyle']['colors']) && is_array($mention['whostyle']['colors'])) {
+                        $colors = $mention['whostyle']['colors'];
                         $styles = [];
-                        foreach ($mention['whostyle'] as $k => $v) {
-                            if (str_starts_with((string)$k, '--whostyle-')) {
-                                $styles[] = htmlspecialchars((string)$k) . ': ' . htmlspecialchars((string)$v);
-                            }
-                        }
+                        if (isset($colors['dark_bg'])) $styles[] = '--whostyle-bg: ' . htmlspecialchars($colors['dark_bg']);
+                        if (isset($colors['dark_text'])) $styles[] = '--whostyle-color: ' . htmlspecialchars($colors['dark_text']);
+                        if (isset($colors['dark_accent'])) $styles[] = '--whostyle-accent: ' . htmlspecialchars($colors['dark_accent']);
                         if (!empty($styles)) {
                             $styleStr = implode('; ', $styles) . ';';
                         }

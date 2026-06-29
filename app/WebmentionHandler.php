@@ -148,49 +148,11 @@ class WebmentionHandler
             $content = substr($content, 0, 297) . '...';
         }
 
-        // Extract Whostyle JSON (Phase 11.5)
+        // Extract Whostyles V2 Hash (Phase 12)
         $whostyleData = null;
-
-        // 1. Check for inline whostyle script
-        $whostyleScript = $xpath->query('//script[@type="application/whostyle+json"]')->item(0);
-        if ($whostyleScript) {
-            $jsonData = json_decode($whostyleScript->nodeValue, true);
-            if (is_array($jsonData)) {
-                $whostyleData = $jsonData;
-            }
-        }
-
-        // 2. If not found, check for external whostyle link
-        if (!$whostyleData) {
-            $whostyleLink = $xpath->query('//link[@rel="whostyle"]')->item(0);
-            if ($whostyleLink instanceof \DOMElement) {
-                $href = $whostyleLink->getAttribute('href');
-                if ($href) {
-                    $sourceParts = parse_url($source);
-                    $base = ($sourceParts['scheme'] ?? 'http') . '://' . ($sourceParts['host'] ?? '');
-                    if (isset($sourceParts['port'])) {
-                        $base .= ':' . $sourceParts['port'];
-                    }
-                    if (substr($href, 0, 1) === '/') {
-                        $resolvedHref = $base . '/' . ltrim($href, '/');
-                    } elseif (strncasecmp($href, 'http', 4) !== 0) {
-                        $path = $sourceParts['path'] ?? '/';
-                        $dir = dirname($path);
-                        $dirClean = ($dir === '/' || $dir === '\\' || $dir === '.') ? '' : trim($dir, '/');
-                        $resolvedHref = $base . ($dirClean !== '' ? '/' . $dirClean : '') . '/' . ltrim($href, '/');
-                    } else {
-                        $resolvedHref = $href;
-                    }
-
-                    $externalWhostyle = $this->fetchUrl($resolvedHref);
-                    if ($externalWhostyle !== false) {
-                        $jsonData = json_decode($externalWhostyle, true);
-                        if (is_array($jsonData)) {
-                            $whostyleData = $jsonData;
-                        }
-                    }
-                }
-            }
+        $hash = \Indieinabox\Whostyles::discoverInline($html);
+        if ($hash) {
+            $whostyleData = \Indieinabox\Whostyles::decode($hash);
         }
 
         return [

@@ -10,14 +10,14 @@ class ThemeManager
      * Includes a view file. If the file exists on disk, it uses standard include.
      * Otherwise, it tries to load it from the embedded DefaultTheme fallback.
      *
-     * @param string $filePath
-     * @param array<string, mixed> $vars
+     * @param string $__tm_view_path
+     * @param array<string, mixed> $data
      */
-    public static function loadView(string $filePath, array $vars = []): void
+    public static function loadView(string $__tm_view_path, array $data = []): void
     {
-        extract($vars);
-        if (file_exists($filePath)) {
-            include $filePath;
+        extract($data, EXTR_SKIP);
+        if (file_exists($__tm_view_path)) {
+            include $__tm_view_path;
             return;
         }
 
@@ -28,11 +28,12 @@ class ThemeManager
 
             // Extract relative path inside the theme folder
             // e.g. /var/www/resources/views/page.php -> views/page.php
-            $pos = strpos($filePath, DIRECTORY_SEPARATOR . $themeDir . DIRECTORY_SEPARATOR);
+            $pos = strpos($__tm_view_path, DIRECTORY_SEPARATOR . $themeDir . DIRECTORY_SEPARATOR);
             if ($pos !== false) {
-                $relativePath = substr($filePath, $pos + strlen(DIRECTORY_SEPARATOR . $themeDir . DIRECTORY_SEPARATOR));
+                $dirLen = strlen(DIRECTORY_SEPARATOR . $themeDir . DIRECTORY_SEPARATOR);
+                $relativePath = substr($__tm_view_path, $pos + $dirLen);
             } else {
-                $relativePath = basename($filePath);
+                $relativePath = basename($__tm_view_path);
             }
 
             // Standardize path separator to forward slash for the embedded keys
@@ -46,7 +47,7 @@ class ThemeManager
         }
 
         // If neither exists, print a helpful error instead of crashing silently
-        echo "<!-- Theme file not found: " . htmlspecialchars($filePath) . " -->\n";
+        echo "<!-- Theme file not found: " . htmlspecialchars($__tm_view_path) . " -->\n";
     }
 
     /**
@@ -71,7 +72,8 @@ class ThemeManager
                         $destPath = $relativePath;
                     }
 
-                    $destination = $base . DIRECTORY_SEPARATOR . $outputDir . DIRECTORY_SEPARATOR . ltrim($destPath, '/');
+                    $destination = $base . DIRECTORY_SEPARATOR . $outputDir . DIRECTORY_SEPARATOR . 
+                                   ltrim($destPath, '/');
                     $destDir = dirname($destination);
                     if (!is_dir($destDir)) {
                         mkdir($destDir, 0777, true);

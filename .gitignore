@@ -15,6 +15,6 @@ docs/coverage/
 .config.yml
 data/indieauth/
 data/twtxt_cache/
-*.sqlite
+*.sqlite*
 .config.php
 sonarqube

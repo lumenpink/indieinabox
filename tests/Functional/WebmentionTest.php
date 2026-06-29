@@ -39,7 +39,7 @@ beforeEach(function () use ($funcTempDir) {
     $ref = new \ReflectionClass(\Indieinabox\Database::class);
     $prop = $ref->getProperty('db');
     $prop->setAccessible(true);
-    $prop->setValue(null);
+    $prop->setValue(null, null);
     
     $testDbPath = $funcTempDir . '/test.sqlite';
     \Indieinabox\Database::connect($testDbPath);

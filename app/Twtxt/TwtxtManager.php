@@ -73,7 +73,7 @@ class TwtxtManager
 
         if ($displayMode === 'full_content') {
             $content = self::cleanMessage($page->rawBody ?? '');
-            return preg_replace('/^\[[A-Z]{2,}\]\s+/', '', $content);
+            return preg_replace('/^\[[A-Z]{2,}\]\s+/', '', $content) ?? '';
         }
 
         if ($displayMode === 'thumbnail_snippet') {
@@ -218,7 +218,7 @@ class TwtxtManager
             '/(?<!\w)#(\w+)/u',
             '<a href="https://hub.twtxt.org/search?tag=$1" class="hashtag">#$1</a>',
             $html
-        );
+        ) ?? '';
 
         return $html;
     }

@@ -374,54 +374,7 @@ class SiteBuilder
         return true;
     }
 
-    private function copyStaticFiles(string $dir, string $base): void
-    {
-        $entries = Helper::getDirContents($dir);
 
-        foreach ($entries as $entry) {
-            if ($this->shouldSkipEntry($entry)) {
-                continue;
-            }
-
-            $destination = $this->getDestinationPath($entry, $dir, $base);
-
-            if ($this->shouldCopyFile($entry, $destination)) {
-                $this->ensureDestinationDirectoryExists($destination);
-                copy($entry, $destination);
-            }
-        }
-    }
-
-    private function shouldSkipEntry(string $entry): bool
-    {
-        return $entry === "." || $entry === "..";
-    }
-
-    private function getDestinationPath(string $entry, string $dir, string $base): string
-    {
-        $path = str_replace($dir . DIRECTORY_SEPARATOR, "", $entry);
-        $filepath = pathinfo($path, PATHINFO_DIRNAME);
-        $fullfilename = pathinfo($path, PATHINFO_BASENAME);
-
-        return $base . DIRECTORY_SEPARATOR . $this->site->paths->outputDir . DIRECTORY_SEPARATOR . $filepath . DIRECTORY_SEPARATOR . $fullfilename;
-    }
-
-    private function shouldCopyFile(string $source, string $destination): bool
-    {
-        return is_file($source)
-            && (!is_file($destination)
-                || filemtime($source) > filemtime($destination)
-                || $this->site->options->forceStaticOverride);
-    }
-
-    private function ensureDestinationDirectoryExists(string $destination): void
-    {
-        $directory = pathinfo($destination, PATHINFO_DIRNAME);
-
-        if (!is_dir($directory)) {
-            mkdir($directory, 0777, true);
-        }
-    }
 
     private function copyLiveJsFile(string $base): void
     {

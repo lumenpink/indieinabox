@@ -13,7 +13,6 @@
         <ignoreFiles>
             <directory name="vendor" />
             <file name="app/Yaml.php" />
-            <file name="app/functions/parsedown.php" />
             <file name="app/functions/beautify-html.php" />
             <file name="app/functions/HtmlMinifier.php" />
         </ignoreFiles>
@@ -30,7 +29,6 @@
         <!-- file_get_contents é uma source de tainted data -->
         <ignoreFiles>
             <!-- Excluir legado onde não há injeção de entrada do usuário -->
-            <file name="app/functions/parsedown.php" />
             <file name="app/Yaml.php" />
         </ignoreFiles>
     </taintAnalysis>

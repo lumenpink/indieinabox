@@ -92,7 +92,7 @@ class WebmentionHandler
     /**
      * @param string $source
      * @param string $target
-     * @return array{success: bool, message?: string, content?: array{title: string, text: string}}
+     * @return array{success: bool, message?: string, content?: array{title: string, text: string, whostyle?: array<array-key, mixed>|null}}
      */
     public function verifySourceLink(string $source, string $target): array
     {

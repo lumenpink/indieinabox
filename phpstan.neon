@@ -6,12 +6,9 @@ parameters:
     - build.php
   excludePaths:
     - app/Yaml.php
-    - app/functions/parsedown.php
     - app/functions/beautify-html.php
     - app/functions/HtmlMinifier.php
-    - app/Parsedown
   bootstrapFiles:
-    - app/functions/parsedown.php
     - app/functions/beautify-html.php
     - app/functions/HtmlMinifier.php
     - app/Yaml.php

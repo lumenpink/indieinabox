@@ -29,7 +29,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['db_path'])) {
                     $db->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
                     $sql = file_get_contents($schemaFile);
                     $db->exec($sql);
-                    $db = null; // Close connection
                     
                     // Cleanup optional: unlink($schemaFile);
                     // Since it's development, we'll keep it or unlink it depending on preferences. Let's keep it.

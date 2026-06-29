@@ -27,7 +27,7 @@ mb_internal_encoding("UTF-8");
 
 $config = \Indieinabox\Database::getAllSettings();
 $config['kinds'] = \Indieinabox\Database::getKinds();
-if (empty($config)) {
+if (empty($config['title'])) {
     // Default fallback if DB is somehow empty
     $config = [
         'base' => '/',
@@ -153,7 +153,6 @@ if (php_sapi_name() === 'cli') {
     } else {
         $builder = new \Indieinabox\SiteBuilder($site);
         $builder->build();
-        $pages = $builder->getPages();
         echo "Build complete\n";
     }
 } else {

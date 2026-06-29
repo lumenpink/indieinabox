@@ -8,13 +8,11 @@ use PDO;
 
 class MicrosubHandler
 {
-    private Site $site;
     private IndieAuthHandler $authHandler;
     private PDO $db;
 
     public function __construct(Site $site)
     {
-        $this->site = $site;
         $this->authHandler = new IndieAuthHandler($site);
         $this->db = Database::getDb();
     }

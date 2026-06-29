@@ -96,9 +96,9 @@ function minifyhtml(string $html): string
  * @param bool $keepRootDir
  * @return bool
  */
-function recursive_rmdir(string $dir, bool $keepRootDir = false): bool
+function recursiveRmdir(string $dir, bool $keepRootDir = false): bool
 {
-    return Helper::recursive_rmdir($dir, $keepRootDir);
+    return Helper::recursiveRmdir($dir, $keepRootDir);
 }
 
 /**
@@ -124,9 +124,9 @@ function sortByDate(array $pages): array
  * @param array<string, mixed> $array
  * @return void
  */
-function recursive_ksort(array &$array): void
+function recursiveKsort(array &$array): void
 {
-    Helper::recursive_ksort($array);
+    Helper::recursiveKsort($array);
 }
 
 function getoriginalcontent(string $slug, string $lang): string

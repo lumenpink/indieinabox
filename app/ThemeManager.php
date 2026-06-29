@@ -25,7 +25,7 @@ class ThemeManager
         if (class_exists('\\DefaultTheme')) {
             global $site;
             $themeDir = isset($site) && isset($site->paths->themeDir) ? $site->paths->themeDir : 'resources';
-            
+
             // Extract relative path inside the theme folder
             // e.g. /var/www/resources/views/page.php -> views/page.php
             $pos = strpos($filePath, DIRECTORY_SEPARATOR . $themeDir . DIRECTORY_SEPARATOR);
@@ -34,17 +34,17 @@ class ThemeManager
             } else {
                 $relativePath = basename($filePath);
             }
-            
+
             // Standardize path separator to forward slash for the embedded keys
             $relativePath = str_replace('\\', '/', $relativePath);
-            
+
             $content = \DefaultTheme::getView($relativePath);
             if ($content !== null) {
                 eval('?>' . $content);
                 return;
             }
         }
-        
+
         // If neither exists, print a helpful error instead of crashing silently
         echo "<!-- Theme file not found: " . htmlspecialchars($filePath) . " -->\n";
     }
@@ -70,7 +70,7 @@ class ThemeManager
                     } else {
                         $destPath = $relativePath;
                     }
-                    
+
                     $destination = $base . DIRECTORY_SEPARATOR . $outputDir . DIRECTORY_SEPARATOR . ltrim($destPath, '/');
                     $destDir = dirname($destination);
                     if (!is_dir($destDir)) {

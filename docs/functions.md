@@ -10,7 +10,7 @@ The core generator pipeline incorporates several procedural functions under `app
 *   **`getDirContents(string $dir, array &$results)`**: Returns a flat array of absolute paths for all files inside a target directory.
 *   **`slugize(string $text)`**: Converts accented/special string characters into lowercase, hyphen-separated slugs (safe for URLs).
 *   **`utf8ToAscii(string $str)`**: Low-level helper that replaces UTF-8 multibyte characters with ASCII equivalents using translation tables loaded from `data/chars.php`.
-*   **`recursive_rmdir(string $dir)`**: Deletes a directory and all of its contents recursively (used to wipe the `public/` output folder before building).
+*   **`recursiveRmdir(string $dir)`**: Deletes a directory and all of its contents recursively (used to wipe the `public/` output folder before building).
 
 ---
 

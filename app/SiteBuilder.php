@@ -54,7 +54,7 @@ class SiteBuilder
         $themeDir = $this->site->paths->themeDir ?? 'theme';
 
         // Clean output directory
-        Helper::recursive_rmdir($base . DIRECTORY_SEPARATOR . $this->site->paths->outputDir);
+        Helper::recursiveRmdir($base . DIRECTORY_SEPARATOR . $this->site->paths->outputDir);
 
         // Scan content
         $this->scan($base . DIRECTORY_SEPARATOR . $this->site->paths->contentDir);
@@ -95,9 +95,9 @@ class SiteBuilder
             $lang = $page->lang ?? $defaultLang;
             $nick = $page->nick ?? '';
             $kind = $page->kind ?? '';
-            
+
             $existing["{$kind}:{$nick}:{$lang}"] = $page;
-            
+
             if ($lang === $defaultLang) {
                 $defaultLangPages[] = $page;
             }
@@ -126,18 +126,21 @@ class SiteBuilder
                 $key = "{$page->kind}:{$translatedNick}:{$lang}";
                 if (!isset($existing[$key])) {
                     if (php_sapi_name() === 'cli') {
-                        echo "[WARNING] Missing translation for page '{$page->slug}' in language '{$lang}'. Virtualizing...\n";
+                        echo "[WARNING] Missing translation for page '{$page->slug}'"
+                            . " in language '{$lang}'. Virtualizing...\n";
                     }
                     // No translation exists for this language! Let's virtualize it!
                     $cloned = clone $page;
-                    
+
                     // Update language of the cloned page
                     $cloned->lang = $lang;
-                    
+
                     // Adjust title or text
                     $prefix = '[' . strtoupper($lang) . '] ';
-                    $hasTitle = !empty($cloned->title) && $cloned->title !== 'Untitled' && $cloned->title !== 'untitled';
-                    
+                    $hasTitle = !empty($cloned->title)
+                        && $cloned->title !== 'Untitled'
+                        && $cloned->title !== 'untitled';
+
                     // Check if the kind config allows a title
                     $kindConfig = \Indieinabox\Helper::getKindConfig($cloned->kind);
                     if (isset($kindConfig['has_title']) && !$kindConfig['has_title']) {
@@ -154,7 +157,7 @@ class SiteBuilder
 
                     // Build its slug preserving subfolder structure
                     $kindFolder = $this->getKindFolder($cloned->kind, $lang);
-                    
+
                     $defaultKindFolder = $this->getKindFolder($page->kind, $defaultLang);
                     $cleanSlug = trim($page->slug, '/');
                     // Remove defaultKindFolder prefix if present
@@ -195,7 +198,7 @@ class SiteBuilder
 
                     // Add to our pages collection
                     $this->pages->add($cloned);
-                    
+
                     // Mark as existing so we don't duplicate
                     $existing[$key] = $cloned;
                 }
@@ -315,7 +318,10 @@ class SiteBuilder
         $themeDir = $this->site->paths->themeDir ?? 'theme';
         ob_start();
         // phpcs:ignore Generic.PHP.ForbiddenFunctions.FoundWithAlternative
-        ThemeManager::loadView($base . DIRECTORY_SEPARATOR . $themeDir . "/views/" . $page->metadata->layout . ".php", get_defined_vars());
+        ThemeManager::loadView(
+            $base . DIRECTORY_SEPARATOR . $themeDir . "/views/" . $page->metadata->layout . ".php",
+            get_defined_vars()
+        );
         $fileContent = ob_get_clean();
 
         if (isset($this->site->options->htmlpostprocessing)) {
@@ -339,7 +345,8 @@ class SiteBuilder
         global $pages, $site;
 
         $themeDir = $this->site->paths->themeDir ?? 'theme';
-        $file = $base . DIRECTORY_SEPARATOR . $themeDir . DIRECTORY_SEPARATOR . "views" . DIRECTORY_SEPARATOR . "feed" . ".php";
+        $file = $base . DIRECTORY_SEPARATOR . $themeDir . DIRECTORY_SEPARATOR . "views"
+            . DIRECTORY_SEPARATOR . "feed" . ".php";
         if (file_exists($file) && is_readable($file)) {
             ThemeManager::loadView($file, get_defined_vars());
         }
@@ -348,7 +355,7 @@ class SiteBuilder
     public function copyAssets(string $dir): void
     {
         $base = $this->site->paths->baseDir;
-        
+
         if (!is_dir($dir) && !class_exists('\\DefaultTheme')) {
             return;
         }
@@ -414,7 +421,8 @@ class SiteBuilder
             if (!is_dir($dir)) {
                 mkdir($dir, 0777, true);
             }
-            $destinationFile = $outDir . DIRECTORY_SEPARATOR . dirname($destination) . DIRECTORY_SEPARATOR . basename($destination, $ext) . '.gmi';
+            $destinationFile = $outDir . DIRECTORY_SEPARATOR . dirname($destination)
+                . DIRECTORY_SEPARATOR . basename($destination, $ext) . '.gmi';
         } else {
             if (!is_dir($outDir . DIRECTORY_SEPARATOR . $destination)) {
                 mkdir($outDir . DIRECTORY_SEPARATOR . $destination, 0777, true);
@@ -433,7 +441,7 @@ class SiteBuilder
 
         $rawBody = $page->rawBody ?? '';
         $ast = $astParser->parse($rawBody);
-        
+
         $title = $page->title;
         $dateStr = $page->localizeddate;
         $author = $this->site->metadata->author;
@@ -477,7 +485,8 @@ class SiteBuilder
             if (!is_dir($dir)) {
                 mkdir($dir, 0777, true);
             }
-            $destinationFile = $outDir . DIRECTORY_SEPARATOR . dirname($destination) . DIRECTORY_SEPARATOR . basename($destination, $ext) . '.gophermap';
+            $destinationFile = $outDir . DIRECTORY_SEPARATOR . dirname($destination)
+                . DIRECTORY_SEPARATOR . basename($destination, $ext) . '.gophermap';
         } else {
             if (!is_dir($outDir . DIRECTORY_SEPARATOR . $destination)) {
                 mkdir($outDir . DIRECTORY_SEPARATOR . $destination, 0777, true);
@@ -507,7 +516,7 @@ class SiteBuilder
         $dateStr = $page->localizeddate;
         $author = $this->site->metadata->author;
 
-        $formatInfo = function(string $text): string {
+        $formatInfo = function (string $text): string {
             return "i{$text}\t\t(null)\t0\r\n";
         };
 
@@ -539,7 +548,7 @@ class SiteBuilder
         // 1. Generate local feeds: public/twtxt.txt (and for each language)
         $twtxtManager = new \Indieinabox\Twtxt\TwtxtManager();
         $defaultLang = $this->site->localization->defaultLang ?? 'en';
-        
+
         $pagesByLang = [];
         foreach ($this->pages as $page) {
             $lang = $page->lang ?? $defaultLang;
@@ -558,7 +567,7 @@ class SiteBuilder
                     mkdir($langDir, 0777, true);
                 }
             }
-            
+
             $feedFile = $langDir . DIRECTORY_SEPARATOR . 'twtxt.txt';
             $twtxtManager->generateFeed(
                 $langPages,
@@ -599,7 +608,8 @@ class SiteBuilder
         $mentions = $mentionEntries;
 
         $themeDir = $this->site->paths->themeDir ?? 'theme';
-        $layoutFile = $base . DIRECTORY_SEPARATOR . $themeDir . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR . 'timeline.php';
+        $layoutFile = $base . DIRECTORY_SEPARATOR . $themeDir
+            . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR . 'timeline.php';
         if (file_exists($layoutFile) && is_readable($layoutFile)) {
             $this->createHTMLFile($timelinePage);
         } else {
@@ -696,37 +706,41 @@ class SiteBuilder
         {
             $kind = $page->kind;
 
-            foreach ($langs as $l) {
-                $folder = '';
-                if ($kind !== 'generic' && $kind !== 'page' && $kind !== 'home') {
-                    $folder = $this->getKindFolder($kind, $l);
-                }
-                
-                // Get the translated slug part, fallback to baseKey (which is the english/default nick)
-                $localizedSlugPart = $baseKey;
-                if ($translationGroup !== null) {
-                    $localizedSlugPart = ($l === $defaultLang) ? $baseKey : ($translationGroup[$l] ?? $baseKey);
-                }
-                
-                // Force empty slug part for the home page so it points to the language root
-                if ($kind === 'home') {
-                    $localizedSlugPart = '';
-                }
-                
-                if ($prettylinks) {
-                    if ($l === $defaultLang) {
-                        $links[$l] = '/' . ($folder ? $folder . '/' : '') . ($localizedSlugPart !== '' ? $localizedSlugPart . '/' : '');
-                    } else {
-                        $links[$l] = '/' . $l . '/' . ($folder ? $folder . '/' : '') . ($localizedSlugPart !== '' ? $localizedSlugPart . '/' : '');
-                    }
+        foreach ($langs as $l) {
+            $folder = '';
+            if ($kind !== 'generic' && $kind !== 'page' && $kind !== 'home') {
+                $folder = $this->getKindFolder($kind, $l);
+            }
+
+            // Get the translated slug part, fallback to baseKey (which is the english/default nick)
+            $localizedSlugPart = $baseKey;
+            if ($translationGroup !== null) {
+                $localizedSlugPart = ($l === $defaultLang) ? $baseKey : ($translationGroup[$l] ?? $baseKey);
+            }
+
+            // Force empty slug part for the home page so it points to the language root
+            if ($kind === 'home') {
+                $localizedSlugPart = '';
+            }
+
+            if ($prettylinks) {
+                if ($l === $defaultLang) {
+                    $links[$l] = '/' . ($folder ? $folder . '/' : '')
+                        . ($localizedSlugPart !== '' ? $localizedSlugPart . '/' : '');
                 } else {
-                    if ($l === $defaultLang) {
-                        $links[$l] = '/' . ($folder ? $folder . '/' : '') . ($localizedSlugPart !== '' ? $localizedSlugPart . '.html' : 'index.html');
-                    } else {
-                        $links[$l] = '/' . $l . '/' . ($folder ? $folder . '/' : '') . ($localizedSlugPart !== '' ? $localizedSlugPart . '.html' : 'index.html');
-                    }
+                    $links[$l] = '/' . $l . '/' . ($folder ? $folder . '/' : '')
+                        . ($localizedSlugPart !== '' ? $localizedSlugPart . '/' : '');
+                }
+            } else {
+                if ($l === $defaultLang) {
+                    $links[$l] = '/' . ($folder ? $folder . '/' : '')
+                        . ($localizedSlugPart !== '' ? $localizedSlugPart . '.html' : 'index.html');
+                } else {
+                    $links[$l] = '/' . $l . '/' . ($folder ? $folder . '/' : '')
+                        . ($localizedSlugPart !== '' ? $localizedSlugPart . '.html' : 'index.html');
                 }
             }
+        }
         }
 
         foreach ($links as $lang => $url) {
@@ -746,7 +760,7 @@ class SiteBuilder
         $defaultLang = $this->site->localization->defaultLang ?? 'en';
         $langPrefix = ($lang === $defaultLang) ? '' : $lang . '/';
         $prettylinks = $this->site->options->prettylinks ?? true;
-        
+
         // 1. Post kinds defined in config
         if (!empty($this->site->config['kinds'])) {
             foreach ($this->site->config['kinds'] as $k => $conf) {
@@ -763,7 +777,7 @@ class SiteBuilder
                 $links[] = ['url' => $url, 'label' => $label];
             }
         }
-        
+
         // 2. MD files with kind: page and show_in_menu: true
         foreach ($this->pages as $p) {
             $pLang = $p->lang ?? $defaultLang;
@@ -773,7 +787,7 @@ class SiteBuilder
                 $links[] = ['url' => $url, 'label' => $label];
             }
         }
-        
+
         return $links;
     }
 
@@ -811,7 +825,8 @@ class SiteBuilder
 
         $base = $this->site->paths->baseDir;
         $themeDir = $this->site->paths->themeDir ?? 'theme';
-        $summaryFile = $base . DIRECTORY_SEPARATOR . $themeDir . DIRECTORY_SEPARATOR . "views" . DIRECTORY_SEPARATOR . "includes" . DIRECTORY_SEPARATOR . "summary.php";
+        $summaryFile = $base . DIRECTORY_SEPARATOR . $themeDir . DIRECTORY_SEPARATOR . "views"
+            . DIRECTORY_SEPARATOR . "includes" . DIRECTORY_SEPARATOR . "summary.php";
 
         foreach ($grouped as $lang => $months) {
             /** @var \Indieinabox\Page[] $allPagesForLang */
@@ -819,7 +834,8 @@ class SiteBuilder
             $titleBase = \Indieinabox\Helper::kindLabel($targetKind, $lang);
 
             foreach ($months as $yearMonth => $monthPages) {
-                $monthSlug = ($lang === $this->site->localization->defaultLang ? '' : $lang . '/') . $this->getKindFolder($targetKind, $lang) . '/' . $yearMonth . '/';
+                $monthSlug = ($lang === $this->site->localization->defaultLang ? '' : $lang . '/')
+                    . $this->getKindFolder($targetKind, $lang) . '/' . $yearMonth . '/';
                 $monthPage = Page::fromArray([
                     'title' => $titleBase . " - " . $yearMonth,
                     'layout' => 'timeline',
@@ -838,7 +854,7 @@ class SiteBuilder
                         $monthContent .= "\n<hr class=\"divisor-bloco\">\n";
                         $monthRaw .= "\n\n---\n\n";
                     }
-                    
+
                     if (file_exists($summaryFile)) {
                         ob_start();
                         global $site;
@@ -863,7 +879,8 @@ class SiteBuilder
                 $this->createGopherFile($monthPage);
             }
 
-            $indexSlug = ($lang === $this->site->localization->defaultLang ? '' : $lang . '/') . $this->getKindFolder($targetKind, $lang) . '/';
+            $indexSlug = ($lang === $this->site->localization->defaultLang ? '' : $lang . '/')
+                . $this->getKindFolder($targetKind, $lang) . '/';
             $indexPage = Page::fromArray([
                 'title' => $titleBase,
                 'layout' => 'timeline',
@@ -910,7 +927,7 @@ class SiteBuilder
     {
         $defaultLang = $this->site->localization->defaultLang;
         $prettylinks = $this->site->options->prettylinks ?? true;
-        
+
         $langs = $this->site->localization->lang;
 
         foreach ($langs as $lang) {
@@ -944,7 +961,7 @@ class SiteBuilder
     {
         $defaultLang = $this->site->localization->defaultLang;
         $prettylinks = $this->site->options->prettylinks ?? true;
-        
+
         // Group by language
         $grouped = [];
         foreach ($pages as $p) {
@@ -954,39 +971,39 @@ class SiteBuilder
         }
 
         foreach ($grouped as $lang => $kindPages) {
-
-                usort($kindPages, function($a, $b) {
+                usort($kindPages, function ($a, $b) {
                     $timeA = $a->date->getTimestamp();
                     $timeB = $b->date->getTimestamp();
                     return $timeB <=> $timeA;
                 });
 
                 $title = \Indieinabox\Helper::kindLabel($targetKind, $lang);
-                
+
                 $displayMode = \Indieinabox\Helper::getKindConfig($targetKind)['display_mode'] ?? 'default';
 
                 $content = '<ul style="list-style-type: none; padding-left: 0;">';
-                foreach ($kindPages as $p) {
-                    $content .= '<li style="margin-bottom: 1.5em;">';
-                    if ($displayMode === 'thumbnail_snippet') {
-                        // For photos/thumbnails
-                        $content .= '<a href="' . $p->relpath . $p->slug . '">' . $p->content . '</a>';
-                        $content .= '<div style="font-size:0.9em; margin-top: 0.5em;">';
-                        $content .= '<span style="opacity:0.8;">' . $p->localizeddate . '</span>';
-                        $content .= '</div>';
-                    } else {
-                        $content .= '<strong><a href="' . $p->relpath . $p->slug . '">' . htmlspecialchars($p->title) . '</a></strong>';
-                        $content .= ' <span style="font-size:0.9em; opacity:0.8;">(' . $p->localizeddate . ')</span>';
-                    }
-                    $content .= '</li>';
+            foreach ($kindPages as $p) {
+                $content .= '<li style="margin-bottom: 1.5em;">';
+                if ($displayMode === 'thumbnail_snippet') {
+                    // For photos/thumbnails
+                    $content .= '<a href="' . $p->relpath . $p->slug . '">' . $p->content . '</a>';
+                    $content .= '<div style="font-size:0.9em; margin-top: 0.5em;">';
+                    $content .= '<span style="opacity:0.8;">' . $p->localizeddate . '</span>';
+                    $content .= '</div>';
+                } else {
+                    $content .= '<strong><a href="' . $p->relpath . $p->slug . '">'
+                        . htmlspecialchars($p->title) . '</a></strong>';
+                    $content .= ' <span style="font-size:0.9em; opacity:0.8;">(' . $p->localizeddate . ')</span>';
                 }
+                $content .= '</li>';
+            }
                 $content .= '</ul>';
 
                 $kindFolder = $this->getKindFolder($targetKind, $lang);
                 $kindSlug = ($lang === $defaultLang ? '' : $lang . '/') . $kindFolder . '/';
-                if (!$prettylinks) {
-                    $kindSlug = ($lang === $defaultLang ? '' : $lang . '/') . $kindFolder . '.html';
-                }
+            if (!$prettylinks) {
+                $kindSlug = ($lang === $defaultLang ? '' : $lang . '/') . $kindFolder . '.html';
+            }
 
                 $indexPage = Page::fromArray([
                     'title'   => $title,
@@ -1001,6 +1018,6 @@ class SiteBuilder
                 $this->createHTMLFile($indexPage);
                 $this->createGeminiFile($indexPage);
                 $this->createGopherFile($indexPage);
-            }
+        }
     }
 }

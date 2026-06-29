@@ -150,7 +150,7 @@ class WebmentionHandler
 
         // Extract Whostyle JSON (Phase 11.5)
         $whostyleData = null;
-        
+
         // 1. Check for inline whostyle script
         $whostyleScript = $xpath->query('//script[@type="application/whostyle+json"]')->item(0);
         if ($whostyleScript) {
@@ -159,7 +159,7 @@ class WebmentionHandler
                 $whostyleData = $jsonData;
             }
         }
-        
+
         // 2. If not found, check for external whostyle link
         if (!$whostyleData) {
             $whostyleLink = $xpath->query('//link[@rel="whostyle"]')->item(0);
@@ -241,7 +241,7 @@ class WebmentionHandler
             $host = isset($parts['host']) ? strtolower($parts['host']) : '';
             $port = isset($parts['port']) ? ':' . $parts['port'] : '';
             $path = $parts['path'] ?? '/';
-            
+
             // Resolve relative path segments like .. and .
             $segments = explode('/', $path);
             $resolved = [];
@@ -338,7 +338,7 @@ class WebmentionHandler
         }
 
         // Filter duplicates
-        $existing = array_filter($existing, function($mention) use ($source) {
+        $existing = array_filter($existing, function ($mention) use ($source) {
             return $mention['source'] !== $source;
         });
 

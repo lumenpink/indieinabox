@@ -47,7 +47,9 @@ afterEach(function () use ($integrationSandbox) {
     cleanIntegrationSandbox($integrationSandbox);
 });
 
-it('compiles the app and runs both CLI build and Web routing from the single-file entry', function () use ($integrationSandbox) {
+it(
+    'compiles the app and runs both CLI build and Web routing from the single-file entry',
+    function () use ($integrationSandbox) {
     $root = dirname(dirname(__DIR__));
 
     // 1. Recompile indieinabox.php
@@ -58,11 +60,14 @@ it('compiles the app and runs both CLI build and Web routing from the single-fil
 
     // 2. Set up sandbox content and configuration
     // Initialize database for compiled script
-    file_put_contents($integrationSandbox . '/.config.php', "<?php\nreturn ['db_path' => '" . $integrationSandbox . "/test.sqlite'];\n");
+    file_put_contents(
+        $integrationSandbox . '/.config.php',
+        "<?php\nreturn ['db_path' => '" . $integrationSandbox . "/test.sqlite'];\n"
+    );
     $db = new \PDO('sqlite:' . $integrationSandbox . '/test.sqlite');
     $db->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
     $db->exec(file_get_contents($root . '/database.sql'));
-    
+
     $stmt = $db->prepare('UPDATE settings SET value = :value WHERE key = :key');
     $stmt->execute([':key' => 'base', ':value' => '']);
     $stmt->execute([':key' => 'title', ':value' => 'Integration Test Title']);
@@ -75,11 +80,19 @@ it('compiles the app and runs both CLI build and Web routing from the single-fil
     $db = null;
 
     // Simple markdown content
-    file_put_contents($integrationSandbox . '/content/index.md', "---\ntitle: Home Page\nlayout: page\n---\nWelcome home!");
-    file_put_contents($integrationSandbox . '/content/about.md', "---\ntitle: About Page\nlayout: page\n---\nAbout page content.");
+    file_put_contents(
+        $integrationSandbox . '/content/index.md',
+        "---\ntitle: Home Page\nlayout: page\n---\nWelcome home!"
+    );
+    file_put_contents(
+        $integrationSandbox . '/content/about.md',
+        "---\ntitle: About Page\nlayout: page\n---\nAbout page content."
+    );
 
     // Simple page view template
-    file_put_contents($integrationSandbox . '/resources/views/page.php', <<<PHP
+    file_put_contents(
+        $integrationSandbox . '/resources/views/page.php',
+        <<<PHP
 <!DOCTYPE html>
 <html>
 <head>
@@ -92,7 +105,9 @@ it('compiles the app and runs both CLI build and Web routing from the single-fil
 </html>
 PHP
     );
-    file_put_contents($integrationSandbox . '/resources/views/indice.php', <<<PHP
+    file_put_contents(
+        $integrationSandbox . '/resources/views/indice.php',
+        <<<PHP
 <!DOCTYPE html>
 <html>
 <head>
@@ -178,7 +193,7 @@ PHP
         // Mock a source page linking to target page on server 2
         $sourceContent = '<html><body><a href="https://example.com/about">Linked!</a></body></html>';
         file_put_contents($integrationSandbox . '/public/source_post.html', $sourceContent);
-        
+
         $sourceUrl = "http://$host2/source_post.html";
         $targetUrl = "https://example.com/about";
 
@@ -213,12 +228,11 @@ PHP
         $stmt = $db->query("SELECT payload_json FROM webmentions WHERE hash = '" . md5('about') . "'");
         $row = $stmt->fetch(\PDO::FETCH_ASSOC);
         expect($row)->not->toBeFalse();
-        
+
         $savedData = json_decode($row['payload_json'], true);
         expect($savedData)->toHaveCount(1);
         expect($savedData[0]['source'])->toBe($sourceUrl);
         expect($savedData[0]['target'])->toBe($targetUrl);
-
     } finally {
         // Terminate background web server processes
         if (is_resource($process1)) {
@@ -230,4 +244,5 @@ PHP
             proc_close($process2);
         }
     }
-});
+}
+);

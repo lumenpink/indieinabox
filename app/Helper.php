@@ -81,7 +81,7 @@ class Helper
             } else {
                 $localizedkindSegment = $localizedkindSegment[1] ?? $localizedkindSegment[0];
             }
-            
+
             // Resolve kind from config content_dir
             if (!empty($site->config['kinds'])) {
                 foreach ($site->config['kinds'] as $k => $conf) {
@@ -92,7 +92,7 @@ class Helper
                     }
                 }
             }
-            
+
             // Fallback to legacy kindspath if not found
             if (!isset($kind)) {
                 global $kindspath;
@@ -191,7 +191,7 @@ class Helper
         global $site;
         $config = self::getKindConfig($kind);
         $targetLang = $lang ?? $site->localization->defaultLang ?? 'en';
-        
+
         if (!empty($config['title']) && is_array($config['title'])) {
             if (isset($config['title'][$targetLang])) {
                 return $config['title'][$targetLang];
@@ -202,7 +202,7 @@ class Helper
             }
             return reset($config['title']);
         }
-        
+
         // Hard fallback to ucfirst of the kind
         return ucfirst($kind);
     }
@@ -221,25 +221,25 @@ class Helper
         $lang = $page->lang ?? $site->localization->defaultLang ?? 'en';
         $defaultLang = $site->localization->defaultLang ?? 'en';
         $prettylinks = $site->options->prettylinks ?? true;
-        
+
         $label = self::kindLabel($kind, $lang);
-        
+
         // If it's a generic kind, don't link it
         if (in_array($kind, ['generic', 'home', 'page'], true)) {
             return '[' . strtoupper(htmlspecialchars($label)) . ']';
         }
-        
+
         $folder = self::getKindFolder($kind, $lang);
         $langPrefix = ($lang === $defaultLang) ? '' : $lang . '/';
-        
+
         if ($prettylinks) {
             $url = ltrim($langPrefix . $folder . '/', '/');
         } else {
             $url = ltrim($langPrefix . $folder . '.html', '/');
         }
-        
+
         $relUrl = $page->relpath . $url;
-        
+
         return '<a href="' . $relUrl . '">[' . strtoupper(htmlspecialchars($label)) . ']</a>';
     }
 
@@ -321,7 +321,10 @@ class Helper
         }
 
         // Custom transliteration rules that iconv typically misses or handles differently depending on locale
-        $custom = ['Ä' => 'Ae', 'ä' => 'ae', 'Ö' => 'Oe', 'ö' => 'oe', 'Ü' => 'Ue', 'ü' => 'ue', 'ß' => 'ss', 'Æ' => 'Ae', 'æ' => 'ae'];
+        $custom = [
+            'Ä' => 'Ae', 'ä' => 'ae', 'Ö' => 'Oe', 'ö' => 'oe',
+            'Ü' => 'Ue', 'ü' => 'ue', 'ß' => 'ss', 'Æ' => 'Ae', 'æ' => 'ae'
+        ];
         $string = str_replace(array_keys($custom), array_values($custom), $string);
 
         $transliterated = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $string);
@@ -486,11 +489,11 @@ class Helper
      * @param  array<string, mixed> $array
      * @return void
      */
-    public static function recursive_ksort(array &$array): void
+    public static function recursiveKsort(array &$array): void
     {
         foreach ($array as &$value) {
             if (is_array($value)) {
-                self::recursive_ksort($value);
+                self::recursiveKsort($value);
             }
         }
         ksort($array, SORT_STRING | SORT_FLAG_CASE);
@@ -595,7 +598,7 @@ class Helper
      * @param  bool $keepRootDir
      * @return bool
      */
-    public static function recursive_rmdir(string $dir, bool $keepRootDir = false): bool
+    public static function recursiveRmdir(string $dir, bool $keepRootDir = false): bool
     {
         if (!file_exists($dir)) {
             return true;
@@ -618,7 +621,7 @@ class Helper
                 $path = $item->getPathname();
 
                 if ($item->isDir()) {
-                    if (!self::recursive_rmdir($path)) {
+                    if (!self::recursiveRmdir($path)) {
                         return false;
                     }
                 } else {
@@ -724,7 +727,7 @@ class Helper
     public static function updateTranslations(): void
     {
         global $translations;
-        self::recursive_ksort($translations);
+        self::recursiveKsort($translations);
         $db = \Indieinabox\Database::getDb();
         foreach ($translations as $lang => $phrases) {
             foreach ($phrases as $key => $val) {
@@ -735,14 +738,16 @@ class Helper
                     $stmt->bindValue(':key', $key);
                     $stmt->execute();
                         $row = $stmt->fetch(\PDO::FETCH_ASSOC);
-                    
+
                     if ($row) {
                         $upd = $db->prepare('UPDATE translations SET phrase_value = :val WHERE id = :id');
                         $upd->bindValue(':val', $val);
                         $upd->bindValue(':id', $row['id']);
                         $upd->execute();
                     } else {
-                        $ins = $db->prepare('INSERT INTO translations (lang, phrase_key, phrase_value) VALUES (:lang, :key, :val)');
+                        $ins = $db->prepare(
+                            'INSERT INTO translations (lang, phrase_key, phrase_value) VALUES (:lang, :key, :val)'
+                        );
                         $ins->bindValue(':lang', $lang);
                         $ins->bindValue(':key', $key);
                         $ins->bindValue(':val', $val);
@@ -765,7 +770,7 @@ class Helper
         $base = $site->paths->baseDir;
         $localpages = $pages instanceof Pages ? $pages->all() : $pages;
         $localpages = array_filter($localpages, [self::class, 'removegeneric']);
-        $localpages = array_filter($localpages, function($page) use ($currentLang) {
+        $localpages = array_filter($localpages, function ($page) use ($currentLang) {
             $lang = $page instanceof Page ? $page->lang : ($page['lang'] ?? 'en');
             return $lang === $currentLang;
         });
@@ -783,7 +788,10 @@ class Helper
         ob_start();
         $themeDir = $site->paths->themeDir ?? 'theme';
         foreach ($localpages as $page) {
-            ThemeManager::loadView($base . DIRECTORY_SEPARATOR . $themeDir . DIRECTORY_SEPARATOR . "views/includes/summary.php", get_defined_vars());
+            ThemeManager::loadView(
+                $base . DIRECTORY_SEPARATOR . $themeDir . DIRECTORY_SEPARATOR . "views/includes/summary.php",
+                get_defined_vars()
+            );
             $count++;
             if ($count >= 10) {
                 break;
@@ -845,9 +853,15 @@ class Helper
                 $exif = @exif_read_data($caminhoOriginal);
                 if (!empty($exif['Orientation'])) {
                     switch ($exif['Orientation']) {
-                        case 3: $imgOriginal = imagerotate($imgOriginal, 180, 0); break;
-                        case 6: $imgOriginal = imagerotate($imgOriginal, -90, 0); break;
-                        case 8: $imgOriginal = imagerotate($imgOriginal, 90, 0); break;
+                        case 3:
+                            $imgOriginal = imagerotate($imgOriginal, 180, 0);
+                            break;
+                        case 6:
+                            $imgOriginal = imagerotate($imgOriginal, -90, 0);
+                            break;
+                        case 8:
+                            $imgOriginal = imagerotate($imgOriginal, 90, 0);
+                            break;
                     }
                 }
             }
@@ -859,10 +873,10 @@ class Helper
 
         $larguraOrig = imagesx($imgOriginal);
         $alturaOrig = imagesy($imgOriginal);
-        
+
         $srcX = 0;
         $srcY = 0;
-        
+
         if ($larguraOrig > $alturaOrig) {
             $srcX = ($larguraOrig - $alturaOrig) / 2;
             $larguraOrig = $alturaOrig;
@@ -872,7 +886,18 @@ class Helper
         }
 
         $imgRedimensionada = imagecreatetruecolor($tamanhoFocal, $tamanhoFocal);
-        imagecopyresampled($imgRedimensionada, $imgOriginal, 0, 0, $srcX, $srcY, $tamanhoFocal, $tamanhoFocal, $larguraOrig, $alturaOrig);
+        imagecopyresampled(
+            $imgRedimensionada,
+            $imgOriginal,
+            0,
+            0,
+            $srcX,
+            $srcY,
+            $tamanhoFocal,
+            $tamanhoFocal,
+            $larguraOrig,
+            $alturaOrig
+        );
         imagedestroy($imgOriginal);
 
         $imgFinal = imagecreate($tamanhoFocal, $tamanhoFocal);
@@ -886,7 +911,7 @@ class Helper
                 $g = ($rgb >> 8) & 0xFF;
                 $b = $rgb & 0xFF;
                 $luminosidade = ($r * 0.299 + $g * 0.587 + $b * 0.114);
-                
+
                 $cor = ($luminosidade > 128) ? $alocadaBG : $alocadaFG;
                 imagesetpixel($imgFinal, $x, $y, $cor);
             }
@@ -936,9 +961,15 @@ class Helper
                 $exif = @exif_read_data($caminhoOriginal);
                 if (!empty($exif['Orientation'])) {
                     switch ($exif['Orientation']) {
-                        case 3: $imgOriginal = imagerotate($imgOriginal, 180, 0); break;
-                        case 6: $imgOriginal = imagerotate($imgOriginal, -90, 0); break;
-                        case 8: $imgOriginal = imagerotate($imgOriginal, 90, 0); break;
+                        case 3:
+                            $imgOriginal = imagerotate($imgOriginal, 180, 0);
+                            break;
+                        case 6:
+                            $imgOriginal = imagerotate($imgOriginal, -90, 0);
+                            break;
+                        case 8:
+                            $imgOriginal = imagerotate($imgOriginal, 90, 0);
+                            break;
                     }
                 }
             }
@@ -953,7 +984,18 @@ class Helper
         $alturaFocal = (int)(($alturaOrig / $larguraOrig) * $larguraFocal);
 
         $imgRedimensionada = imagecreatetruecolor($larguraFocal, $alturaFocal);
-        imagecopyresampled($imgRedimensionada, $imgOriginal, 0, 0, 0, 0, $larguraFocal, $alturaFocal, $larguraOrig, $alturaOrig);
+        imagecopyresampled(
+            $imgRedimensionada,
+            $imgOriginal,
+            0,
+            0,
+            0,
+            0,
+            $larguraFocal,
+            $alturaFocal,
+            $larguraOrig,
+            $alturaOrig
+        );
         imagedestroy($imgOriginal);
 
         $brilhoTotal = 0;
@@ -967,13 +1009,13 @@ class Helper
         }
         $luminanciaMedia = ($brilhoTotal / $amostras) / 255;
 
-        $fatorGamma = 1.0; 
+        $fatorGamma = 1.0;
         $fatorContraste = 1.0;
 
         if ($aplicarAutomacao) {
             $alvoLuminancia = 0.40;
             $desvio = $luminanciaMedia - $alvoLuminancia;
-            $fatorGamma = 1.0 + ($desvio * 0.65); 
+            $fatorGamma = 1.0 + ($desvio * 0.65);
             $fatorContraste = 1.0 + (abs($desvio) * 0.20);
         }
 
@@ -987,7 +1029,7 @@ class Helper
                     $v = pow($v, $fatorGamma);
                     $v = (($v - 0.5) * $fatorContraste) + 0.5;
                 }
-                
+
                 $matriz[$y][$x] = max(0, min(1, $v)) * 255;
             }
         }
@@ -1001,14 +1043,24 @@ class Helper
 
                 $erro = ($velhoPixel - $novoPixel) / 8;
 
-                if ($x + 1 < $larguraFocal)  $matriz[$y][$x+1]     += $erro;
-                if ($x + 2 < $larguraFocal)  $matriz[$y][$x+2]     += $erro;
-                if ($y + 1 < $alturaFocal) {
-                    if ($x - 1 >= 0)         $matriz[$y+1][$x-1]   += $erro;
-                                             $matriz[$y+1][$x]     += $erro;
-                    if ($x + 1 < $larguraFocal)  $matriz[$y+1][$x+1]   += $erro;
+                if ($x + 1 < $larguraFocal) {
+                    $matriz[$y][$x + 1]     += $erro;
                 }
-                if ($y + 2 < $alturaFocal)   $matriz[$y+2][$x]     += $erro;
+                if ($x + 2 < $larguraFocal) {
+                    $matriz[$y][$x + 2]     += $erro;
+                }
+                if ($y + 1 < $alturaFocal) {
+                    if ($x - 1 >= 0) {
+                        $matriz[$y + 1][$x - 1]   += $erro;
+                    }
+                                             $matriz[$y + 1][$x]     += $erro;
+                    if ($x + 1 < $larguraFocal) {
+                        $matriz[$y + 1][$x + 1]   += $erro;
+                    }
+                }
+                if ($y + 2 < $alturaFocal) {
+                    $matriz[$y + 2][$x]     += $erro;
+                }
             }
         }
 
@@ -1029,4 +1081,3 @@ class Helper
         return $result;
     }
 }
-

@@ -292,6 +292,11 @@ class WebmentionHandler
         return strcasecmp($normalize($resolved), $targetNorm) === 0;
     }
 
+    /**
+     * @param string $source
+     * @param string $target
+     * @param array<string, mixed> $meta
+     */
     public function saveWebmention(string $source, string $target, array $meta): void
     {
         $db = \Indieinabox\Database::getDb();

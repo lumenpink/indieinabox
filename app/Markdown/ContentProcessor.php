@@ -18,10 +18,7 @@ class ContentProcessor
      */
     private HtmlRenderer $htmlRenderer;
 
-    /**
-     * @param mixed $parsedown
-     */
-    public function __construct($parsedown = null)
+    public function __construct()
     {
         $this->astParser = new ASTParser();
         $this->htmlRenderer = new HtmlRenderer();

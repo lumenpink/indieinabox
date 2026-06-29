@@ -81,7 +81,7 @@ class SiteBuilder
     private function virtualizeMissingLanguages(): void
     {
         $langs = $this->site->localization->lang;
-        if (!is_array($langs) || count($langs) <= 1) {
+        if (count($langs) <= 1) {
             return;
         }
 
@@ -168,7 +168,7 @@ class SiteBuilder
                         $cloned->slug = $lang . '/index.html';
                     } else {
                         if ($prettylinks) {
-                            $cloned->slug = $lang . '/' . $kindFolder . '/' . ($cleanSlug !== '' ? $cleanSlug . '/' : '');
+                            $cloned->slug = $lang . '/' . $kindFolder . '/' . $cleanSlug . '/';
                         } else {
                             // For non-prettylinks, it ends in .html
                             if (str_ends_with($cleanSlug, '.html')) {
@@ -607,6 +607,9 @@ class SiteBuilder
         }
     }
 
+    /**
+     * @return array<string, string>
+     */
     private function getLanguageLinks(Page $page): array
     {
         global $urltranslations;
@@ -615,15 +618,12 @@ class SiteBuilder
         }
 
         $langs = $this->site->localization->lang;
-        if (!is_array($langs)) {
-            $langs = [$langs];
-        }
         $defaultLang = $this->site->localization->defaultLang ?? 'en';
         $prettylinks = $this->site->options->prettylinks ?? true;
 
         $slug = $page->slug;
         $parts = explode('/', trim($slug, '/'));
-        if (isset($parts[0]) && in_array($parts[0], $langs, true) && $parts[0] !== $defaultLang) {
+        if (in_array($parts[0], $langs, true) && $parts[0] !== $defaultLang) {
             array_shift($parts);
         }
 
@@ -693,7 +693,7 @@ class SiteBuilder
             }
         }
 
-        if ($baseKey !== null) {
+        {
             $kind = $page->kind;
 
             foreach ($langs as $l) {
@@ -736,6 +736,9 @@ class SiteBuilder
         return $links;
     }
 
+    /**
+     * @return array<int, array<string, string>>
+     */
     private function getFooterLinks(Page $page): array
     {
         $links = [];
@@ -788,7 +791,7 @@ class SiteBuilder
         foreach ($pages as $p) {
             $lang = $p->lang ?? 'en';
             $date = $p->date;
-            $yearMonth = $date instanceof \DateTime ? $date->format('Y-m') : date('Y-m', $date);
+            $yearMonth = $date->format('Y-m');
 
             $grouped[$lang][$yearMonth][] = $p;
         }
@@ -797,8 +800,8 @@ class SiteBuilder
             krsort($months);
             foreach ($months as $yearMonth => &$monthPages) {
                 usort($monthPages, function ($a, $b) {
-                    $timeA = $a->date instanceof \DateTime ? $a->date->getTimestamp() : $a->date;
-                    $timeB = $b->date instanceof \DateTime ? $b->date->getTimestamp() : $b->date;
+                    $timeA = $a->date->getTimestamp();
+                    $timeB = $b->date->getTimestamp();
                     return $timeB <=> $timeA;
                 });
             }
@@ -909,9 +912,6 @@ class SiteBuilder
         $prettylinks = $this->site->options->prettylinks ?? true;
         
         $langs = $this->site->localization->lang;
-        if (!is_array($langs)) {
-            $langs = [$langs];
-        }
 
         foreach ($langs as $lang) {
             $sitemapSlug = ($lang === $defaultLang ? '' : $lang . '/') . 'indice/';
@@ -936,6 +936,10 @@ class SiteBuilder
         }
     }
 
+    /**
+     * @param string $targetKind
+     * @param array<int, Page> $pages
+     */
     private function compileSectionIndexes(string $targetKind, array $pages): void
     {
         $defaultLang = $this->site->localization->defaultLang;
@@ -952,8 +956,8 @@ class SiteBuilder
         foreach ($grouped as $lang => $kindPages) {
 
                 usort($kindPages, function($a, $b) {
-                    $timeA = $a->date instanceof \DateTime ? $a->date->getTimestamp() : $a->date;
-                    $timeB = $b->date instanceof \DateTime ? $b->date->getTimestamp() : $b->date;
+                    $timeA = $a->date->getTimestamp();
+                    $timeB = $b->date->getTimestamp();
                     return $timeB <=> $timeA;
                 });
 

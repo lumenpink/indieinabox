@@ -9,6 +9,9 @@ class ThemeManager
     /**
      * Includes a view file. If the file exists on disk, it uses standard include.
      * Otherwise, it tries to load it from the embedded DefaultTheme fallback.
+     *
+     * @param string $filePath
+     * @param array<string, mixed> $vars
      */
     public static function loadView(string $filePath, array $vars = []): void
     {

@@ -71,6 +71,9 @@ class MicropubHandler
         $this->sendResponse(400, 'Invalid Query', 'Unsupported q parameter.');
     }
 
+    /**
+     * @param array<string, mixed> $tokenData
+     */
     private function handlePostRequest(array $tokenData): void
     {
         $scopes = explode(' ', $tokenData['scope'] ?? '');
@@ -116,6 +119,9 @@ class MicropubHandler
         $this->createPost($input);
     }
 
+    /**
+     * @param array<string, mixed> $input
+     */
     private function createPost(array $input): void
     {
         $name = $input['name'] ?? null;
@@ -246,6 +252,9 @@ class MicropubHandler
         header('Location: ' . $postUrl);
     }
 
+    /**
+     * @param array<string, mixed> $tokenData
+     */
     private function handleMediaEndpoint(array $tokenData): void
     {
         $scopes = explode(' ', $tokenData['scope'] ?? '');

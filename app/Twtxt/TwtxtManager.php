@@ -149,9 +149,7 @@ class TwtxtManager
             $feedContent .= "# avatar = {$config->avatar}\n";
         }
         foreach ($config->following as $follow) {
-            if (isset($follow['nick']) && isset($follow['url'])) {
-                $feedContent .= "# follow = {$follow['nick']} {$follow['url']}\n";
-            }
+            $feedContent .= "# follow = {$follow['nick']} {$follow['url']}\n";
         }
         if ($feedContent !== '') {
             $feedContent .= "\n";
@@ -272,7 +270,7 @@ class TwtxtManager
     /**
      * Fetches timeline updates from remote feeds.
      *
-     * @param array $following
+     * @param array<int, array<string, string>> $following
      * @param string $cacheDir
      * @return TwtxtEntry[]
      */
@@ -320,7 +318,7 @@ class TwtxtManager
     /**
      * Queries all configured hubs to fetch replies/mentions.
      *
-     * @param array $hubs
+     * @param array<int, string> $hubs
      * @param string $fqdn
      * @return TwtxtEntry[]
      */

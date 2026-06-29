@@ -22,6 +22,9 @@ class Helper
     /**
      * Get the configuration for a specific kind with fallbacks.
      */
+    /**
+     * @return array<string, mixed>
+     */
     public static function getKindConfig(string $kind): array
     {
         global $site;
@@ -813,6 +816,10 @@ class Helper
      * @param array $corBG
      * @param array $corFG
      * @return bool
+     */
+    /**
+     * @param array<int, int> $corFG
+     * @param array<int, int> $corBG
      */
     public static function createThumbnail(
         string $caminhoOriginal,

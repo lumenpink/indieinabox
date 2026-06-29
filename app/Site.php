@@ -13,6 +13,7 @@ use Indieinabox\Site\Twtxt;
 
 class Site
 {
+    /** @var array<string, mixed> */
     public array $config = [];
     public Metadata $metadata;
     public Paths $paths;

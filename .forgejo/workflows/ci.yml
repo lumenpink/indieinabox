@@ -6,25 +6,25 @@ on:
   pull_request:
     branches: ["main", "develop"]
 
-# Cancela runs concorrentes no mesmo branch (exceto main)
+# Cancel concurrent runs on the same branch (except main)
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 jobs:
   # ─────────────────────────────────────────────────────────────────────────────
-  # JOB 1 — Lint + Testes unitários (Matrix PHP 8.2 → 8.4)
+  # JOB 1 — Lint + Unit tests (Matrix PHP 8.2 → 8.4)
   # ─────────────────────────────────────────────────────────────────────────────
   test:
     name: "PHP ${{ matrix.php }} — Tests & Lint"
     runs-on: codeberg-tiny
     strategy:
-      fail-fast: true          # Para ao primeiro erro em qualquer versão
+      fail-fast: true          # Stop at the first error in any version
       matrix:
         php: ["8.4"]
 
     steps:
-      - name: "Checkout (histórico completo para Psalm)"
+      - name: "Checkout (full history for Psalm)"
         uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         with:
           fetch-depth: 0
@@ -34,7 +34,7 @@ jobs:
         with:
           php-version: ${{ matrix.php }}
           extensions: mbstring, json, fileinfo
-          coverage: xdebug          # Necessário para gerar clover
+          coverage: xdebug          # Required to generate clover
           tools: composer:v2
 
       - name: "Cache vendor/"
@@ -46,16 +46,16 @@ jobs:
           restore-keys: |
             vendor-php${{ matrix.php }}-
 
-      - name: "Instalar dependências Composer"
+      - name: "Install Composer dependencies"
         if: steps.cache-vendor.outputs.cache-hit != 'true'
         run: composer install --no-interaction --prefer-dist --no-progress
 
-      # ── Segurança ────────────────────────────────────────────────────────────
-      - name: "composer audit — Vulnerabilidades conhecidas"
-        # Substituto ao roave/security-advisories (conflita com pest v3)
+      # ── Security ────────────────────────────────────────────────────────────
+      - name: "composer audit — Known vulnerabilities"
+        # Substitute for roave/security-advisories (conflicts with pest v3)
         run: composer audit --format=plain
 
-      # ── Compatibilidade de versão PHP ────────────────────────────────────────
+      # ── PHP Version Compatibility ────────────────────────────────────────
       - name: "PHP Compatibility Sniffer (${{ matrix.php }})"
         run: |
           composer sniffer:php${{ matrix.php == '8.2' && '82' || matrix.php == '8.3' && '83' || '84' }}
@@ -65,7 +65,7 @@ jobs:
         run: php compile.php
 
       # ── Testes PEST ──────────────────────────────────────────────────────────
-      - name: "PEST — Suite padrão (source) + cobertura Clover"
+      - name: "PEST — Standard suite (source) + Clover coverage"
         run: |
           mkdir -p coverage
           ./vendor/bin/pest \
@@ -93,12 +93,12 @@ jobs:
           retention-days: 7
 
   # ─────────────────────────────────────────────────────────────────────────────
-  # JOB 2 — Análise estática de segurança com Psalm
+  # JOB 2 — Static security analysis with Psalm
   # ─────────────────────────────────────────────────────────────────────────────
   psalm:
     name: "Psalm — Static Security Analysis"
     runs-on: codeberg-tiny
-    needs: test           # Só roda se os testes passarem
+    needs: test           # Only runs if tests pass
 
     steps:
       - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
@@ -119,11 +119,11 @@ jobs:
           path: vendor
           key: vendor-php8.4-${{ hashFiles('composer.lock') }}
 
-      - name: "Instalar dependências"
+      - name: "Install dependencies"
         run: |
           composer install --no-interaction --prefer-dist --no-progress
 
-      - name: "Psalm — Análise (taint + erros)"
+      - name: "Psalm — Analysis (taints + errors)"
         run: |
           mkdir -p coverage
           ./vendor/bin/psalm \
@@ -132,9 +132,9 @@ jobs:
             --report=coverage/psalm.json \
             --report-show-info=true \
             --no-progress \
-            --output-format=github   # Anotações nativas no PR
+            --output-format=github   # Native PR annotations
 
-      - name: "Upload relatório Psalm (JSON)"
+      - name: "Upload Psalm report (JSON)"
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
@@ -143,7 +143,7 @@ jobs:
           retention-days: 30
 
   # ─────────────────────────────────────────────────────────────────────────────
-  # JOB 3 — OWASP Dependency-Check (CVEs em dependências transitivas)
+  # JOB 3 — OWASP Dependency-Check (CVEs in transitive dependencies)
   # ─────────────────────────────────────────────────────────────────────────────
   dependency-check:
     name: "OWASP Dependency-Check"
@@ -153,7 +153,7 @@ jobs:
     steps:
       - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
 
-      - name: "Cache NVD (acelera scans subsequentes)"
+      - name: "Cache NVD (speeds up subsequent scans)"
         uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
         with:
           path: ~/.dependency-check/data

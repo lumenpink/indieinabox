@@ -4,6 +4,13 @@ declare(strict_types=1);
 
 namespace Indieinabox;
 
+/**
+ * Class Helper
+ * 
+ * Provides a comprehensive suite of static utilities to support site generation.
+ * This includes functions for file manipulation, URL resolution, HTTP routing,
+ * image processing, and localization handling.
+ */
 class Helper
 {
     /**
@@ -901,8 +908,8 @@ class Helper
         imagedestroy($imgOriginal);
 
         $imgFinal = imagecreate($tamanhoFocal, $tamanhoFocal);
-        $alocadaBG = imagecolorallocate($imgFinal, $corBG[0], $corBG[1], $corBG[2]);
-        $alocadaFG = imagecolorallocate($imgFinal, $corFG[0], $corFG[1], $corFG[2]);
+        $allocatedBG = imagecolorallocate($imgFinal, $corBG[0], $corBG[1], $corBG[2]);
+        $allocatedFG = imagecolorallocate($imgFinal, $corFG[0], $corFG[1], $corFG[2]);
 
         for ($y = 0; $y < $tamanhoFocal; $y++) {
             for ($x = 0; $x < $tamanhoFocal; $x++) {
@@ -912,7 +919,7 @@ class Helper
                 $b = $rgb & 0xFF;
                 $luminosidade = ($r * 0.299 + $g * 0.587 + $b * 0.114);
 
-                $cor = ($luminosidade > 128) ? $alocadaBG : $alocadaFG;
+                $cor = ($luminosidade > 128) ? $allocatedBG : $allocatedFG;
                 imagesetpixel($imgFinal, $x, $y, $cor);
             }
         }
@@ -1019,7 +1026,7 @@ class Helper
             $fatorContraste = 1.0 + (abs($desvio) * 0.20);
         }
 
-        $matriz = [];
+        $matrix = [];
         for ($y = 0; $y < $alturaFocal; $y++) {
             for ($x = 0; $x < $larguraFocal; $x++) {
                 $rgb = imagecolorat($imgRedimensionada, $x, $y);
@@ -1030,47 +1037,47 @@ class Helper
                     $v = (($v - 0.5) * $fatorContraste) + 0.5;
                 }
 
-                $matriz[$y][$x] = max(0, min(1, $v)) * 255;
+                $matrix[$y][$x] = max(0, min(1, $v)) * 255;
             }
         }
         imagedestroy($imgRedimensionada);
 
         for ($y = 0; $y < $alturaFocal; $y++) {
             for ($x = 0; $x < $larguraFocal; $x++) {
-                $velhoPixel = $matriz[$y][$x];
-                $novoPixel = ($velhoPixel > 128) ? 255 : 0;
-                $matriz[$y][$x] = $novoPixel;
+                $oldPixel = $matrix[$y][$x];
+                $newPixel = ($oldPixel > 128) ? 255 : 0;
+                $matrix[$y][$x] = $newPixel;
 
-                $erro = ($velhoPixel - $novoPixel) / 8;
+                $errorVal = ($oldPixel - $newPixel) / 8;
 
                 if ($x + 1 < $larguraFocal) {
-                    $matriz[$y][$x + 1]     += $erro;
+                    $matrix[$y][$x + 1]     += $errorVal;
                 }
                 if ($x + 2 < $larguraFocal) {
-                    $matriz[$y][$x + 2]     += $erro;
+                    $matrix[$y][$x + 2]     += $errorVal;
                 }
                 if ($y + 1 < $alturaFocal) {
                     if ($x - 1 >= 0) {
-                        $matriz[$y + 1][$x - 1]   += $erro;
+                        $matrix[$y + 1][$x - 1]   += $errorVal;
                     }
-                                             $matriz[$y + 1][$x]     += $erro;
+                                             $matrix[$y + 1][$x]     += $errorVal;
                     if ($x + 1 < $larguraFocal) {
-                        $matriz[$y + 1][$x + 1]   += $erro;
+                        $matrix[$y + 1][$x + 1]   += $errorVal;
                     }
                 }
                 if ($y + 2 < $alturaFocal) {
-                    $matriz[$y + 2][$x]     += $erro;
+                    $matrix[$y + 2][$x]     += $errorVal;
                 }
             }
         }
 
         $imgFinal = imagecreate($larguraFocal, $alturaFocal);
-        $alocadaBG = imagecolorallocate($imgFinal, $corBG[0], $corBG[1], $corBG[2]);
-        $alocadaFG = imagecolorallocate($imgFinal, $corFG[0], $corFG[1], $corFG[2]);
+        $allocatedBG = imagecolorallocate($imgFinal, $corBG[0], $corBG[1], $corBG[2]);
+        $allocatedFG = imagecolorallocate($imgFinal, $corFG[0], $corFG[1], $corFG[2]);
 
         for ($y = 0; $y < $alturaFocal; $y++) {
             for ($x = 0; $x < $larguraFocal; $x++) {
-                $cor = ($matriz[$y][$x] > 128) ? $alocadaBG : $alocadaFG;
+                $color = ($matrix[$y][$x] > 128) ? $allocatedBG : $allocatedFG;
                 imagesetpixel($imgFinal, $x, $y, $cor);
             }
         }

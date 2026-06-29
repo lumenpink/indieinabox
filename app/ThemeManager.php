@@ -4,6 +4,12 @@ declare(strict_types=1);
 
 namespace Indieinabox;
 
+/**
+ * Class ThemeManager
+ * 
+ * Manages the inclusion of theme view files and the copying of static theme assets.
+ * Provides fallback mechanisms to load embedded theme contents if disk files are missing.
+ */
 class ThemeManager
 {
     /**

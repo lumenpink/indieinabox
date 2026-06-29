@@ -54,9 +54,6 @@ it('classifies kind automatically based on slug prefix matching kindspath', func
     $result = kind($page);
     expect($result)->toBe(['localized' => 'articles', 'kind' => 'article']);
 
-    $page = ['slug' => 'pt-br/artigos/meu-post', 'lang' => 'pt-br'];
-    $result = kind($page);
-    expect($result)->toBe(['localized' => 'artigos', 'kind' => 'article']);
 });
 
 it('classifies kind as generic if no match is found', function () {

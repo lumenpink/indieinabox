@@ -11,11 +11,18 @@ support for IndieWeb principles (Micropub API, IndieAuth, Webmentions, and Whost
 
 All detailed technical documentation has been separated into dedicated markdown files under the `docs/` folder:
 
-*   **[Project Architecture](file:///home/lumen/indieinabox2026/docs/architecture.md)**: Details the compilation pipeline flow and workspace directory structures.
-*   **[Core Classes](file:///home/lumen/indieinabox2026/docs/classes.md)**: Explains namespaced PHP objects (Site, Page, Pages, Parsedown) and the magic property shortcut layer.
-*   **[Procedural Functions](file:///home/lumen/indieinabox2026/docs/functions.md)**: Documents legacy helper routines and date/translation mechanisms.
-*   **[Configuration & CLI Options](file:///home/lumen/indieinabox2026/docs/configuration.md)**: Details `config.yml` keys, command-line arguments, and global variables.
-*   **[Roadmap & Refactoring History](file:///home/lumen/indieinabox2026/docs/roadmap.md)**: Tracks completed and upcoming refactoring steps.
+*   **[Project Architecture](file:///home/lumen/indieinabox/docs/architecture.md)**: Details the compilation 
+    pipeline flow and workspace directory structures.
+*   **[Core Classes](file:///home/lumen/indieinabox/docs/classes.md)**: Explains namespaced PHP objects 
+    (Site, Page, Pages, Parsedown) and the magic property shortcut layer.
+*   **[Procedural Functions](file:///home/lumen/indieinabox/docs/functions.md)**: Documents legacy helper routines 
+    and date/translation mechanisms.
+*   **[Configuration & CLI Options](file:///home/lumen/indieinabox/docs/configuration.md)**: Details `config.yml` 
+    keys, command-line arguments, and global variables.
+*   **[Roadmap & Refactoring History](file:///home/lumen/indieinabox/docs/roadmap.md)**: Tracks completed and 
+    upcoming refactoring steps.
+*   **[Custom Types & Languages](file:///home/lumen/indieinabox/docs/custom_types.md)**: Instructions on how to 
+    add new languages and post kinds (`notes`, `photos`, `garden`) to the blog.
 
 ---
 

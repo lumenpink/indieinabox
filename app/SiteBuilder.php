@@ -12,6 +12,13 @@ use Indieinabox\Markdown\ASTParser;
 use Indieinabox\Markdown\GemtextRenderer;
 use Indieinabox\Markdown\GophermapRenderer;
 
+/**
+ * Class SiteBuilder
+ * 
+ * Orchestrates the static site generation process. It scans the content directory,
+ * virtualizes missing translations, processes markdown into HTML/Gemtext/Gophermap,
+ * and compiles feeds and assets into the output directory.
+ */
 class SiteBuilder
 {
     private Site $site;
@@ -48,6 +55,12 @@ class SiteBuilder
         return $this->pages;
     }
 
+    /**
+     * Executes the main build pipeline.
+     * 
+     * Cleans the output directory, scans content files, handles translation virtualization,
+     * and triggers generation of HTML, feeds, and static assets.
+     */
     public function build(): void
     {
         $base = $this->site->paths->baseDir;

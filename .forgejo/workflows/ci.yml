@@ -237,8 +237,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           args: >
-            -Dsonar.projectKey=${{ vars.SONAR_PROJECT_KEY || 'lumenpink_indieinabox' }}
-            -Dsonar.organization=${{ vars.SONAR_ORG || 'lumenpink' }}
+            -Dsonar.projectKey=${{ vars.SONAR_PROJECT_KEY || 'indieinabox_indieinabox' }}
+            -Dsonar.organization=${{ vars.SONAR_ORG || 'indieinabox' }}
             -Dsonar.php.coverage.reportPaths=coverage/clover.xml
             -Dsonar.externalIssuesReportPaths=coverage/psalm.json
 

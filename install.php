@@ -6,32 +6,37 @@ if (!extension_loaded('pdo_sqlite')) {
     die("<h1>Error: PDO_SQLite extension is not enabled in PHP. Please enable it to continue.</h1>");
 }
 
-$baseDir = dirname(__DIR__);
+$baseDir = __DIR__;
 $configFile = $baseDir . DIRECTORY_SEPARATOR . '.config.php';
 $schemaFile = $baseDir . DIRECTORY_SEPARATOR . 'database.sql';
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['db_path'])) {
-    $dbPath = $_POST['db_path'];
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['data_dir'])) {
+    $dataDir = rtrim($_POST['data_dir'], '/\\');
     
-    // Ensure the directory is writable
-    $dir = dirname($dbPath);
-    if (!is_writable($dir) && !is_writable($baseDir)) {
-        $error = "The directory '$dir' is not writable.";
+    // Create the directory if it doesn't exist
+    if (!is_dir($dataDir)) {
+        @mkdir($dataDir, 0755, true);
+    }
+    
+    if (!is_writable($dataDir)) {
+        $error = "The directory '$dataDir' is not writable or could not be created.";
     } else {
+        // Create subdirectories for microsub/activitypub to avoid permission issues later
+        @mkdir($dataDir . DIRECTORY_SEPARATOR . 'microsub', 0755, true);
+        @mkdir($dataDir . DIRECTORY_SEPARATOR . 'activitypub', 0755, true);
+
         // Save .config.php
-        $configContent = "<?php\n\nreturn [\n    'db_path' => '" . str_replace("'", "\\'", $dbPath) . "'\n];\n";
+        $configContent = "<?php\n\nreturn [\n    'data_dir' => '" . str_replace("'", "\\'", $dataDir) . "'\n];\n";
         if (file_put_contents($configFile, $configContent) !== false) {
             
             // Run schema if exists
             if (file_exists($schemaFile)) {
                 try {
+                    $dbPath = $dataDir . DIRECTORY_SEPARATOR . 'indieinabox.sqlite';
                     $db = new \PDO('sqlite:' . $dbPath);
                     $db->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
                     $sql = file_get_contents($schemaFile);
                     $db->exec($sql);
-                    
-                    // Cleanup optional: unlink($schemaFile);
-                    // Since it's development, we'll keep it or unlink it depending on preferences. Let's keep it.
                 } catch (Exception $e) {
                     die("Database creation failed: " . $e->getMessage());
                 }
@@ -45,8 +50,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['db_path'])) {
     }
 }
 
-// Default DB path suggestion
-$defaultDbPath = $baseDir . DIRECTORY_SEPARATOR . 'indieinabox.sqlite';
+// Default Data directory suggestion
+// We try to suggest one level up (../data) for security, falling back to ./data
+$parentDir = dirname($baseDir);
+$defaultDataDir = $parentDir . DIRECTORY_SEPARATOR . 'data';
+if (!is_writable($parentDir)) {
+    $defaultDataDir = $baseDir . DIRECTORY_SEPARATOR . 'data';
+}
 
 ?>
 <!DOCTYPE html>
@@ -76,10 +86,10 @@ $defaultDbPath = $baseDir . DIRECTORY_SEPARATOR . 'indieinabox.sqlite';
 
         <form method="POST">
             <div class="form-group">
-                <label for="db_path">SQLite Database Absolute Path</label>
-                <input type="text" id="db_path" name="db_path" value="<?php echo htmlspecialchars($defaultDbPath); ?>" required>
+                <label for="data_dir">Data Directory Absolute Path</label>
+                <input type="text" id="data_dir" name="data_dir" value="<?php echo htmlspecialchars($defaultDataDir); ?>" required>
                 <small style="color: #666; display: block; margin-top: 0.5rem;">
-                    This file will be created if it doesn't exist. Ensure the directory is writable by the PHP process.
+                    This directory will contain the SQLite database and all inbox files. Ensure it is writable by the PHP process.
                 </small>
             </div>
             <button type="submit">Install & Migrate Data</button>

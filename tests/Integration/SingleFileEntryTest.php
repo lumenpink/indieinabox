@@ -62,9 +62,9 @@ it(
     // Initialize database for compiled script
     file_put_contents(
         $integrationSandbox . '/.config.php',
-        "<?php\nreturn ['db_path' => '" . $integrationSandbox . "/test.sqlite'];\n"
+        "<?php\nreturn ['data_dir' => '" . $integrationSandbox . "'];\n"
     );
-    $db = new \PDO('sqlite:' . $integrationSandbox . '/test.sqlite');
+    $db = new \PDO('sqlite:' . $integrationSandbox . '/indieinabox.sqlite');
     $db->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
     $db->exec(file_get_contents($root . '/database.sql'));
 
@@ -223,16 +223,20 @@ PHP
             ->and($json['status'])->toBe(202)
             ->and($json['message'])->toContain('Webmention accepted');
 
-        // Check that webmention data is created correctly in SQLite
-        $db = new \PDO('sqlite:' . $integrationSandbox . '/test.sqlite');
-        $stmt = $db->query("SELECT payload_json FROM webmentions WHERE hash = '" . md5('about') . "'");
-        $row = $stmt->fetch(\PDO::FETCH_ASSOC);
-        expect($row)->not->toBeFalse();
+        // Check that webmention data is created correctly in Markdown
+        $hash = md5('about');
+        $expectedId = $hash . '_' . md5($sourceUrl);
+        $mdFile = $integrationSandbox . '/microsub/inbox/notifications/' . $expectedId . '.md';
+        
+        expect(file_exists($mdFile))->toBeTrue();
 
-        $savedData = json_decode($row['payload_json'], true);
-        expect($savedData)->toHaveCount(1);
-        expect($savedData[0]['source'])->toBe($sourceUrl);
-        expect($savedData[0]['target'])->toBe($targetUrl);
+        $content = file_get_contents($mdFile);
+        preg_match('/^---\s*\n(.*?)\n---\s*\n(.*)$/s', $content, $matches);
+        $yamlParser = new \Indieinabox\Yaml();
+        $savedData = $yamlParser->loadString($matches[1]);
+        
+        expect($savedData['source'])->toBe($sourceUrl);
+        expect($savedData['target'])->toBe($targetUrl);
     } finally {
         // Terminate background web server processes
         if (is_resource($process1)) {

@@ -114,29 +114,144 @@ class ActivityPubHandler
             return;
         }
 
-        // Technically we should verify HTTP Signature here for security
-        // But let's at least process basic follows
+        $headers = getallheaders();
+        $signatureHeader = '';
+        foreach ($headers as $k => $v) {
+            if (strtolower($k) === 'signature') {
+                $signatureHeader = $v;
+                break;
+            }
+        }
+
+        if (!$signatureHeader) {
+            http_response_code(401);
+            echo "Missing signature";
+            return;
+        }
+
+        preg_match('/keyId="([^"]+)"/', $signatureHeader, $matches);
+        $keyId = $matches[1] ?? '';
+        if (!$keyId) {
+            http_response_code(401);
+            echo "Missing keyId in signature";
+            return;
+        }
+
+        $pubKey = $this->getPublicKey($keyId);
+        if (!$pubKey) {
+            http_response_code(401);
+            echo "Failed to fetch public key";
+            return;
+        }
+
+        $path = $_SERVER['REQUEST_URI'] ?? '/inbox';
+        $method = $_SERVER['REQUEST_METHOD'] ?? 'POST';
+
+        if (!HttpSignature::verify($headers, $method, $path, $pubKey)) {
+            http_response_code(401);
+            echo "Invalid signature";
+            return;
+        }
+
         $type = $activity['type'] ?? '';
 
         if ($type === 'Follow') {
             $actor = $activity['actor'] ?? '';
             if ($actor) {
-                // Fetch actor to find their inbox (ideally)
-                $actorInbox = $actor . '/inbox'; // Simplified fallback
-                
-                // Try to find the inbox in the actor object if we fetch it
-                // For now, assume actor has an inbox ending in /inbox or we just store it
-                $sql = "INSERT OR REPLACE INTO activitypub_followers (actor_url, inbox_url) " .
-                       "VALUES (?, ?)";
+                $actorInbox = $actor . '/inbox';
+                $sql = "INSERT OR REPLACE INTO activitypub_followers (actor_url, inbox_url) VALUES (?, ?)";
                 $stmt = $this->db->prepare($sql);
                 $stmt->execute([$actor, $actorInbox]);
-
-                // We must send an Accept activity back
                 $this->queueAcceptFollow($activity, $actorInbox);
             }
+        } elseif ($type === 'Create') {
+            $this->handleCreateActivity($activity);
         }
 
         http_response_code(202);
+    }
+
+    private function getPublicKey(string $keyId): ?string
+    {
+        $stmt = $this->db->prepare("SELECT public_key FROM activitypub_actors WHERE actor_url = ?");
+        $stmt->execute([$keyId]);
+        if ($row = $stmt->fetch()) {
+            return $row['public_key'];
+        }
+
+        $actorUrl = preg_replace('/#.*$/', '', $keyId);
+        $ch = curl_init($actorUrl);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, ['Accept: application/activity+json']);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+        $res = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        if ($httpCode >= 200 && $httpCode < 300 && $res) {
+            $data = json_decode($res, true);
+            $fetchedKeyId = $data['publicKey']['id'] ?? '';
+            if ($fetchedKeyId === $keyId && isset($data['publicKey']['publicKeyPem'])) {
+                $pubKey = $data['publicKey']['publicKeyPem'];
+                $stmt = $this->db->prepare("INSERT OR REPLACE INTO activitypub_actors (actor_url, public_key, updated_at) VALUES (?, ?, ?)");
+                $stmt->execute([$keyId, $pubKey, time()]);
+                return $pubKey;
+            }
+        }
+        return null;
+    }
+
+    private function handleCreateActivity(array $activity): void
+    {
+        $object = $activity['object'] ?? null;
+        if (!$object || !is_array($object)) {
+            return;
+        }
+
+        $type = $object['type'] ?? '';
+        if (!in_array($type, ['Note', 'Article'])) {
+            return;
+        }
+
+        $id = $object['id'] ?? '';
+        if (!$id) return;
+
+        $hash = md5($id);
+        $dataDir = \Indieinabox\Database::$dataDir ?? (dirname(__DIR__) . '/data');
+        $inboxDir = $dataDir . DIRECTORY_SEPARATOR . 'microsub' . DIRECTORY_SEPARATOR . 'inbox' . DIRECTORY_SEPARATOR . 'inbox';
+        
+        if (!is_dir($inboxDir)) {
+            @mkdir($inboxDir, 0755, true);
+        }
+
+        $actor = $activity['actor'] ?? '';
+        $authorName = $actor;
+        $authorPhoto = '';
+        
+        // Optionally fetch actor details for name and photo, but for now we use actor url
+        
+        $published = isset($object['published']) ? strtotime($object['published']) : time();
+        $content = $object['content'] ?? ($object['summary'] ?? '');
+        
+        $frontmatter = [
+            'id' => $hash,
+            'url' => $object['url'] ?? $id,
+            'author_name' => $authorName,
+            'author_photo' => $authorPhoto,
+            'published' => $published,
+            'is_read' => 0,
+            'type' => 'activitypub'
+        ];
+
+        $yaml = new \Indieinabox\Yaml();
+        $yamlStr = $yaml->dump($frontmatter);
+
+        $filepath = $inboxDir . DIRECTORY_SEPARATOR . $hash . '.md';
+        $fileContent = "---\n" . trim($yamlStr) . "\n---\n\n" . $content;
+
+        file_put_contents($filepath, $fileContent);
     }
 
     private function queueAcceptFollow(array $followActivity, string $targetInbox): void
@@ -235,6 +350,13 @@ class ActivityPubHandler
         echo "Running ActivityPub outbox processor...\n";
 
         $db = Database::getDb();
+
+        // Prune old outbox entries (7 days) and actors (30 days)
+        $sevenDaysAgo = time() - (7 * 86400);
+        $thirtyDaysAgo = time() - (30 * 86400);
+        
+        $db->exec("DELETE FROM activitypub_outbox WHERE status IN ('sent', 'failed') AND created_at < $sevenDaysAgo");
+        $db->exec("DELETE FROM activitypub_actors WHERE updated_at < $thirtyDaysAgo");
 
         $stmt = $db->query("SELECT private_key FROM activitypub_keys WHERE key_id = 'main-key'");
         $keyRow = $stmt->fetch();

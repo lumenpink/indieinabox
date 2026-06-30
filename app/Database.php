@@ -11,6 +11,7 @@ use PDOResult;
 class Database
 {
     private static ?PDO $db = null;
+    public static ?string $dataDir = null;
 
     /**
      * @throws Exception

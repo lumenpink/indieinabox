@@ -162,25 +162,33 @@ class FeedFetcher
 
     private function saveItem(string $id, string $channel, string $url, string $content, int $published, string $authorName, string $authorPhoto): void
     {
-        // Insert or ignore if it already exists
-        $stmt = $this->db->prepare('SELECT count(*) FROM microsub_items WHERE id = :id AND channel_uid = :channel');
-        $stmt->bindValue(':id', $id, PDO::PARAM_STR);
-        $stmt->bindValue(':channel', $channel, PDO::PARAM_STR);
-        $stmt->execute();
+        $dataDir = \Indieinabox\Database::$dataDir ?? (dirname(__DIR__) . '/data');
         
-        if ($stmt->fetchColumn() == 0) {
-            $insert = $this->db->prepare('
-                INSERT INTO microsub_items (id, channel_uid, url, content, published, author_name, author_photo, is_read) 
-                VALUES (:id, :channel, :url, :content, :published, :author_name, :author_photo, 0)
-            ');
-            $insert->bindValue(':id', $id, PDO::PARAM_STR);
-            $insert->bindValue(':channel', $channel, PDO::PARAM_STR);
-            $insert->bindValue(':url', $url, PDO::PARAM_STR);
-            $insert->bindValue(':content', $content, PDO::PARAM_STR);
-            $insert->bindValue(':published', $published, PDO::PARAM_INT);
-            $insert->bindValue(':author_name', $authorName, PDO::PARAM_STR);
-            $insert->bindValue(':author_photo', $authorPhoto, PDO::PARAM_STR);
-            $insert->execute();
+        $channelDir = $dataDir . DIRECTORY_SEPARATOR . 'microsub' . DIRECTORY_SEPARATOR . 'inbox' . DIRECTORY_SEPARATOR . preg_replace('/[^a-zA-Z0-9_-]/', '', $channel);
+        if (!is_dir($channelDir)) {
+            @mkdir($channelDir, 0755, true);
+        }
+
+        // Generate a safe filename from the ID
+        $filename = md5($id) . '.md';
+        $filepath = $channelDir . DIRECTORY_SEPARATOR . $filename;
+
+        if (!file_exists($filepath)) {
+            $frontmatter = [
+                'id' => $id,
+                'url' => $url,
+                'author_name' => $authorName,
+                'author_photo' => $authorPhoto,
+                'published' => $published,
+                'is_read' => 0,
+                'type' => 'feed'
+            ];
+            
+            $yaml = new \Indieinabox\Yaml();
+            $yamlStr = $yaml->dump($frontmatter);
+            $fileContent = "---\n" . $yamlStr . "---\n\n" . $content;
+            
+            file_put_contents($filepath, $fileContent);
         }
     }
 }

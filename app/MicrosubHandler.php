@@ -53,55 +53,70 @@ class MicrosubHandler
 
             case 'timeline':
                 $channel = $_GET['channel'] ?? 'inbox';
-                $before = $_GET['before'] ?? null;
-                $after = $_GET['after'] ?? null;
+                $before = (int)($_GET['before'] ?? 0);
+                $after = (int)($_GET['after'] ?? 0);
                 
-                $sql = '
-                    SELECT id, url, content, published, author_name, author_photo, is_read
-                    FROM microsub_items
-                    WHERE channel_uid = :channel
-                ';
-                $params = [':channel' => $channel];
-
-                if ($before) {
-                    $sql .= ' AND published > :before';
-                    $params[':before'] = (int)$before;
-                }
-                if ($after) {
-                    $sql .= ' AND published < :after';
-                    $params[':after'] = (int)$after;
-                }
-
-                $sql .= ' ORDER BY published DESC LIMIT 20';
-                $stmt = $this->db->prepare($sql);
-                $stmt->execute($params);
+                $dataDir = \Indieinabox\Database::$dataDir ?? (dirname(__DIR__) . '/data');
+                $channelDir = $dataDir . DIRECTORY_SEPARATOR . 'microsub' . DIRECTORY_SEPARATOR . 'inbox' . DIRECTORY_SEPARATOR . preg_replace('/[^a-zA-Z0-9_-]/', '', $channel);
                 
                 $items = [];
                 $firstPub = null;
                 $lastPub = null;
-                while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                    $pubInt = (int)$row['published'];
-                    if ($firstPub === null) {
-                        $firstPub = $pubInt;
+                
+                if (is_dir($channelDir)) {
+                    $files = glob($channelDir . DIRECTORY_SEPARATOR . '*.md');
+                    if ($files) {
+                        $parsedItems = [];
+                        foreach ($files as $file) {
+                            $content = file_get_contents($file);
+                            if (preg_match('/^---\s*\n(.*?)\n---\s*\n(.*)$/s', $content, $matches)) {
+                                $yamlParser = new \Indieinabox\Yaml();
+                                $fm = $yamlParser->loadString($matches[1]);
+                                $pubInt = (int)($fm['published'] ?? filemtime($file));
+                                
+                                if ($before && $pubInt <= $before) continue;
+                                if ($after && $pubInt >= $after) continue;
+                                
+                                $parsedItems[] = [
+                                    'pubInt' => $pubInt,
+                                    'fm' => $fm,
+                                    'contentHtml' => trim($matches[2])
+                                ];
+                            }
+                        }
+                        
+                        usort($parsedItems, function ($a, $b) {
+                            return $b['pubInt'] <=> $a['pubInt'];
+                        });
+                        
+                        $parsedItems = array_slice($parsedItems, 0, 20);
+                        
+                        foreach ($parsedItems as $p) {
+                            $pubInt = $p['pubInt'];
+                            if ($firstPub === null) {
+                                $firstPub = $pubInt;
+                            }
+                            $lastPub = $pubInt;
+                            
+                            $fm = $p['fm'];
+                            $item = [
+                                'type' => 'entry',
+                                'url' => $fm['url'] ?? '',
+                                'content' => ['html' => $p['contentHtml']],
+                                'published' => date('c', $pubInt),
+                                '_id' => $fm['id'] ?? basename($file, '.md'),
+                                '_is_read' => (bool)($fm['is_read'] ?? false)
+                            ];
+                            if (!empty($fm['author_name'])) {
+                                $item['author'] = [
+                                    'type' => 'card',
+                                    'name' => $fm['author_name'],
+                                    'photo' => $fm['author_photo'] ?? ''
+                                ];
+                            }
+                            $items[] = $item;
+                        }
                     }
-                    $lastPub = $pubInt;
-
-                    $item = [
-                        'type' => 'entry',
-                        'url' => $row['url'],
-                        'content' => ['html' => $row['content']],
-                        'published' => date('c', $pubInt),
-                        '_id' => $row['id'],
-                        '_is_read' => (bool)$row['is_read']
-                    ];
-                    if (!empty($row['author_name'])) {
-                        $item['author'] = [
-                            'type' => 'card',
-                            'name' => $row['author_name'],
-                            'photo' => $row['author_photo'] ?? ''
-                        ];
-                    }
-                    $items[] = $item;
                 }
                 
                 $response = ['items' => $items];
@@ -176,18 +191,37 @@ class MicrosubHandler
             case 'timeline':
                 $method = $_POST['method'] ?? '';
                 if ($method === 'mark_read') {
-                    $channel = $_POST['channel'] ?? 'inbox';
+                    $channel = preg_replace('/[^a-zA-Z0-9_-]/', '', $_POST['channel'] ?? 'inbox');
                     $entryIds = $_POST['entry'] ?? [];
                     if (!is_array($entryIds)) {
                         $entryIds = [$entryIds];
                     }
 
+                    $dataDir = \Indieinabox\Database::$dataDir ?? (dirname(__DIR__) . '/data');
+                    $channelDir = $dataDir . DIRECTORY_SEPARATOR . 'microsub' . DIRECTORY_SEPARATOR . 'inbox' . DIRECTORY_SEPARATOR . $channel;
+
                     foreach ($entryIds as $id) {
-                        $sql = 'UPDATE microsub_items SET is_read = 1 WHERE channel_uid = :channel AND id = :id';
-                        $stmt = $this->db->prepare($sql);
-                        $stmt->bindValue(':channel', $channel, PDO::PARAM_STR);
-                        $stmt->bindValue(':id', $id, PDO::PARAM_STR);
-                        $stmt->execute();
+                        $possibleFiles = [
+                            $channelDir . DIRECTORY_SEPARATOR . $id . '.md',
+                            $channelDir . DIRECTORY_SEPARATOR . md5($id) . '.md'
+                        ];
+                        
+                        foreach ($possibleFiles as $file) {
+                            if (file_exists($file)) {
+                                $content = file_get_contents($file);
+                                if (preg_match('/^---\s*\n(.*?)\n---\s*\n(.*)$/s', $content, $matches)) {
+                                    $yamlParser = new \Indieinabox\Yaml();
+                                    $fm = $yamlParser->loadString($matches[1]);
+                                    if (($fm['id'] ?? '') === $id || md5($fm['id'] ?? '') === md5($id)) {
+                                        $fm['is_read'] = 1;
+                                        $yamlStr = $yamlParser->dump($fm);
+                                        $newContent = "---\n" . $yamlStr . "---\n\n" . trim($matches[2]);
+                                        file_put_contents($file, $newContent);
+                                        break;
+                                    }
+                                }
+                            }
+                        }
                     }
                     echo json_encode(['success' => 'ok']);
                 } else {

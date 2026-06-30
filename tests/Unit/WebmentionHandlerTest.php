@@ -17,6 +17,7 @@ beforeEach(function () use ($tempDir) {
     $property->setAccessible(true);
     $property->setValue(null, null);
     
+    \Indieinabox\Database::$dataDir = $tempDir . '/data';
     \Indieinabox\Database::connect(':memory:');
     $sql = file_get_contents(dirname(__DIR__, 2) . '/database.sql');
     \Indieinabox\Database::getDb()->exec($sql);
@@ -89,34 +90,40 @@ it('saves webmention data correctly and aggregates mentions without duplicating 
 
     $handler->saveWebmention($source, $target, $meta);
 
-    $db = \Indieinabox\Database::getDb();
-    $stmt = $db->query("SELECT payload_json FROM webmentions WHERE hash = '" . md5('about') . "'");
-    $row = $stmt->fetch(\PDO::FETCH_ASSOC);
-    expect($row)->not->toBeFalse();
+    $hash = md5('about');
+    $notificationsDir = $tempDir . '/data/microsub/inbox/notifications';
+    
+    $file1 = $notificationsDir . '/' . $hash . '_' . md5($source) . '.md';
+    expect(file_exists($file1))->toBeTrue();
 
-    $content = json_decode($row['payload_json'], true);
-    if (count($content) !== 1) {
-        var_dump($content);
-    }
-    expect($content)->toHaveCount(1);
-    expect($content[0]['source'])->toBe($source);
-    expect($content[0]['title'])->toBe('Great Post!');
-    expect($content[0]['text'])->toBe('Loved reading this.');
+    $yamlParser = new \Indieinabox\Yaml();
+
+    $content = file_get_contents($file1);
+    preg_match('/^---\s*\n(.*?)\n---\s*\n(.*)$/s', $content, $matches);
+    $data1 = $yamlParser->loadString($matches[1]);
+    expect($data1['source'])->toBe($source);
+    expect($data1['author_name'])->toBe('Great Post!');
 
     // Save another webmention from a different source
-    $handler->saveWebmention('https://anotherblog.com/post2', $target, ['title' => 'Reply', 'text' => 'Cool.']);
-    $stmt = $db->query("SELECT payload_json FROM webmentions WHERE hash = '" . md5('about') . "'");
-    $content = json_decode($stmt->fetchColumn(), true);
-    expect($content)->toHaveCount(2);
+    $source2 = 'https://anotherblog.com/post2';
+    $handler->saveWebmention($source2, $target, ['title' => 'Reply', 'text' => 'Cool.']);
+    
+    $file2 = $notificationsDir . '/' . $hash . '_' . md5($source2) . '.md';
+    expect(file_exists($file2))->toBeTrue();
+    
+    $files = glob($notificationsDir . '/' . $hash . '_*.md');
+    expect($files)->toHaveCount(2);
 
     // Save again from same source (updates/overwrites the existing one from that source)
     $handler->saveWebmention($source, $target, ['title' => 'Updated Great Post!', 'text' => 'Loved reading this. (v2)']);
-    $stmt = $db->query("SELECT payload_json FROM webmentions WHERE hash = '" . md5('about') . "'");
-    $content = json_decode($stmt->fetchColumn(), true);
-    expect($content)->toHaveCount(2);
+    
+    $files = glob($notificationsDir . '/' . $hash . '_*.md');
+    expect($files)->toHaveCount(2);
     
     // The one from post1 should be updated
-    $post1 = array_values(array_filter($content, fn($m) => $m['source'] === $source))[0];
-    expect($post1['title'])->toBe('Updated Great Post!');
-    expect($post1['text'])->toBe('Loved reading this. (v2)');
+    $content = file_get_contents($file1);
+    preg_match('/^---\s*\n(.*?)\n---\s*\n(.*)$/s', $content, $matches);
+    $data1_v2 = $yamlParser->loadString($matches[1]);
+    expect($data1_v2['author_name'])->toBe('Updated Great Post!');
+    expect(trim($matches[2]))->toBe('Loved reading this. (v2)');
 });

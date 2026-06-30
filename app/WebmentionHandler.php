@@ -274,51 +274,34 @@ class WebmentionHandler
         }
         $hash = md5($slug);
 
-        $stmt = $db->prepare('SELECT payload_json FROM webmentions WHERE hash = :hash');
-        $stmt->bindValue(':hash', $hash, \PDO::PARAM_STR);
-        $stmt->execute();
-        $row = $stmt->fetch(\PDO::FETCH_ASSOC);
-
-        $existing = [];
-        if ($row && isset($row['payload_json'])) {
-            $data = json_decode($row['payload_json'], true);
-            if (is_array($data)) {
-                $existing = $data;
-            }
+        $dataDir = \Indieinabox\Database::$dataDir ?? (dirname(__DIR__) . '/data');
+        $notificationsDir = $dataDir . DIRECTORY_SEPARATOR . 'microsub' . DIRECTORY_SEPARATOR . 'inbox' . DIRECTORY_SEPARATOR . 'notifications';
+        
+        if (!is_dir($notificationsDir)) {
+            @mkdir($notificationsDir, 0755, true);
         }
 
         $newMention = [
+            'id' => $hash . '_' . md5($source),
+            'target_hash' => $hash,
             'source' => $source,
             'target' => $target,
-            'title' => $meta['title'] ?: 'Webmention from ' . (parse_url($source, PHP_URL_HOST) ?? 'external link'),
-            'text' => $meta['text'],
-            'date' => date('c'),
+            'author_name' => $meta['title'] ?: 'Webmention from ' . (parse_url($source, PHP_URL_HOST) ?? 'external link'),
+            'author_photo' => '',
+            'url' => $source,
+            'published' => time(),
+            'is_read' => 0,
+            'type' => 'webmention',
+            'whostyle' => $meta['whostyle'] ?? []
         ];
 
-        if (isset($meta['whostyle']) && is_array($meta['whostyle'])) {
-            $newMention['whostyle'] = $meta['whostyle'];
-        }
-
-        // Filter duplicates
-        $existing = array_filter($existing, function ($mention) use ($source) {
-            return $mention['source'] !== $source;
-        });
-
-        $existing[] = $newMention;
-
-        $json = json_encode(array_values($existing), JSON_PRETTY_PRINT);
-
-        if ($row) {
-            $upd = $db->prepare('UPDATE webmentions SET payload_json = :json WHERE hash = :hash');
-            $upd->bindValue(':hash', $hash, \PDO::PARAM_STR);
-            $upd->bindValue(':json', $json, \PDO::PARAM_STR);
-            $upd->execute();
-        } else {
-            $ins = $db->prepare('INSERT INTO webmentions (hash, payload_json) VALUES (:hash, :json)');
-            $ins->bindValue(':hash', $hash, \PDO::PARAM_STR);
-            $ins->bindValue(':json', $json, \PDO::PARAM_STR);
-            $ins->execute();
-        }
+        $filepath = $notificationsDir . DIRECTORY_SEPARATOR . $newMention['id'] . '.md';
+        
+        $yaml = new \Indieinabox\Yaml();
+        $yamlStr = $yaml->dump($newMention);
+        $fileContent = "---\n" . $yamlStr . "---\n\n" . ($meta['text'] ?? '');
+        
+        file_put_contents($filepath, $fileContent);
     }
 
     private function sendResponse(int $code, string $message): void

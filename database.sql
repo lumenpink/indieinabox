@@ -6,14 +6,9 @@ CREATE TABLE IF NOT EXISTS translations (
 CREATE TABLE IF NOT EXISTS url_translations (
     id INTEGER PRIMARY KEY AUTOINCREMENT, lang TEXT, slug_key TEXT, slug_value TEXT
 );
-CREATE TABLE IF NOT EXISTS webmentions (id INTEGER PRIMARY KEY AUTOINCREMENT, hash TEXT UNIQUE, payload_json TEXT);
 CREATE TABLE IF NOT EXISTS microsub_channels (uid TEXT PRIMARY KEY, name TEXT);
 CREATE TABLE IF NOT EXISTS microsub_subscriptions (
     id INTEGER PRIMARY KEY AUTOINCREMENT, channel_uid TEXT, url TEXT, type TEXT, name TEXT, photo TEXT
-);
-CREATE TABLE IF NOT EXISTS microsub_items (
-    id TEXT PRIMARY KEY, channel_uid TEXT, url TEXT, content TEXT, published INTEGER, author_name TEXT, 
-    author_photo TEXT, is_read INTEGER
 );
 
 INSERT OR IGNORE INTO microsub_channels (uid, name) VALUES ('inbox', 'Timeline');
@@ -112,6 +107,12 @@ CREATE TABLE IF NOT EXISTS activitypub_outbox (
     target_inbox TEXT NOT NULL,
     status TEXT DEFAULT 'pending',
     created_at INTEGER NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS activitypub_actors (
+    actor_url TEXT PRIMARY KEY,
+    public_key TEXT NOT NULL,
+    updated_at INTEGER NOT NULL
 );
 
 INSERT OR REPLACE INTO settings (key, value) VALUES ('activitypub_handle', 'author');

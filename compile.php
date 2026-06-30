@@ -274,12 +274,18 @@ HTML;
     }
 
     $dbConfig = require $configFile;
-    if (!isset($dbConfig['db_path'])) {
-        die("Error: Invalid .config.php format.");
+    if (!isset($dbConfig['data_dir'])) {
+        if (isset($dbConfig['db_path'])) {
+            $dbConfig['data_dir'] = dirname($dbConfig['db_path']);
+        } else {
+            die("Error: Invalid .config.php format. Missing 'data_dir'.");
+        }
     }
 
     try {
-        \Indieinabox\Database::connect($dbConfig['db_path']);
+        $dbPath = $dbConfig['data_dir'] . '/indieinabox.sqlite';
+        \Indieinabox\Database::$dataDir = $dbConfig['data_dir'];
+        \Indieinabox\Database::connect($dbPath);
     } catch (\Exception $e) {
         die("Database Connection Error: " . $e->getMessage());
     }

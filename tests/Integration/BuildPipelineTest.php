@@ -30,7 +30,7 @@ function cleanSandbox(string $dir): void
 function writeSandboxConfig(string $sandbox): void
 {
     // Write database config to bypass installer logic
-    file_put_contents($sandbox . '/.config.php', "<?php\nreturn ['db_path' => '" . $sandbox . "/indieinabox.sqlite'];\n");
+    file_put_contents($sandbox . '/.config.php', "<?php\nreturn ['data_dir' => '" . $sandbox . "'];\n");
     // Initialize the SQLite DB with the schema
     $db = new \PDO('sqlite:' . $sandbox . '/indieinabox.sqlite');
     $db->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);

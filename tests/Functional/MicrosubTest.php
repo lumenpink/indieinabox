@@ -60,6 +60,7 @@ beforeEach(function () use ($funcTempDir) {
     if (file_exists($testDbPath)) {
         unlink($testDbPath);
     }
+    \Indieinabox\Database::$dataDir = $funcTempDir . '/data';
     \Indieinabox\Database::connect($testDbPath);
     $db = \Indieinabox\Database::getDb();
 
@@ -149,13 +150,22 @@ it('fetches timeline with pagination', function () use ($funcTempDir) {
     TestMicrosubRouter::$mockTokenValid = true;
     $router = new TestMicrosubRouter($site);
 
-    $db = \Indieinabox\Database::getDb();
-    $db->exec("INSERT INTO microsub_items (id, channel_uid, url, content, published, author_name, is_read)
-               VALUES ('id1', 'inbox', 'http://1', 'post 1', 1000, 'Author', 0)");
-    $db->exec("INSERT INTO microsub_items (id, channel_uid, url, content, published, author_name, is_read)
-               VALUES ('id2', 'inbox', 'http://2', 'post 2', 2000, 'Author', 0)");
-    $db->exec("INSERT INTO microsub_items (id, channel_uid, url, content, published, author_name, is_read)
-               VALUES ('id3', 'inbox', 'http://3', 'post 3', 3000, 'Author', 0)");
+    $dataDir = $funcTempDir . '/data';
+    $inboxDir = $dataDir . DIRECTORY_SEPARATOR . 'microsub' . DIRECTORY_SEPARATOR . 'inbox' . DIRECTORY_SEPARATOR . 'inbox';
+    if (!is_dir($inboxDir)) {
+        @mkdir($inboxDir, 0755, true);
+    }
+    
+    $yamlParser = new \Indieinabox\Yaml();
+    
+    $fm1 = $yamlParser->dump(['id' => 'id1', 'url' => 'http://1', 'published' => 1000, 'author_name' => 'Author', 'is_read' => 0]);
+    file_put_contents($inboxDir . '/id1.md', "---\n$fm1---\n\npost 1");
+    
+    $fm2 = $yamlParser->dump(['id' => 'id2', 'url' => 'http://2', 'published' => 2000, 'author_name' => 'Author', 'is_read' => 0]);
+    file_put_contents($inboxDir . '/id2.md', "---\n$fm2---\n\npost 2");
+    
+    $fm3 = $yamlParser->dump(['id' => 'id3', 'url' => 'http://3', 'published' => 3000, 'author_name' => 'Author', 'is_read' => 0]);
+    file_put_contents($inboxDir . '/id3.md', "---\n$fm3---\n\npost 3");
 
     $_SERVER['REQUEST_METHOD'] = 'GET';
     $_SERVER['REQUEST_URI'] = '/microsub';

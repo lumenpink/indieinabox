@@ -42,11 +42,13 @@ beforeEach(function () use ($funcTempDir) {
     $prop->setValue(null, null);
     
     $testDbPath = $funcTempDir . '/test.sqlite';
+    \Indieinabox\Database::$dataDir = $funcTempDir . '/data';
     \Indieinabox\Database::connect($testDbPath);
     $db = \Indieinabox\Database::getDb();
-    $db->exec('CREATE TABLE IF NOT EXISTS webmentions (
-        hash TEXT PRIMARY KEY,
-        payload_json TEXT NOT NULL
+    $db->exec('CREATE TABLE IF NOT EXISTS activitypub_actors (
+        actor_url TEXT PRIMARY KEY,
+        public_key TEXT NOT NULL,
+        updated_at INTEGER NOT NULL
     )');
 });
 
@@ -269,20 +271,21 @@ HTML;
     expect($json['status'])->toBe(202)
         ->and($json['message'])->toContain('Webmention accepted and processed');
 
-    // Assert webmention was saved to SQLite database
-    $db = \Indieinabox\Database::getDb();
+    // Assert webmention was saved to markdown file
     $expectedHash = md5('about');
-    $stmt = $db->prepare('SELECT payload_json FROM webmentions WHERE hash = :hash');
-    $stmt->execute([':hash' => $expectedHash]);
-    $row = $stmt->fetch(\PDO::FETCH_ASSOC);
-
-    expect($row)->not->toBeFalse();
+    $source = 'https://external.com/post';
+    $mdFile = $funcTempDir . '/data/microsub/inbox/notifications/' . $expectedHash . '_' . md5($source) . '.md';
     
-    $data = json_decode($row['payload_json'], true);
-    expect($data)->toHaveCount(1);
-    expect($data[0]['source'])->toBe('https://external.com/post');
-    expect($data[0]['title'])->toBe('External Post Title');
-    expect($data[0]['text'])->toContain('I read this great page');
+    expect(file_exists($mdFile))->toBeTrue();
+    
+    $content = file_get_contents($mdFile);
+    preg_match('/^---\s*\n(.*?)\n---\s*\n(.*)$/s', $content, $matches);
+    $yamlParser = new \Indieinabox\Yaml();
+    $data = $yamlParser->loadString($matches[1]);
+    
+    expect($data['source'])->toBe($source);
+    expect($data['author_name'])->toBe('External Post Title');
+    expect(trim($matches[2]))->toContain('I read this great page');
 });
 
 
@@ -313,13 +316,15 @@ function setupWebmentionTest(string $funcTempDir, string $sourceHtml): array
     $router->handleRequest();
     ob_get_clean();
 
-    $db = \Indieinabox\Database::getDb();
-    $stmt = $db->prepare('SELECT payload_json FROM webmentions WHERE hash = :hash');
-    $stmt->execute([':hash' => md5('about')]);
-    $row = $stmt->fetch(\PDO::FETCH_ASSOC);
-
-    if ($row) {
-        return json_decode($row['payload_json'], true) ?? [];
+    $expectedHash = md5('about');
+    $mdFile = $funcTempDir . '/data/microsub/inbox/notifications/' . $expectedHash . '_' . md5($_POST['source']) . '.md';
+    if (file_exists($mdFile)) {
+        $content = file_get_contents($mdFile);
+        preg_match('/^---\s*\n(.*?)\n---\s*\n(.*)$/s', $content, $matches);
+        $yamlParser = new \Indieinabox\Yaml();
+        $data = $yamlParser->loadString($matches[1]);
+        $data['text'] = trim($matches[2]);
+        return [$data];
     }
     return [];
 }
@@ -328,7 +333,7 @@ function setupWebmentionTest(string $funcTempDir, string $sourceHtml): array
 it('accepts webmention with no whostyle', function () use ($funcTempDir) {
     $html = '<html><body><a href="https://mysite.com/about">Link</a></body></html>';
     $data = setupWebmentionTest($funcTempDir, $html);
-    expect(isset($data[0]['whostyle']))->toBeFalse();
+    expect(empty($data[0]['whostyle']))->toBeTrue();
 });
 
 // 2. valid whostyle hash in meta tag
@@ -362,7 +367,7 @@ it('ignores meta whostyle with invalid chars', function () use ($funcTempDir) {
     $html = '<html><head><meta name="whostyle" content="{ws2:A$AAAAA____AAAAAAD_8PDwAAAA____AIj_ERER}"></head>'
         . '<body><a href="https://mysite.com/about">Link</a></body></html>';
     $data = setupWebmentionTest($funcTempDir, $html);
-    expect(isset($data[0]['whostyle']))->toBeFalse();
+    expect(empty($data[0]['whostyle']))->toBeTrue();
 });
 
 it('parses meta whostyle with out-of-bounds values', function () use ($funcTempDir) {
@@ -385,7 +390,7 @@ it('ignores inline whostyle with invalid chars', function () use ($funcTempDir) 
         . '{ws2:A$AAAAA____AAAAAAD_8PDwAAAA____AIj_ERER}'
         . ' <a href="https://mysite.com/about">Link</a></body></html>';
     $data = setupWebmentionTest($funcTempDir, $html);
-    expect(isset($data[0]['whostyle']))->toBeFalse();
+    expect(empty($data[0]['whostyle']))->toBeTrue();
 });
 
 it('parses inline whostyle with out-of-bounds values', function () use ($funcTempDir) {

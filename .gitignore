@@ -18,3 +18,4 @@ data/twtxt_cache/
 *.sqlite*
 .config.php
 sonarqube
+scratch/

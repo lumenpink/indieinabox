@@ -33,7 +33,7 @@ jobs:
         uses: https://github.com/shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2.37.2
         with:
           php-version: ${{ matrix.php }}
-          extensions: mbstring, json, fileinfo
+          extensions: mbstring, json, fileinfo, pdo_sqlite, sqlite3
           coverage: xdebug          # Required to generate clover
           tools: composer:v2
 
@@ -65,7 +65,7 @@ jobs:
         run: |
           mkdir -p data
           echo "<?php return ['db_path' => __DIR__ . '/data/indieinabox.sqlite'];" > .config.php
-          sqlite3 data/indieinabox.sqlite < database.sql
+          php -r '$db = new PDO("sqlite:" . __DIR__ . "/data/indieinabox.sqlite"); $db->exec(file_get_contents("database.sql"));'
 
       # ── Bundle compilation (required for test:compiled) ─────────────────
       - name: "Compile bundle (php compile.php)"
@@ -115,7 +115,7 @@ jobs:
       - uses: https://github.com/shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2.37.2
         with:
           php-version: "8.4"
-          extensions: mbstring, json, fileinfo
+          extensions: mbstring, json, fileinfo, pdo_sqlite, sqlite3
           coverage: none
           tools: composer:v2
 

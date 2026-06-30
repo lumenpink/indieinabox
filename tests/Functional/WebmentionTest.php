@@ -15,6 +15,14 @@ class MockWebmentionHandler extends \Indieinabox\WebmentionHandler
     }
 }
 
+class MockBackgroundWorker extends \Indieinabox\BackgroundWorker
+{
+    protected function fetchUrl(string $url)
+    {
+        return MockWebmentionHandler::$mockResponses[$url] ?? parent::fetchUrl($url);
+    }
+}
+
 class TestWebRouter extends \Indieinabox\WebRouter
 {
     protected function createWebmentionHandler(): \Indieinabox\WebmentionHandler
@@ -45,11 +53,7 @@ beforeEach(function () use ($funcTempDir) {
     \Indieinabox\Database::$dataDir = $funcTempDir . '/data';
     \Indieinabox\Database::connect($testDbPath);
     $db = \Indieinabox\Database::getDb();
-    $db->exec('CREATE TABLE IF NOT EXISTS activitypub_actors (
-        actor_url TEXT PRIMARY KEY,
-        public_key TEXT NOT NULL,
-        updated_at INTEGER NOT NULL
-    )');
+    $db->exec(file_get_contents(dirname(__DIR__, 2) . '/database.sql'));
 });
 
 afterEach(function () use ($funcTempDir) {
@@ -222,8 +226,8 @@ HTML;
     $output = ob_get_clean();
 
     $json = json_decode($output, true);
-    expect($json['status'])->toBe(400)
-        ->and($json['message'])->toContain('Source page does not link to target page');
+    expect($json['status'])->toBe(202)
+        ->and($json['message'])->toContain('Webmention accepted and queued for processing');
 });
 
 it('accepts and verifies valid webmention', function () use ($funcTempDir) {
@@ -265,11 +269,11 @@ HTML;
 
     $json = json_decode($output, true);
     expect($json['status'])->toBe(202)
-        ->and($json['message'])->toContain('Webmention accepted and processed');
+        ->and($json['message'])->toContain('Webmention accepted and queued for processing');
 
-    $json = json_decode($output, true);
-    expect($json['status'])->toBe(202)
-        ->and($json['message'])->toContain('Webmention accepted and processed');
+    // Run BackgroundWorker to process the queued payload
+    $worker = new MockBackgroundWorker($site);
+    $worker->processInboxQueue();
 
     // Assert webmention was saved to markdown file
     $expectedHash = md5('about');
@@ -315,6 +319,9 @@ function setupWebmentionTest(string $funcTempDir, string $sourceHtml): array
     ob_start();
     $router->handleRequest();
     ob_get_clean();
+
+    $worker = new MockBackgroundWorker($site);
+    $worker->processInboxQueue();
 
     $expectedHash = md5('about');
     $mdFile = $funcTempDir . '/data/microsub/inbox/notifications/' . $expectedHash . '_' . md5($_POST['source']) . '.md';

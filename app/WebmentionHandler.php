@@ -76,17 +76,10 @@ class WebmentionHandler
             return;
         }
 
-        // Verify link (check if source contains a link to target)
-        $verificationResult = $this->verifySourceLink($source, $target);
-        if (!$verificationResult['success']) {
-            $this->sendResponse(400, 'Source page does not link to target page. Error: ' . ($verificationResult['message'] ?? ''));
-            return;
-        }
+        // Queue Webmention for async verification and processing
+        $this->queueWebmention($source, $target);
 
-        // Save Webmention
-        $this->saveWebmention($source, $target, $verificationResult['content'] ?? ['title' => '', 'text' => '']);
-
-        $this->sendResponse(202, 'Webmention accepted and processed.');
+        $this->sendResponse(202, 'Webmention accepted and queued for processing.');
     }
 
     /**
@@ -257,51 +250,18 @@ class WebmentionHandler
     /**
      * @param string $source
      * @param string $target
-     * @param array<string, mixed> $meta
      */
-    public function saveWebmention(string $source, string $target, array $meta): void
+    public function queueWebmention(string $source, string $target): void
     {
         $db = \Indieinabox\Database::getDb();
-
-        $targetPath = parse_url($target, PHP_URL_PATH) ?? '/';
-        $sitePath = parse_url($this->site->metadata->fqdn ?? '', PHP_URL_PATH);
-        if ($sitePath && $sitePath !== '/' && strpos($targetPath, $sitePath) === 0) {
-            $targetPath = substr($targetPath, strlen($sitePath));
-        }
-        $slug = trim($targetPath, '/');
-        if ($slug === '') {
-            $slug = 'home';
-        }
-        $hash = md5($slug);
-
-        $dataDir = \Indieinabox\Database::$dataDir ?? (dirname(__DIR__) . '/data');
-        $notificationsDir = $dataDir . DIRECTORY_SEPARATOR . 'microsub' . DIRECTORY_SEPARATOR . 'inbox' . DIRECTORY_SEPARATOR . 'notifications';
-        
-        if (!is_dir($notificationsDir)) {
-            @mkdir($notificationsDir, 0755, true);
-        }
-
-        $newMention = [
-            'id' => $hash . '_' . md5($source),
-            'target_hash' => $hash,
+        $payload = [
             'source' => $source,
-            'target' => $target,
-            'author_name' => $meta['title'] ?: 'Webmention from ' . (parse_url($source, PHP_URL_HOST) ?? 'external link'),
-            'author_photo' => '',
-            'url' => $source,
-            'published' => time(),
-            'is_read' => 0,
-            'type' => 'webmention',
-            'whostyle' => $meta['whostyle'] ?? []
+            'target' => $target
         ];
-
-        $filepath = $notificationsDir . DIRECTORY_SEPARATOR . $newMention['id'] . '.md';
         
-        $yaml = new \Indieinabox\Yaml();
-        $yamlStr = $yaml->dump($newMention);
-        $fileContent = "---\n" . $yamlStr . "---\n\n" . ($meta['text'] ?? '');
-        
-        file_put_contents($filepath, $fileContent);
+        $sql = "INSERT INTO inbox_queue (type, payload_json, created_at) VALUES (?, ?, ?)";
+        $stmt = $db->prepare($sql);
+        $stmt->execute(['webmention', json_encode($payload), time()]);
     }
 
     private function sendResponse(int $code, string $message): void

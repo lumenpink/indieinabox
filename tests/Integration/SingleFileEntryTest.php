@@ -223,10 +223,19 @@ PHP
             ->and($json['status'])->toBe(202)
             ->and($json['message'])->toContain('Webmention accepted');
 
+        // Run background worker to process the queued webmention
+        $cronCmd = 'cd ' . escapeshellarg($integrationSandbox) . ' && php build.php cron 2>&1';
+        $cronOut = shell_exec($cronCmd);
+
         // Check that webmention data is created correctly in Markdown
         $hash = md5('about');
         $expectedId = $hash . '_' . md5($sourceUrl);
         $mdFile = $integrationSandbox . '/microsub/inbox/notifications/' . $expectedId . '.md';
+        
+        if (!file_exists($mdFile)) {
+            echo "Cron output:\n" . $cronOut . "\n";
+            echo "Expected mdFile: " . $mdFile . "\n";
+        }
         
         expect(file_exists($mdFile))->toBeTrue();
 

@@ -116,3 +116,30 @@ CREATE TABLE IF NOT EXISTS activitypub_actors (
 );
 
 INSERT OR REPLACE INTO settings (key, value) VALUES ('activitypub_handle', 'author');
+
+CREATE TABLE IF NOT EXISTS inbox_queue (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    type TEXT NOT NULL,
+    payload_json TEXT NOT NULL,
+    created_at INTEGER NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS archive_queue (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    url TEXT NOT NULL,
+    status TEXT DEFAULT 'pending',
+    requested_at INTEGER NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS archived_links (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    url TEXT NOT NULL,
+    timestamp INTEGER NOT NULL,
+    local_pdf_path TEXT,
+    archive_org_url TEXT
+);
+
+CREATE TABLE IF NOT EXISTS archive_aliases (
+    original_url TEXT PRIMARY KEY,
+    final_url TEXT NOT NULL
+);

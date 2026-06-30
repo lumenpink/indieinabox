@@ -149,15 +149,16 @@ class WebRouter
 
     private function serveStatic(): void
     {
-        $base = $this->site->paths->baseDir;
-        $outputDir = $this->site->paths->outputDir;
         $requestUri = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
 
-        // Sanitize path to prevent directory traversal
+        $outputDir = $this->site->paths->outputDirHtml;
         $path = str_replace(['..', '//'], ['', '/'], urldecode($requestUri));
-        if ($path === '/') {
+
+        if ($path === '' || $path === '/') {
             $path = '/index.html';
         }
+
+        $base = rtrim($this->site->paths->baseDir, DIRECTORY_SEPARATOR);
 
         $filePath = $base . DIRECTORY_SEPARATOR . $outputDir . $path;
 

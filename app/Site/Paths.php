@@ -12,7 +12,10 @@ namespace Indieinabox\Site;
 class Paths
 {
     public string $baseDir;
-    public string $outputDir;
+    public string $outputDirHtml;
+    public string $outputDirGemini;
+    public string $outputDirGopher;
+    public string $outputDirMedia;
     public string $contentDir;
     public string $themeDir;
 
@@ -20,18 +23,27 @@ class Paths
      * SitePaths constructor.
      *
      * @param string $baseDir
-     * @param string $outputDir
+     * @param string $outputDirHtml
+     * @param string $outputDirGemini
+     * @param string $outputDirGopher
+     * @param string $outputDirMedia
      * @param string $contentDir
      * @param string $themeDir
      */
     public function __construct(
         string $baseDir = "/",
-        string $outputDir = "public",
+        string $outputDirHtml = "public_html",
+        string $outputDirGemini = "public_gemini",
+        string $outputDirGopher = "public_gopher",
+        string $outputDirMedia = "public_media",
         string $contentDir = "content",
         string $themeDir = "resources"
     ) {
         $this->baseDir = $baseDir;
-        $this->outputDir = $outputDir;
+        $this->outputDirHtml = $outputDirHtml;
+        $this->outputDirGemini = $outputDirGemini;
+        $this->outputDirGopher = $outputDirGopher;
+        $this->outputDirMedia = $outputDirMedia;
         $this->contentDir = $contentDir;
         $this->themeDir = $themeDir;
     }

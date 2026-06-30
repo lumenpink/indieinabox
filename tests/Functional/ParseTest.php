@@ -42,7 +42,7 @@ beforeEach(function () {
 
     $site = new Site(
         null,
-        new Paths('vfs://root', 'public', 'content'),
+        new Paths('vfs://root', 'public_html', 'public_gemini', 'public_gopher', 'public_media', 'content'),
         null,
         null,
         new Support(['md', 'html'])

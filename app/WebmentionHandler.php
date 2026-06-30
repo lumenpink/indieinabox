@@ -58,8 +58,8 @@ class WebmentionHandler
             $targetPath = substr($targetPath, strlen($sitePath));
         }
 
-        $base = $this->site->paths->baseDir;
-        $outputDir = $this->site->paths->outputDir;
+        $base = rtrim($this->site->paths->baseDir, DIRECTORY_SEPARATOR);
+        $outputDir = $this->site->paths->outputDirHtml;
 
         $targetPathClean = str_replace('..', '', urldecode($targetPath));
         if ($targetPathClean === '' || $targetPathClean === '/') {

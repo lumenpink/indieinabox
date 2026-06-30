@@ -6,7 +6,7 @@ use Indieinabox\Yaml;
 
 // Setup directories
 $sandbox = dirname(__DIR__) . '/Integration/tmp_sandbox';
-$outputDir = $sandbox . '/public';
+$outputDir = $sandbox . '/public_html';
 
 function cleanSandbox(string $dir): void
 {
@@ -43,7 +43,7 @@ function writeSandboxConfig(string $sandbox): void
     $stmt->execute([':key' => 'sitename', ':value' => 'My Integration Site']);
     $stmt->execute([':key' => 'author', ':value' => 'Agent Antigravity']);
     $stmt->execute([':key' => 'fqdn', ':value' => 'https://example.com/testbase']);
-    $stmt->execute([':key' => 'outputdir', ':value' => 'public']);
+    $stmt->execute([':key' => 'outputdir', ':value' => 'public_html']);
     $stmt->execute([':key' => 'contentdir', ':value' => 'content']);
     $stmt->execute([':key' => 'lang', ':value' => '["en"]']);
     $stmt->execute([':key' => 'htmlpostprocessing', ':value' => 'beautify']);

@@ -85,7 +85,7 @@ beforeEach(function () use ($funcTempDir) {
     $schema = file_get_contents(__DIR__ . '/../../database.sql');
     $db->exec($schema);
     
-    $paths = new \Indieinabox\Site\Paths($funcTempDir, $funcTempDir . '/public', $funcTempDir . '/content', $funcTempDir . '/resources');
+    $paths = new \Indieinabox\Site\Paths($funcTempDir, $funcTempDir . '/public_html', $funcTempDir . '/public_gemini', $funcTempDir . '/public_gopher', $funcTempDir . '/public_media', $funcTempDir . '/content', $funcTempDir . '/resources');
     $this->site = new Site(null, $paths);
     
     $this->worker = new MockBackgroundWorkerBgTest($this->site);

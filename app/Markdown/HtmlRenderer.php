@@ -162,16 +162,16 @@ class HtmlRenderer implements RendererInterface
                 if (file_exists($caminhoOriginal)) {
                     global $site;
                     $base = $site?->paths?->baseDir ?? dirname(dirname(__DIR__));
-                    $outputDir = $site?->paths?->outputDir ?? 'public';
+                    $outputDirHtml = $site?->paths?->outputDirHtml ?? 'public_html';
 
                     $pathInfo = pathinfo($target);
                     $gifName = $pathInfo['filename'] . '.gif';
 
                     $slug = $this->page->slug;
                     if (str_ends_with($slug, '.html')) {
-                        $outputHtmlDir = dirname($base . DIRECTORY_SEPARATOR . $outputDir . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, trim($slug, '/')));
+                        $outputHtmlDir = dirname($base . DIRECTORY_SEPARATOR . $outputDirHtml . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, trim($slug, '/')));
                     } else {
-                        $outputHtmlDir = $base . DIRECTORY_SEPARATOR . $outputDir . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, trim($slug, '/'));
+                        $outputHtmlDir = $base . DIRECTORY_SEPARATOR . $outputDirHtml . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, trim($slug, '/'));
                     }
 
                     $caminhoDestino = $outputHtmlDir . DIRECTORY_SEPARATOR . $gifName;

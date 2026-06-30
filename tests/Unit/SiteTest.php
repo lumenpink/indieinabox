@@ -22,7 +22,10 @@ it(
         ]);
         expect($site->paths)->toMatchObject([
             'baseDir' => '/',
-            'outputDir' => 'public',
+            'outputDirHtml' => 'public_html',
+            'outputDirGemini' => 'public_gemini',
+            'outputDirGopher' => 'public_gopher',
+            'outputDirMedia' => 'public_media',
             'contentDir' => 'content'
         ]);
         expect($site->localization)->toMatchObject([
@@ -48,7 +51,7 @@ it(
     function () {
         $site = new Site(
             new Metadata('title', 'description', 'keywords', 'NoTitle', 'http://example.com'),
-            new Paths('/custom', 'custom_site', 'custom_content'),
+            new Paths('/custom', 'custom_html', 'custom_gemini', 'custom_gopher', 'custom_media', 'custom_content'),
             new Options(false, true, true, true),
             new Localization(['en', 'fr'], 'pt'),
             new Support(['doc', 'xls'], 'None')
@@ -62,7 +65,10 @@ it(
         ]);
         expect($site->paths)->toMatchObject([
             'baseDir' => '/custom',
-            'outputDir' => 'custom_site',
+            'outputDirHtml' => 'custom_html',
+            'outputDirGemini' => 'custom_gemini',
+            'outputDirGopher' => 'custom_gopher',
+            'outputDirMedia' => 'custom_media',
             'contentDir' => 'custom_content'
         ]);
         expect($site->localization)->toMatchObject([

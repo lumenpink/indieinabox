@@ -460,7 +460,11 @@ class ConfigHandler
             $newSite->options->buildAll = (bool)$config['buildall'];
         }
         if (isset($config['outputdir'])) {
-            $newSite->paths->outputDir = $config['outputdir'];
+            $baseOut = $config['outputdir'];
+            $newSite->paths->outputDirHtml = $baseOut;
+            $newSite->paths->outputDirGemini = $baseOut . '_gemini';
+            $newSite->paths->outputDirGopher = $baseOut . '_gopher';
+            $newSite->paths->outputDirMedia = $baseOut . '_media';
         }
         if (isset($config['contentdir'])) {
             $newSite->paths->contentDir = $config['contentdir'];

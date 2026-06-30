@@ -199,7 +199,7 @@ it('rejects target URL if source page does not link to target', function () use 
     $site->metadata->fqdn = 'https://mysite.com';
 
     // Create target file to exist
-    $targetFileDir = $funcTempDir . '/public/about';
+    $targetFileDir = $funcTempDir . '/public_html/about';
     mkdir($targetFileDir, 0777, true);
     file_put_contents($targetFileDir . '/index.html', '<h1>About Us</h1>');
 
@@ -237,7 +237,7 @@ it('accepts and verifies valid webmention', function () use ($funcTempDir) {
     $site->metadata->fqdn = 'https://mysite.com';
 
     // Create target file to exist
-    $targetFileDir = $funcTempDir . '/public/about';
+    $targetFileDir = $funcTempDir . '/public_html/about';
     mkdir($targetFileDir, 0777, true);
     file_put_contents($targetFileDir . '/index.html', '<h1>About Us</h1>');
 
@@ -302,7 +302,7 @@ function setupWebmentionTest(string $funcTempDir, string $sourceHtml): array
     $site->paths->outputDir = 'public';
     $site->metadata->fqdn = 'https://mysite.com';
 
-    $targetFileDir = $funcTempDir . '/public/about';
+    $targetFileDir = $funcTempDir . '/public_html/about';
     @mkdir($targetFileDir, 0777, true);
     file_put_contents($targetFileDir . '/index.html', '<h1>About Us</h1>');
 

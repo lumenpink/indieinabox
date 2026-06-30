@@ -92,7 +92,7 @@ beforeEach(function () use ($funcTempDir) {
     $db->exec("INSERT INTO indieauth_tokens (token_hash, client_id, scope, me, created_at) VALUES ('" . hash('sha256', 'no-media-token') . "', 'https://client.example.com', 'update', 'https://example.com/', " . time() . ")");
     
     // Set Site configuration
-    $paths = new \Indieinabox\Site\Paths($funcTempDir, $funcTempDir . '/public', $funcTempDir . '/content', $funcTempDir . '/resources');
+    $paths = new \Indieinabox\Site\Paths($funcTempDir, $funcTempDir . '/public_html', $funcTempDir . '/public_gemini', $funcTempDir . '/public_gopher', $funcTempDir . '/public_media', $funcTempDir . '/content', $funcTempDir . '/resources');
     $this->site = new Site(null, $paths);
     if (!is_dir($this->site->paths->contentDir)) {
         mkdir($this->site->paths->contentDir, 0777, true);

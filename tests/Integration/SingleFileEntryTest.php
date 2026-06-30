@@ -74,7 +74,7 @@ it(
     $stmt->execute([':key' => 'sitename', ':value' => 'Integration Test Site']);
     $stmt->execute([':key' => 'author', ':value' => 'Antigravity']);
     $stmt->execute([':key' => 'fqdn', ':value' => 'https://example.com']);
-    $stmt->execute([':key' => 'outputdir', ':value' => 'public']);
+    $stmt->execute([':key' => 'outputdir', ':value' => 'public_html']);
     $stmt->execute([':key' => 'contentdir', ':value' => 'content']);
     $stmt->execute([':key' => 'lang', ':value' => '["en"]']);
     $db = null;
@@ -138,18 +138,18 @@ PHP
     // 4. Test CLI Mode: Run build process
     $cliCmd = 'php ' . escapeshellarg($integrationSandbox . '/build.php');
     $cliOutput = shell_exec($cliCmd);
-    if (!is_dir($integrationSandbox . '/public')) {
+    if (!is_dir($integrationSandbox . '/public_html')) {
         echo "CLI OUTPUT:\n" . $cliOutput . "\n";
     }
-    if (!file_exists($integrationSandbox . '/public/about/index.html')) {
+    if (!file_exists($integrationSandbox . '/public_html/about/index.html')) {
         echo "ABOUT.MD output:\n" . $cliOutput . "\n";
     }
 
-    expect(is_dir($integrationSandbox . '/public'))->toBeTrue();
-    expect(file_exists($integrationSandbox . '/public/index.html'))->toBeTrue();
-    expect(file_exists($integrationSandbox . '/public/about/index.html'))->toBeTrue();
+    expect(is_dir($integrationSandbox . '/public_html'))->toBeTrue();
+    expect(file_exists($integrationSandbox . '/public_html/index.html'))->toBeTrue();
+    expect(file_exists($integrationSandbox . '/public_html/about/index.html'))->toBeTrue();
 
-    $indexHtml = file_get_contents($integrationSandbox . '/public/index.html');
+    $indexHtml = file_get_contents($integrationSandbox . '/public_html/index.html');
     expect($indexHtml)->toContain('<title>Home Page</title>')
         ->and($indexHtml)->toContain('Welcome home!');
 
@@ -171,7 +171,7 @@ PHP
     $process1 = proc_open($srvCmd1, $descriptorspec, $pipes1);
 
     // Server 2 (Static server for the source link to avoid deadlock)
-    $srvCmd2 = "exec php -S $host2 -t " . escapeshellarg($integrationSandbox . '/public');
+    $srvCmd2 = "exec php -S $host2 -t " . escapeshellarg($integrationSandbox . '/public_html');
     $process2 = proc_open($srvCmd2, $descriptorspec, $pipes2);
 
     // Wait 250ms for servers to start
@@ -192,7 +192,7 @@ PHP
         // B. Verify POST webmention endpoint with target validation
         // Mock a source page linking to target page on server 2
         $sourceContent = '<html><body><a href="https://example.com/about">Linked!</a></body></html>';
-        file_put_contents($integrationSandbox . '/public/source_post.html', $sourceContent);
+        file_put_contents($integrationSandbox . '/public_html/source_post.html', $sourceContent);
 
         $sourceUrl = "http://$host2/source_post.html";
         $targetUrl = "https://example.com/about";

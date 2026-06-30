@@ -67,7 +67,10 @@ class SiteBuilder
         $themeDir = $this->site->paths->themeDir ?? 'theme';
 
         // Clean output directory
-        Helper::recursiveRmdir($base . DIRECTORY_SEPARATOR . $this->site->paths->outputDir);
+        Helper::recursiveRmdir($base . DIRECTORY_SEPARATOR . $this->site->paths->outputDirHtml);
+        Helper::recursiveRmdir($base . DIRECTORY_SEPARATOR . $this->site->paths->outputDirGemini);
+        Helper::recursiveRmdir($base . DIRECTORY_SEPARATOR . $this->site->paths->outputDirGopher);
+        Helper::recursiveRmdir($base . DIRECTORY_SEPARATOR . $this->site->paths->outputDirMedia);
 
         // Scan content
         $this->scan($base . DIRECTORY_SEPARATOR . $this->site->paths->contentDir);
@@ -83,6 +86,9 @@ class SiteBuilder
         // Copy assets
         $this->copyAssets($base . DIRECTORY_SEPARATOR . $themeDir . DIRECTORY_SEPARATOR . "views");
 
+        // Copy Media
+        $this->copyMedia();
+
         // Copy static files
         if ($this->site->options->skipStatic) {
             echo "Skipping static files\n";
@@ -90,7 +96,17 @@ class SiteBuilder
             $this->copyStatic($base . DIRECTORY_SEPARATOR . $themeDir . DIRECTORY_SEPARATOR . "static");
         }
     }
+    public function copyMedia(): void
+    {
+        $base = $this->site->paths->baseDir;
+        $contentMediaDir = $base . DIRECTORY_SEPARATOR . rtrim($this->site->paths->contentDir, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . 'media';
+        if (!is_dir($contentMediaDir)) {
+            return;
+        }
 
+        echo "Copying media files\n";
+        ThemeManager::copyStaticFiles($contentMediaDir, $base, $this->site->paths->outputDirMedia);
+    }
     private function virtualizeMissingLanguages(): void
     {
         $langs = $this->site->localization->lang;
@@ -252,7 +268,10 @@ class SiteBuilder
                         && strpos($path, DIRECTORY_SEPARATOR . $themeDir) === false
                         && strpos($path, DIRECTORY_SEPARATOR . "theme") === false
                         && strpos($path, DIRECTORY_SEPARATOR . "data") === false
-                        && strpos($path, DIRECTORY_SEPARATOR . $this->site->paths->outputDir) === false
+                        && strpos($path, DIRECTORY_SEPARATOR . $this->site->paths->outputDirHtml) === false
+                        && strpos($path, DIRECTORY_SEPARATOR . $this->site->paths->outputDirGemini) === false
+                        && strpos($path, DIRECTORY_SEPARATOR . $this->site->paths->outputDirGopher) === false
+                        && strpos($path, DIRECTORY_SEPARATOR . $this->site->paths->outputDirMedia) === false
                     ) {
                         $this->scan($path);
                     }
@@ -311,7 +330,7 @@ class SiteBuilder
         );
         $destination = trim($destination, DIRECTORY_SEPARATOR);
 
-        $outDir = $base . DIRECTORY_SEPARATOR . $this->site->paths->outputDir;
+        $outDir = $base . DIRECTORY_SEPARATOR . $this->site->paths->outputDirHtml;
 
         if (str_ends_with($destination, '.html')) {
             $dir = dirname($outDir . DIRECTORY_SEPARATOR . $destination);
@@ -376,7 +395,7 @@ class SiteBuilder
             return;
         }
 
-        ThemeManager::copyViewAssets($dir, $base, $this->site->paths->outputDir);
+        ThemeManager::copyViewAssets($dir, $base, $this->site->paths->outputDirHtml);
     }
 
     public function copyStatic(string $dir): bool
@@ -388,7 +407,7 @@ class SiteBuilder
         }
 
         echo "Copying static files\n";
-        ThemeManager::copyStaticFiles($dir, $base, $this->site->paths->outputDir);
+        ThemeManager::copyStaticFiles($dir, $base, $this->site->paths->outputDirHtml);
 
         if ($this->site->options->dev) {
             $this->copyLiveJsFile($base);
@@ -402,7 +421,7 @@ class SiteBuilder
     private function copyLiveJsFile(string $base): void
     {
         $themeDir = $this->site->paths->themeDir ?? 'theme';
-        $jsDir = $base . DIRECTORY_SEPARATOR . $this->site->paths->outputDir . DIRECTORY_SEPARATOR . "js";
+        $jsDir = $base . DIRECTORY_SEPARATOR . $this->site->paths->outputDirHtml . DIRECTORY_SEPARATOR . "js";
 
         if (!is_dir($jsDir)) {
             mkdir($jsDir, 0777, true);
@@ -430,27 +449,27 @@ class SiteBuilder
         );
         $destination = trim($destination, DIRECTORY_SEPARATOR);
 
-        $outDir = $base . DIRECTORY_SEPARATOR . $this->site->paths->outputDir;
+        $outDirGemini = $base . DIRECTORY_SEPARATOR . $this->site->paths->outputDirGemini;
         if (str_ends_with($destination, '.html') || str_ends_with($destination, '.htm')) {
             $ext = str_ends_with($destination, '.html') ? '.html' : '.htm';
-            $dir = dirname($outDir . DIRECTORY_SEPARATOR . $destination);
+            $dir = dirname($outDirGemini . DIRECTORY_SEPARATOR . $destination);
             if (!is_dir($dir)) {
                 mkdir($dir, 0777, true);
             }
-            $destinationFile = $outDir . DIRECTORY_SEPARATOR . dirname($destination)
+            $destinationFile = $outDirGemini . DIRECTORY_SEPARATOR . dirname($destination)
                 . DIRECTORY_SEPARATOR . basename($destination, $ext) . '.gmi';
         } else {
-            if (!is_dir($outDir . DIRECTORY_SEPARATOR . $destination)) {
-                mkdir($outDir . DIRECTORY_SEPARATOR . $destination, 0777, true);
+            if (!is_dir($outDirGemini . DIRECTORY_SEPARATOR . $destination)) {
+                mkdir($outDirGemini . DIRECTORY_SEPARATOR . $destination, 0777, true);
             }
-            $destinationFile = $outDir
+            $destinationFile = $outDirGemini
                 . DIRECTORY_SEPARATOR
                 . $destination
                 . DIRECTORY_SEPARATOR
                 . "index.gmi";
         }
 
-        echo "Built " . str_replace($outDir . DIRECTORY_SEPARATOR, '', $destinationFile) . "\n";
+        echo "Built " . str_replace($outDirGemini . DIRECTORY_SEPARATOR, '', $destinationFile) . "\n";
 
         $astParser = new ASTParser();
         $gemtextRenderer = new GemtextRenderer($page);
@@ -494,27 +513,27 @@ class SiteBuilder
         );
         $destination = trim($destination, DIRECTORY_SEPARATOR);
 
-        $outDir = $base . DIRECTORY_SEPARATOR . $this->site->paths->outputDir;
+        $outDirGopher = $base . DIRECTORY_SEPARATOR . $this->site->paths->outputDirGopher;
         if (str_ends_with($destination, '.html') || str_ends_with($destination, '.htm')) {
             $ext = str_ends_with($destination, '.html') ? '.html' : '.htm';
-            $dir = dirname($outDir . DIRECTORY_SEPARATOR . $destination);
+            $dir = dirname($outDirGopher . DIRECTORY_SEPARATOR . $destination);
             if (!is_dir($dir)) {
                 mkdir($dir, 0777, true);
             }
-            $destinationFile = $outDir . DIRECTORY_SEPARATOR . dirname($destination)
+            $destinationFile = $outDirGopher . DIRECTORY_SEPARATOR . dirname($destination)
                 . DIRECTORY_SEPARATOR . basename($destination, $ext) . '.gophermap';
         } else {
-            if (!is_dir($outDir . DIRECTORY_SEPARATOR . $destination)) {
-                mkdir($outDir . DIRECTORY_SEPARATOR . $destination, 0777, true);
+            if (!is_dir($outDirGopher . DIRECTORY_SEPARATOR . $destination)) {
+                mkdir($outDirGopher . DIRECTORY_SEPARATOR . $destination, 0777, true);
             }
-            $destinationFile = $outDir
+            $destinationFile = $outDirGopher
                 . DIRECTORY_SEPARATOR
                 . $destination
                 . DIRECTORY_SEPARATOR
                 . "gophermap";
         }
 
-        echo "Built " . str_replace($outDir . DIRECTORY_SEPARATOR, '', $destinationFile) . "\n";
+        echo "Built " . str_replace($outDirGopher . DIRECTORY_SEPARATOR, '', $destinationFile) . "\n";
 
         $host = 'gopher.example.com';
         if ($this->site->metadata->fqdn) {
@@ -556,9 +575,17 @@ class SiteBuilder
     public function generateTwtxt(): void
     {
         $base = $this->site->paths->baseDir;
-        $outDir = $base . DIRECTORY_SEPARATOR . $this->site->paths->outputDir;
-        if (!is_dir($outDir)) {
-            mkdir($outDir, 0777, true);
+        $outDirHtml = $base . DIRECTORY_SEPARATOR . $this->site->paths->outputDirHtml;
+        $outDirGemini = $base . DIRECTORY_SEPARATOR . $this->site->paths->outputDirGemini;
+        $outDirGopher = $base . DIRECTORY_SEPARATOR . $this->site->paths->outputDirGopher;
+        if (!is_dir($outDirHtml)) {
+            mkdir($outDirHtml, 0777, true);
+        }
+        if (!is_dir($outDirGemini)) {
+            mkdir($outDirGemini, 0777, true);
+        }
+        if (!is_dir($outDirGopher)) {
+            mkdir($outDirGopher, 0777, true);
         }
 
         // 1. Generate local feeds: public/twtxt.txt (and for each language)
@@ -576,21 +603,29 @@ class SiteBuilder
 
         echo "Generating twtxt.txt feeds...\n";
         foreach ($pagesByLang as $lang => $langPages) {
-            $langDir = $outDir;
+            $langDirHtml = $outDirHtml;
+            $langDirGemini = $outDirGemini;
+            $langDirGopher = $outDirGopher;
             if ($lang !== $defaultLang) {
-                $langDir .= DIRECTORY_SEPARATOR . $lang;
-                if (!is_dir($langDir)) {
-                    mkdir($langDir, 0777, true);
-                }
+                $langDirHtml .= DIRECTORY_SEPARATOR . $lang;
+                $langDirGemini .= DIRECTORY_SEPARATOR . $lang;
+                $langDirGopher .= DIRECTORY_SEPARATOR . $lang;
+                if (!is_dir($langDirHtml)) mkdir($langDirHtml, 0777, true);
+                if (!is_dir($langDirGemini)) mkdir($langDirGemini, 0777, true);
+                if (!is_dir($langDirGopher)) mkdir($langDirGopher, 0777, true);
             }
 
-            $feedFile = $langDir . DIRECTORY_SEPARATOR . 'twtxt.txt';
+            $feedFile = $langDirHtml . DIRECTORY_SEPARATOR . 'twtxt.txt';
             $twtxtManager->generateFeed(
                 $langPages,
                 $feedFile,
                 $this->site->metadata->fqdn,
                 $this->site->twtxt
             );
+            
+            // Copy to other formats
+            copy($feedFile, $langDirGemini . DIRECTORY_SEPARATOR . 'twtxt.txt');
+            copy($feedFile, $langDirGopher . DIRECTORY_SEPARATOR . 'twtxt.txt');
         }
 
         // 2. Fetch aggregated timeline & mentions if subscriptions/hubs are configured

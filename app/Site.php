@@ -65,8 +65,10 @@ class Site
                 return $this->options->htmlpostprocessing;
             case 'prettylinks':
                 return $this->options->prettylinks;
+            case 'output':
+                return rtrim($this->paths->baseDir, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $this->paths->outputDirHtml;
             case 'outputdir':
-                return $this->paths->outputDir;
+                return $this->paths->outputDirHtml;
             case 'contentdir':
                 return $this->paths->contentDir;
             case 'defaultlang':

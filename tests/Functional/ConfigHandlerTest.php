@@ -34,8 +34,8 @@ beforeEach(function () use ($configTestTempDir) {
     if (!is_dir($configTestTempDir . '/resources/views')) {
         mkdir($configTestTempDir . '/resources/views', 0777, true);
     }
-    if (!is_dir($configTestTempDir . '/public')) {
-        mkdir($configTestTempDir . '/public', 0777, true);
+    if (!is_dir($configTestTempDir . '/public_html')) {
+        mkdir($configTestTempDir . '/public_html', 0777, true);
     }
     $_GET = [];
     $_POST = [];

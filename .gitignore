@@ -1,7 +1,10 @@
 node_modules
 vendor
 content/.obsidian
-public
+public_html/
+public_gemini/
+public_gopher/
+public_media/
 resources/static/dist
 fa
 .phive

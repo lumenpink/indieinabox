@@ -60,6 +60,13 @@ jobs:
         run: |
           composer sniffer:php${{ matrix.php == '8.2' && '82' || matrix.php == '8.3' && '83' || '84' }}
 
+      # ── Create dummy database config for tests ───────────────────────────
+      - name: "Setup test database"
+        run: |
+          mkdir -p data
+          echo "<?php return ['db_path' => __DIR__ . '/data/indieinabox.sqlite'];" > .config.php
+          sqlite3 data/indieinabox.sqlite < database.sql
+
       # ── Bundle compilation (required for test:compiled) ─────────────────
       - name: "Compile bundle (php compile.php)"
         run: php compile.php

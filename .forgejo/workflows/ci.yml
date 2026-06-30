@@ -25,12 +25,12 @@ jobs:
 
     steps:
       - name: "Checkout (full history for Psalm)"
-        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        uses: https://github.com/actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         with:
           fetch-depth: 0
 
       - name: "Setup PHP ${{ matrix.php }}"
-        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2.37.2
+        uses: https://github.com/shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2.37.2
         with:
           php-version: ${{ matrix.php }}
           extensions: mbstring, json, fileinfo
@@ -39,7 +39,7 @@ jobs:
 
       - name: "Cache vendor/"
         id: cache-vendor
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+        uses: https://github.com/actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
         with:
           path: vendor
           key: vendor-php${{ matrix.php }}-${{ hashFiles('composer.lock') }}
@@ -60,11 +60,11 @@ jobs:
         run: |
           composer sniffer:php${{ matrix.php == '8.2' && '82' || matrix.php == '8.3' && '83' || '84' }}
 
-      # ── Compilação do bundle (necessário para test:compiled) ─────────────────
-      - name: "Compilar bundle (php compile.php)"
+      # ── Bundle compilation (required for test:compiled) ─────────────────
+      - name: "Compile bundle (php compile.php)"
         run: php compile.php
 
-      # ── Testes PEST ──────────────────────────────────────────────────────────
+      # ── PEST Tests ──────────────────────────────────────────────────────────
       - name: "PEST — Standard suite (source) + Clover coverage"
         run: |
           mkdir -p coverage
@@ -72,21 +72,21 @@ jobs:
             --coverage-clover coverage/clover.xml \
             --log-junit coverage/junit.xml
 
-      - name: "PEST — Suite compilada"
+      - name: "PEST — Compiled suite"
         run: TEST_COMPILED=true ./vendor/bin/pest
 
-      # ── Artefatos de cobertura ───────────────────────────────────────────────
-      - name: "Upload relatório Clover"
-        if: matrix.php == '8.4'          # Evita uploads duplicados
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      # ── Coverage artifacts ───────────────────────────────────────────────
+      - name: "Upload Clover report"
+        if: matrix.php == '8.4'          # Avoid duplicate uploads
+        uses: https://github.com/actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: coverage-clover
           path: coverage/clover.xml
           retention-days: 7
 
-      - name: "Upload relatório JUnit"
+      - name: "Upload JUnit report"
         if: matrix.php == '8.4'
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: https://github.com/actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: coverage-junit
           path: coverage/junit.xml
@@ -101,7 +101,7 @@ jobs:
     needs: test           # Only runs if tests pass
 
     steps:
-      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+      - uses: https://github.com/actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         with:
           fetch-depth: 0
 
@@ -114,7 +114,7 @@ jobs:
 
       - name: "Cache vendor/"
         id: cache-vendor
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+        uses: https://github.com/actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
         with:
           path: vendor
           key: vendor-php8.4-${{ hashFiles('composer.lock') }}
@@ -136,7 +136,7 @@ jobs:
 
       - name: "Upload Psalm report (JSON)"
         if: always()
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: https://github.com/actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: psalm-report
           path: coverage/psalm.json
@@ -151,33 +151,33 @@ jobs:
     needs: test
 
     steps:
-      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+      - uses: https://github.com/actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
 
       - name: "Cache NVD (speeds up subsequent scans)"
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+        uses: https://github.com/actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
         with:
           path: ~/.dependency-check/data
           key: nvd-${{ github.run_id }}
           restore-keys: |
             nvd-
 
-      - name: "Executar OWASP Dependency-Check"
-        uses: dependency-check/Dependency-Check_Action@75ba02d6183445fe0761d26e836bde58b1560600 # v1.1.0
+      - name: "Run OWASP Dependency-Check"
+        uses: https://github.com/dependency-check/Dependency-Check_Action@75ba02d6183445fe0761d26e836bde58b1560600 # v1.1.0
         id: depcheck
         with:
           project: "indieinabox"
           path: "."
           format: "HTML SARIF"
           out: "coverage/dependency-check"
-          # CVSS >= 7 falha o build (ajustar conforme política de risco)
+          # CVSS >= 7 fails the build (adjust according to risk policy)
           args: >
             --failOnCVSS 7
             --enableRetired
             --exclude "**/vendor/**"
 
-      - name: "Upload relatório Dependency-Check"
+      - name: "Upload Dependency-Check report"
         if: always()
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: https://github.com/actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: dependency-check-report
           path: coverage/dependency-check
@@ -185,47 +185,47 @@ jobs:
 
   # ─────────────────────────────────────────────────────────────────────────────
   # JOB 4 — SonarQube / SonarCloud
-  # Depende dos jobs anteriores para ter os relatórios disponíveis
+  # Depends on previous jobs to have reports available
   # ─────────────────────────────────────────────────────────────────────────────
   sonarqube:
     name: "SonarQube Analysis"
     runs-on: codeberg-tiny
-    needs: [test, psalm]      # Precisa dos relatórios de cobertura e Psalm
-    # Só roda no branch principal ou em PRs (evita rodar em feature branches sem SONAR_TOKEN)
+    needs: [test, psalm]      # Requires coverage and Psalm reports
+    # Only runs on main branch or PRs (avoids running on feature branches without SONAR_TOKEN)
     if: github.actor != 'dependabot[bot]'
     env:
       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
     steps:
-      - name: "Verificar SONAR_TOKEN"
+      - name: "Verify SONAR_TOKEN"
         run: |
           if [ -z "$SONAR_TOKEN" ]; then
-            echo "::warning::SONAR_TOKEN não configurado. Pulando análise do SonarQube."
+            echo "::warning::SONAR_TOKEN not configured. Skipping SonarQube analysis."
           fi
 
-      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+      - uses: https://github.com/actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         if: env.SONAR_TOKEN != ''
         with:
-          fetch-depth: 0   # Necessário para blame e histórico no Sonar
+          fetch-depth: 0   # Required for blame and history in Sonar
 
-      - name: "Baixar relatório Clover"
+      - name: "Download Clover report"
         if: env.SONAR_TOKEN != ''
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        uses: https://github.com/actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: coverage-clover
           path: coverage
 
-      - name: "Baixar relatório Psalm"
+      - name: "Download Psalm report"
         if: env.SONAR_TOKEN != ''
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        uses: https://github.com/actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: psalm-report
           path: coverage
 
-      # ── Opção A: SonarCloud (SaaS gratuito para open source) ─────────────────
+      # ── Option A: SonarCloud (Free SaaS for open source) ─────────────────
       - name: "SonarCloud Scan"
         if: env.SONAR_TOKEN != ''
-        uses: SonarSource/sonarqube-scan-action@713881670b6b3676cda39549040e2d88c70d582e # v8.2.0
+        uses: https://github.com/SonarSource/sonarqube-scan-action@713881670b6b3676cda39549040e2d88c70d582e # v8.2.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -235,9 +235,9 @@ jobs:
             -Dsonar.php.coverage.reportPaths=coverage/clover.xml
             -Dsonar.externalIssuesReportPaths=coverage/psalm.json
 
-      # ── Opção B: SonarQube self-hosted (descomente se preferir) ──────────────
+      # ── Option B: SonarQube self-hosted (uncomment if preferred) ──────────────
       # - name: "SonarQube Scan (self-hosted)"
       #   if: env.SONAR_TOKEN != ''
-      #   uses: SonarSource/sonarqube-scan-action@713881670b6b3676cda39549040e2d88c70d582e # v8.2.0
+      #   uses: https://github.com/SonarSource/sonarqube-scan-action@713881670b6b3676cda39549040e2d88c70d582e # v8.2.0
       #   env:
       #     SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}

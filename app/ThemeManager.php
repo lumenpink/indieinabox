@@ -138,6 +138,9 @@ class ThemeManager
 
     private static function copyAssetsFromDisk(string $dir, string $base, string $outputDir): void
     {
+        if (!is_dir($dir)) {
+            return;
+        }
         $entries = scandir($dir);
         if ($entries === false) {
             return;

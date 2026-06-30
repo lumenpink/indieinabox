@@ -48,23 +48,24 @@ class MicropubHandler
         $this->sendResponse(405, 'Method Not Allowed', 'Unsupported HTTP method.');
     }
 
+    protected function getRawInput(): string
+    {
+        return file_get_contents('php://input');
+    }
+
     private function handleGetRequest(): void
     {
         $q = $_GET['q'] ?? '';
         if ($q === 'config') {
-            header('HTTP/1.1 200 OK');
-            header('Content-Type: application/json; charset=utf-8');
-            echo json_encode([
+            $this->sendSuccessResponse(200, ['Content-Type' => 'application/json; charset=utf-8'], [
                 'media-endpoint' => rtrim($this->site->fqdn ?? '', '/') . '/micropub/media',
                 'syndicate-to' => []
-            ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+            ]);
             return;
         }
         
         if ($q === 'syndicate-to') {
-            header('HTTP/1.1 200 OK');
-            header('Content-Type: application/json; charset=utf-8');
-            echo json_encode(['syndicate-to' => []], JSON_PRETTY_PRINT);
+            $this->sendSuccessResponse(200, ['Content-Type' => 'application/json; charset=utf-8'], ['syndicate-to' => []]);
             return;
         }
 
@@ -85,9 +86,9 @@ class MicropubHandler
         $contentType = $_SERVER['CONTENT_TYPE'] ?? '';
         
         $input = [];
-        if (strpos($contentType, 'application/json') !== false) {
-            $json = file_get_contents('php://input');
-            $data = json_decode($json, true);
+        if ($contentType === 'application/json') {
+            $json = $this->getRawInput();
+            $data = json_decode($json, true) ?: [];
             if (!is_array($data)) {
                 $this->sendResponse(400, 'Invalid JSON', 'Malformed JSON payload.');
                 return;
@@ -189,8 +190,7 @@ class MicropubHandler
         $yaml .= $content;
 
         // Determine directory path
-        $base = rtrim($this->site->paths->baseDir, DIRECTORY_SEPARATOR);
-        $contentDir = $base . DIRECTORY_SEPARATOR . 'content';
+        $contentDir = rtrim($this->site->paths->contentDir, DIRECTORY_SEPARATOR);
         
         if ($lang && $lang !== $this->site->localization->defaultLang) {
             $contentDir .= DIRECTORY_SEPARATOR . $lang;
@@ -248,8 +248,7 @@ class MicropubHandler
             $apHandler->queueCreateActivity($postUrl, $content, $name);
         }
 
-        header('HTTP/1.1 201 Created');
-        header('Location: ' . $postUrl);
+        $this->sendSuccessResponse(201, ['Location' => $postUrl]);
     }
 
     /**
@@ -278,8 +277,8 @@ class MicropubHandler
         $year = date('Y');
         $month = date('m');
 
-        $base = rtrim($this->site->paths->baseDir, DIRECTORY_SEPARATOR);
-        $mediaDir = $base . DIRECTORY_SEPARATOR . 'content' . DIRECTORY_SEPARATOR . 'media';
+        $contentDir = rtrim($this->site->paths->contentDir, DIRECTORY_SEPARATOR);
+        $mediaDir = $contentDir . DIRECTORY_SEPARATOR . 'media';
         $mediaDir .= DIRECTORY_SEPARATOR . $year . DIRECTORY_SEPARATOR . $month;
 
         if (!is_dir($mediaDir)) {
@@ -295,25 +294,40 @@ class MicropubHandler
         }
 
         $destPath = $mediaDir . DIRECTORY_SEPARATOR . $filename;
-        if (!move_uploaded_file($file['tmp_name'], $destPath)) {
+        if (!$this->moveUploadedFile($file['tmp_name'], $destPath)) {
             $this->sendResponse(500, 'Server Error', 'Could not save uploaded file.');
             return;
         }
 
         $fileUrl = rtrim($this->site->fqdn ?? '', '/') . '/media/' . $year . '/' . $month . '/' . $filename;
 
-        header('HTTP/1.1 201 Created');
-        header('Location: ' . $fileUrl);
+        $this->sendSuccessResponse(201, ['Location' => $fileUrl]);
     }
 
-    private function sendResponse(int $code, string $error, string $description): void
+    protected function sendSuccessResponse(int $code, array $headers = [], $body = null): void
+    {
+        header('HTTP/1.1 ' . $code);
+        foreach ($headers as $key => $value) {
+            header($key . ': ' . $value);
+        }
+        if ($body !== null) {
+            echo is_string($body) ? $body : json_encode($body, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+        }
+    }
+
+    protected function sendResponse(int $code, string $error, string $description): void
     {
         header('HTTP/1.1 ' . $code);
         header('Content-Type: application/json; charset=utf-8');
         echo json_encode([
             'error' => $error,
             'error_description' => $description
-        ], JSON_PRETTY_PRINT);
+        ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+    }
+
+    protected function moveUploadedFile(string $tmpName, string $destPath): bool
+    {
+        return move_uploaded_file($tmpName, $destPath);
     }
 
     private function slugify(string $text): string

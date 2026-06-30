@@ -515,6 +515,10 @@ class Helper
      */
     public static function getDirContents(string $dir, array &$results = []): array
     {
+        if (!is_dir($dir)) {
+            return $results;
+        }
+        
         $files = scandir($dir);
 
         foreach ($files as $key => $value) {
@@ -1078,7 +1082,7 @@ class Helper
         for ($y = 0; $y < $alturaFocal; $y++) {
             for ($x = 0; $x < $larguraFocal; $x++) {
                 $color = ($matrix[$y][$x] > 128) ? $allocatedBG : $allocatedFG;
-                imagesetpixel($imgFinal, $x, $y, $cor);
+                imagesetpixel($imgFinal, $x, $y, $color);
             }
         }
 

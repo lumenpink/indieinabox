@@ -221,6 +221,9 @@ class SiteBuilder
 
     public function scan(string $dir): void
     {
+        if (!is_dir($dir)) {
+            return;
+        }
         $entries = scandir($dir);
         if ($entries === false) {
             return;

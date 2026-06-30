@@ -509,7 +509,11 @@ class BackgroundWorker
         foreach ($items as $item) {
             $id = $item['id'];
             $url = $item['url'];
-            $requestedAt = $item['requested_at'];
+            $requestedAt = (int)$item['requested_at'];
+            $forceArchive = (int)($item['force_archive'] ?? 0);
+
+            // Mark as processing
+            $this->db->prepare("UPDATE archive_queue SET status = 'processing' WHERE id = ?")->execute([$id]);
             
             echo "Archiving URL: $url\n";
             
@@ -525,13 +529,15 @@ class BackgroundWorker
             // Basic normalization (strip trailing slash, to lowercase)
             $normUrl = rtrim(strtolower($url), '/');
             
-            // Check if we already have a recent snapshot (within 24 hours)
-            $check = $this->db->prepare("SELECT id FROM archived_links WHERE url = ? AND timestamp > ?");
-            $check->execute([$normUrl, $requestedAt - 86400]);
-            if ($check->fetch()) {
-                echo "Recent snapshot exists, skipping.\n";
-                $this->db->prepare("DELETE FROM archive_queue WHERE id = ?")->execute([$id]);
-                continue;
+            if (!$forceArchive) {
+                // Check if already archived recently
+                $stmt = $this->db->prepare("SELECT * FROM archived_links WHERE url = ? AND timestamp > ?");
+                $stmt->execute([$normUrl, $requestedAt - 86400]); // Don't archive if we already did in the last 24h
+                if ($stmt->fetch()) {
+                    // Skip
+                    $this->db->prepare("DELETE FROM archive_queue WHERE id = ?")->execute([$id]);
+                    continue;
+                }
             }
 
             // 1. Send to Archive.org (fire and forget)

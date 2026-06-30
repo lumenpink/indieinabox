@@ -128,7 +128,8 @@ CREATE TABLE IF NOT EXISTS archive_queue (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     url TEXT NOT NULL,
     status TEXT DEFAULT 'pending',
-    requested_at INTEGER NOT NULL
+    requested_at INTEGER NOT NULL,
+    force_archive INTEGER DEFAULT 0
 );
 
 CREATE TABLE IF NOT EXISTS archived_links (

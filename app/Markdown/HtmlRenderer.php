@@ -130,7 +130,23 @@ class HtmlRenderer implements RendererInterface
         }
 
         if ($node instanceof LinkNode) {
-            $targetEsc = htmlspecialchars($node->target, ENT_QUOTES | ENT_HTML5);
+            $target = $node->target;
+            if (preg_match('#^https?://#i', $target)) {
+                global $site;
+                $fqdn = $site?->metadata?->fqdn ?? '';
+                if ($fqdn === '' || strpos($target, $fqdn) !== 0) {
+                    $ts = $this->page && current($this->page->frontmatter) && isset($this->page->frontmatter['published']) 
+                          ? strtotime((string)$this->page->frontmatter['published']) 
+                          : time();
+                    
+                    // Fallback to page date if published not found but Date object exists
+                    if ($this->page && $this->page->published && $ts === time()) {
+                        $ts = $this->page->published->getTimestamp();
+                    }
+                    $target = '/archive?url=' . urlencode($target) . '&ts=' . $ts;
+                }
+            }
+            $targetEsc = htmlspecialchars($target, ENT_QUOTES | ENT_HTML5);
             $labelEsc = htmlspecialchars($node->label, ENT_QUOTES | ENT_HTML5);
             return "<a href=\"{$targetEsc}\">{$labelEsc}</a>";
         }

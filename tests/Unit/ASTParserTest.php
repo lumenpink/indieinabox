@@ -216,6 +216,18 @@ it('renders standard Markdown links to HTML correctly', function () {
     expect($html)->toBe("<p>This is <a href=\"/blog/other-post\">my link</a>.</p>\n");
 });
 
+it('rewrites external Markdown links to use the archive route in HtmlRenderer', function () {
+    $markdown = "Check [external](https://example.com/foo).";
+    $parser = new ASTParser();
+    $ast = $parser->parse($markdown);
+    
+    $renderer = new HtmlRenderer();
+    $html = $renderer->render($ast);
+    
+    // We expect the URL to be rewritten. The ts will be the current time, so we just match the prefix
+    expect($html)->toMatch('#<p>Check <a href="/archive\?url=https%3A%2F%2Fexample\.com%2Ffoo&amp;ts=\d+">external</a>.</p>#');
+});
+
 it('compiles Markdown to Gemini Gemtext correctly', function () {
     $markdown = "# Main Title\n## Sub Title\n\nThis is a **bold** paragraph with [a link](https://example.com) and [[Obsidian Wikilink]].\n\n- First item\n- Second item";
     $parser = new ASTParser();

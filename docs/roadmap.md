@@ -101,12 +101,12 @@ This document tracks completed refactoring phases and future directions.
 
 The following next-generation features are scheduled for development:
 
-### 🎨 Phase 12: Whostyles Integration
+### 🎨 Phase 12: Whostyles Integration (COMPLETED)
 *   **Decentralized Styling**: Integrate the newly updated Whostyles V2 specification (as documented at [https://codeberg.org/whostyles/whostyles](https://codeberg.org/whostyles/whostyles)) into the Indieinabox ecosystem.
 *   **Hash-Based Rendering**: Safely decode Whostyles V2 hashes (e.g., `{ws2:1mBxq6lG0u0uG0u1g1E4a4a1g1E2e2e}`) to extract configuration and color maps. Apply these safely-clamped CSS design tokens to incoming third-party comments and webmentions to preserve the author's visual identity.
 *   **Inline & Content Discovery**: Implement discovery by parsing `<meta name="whostyle" content="{ws2:...}">` tags from incoming webmentions. Additionally, support extracting the mathematical bitpacking hash directly from the content body, enabling customization for anonymous posting systems like `commentpara.de`.
 
-### 📬 Phase 13: Microsub Endpoint & Reader (with Twtxt)
+### 📬 Phase 13: Microsub Endpoint & Reader (with Twtxt) (COMPLETED)
 *   **Microsub Server**: Implement a W3C Microsub endpoint to manage feeds, channels (e.g., Inbox, Friends, Tech), and read states (read, unread, archived).
 *   **Twtxt Feeds Bridging**: Enable subscription to standard `twtxt.txt` feeds alongside traditional RSS, Atom, and Microformats-parsed feeds, converting microblog posts into unified Microsub timeline entries.
 *   **Token Verification**: Verify bearer tokens using the local IndieAuth endpoint to authorize feed readers/clients.

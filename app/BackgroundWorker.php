@@ -22,9 +22,22 @@ class BackgroundWorker
 
     public function runAll(): void
     {
-        $this->processInboxQueue();
-        $this->processOutbox();
-        $this->processArchiveQueue();
+        $lockFile = Database::$dataDir . '/cron.lock';
+        $fp = fopen($lockFile, 'w+');
+        if (!flock($fp, LOCK_EX | LOCK_NB)) {
+            echo "Cron is already running.\n";
+            fclose($fp);
+            return;
+        }
+
+        try {
+            $this->processInboxQueue();
+            $this->processOutbox();
+            $this->processArchiveQueue();
+        } finally {
+            flock($fp, LOCK_UN);
+            fclose($fp);
+        }
     }
 
     public function processInboxQueue(): void

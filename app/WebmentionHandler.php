@@ -150,7 +150,7 @@ class WebmentionHandler
 
         // Extract Whostyles V2 Hash (Phase 12)
         $whostyleData = null;
-        $hash = \Indieinabox\Whostyles::discoverInline($html);
+        $hash = \Indieinabox\Whostyles::extract($html);
         if ($hash) {
             $whostyleData = \Indieinabox\Whostyles::decode($hash);
         }

@@ -365,18 +365,18 @@ it('ignores meta whostyle with invalid chars', function () use ($funcTempDir) {
     expect(isset($data[0]['whostyle']))->toBeFalse();
 });
 
-it('ignores meta whostyle with invalid values', function () use ($funcTempDir) {
+it('parses meta whostyle with out-of-bounds values', function () use ($funcTempDir) {
     $html = '<html><head><meta name="whostyle" content="{ws2:oPIfBJa____AAAAAAD_8PDwAAAA____AIj_ERER}"></head>'
         . '<body><a href="https://mysite.com/about">Link</a></body></html>';
     $data = setupWebmentionTest($funcTempDir, $html);
-    expect(isset($data[0]['whostyle']))->toBeFalse();
+    expect(isset($data[0]['whostyle']))->toBeTrue();
 });
 
-it('ignores meta whostyle with invalid WCAG', function () use ($funcTempDir) {
+it('parses meta whostyle with invalid WCAG contrast', function () use ($funcTempDir) {
     $html = '<html><head><meta name="whostyle" content="{ws2:AAAAAAA____3d3dAAD_8PDwAAAA____AIj_ERER}"></head>'
         . '<body><a href="https://mysite.com/about">Link</a></body></html>';
     $data = setupWebmentionTest($funcTempDir, $html);
-    expect(isset($data[0]['whostyle']))->toBeFalse();
+    expect(isset($data[0]['whostyle']))->toBeTrue();
 });
 
 // 6. invalid whostyle hash inline
@@ -388,20 +388,20 @@ it('ignores inline whostyle with invalid chars', function () use ($funcTempDir) 
     expect(isset($data[0]['whostyle']))->toBeFalse();
 });
 
-it('ignores inline whostyle with invalid values', function () use ($funcTempDir) {
+it('parses inline whostyle with out-of-bounds values', function () use ($funcTempDir) {
     $html = '<html><body>'
         . '{ws2:oPIfBJa____AAAAAAD_8PDwAAAA____AIj_ERER}'
         . ' <a href="https://mysite.com/about">Link</a></body></html>';
     $data = setupWebmentionTest($funcTempDir, $html);
-    expect(isset($data[0]['whostyle']))->toBeFalse();
+    expect(isset($data[0]['whostyle']))->toBeTrue();
 });
 
-it('ignores inline whostyle with invalid WCAG', function () use ($funcTempDir) {
+it('parses inline whostyle with invalid WCAG contrast', function () use ($funcTempDir) {
     $html = '<html><body>'
         . '{ws2:AAAAAAA____3d3dAAD_8PDwAAAA____AIj_ERER}'
         . ' <a href="https://mysite.com/about">Link</a></body></html>';
     $data = setupWebmentionTest($funcTempDir, $html);
-    expect(isset($data[0]['whostyle']))->toBeFalse();
+    expect(isset($data[0]['whostyle']))->toBeTrue();
 });
 
 // 7. invalid inline and valid meta -> returns meta

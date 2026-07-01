@@ -49,7 +49,7 @@ it('renders headings to HTML correctly', function () {
     $renderer = new HtmlRenderer();
     $html = $renderer->render($ast);
     
-    expect($html)->toBe("<h1>Heading 1</h1>\n<h3>Heading 3</h3>\n");
+    expect($html)->toBe("<h1 class=\"p-name\">Heading 1</h1>\n<h3>Heading 3</h3>\n");
 });
 
 it('parses standard paragraphs and handles multi-line paragraphs', function () {

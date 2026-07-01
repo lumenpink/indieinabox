@@ -69,6 +69,9 @@ class HtmlRenderer implements RendererInterface
             foreach ($node->children as $child) {
                 $inner .= $this->render($child);
             }
+            if ($node->level === 1) {
+                return "<h1 class=\"p-name\">{$inner}</h1>\n";
+            }
             return "<h{$node->level}>{$inner}</h{$node->level}>\n";
         }
 

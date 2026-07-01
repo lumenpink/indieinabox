@@ -33,6 +33,11 @@
                     endforeach;
                 endif;
                 ?>
+                <?php
+                if ($page->kind !== 'note' && $page->kind !== 'reply' && $page->kind !== 'like' && !empty($page->title) && $page->title !== 'Untitled' && strpos($page->content, '<h1') === false) :
+                ?>
+                    <h1 class="p-name"><?= htmlspecialchars($page->title) ?></h1>
+                <?php endif; ?>
                 <?= $page->content; ?>
             </div>
             <div>

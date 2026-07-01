@@ -241,7 +241,7 @@ PHP
 
         $content = file_get_contents($mdFile);
         preg_match('/^---\s*\n(.*?)\n---\s*\n(.*)$/s', $content, $matches);
-        $yamlParser = new \Indieinabox\Yaml();
+        $yamlParser = new Yaml();
         $savedData = $yamlParser->loadString($matches[1]);
         
         expect($savedData['source'])->toBe($sourceUrl);

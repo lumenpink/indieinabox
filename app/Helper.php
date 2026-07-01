@@ -27,6 +27,26 @@ class Helper
     }
 
     /**
+     * Helper function to get time ago string
+     *
+     * @param int $timestamp
+     * @return string
+     */
+    public static function timeAgo(int $timestamp): string
+    {
+        $diff = time() - $timestamp;
+        if ($diff < 60) {
+            return $diff . " seconds ago";
+        } elseif ($diff < 3600) {
+            return floor($diff / 60) . " minutes ago";
+        } elseif ($diff < 86400) {
+            return floor($diff / 3600) . " hours ago";
+        } else {
+            return floor($diff / 86400) . " days ago";
+        }
+    }
+
+    /**
      * Get the configuration for a specific kind with fallbacks.
      */
     /**

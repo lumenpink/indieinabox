@@ -7,6 +7,11 @@ use Indieinabox\Site;
 use Indieinabox\Site\Paths;
 use Indieinabox\SiteBuilder;
 
+/**
+ * @property string $tempDir
+ * @property Site $site
+ * @property SiteBuilder $builder
+ */
 beforeEach(function () {
     // Setup temporary directories
     $this->tempDir = sys_get_temp_dir() . '/indieinabox_test_' . uniqid();

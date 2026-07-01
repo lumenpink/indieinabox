@@ -150,6 +150,7 @@ class WebRouter
     private function serveStatic(): void
     {
         $requestUri = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
+        $requestUriClean = rtrim($requestUri, '/');
 
         $outputDir = $this->site->paths->outputDirHtml;
         $path = str_replace(['..', '//'], ['', '/'], urldecode($requestUri));

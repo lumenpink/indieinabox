@@ -172,7 +172,7 @@ it('rejects target URL mismatch with site FQDN', function () use ($funcTempDir) 
 it('rejects target URL if target page does not exist on site', function () use ($funcTempDir) {
     $site = new Site();
     $site->paths->baseDir = $funcTempDir;
-    $site->paths->outputDir = 'public';
+    $site->paths->outputDirHtml = 'public_html';
     $site->metadata->fqdn = 'https://mysite.com';
 
     $_SERVER['REQUEST_METHOD'] = 'POST';
@@ -195,7 +195,7 @@ it('rejects target URL if target page does not exist on site', function () use (
 it('rejects target URL if source page does not link to target', function () use ($funcTempDir) {
     $site = new Site();
     $site->paths->baseDir = $funcTempDir;
-    $site->paths->outputDir = 'public';
+    $site->paths->outputDirHtml = 'public_html';
     $site->metadata->fqdn = 'https://mysite.com';
 
     // Create target file to exist
@@ -233,7 +233,7 @@ HTML;
 it('accepts and verifies valid webmention', function () use ($funcTempDir) {
     $site = new Site();
     $site->paths->baseDir = $funcTempDir;
-    $site->paths->outputDir = 'public';
+    $site->paths->outputDirHtml = 'public_html';
     $site->metadata->fqdn = 'https://mysite.com';
 
     // Create target file to exist
@@ -299,7 +299,7 @@ function setupWebmentionTest(string $funcTempDir, string $sourceHtml): array
 {
     $site = new Site();
     $site->paths->baseDir = $funcTempDir;
-    $site->paths->outputDir = 'public';
+    $site->paths->outputDirHtml = 'public_html';
     $site->metadata->fqdn = 'https://mysite.com';
 
     $targetFileDir = $funcTempDir . '/public_html/about';

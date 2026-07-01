@@ -173,7 +173,7 @@ it('creates an article post via JSON content', function () {
     
     $this->router->handleRequest();
     
-    expect($this->router->micropubMock->lastResponse['status'])->toBe(201);
+    expect($this->router->micropubMock->lastResponse['status'])->toBe(202);
     expect($this->router->micropubMock->lastResponse['headers'])->toHaveKey('Location');
     
     // Verify file was created
@@ -186,6 +186,12 @@ it('creates an article post via JSON content', function () {
     expect($content)->toContain('title: "My Test Article"');
     expect($content)->toContain('This is the body of the article.');
     expect($content)->toContain('- test');
+
+    // Verify it queued the site build
+    $db = \Indieinabox\Database::getDb();
+    $stmt = $db->query("SELECT * FROM inbox_queue WHERE type = 'build_site'");
+    $queueItem = $stmt->fetch(\PDO::FETCH_ASSOC);
+    expect($queueItem)->not->toBeFalse();
 });
 
 it('creates a note via form-encoded content', function () {
@@ -202,7 +208,7 @@ it('creates a note via form-encoded content', function () {
     
     $this->router->handleRequest();
     
-    expect($this->router->micropubMock->lastResponse['status'])->toBe(201);
+    expect($this->router->micropubMock->lastResponse['status'])->toBe(202);
     
     $location = $this->router->micropubMock->lastResponse['headers']['Location'];
     $slug = str_replace('.html', '', basename($location));

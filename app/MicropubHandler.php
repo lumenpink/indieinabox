@@ -219,17 +219,14 @@ class MicropubHandler
         $filePath = $dir . DIRECTORY_SEPARATOR . $slug . '.md';
         file_put_contents($filePath, $yaml);
 
-        // Rebuild site
+        // Rebuild site asynchronously
         if (class_exists('\\Indieinabox\\ConfigHandler')) {
-            // Ensure config is fully populated from DB before building
-            $this->site->config = \Indieinabox\Database::getAllSettings();
-            $this->site->config['kinds'] = \Indieinabox\Database::getKinds();
-            $this->site->config['translations'] = \Indieinabox\Database::getTranslations();
-            $this->site->config['urltranslations'] = \Indieinabox\Database::getUrlTranslations();
-            
-            // Rebuild can be synchronous for now
-            $siteBuilder = new SiteBuilder($this->site);
-            $siteBuilder->build();
+            $db = \Indieinabox\Database::getDb();
+            $stmt = $db->query("SELECT 1 FROM inbox_queue WHERE type = 'build_site'");
+            if (!$stmt->fetch()) {
+                $insert = $db->prepare("INSERT INTO inbox_queue (type, payload_json, created_at) VALUES (?, ?, ?)");
+                $insert->execute(['build_site', json_encode([]), time()]);
+            }
         }
 
         // Build the created URL
@@ -248,7 +245,7 @@ class MicropubHandler
             $apHandler->queueCreateActivity($postUrl, $content, $name);
         }
 
-        $this->sendSuccessResponse(201, ['Location' => $postUrl]);
+        $this->sendSuccessResponse(202, ['Location' => $postUrl]);
     }
 
     /**

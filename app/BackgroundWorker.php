@@ -64,6 +64,8 @@ class BackgroundWorker
                     $this->handleWebmention($payload);
                 } elseif ($type === 'activitypub') {
                     $this->handleActivityPub($payload);
+                } elseif ($type === 'build_site') {
+                    $this->handleBuildSite();
                 }
             } catch (\Exception $e) {
                 echo "Error processing inbox item $id: " . $e->getMessage() . "\n";
@@ -74,6 +76,21 @@ class BackgroundWorker
             $del->execute([$id]);
         }
         echo "Inbox queue done.\n";
+    }
+
+    private function handleBuildSite(): void
+    {
+        echo "Rebuilding static site...\n";
+        
+        $this->site->config = Database::getAllSettings();
+        $this->site->config['kinds'] = Database::getKinds();
+        $this->site->config['translations'] = Database::getTranslations();
+        $this->site->config['urltranslations'] = Database::getUrlTranslations();
+        
+        $siteBuilder = new SiteBuilder($this->site);
+        $siteBuilder->build();
+        
+        echo "Site rebuild completed.\n";
     }
 
     private function handleWebmention(array $payload): void

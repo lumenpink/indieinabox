@@ -211,3 +211,27 @@ it('downloads avatar locally for activitypub create', function () use ($funcTemp
     expect($content)->toContain('/data/avatars/remote.example.com/');
 });
 
+it('processes build_site queue correctly', function () use ($funcTempDir) {
+    $db = \Indieinabox\Database::getDb();
+    
+    // Clear the html dir so we can verify if it creates a file
+    $htmlDir = $funcTempDir . '/public_html';
+    if (!is_dir($htmlDir)) mkdir($htmlDir, 0777, true);
+    
+    // Create a dummy content file to trigger an index build
+    $contentDir = $funcTempDir . '/content/article/2026/06';
+    if (!is_dir($contentDir)) mkdir($contentDir, 0777, true);
+    file_put_contents($contentDir . '/test-build-bg.md', "---\ntitle: Test\n---\nHello");
+    
+    $db->exec("INSERT INTO inbox_queue (type, payload_json, created_at) VALUES ('build_site', '{}', " . time() . ")");
+    
+    // We mock output capture because SiteBuilder produces output
+    ob_start();
+    $this->worker->processInboxQueue();
+    $output = ob_get_clean();
+    
+    expect($output)->toContain('Rebuilding static site...');
+    expect($output)->toContain('Site rebuild completed.');
+    expect($output)->toContain('Rebuilding static site...');
+    expect($output)->toContain('Site rebuild completed.');
+});

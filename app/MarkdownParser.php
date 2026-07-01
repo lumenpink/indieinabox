@@ -75,6 +75,10 @@ class MarkdownParser implements ParserInterface
 
         $page['rawBody'] = trim($content, " \n\r\t");
 
+        if (isset($page['publish']) && $page['publish'] === false) {
+            return null;
+        }
+
         if (!$this->site->options->buildAll && !$hasFrontMatter) {
             return null;
         }
@@ -101,6 +105,12 @@ class MarkdownParser implements ParserInterface
             $detectedLang = $segments[0];
             array_shift($segments);
             $cleanRelPath = implode('/', $segments);
+        }
+
+        $isRoot = count($segments) === 1;
+        $hasPublishTrue = isset($page['publish']) && $page['publish'] === true;
+        if ($isRoot && !$hasPublishTrue) {
+            $page['kind'] = 'page';
         }
 
         // Process base slug from clean relative path

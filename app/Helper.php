@@ -85,9 +85,10 @@ class Helper
      * @param  Page|array<string, mixed> $page
      * @return array{localized: string, kind: string}
      */
-    public static function kind($page): array
+    public static function kind($page, ?\Indieinabox\Site $siteInstance = null): array
     {
         global $site;
+        $site = $siteInstance ?? $site;
         $isObject = $page instanceof Page;
         $pageKind = $isObject ? $page->kind : ($page["kind"] ?? null);
         $pageSlug = $isObject ? $page->slug : ($page["slug"] ?? "");
@@ -137,7 +138,26 @@ class Helper
             }
 
             if (!isset($kind)) {
-                $kind = "generic";
+                $isRoot = false;
+                if ($isObject) {
+                    $baseDir = $site->paths->baseDir ?? '';
+                    $contentDir = $site->paths->contentDir ?? 'content';
+                    $contentPath = $baseDir . DIRECTORY_SEPARATOR . $contentDir;
+                    $relPath = str_replace($contentPath, "", $page->filepath ?? '');
+                    $relPath = trim($relPath, DIRECTORY_SEPARATOR);
+                    
+                    $segments = explode(DIRECTORY_SEPARATOR, $relPath);
+                    $langs = $site->localization->lang ?? [];
+                    if (!is_array($langs)) {
+                        $langs = [$langs];
+                    }
+                    if (count($segments) === 1) {
+                        $isRoot = true;
+                    } elseif (count($segments) === 2 && in_array($segments[0], $langs)) {
+                        $isRoot = true;
+                    }
+                }
+                $kind = $isRoot ? "page" : "generic";
                 $localizedkind = "generic";
             } else {
                 $kindConfig = $site->config['kinds'][$kind] ?? null;

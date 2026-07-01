@@ -825,18 +825,40 @@ class SiteBuilder
                     $url = $page->relpath . $langPrefix . $folder . '/index.html';
                 }
                 $label = \Indieinabox\Helper::kindLabel($k, $lang);
-                $links[] = ['url' => $url, 'label' => $label];
+                $links[] = ['url' => $url, 'label' => $label, 'order' => PHP_INT_MAX];
             }
         }
 
-        // 2. MD files with kind: page and show_in_menu: true
+        // 2. MD files with kind: page
         foreach ($this->pages as $p) {
             $pLang = $p->lang ?? $defaultLang;
-            if ($pLang === $lang && $p->kind === 'page' && !empty($p->metadata->show_in_menu)) {
+            
+            // By default, it appears unless menu is explicitly false
+            $hideMenu = isset($p->metadata->menu) && $p->metadata->menu === false;
+            
+            if ($pLang === $lang && $p->kind === 'page' && !$hideMenu) {
                 $url = $page->relpath . ltrim($p->slug, '/');
                 $label = $p->title;
-                $links[] = ['url' => $url, 'label' => $label];
+                $order = $p->metadata->menu_order ?? PHP_INT_MAX;
+                $links[] = ['url' => $url, 'label' => $label, 'order' => $order];
             }
+        }
+
+        // 3. Sort links: numbered first, then alphabetically
+        usort($links, function($a, $b) {
+            $orderA = $a['order'] ?? PHP_INT_MAX;
+            $orderB = $b['order'] ?? PHP_INT_MAX;
+            
+            if ($orderA !== $orderB) {
+                return $orderA <=> $orderB;
+            }
+            
+            return strcasecmp($a['label'] ?? '', $b['label'] ?? '');
+        });
+
+        // Strip order key to match original shape
+        foreach ($links as &$link) {
+            unset($link['order']);
         }
 
         return $links;

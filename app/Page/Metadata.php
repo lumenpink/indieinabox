@@ -59,6 +59,16 @@ class Metadata
     public $reliability;
 
     /**
+     * @var bool|null
+     */
+    public $menu;
+
+    /**
+     * @var int|null
+     */
+    public $menu_order;
+
+    /**
      * PageMetadata constructor.
      *
      * @param array<string> $category
@@ -70,6 +80,8 @@ class Metadata
      * @param string $layout
      * @param string|null $maturity
      * @param string|null $reliability
+     * @param bool|null $menu
+     * @param int|null $menu_order
      */
     public function __construct(
         array $category = ["No Category"],
@@ -80,7 +92,9 @@ class Metadata
         string $kind = "note",
         string $layout = "page",
         ?string $maturity = null,
-        ?string $reliability = null
+        ?string $reliability = null,
+        ?bool $menu = null,
+        ?int $menu_order = null
     ) {
         $this->category = $category;
         $this->tags = $tags;
@@ -91,5 +105,7 @@ class Metadata
         $this->layout = $layout;
         $this->maturity = $maturity;
         $this->reliability = $reliability;
+        $this->menu = $menu;
+        $this->menu_order = $menu_order;
     }
 }

@@ -20,6 +20,7 @@ Markdown files in IndieinaBox can include a YAML front-matter block at the top o
   - `true`: Displays a warning in the layout that the content was automatically translated by AI.
   - `"revised"`: Displays a warning that the content was translated by AI but revised by a human.
   - `false` (or omitted): No warning is displayed.
+- **`hide_on_rss`** (boolean|string): Set to `true` or `"yes"` to exclude this page from the RSS and Atom feeds.
 
 ## Menu Tags
 

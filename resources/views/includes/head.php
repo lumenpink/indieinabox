@@ -22,6 +22,8 @@ if (!empty($kindConfig['palette'])) {
 <meta name="description" content="<?= htmlspecialchars($page->title) ?>">
 <meta name="author" content="<?= htmlspecialchars($site->metadata->author) ?>">
 <link rel="microsub" href="<?= rtrim($site->metadata->fqdn, '/') ?>/microsub">
+<link rel="alternate" type="application/rss+xml" title="RSS Feed" href="<?= $page->relpath ?>rss.xml">
+<link rel="alternate" type="application/atom+xml" title="Atom Feed" href="<?= $page->relpath ?>atom.xml">
 <style>
     :root {
         --bg: <?= $bg ?>;

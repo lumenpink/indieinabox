@@ -17,6 +17,7 @@ class Options
     public bool $forceStaticOverride;
     public ?string $htmlpostprocessing;
     public bool $prettylinks;
+    public int $feed_limit;
 
     /**
      * SiteOptions constructor.
@@ -34,7 +35,8 @@ class Options
         bool $skipStatic = false,
         bool $forceStaticOverride = false,
         ?string $htmlpostprocessing = null,
-        bool $prettylinks = true
+        bool $prettylinks = true,
+        int $feed_limit = 20
     ) {
         $this->buildAll = $buildAll;
         $this->dev = $dev;
@@ -42,5 +44,6 @@ class Options
         $this->forceStaticOverride = $forceStaticOverride;
         $this->htmlpostprocessing = $htmlpostprocessing;
         $this->prettylinks = $prettylinks;
+        $this->feed_limit = $feed_limit;
     }
 }

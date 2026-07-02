@@ -219,6 +219,7 @@ class ConfigHandler
         $currentConfig['buildall'] = isset($_POST['buildall']);
         $currentConfig['dev'] = isset($_POST['dev']);
         $currentConfig['prettylinks'] = isset($_POST['prettylinks']);
+        $currentConfig['feed_limit'] = isset($_POST['feed_limit']) ? (int)$_POST['feed_limit'] : 20;
 
         // --- Arrays ---
         $supportVal = $_POST['support'] ?? 'md, txt, html, htm';
@@ -483,6 +484,9 @@ class ConfigHandler
         }
         if (isset($config['prettylinks'])) {
             $newSite->options->prettylinks = (bool)$config['prettylinks'];
+        }
+        if (isset($config['feed_limit'])) {
+            $newSite->options->feed_limit = (int)$config['feed_limit'];
         }
 
         if (isset($config['lang'])) {
@@ -869,6 +873,11 @@ class ConfigHandler
                                 <option value="beautify" <?= ($config['htmlpostprocessing'] ?? '') === 'beautify' ? 'selected' : '' ?>>Beautify</option>
                             </select>
                         </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="feed_limit">RSS/Atom Feed Limit</label>
+                        <input type="number" name="feed_limit" id="feed_limit" value="<?= (int)($config['feed_limit'] ?? 20) ?>" min="0">
+                        <small>Number of latest posts to include in the RSS and Atom feeds. Set to 0 for unlimited.</small>
                     </div>
                     <div class="form-group">
                         <label>Supported File Extensions (comma separated)</label>

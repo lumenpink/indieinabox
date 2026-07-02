@@ -64,6 +64,16 @@ class Metadata
     public $menu;
 
     /**
+     * @var bool
+     */
+    public $hide_title;
+
+    /**
+     * @var bool|string
+     */
+    public $hide_on_rss;
+
+    /**
      * @var int|null
      */
     public $menu_order;
@@ -94,7 +104,9 @@ class Metadata
         ?string $maturity = null,
         ?string $reliability = null,
         $menu = null,
-        ?int $menu_order = null
+        ?int $menu_order = null,
+        bool $hide_title = false,
+        $hide_on_rss = false
     ) {
         $this->category = $category;
         $this->tags = $tags;
@@ -107,5 +119,7 @@ class Metadata
         $this->reliability = $reliability;
         $this->menu = $menu;
         $this->menu_order = $menu_order;
+        $this->hide_title = $hide_title;
+        $this->hide_on_rss = $hide_on_rss;
     }
 }

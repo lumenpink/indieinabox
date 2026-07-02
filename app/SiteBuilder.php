@@ -642,8 +642,9 @@ class SiteBuilder
             mkdir($outDirGopher, 0777, true);
         }
 
-        // 1. Generate local feeds: public/twtxt.txt (and for each language)
+        // 1. Generate local feeds: public/twtxt.txt, rss.xml, atom.xml (and for each language)
         $twtxtManager = new \Indieinabox\Twtxt\TwtxtManager();
+        $feedManager = new \Indieinabox\Feeds\FeedManager();
         $defaultLang = $this->site->localization->defaultLang ?? 'en';
 
         $pagesByLang = [];
@@ -680,6 +681,28 @@ class SiteBuilder
             // Copy to other formats
             copy($feedFile, $langDirGemini . DIRECTORY_SEPARATOR . 'twtxt.txt');
             copy($feedFile, $langDirGopher . DIRECTORY_SEPARATOR . 'twtxt.txt');
+
+            // Generate RSS and Atom
+            $rssFile = $langDirHtml . DIRECTORY_SEPARATOR . 'rss.xml';
+            $atomFile = $langDirHtml . DIRECTORY_SEPARATOR . 'atom.xml';
+            
+            $feedLimit = $this->site->options->feed_limit ?? 20;
+            
+            $feedManager->generateRss(
+                $langPages,
+                $rssFile,
+                $this->site->metadata->fqdn,
+                $this->site->metadata,
+                $feedLimit
+            );
+            
+            $feedManager->generateAtom(
+                $langPages,
+                $atomFile,
+                $this->site->metadata->fqdn,
+                $this->site->metadata,
+                $feedLimit
+            );
         }
 
         // 2. Fetch aggregated timeline & mentions if subscriptions/hubs are configured

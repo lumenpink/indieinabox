@@ -12,7 +12,8 @@ global $footerLinks;
                 $linksHTML[] = '<a href="' . htmlspecialchars($item['url']) . '">' . htmlspecialchars($item['label']) . '</a>';
             }
         }
-        $linksHTML[] = '<a href="' . $page->relpath . 'feed.xml">RSS</a>';
+        $linksHTML[] = '<a href="' . $page->relpath . 'rss.xml">RSS</a>';
+        $linksHTML[] = '<a href="' . $page->relpath . 'atom.xml">ATOM</a>';
         echo implode(' | ', $linksHTML);
         ?>
     </div>

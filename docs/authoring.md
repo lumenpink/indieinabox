@@ -48,4 +48,17 @@ Por exemplo:
 - `content/pt/about.md` (Página traduzida para Português)
 - `content/es/about.md` (Página traduzida para Espanhol)
 
-Durante a compilação, o IndieinaBox reconhecerá a afinidade e permitirá que no layout possamos construir links para as outras versões (language switcher) disponíveis daquela mesma nota ou artigo. O `intro.md` funciona sob o mesmo princípio, você pode ter `content/intro.md` e `content/pt/intro.md`, e a página inicial em português puxará a introdução em português.
+Durante a compilação, o IndieinaBox reconhecerá a afinidade e criará no layout os links para as outras versões disponíveis. O `intro.md` funciona sob o mesmo princípio.
+
+**Paridade e Auto-Traduções Simuladas (Virtualização)**
+
+Nas configurações web, você possui controles estritos de "Translation Parity":
+- **Full**: Tenta simular (virtualizar) notas em todos os sentidos caso falte a tradução.
+- **From Main Only**: Apenas notas criadas na língua principal virtualizam para as sublínguas caso falte a tradução.
+- **From Sublang Only**: Apenas notas sub-idiomas virtualizam paras as demais.
+- **Inter Sublang Only**: Apenas entre sublínguas.
+- **Disabled**: Não aplica regras de paridade (desabilita a geração automática).
+
+Além disso, a opção **Translation Auto-Generation** define o que ocorre caso falte um arquivo que a paridade exige:
+- `pseudo`: Ele gera um arquivo fantasma apenas copiando a versão base e inserindo o prefixo `[LANG]` no título para sinalizar que não foi traduzido ainda.
+- `disabled`: O sistema lançará um **Erro Fatal** no console e impedirá a geração do site até que você crie o arquivo traduzido manualmente.

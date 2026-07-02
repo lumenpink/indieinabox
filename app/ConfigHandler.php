@@ -212,6 +212,9 @@ class ConfigHandler
         $currentConfig['defaultcategory'] = trim($_POST['defaultcategory'] ?? 'General');
         $currentConfig['htmlpostprocessing'] = $_POST['htmlpostprocessing'] ?? 'minify';
         
+        $currentConfig['translation_parity'] = $_POST['translation_parity'] ?? 'full';
+        $currentConfig['translation_auto'] = $_POST['translation_auto'] ?? 'pseudo';
+        
         // --- Booleans ---
         $currentConfig['buildall'] = isset($_POST['buildall']);
         $currentConfig['dev'] = isset($_POST['dev']);
@@ -910,6 +913,28 @@ class ConfigHandler
                             <input type="checkbox" name="dev" id="dev" <?= ($config['dev'] ?? false) ? 'checked' : '' ?>>
                             <label for="dev">Dev mode (live-reload script)</label>
                         </div>
+                    </div>
+                </fieldset>
+
+                <fieldset>
+                    <legend>Translations & Parity</legend>
+                    <div class="form-group">
+                        <label>Translation Parity Mode</label>
+                        <select name="translation_parity">
+                            <option value="full" <?= ($config['translation_parity'] ?? 'full') === 'full' ? 'selected' : '' ?>>Full (All directions)</option>
+                            <option value="from-main-only" <?= ($config['translation_parity'] ?? '') === 'from-main-only' ? 'selected' : '' ?>>From Main Language Only</option>
+                            <option value="from-sublang-only" <?= ($config['translation_parity'] ?? '') === 'from-sublang-only' ? 'selected' : '' ?>>From Sub-languages Only</option>
+                            <option value="inter-sublang-only" <?= ($config['translation_parity'] ?? '') === 'inter-sublang-only' ? 'selected' : '' ?>>Inter Sub-languages Only</option>
+                            <option value="disabled" <?= ($config['translation_parity'] ?? '') === 'disabled' ? 'selected' : '' ?>>Disabled</option>
+                        </select>
+                        <p style="font-size: 0.85em; opacity: 0.8; margin-top: 5px;">Controls which pages are required to have translations in other languages.</p>
+                    </div>
+                    <div class="form-group">
+                        <label>Translation Auto-Generation</label>
+                        <select name="translation_auto">
+                            <option value="pseudo" <?= ($config['translation_auto'] ?? 'pseudo') === 'pseudo' ? 'selected' : '' ?>>Pseudo (Virtualizes translations with [LANG] prefix)</option>
+                            <option value="disabled" <?= ($config['translation_auto'] ?? '') === 'disabled' ? 'selected' : '' ?>>Disabled (Fails build if required parity is not met)</option>
+                        </select>
                     </div>
                 </fieldset>
 

@@ -116,6 +116,12 @@ class SiteBuilder
 
         $defaultLang = $this->site->localization->defaultLang ?? 'en';
         $prettylinks = $this->site->options->prettylinks ?? true;
+        
+        $parity = $this->site->options->translation_parity ?? 'full';
+        if ($parity === 'disabled') {
+            return;
+        }
+        $autoVirtualize = $this->site->options->translation_auto ?? 'pseudo';
 
         global $urltranslations;
         $urlTranslationsArr = $urltranslations ?? [];
@@ -154,8 +160,22 @@ class SiteBuilder
                 }
             }
 
+            $sourceIsMain = ($sourceLang === $defaultLang);
+
             foreach ($langs as $targetLang) {
                 if ($targetLang === $sourceLang) {
+                    continue;
+                }
+                
+                $targetIsMain = ($targetLang === $defaultLang);
+                
+                if ($parity === 'from-main-only' && !$sourceIsMain) {
+                    continue;
+                }
+                if ($parity === 'from-sublang-only' && $sourceIsMain) {
+                    continue;
+                }
+                if ($parity === 'inter-sublang-only' && ($sourceIsMain || $targetIsMain)) {
                     continue;
                 }
 
@@ -168,6 +188,13 @@ class SiteBuilder
 
                 $key = "{$page->kind}:{$targetNick}:{$targetLang}";
                 if (!isset($existing[$key])) {
+                    if ($autoVirtualize === 'disabled') {
+                        throw new \RuntimeException(
+                            "Translation Parity rule '{$parity}' violated. " .
+                            "Missing translation for '{$page->slug}' in '{$targetLang}'."
+                        );
+                    }
+                    
                     $existing[$key] = true; // Mark as handled
 
                     if (php_sapi_name() === 'cli') {
@@ -822,7 +849,31 @@ class SiteBuilder
         }
 
         foreach ($links as $lang => $url) {
-            $links[$lang] = '/' . ltrim(preg_replace('#/+#', '/', $url), '/');
+            $url = '/' . ltrim(preg_replace('#/+#', '/', $url), '/');
+            
+            $exists = false;
+            if ($kind === 'home' || $kind === 'generic') {
+                $exists = true; // Home and generic index are always accessible
+            } else {
+                $targetNick = $baseKey;
+                if ($translationGroup !== null) {
+                    $targetNick = ($lang === $defaultLang) ? $baseKey : ($translationGroup[$lang] ?? $baseKey);
+                }
+                foreach ($this->pages as $p) {
+                    $pLang = $p->lang ?? $defaultLang;
+                    if ($pLang === $lang && $p->kind === $kind && $p->nick === $targetNick) {
+                        $exists = true;
+                        break;
+                    }
+                }
+            }
+            
+            if (!$exists) {
+                // fallback to language root (Home)
+                $url = $lang === $defaultLang ? '/' : '/' . $lang . '/';
+            }
+            
+            $links[$lang] = $url;
         }
 
         return $links;

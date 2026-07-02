@@ -86,8 +86,15 @@ class ValidationResult implements \JsonSerializable
  */
 class MarkdownValidator
 {
+    /**
+     * @var string
+     */
     private string $markdown;
 
+    /**
+     * Method __construct
+     * @param string $markdown
+     */
     public function __construct(string $markdown)
     {
         $this->markdown = $markdown;

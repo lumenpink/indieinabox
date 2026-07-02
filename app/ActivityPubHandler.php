@@ -6,11 +6,24 @@ namespace Indieinabox;
 
 use PDO;
 
+/**
+ * Class ActivityPubHandler
+ */
 class ActivityPubHandler
 {
+    /**
+     * @var Indieinabox\Site
+     */
     private Site $site;
+    /**
+     * @var PDO
+     */
     private PDO $db;
 
+    /**
+     * Method __construct
+     * @param Indieinabox\Site $site
+     */
     public function __construct(Site $site)
     {
         $this->site = $site;
@@ -18,6 +31,10 @@ class ActivityPubHandler
         $this->ensureKeys();
     }
 
+    /**
+     * Method ensureKeys
+     * @return void
+     */
     private function ensureKeys(): void
     {
         $stmt = $this->db->query("SELECT * FROM activitypub_keys WHERE key_id = 'main-key'");
@@ -38,6 +55,10 @@ class ActivityPubHandler
         }
     }
 
+    /**
+     * Method handleWebFinger
+     * @return void
+     */
     public function handleWebFinger(): void
     {
         $resource = $_GET['resource'] ?? '';
@@ -71,6 +92,10 @@ class ActivityPubHandler
         ], JSON_UNESCAPED_SLASHES);
     }
 
+    /**
+     * Method handleActor
+     * @return void
+     */
     public function handleActor(): void
     {
         $handle = Database::getSetting('activitypub_handle') ?? 'lumen';
@@ -104,6 +129,10 @@ class ActivityPubHandler
         ], JSON_UNESCAPED_SLASHES);
     }
 
+    /**
+     * Method handleInbox
+     * @return void
+     */
     public function handleInbox(): void
     {
         $body = file_get_contents('php://input');
@@ -126,6 +155,13 @@ class ActivityPubHandler
         http_response_code(202);
     }
 
+    /**
+     * Method queueAcceptFollow
+     * @param array $followActivity
+     * @param string $targetInbox
+     * 
+     * @return void
+     */
     private function queueAcceptFollow(array $followActivity, string $targetInbox): void
     {
         $fqdn = rtrim($this->site->metadata->fqdn ?? '', '/');
@@ -145,6 +181,10 @@ class ActivityPubHandler
         $stmt->execute([json_encode($accept, JSON_UNESCAPED_SLASHES), $targetInbox, time()]);
     }
 
+    /**
+     * Method handleOutbox
+     * @return void
+     */
     public function handleOutbox(): void
     {
         $fqdn = rtrim($this->site->metadata->fqdn ?? '', '/');
@@ -158,6 +198,14 @@ class ActivityPubHandler
         ]);
     }
 
+    /**
+     * Method queueCreateActivity
+     * @param string $postUrl
+     * @param string $content
+     * @param ?string $name
+     * 
+     * @return void
+     */
     public function queueCreateActivity(string $postUrl, string $content, ?string $name): void
     {
         $handle = Database::getSetting('activitypub_handle') ?? 'lumen';

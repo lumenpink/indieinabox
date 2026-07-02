@@ -56,13 +56,37 @@ class Yaml
      * @var mixed
      */
     private int $dumpIndent = 2;
+    /**
+     * @var int
+     */
     private int $dumpWordWrap = 40;
+    /**
+     * @var mixed
+     */
     private $containsGroupAnchor = false;
+    /**
+     * @var mixed
+     */
     private $containsGroupAlias = false;
+    /**
+     * @var array
+     */
     private array $path;
+    /**
+     * @var array
+     */
     private array $result;
+    /**
+     * @var string
+     */
     private string $LiteralPlaceHolder = '___YAML_Literal_Block___';
+    /**
+     * @var array
+     */
     private array $SavedGroups = array();
+    /**
+     * @var int
+     */
     private int $indent;
 
     /**
@@ -382,6 +406,12 @@ class Yaml
 
     // LOADING FUNCTIONS
 
+    /**
+     * Method loadWithSource
+     * @param array $Source
+     * 
+     * @return array
+     */
     private function loadWithSource(array $Source): array
     {
         if (empty($Source)) {
@@ -458,6 +488,12 @@ class Yaml
         return $this->result;
     }
 
+    /**
+     * Method loadFromFile
+     * @param string $file
+     * 
+     * @return array
+     */
     private function loadFromFile(string $file): array
     {
         if (!file_exists($file)) {
@@ -467,6 +503,12 @@ class Yaml
         return file($file);
     }
 
+    /**
+     * Method loadFromString
+     * @param string $input
+     * 
+     * @return array
+     */
     private function loadFromString(string $input): array
     {
         $lines = explode("\n", $input);
@@ -773,6 +815,13 @@ class Yaml
         return $explode;
     }
 
+    /**
+     * Method literalBlockContinues
+     * @param string $line
+     * @param int $lineIndent
+     * 
+     * @return bool
+     */
     private function literalBlockContinues(string $line, int $lineIndent): bool
     {
         if (!trim($line)) {
@@ -785,6 +834,10 @@ class Yaml
         return false;
     }
 
+    /**
+     * Method referenceContentsByAlias
+     * @param string $alias
+     */
     private function referenceContentsByAlias(string $alias)
     {
         do {
@@ -804,6 +857,13 @@ class Yaml
         return $value;
     }
 
+    /**
+     * Method addArrayInline
+     * @param array $array
+     * @param int $indent
+     * 
+     * @return bool
+     */
     private function addArrayInline(array $array, int $indent): bool
     {
         $CommonGroupPath = $this->path;
@@ -820,6 +880,13 @@ class Yaml
         return true;
     }
 
+    /**
+     * Method addArray
+     * @param array $incoming_data
+     * @param int $incoming_indent
+     * 
+     * @return void
+     */
     private function addArray(array $incoming_data, int $incoming_indent): void
     {
         if (count($incoming_data) > 1) {
@@ -910,6 +977,10 @@ class Yaml
         }
     }
 
+    /**
+     * Method startsLiteralBlock
+     * @param string $line
+     */
     private static function startsLiteralBlock(string $line)
     {
         $lastChar = substr(trim($line), -1);
@@ -928,6 +999,12 @@ class Yaml
         return $lastChar;
     }
 
+    /**
+     * Method greedilyNeedNextLine
+     * @param string $line
+     * 
+     * @return bool
+     */
     private static function greedilyNeedNextLine(string $line): bool
     {
         $line = trim($line);
@@ -948,6 +1025,15 @@ class Yaml
         return false;
     }
 
+    /**
+     * Method addLiteralLine
+     * @param string $literalBlock
+     * @param string $line
+     * @param string $literalBlockStyle
+     * @param int $indent
+     * 
+     * @return string
+     */
     private function addLiteralLine(string $literalBlock, string $line, string $literalBlockStyle, int $indent = -1): string
     {
         $line = self::stripIndent($line, $indent);
@@ -974,6 +1060,13 @@ class Yaml
         return $literalBlock . $line;
     }
 
+    /**
+     * Method revertLiteralPlaceHolder
+     * @param array $lineArray
+     * @param string $literalBlock
+     * 
+     * @return array
+     */
     public function revertLiteralPlaceHolder(array $lineArray, string $literalBlock): array
     {
         foreach ($lineArray as $k => $_) {
@@ -987,6 +1080,13 @@ class Yaml
         return $lineArray;
     }
 
+    /**
+     * Method stripIndent
+     * @param string $line
+     * @param int $indent
+     * 
+     * @return string
+     */
     private static function stripIndent(string $line, int $indent = -1): string
     {
         if ($indent == -1) {
@@ -996,6 +1096,12 @@ class Yaml
         return substr($line, $indent);
     }
 
+    /**
+     * Method getParentPathByIndent
+     * @param int $indent
+     * 
+     * @return array
+     */
     private function getParentPathByIndent(int $indent): array
     {
         if ($indent == 0) {
@@ -1016,6 +1122,12 @@ class Yaml
     }
 
 
+    /**
+     * Method clearBiggerPathValues
+     * @param int $indent
+     * 
+     * @return bool
+     */
     private function clearBiggerPathValues(int $indent): bool
     {
         if ($indent == 0) {
@@ -1035,6 +1147,12 @@ class Yaml
     }
 
 
+    /**
+     * Method isComment
+     * @param string $line
+     * 
+     * @return bool
+     */
     private static function isComment(string $line): bool
     {
         if (!$line) {
@@ -1050,12 +1168,24 @@ class Yaml
         return false;
     }
 
+    /**
+     * Method isEmpty
+     * @param string $line
+     * 
+     * @return bool
+     */
     private static function isEmpty(string $line): bool
     {
         return (trim($line) === '');
     }
 
 
+    /**
+     * Method isArrayElement
+     * @param string $line
+     * 
+     * @return bool
+     */
     private function isArrayElement(string $line): bool
     {
         if (!$line) {
@@ -1073,11 +1203,21 @@ class Yaml
         return true;
     }
 
+    /**
+     * Method isHashElement
+     * @param string $line
+     */
     private function isHashElement(string $line)
     {
         return strpos($line, ':');
     }
 
+    /**
+     * Method isLiteral
+     * @param string $line
+     * 
+     * @return bool
+     */
     private function isLiteral(string $line): bool
     {
         if ($this->isArrayElement($line)) {
@@ -1113,11 +1253,23 @@ class Yaml
         return $value;
     }
 
+    /**
+     * Method startsMappedSequence
+     * @param string $line
+     * 
+     * @return bool
+     */
     private function startsMappedSequence(string $line): bool
     {
         return ($line[0] == '-' && substr($line, -1, 1) == ':');
     }
 
+    /**
+     * Method returnMappedSequence
+     * @param string $line
+     * 
+     * @return array
+     */
     private function returnMappedSequence(string $line): array
     {
         $array = array();
@@ -1128,6 +1280,12 @@ class Yaml
         return array($array);
     }
 
+    /**
+     * Method returnMappedValue
+     * @param string $line
+     * 
+     * @return array
+     */
     private function returnMappedValue(string $line): array
     {
         $array = array();
@@ -1136,21 +1294,43 @@ class Yaml
         return $array;
     }
 
+    /**
+     * Method startsMappedValue
+     * @param string $line
+     * 
+     * @return bool
+     */
     private function startsMappedValue(string $line): bool
     {
         return substr($line, -1, 1) == ':';
     }
 
+    /**
+     * Method isPlainArray
+     * @param string $line
+     * 
+     * @return bool
+     */
     private function isPlainArray(string $line): bool
     {
         return $line[0] == '[' && substr($line, -1, 1) == ']';
     }
 
+    /**
+     * Method returnPlainArray
+     * @param string $line
+     */
     private function returnPlainArray(string $line)
     {
         return $this->toType($line);
     }
 
+    /**
+     * Method returnKeyValuePair
+     * @param string $line
+     * 
+     * @return array
+     */
     private function returnKeyValuePair(string $line): array
     {
         $array = array();
@@ -1183,6 +1363,12 @@ class Yaml
     }
 
 
+    /**
+     * Method returnArrayElement
+     * @param string $line
+     * 
+     * @return array
+     */
     private function returnArrayElement(string $line): array
     {
         if (strlen($line) <= 1) {
@@ -1198,6 +1384,10 @@ class Yaml
     }
 
 
+    /**
+     * Method nodeContainsGroup
+     * @param string $line
+     */
     private function nodeContainsGroup(string $line)
     {
         $symbolsForReference = 'A-z0-9_\-';
@@ -1224,6 +1414,13 @@ class Yaml
         return false;
     }
 
+    /**
+     * Method addGroup
+     * @param string $line
+     * @param string $group
+     * 
+     * @return void
+     */
     private function addGroup(string $line, string $group): void
     {
         if ($group[0] == '&') {
@@ -1234,6 +1431,13 @@ class Yaml
         }
     }
 
+    /**
+     * Method stripGroup
+     * @param string $line
+     * @param string $group
+     * 
+     * @return string
+     */
     private function stripGroup(string $line, string $group): string
     {
         $line = trim(str_replace($group, '', $line));

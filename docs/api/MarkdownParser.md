@@ -1,6 +1,8 @@
 # MarkdownParser
 **Namespace:** `Indieinabox`
 
+Class MarkdownParser
+
 ## Properties
 
 ### `private mixed $fileProcessor`

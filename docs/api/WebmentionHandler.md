@@ -1,17 +1,27 @@
 # WebmentionHandler
 **Namespace:** `Indieinabox`
 
+Class WebmentionHandler
+
 ## Properties
 
 ### `private Indieinabox\Site $site`
+
+@var Indieinabox\Site
 
 ## Methods
 
 ### __construct()
 `public function __construct(Indieinabox\Site $site)`
 
+Method __construct
+@param Indieinabox\Site $site
+
 ### handle()
 `public function handle(): void`
+
+Method handle
+@return void
 
 ### verifySourceLink()
 `public function verifySourceLink(string $source, string $target): array`
@@ -47,5 +57,14 @@ Compare target and link href to check if they match (including relative links)
 ### sendResponse()
 `private function sendResponse(int $code, string $message): void`
 
+Method sendResponse
+@param int $code
+@param string $message
+
+@return void
+
 ### sendHelpPage()
 `private function sendHelpPage(): void`
+
+Method sendHelpPage
+@return void

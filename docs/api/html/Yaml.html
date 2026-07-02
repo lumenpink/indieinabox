@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yaml - Indieinabox API</title>
+    <style>
+        :root { --bg: #F4F1EA; --fg: #2C2E2F; --accent: #2C2E2F; }
+        body { font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; margin: 0; display: flex; background: var(--bg); color: var(--fg); line-height: 1.6; }
+        .sidebar { width: 300px; background: rgba(0,0,0,0.05); padding: 20px; overflow-y: auto; height: 100vh; position: fixed; }
+        .sidebar ul { list-style: none; padding: 0; }
+        .sidebar li { margin-bottom: 5px; }
+        .sidebar a { text-decoration: none; color: var(--accent); font-size: 0.9em; }
+        .sidebar a:hover { text-decoration: underline; }
+        .content { margin-left: 320px; padding: 40px; max-width: 800px; }
+        pre { background: rgba(0, 0, 0, 0.05); padding: 1em; overflow-x: auto; }
+        code { background: rgba(0, 0, 0, 0.05); padding: 2px 4px; font-size: 0.9em; }
+        a { color: var(--accent); }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h3>API Reference</h3>
+        <ul><li><a href="/docs/api/html/ActivityPubHandler.html">ActivityPubHandler</a></li>
+<li><a href="/docs/api/html/BackgroundWorker.html">BackgroundWorker</a></li>
+<li><a href="/docs/api/html/ConfigHandler.html">ConfigHandler</a></li>
+<li><a href="/docs/api/html/Database.html">Database</a></li>
+<li><a href="/docs/api/html/FeedFetcher.html">FeedFetcher</a></li>
+<li><a href="/docs/api/html/Feeds-FeedManager.html">Feeds-FeedManager</a></li>
+<li><a href="/docs/api/html/Helper.html">Helper</a></li>
+<li><a href="/docs/api/html/HttpSignature.html">HttpSignature</a></li>
+<li><a href="/docs/api/html/IndieAuthHandler.html">IndieAuthHandler</a></li>
+<li><a href="/docs/api/html/Markdown-ASTParser.html">Markdown-ASTParser</a></li>
+<li><a href="/docs/api/html/Markdown-ContentProcessor.html">Markdown-ContentProcessor</a></li>
+<li><a href="/docs/api/html/Markdown-FileProcessor.html">Markdown-FileProcessor</a></li>
+<li><a href="/docs/api/html/Markdown-GemtextRenderer.html">Markdown-GemtextRenderer</a></li>
+<li><a href="/docs/api/html/Markdown-GophermapRenderer.html">Markdown-GophermapRenderer</a></li>
+<li><a href="/docs/api/html/Markdown-HtmlRenderer.html">Markdown-HtmlRenderer</a></li>
+<li><a href="/docs/api/html/Markdown-LanguageProcessor.html">Markdown-LanguageProcessor</a></li>
+<li><a href="/docs/api/html/Markdown-MarkdownValidator.html">Markdown-MarkdownValidator</a></li>
+<li><a href="/docs/api/html/Markdown-RendererInterface.html">Markdown-RendererInterface</a></li>
+<li><a href="/docs/api/html/MarkdownParser.html">MarkdownParser</a></li>
+<li><a href="/docs/api/html/MicropubClientHandler.html">MicropubClientHandler</a></li>
+<li><a href="/docs/api/html/MicropubHandler.html">MicropubHandler</a></li>
+<li><a href="/docs/api/html/MicrosubHandler.html">MicrosubHandler</a></li>
+<li><a href="/docs/api/html/MicrosubReaderHandler.html">MicrosubReaderHandler</a></li>
+<li><a href="/docs/api/html/Page-Content.html">Page-Content</a></li>
+<li><a href="/docs/api/html/Page-Localization.html">Page-Localization</a></li>
+<li><a href="/docs/api/html/Page-Metadata.html">Page-Metadata</a></li>
+<li><a href="/docs/api/html/Page.html">Page</a></li>
+<li><a href="/docs/api/html/Pages.html">Pages</a></li>
+<li><a href="/docs/api/html/ParserInterface.html">ParserInterface</a></li>
+<li><a href="/docs/api/html/Site-Localization.html">Site-Localization</a></li>
+<li><a href="/docs/api/html/Site-Metadata.html">Site-Metadata</a></li>
+<li><a href="/docs/api/html/Site-Options.html">Site-Options</a></li>
+<li><a href="/docs/api/html/Site-Paths.html">Site-Paths</a></li>
+<li><a href="/docs/api/html/Site-Support.html">Site-Support</a></li>
+<li><a href="/docs/api/html/Site-Twtxt.html">Site-Twtxt</a></li>
+<li><a href="/docs/api/html/Site.html">Site</a></li>
+<li><a href="/docs/api/html/SiteBuilder.html">SiteBuilder</a></li>
+<li><a href="/docs/api/html/ThemeManager.html">ThemeManager</a></li>
+<li><a href="/docs/api/html/Translations-UrlTranslations.html">Translations-UrlTranslations</a></li>
+<li><a href="/docs/api/html/Twtxt-TwtxtEntry.html">Twtxt-TwtxtEntry</a></li>
+<li><a href="/docs/api/html/Twtxt-TwtxtManager.html">Twtxt-TwtxtManager</a></li>
+<li><a href="/docs/api/html/WebRouter.html">WebRouter</a></li>
+<li><a href="/docs/api/html/WebmentionHandler.html">WebmentionHandler</a></li>
+<li><a href="/docs/api/html/Whostyles.html">Whostyles</a></li>
+<li><a href="/docs/api/html/Yaml.html">Yaml</a></li></ul>
+    </div>
+    <div class="content">
+        <h1 class="p-name">Yaml</h1>
+<p><strong>Namespace:</strong> <code>Indieinabox</code></p>
+<p>Yaml Class</p>
+<p>A Simple &amp; Lightweight PHP/YAML Class
+This is the maintained version of spyc library, it was renamed to Yaml</p>
+<p>This class can be used to read a YAML file and convert its contents
+into a PHP array.  It currently supports a very limited subsection of
+the YAML spec.</p>
+<p>-----------------------------------------------------------------------------
+This Class is mantained version of spyc lib
+Code subject to the MIT license
+Copyright (c) 2011 Vladimir Andersen
+-----------------------------------------------------------------------------</p>
+<p>Usage:
+&lt;code&gt;
+  $yaml  = new Yaml();
+  $array = $yaml-&gt;load($file);
+&lt;/code&gt;</p>
+<p>@author    Vlad Andersen &lt;vlad.andersen@gmail.com&gt;
+@author    Chris Wanstrath &lt;chris@ozmm.org&gt;
+@author    Erik Amaru Ortiz &lt;aortiz.erik@gmail.com&gt;
+@link      (origin) http://code.google.com/p/spyc/ last rev. 2011
+@link      (current) https://github.com/eriknyk/Yaml
+@copyright Copyright 2005-2006 Chris Wanstrath,
+@copyright 2006-2011 Vlad Andersen
+@copyright 2012 Erik Amaru Ortiz &lt;aortiz.erik@gmail.com&gt;
+@license   http://www.opensource.org/licenses/mit-license.php MIT License
+@package   Yaml
+@version   1.0</p>
+<h2>Properties</h2>
+<h3><code>public bool $settingDumpForceQuotes</code></h3>
+<p>Setting this to true will force YAMLDump to enclose any string value in
+quotes.  False by default.</p>
+<p>@var bool</p>
+<h3><code>private int $dumpIndent</code></h3>
+<p>Private vars.</p>
+<p>@var mixed</p>
+<h3><code>private int $dumpWordWrap</code></h3>
+<p>@var int</p>
+<h3><code>private mixed $containsGroupAnchor</code></h3>
+<p>@var mixed</p>
+<h3><code>private mixed $containsGroupAlias</code></h3>
+<p>@var mixed</p>
+<h3><code>private array $path</code></h3>
+<p>@var array</p>
+<h3><code>private array $result</code></h3>
+<p>@var array</p>
+<h3><code>private string $LiteralPlaceHolder</code></h3>
+<p>@var string</p>
+<h3><code>private array $SavedGroups</code></h3>
+<p>@var array</p>
+<h3><code>private int $indent</code></h3>
+<p>@var int</p>
+<h3><code>private array $delayedPath</code></h3>
+<p>Path modifier that should be applied after adding current element.</p>
+<p>@var array</p>
+<h3><code>public mixed $nodeId</code></h3>
+<p>#@+</p>
+<p>@access public
+@var    mixed</p>
+<h2>Methods</h2>
+<h3><em></em>construct()</h3>
+<p><code>public function __construct(string $file = &apos;&apos;)</code></p>
+<p>Yaml Construct</p>
+<p>@param string $file (alternative) path of yaml file</p>
+<h3>load()</h3>
+<p><code>public function load(string $file): array</code></p>
+<p>Load a yaml file &amp; parse</p>
+<p>@param  string $file path of yaml file
+@return array        yaml parsed result</p>
+<h3>loadString()</h3>
+<p><code>public function loadString(string $yamlContent): array</code></p>
+<p>Load a yaml string &amp; parse</p>
+<p>@param  string $yamlContent string conatining yaml content
+@return array               yaml parsed result</p>
+<h3>loadFile()</h3>
+<p><code>public function loadFile(string $file): array</code></p>
+<p>Load a valid YAML file to Spyc.</p>
+<p>@param  string $file
+@return array</p>
+<h3>removeComments()</h3>
+<p><code>public function removeComments(array $array): array</code></p>
+<p>Strip comments from YAML</p>
+<p>@param  array $array
+@return array</p>
+<h3>dump()</h3>
+<p><code>public function dump(mixed $array, mixed $indent = false, mixed $wordwrap = false): string</code></p>
+<p>Dump PHP array to YAML</p>
+<p>The dump method, when supplied with an array, will do its best
+to convert the array into friendly YAML.  Pretty simple.  Feel free to
+save the returned string as tasteful.yaml and pass it around.</p>
+<p>Oh, and you can decide how big the indent is and what the wordwrap
+for folding is.  Pretty cool -- just pass in &apos;false&apos; for either if
+you want to use the default.</p>
+<p>Indent&apos;s default is 2 spaces, wordwrap&apos;s default is 40 characters.  And
+you can turn off wordwrap by passing in 0.</p>
+<p>@access public
+@return string
+@param  array $array    PHP array
+@param  int   $indent   Pass in false to use the default, which is 2
+@param  int   $wordwrap Pass in 0 for no wordwrap, false for default (40)</p>
+<h3>yamlize()</h3>
+<p><code>private function yamlize(mixed $key, mixed $value, int $indent, mixed $previous_key = -1, mixed $first_key = 0, ?array $source_array = null): string</code></p>
+<p>Attempts to convert a key / value array item to YAML</p>
+<p>@access private
+@return string
+@param  string|int $key    The name of the key
+@param  mixed      $value  The value of the item
+@param  int        $indent The indent of the current node</p>
+<h3>yamlizeArray()</h3>
+<p><code>private function yamlizeArray(array $array, int $indent): string</code></p>
+<p>Attempts to convert an array to YAML</p>
+<p>@access private
+@return string
+@param  $array  The array you want to convert
+@param  $indent The indent of the current level</p>
+<h3>dumpNode()</h3>
+<p><code>private function dumpNode(mixed $key, mixed $value, int $indent, mixed $previous_key = -1, mixed $first_key = 0, ?array $source_array = null): string</code></p>
+<p>Returns YAML from a key and a value</p>
+<p>@access private
+@return string
+@param  string|int $key    The name of the key
+@param  mixed      $value  The value of the item
+@param  int        $indent The indent of the current node</p>
+<h3>doLiteralBlock()</h3>
+<p><code>private function doLiteralBlock(string $value, int $indent): string</code></p>
+<p>Creates a literal block for dumping</p>
+<p>@access private
+@return string
+@param  $value
+@param  $indent int The value of the indent</p>
+<h3>doFolding()</h3>
+<p><code>private function doFolding(mixed $value, int $indent)</code></p>
+<p>Folds a string of text, if necessary</p>
+<p>@access private
+@param  mixed $value The string you wish to fold
+@param  int   $indent
+@return mixed</p>
+<h3>loadWithSource()</h3>
+<p><code>private function loadWithSource(array $Source): array</code></p>
+<p>Method loadWithSource
+@param array $Source</p>
+<p>@return array</p>
+<h3>loadFromFile()</h3>
+<p><code>private function loadFromFile(string $file): array</code></p>
+<p>Method loadFromFile
+@param string $file</p>
+<p>@return array</p>
+<h3>loadFromString()</h3>
+<p><code>private function loadFromString(string $input): array</code></p>
+<p>Method loadFromString
+@param string $input</p>
+<p>@return array</p>
+<h3>parseLine()</h3>
+<p><code>private function parseLine(string $line): array</code></p>
+<p>Parses YAML code and returns an array for a node</p>
+<p>@access private
+@return array
+@param  string $line A line from the YAML file</p>
+<h3>toType()</h3>
+<p><code>private function toType(mixed $value)</code></p>
+<p>Finds the type of the passed value, returns the value as the new type.</p>
+<p>@access private
+@param  string $value
+@return mixed</p>
+<h3>inlineEscape()</h3>
+<p><code>private function inlineEscape(string $inline): array</code></p>
+<p>Used in inlines to check for more inlines or quoted strings</p>
+<p>@access private
+@return array</p>
+<h3>literalBlockContinues()</h3>
+<p><code>private function literalBlockContinues(string $line, int $lineIndent): bool</code></p>
+<p>Method literalBlockContinues
+@param string $line
+@param int $lineIndent</p>
+<p>@return bool</p>
+<h3>referenceContentsByAlias()</h3>
+<p><code>private function referenceContentsByAlias(string $alias)</code></p>
+<p>Method referenceContentsByAlias
+@param string $alias</p>
+<h3>addArrayInline()</h3>
+<p><code>private function addArrayInline(array $array, int $indent): bool</code></p>
+<p>Method addArrayInline
+@param array $array
+@param int $indent</p>
+<p>@return bool</p>
+<h3>addArray()</h3>
+<p><code>private function addArray(array $incoming_data, int $incoming_indent): void</code></p>
+<p>Method addArray
+@param array $incoming<em>data
+@param int $incoming</em>indent</p>
+<p>@return void</p>
+<h3>startsLiteralBlock()</h3>
+<p><code>private static function startsLiteralBlock(string $line)</code></p>
+<p>Method startsLiteralBlock
+@param string $line</p>
+<h3>greedilyNeedNextLine()</h3>
+<p><code>private static function greedilyNeedNextLine(string $line): bool</code></p>
+<p>Method greedilyNeedNextLine
+@param string $line</p>
+<p>@return bool</p>
+<h3>addLiteralLine()</h3>
+<p><code>private function addLiteralLine(string $literalBlock, string $line, string $literalBlockStyle, int $indent = -1): string</code></p>
+<p>Method addLiteralLine
+@param string $literalBlock
+@param string $line
+@param string $literalBlockStyle
+@param int $indent</p>
+<p>@return string</p>
+<h3>revertLiteralPlaceHolder()</h3>
+<p><code>public function revertLiteralPlaceHolder(array $lineArray, string $literalBlock): array</code></p>
+<p>Method revertLiteralPlaceHolder
+@param array $lineArray
+@param string $literalBlock</p>
+<p>@return array</p>
+<h3>stripIndent()</h3>
+<p><code>private static function stripIndent(string $line, int $indent = -1): string</code></p>
+<p>Method stripIndent
+@param string $line
+@param int $indent</p>
+<p>@return string</p>
+<h3>getParentPathByIndent()</h3>
+<p><code>private function getParentPathByIndent(int $indent): array</code></p>
+<p>Method getParentPathByIndent
+@param int $indent</p>
+<p>@return array</p>
+<h3>clearBiggerPathValues()</h3>
+<p><code>private function clearBiggerPathValues(int $indent): bool</code></p>
+<p>Method clearBiggerPathValues
+@param int $indent</p>
+<p>@return bool</p>
+<h3>isComment()</h3>
+<p><code>private static function isComment(string $line): bool</code></p>
+<p>Method isComment
+@param string $line</p>
+<p>@return bool</p>
+<h3>isEmpty()</h3>
+<p><code>private static function isEmpty(string $line): bool</code></p>
+<p>Method isEmpty
+@param string $line</p>
+<p>@return bool</p>
+<h3>isArrayElement()</h3>
+<p><code>private function isArrayElement(string $line): bool</code></p>
+<p>Method isArrayElement
+@param string $line</p>
+<p>@return bool</p>
+<h3>isHashElement()</h3>
+<p><code>private function isHashElement(string $line)</code></p>
+<p>Method isHashElement
+@param string $line</p>
+<h3>isLiteral()</h3>
+<p><code>private function isLiteral(string $line): bool</code></p>
+<p>Method isLiteral
+@param string $line</p>
+<p>@return bool</p>
+<h3>unquote()</h3>
+<p><code>private static function unquote(mixed $value)</code></p>
+<p>@param  mixed $value
+@return mixed</p>
+<h3>startsMappedSequence()</h3>
+<p><code>private function startsMappedSequence(string $line): bool</code></p>
+<p>Method startsMappedSequence
+@param string $line</p>
+<p>@return bool</p>
+<h3>returnMappedSequence()</h3>
+<p><code>private function returnMappedSequence(string $line): array</code></p>
+<p>Method returnMappedSequence
+@param string $line</p>
+<p>@return array</p>
+<h3>returnMappedValue()</h3>
+<p><code>private function returnMappedValue(string $line): array</code></p>
+<p>Method returnMappedValue
+@param string $line</p>
+<p>@return array</p>
+<h3>startsMappedValue()</h3>
+<p><code>private function startsMappedValue(string $line): bool</code></p>
+<p>Method startsMappedValue
+@param string $line</p>
+<p>@return bool</p>
+<h3>isPlainArray()</h3>
+<p><code>private function isPlainArray(string $line): bool</code></p>
+<p>Method isPlainArray
+@param string $line</p>
+<p>@return bool</p>
+<h3>returnPlainArray()</h3>
+<p><code>private function returnPlainArray(string $line)</code></p>
+<p>Method returnPlainArray
+@param string $line</p>
+<h3>returnKeyValuePair()</h3>
+<p><code>private function returnKeyValuePair(string $line): array</code></p>
+<p>Method returnKeyValuePair
+@param string $line</p>
+<p>@return array</p>
+<h3>returnArrayElement()</h3>
+<p><code>private function returnArrayElement(string $line): array</code></p>
+<p>Method returnArrayElement
+@param string $line</p>
+<p>@return array</p>
+<h3>nodeContainsGroup()</h3>
+<p><code>private function nodeContainsGroup(string $line)</code></p>
+<p>Method nodeContainsGroup
+@param string $line</p>
+<h3>addGroup()</h3>
+<p><code>private function addGroup(string $line, string $group): void</code></p>
+<p>Method addGroup
+@param string $line
+@param string $group</p>
+<p>@return void</p>
+<h3>stripGroup()</h3>
+<p><code>private function stripGroup(string $line, string $group): string</code></p>
+<p>Method stripGroup
+@param string $line
+@param string $group</p>
+<p>@return string</p>
+
+    </div>
+</body>
+</html>

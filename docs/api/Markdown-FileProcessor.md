@@ -1,6 +1,8 @@
 # FileProcessor
 **Namespace:** `Indieinabox\Markdown`
 
+Class FileProcessor
+
 ## Properties
 
 ### `private mixed $site`

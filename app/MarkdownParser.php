@@ -8,6 +8,9 @@ use Indieinabox\Markdown\FileProcessor;
 use Indieinabox\Markdown\ContentProcessor;
 use Indieinabox\Markdown\LanguageProcessor;
 
+/**
+ * Class MarkdownParser
+ */
 class MarkdownParser implements ParserInterface
 {
     /**

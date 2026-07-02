@@ -1,6 +1,8 @@
 # ContentProcessor
 **Namespace:** `Indieinabox\Markdown`
 
+Class ContentProcessor
+
 ## Properties
 
 ### `private Indieinabox\Markdown\ASTParser $astParser`
@@ -15,6 +17,8 @@
 
 ### __construct()
 `public function __construct()`
+
+Method __construct
 
 ### extractFrontMatter()
 `public function extractFrontMatter(string $content): array`

@@ -4,15 +4,29 @@ declare(strict_types=1);
 
 namespace Indieinabox;
 
+/**
+ * Class WebRouter
+ */
 class WebRouter
 {
+    /**
+     * @var Indieinabox\Site
+     */
     protected Site $site;
 
+    /**
+     * Method __construct
+     * @param Indieinabox\Site $site
+     */
     public function __construct(Site $site)
     {
         $this->site = $site;
     }
 
+    /**
+     * Method handleRequest
+     * @return void
+     */
     public function handleRequest(): void
     {
         $requestUri = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
@@ -107,46 +121,82 @@ class WebRouter
         $this->serveStatic();
     }
 
+    /**
+     * Method createWebmentionHandler
+     * @return Indieinabox\WebmentionHandler
+     */
     protected function createWebmentionHandler(): WebmentionHandler
     {
         return new WebmentionHandler($this->site);
     }
 
+    /**
+     * Method createIndieAuthHandler
+     * @return Indieinabox\IndieAuthHandler
+     */
     protected function createIndieAuthHandler(): IndieAuthHandler
     {
         return new IndieAuthHandler($this->site);
     }
 
+    /**
+     * Method createConfigHandler
+     * @return Indieinabox\ConfigHandler
+     */
     protected function createConfigHandler(): ConfigHandler
     {
         return new ConfigHandler($this->site);
     }
 
+    /**
+     * Method createMicropubHandler
+     * @return Indieinabox\MicropubHandler
+     */
     protected function createMicropubHandler(): MicropubHandler
     {
         return new MicropubHandler($this->site);
     }
 
+    /**
+     * Method createMicropubClientHandler
+     * @return Indieinabox\MicropubClientHandler
+     */
     protected function createMicropubClientHandler(): MicropubClientHandler
     {
         return new MicropubClientHandler($this->site);
     }
 
+    /**
+     * Method createMicrosubHandler
+     * @return Indieinabox\MicrosubHandler
+     */
     protected function createMicrosubHandler(): MicrosubHandler
     {
         return new MicrosubHandler($this->site);
     }
 
+    /**
+     * Method createMicrosubReaderHandler
+     * @return Indieinabox\MicrosubReaderHandler
+     */
     protected function createMicrosubReaderHandler(): MicrosubReaderHandler
     {
         return new MicrosubReaderHandler($this->site);
     }
 
+    /**
+     * Method createActivityPubHandler
+     * @return Indieinabox\ActivityPubHandler
+     */
     protected function createActivityPubHandler(): ActivityPubHandler
     {
         return new ActivityPubHandler($this->site);
     }
 
+    /**
+     * Method serveStatic
+     * @return void
+     */
     private function serveStatic(): void
     {
         $requestUri = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
@@ -210,6 +260,10 @@ class WebRouter
         echo "404 Not Found";
     }
 
+    /**
+     * Method handleArchive
+     * @return void
+     */
     private function handleArchive(): void
     {
         $url = $_GET['url'] ?? '';
@@ -301,6 +355,10 @@ class WebRouter
         echo $html;
     }
 
+    /**
+     * Method handleArchiveForce
+     * @return void
+     */
     private function handleArchiveForce(): void
     {
         $url = $_POST['url'] ?? '';

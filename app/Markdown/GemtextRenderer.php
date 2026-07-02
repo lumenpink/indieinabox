@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Indieinabox\Markdown;
 
+/**
+ * Class GemtextRenderer
+ */
 class GemtextRenderer implements RendererInterface
 {
     /**
@@ -16,6 +19,10 @@ class GemtextRenderer implements RendererInterface
      */
     private ?\Indieinabox\Page $page = null;
 
+    /**
+     * Method __construct
+     * @param ?Indieinabox\Page $page
+     */
     public function __construct(?\Indieinabox\Page $page = null)
     {
         $this->page = $page;
@@ -45,6 +52,12 @@ class GemtextRenderer implements RendererInterface
         return $body . $linksSection;
     }
 
+    /**
+     * Method renderNode
+     * @param Indieinabox\Markdown\Node $node
+     * 
+     * @return string
+     */
     private function renderNode(Node $node): string
     {
         if ($node instanceof RootNode) {
@@ -142,6 +155,12 @@ class GemtextRenderer implements RendererInterface
         return '';
     }
 
+    /**
+     * Method renderPlain
+     * @param Indieinabox\Markdown\Node $node
+     * 
+     * @return string
+     */
     private function renderPlain(Node $node): string
     {
         if ($node instanceof TextNode) {

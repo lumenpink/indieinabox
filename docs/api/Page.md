@@ -103,3 +103,5 @@ Create a Page object from a raw array structure.
 
 ### __clone()
 `public function __clone()`
+
+Method __clone

@@ -2,10 +2,20 @@
 
 namespace Indieinabox;
 
+/**
+ * Class Whostyles
+ */
 class Whostyles {
     private const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_';
+    /**
+     * @var mixed
+     */
     private static $ALPHABET_MAP = null;
 
+    /**
+     * Method getAlphabetMap
+     * @return array
+     */
     private static function getAlphabetMap(): array {
         if (self::$ALPHABET_MAP === null) {
             self::$ALPHABET_MAP = array_flip(str_split(self::ALPHABET));
@@ -27,6 +37,12 @@ class Whostyles {
         'letter_spacing' => 26
     ];
 
+    /**
+     * Method decodeBase64
+     * @param string $str
+     * 
+     * @return int
+     */
     public static function decodeBase64(string $str): int {
         $map = self::getAlphabetMap();
         $value = 0;
@@ -40,6 +56,13 @@ class Whostyles {
         return $value;
     }
 
+    /**
+     * Method encodeBase64
+     * @param int $value
+     * @param int $length
+     * 
+     * @return string
+     */
     public static function encodeBase64(int $value, int $length): string {
         $result = '';
         for ($i = 0; $i < $length; $i++) {
@@ -49,6 +72,12 @@ class Whostyles {
         return $result;
     }
 
+    /**
+     * Method decodeColor
+     * @param string $str
+     * 
+     * @return string
+     */
     public static function decodeColor(string $str): string {
         $map = self::getAlphabetMap();
         $val = 0;
@@ -59,6 +88,12 @@ class Whostyles {
         return '#' . str_pad(dechex($val), 6, '0', STR_PAD_LEFT);
     }
 
+    /**
+     * Method encodeColor
+     * @param string $hex
+     * 
+     * @return string
+     */
     public static function encodeColor(string $hex): string {
         $val = hexdec(ltrim($hex, '#'));
         $result = '';
@@ -69,6 +104,12 @@ class Whostyles {
         return $result;
     }
 
+    /**
+     * Method decode
+     * @param string $hash
+     * 
+     * @return ?array
+     */
     public static function decode(string $hash): ?array {
         if (PHP_INT_MAX < 179639500800) {
             throw new \Exception("Whostyle v2 requires a 64-bit PHP environment or GMP/bcmath extensions for safe decoding.");
@@ -106,6 +147,13 @@ class Whostyles {
         return ['config' => $config, 'colors' => $colors];
     }
 
+    /**
+     * Method encode
+     * @param array $config
+     * @param array $colors
+     * 
+     * @return string
+     */
     public static function encode(array $config, array $colors): string {
         if (PHP_INT_MAX < 179639500800) {
             throw new \Exception("Whostyle v2 requires a 64-bit PHP environment or GMP/bcmath extensions for safe encoding.");
@@ -133,6 +181,12 @@ class Whostyles {
         return "{ws2:{$configB64}{$colorsB64}}";
     }
 
+    /**
+     * Method extract
+     * @param string $html
+     * 
+     * @return ?string
+     */
     public static function extract(string $html): ?string {
         $metaHash = null;
         $inlineHash = null;
@@ -155,6 +209,12 @@ class Whostyles {
         return $metaHash ?: $inlineHash;
     }
 
+    /**
+     * Method clean
+     * @param string $html
+     * 
+     * @return string
+     */
     public static function clean(string $html): string {
         return preg_replace_callback(
             '/((?:<|&lt;)meta(?:(?!(?:>|&gt;)).){0,250}?name=(?:["\']|&quot;|&#39;|&#039;)?whostyle(?:["\']|&quot;|&#39;|&#039;)?(?:(?!(?:>|&gt;)).){0,250}?content=(?:["\']|&quot;|&#39;|&#039;)?{ws2:[A-Za-z0-9\-_]{39}}(?:["\']|&quot;|&#39;|&#039;)?(?:(?!(?:>|&gt;)).){0,250}?(?:>|&gt;))|({ws2:[A-Za-z0-9\-_]{39}})/is',
@@ -192,6 +252,12 @@ class Whostyles {
         ]
     ];
 
+    /**
+     * Method getLuminance
+     * @param string $hex
+     * 
+     * @return float
+     */
     private static function getLuminance(string $hex): float {
         $r = hexdec(substr($hex, 1, 2)) / 255.0;
         $g = hexdec(substr($hex, 3, 2)) / 255.0;
@@ -204,12 +270,25 @@ class Whostyles {
         return 0.2126 * $r + 0.7152 * $g + 0.0722 * $b;
     }
 
+    /**
+     * Method getContrast
+     * @param string $hex1
+     * @param string $hex2
+     * 
+     * @return float
+     */
     private static function getContrast(string $hex1, string $hex2): float {
         $l1 = self::getLuminance($hex1);
         $l2 = self::getLuminance($hex2);
         return (max($l1, $l2) + 0.05) / (min($l1, $l2) + 0.05);
     }
 
+    /**
+     * Method generateAttributes
+     * @param string $hash
+     * 
+     * @return string
+     */
     public static function generateAttributes(string $hash): string {
         $decoded = self::decode($hash);
         if (!$decoded) return '';

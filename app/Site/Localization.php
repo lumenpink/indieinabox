@@ -16,6 +16,9 @@ class Localization
 {
     /** @var array<string> */
     private array $lang;
+    /**
+     * @var string
+     */
     private string $defaultLang;
 
     /**

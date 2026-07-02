@@ -310,6 +310,9 @@ class Page
         );
     }
 
+    /**
+     * Method __clone
+     */
     public function __clone()
     {
         if ($this->metadata !== null) {

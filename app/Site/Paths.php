@@ -11,12 +11,33 @@ namespace Indieinabox\Site;
  */
 class Paths
 {
+    /**
+     * @var string
+     */
     public string $baseDir;
+    /**
+     * @var string
+     */
     public string $outputDirHtml;
+    /**
+     * @var string
+     */
     public string $outputDirGemini;
+    /**
+     * @var string
+     */
     public string $outputDirGopher;
+    /**
+     * @var string
+     */
     public string $outputDirMedia;
+    /**
+     * @var string
+     */
     public string $contentDir;
+    /**
+     * @var string
+     */
     public string $themeDir;
 
     /**

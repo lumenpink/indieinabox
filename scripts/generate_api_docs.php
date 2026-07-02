@@ -175,3 +175,108 @@ foreach ($files as $file) {
 }
 
 echo "API documentation generated successfully in docs/api/.\n";
+
+$isHtml = in_array('--html', $argv);
+
+if ($isHtml) {
+    echo "Generating HTML documentation...\n";
+    $htmlDir = $docsDir . '/html';
+    if (!is_dir($htmlDir)) {
+        mkdir($htmlDir, 0755, true);
+    }
+    
+    // We can use our own markdown parser
+    $parser = new \Indieinabox\Markdown\ASTParser();
+    $renderer = new \Indieinabox\Markdown\HtmlRenderer();
+    
+    // Get all generated MD files
+    $mdFiles = glob($docsDir . '/*.md');
+    $links = [];
+    
+    foreach ($mdFiles as $mdFile) {
+        $basename = basename($mdFile, '.md');
+        $links[] = "<li><a href=\"/docs/api/html/$basename.html\">$basename</a></li>";
+    }
+    
+    $sidebar = "<ul>" . implode("\n", $links) . "</ul>";
+    
+    foreach ($mdFiles as $mdFile) {
+        $basename = basename($mdFile, '.md');
+        $mdContent = file_get_contents($mdFile);
+        $ast = $parser->parse($mdContent);
+        $htmlContent = $renderer->render($ast);
+        
+        $html = <<<HTML
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>$basename - Indieinabox API</title>
+    <style>
+        :root { --bg: #F4F1EA; --fg: #2C2E2F; --accent: #2C2E2F; }
+        body { font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; margin: 0; display: flex; background: var(--bg); color: var(--fg); line-height: 1.6; }
+        .sidebar { width: 300px; background: rgba(0,0,0,0.05); padding: 20px; overflow-y: auto; height: 100vh; position: fixed; }
+        .sidebar ul { list-style: none; padding: 0; }
+        .sidebar li { margin-bottom: 5px; }
+        .sidebar a { text-decoration: none; color: var(--accent); font-size: 0.9em; }
+        .sidebar a:hover { text-decoration: underline; }
+        .content { margin-left: 320px; padding: 40px; max-width: 800px; }
+        pre { background: rgba(0, 0, 0, 0.05); padding: 1em; overflow-x: auto; }
+        code { background: rgba(0, 0, 0, 0.05); padding: 2px 4px; font-size: 0.9em; }
+        a { color: var(--accent); }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h3>API Reference</h3>
+        $sidebar
+    </div>
+    <div class="content">
+        $htmlContent
+    </div>
+</body>
+</html>
+HTML;
+        file_put_contents($htmlDir . DIRECTORY_SEPARATOR . $basename . '.html', $html);
+    }
+    
+    // Create an index file
+    $indexHtml = <<<HTML
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Indieinabox API</title>
+    <style>
+        :root { --bg: #F4F1EA; --fg: #2C2E2F; --accent: #2C2E2F; }
+        body { font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; margin: 0; display: flex; background: var(--bg); color: var(--fg); line-height: 1.6; }
+        .sidebar { width: 300px; background: rgba(0,0,0,0.05); padding: 20px; overflow-y: auto; height: 100vh; position: fixed; }
+        .sidebar ul { list-style: none; padding: 0; }
+        .sidebar li { margin-bottom: 5px; }
+        .sidebar a { text-decoration: none; color: var(--accent); font-size: 0.9em; }
+        .sidebar a:hover { text-decoration: underline; }
+        .content { margin-left: 320px; padding: 40px; max-width: 800px; }
+        pre { background: rgba(0, 0, 0, 0.05); padding: 1em; overflow-x: auto; }
+        code { background: rgba(0, 0, 0, 0.05); padding: 2px 4px; font-size: 0.9em; }
+        a { color: var(--accent); }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h3>API Reference</h3>
+        $sidebar
+    </div>
+    <div class="content">
+        <h1>Indieinabox API Documentation</h1>
+        <p>Welcome to the internal API documentation for Indieinabox.</p>
+        <p>Select a class, interface, or trait from the sidebar to view its properties and methods.</p>
+    </div>
+</body>
+</html>
+HTML;
+    file_put_contents($htmlDir . DIRECTORY_SEPARATOR . 'index.html', $indexHtml);
+    
+    echo "HTML documentation generated successfully in docs/api/html/.\n";
+}

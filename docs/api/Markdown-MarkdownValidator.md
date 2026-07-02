@@ -9,10 +9,15 @@ Markdown integrity validator (Linter/Sanitizer)
 
 ### `private string $markdown`
 
+@var string
+
 ## Methods
 
 ### __construct()
 `public function __construct(string $markdown)`
+
+Method __construct
+@param string $markdown
 
 ### validate()
 `public function validate(): Indieinabox\Markdown\ValidationResult`

@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Indieinabox\Translations;
 
+/**
+ * Class UrlTranslations
+ */
 class UrlTranslations
 {
     /**

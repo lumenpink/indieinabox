@@ -51,19 +51,35 @@ Private vars.
 
 ### `private int $dumpWordWrap`
 
+@var int
+
 ### `private mixed $containsGroupAnchor`
+
+@var mixed
 
 ### `private mixed $containsGroupAlias`
 
+@var mixed
+
 ### `private array $path`
+
+@var array
 
 ### `private array $result`
 
+@var array
+
 ### `private string $LiteralPlaceHolder`
+
+@var string
 
 ### `private array $SavedGroups`
 
+@var array
+
 ### `private int $indent`
+
+@var int
 
 ### `private array $delayedPath`
 
@@ -196,11 +212,26 @@ Folds a string of text, if necessary
 ### loadWithSource()
 `private function loadWithSource(array $Source): array`
 
+Method loadWithSource
+@param array $Source
+
+@return array
+
 ### loadFromFile()
 `private function loadFromFile(string $file): array`
 
+Method loadFromFile
+@param string $file
+
+@return array
+
 ### loadFromString()
 `private function loadFromString(string $input): array`
+
+Method loadFromString
+@param string $input
+
+@return array
 
 ### parseLine()
 `private function parseLine(string $line): array`
@@ -231,50 +262,132 @@ Used in inlines to check for more inlines or quoted strings
 ### literalBlockContinues()
 `private function literalBlockContinues(string $line, int $lineIndent): bool`
 
+Method literalBlockContinues
+@param string $line
+@param int $lineIndent
+
+@return bool
+
 ### referenceContentsByAlias()
 `private function referenceContentsByAlias(string $alias)`
+
+Method referenceContentsByAlias
+@param string $alias
 
 ### addArrayInline()
 `private function addArrayInline(array $array, int $indent): bool`
 
+Method addArrayInline
+@param array $array
+@param int $indent
+
+@return bool
+
 ### addArray()
 `private function addArray(array $incoming_data, int $incoming_indent): void`
+
+Method addArray
+@param array $incoming_data
+@param int $incoming_indent
+
+@return void
 
 ### startsLiteralBlock()
 `private static function startsLiteralBlock(string $line)`
 
+Method startsLiteralBlock
+@param string $line
+
 ### greedilyNeedNextLine()
 `private static function greedilyNeedNextLine(string $line): bool`
+
+Method greedilyNeedNextLine
+@param string $line
+
+@return bool
 
 ### addLiteralLine()
 `private function addLiteralLine(string $literalBlock, string $line, string $literalBlockStyle, int $indent = -1): string`
 
+Method addLiteralLine
+@param string $literalBlock
+@param string $line
+@param string $literalBlockStyle
+@param int $indent
+
+@return string
+
 ### revertLiteralPlaceHolder()
 `public function revertLiteralPlaceHolder(array $lineArray, string $literalBlock): array`
+
+Method revertLiteralPlaceHolder
+@param array $lineArray
+@param string $literalBlock
+
+@return array
 
 ### stripIndent()
 `private static function stripIndent(string $line, int $indent = -1): string`
 
+Method stripIndent
+@param string $line
+@param int $indent
+
+@return string
+
 ### getParentPathByIndent()
 `private function getParentPathByIndent(int $indent): array`
+
+Method getParentPathByIndent
+@param int $indent
+
+@return array
 
 ### clearBiggerPathValues()
 `private function clearBiggerPathValues(int $indent): bool`
 
+Method clearBiggerPathValues
+@param int $indent
+
+@return bool
+
 ### isComment()
 `private static function isComment(string $line): bool`
+
+Method isComment
+@param string $line
+
+@return bool
 
 ### isEmpty()
 `private static function isEmpty(string $line): bool`
 
+Method isEmpty
+@param string $line
+
+@return bool
+
 ### isArrayElement()
 `private function isArrayElement(string $line): bool`
+
+Method isArrayElement
+@param string $line
+
+@return bool
 
 ### isHashElement()
 `private function isHashElement(string $line)`
 
+Method isHashElement
+@param string $line
+
 ### isLiteral()
 `private function isLiteral(string $line): bool`
+
+Method isLiteral
+@param string $line
+
+@return bool
 
 ### unquote()
 `private static function unquote(mixed $value)`
@@ -285,32 +398,85 @@ Used in inlines to check for more inlines or quoted strings
 ### startsMappedSequence()
 `private function startsMappedSequence(string $line): bool`
 
+Method startsMappedSequence
+@param string $line
+
+@return bool
+
 ### returnMappedSequence()
 `private function returnMappedSequence(string $line): array`
+
+Method returnMappedSequence
+@param string $line
+
+@return array
 
 ### returnMappedValue()
 `private function returnMappedValue(string $line): array`
 
+Method returnMappedValue
+@param string $line
+
+@return array
+
 ### startsMappedValue()
 `private function startsMappedValue(string $line): bool`
+
+Method startsMappedValue
+@param string $line
+
+@return bool
 
 ### isPlainArray()
 `private function isPlainArray(string $line): bool`
 
+Method isPlainArray
+@param string $line
+
+@return bool
+
 ### returnPlainArray()
 `private function returnPlainArray(string $line)`
+
+Method returnPlainArray
+@param string $line
 
 ### returnKeyValuePair()
 `private function returnKeyValuePair(string $line): array`
 
+Method returnKeyValuePair
+@param string $line
+
+@return array
+
 ### returnArrayElement()
 `private function returnArrayElement(string $line): array`
+
+Method returnArrayElement
+@param string $line
+
+@return array
 
 ### nodeContainsGroup()
 `private function nodeContainsGroup(string $line)`
 
+Method nodeContainsGroup
+@param string $line
+
 ### addGroup()
 `private function addGroup(string $line, string $group): void`
 
+Method addGroup
+@param string $line
+@param string $group
+
+@return void
+
 ### stripGroup()
 `private function stripGroup(string $line, string $group): string`
+
+Method stripGroup
+@param string $line
+@param string $group
+
+@return string

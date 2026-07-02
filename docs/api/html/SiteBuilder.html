@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SiteBuilder - Indieinabox API</title>
+    <style>
+        :root { --bg: #F4F1EA; --fg: #2C2E2F; --accent: #2C2E2F; }
+        body { font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; margin: 0; display: flex; background: var(--bg); color: var(--fg); line-height: 1.6; }
+        .sidebar { width: 300px; background: rgba(0,0,0,0.05); padding: 20px; overflow-y: auto; height: 100vh; position: fixed; }
+        .sidebar ul { list-style: none; padding: 0; }
+        .sidebar li { margin-bottom: 5px; }
+        .sidebar a { text-decoration: none; color: var(--accent); font-size: 0.9em; }
+        .sidebar a:hover { text-decoration: underline; }
+        .content { margin-left: 320px; padding: 40px; max-width: 800px; }
+        pre { background: rgba(0, 0, 0, 0.05); padding: 1em; overflow-x: auto; }
+        code { background: rgba(0, 0, 0, 0.05); padding: 2px 4px; font-size: 0.9em; }
+        a { color: var(--accent); }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h3>API Reference</h3>
+        <ul><li><a href="/docs/api/html/ActivityPubHandler.html">ActivityPubHandler</a></li>
+<li><a href="/docs/api/html/BackgroundWorker.html">BackgroundWorker</a></li>
+<li><a href="/docs/api/html/ConfigHandler.html">ConfigHandler</a></li>
+<li><a href="/docs/api/html/Database.html">Database</a></li>
+<li><a href="/docs/api/html/FeedFetcher.html">FeedFetcher</a></li>
+<li><a href="/docs/api/html/Feeds-FeedManager.html">Feeds-FeedManager</a></li>
+<li><a href="/docs/api/html/Helper.html">Helper</a></li>
+<li><a href="/docs/api/html/HttpSignature.html">HttpSignature</a></li>
+<li><a href="/docs/api/html/IndieAuthHandler.html">IndieAuthHandler</a></li>
+<li><a href="/docs/api/html/Markdown-ASTParser.html">Markdown-ASTParser</a></li>
+<li><a href="/docs/api/html/Markdown-ContentProcessor.html">Markdown-ContentProcessor</a></li>
+<li><a href="/docs/api/html/Markdown-FileProcessor.html">Markdown-FileProcessor</a></li>
+<li><a href="/docs/api/html/Markdown-GemtextRenderer.html">Markdown-GemtextRenderer</a></li>
+<li><a href="/docs/api/html/Markdown-GophermapRenderer.html">Markdown-GophermapRenderer</a></li>
+<li><a href="/docs/api/html/Markdown-HtmlRenderer.html">Markdown-HtmlRenderer</a></li>
+<li><a href="/docs/api/html/Markdown-LanguageProcessor.html">Markdown-LanguageProcessor</a></li>
+<li><a href="/docs/api/html/Markdown-MarkdownValidator.html">Markdown-MarkdownValidator</a></li>
+<li><a href="/docs/api/html/Markdown-RendererInterface.html">Markdown-RendererInterface</a></li>
+<li><a href="/docs/api/html/MarkdownParser.html">MarkdownParser</a></li>
+<li><a href="/docs/api/html/MicropubClientHandler.html">MicropubClientHandler</a></li>
+<li><a href="/docs/api/html/MicropubHandler.html">MicropubHandler</a></li>
+<li><a href="/docs/api/html/MicrosubHandler.html">MicrosubHandler</a></li>
+<li><a href="/docs/api/html/MicrosubReaderHandler.html">MicrosubReaderHandler</a></li>
+<li><a href="/docs/api/html/Page-Content.html">Page-Content</a></li>
+<li><a href="/docs/api/html/Page-Localization.html">Page-Localization</a></li>
+<li><a href="/docs/api/html/Page-Metadata.html">Page-Metadata</a></li>
+<li><a href="/docs/api/html/Page.html">Page</a></li>
+<li><a href="/docs/api/html/Pages.html">Pages</a></li>
+<li><a href="/docs/api/html/ParserInterface.html">ParserInterface</a></li>
+<li><a href="/docs/api/html/Site-Localization.html">Site-Localization</a></li>
+<li><a href="/docs/api/html/Site-Metadata.html">Site-Metadata</a></li>
+<li><a href="/docs/api/html/Site-Options.html">Site-Options</a></li>
+<li><a href="/docs/api/html/Site-Paths.html">Site-Paths</a></li>
+<li><a href="/docs/api/html/Site-Support.html">Site-Support</a></li>
+<li><a href="/docs/api/html/Site-Twtxt.html">Site-Twtxt</a></li>
+<li><a href="/docs/api/html/Site.html">Site</a></li>
+<li><a href="/docs/api/html/SiteBuilder.html">SiteBuilder</a></li>
+<li><a href="/docs/api/html/ThemeManager.html">ThemeManager</a></li>
+<li><a href="/docs/api/html/Translations-UrlTranslations.html">Translations-UrlTranslations</a></li>
+<li><a href="/docs/api/html/Twtxt-TwtxtEntry.html">Twtxt-TwtxtEntry</a></li>
+<li><a href="/docs/api/html/Twtxt-TwtxtManager.html">Twtxt-TwtxtManager</a></li>
+<li><a href="/docs/api/html/WebRouter.html">WebRouter</a></li>
+<li><a href="/docs/api/html/WebmentionHandler.html">WebmentionHandler</a></li>
+<li><a href="/docs/api/html/Whostyles.html">Whostyles</a></li>
+<li><a href="/docs/api/html/Yaml.html">Yaml</a></li></ul>
+    </div>
+    <div class="content">
+        <h1 class="p-name">SiteBuilder</h1>
+<p><strong>Namespace:</strong> <code>Indieinabox</code></p>
+<p>Class SiteBuilder</p>
+<p>Orchestrates the static site generation process. It scans the content directory,
+virtualizes missing translations, processes markdown into HTML/Gemtext/Gophermap,
+and compiles feeds and assets into the output directory.</p>
+<h2>Properties</h2>
+<h3><code>private Indieinabox\Site $site</code></h3>
+<p>@var Indieinabox\Site</p>
+<h3><code>private Indieinabox\Pages $pages</code></h3>
+<p>@var Indieinabox\Pages</p>
+<h3><code>private Indieinabox\ParserInterface $parser</code></h3>
+<p>@var Indieinabox\ParserInterface</p>
+<h2>Methods</h2>
+<h3><em></em>construct()</h3>
+<p><code>public function __construct(Indieinabox\Site $site, ?Indieinabox\Pages $pages = null, ?Indieinabox\ParserInterface $parser = null)</code></p>
+<p>Method <em></em>construct
+@param Indieinabox\Site $site
+@param ?Indieinabox\Pages $pages
+@param ?Indieinabox\ParserInterface $parser</p>
+<h3>getPages()</h3>
+<p><code>public function getPages(): Indieinabox\Pages</code></p>
+<p>Method getPages
+@return Indieinabox\Pages</p>
+<h3>build()</h3>
+<p><code>public function build(): void</code></p>
+<p>Executes the main build pipeline.</p>
+<p>Cleans the output directory, scans content files, handles translation virtualization,
+and triggers generation of HTML, feeds, and static assets.</p>
+<h3>copyMedia()</h3>
+<p><code>public function copyMedia(): void</code></p>
+<p>Method copyMedia
+@return void</p>
+<h3>virtualizeMissingLanguages()</h3>
+<p><code>private function virtualizeMissingLanguages(): void</code></p>
+<p>Method virtualizeMissingLanguages
+@return void</p>
+<h3>pseudoTranslate()</h3>
+<p><code>public function pseudoTranslate(Indieinabox\Page $page, string $targetLang): void</code></p>
+<p>Method pseudoTranslate
+@param Indieinabox\Page $page
+@param string $targetLang</p>
+<p>@return void</p>
+<h3>scan()</h3>
+<p><code>public function scan(string $dir): void</code></p>
+<p>Method scan
+@param string $dir</p>
+<p>@return void</p>
+<h3>generateHTMLFiles()</h3>
+<p><code>public function generateHTMLFiles(): void</code></p>
+<p>Method generateHTMLFiles
+@return void</p>
+<h3>createHTMLFile()</h3>
+<p><code>private function createHTMLFile(Indieinabox\Page $page): void</code></p>
+<p>Method createHTMLFile
+@param Indieinabox\Page $page</p>
+<p>@return void</p>
+<h3>generateFeed()</h3>
+<p><code>public function generateFeed(): void</code></p>
+<p>Method generateFeed
+@return void</p>
+<h3>copyAssets()</h3>
+<p><code>public function copyAssets(string $dir): void</code></p>
+<p>Method copyAssets
+@param string $dir</p>
+<p>@return void</p>
+<h3>copyStatic()</h3>
+<p><code>public function copyStatic(string $dir): bool</code></p>
+<p>Method copyStatic
+@param string $dir</p>
+<p>@return bool</p>
+<h3>copyLiveJsFile()</h3>
+<p><code>private function copyLiveJsFile(string $base): void</code></p>
+<p>Method copyLiveJsFile
+@param string $base</p>
+<p>@return void</p>
+<h3>createGeminiFile()</h3>
+<p><code>private function createGeminiFile(Indieinabox\Page $page): void</code></p>
+<p>Method createGeminiFile
+@param Indieinabox\Page $page</p>
+<p>@return void</p>
+<h3>createGopherFile()</h3>
+<p><code>private function createGopherFile(Indieinabox\Page $page): void</code></p>
+<p>Method createGopherFile
+@param Indieinabox\Page $page</p>
+<p>@return void</p>
+<h3>generateTwtxt()</h3>
+<p><code>public function generateTwtxt(): void</code></p>
+<p>Method generateTwtxt
+@return void</p>
+<h3>getLanguageLinks()</h3>
+<p><code>private function getLanguageLinks(Indieinabox\Page $page): array</code></p>
+<p>@return array&lt;string, string&gt;</p>
+<h3>getMenuLinks()</h3>
+<p><code>private function getMenuLinks(Indieinabox\Page $page): array</code></p>
+<p>@return array&lt;string, array&lt;int, array&lt;string, string&gt;&gt;&gt;</p>
+<h3>getKindFolder()</h3>
+<p><code>private function getKindFolder(string $kind, string $lang): string</code></p>
+<p>Method getKindFolder
+@param string $kind
+@param string $lang</p>
+<p>@return string</p>
+<h3>compileTimelineIndexes()</h3>
+<p><code>private function compileTimelineIndexes(string $targetKind, array $pages): void</code></p>
+<p>@param \Indieinabox\Page@param \Indieinabox\Page[] $pages</p>
+<h3>compileSitemap()</h3>
+<p><code>private function compileSitemap(): void</code></p>
+<p>Method compileSitemap
+@return void</p>
+<h3>compileSectionIndexes()</h3>
+<p><code>private function compileSectionIndexes(string $targetKind, array $pages): void</code></p>
+<p>@param string $targetKind
+@param array&lt;int, Page&gt; $pages</p>
+
+    </div>
+</body>
+</html>

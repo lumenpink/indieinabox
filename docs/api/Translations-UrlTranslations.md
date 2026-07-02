@@ -1,6 +1,8 @@
 # UrlTranslations
 **Namespace:** `Indieinabox\Translations`
 
+Class UrlTranslations
+
 ## Properties
 
 ### `private mixed $translations`

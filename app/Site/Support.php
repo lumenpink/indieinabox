@@ -13,6 +13,9 @@ class Support
 {
     /** @var array<string> */
     public array $support;
+    /**
+     * @var string
+     */
     public string $defaultCategory;
 
     /**

@@ -4,15 +4,29 @@ declare(strict_types=1);
 
 namespace Indieinabox;
 
+/**
+ * Class MicrosubReaderHandler
+ */
 class MicrosubReaderHandler
 {
+    /**
+     * @var Indieinabox\Site
+     */
     private Site $site;
 
+    /**
+     * Method __construct
+     * @param Indieinabox\Site $site
+     */
     public function __construct(Site $site)
     {
         $this->site = $site;
     }
 
+    /**
+     * Method handleRequest
+     * @return void
+     */
     public function handleRequest(): void
     {
         header('Content-Type: text/html; charset=utf-8');

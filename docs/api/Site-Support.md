@@ -13,6 +13,8 @@ Holds support-related configurations.
 
 ### `public string $defaultCategory`
 
+@var string
+
 ## Methods
 
 ### __construct()

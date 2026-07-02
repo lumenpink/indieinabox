@@ -9,6 +9,9 @@ use DateTimeZone;
 use Indieinabox\Page;
 use Indieinabox\Site\Twtxt as TwtxtConfig;
 
+/**
+ * Class TwtxtManager
+ */
 class TwtxtManager
 {
     /**

@@ -4,15 +4,29 @@ declare(strict_types=1);
 
 namespace Indieinabox;
 
+/**
+ * Class IndieAuthHandler
+ */
 class IndieAuthHandler
 {
+    /**
+     * @var Indieinabox\Site
+     */
     private Site $site;
 
+    /**
+     * Method __construct
+     * @param Indieinabox\Site $site
+     */
     public function __construct(Site $site)
     {
         $this->site = $site;
     }
 
+    /**
+     * Method handle
+     * @return void
+     */
     public function handle(): void
     {
         $requestUri = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
@@ -43,6 +57,10 @@ class IndieAuthHandler
         $this->sendResponse(404, 'Endpoint not found.');
     }
 
+    /**
+     * Method sendMetadata
+     * @return void
+     */
     private function sendMetadata(): void
     {
         $fqdn = rtrim($this->site->metadata->fqdn ?? 'http://localhost:8080', '/');
@@ -61,6 +79,10 @@ class IndieAuthHandler
         echo json_encode($metadata, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
     }
 
+    /**
+     * Method handleAuthRequest
+     * @return void
+     */
     private function handleAuthRequest(): void
     {
         $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
@@ -81,6 +103,12 @@ class IndieAuthHandler
         $this->processLogin();
     }
 
+    /**
+     * Method renderLoginForm
+     * @param ?string $error
+     * 
+     * @return void
+     */
     private function renderLoginForm(?string $error = null): void
     {
         $clientId = $_GET['client_id'] ?? $_POST['client_id'] ?? '';
@@ -360,6 +388,10 @@ class IndieAuthHandler
         <?php
     }
 
+    /**
+     * Method processLogin
+     * @return void
+     */
     private function processLogin(): void
     {
         $clientId = $_POST['client_id'] ?? '';
@@ -410,6 +442,10 @@ class IndieAuthHandler
         header('Location: ' . $location);
     }
 
+    /**
+     * Method verifyAuthCode
+     * @return void
+     */
     private function verifyAuthCode(): void
     {
         $code = $_POST['code'] ?? '';
@@ -476,6 +512,10 @@ class IndieAuthHandler
         ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
     }
 
+    /**
+     * Method handleTokenRequest
+     * @return void
+     */
     private function handleTokenRequest(): void
     {
         $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
@@ -494,6 +534,10 @@ class IndieAuthHandler
         $this->verifyToken();
     }
 
+    /**
+     * Method exchangeCodeForToken
+     * @return void
+     */
     private function exchangeCodeForToken(): void
     {
         $code = $_POST['code'] ?? '';
@@ -573,6 +617,12 @@ class IndieAuthHandler
         ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
     }
 
+    /**
+     * Method validateBearerToken
+     * @param ?string $tokenOut
+     * 
+     * @return ?array
+     */
     public function validateBearerToken(?string &$tokenOut = null): ?array
     {
         $token = '';
@@ -612,6 +662,10 @@ class IndieAuthHandler
         ];
     }
 
+    /**
+     * Method verifyToken
+     * @return void
+     */
     private function verifyToken(): void
     {
         $tokenOut = null;
@@ -631,6 +685,13 @@ class IndieAuthHandler
         ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
     }
 
+    /**
+     * Method sendResponse
+     * @param int $code
+     * @param string $message
+     * 
+     * @return void
+     */
     private function sendResponse(int $code, string $message): void
     {
         header('HTTP/1.1 ' . $code);

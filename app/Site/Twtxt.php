@@ -4,10 +4,22 @@ declare(strict_types=1);
 
 namespace Indieinabox\Site;
 
+/**
+ * Class Twtxt
+ */
 class Twtxt
 {
+    /**
+     * @var string
+     */
     public string $nick;
+    /**
+     * @var string
+     */
     public string $description;
+    /**
+     * @var string
+     */
     public string $avatar;
     /**
      * @var array<array{nick: string, url: string}>

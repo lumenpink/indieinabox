@@ -11,12 +11,33 @@ namespace Indieinabox\Site;
  */
 class Options
 {
+    /**
+     * @var bool
+     */
     public bool $buildAll;
+    /**
+     * @var bool
+     */
     public bool $dev;
+    /**
+     * @var bool
+     */
     public bool $skipStatic;
+    /**
+     * @var bool
+     */
     public bool $forceStaticOverride;
+    /**
+     * @var ?string
+     */
     public ?string $htmlpostprocessing;
+    /**
+     * @var bool
+     */
     public bool $prettylinks;
+    /**
+     * @var int
+     */
     public int $feed_limit;
 
     /**

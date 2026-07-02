@@ -8,6 +8,9 @@ use Exception;
 use PDO;
 use PDOResult;
 
+/**
+ * Class Database
+ */
 class Database
 {
     private static ?PDO $db = null;
@@ -45,6 +48,10 @@ class Database
         }
     }
 
+    /**
+     * Method getDb
+     * @return PDO
+     */
     public static function getDb(): PDO
     {
         if (self::$db === null) {
@@ -115,6 +122,10 @@ class Database
         return $settings;
     }
 
+    /**
+     * Method getTranslations
+     * @return array
+     */
     public static function getTranslations(): array
     {
         $translations = [];
@@ -138,6 +149,10 @@ class Database
         return $translations;
     }
 
+    /**
+     * Method getUrlTranslations
+     * @return array
+     */
     public static function getUrlTranslations(): array
     {
         $urlTranslations = [];
@@ -161,6 +176,10 @@ class Database
         return $urlTranslations;
     }
 
+    /**
+     * Method getKinds
+     * @return array
+     */
     public static function getKinds(): array
     {
         $kinds = [];

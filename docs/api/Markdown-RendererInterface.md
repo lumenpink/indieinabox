@@ -1,6 +1,8 @@
 # RendererInterface
 **Namespace:** `Indieinabox\Markdown`
 
+Class RendererInterface
+
 ## Methods
 
 ### render()

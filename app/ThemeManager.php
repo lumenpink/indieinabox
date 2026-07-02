@@ -90,6 +90,14 @@ class ThemeManager
         }
     }
 
+    /**
+     * Method copyFromDisk
+     * @param string $dir
+     * @param string $base
+     * @param string $outputDir
+     * 
+     * @return void
+     */
     private static function copyFromDisk(string $dir, string $base, string $outputDir): void
     {
         $entries = Helper::getDirContents($dir);
@@ -112,6 +120,14 @@ class ThemeManager
         }
     }
 
+    /**
+     * Method copyViewAssets
+     * @param string $dir
+     * @param string $base
+     * @param string $outputDir
+     * 
+     * @return void
+     */
     public static function copyViewAssets(string $dir, string $base, string $outputDir): void
     {
         if (is_dir($dir)) {
@@ -136,6 +152,14 @@ class ThemeManager
         }
     }
 
+    /**
+     * Method copyAssetsFromDisk
+     * @param string $dir
+     * @param string $base
+     * @param string $outputDir
+     * 
+     * @return void
+     */
     private static function copyAssetsFromDisk(string $dir, string $base, string $outputDir): void
     {
         if (!is_dir($dir)) {

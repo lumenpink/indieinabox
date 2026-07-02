@@ -21,10 +21,25 @@ use Indieinabox\Markdown\GophermapRenderer;
  */
 class SiteBuilder
 {
+    /**
+     * @var Indieinabox\Site
+     */
     private Site $site;
+    /**
+     * @var Indieinabox\Pages
+     */
     private Pages $pages;
+    /**
+     * @var Indieinabox\ParserInterface
+     */
     private ParserInterface $parser;
 
+    /**
+     * Method __construct
+     * @param Indieinabox\Site $site
+     * @param ?Indieinabox\Pages $pages
+     * @param ?Indieinabox\ParserInterface $parser
+     */
     public function __construct(Site $site, ?Pages $pages = null, ?ParserInterface $parser = null)
     {
         $this->site = $site;
@@ -50,6 +65,10 @@ class SiteBuilder
         }
     }
 
+    /**
+     * Method getPages
+     * @return Indieinabox\Pages
+     */
     public function getPages(): Pages
     {
         return $this->pages;
@@ -96,6 +115,10 @@ class SiteBuilder
             $this->copyStatic($base . DIRECTORY_SEPARATOR . $themeDir . DIRECTORY_SEPARATOR . "static");
         }
     }
+    /**
+     * Method copyMedia
+     * @return void
+     */
     public function copyMedia(): void
     {
         $base = $this->site->paths->baseDir;
@@ -107,6 +130,10 @@ class SiteBuilder
         echo "Copying media files\n";
         ThemeManager::copyStaticFiles($contentMediaDir, $base, $this->site->paths->outputDirMedia);
     }
+    /**
+     * Method virtualizeMissingLanguages
+     * @return void
+     */
     private function virtualizeMissingLanguages(): void
     {
         $langs = $this->site->localization->lang;
@@ -266,6 +293,13 @@ class SiteBuilder
         }
     }
 
+    /**
+     * Method pseudoTranslate
+     * @param Indieinabox\Page $page
+     * @param string $targetLang
+     * 
+     * @return void
+     */
     public function pseudoTranslate(\Indieinabox\Page $page, string $targetLang): void
     {
         $prefix = '[' . strtoupper($targetLang) . '] ';
@@ -286,6 +320,12 @@ class SiteBuilder
         }
     }
 
+    /**
+     * Method scan
+     * @param string $dir
+     * 
+     * @return void
+     */
     public function scan(string $dir): void
     {
         if (!is_dir($dir)) {
@@ -331,6 +371,10 @@ class SiteBuilder
         }
     }
 
+    /**
+     * Method generateHTMLFiles
+     * @return void
+     */
     public function generateHTMLFiles(): void
     {
         $pagesByKind = [];
@@ -357,6 +401,12 @@ class SiteBuilder
         }
     }
 
+    /**
+     * Method createHTMLFile
+     * @param Indieinabox\Page $page
+     * 
+     * @return void
+     */
     private function createHTMLFile(Page $page): void
     {
         $base = $this->site->paths->baseDir;
@@ -425,6 +475,10 @@ class SiteBuilder
         file_put_contents($destinationFile, $fileContent);
     }
 
+    /**
+     * Method generateFeed
+     * @return void
+     */
     public function generateFeed(): void
     {
         $base = $this->site->paths->baseDir;
@@ -441,6 +495,12 @@ class SiteBuilder
         }
     }
 
+    /**
+     * Method copyAssets
+     * @param string $dir
+     * 
+     * @return void
+     */
     public function copyAssets(string $dir): void
     {
         $base = $this->site->paths->baseDir;
@@ -452,6 +512,12 @@ class SiteBuilder
         ThemeManager::copyViewAssets($dir, $base, $this->site->paths->outputDirHtml);
     }
 
+    /**
+     * Method copyStatic
+     * @param string $dir
+     * 
+     * @return bool
+     */
     public function copyStatic(string $dir): bool
     {
         $base = $this->site->paths->baseDir;
@@ -472,6 +538,12 @@ class SiteBuilder
 
 
 
+    /**
+     * Method copyLiveJsFile
+     * @param string $base
+     * 
+     * @return void
+     */
     private function copyLiveJsFile(string $base): void
     {
         $themeDir = $this->site->paths->themeDir ?? 'theme';
@@ -487,6 +559,12 @@ class SiteBuilder
         }
     }
 
+    /**
+     * Method createGeminiFile
+     * @param Indieinabox\Page $page
+     * 
+     * @return void
+     */
     private function createGeminiFile(Page $page): void
     {
         if (in_array("draft", $page->metadata->tags)) {
@@ -551,6 +629,12 @@ class SiteBuilder
         file_put_contents($destinationFile, $gmiContent);
     }
 
+    /**
+     * Method createGopherFile
+     * @param Indieinabox\Page $page
+     * 
+     * @return void
+     */
     private function createGopherFile(Page $page): void
     {
         if (in_array("draft", $page->metadata->tags)) {
@@ -626,6 +710,10 @@ class SiteBuilder
         file_put_contents($destinationFile, $gopherContent);
     }
 
+    /**
+     * Method generateTwtxt
+     * @return void
+     */
     public function generateTwtxt(): void
     {
         $base = $this->site->paths->baseDir;
@@ -989,6 +1077,13 @@ class SiteBuilder
         ];
     }
 
+    /**
+     * Method getKindFolder
+     * @param string $kind
+     * @param string $lang
+     * 
+     * @return string
+     */
     private function getKindFolder(string $kind, string $lang): string
     {
         return \Indieinabox\Helper::getKindFolder($kind, $lang);
@@ -1125,6 +1220,10 @@ class SiteBuilder
         }
     }
 
+    /**
+     * Method compileSitemap
+     * @return void
+     */
     private function compileSitemap(): void
     {
         $defaultLang = $this->site->localization->defaultLang ?? 'en';

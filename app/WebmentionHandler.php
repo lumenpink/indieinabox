@@ -4,15 +4,29 @@ declare(strict_types=1);
 
 namespace Indieinabox;
 
+/**
+ * Class WebmentionHandler
+ */
 class WebmentionHandler
 {
+    /**
+     * @var Indieinabox\Site
+     */
     private Site $site;
 
+    /**
+     * Method __construct
+     * @param Indieinabox\Site $site
+     */
     public function __construct(Site $site)
     {
         $this->site = $site;
     }
 
+    /**
+     * Method handle
+     * @return void
+     */
     public function handle(): void
     {
         $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
@@ -264,6 +278,13 @@ class WebmentionHandler
         $stmt->execute(['webmention', json_encode($payload), time()]);
     }
 
+    /**
+     * Method sendResponse
+     * @param int $code
+     * @param string $message
+     * 
+     * @return void
+     */
     private function sendResponse(int $code, string $message): void
     {
         header('HTTP/1.1 ' . $code);
@@ -274,6 +295,10 @@ class WebmentionHandler
         ], JSON_PRETTY_PRINT);
     }
 
+    /**
+     * Method sendHelpPage
+     * @return void
+     */
     private function sendHelpPage(): void
     {
         header('HTTP/1.1 200 OK');

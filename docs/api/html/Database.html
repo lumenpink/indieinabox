@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Database - Indieinabox API</title>
+    <style>
+        :root { --bg: #F4F1EA; --fg: #2C2E2F; --accent: #2C2E2F; }
+        body { font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; margin: 0; display: flex; background: var(--bg); color: var(--fg); line-height: 1.6; }
+        .sidebar { width: 300px; background: rgba(0,0,0,0.05); padding: 20px; overflow-y: auto; height: 100vh; position: fixed; }
+        .sidebar ul { list-style: none; padding: 0; }
+        .sidebar li { margin-bottom: 5px; }
+        .sidebar a { text-decoration: none; color: var(--accent); font-size: 0.9em; }
+        .sidebar a:hover { text-decoration: underline; }
+        .content { margin-left: 320px; padding: 40px; max-width: 800px; }
+        pre { background: rgba(0, 0, 0, 0.05); padding: 1em; overflow-x: auto; }
+        code { background: rgba(0, 0, 0, 0.05); padding: 2px 4px; font-size: 0.9em; }
+        a { color: var(--accent); }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h3>API Reference</h3>
+        <ul><li><a href="/docs/api/html/ActivityPubHandler.html">ActivityPubHandler</a></li>
+<li><a href="/docs/api/html/BackgroundWorker.html">BackgroundWorker</a></li>
+<li><a href="/docs/api/html/ConfigHandler.html">ConfigHandler</a></li>
+<li><a href="/docs/api/html/Database.html">Database</a></li>
+<li><a href="/docs/api/html/FeedFetcher.html">FeedFetcher</a></li>
+<li><a href="/docs/api/html/Feeds-FeedManager.html">Feeds-FeedManager</a></li>
+<li><a href="/docs/api/html/Helper.html">Helper</a></li>
+<li><a href="/docs/api/html/HttpSignature.html">HttpSignature</a></li>
+<li><a href="/docs/api/html/IndieAuthHandler.html">IndieAuthHandler</a></li>
+<li><a href="/docs/api/html/Markdown-ASTParser.html">Markdown-ASTParser</a></li>
+<li><a href="/docs/api/html/Markdown-ContentProcessor.html">Markdown-ContentProcessor</a></li>
+<li><a href="/docs/api/html/Markdown-FileProcessor.html">Markdown-FileProcessor</a></li>
+<li><a href="/docs/api/html/Markdown-GemtextRenderer.html">Markdown-GemtextRenderer</a></li>
+<li><a href="/docs/api/html/Markdown-GophermapRenderer.html">Markdown-GophermapRenderer</a></li>
+<li><a href="/docs/api/html/Markdown-HtmlRenderer.html">Markdown-HtmlRenderer</a></li>
+<li><a href="/docs/api/html/Markdown-LanguageProcessor.html">Markdown-LanguageProcessor</a></li>
+<li><a href="/docs/api/html/Markdown-MarkdownValidator.html">Markdown-MarkdownValidator</a></li>
+<li><a href="/docs/api/html/Markdown-RendererInterface.html">Markdown-RendererInterface</a></li>
+<li><a href="/docs/api/html/MarkdownParser.html">MarkdownParser</a></li>
+<li><a href="/docs/api/html/MicropubClientHandler.html">MicropubClientHandler</a></li>
+<li><a href="/docs/api/html/MicropubHandler.html">MicropubHandler</a></li>
+<li><a href="/docs/api/html/MicrosubHandler.html">MicrosubHandler</a></li>
+<li><a href="/docs/api/html/MicrosubReaderHandler.html">MicrosubReaderHandler</a></li>
+<li><a href="/docs/api/html/Page-Content.html">Page-Content</a></li>
+<li><a href="/docs/api/html/Page-Localization.html">Page-Localization</a></li>
+<li><a href="/docs/api/html/Page-Metadata.html">Page-Metadata</a></li>
+<li><a href="/docs/api/html/Page.html">Page</a></li>
+<li><a href="/docs/api/html/Pages.html">Pages</a></li>
+<li><a href="/docs/api/html/ParserInterface.html">ParserInterface</a></li>
+<li><a href="/docs/api/html/Site-Localization.html">Site-Localization</a></li>
+<li><a href="/docs/api/html/Site-Metadata.html">Site-Metadata</a></li>
+<li><a href="/docs/api/html/Site-Options.html">Site-Options</a></li>
+<li><a href="/docs/api/html/Site-Paths.html">Site-Paths</a></li>
+<li><a href="/docs/api/html/Site-Support.html">Site-Support</a></li>
+<li><a href="/docs/api/html/Site-Twtxt.html">Site-Twtxt</a></li>
+<li><a href="/docs/api/html/Site.html">Site</a></li>
+<li><a href="/docs/api/html/SiteBuilder.html">SiteBuilder</a></li>
+<li><a href="/docs/api/html/ThemeManager.html">ThemeManager</a></li>
+<li><a href="/docs/api/html/Translations-UrlTranslations.html">Translations-UrlTranslations</a></li>
+<li><a href="/docs/api/html/Twtxt-TwtxtEntry.html">Twtxt-TwtxtEntry</a></li>
+<li><a href="/docs/api/html/Twtxt-TwtxtManager.html">Twtxt-TwtxtManager</a></li>
+<li><a href="/docs/api/html/WebRouter.html">WebRouter</a></li>
+<li><a href="/docs/api/html/WebmentionHandler.html">WebmentionHandler</a></li>
+<li><a href="/docs/api/html/Whostyles.html">Whostyles</a></li>
+<li><a href="/docs/api/html/Yaml.html">Yaml</a></li></ul>
+    </div>
+    <div class="content">
+        <h1 class="p-name">Database</h1>
+<p><strong>Namespace:</strong> <code>Indieinabox</code></p>
+<p>Class Database</p>
+<h2>Properties</h2>
+<h3><code>private static ?PDO $db</code></h3>
+<h3><code>public static ?string $dataDir</code></h3>
+<h2>Methods</h2>
+<h3>connect()</h3>
+<p><code>public static function connect(string $path): void</code></p>
+<p>@throws Exception</p>
+<h3>getDb()</h3>
+<p><code>public static function getDb(): PDO</code></p>
+<p>Method getDb
+@return PDO</p>
+<h3>getSetting()</h3>
+<p><code>public static function getSetting(string $key, ?mixed $default = null): ?mixed</code></p>
+<p>Fetches a single value from the settings table</p>
+<p>@param string $key
+@param mixed $default
+@return mixed</p>
+<h3>getAllSettings()</h3>
+<p><code>public static function getAllSettings(): array</code></p>
+<p>Gets all settings as an associative array</p>
+<h3>getTranslations()</h3>
+<p><code>public static function getTranslations(): array</code></p>
+<p>Method getTranslations
+@return array</p>
+<h3>getUrlTranslations()</h3>
+<p><code>public static function getUrlTranslations(): array</code></p>
+<p>Method getUrlTranslations
+@return array</p>
+<h3>getKinds()</h3>
+<p><code>public static function getKinds(): array</code></p>
+<p>Method getKinds
+@return array</p>
+
+    </div>
+</body>
+</html>

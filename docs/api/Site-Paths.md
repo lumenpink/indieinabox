@@ -9,17 +9,31 @@ Holds directory paths related to the site.
 
 ### `public string $baseDir`
 
+@var string
+
 ### `public string $outputDirHtml`
+
+@var string
 
 ### `public string $outputDirGemini`
 
+@var string
+
 ### `public string $outputDirGopher`
+
+@var string
 
 ### `public string $outputDirMedia`
 
+@var string
+
 ### `public string $contentDir`
 
+@var string
+
 ### `public string $themeDir`
+
+@var string
 
 ## Methods
 

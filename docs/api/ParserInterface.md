@@ -1,6 +1,8 @@
 # ParserInterface
 **Namespace:** `Indieinabox`
 
+Class ParserInterface
+
 ## Methods
 
 ### parse()

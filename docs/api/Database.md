@@ -1,6 +1,8 @@
 # Database
 **Namespace:** `Indieinabox`
 
+Class Database
+
 ## Properties
 
 ### `private static ?PDO $db`
@@ -16,6 +18,9 @@
 
 ### getDb()
 `public static function getDb(): PDO`
+
+Method getDb
+@return PDO
 
 ### getSetting()
 `public static function getSetting(string $key, ?mixed $default = null): ?mixed`
@@ -34,8 +39,17 @@ Gets all settings as an associative array
 ### getTranslations()
 `public static function getTranslations(): array`
 
+Method getTranslations
+@return array
+
 ### getUrlTranslations()
 `public static function getUrlTranslations(): array`
 
+Method getUrlTranslations
+@return array
+
 ### getKinds()
 `public static function getKinds(): array`
+
+Method getKinds
+@return array

@@ -1,15 +1,25 @@
 # TwtxtEntry
 **Namespace:** `Indieinabox\Twtxt`
 
+Class TwtxtEntry
+
 ## Properties
 
 ### `public DateTime $timestamp`
 
+@var DateTime
+
 ### `public string $nick`
+
+@var string
 
 ### `public string $message`
 
+@var string
+
 ### `public string $html`
+
+@var string
 
 ## Methods
 

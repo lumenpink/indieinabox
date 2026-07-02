@@ -4,17 +4,34 @@ declare(strict_types=1);
 
 namespace Indieinabox;
 
+/**
+ * Class MicropubHandler
+ */
 class MicropubHandler
 {
+    /**
+     * @var Indieinabox\Site
+     */
     private Site $site;
+    /**
+     * @var Indieinabox\IndieAuthHandler
+     */
     private IndieAuthHandler $authHandler;
 
+    /**
+     * Method __construct
+     * @param Indieinabox\Site $site
+     */
     public function __construct(Site $site)
     {
         $this->site = $site;
         $this->authHandler = new IndieAuthHandler($site);
     }
 
+    /**
+     * Method handle
+     * @return void
+     */
     public function handle(): void
     {
         $requestUri = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
@@ -48,11 +65,19 @@ class MicropubHandler
         $this->sendResponse(405, 'Method Not Allowed', 'Unsupported HTTP method.');
     }
 
+    /**
+     * Method getRawInput
+     * @return string
+     */
     protected function getRawInput(): string
     {
         return file_get_contents('php://input');
     }
 
+    /**
+     * Method handleGetRequest
+     * @return void
+     */
     private function handleGetRequest(): void
     {
         $q = $_GET['q'] ?? '';
@@ -301,6 +326,14 @@ class MicropubHandler
         $this->sendSuccessResponse(201, ['Location' => $fileUrl]);
     }
 
+    /**
+     * Method sendSuccessResponse
+     * @param int $code
+     * @param array $headers
+     * @param mixed $body
+     * 
+     * @return void
+     */
     protected function sendSuccessResponse(int $code, array $headers = [], $body = null): void
     {
         header('HTTP/1.1 ' . $code);
@@ -312,6 +345,14 @@ class MicropubHandler
         }
     }
 
+    /**
+     * Method sendResponse
+     * @param int $code
+     * @param string $error
+     * @param string $description
+     * 
+     * @return void
+     */
     protected function sendResponse(int $code, string $error, string $description): void
     {
         header('HTTP/1.1 ' . $code);
@@ -322,11 +363,24 @@ class MicropubHandler
         ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
     }
 
+    /**
+     * Method moveUploadedFile
+     * @param string $tmpName
+     * @param string $destPath
+     * 
+     * @return bool
+     */
     protected function moveUploadedFile(string $tmpName, string $destPath): bool
     {
         return move_uploaded_file($tmpName, $destPath);
     }
 
+    /**
+     * Method slugify
+     * @param string $text
+     * 
+     * @return string
+     */
     private function slugify(string $text): string
     {
         $text = preg_replace('~[^\pL\d]+~u', '-', $text);

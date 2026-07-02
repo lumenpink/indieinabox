@@ -6,6 +6,9 @@ namespace Indieinabox\Markdown;
 
 use Indieinabox\Yaml;
 
+/**
+ * Class ContentProcessor
+ */
 class ContentProcessor
 {
     /**
@@ -18,6 +21,9 @@ class ContentProcessor
      */
     private HtmlRenderer $htmlRenderer;
 
+    /**
+     * Method __construct
+     */
     public function __construct()
     {
         $this->astParser = new ASTParser();

@@ -1,6 +1,8 @@
 # TwtxtManager
 **Namespace:** `Indieinabox\Twtxt`
 
+Class TwtxtManager
+
 ## Methods
 
 ### cleanMessage()

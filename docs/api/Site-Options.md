@@ -9,17 +9,31 @@ Holds boolean flags and options for the site.
 
 ### `public bool $buildAll`
 
+@var bool
+
 ### `public bool $dev`
+
+@var bool
 
 ### `public bool $skipStatic`
 
+@var bool
+
 ### `public bool $forceStaticOverride`
+
+@var bool
 
 ### `public ?string $htmlpostprocessing`
 
+@var ?string
+
 ### `public bool $prettylinks`
 
+@var bool
+
 ### `public int $feed_limit`
+
+@var int
 
 ## Methods
 

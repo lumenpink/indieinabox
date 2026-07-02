@@ -1,6 +1,8 @@
 # HttpSignature
 **Namespace:** `Indieinabox`
 
+Class HttpSignature
+
 ## Methods
 
 ### sign()

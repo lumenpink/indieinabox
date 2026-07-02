@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Helper - Indieinabox API</title>
+    <style>
+        :root { --bg: #F4F1EA; --fg: #2C2E2F; --accent: #2C2E2F; }
+        body { font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; margin: 0; display: flex; background: var(--bg); color: var(--fg); line-height: 1.6; }
+        .sidebar { width: 300px; background: rgba(0,0,0,0.05); padding: 20px; overflow-y: auto; height: 100vh; position: fixed; }
+        .sidebar ul { list-style: none; padding: 0; }
+        .sidebar li { margin-bottom: 5px; }
+        .sidebar a { text-decoration: none; color: var(--accent); font-size: 0.9em; }
+        .sidebar a:hover { text-decoration: underline; }
+        .content { margin-left: 320px; padding: 40px; max-width: 800px; }
+        pre { background: rgba(0, 0, 0, 0.05); padding: 1em; overflow-x: auto; }
+        code { background: rgba(0, 0, 0, 0.05); padding: 2px 4px; font-size: 0.9em; }
+        a { color: var(--accent); }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h3>API Reference</h3>
+        <ul><li><a href="/docs/api/html/ActivityPubHandler.html">ActivityPubHandler</a></li>
+<li><a href="/docs/api/html/BackgroundWorker.html">BackgroundWorker</a></li>
+<li><a href="/docs/api/html/ConfigHandler.html">ConfigHandler</a></li>
+<li><a href="/docs/api/html/Database.html">Database</a></li>
+<li><a href="/docs/api/html/FeedFetcher.html">FeedFetcher</a></li>
+<li><a href="/docs/api/html/Feeds-FeedManager.html">Feeds-FeedManager</a></li>
+<li><a href="/docs/api/html/Helper.html">Helper</a></li>
+<li><a href="/docs/api/html/HttpSignature.html">HttpSignature</a></li>
+<li><a href="/docs/api/html/IndieAuthHandler.html">IndieAuthHandler</a></li>
+<li><a href="/docs/api/html/Markdown-ASTParser.html">Markdown-ASTParser</a></li>
+<li><a href="/docs/api/html/Markdown-ContentProcessor.html">Markdown-ContentProcessor</a></li>
+<li><a href="/docs/api/html/Markdown-FileProcessor.html">Markdown-FileProcessor</a></li>
+<li><a href="/docs/api/html/Markdown-GemtextRenderer.html">Markdown-GemtextRenderer</a></li>
+<li><a href="/docs/api/html/Markdown-GophermapRenderer.html">Markdown-GophermapRenderer</a></li>
+<li><a href="/docs/api/html/Markdown-HtmlRenderer.html">Markdown-HtmlRenderer</a></li>
+<li><a href="/docs/api/html/Markdown-LanguageProcessor.html">Markdown-LanguageProcessor</a></li>
+<li><a href="/docs/api/html/Markdown-MarkdownValidator.html">Markdown-MarkdownValidator</a></li>
+<li><a href="/docs/api/html/Markdown-RendererInterface.html">Markdown-RendererInterface</a></li>
+<li><a href="/docs/api/html/MarkdownParser.html">MarkdownParser</a></li>
+<li><a href="/docs/api/html/MicropubClientHandler.html">MicropubClientHandler</a></li>
+<li><a href="/docs/api/html/MicropubHandler.html">MicropubHandler</a></li>
+<li><a href="/docs/api/html/MicrosubHandler.html">MicrosubHandler</a></li>
+<li><a href="/docs/api/html/MicrosubReaderHandler.html">MicrosubReaderHandler</a></li>
+<li><a href="/docs/api/html/Page-Content.html">Page-Content</a></li>
+<li><a href="/docs/api/html/Page-Localization.html">Page-Localization</a></li>
+<li><a href="/docs/api/html/Page-Metadata.html">Page-Metadata</a></li>
+<li><a href="/docs/api/html/Page.html">Page</a></li>
+<li><a href="/docs/api/html/Pages.html">Pages</a></li>
+<li><a href="/docs/api/html/ParserInterface.html">ParserInterface</a></li>
+<li><a href="/docs/api/html/Site-Localization.html">Site-Localization</a></li>
+<li><a href="/docs/api/html/Site-Metadata.html">Site-Metadata</a></li>
+<li><a href="/docs/api/html/Site-Options.html">Site-Options</a></li>
+<li><a href="/docs/api/html/Site-Paths.html">Site-Paths</a></li>
+<li><a href="/docs/api/html/Site-Support.html">Site-Support</a></li>
+<li><a href="/docs/api/html/Site-Twtxt.html">Site-Twtxt</a></li>
+<li><a href="/docs/api/html/Site.html">Site</a></li>
+<li><a href="/docs/api/html/SiteBuilder.html">SiteBuilder</a></li>
+<li><a href="/docs/api/html/ThemeManager.html">ThemeManager</a></li>
+<li><a href="/docs/api/html/Translations-UrlTranslations.html">Translations-UrlTranslations</a></li>
+<li><a href="/docs/api/html/Twtxt-TwtxtEntry.html">Twtxt-TwtxtEntry</a></li>
+<li><a href="/docs/api/html/Twtxt-TwtxtManager.html">Twtxt-TwtxtManager</a></li>
+<li><a href="/docs/api/html/WebRouter.html">WebRouter</a></li>
+<li><a href="/docs/api/html/WebmentionHandler.html">WebmentionHandler</a></li>
+<li><a href="/docs/api/html/Whostyles.html">Whostyles</a></li>
+<li><a href="/docs/api/html/Yaml.html">Yaml</a></li></ul>
+    </div>
+    <div class="content">
+        <h1 class="p-name">Helper</h1>
+<p><strong>Namespace:</strong> <code>Indieinabox</code></p>
+<p>Class Helper</p>
+<p>Provides a comprehensive suite of static utilities to support site generation.
+This includes functions for file manipulation, URL resolution, HTTP routing,
+image processing, and localization handling.</p>
+<h2>Methods</h2>
+<h3>arrayGet()</h3>
+<p><code>public static function arrayGet(array $array, string $key, mixed $default = null)</code></p>
+<p>Helper function to get a value from nested array with default</p>
+<p>@param  array&lt;string, mixed&gt;  $array
+@param  string $key
+@param  mixed  $default
+@return mixed</p>
+<h3>timeAgo()</h3>
+<p><code>public static function timeAgo(int $timestamp): string</code></p>
+<p>Helper function to get time ago string</p>
+<p>@param int $timestamp
+@return string</p>
+<h3>getKindConfig()</h3>
+<p><code>public static function getKindConfig(string $kind): array</code></p>
+<p>@return array&lt;string, mixed&gt;</p>
+<h3>kind()</h3>
+<p><code>public static function kind(mixed $page, ?Indieinabox\Site $siteInstance = null): array</code></p>
+<p>Helper function to determine the kind of content</p>
+<p>@param  Page|array&lt;string, mixed&gt; $page
+@return array{localized: string, kind: string}</p>
+<h3>getKindFolder()</h3>
+<p><code>public static function getKindFolder(string $kind, string $lang): string</code></p>
+<p>Get the localized folder name for a specific kind and language.</p>
+<p>@param string $kind
+@param string $lang
+@return string</p>
+<h3>kindLabel()</h3>
+<p><code>public static function kindLabel(string $kind, ?string $lang = null): string</code></p>
+<p>Return a human-readable, localized display label for a post kind.</p>
+<p>Maps internal slugs (article, photo, note, jardim, etc.) to their
+translated labels defined in config.yml.</p>
+<p>@param  string      $kind Internal kind slug
+@param  string|null $lang Target language (defaults to current page lang)
+@return string</p>
+<h3>kindLink()</h3>
+<p><code>public static function kindLink(Indieinabox\Page $page, string $kind): string</code></p>
+<p>Return a hyperlinked, human-readable display label for a post kind.
+The link points to the kind&apos;s index page in the corresponding language.</p>
+<p>@param  Page   $page The page context where this link is rendered
+@param  string $kind Internal kind slug
+@return string</p>
+<h3>localizeddate()</h3>
+<p><code>public static function localizeddate(mixed $page): array</code></p>
+<p>Helper function to format dates</p>
+<p>@param  Page|array&lt;string, mixed&gt; $page
+@return array{long: string, iso: string}</p>
+<h3>unaccent()</h3>
+<p><code>public static function unaccent(string $string): string</code></p>
+<p>Remove accents from a string</p>
+<p>@param  string $string
+@return string</p>
+<h3>utf8ToAscii()</h3>
+<p><code>public static function utf8ToAscii(string $str, string $unknown = &apos;?&apos;): string</code></p>
+<p>Convert UTF-8 string to ASCII</p>
+<p>@param  string $str
+@param  string $unknown
+@return string</p>
+<h3>decodeUtf8Codepoint()</h3>
+<p><code>private static function decodeUtf8Codepoint(string $c): int</code></p>
+<p>Decode a multi-byte UTF-8 character sequence into its Unicode codepoint.</p>
+<p>@param  string $c  Raw multi-byte character (up to 6 bytes)
+@return int        Unicode codepoint value</p>
+<h3>loadUtf8Bank()</h3>
+<p><code>private static function loadUtf8Bank(int $bank, array $cache): void</code></p>
+<p>Lazily load a UTF-8 translation bank from disk into the static cache.</p>
+<p>@param  int                      $bank         Bank index (high byte of codepoint)
+@param  array&lt;int, array&lt;int, string&gt;&gt; &amp;$cache Reference to the static lookup table
+@return void</p>
+<h3>slugize()</h3>
+<p><code>public static function slugize(string $str): string</code></p>
+<p>Slugize a string</p>
+<p>@param  string $str
+@return string</p>
+<h3>sortByDate()</h3>
+<p><code>public static function sortByDate(array $pages): array</code></p>
+<p>Sorts pages by date descending</p>
+<p>@param  array&lt;int, array&lt;string, mixed&gt;|Page&gt; $pages
+@return array&lt;int, array&lt;string, mixed&gt;|Page&gt;</p>
+<h3>recursiveKsort()</h3>
+<p><code>public static function recursiveKsort(array $array): void</code></p>
+<p>Recursively sorts an array by keys</p>
+<p>@param  array&lt;string, mixed&gt; $array
+@return void</p>
+<h3>getDirContents()</h3>
+<p><code>public static function getDirContents(string $dir, array $results = []): array</code></p>
+<p>Get directory contents recursively</p>
+<p>@param  string $dir
+@param  array&lt;int, string&gt; $results
+@return array&lt;int, string&gt;</p>
+<h3>getoriginalcontent()</h3>
+<p><code>public static function getoriginalcontent(string $slug, string $lang): string</code></p>
+<p>Get original content slug translation</p>
+<p>@param  string $slug
+@param  string $lang
+@return string</p>
+<h3>beautifyhtml()</h3>
+<p><code>public static function beautifyhtml(string $html): string</code></p>
+<p>Beautify HTML content</p>
+<p>@param  string $html
+@return string</p>
+<h3>minifyhtml()</h3>
+<p><code>public static function minifyhtml(string $html): string</code></p>
+<p>Minify HTML content</p>
+<p>@param  string $html
+@return string</p>
+<h3>recursiveRmdir()</h3>
+<p><code>public static function recursiveRmdir(string $dir, bool $keepRootDir = false): bool</code></p>
+<p>Recursively remove directory</p>
+<p>@param  string $dir
+@param  bool $keepRootDir
+@return bool</p>
+<h3>translate()</h3>
+<p><code>public static function translate(string $text, ?string $lang = null): string</code></p>
+<p>Translation lookup</p>
+<p>@param  string $text
+@param  string|null $lang
+@return string</p>
+<h3>translateLowercase()</h3>
+<p><code>public static function translateLowercase(string $text): string</code></p>
+<p>Translate and make lowercase</p>
+<p>@param  string $text
+@return string</p>
+<h3>translateSlugize()</h3>
+<p><code>public static function translateSlugize(string $text): string</code></p>
+<p>Translate and slugize</p>
+<p>@param  string $text
+@return string</p>
+<h3>updateTranslations()</h3>
+<p><code>public static function updateTranslations(): void</code></p>
+<p>Update translations file</p>
+<p>@return void</p>
+<h3>listposts()</h3>
+<p><code>public static function listposts(): string</code></p>
+<p>List posts, sorting by date descending, up to 10 posts</p>
+<p>@return string</p>
+<h3>removegeneric()</h3>
+<p><code>public static function removegeneric(mixed $var): bool</code></p>
+<p>Remove generic/page items from filter list</p>
+<p>@param  mixed $var
+@return bool</p>
+<h3>createThumbnail()</h3>
+<p><code>public static function createThumbnail(string $caminhoOriginal, string $caminhoDestino, int $tamanhoFocal, array $corBG, array $corFG): bool</code></p>
+<p>@param array&lt;int, int&gt; $corFG
+@param array&lt;int, int&gt; $corBG</p>
+<h3>ditherImageToGif()</h3>
+<p><code>public static function ditherImageToGif(string $caminhoOriginal, string $caminhoDestino, int $larguraFocal, array $corBG, array $corFG, bool $aplicarAutomacao = true): bool</code></p>
+<p>Atkinson adaptive dithering using GD to index 8-bit GIF</p>
+<p>@param string $caminhoOriginal
+@param string $caminhoDestino
+@param int $larguraFocal
+@param array $corBG
+@param array $corFG
+@param bool $aplicarAutomacao
+@return bool</p>
+
+    </div>
+</body>
+</html>

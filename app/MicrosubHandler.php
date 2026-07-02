@@ -6,17 +6,34 @@ namespace Indieinabox;
 
 use PDO;
 
+/**
+ * Class MicrosubHandler
+ */
 class MicrosubHandler
 {
+    /**
+     * @var Indieinabox\IndieAuthHandler
+     */
     private IndieAuthHandler $authHandler;
+    /**
+     * @var PDO
+     */
     private PDO $db;
 
+    /**
+     * Method __construct
+     * @param Indieinabox\Site $site
+     */
     public function __construct(Site $site)
     {
         $this->authHandler = new IndieAuthHandler($site);
         $this->db = Database::getDb();
     }
 
+    /**
+     * Method handleRequest
+     * @return void
+     */
     public function handleRequest(): void
     {
         $tokenData = $this->authHandler->validateBearerToken();
@@ -42,6 +59,12 @@ class MicrosubHandler
         }
     }
 
+    /**
+     * Method handleGet
+     * @param string $action
+     * 
+     * @return void
+     */
     private function handleGet(string $action): void
     {
         switch ($action) {
@@ -185,6 +208,12 @@ class MicrosubHandler
         }
     }
 
+    /**
+     * Method handlePost
+     * @param string $action
+     * 
+     * @return void
+     */
     private function handlePost(string $action): void
     {
         switch ($action) {

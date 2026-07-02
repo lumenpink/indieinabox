@@ -1,13 +1,21 @@
 # Twtxt
 **Namespace:** `Indieinabox\Site`
 
+Class Twtxt
+
 ## Properties
 
 ### `public string $nick`
 
+@var string
+
 ### `public string $description`
 
+@var string
+
 ### `public string $avatar`
+
+@var string
 
 ### `public array $following`
 

@@ -16,6 +16,8 @@ Holds language and localization-related configurations.
 
 ### `private string $defaultLang`
 
+@var string
+
 ## Methods
 
 ### __construct()

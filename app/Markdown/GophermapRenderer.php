@@ -4,13 +4,22 @@ declare(strict_types=1);
 
 namespace Indieinabox\Markdown;
 
+/**
+ * Class GophermapRenderer
+ */
 class GophermapRenderer implements RendererInterface
 {
     /**
      * @var array<array{type: string, label: string, target: string}>
      */
     private array $links = [];
+    /**
+     * @var string
+     */
     private string $host;
+    /**
+     * @var int
+     */
     private int $port;
 
     /**
@@ -18,6 +27,12 @@ class GophermapRenderer implements RendererInterface
      */
     private ?\Indieinabox\Page $page = null;
 
+    /**
+     * Method __construct
+     * @param string $host
+     * @param int $port
+     * @param ?Indieinabox\Page $page
+     */
     public function __construct(string $host = 'gopher.example.com', int $port = 70, ?\Indieinabox\Page $page = null)
     {
         $this->host = $host;
@@ -49,11 +64,27 @@ class GophermapRenderer implements RendererInterface
         return $body . $linksSection;
     }
 
+    /**
+     * Method formatLine
+     * @param string $type
+     * @param string $display
+     * @param string $selector
+     * @param string $host
+     * @param int $port
+     * 
+     * @return string
+     */
     private function formatLine(string $type, string $display, string $selector = '', string $host = '(null)', int $port = 0): string
     {
         return "{$type}{$display}\t{$selector}\t{$host}\t{$port}\r\n";
     }
 
+    /**
+     * Method renderNode
+     * @param Indieinabox\Markdown\Node $node
+     * 
+     * @return string
+     */
     private function renderNode(Node $node): string
     {
         if ($node instanceof RootNode) {
@@ -188,6 +219,12 @@ class GophermapRenderer implements RendererInterface
         return '';
     }
 
+    /**
+     * Method renderPlain
+     * @param Indieinabox\Markdown\Node $node
+     * 
+     * @return string
+     */
     private function renderPlain(Node $node): string
     {
         if ($node instanceof TextNode) {

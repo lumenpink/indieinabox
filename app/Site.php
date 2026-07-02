@@ -11,15 +11,36 @@ use Indieinabox\Site\Localization;
 use Indieinabox\Site\Support;
 use Indieinabox\Site\Twtxt;
 
+/**
+ * Class Site
+ */
 class Site
 {
     /** @var array<string, mixed> */
     public array $config = [];
+    /**
+     * @var Indieinabox\Site\Metadata
+     */
     public Metadata $metadata;
+    /**
+     * @var Indieinabox\Site\Paths
+     */
     public Paths $paths;
+    /**
+     * @var Indieinabox\Site\Options
+     */
     public Options $options;
+    /**
+     * @var Indieinabox\Site\Localization
+     */
     public Localization $localization;
+    /**
+     * @var Indieinabox\Site\Support
+     */
     public Support $support;
+    /**
+     * @var Indieinabox\Site\Twtxt
+     */
     public Twtxt $twtxt;
 
     /**

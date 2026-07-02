@@ -4,15 +4,29 @@ declare(strict_types=1);
 
 namespace Indieinabox;
 
+/**
+ * Class MicropubClientHandler
+ */
 class MicropubClientHandler
 {
+    /**
+     * @var Indieinabox\Site
+     */
     private Site $site;
 
+    /**
+     * Method __construct
+     * @param Indieinabox\Site $site
+     */
     public function __construct(Site $site)
     {
         $this->site = $site;
     }
 
+    /**
+     * Method handle
+     * @return void
+     */
     public function handle(): void
     {
         $fqdn = rtrim($this->site->metadata->fqdn ?? '', '/');

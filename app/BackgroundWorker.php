@@ -9,17 +9,34 @@ use DOMDocument;
 use DOMXPath;
 use DOMElement;
 
+/**
+ * Class BackgroundWorker
+ */
 class BackgroundWorker
 {
+    /**
+     * @var PDO
+     */
     private PDO $db;
+    /**
+     * @var Indieinabox\Site
+     */
     private Site $site;
 
+    /**
+     * Method __construct
+     * @param Indieinabox\Site $site
+     */
     public function __construct(Site $site)
     {
         $this->site = $site;
         $this->db = Database::getDb();
     }
 
+    /**
+     * Method runAll
+     * @return void
+     */
     public function runAll(): void
     {
         $lockFile = Database::$dataDir . '/cron.lock';
@@ -40,6 +57,10 @@ class BackgroundWorker
         }
     }
 
+    /**
+     * Method processInboxQueue
+     * @return void
+     */
     public function processInboxQueue(): void
     {
         echo "Running Inbox Queue processor...\n";
@@ -78,6 +99,10 @@ class BackgroundWorker
         echo "Inbox queue done.\n";
     }
 
+    /**
+     * Method handleBuildSite
+     * @return void
+     */
     private function handleBuildSite(): void
     {
         echo "Rebuilding static site...\n";
@@ -93,6 +118,12 @@ class BackgroundWorker
         echo "Site rebuild completed.\n";
     }
 
+    /**
+     * Method handleWebmention
+     * @param array $payload
+     * 
+     * @return void
+     */
     private function handleWebmention(array $payload): void
     {
         $source = $payload['source'];
@@ -193,6 +224,12 @@ class BackgroundWorker
         $this->extractLinksToArchiveQueue($content);
     }
 
+    /**
+     * Method handleActivityPub
+     * @param array $payload
+     * 
+     * @return void
+     */
     private function handleActivityPub(array $payload): void
     {
         $headers = $payload['headers'];
@@ -251,6 +288,15 @@ class BackgroundWorker
         }
     }
 
+    /**
+     * Method verifySignature
+     * @param array $headers
+     * @param string $method
+     * @param string $path
+     * @param string $pubKey
+     * 
+     * @return bool
+     */
     protected function verifySignature(array $headers, string $method, string $path, string $pubKey): bool
     {
         // We skip verification for now if the library throws. In real env it would be:
@@ -260,6 +306,12 @@ class BackgroundWorker
         return true;
     }
 
+    /**
+     * Method saveActivityPubCreate
+     * @param array $activity
+     * 
+     * @return void
+     */
     private function saveActivityPubCreate(array $activity): void
     {
         $object = $activity['object'] ?? null;
@@ -320,6 +372,13 @@ class BackgroundWorker
         $this->extractLinksToArchiveQueue($content);
     }
 
+    /**
+     * Method downloadAvatarLocally
+     * @param string $actorUrl
+     * @param string $photoUrl
+     * 
+     * @return string
+     */
     private function downloadAvatarLocally(string $actorUrl, string $photoUrl): string
     {
         $dataDir = \Indieinabox\Database::$dataDir ?? (dirname(__DIR__) . '/data');
@@ -348,6 +407,12 @@ class BackgroundWorker
         return '/data/avatars/' . $actorHost . '/' . $filename;
     }
 
+    /**
+     * Method extractLinksToArchiveQueue
+     * @param string $htmlContent
+     * 
+     * @return void
+     */
     private function extractLinksToArchiveQueue(string $htmlContent): void
     {
         if (preg_match_all('/href=["\'](http[^"\']+)["\']/i', $htmlContent, $matches)) {
@@ -365,6 +430,12 @@ class BackgroundWorker
         }
     }
 
+    /**
+     * Method getPublicKey
+     * @param string $keyId
+     * 
+     * @return ?string
+     */
     private function getPublicKey(string $keyId): ?string
     {
         $stmt = $this->db->prepare("SELECT public_key FROM activitypub_actors WHERE actor_url = ?");
@@ -388,6 +459,12 @@ class BackgroundWorker
         return null;
     }
 
+    /**
+     * Method fetchJsonUrl
+     * @param string $url
+     * 
+     * @return ?array
+     */
     protected function fetchJsonUrl(string $url): ?array
     {
         $ch = curl_init($url);
@@ -406,6 +483,10 @@ class BackgroundWorker
         return null;
     }
 
+    /**
+     * Method fetchUrl
+     * @param string $url
+     */
     protected function fetchUrl(string $url)
     {
         $ch = curl_init($url);
@@ -419,6 +500,13 @@ class BackgroundWorker
         return $res;
     }
 
+    /**
+     * Method queueAcceptFollow
+     * @param array $followActivity
+     * @param string $targetInbox
+     * 
+     * @return void
+     */
     private function queueAcceptFollow(array $followActivity, string $targetInbox): void
     {
         $fqdn = rtrim($this->site->metadata->fqdn ?? '', '/');
@@ -438,6 +526,10 @@ class BackgroundWorker
         $stmt->execute([json_encode($accept, JSON_UNESCAPED_SLASHES), $targetInbox, time()]);
     }
 
+    /**
+     * Method processOutbox
+     * @return void
+     */
     public function processOutbox(): void
     {
         echo "Running ActivityPub outbox processor...\n";
@@ -525,6 +617,10 @@ class BackgroundWorker
         echo "Done.\n";
     }
 
+    /**
+     * Method processArchiveQueue
+     * @return void
+     */
     public function processArchiveQueue(): void
     {
         echo "Running Archive Queue processor...\n";
@@ -601,6 +697,12 @@ class BackgroundWorker
         echo "Archive queue done.\n";
     }
 
+    /**
+     * Method resolveFinalUrl
+     * @param string $url
+     * 
+     * @return string
+     */
     protected function resolveFinalUrl(string $url): string
     {
         $ch = curl_init($url);
@@ -618,6 +720,12 @@ class BackgroundWorker
         return $finalUrl ? $finalUrl : $url;
     }
 
+    /**
+     * Method sendToArchiveOrg
+     * @param string $url
+     * 
+     * @return void
+     */
     protected function sendToArchiveOrg(string $url): void
     {
         $archiveOrgUrl = "https://web.archive.org/save/" . $url;
@@ -629,6 +737,14 @@ class BackgroundWorker
         curl_close($ch);
     }
 
+    /**
+     * Method fetchPdfFromMicrolink
+     * @param string $url
+     * @param string $normUrl
+     * @param string $pdfDir
+     * 
+     * @return ?string
+     */
     protected function fetchPdfFromMicrolink(string $url, string $normUrl, string $pdfDir): ?string
     {
         $pdfApiUrl = "https://api.microlink.io/?url=" . urlencode($url) . "&pdf=true&meta=false";

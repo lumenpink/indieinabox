@@ -6,11 +6,26 @@ namespace Indieinabox\Twtxt;
 
 use DateTime;
 
+/**
+ * Class TwtxtEntry
+ */
 class TwtxtEntry
 {
+    /**
+     * @var DateTime
+     */
     public DateTime $timestamp;
+    /**
+     * @var string
+     */
     public string $nick;
+    /**
+     * @var string
+     */
     public string $message;
+    /**
+     * @var string
+     */
     public string $html;
 
     /**

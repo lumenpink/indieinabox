@@ -26,8 +26,29 @@ Otherwise, it writes the embedded static files to the destination.
 ### copyFromDisk()
 `private static function copyFromDisk(string $dir, string $base, string $outputDir): void`
 
+Method copyFromDisk
+@param string $dir
+@param string $base
+@param string $outputDir
+
+@return void
+
 ### copyViewAssets()
 `public static function copyViewAssets(string $dir, string $base, string $outputDir): void`
 
+Method copyViewAssets
+@param string $dir
+@param string $base
+@param string $outputDir
+
+@return void
+
 ### copyAssetsFromDisk()
 `private static function copyAssetsFromDisk(string $dir, string $base, string $outputDir): void`
+
+Method copyAssetsFromDisk
+@param string $dir
+@param string $base
+@param string $outputDir
+
+@return void

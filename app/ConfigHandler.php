@@ -4,15 +4,29 @@ declare(strict_types=1);
 
 namespace Indieinabox;
 
+/**
+ * Class ConfigHandler
+ */
 class ConfigHandler
 {
+    /**
+     * @var Indieinabox\Site
+     */
     private Site $site;
 
+    /**
+     * Method __construct
+     * @param Indieinabox\Site $site
+     */
     public function __construct(Site $site)
     {
         $this->site = $site;
     }
 
+    /**
+     * Method handle
+     * @return void
+     */
     public function handle(): void
     {
         if (session_status() === PHP_SESSION_NONE) {
@@ -66,6 +80,10 @@ class ConfigHandler
         $this->renderConfigForm();
     }
 
+    /**
+     * Method handleBootstrap
+     * @return void
+     */
     private function handleBootstrap(): void
     {
         if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
@@ -123,6 +141,10 @@ class ConfigHandler
         $this->renderBootstrapForm();
     }
 
+    /**
+     * Method handleCallback
+     * @return void
+     */
     private function handleCallback(): void
     {
         $state = $_GET['state'] ?? '';
@@ -168,6 +190,10 @@ class ConfigHandler
         return;
     }
 
+    /**
+     * Method redirectToAuth
+     * @return void
+     */
     private function redirectToAuth(): void
     {
         $state = bin2hex(random_bytes(16));
@@ -188,6 +214,10 @@ class ConfigHandler
         return;
     }
 
+    /**
+     * Method saveConfig
+     * @return void
+     */
     private function saveConfig(): void
     {
         $currentConfig = \Indieinabox\Database::getAllSettings();
@@ -430,6 +460,10 @@ class ConfigHandler
         return;
     }
 
+    /**
+     * Method rebuildSite
+     * @return void
+     */
     private function rebuildSite(): void
     {
         $basePath = $this->site->paths->baseDir;
@@ -515,6 +549,10 @@ class ConfigHandler
         $this->site = $newSite;
     }
 
+    /**
+     * Method detectPrettyLinksSupport
+     * @return bool
+     */
     private function detectPrettyLinksSupport(): bool
     {
         $requestUri = $_SERVER['REQUEST_URI'] ?? '';
@@ -526,6 +564,12 @@ class ConfigHandler
         return true;
     }
 
+    /**
+     * Method renderBootstrapForm
+     * @param ?string $error
+     * 
+     * @return void
+     */
     private function renderBootstrapForm(?string $error = null): void
     {
         $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
@@ -630,6 +674,10 @@ class ConfigHandler
         <?php
     }
 
+    /**
+     * Method renderConfigForm
+     * @return void
+     */
     private function renderConfigForm(): void
     {
         $config = \Indieinabox\Database::getAllSettings();
@@ -1159,6 +1207,13 @@ class ConfigHandler
         <?php
     }
 
+    /**
+     * Method sendError
+     * @param int $code
+     * @param string $message
+     * 
+     * @return void
+     */
     private function sendError(int $code, string $message): void
     {
         header('HTTP/1.1 ' . $code);

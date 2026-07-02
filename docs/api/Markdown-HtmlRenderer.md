@@ -1,6 +1,8 @@
 # HtmlRenderer
 **Namespace:** `Indieinabox\Markdown`
 
+Class HtmlRenderer
+
 ## Properties
 
 ### `private ?Indieinabox\Page $page`

@@ -1,6 +1,8 @@
 # FeedManager
 **Namespace:** `Indieinabox\Feeds`
 
+Class FeedManager
+
 ## Methods
 
 ### preparePages()

@@ -9,15 +9,27 @@ Holds metadata related to the site.
 
 ### `public string $title`
 
+@var string
+
 ### `public string $sitename`
+
+@var string
 
 ### `public string $author`
 
+@var string
+
 ### `public string $defaultTitle`
+
+@var string
 
 ### `public string $fqdn`
 
+@var string
+
 ### `public ?string $indieauthPassword`
+
+@var ?string
 
 ## Methods
 

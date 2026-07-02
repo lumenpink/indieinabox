@@ -8,15 +8,28 @@ use PDO;
 use SimpleXMLElement;
 use Exception;
 
+/**
+ * Class FeedFetcher
+ */
 class FeedFetcher
 {
+    /**
+     * @var PDO
+     */
     private PDO $db;
 
+    /**
+     * Method __construct
+     */
     public function __construct()
     {
         $this->db = Database::getDb();
     }
 
+    /**
+     * Method fetchAll
+     * @return void
+     */
     public function fetchAll(): void
     {
         $stmt = $this->db->query('SELECT id, channel_uid, url FROM microsub_subscriptions');
@@ -31,6 +44,13 @@ class FeedFetcher
         }
     }
 
+    /**
+     * Method fetchSubscription
+     * @param string $channel
+     * @param string $url
+     * 
+     * @return void
+     */
     private function fetchSubscription(string $channel, string $url): void
     {
         $content = @file_get_contents($url);
@@ -67,6 +87,14 @@ class FeedFetcher
         }
     }
 
+    /**
+     * Method parseTwtxt
+     * @param string $channel
+     * @param string $feedUrl
+     * @param string $content
+     * 
+     * @return void
+     */
     private function parseTwtxt(string $channel, string $feedUrl, string $content): void
     {
         $lines = explode("\n", $content);
@@ -89,6 +117,14 @@ class FeedFetcher
         }
     }
 
+    /**
+     * Method parseJsonFeed
+     * @param string $channel
+     * @param string $feedUrl
+     * @param array $json
+     * 
+     * @return void
+     */
     private function parseJsonFeed(string $channel, string $feedUrl, array $json): void
     {
         $authorName = $json['title'] ?? 'Unknown';
@@ -108,6 +144,14 @@ class FeedFetcher
         }
     }
 
+    /**
+     * Method parseRss
+     * @param string $channel
+     * @param string $feedUrl
+     * @param SimpleXMLElement $xml
+     * 
+     * @return void
+     */
     private function parseRss(string $channel, string $feedUrl, SimpleXMLElement $xml): void
     {
         $authorName = (string)($xml->channel->title ?? 'Unknown');
@@ -126,6 +170,14 @@ class FeedFetcher
         }
     }
 
+    /**
+     * Method parseAtom
+     * @param string $channel
+     * @param string $feedUrl
+     * @param SimpleXMLElement $xml
+     * 
+     * @return void
+     */
     private function parseAtom(string $channel, string $feedUrl, SimpleXMLElement $xml): void
     {
         $authorName = (string)($xml->title ?? 'Unknown');
@@ -160,6 +212,18 @@ class FeedFetcher
         }
     }
 
+    /**
+     * Method saveItem
+     * @param string $id
+     * @param string $channel
+     * @param string $url
+     * @param string $content
+     * @param int $published
+     * @param string $authorName
+     * @param string $authorPhoto
+     * 
+     * @return void
+     */
     private function saveItem(string $id, string $channel, string $url, string $content, int $published, string $authorName, string $authorPhoto): void
     {
         $dataDir = \Indieinabox\Database::$dataDir ?? (dirname(__DIR__) . '/data');

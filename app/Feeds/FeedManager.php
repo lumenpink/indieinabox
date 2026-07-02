@@ -9,6 +9,9 @@ use Indieinabox\Page;
 use Indieinabox\Site\Metadata;
 use Indieinabox\Helper;
 
+/**
+ * Class FeedManager
+ */
 class FeedManager
 {
     /**

@@ -1,72 +1,74 @@
 <?php
 /** @var \Indieinabox\Page $page */
-/** @var \Indieinabox\Page $p */
-/** @var \Indieinabox\Site $site */
-/** @var array $kinds */
+global $langLinks, $site, $urltranslations;
+
+$langs = $site->localization->lang;
+if (!is_array($langs)) {
+    $langs = [$langs];
+}
+$defaultLang = $site->localization->defaultLang ?? 'en';
+$lang = $page->lang ?? 'en';
+$langPrefix = ($lang === $defaultLang) ? '' : $lang . '/';
+
+if (!isset($langLinks)) {
+    $links = [];
+    foreach ($langs as $l) {
+        if ($l === $defaultLang) {
+            $links[$l] = $page->relpath;
+        } else {
+            $links[$l] = $page->relpath . $l . '/';
+        }
+    }
+} else {
+    $links = $langLinks;
+}
+
+$prettylinks = $site->options->prettylinks ?? true;
+
+$agoraSlug = 'now';
+if ($lang !== 'en' && isset($urltranslations['now'][$lang])) {
+    $agoraSlug = $urltranslations['now'][$lang];
+}
+
+$indiceSlug = 'indice';
+
+if ($prettylinks) {
+    $homeLink = $page->relpath . $langPrefix;
+    $indiceLink = $page->relpath . $langPrefix . $indiceSlug . '/';
+    $agoraLink = $page->relpath . $langPrefix . $agoraSlug . '/';
+} else {
+    $homeLink = $page->relpath . ($langPrefix ? $langPrefix . 'index.html' : 'index.html');
+    $indiceLink = $page->relpath . $langPrefix . $indiceSlug . '.html';
+    $agoraLink = $page->relpath . $langPrefix . $agoraSlug . '.html';
+}
 ?>
-    <header class="header">
-        <a href="<?= $page->relpath ?>" class="logo">
-            <img src="<?= $page->relpath ?>apple-touch-icon-72x72.png" alt="Site Logo" />
-            ~lumen</a>
-        <input class="menu-btn" type="checkbox" id="menu-btn" />
-        <label class="menu-icon" for="menu-btn"><span class="navicon"></span></label>
-
-        <ul class="menu-big">
-            <li>
-
-                <a href="<?= $page->relpath . $page->langpath . ts("pensamentos") ?>">
-
-                    <span><?= t("Pensamentos") ?></span>
-                </a>
-            </li>
-
-            <li>
-                <a href="<?= $page->relpath . $page->langpath . ts("agora") ?>">
-
-                    <span><?= t("Agora") ?></span>
-                </a>
-            </li>
-
-            <li>
-                <?php foreach ($p->otherlang as $i => $otherLang) : ?>
-                    <?php if (isset($p->otherlangpath[$i])) : ?>
-                        <a class="<?= $i === 0 ? 'upper-flag' : 'bottom-flag' ?>" href="<?= $page->relpath . $p->otherlangpath[$i] ?>">
-                            <img src="<?= $page->relpath ?>flags/<?= $otherLang ?>.gif" alt='<?= t("Conteúdo em Português", $otherLang) ?>'>
-                        </a>
-                    <?php endif; ?>
-                <?php endforeach; ?>
-            </li>
-        </ul>
-        <ul class="menu">
-            <li class="menu-item-small menu-box">
-                <a href="<?= $page->relpath ?>agora/">
-                    <span>Agora</span>
-                </a>
-            </li>
-            <li class="menu-item-small">
-                <?php foreach ($p->otherlang as $i => $otherLang) : ?>
-                    <?php if (isset($p->otherlangpath[$i])) : ?>
-                        <a class="<?= $i === 0 ? 'upper-flag' : 'bottom-flag' ?>" href="<?= $page->relpath . $p->otherlangpath[$i] ?>">
-                            <img src="<?= $page->relpath ?>flags/<?= $otherLang ?>.gif" alt='<?= t("Conteúdo em Português", $otherLang) ?>'>
-                        </a>
-                    <?php endif; ?>
-                <?php endforeach; ?>
-            </li>
-
-            <?php foreach ($kinds as $kind => $icon) : ?>
-                <li class="menu-kind">
-                    <a href="<?= $page->relpath . $page->langpath . ts($kind) ?>">
-                        <img class="icon p-kind" alt="<?= t($kind) ?>"
-                            src="<?= $page->relpath . 'i/' . $icon . ".png" ?>">
-                    </a>
-                </li>
-            <?php endforeach; ?>
-
-
-        </ul>
-
-        <div>
-
+<header>
+    <pre class="logo-figlet">       _                            
+      | |_   _ _ __ ___   ___ _ __  
+ /\/| | | | | | '_ ` _ \ / _ \ '_ \ 
+|/\/  | | |_| | | | | | |  __/ | | |
+      |_|\__,_|_| |_| |_|\___|_| |_|</pre>
+    <?php if (count($langs) > 1): ?>
+        <div class="lang-selector" style="text-align: center;">
+            <?php 
+            $langLinksHTML = [];
+            foreach ($langs as $l) {
+                $label = strtoupper($l);
+                if ($l === $lang) {
+                    $langLinksHTML[] = '<strong>' . htmlspecialchars($label) . '</strong>';
+                } else {
+                    $url = $links[$l] ?? '';
+                    if ($url !== '') {
+                        $langLinksHTML[] = '<a href="' . htmlspecialchars($url) . '">' . htmlspecialchars($label) . '</a>';
+                    }
+                }
+            }
+            echo '[ ' . implode(' &bull; ', $langLinksHTML) . ' ]';
+            ?>
         </div>
-
-    </header>
+    <?php endif; ?>
+    <nav class="top-nav" style="text-align: center;">
+        [ <a href="<?= $homeLink ?>"><?= \Indieinabox\Helper::translate('Home') ?></a> • <a href="<?= $indiceLink ?>"><?= \Indieinabox\Helper::translate('Index') ?></a> • <a href="<?= $agoraLink ?>"><?= \Indieinabox\Helper::translate('Now') ?></a> ]
+    </nav>
+    <hr>
+</header>

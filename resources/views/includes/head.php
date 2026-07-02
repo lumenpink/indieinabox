@@ -1,78 +1,110 @@
-    <?php
-    /** @var \Indieinabox\Page $page */
-    /** @var \Indieinabox\Pages $pages */
-    /** @var \Indieinabox\Site $site */
-    if ($site->dev) {
+<?php
+/** @var \Indieinabox\Page $page */
+/** @var \Indieinabox\Site $site */
 
-        echo "<!-- dev mode" . PHP_EOL;
-        echo "************* site *************" . PHP_EOL;
-        echo json_encode($site, JSON_PRETTY_PRINT);
-        echo "************* page *************" . PHP_EOL;
-        echo json_encode($page, JSON_PRETTY_PRINT);
-        echo "************* pages *************" . PHP_EOL;
-        echo json_encode($pages, JSON_PRETTY_PRINT);
-        echo "-->";
+// Dynamic color matching
+$kind = strtolower($page->kind ?? 'generic');
+$layout = strtolower($page->layout ?? 'page');
+
+$bg = '#F4F1EA';
+$fg = '#2C2E2F';
+
+$kindConfig = \Indieinabox\Helper::getKindConfig($kind);
+if (!empty($kindConfig['palette'])) {
+    $bg = $kindConfig['palette']['bg'] ?? $bg;
+    $fg = $kindConfig['palette']['fg'] ?? $fg;
+}
+?>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="generator" content="Indieinabox v0.1.0" />
+<title><?= empty($page->title) || $page->title == "Untitled" ? $site->metadata->author : $page->title . " | " . $site->metadata->author ?></title>
+<meta name="description" content="<?= htmlspecialchars($page->title) ?>">
+<meta name="author" content="<?= htmlspecialchars($site->metadata->author) ?>">
+<link rel="microsub" href="<?= rtrim($site->metadata->fqdn, '/') ?>/microsub">
+<style>
+    :root {
+        --bg: <?= $bg ?>;
+        --fg: <?= $fg ?>;
+        --accent: <?= $fg ?>;
     }
-    ?>
-    <meta name="generator" content="Indieinabox v0.1.0" />
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <?php if (!$site->dev): ?>
-        <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self'; object-src 'none'" />
-    <?php endif; ?>
-    <meta property="og:title" content="~lumen" />
-    <meta property="og:site_name" content="~lumen">
-    <title><?= empty($page->title) || $page->title == "Untitled" ? $site->author : $page->title . " | " . $site->author ?></title>
-    <meta property="og:description"
-        content="Blog pessoal, notas e pensamentos de Lumen Pink" />
-    <meta property="og:site_name" content="<?= empty($page->title) || $page->title == "Untitled" ? $site->author : $page->title . " | " . $site->author ?>">
-    <meta property="og:url" content="https://lumen.pink/">
-    <meta property="og:type" content="website">
-    <meta property="og:image" content="https://lumen.pink/android-chrome-192x192.png" />
-    <meta name="twitter:card" content="summary_large_image">
-    <meta property="twitter:domain" content="lumen.pink">
-    <meta property="twitter:url" content="https://lumen.pink/">
-    <meta name="twitter:description" content="Blog pessoal, notas e pensamentos de Lumen Pink">
-    <meta name="twitter:image" content="https://lumen.pink/android-chrome-192x192.png">
-    <meta name="description" content="Blog pessoal, notas e pensamentos de Lumen Pink">
-    <meta name="author" content="Lumen Pink">
-    <meta name="language" content="<?= $page->lang ?>">
-    <link rel="whostyle" href="whostyle.css">
-    <link rel="apple-touch-icon" sizes="180x180" href="<?= $page->relpath ?>apple-touch-icon.png">
-    <link rel="icon" type="image/svg+xml" href="<?= $page->relpath ?>favicon.svg">
-    <link rel="icon" type="image/png" sizes="32x32" href="<?= $page->relpath ?>favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="<?= $page->relpath ?>favicon-16x16.png">
-    <link rel="icon" type="image/png" sizes="48x48" href="<?= $page->relpath ?>favicon.png">
-    <?php
-
-    if (is_array($page->otherlang)) {
-        echo '<link rel="alternate" hreflang="' . $page->lang .
-            '"href="' . $site->fqdn . "/" . ($page->slug == "/" ? "" : $page->slug) . '">' . PHP_EOL;
-
-        foreach ($page->otherlang as $i => $lang) {
-            echo '    <link rel="alternate" hreflang="' . $lang .
-                ' "href="' . $site->fqdn . "/" . $page->otherlangpath[$i] . $page->langslug[$i] . '">' . PHP_EOL;
+    body {
+        background-color: var(--bg);
+        color: var(--fg);
+        font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+        line-height: 1.6;
+        max-width: 650px;
+        margin: 40px auto;
+        padding: 0 16px;
+    }
+    a {
+        color: var(--accent);
+        text-decoration: underline;
+    }
+    a:hover {
+        text-decoration: none;
+    }
+    hr {
+        border: none;
+        border-top: 1px dashed var(--fg);
+        margin: 2em 0;
+    }
+    hr.divisor-bloco {
+        border-top: 1px dashed var(--accent);
+    }
+    pre, code {
+        background: rgba(0, 0, 0, 0.05);
+        padding: 2px 4px;
+        font-size: 0.9em;
+    }
+    pre {
+        padding: 1em;
+        overflow-x: auto;
+        display: block;
+    }
+    img {
+        max-width: 100%;
+        height: auto;
+        display: block;
+        margin: 1.5em 0;
+    }
+    .lang-selector, .top-nav {
+        margin: 0.5em 0;
+        font-size: 0.95em;
+    }
+    .logo-figlet {
+        text-align: center;
+        font-size: 14px;
+        line-height: 1.2;
+        margin-bottom: 2em;
+        white-space: pre;
+        overflow-x: hidden;
+        background: transparent;
+        padding: 0;
+    }
+    @media (max-width: 600px) {
+        .logo-figlet {
+            font-size: 10px;
         }
-    } ?>
-    <link rel="manifest" href="<?= $page->relpath ?>site.webmanifest">
-    <link rel="mask-icon" href="<?= $page->relpath ?>safari-pinned-tab.svg" color="#5bbad5">
-    <meta name="apple-mobile-web-app-title" content="~lumen">
-    <meta name="application-name" content="~lumen">
-    <meta name="msapplication-TileColor" content="#da532c">
-    <meta name="theme-color" content="#eccb00">
-    <link rel="feed" href="https://lumen.pink/">
-    <link rel="me" href="https://social.lumen.pink/@j">
-    <link rel="me" href="mailto:hi@lumen.pink">
-    <link rel="me" href="https://github.com/lumenpink">
-    <link rel="me" href="https://twitter.com/lumenpink">
-    <link rel="authorization_endpoint" href="<?= $site->fqdn ?>/auth" />
-    <link rel="token_endpoint" href="<?= $site->fqdn ?>/token" />
-    <link rel="micropub" href="<?= $site->fqdn ?>/micropub" />
-    <link rel="microsub" href="https://aperture.p3k.io/microsub/795" />
-    <link rel="webmention" href="https://webmention.io/lumen.pink/webmention" />
-    <link rel="pingback" href="https://webmention.io/lumen.pink/xmlrpc" />
-    <link rel="stylesheet" href="<?= $page->relpath ?>dist/app.css" />
-    <?php if ($site->dev): ?>
-        <script src="<?= $page->relpath ?>js/live.js"></script>
-    <?php endif; ?>
-    <script src="<?= $page->relpath ?>js/app.js"></script>
+    }
+    .footer-links {
+        margin-top: 2em;
+        font-size: 0.9em;
+    }
+    h1, h2, h3, h4, h5, h6 {
+        line-height: 1.2;
+        margin-top: 1.5em;
+        margin-bottom: 0.5em;
+    }
+    .post-metadata {
+        font-size: 0.9em;
+        opacity: 0.8;
+        margin-bottom: 2em;
+    }
+    a {
+        transition: color 0.15s ease-in-out;
+    }
+</style>
+<?php if (isset($site->options->dev) && $site->options->dev): ?>
+    <script src="<?= $page->relpath ?>js/live.js"></script>
+<?php endif; ?>

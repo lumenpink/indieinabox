@@ -4,25 +4,33 @@
 ?>
 <!DOCTYPE html>
 <html lang="<?= $page->lang ?>">
-
 <head>
     <?php include('includes/head.php'); ?>
 </head>
-
 <body>
     <?php include('includes/header.php'); ?>
-    <?php include('includes/introduction.' . $page->lang . '.php'); ?>
-    <div class="catalogue h-feed">
-        <?= listposts() ?>
-        <!--
-        {{ range where $items "Params.deleted" false }}
-        {{ .Render "summary" }}
-        {{ end }}        
-        # TODO: include pagination
-        template "_internal/pagination.html"
-        -->
-    </div>
+    
+    <main>
+        <h1><?= htmlspecialchars($page->title) ?></h1>
+        <div class="introduction" style="margin-left: 2em; margin-bottom: 5em;">
+            <?php
+            $introFile = __DIR__ . '/includes/introduction.' . $page->lang . '.php';
+            if (file_exists($introFile)) {
+                include($introFile);
+            } else {
+                echo "<p>Welcome to my static website.</p>";
+            }
+            ?>
+        </div>
+        
+        <hr>
+        
+        <h2><?= \Indieinabox\Helper::translate('Recent posts') ?></h2>
+        <div class="catalogue">
+            <?= \Indieinabox\Helper::listposts() ?>
+        </div>
+    </main>
+    
     <?php include('includes/footer.php'); ?>
 </body>
-
 </html>

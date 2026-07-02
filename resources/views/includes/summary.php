@@ -1,50 +1,33 @@
 <?php
 /** @var \Indieinabox\Page $page */
 /** @var \Indieinabox\Site $site */
+$_kindLabel = \Indieinabox\Helper::kindLabel($page->kind);
 ?>
-<article class="h-entry the-summary">
-    <div class="summary summary-<?= $page->kind ?>">
-        <?php if ($page->kind !== "page") : ?>
-            <div class="summary-kind">
-                <?php include('kind.php'); ?>
-            </div>
-        <?php endif ?>
-        <div class="fullwidth">
-            <div class="e-content summary-content summary-kind-<?= $page->kind ?>">
-                <?php if (isset($page->images) && is_array($page->images)) :
-                    foreach ($page->images as $imgData) :
-                        $img = (array) $imgData;
-                        if (!isset($img["url"])) {
-                            continue;
-                        }
-                        if (!isset($img["alt"])) {
-                            $img["alt"] = t("Criada por ") . $site->author;
-                        }
-                ?>
-
-                        <div class="text-center">
-                            <a href="<?= $page->relpath . $img["url"] ?>" class="u-photo" rel="nofollow">
-                                <img src="<?= $page->relpath . $img["url"] ?>"
-                                     alt="<?= $img["alt"] ?>"
-                                     class="width-75">
-                            </a>
-                        </div>
-                <?php
-                    endforeach;
-                endif;
-                ?>
-                <?php
-                if ($page->kind !== 'note' && $page->kind !== 'reply' && $page->kind !== 'like' && !empty($page->title) && $page->title !== 'Untitled' && strpos($page->content, '<h1') === false) :
-                ?>
-                    <h1 class="p-name"><?= htmlspecialchars($page->title) ?></h1>
-                <?php endif; ?>
-                <?= $page->content; ?>
-            </div>
-            <div>
-                <?php include("post-meta.php") ?>
-                <!-- Add webmentions -->
-                <?php include(__DIR__ . '/../partials/webmentions.php'); ?>
-            </div>
+<article class="h-entry the-summary" style="margin-bottom: 5em;">
+    <header>
+        <?php if (\Indieinabox\Helper::getKindConfig($page->kind)['has_title']): ?>
+            <h3 style="margin: 0 0 0.5em 0;">
+                <a href="<?= $page->relpath ?><?= $page->slug ?>"><?= htmlspecialchars($page->title) ?></a>
+            </h3>
+        <?php endif; ?>
+        <div class="post-metadata" style="font-size: 0.85em; opacity: 0.8; margin-bottom: 1em;">
+            <?= \Indieinabox\Helper::kindLink($page, $page->kind) ?>
+            <?php if (isset($page->date)): ?>
+                • <a href="<?= $page->relpath ?><?= $page->slug ?>"><time class="dt-published" datetime="<?= $page->isodate ?>"><?= $page->localizeddate ?></time></a>
+            <?php endif; ?>
+            <?php if (!empty($page->tags)): ?>
+                •
+                <?php foreach ($page->tags as $tag): ?>
+                    <a href="<?= $page->relpath ?>tag/<?= $tag ?>/">#<?= htmlspecialchars($tag) ?></a>&#32;
+                <?php endforeach; ?>
+            <?php endif; ?>
         </div>
+    </header>
+    <div class="e-content" style="margin-left: 2em;">
+        <?php
+        $content = $page->content;
+        $content = preg_replace('/src="([^"]+)\.gif"/', 'src="$1_global.gif"', (string)$content);
+        echo $content;
+        ?>
     </div>
 </article>

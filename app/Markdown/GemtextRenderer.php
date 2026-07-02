@@ -21,7 +21,7 @@ class GemtextRenderer implements RendererInterface
 
     /**
      * Method __construct
-     * @param ?Indieinabox\Page $page
+     * @param ?\Indieinabox\Page $page
      */
     public function __construct(?\Indieinabox\Page $page = null)
     {
@@ -54,7 +54,7 @@ class GemtextRenderer implements RendererInterface
 
     /**
      * Method renderNode
-     * @param Indieinabox\Markdown\Node $node
+     * @param \Indieinabox\Markdown\Node $node
      * 
      * @return string
      */
@@ -157,7 +157,7 @@ class GemtextRenderer implements RendererInterface
 
     /**
      * Method renderPlain
-     * @param Indieinabox\Markdown\Node $node
+     * @param \Indieinabox\Markdown\Node $node
      * 
      * @return string
      */

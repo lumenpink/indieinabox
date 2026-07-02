@@ -12,7 +12,7 @@ use PDO;
 class ActivityPubHandler
 {
     /**
-     * @var Indieinabox\Site
+     * @var \Indieinabox\Site
      */
     private Site $site;
     /**
@@ -22,7 +22,7 @@ class ActivityPubHandler
 
     /**
      * Method __construct
-     * @param Indieinabox\Site $site
+     * @param \Indieinabox\Site $site
      */
     public function __construct(Site $site)
     {

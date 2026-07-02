@@ -22,23 +22,23 @@ use Indieinabox\Markdown\GophermapRenderer;
 class SiteBuilder
 {
     /**
-     * @var Indieinabox\Site
+     * @var \Indieinabox\Site
      */
     private Site $site;
     /**
-     * @var Indieinabox\Pages
+     * @var \Indieinabox\Pages
      */
     private Pages $pages;
     /**
-     * @var Indieinabox\ParserInterface
+     * @var \Indieinabox\ParserInterface
      */
     private ParserInterface $parser;
 
     /**
      * Method __construct
-     * @param Indieinabox\Site $site
-     * @param ?Indieinabox\Pages $pages
-     * @param ?Indieinabox\ParserInterface $parser
+     * @param \Indieinabox\Site $site
+     * @param ?\Indieinabox\Pages $pages
+     * @param ?\Indieinabox\ParserInterface $parser
      */
     public function __construct(Site $site, ?Pages $pages = null, ?ParserInterface $parser = null)
     {
@@ -67,7 +67,7 @@ class SiteBuilder
 
     /**
      * Method getPages
-     * @return Indieinabox\Pages
+     * @return \Indieinabox\Pages
      */
     public function getPages(): Pages
     {
@@ -295,7 +295,7 @@ class SiteBuilder
 
     /**
      * Method pseudoTranslate
-     * @param Indieinabox\Page $page
+     * @param \Indieinabox\Page $page
      * @param string $targetLang
      * 
      * @return void
@@ -403,7 +403,7 @@ class SiteBuilder
 
     /**
      * Method createHTMLFile
-     * @param Indieinabox\Page $page
+     * @param \Indieinabox\Page $page
      * 
      * @return void
      */
@@ -561,7 +561,7 @@ class SiteBuilder
 
     /**
      * Method createGeminiFile
-     * @param Indieinabox\Page $page
+     * @param \Indieinabox\Page $page
      * 
      * @return void
      */
@@ -631,7 +631,7 @@ class SiteBuilder
 
     /**
      * Method createGopherFile
-     * @param Indieinabox\Page $page
+     * @param \Indieinabox\Page $page
      * 
      * @return void
      */

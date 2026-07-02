@@ -10,13 +10,13 @@ namespace Indieinabox;
 class WebRouter
 {
     /**
-     * @var Indieinabox\Site
+     * @var \Indieinabox\Site
      */
     protected Site $site;
 
     /**
      * Method __construct
-     * @param Indieinabox\Site $site
+     * @param \Indieinabox\Site $site
      */
     public function __construct(Site $site)
     {
@@ -123,7 +123,7 @@ class WebRouter
 
     /**
      * Method createWebmentionHandler
-     * @return Indieinabox\WebmentionHandler
+     * @return \Indieinabox\WebmentionHandler
      */
     protected function createWebmentionHandler(): WebmentionHandler
     {
@@ -132,7 +132,7 @@ class WebRouter
 
     /**
      * Method createIndieAuthHandler
-     * @return Indieinabox\IndieAuthHandler
+     * @return \Indieinabox\IndieAuthHandler
      */
     protected function createIndieAuthHandler(): IndieAuthHandler
     {
@@ -141,7 +141,7 @@ class WebRouter
 
     /**
      * Method createConfigHandler
-     * @return Indieinabox\ConfigHandler
+     * @return \Indieinabox\ConfigHandler
      */
     protected function createConfigHandler(): ConfigHandler
     {
@@ -150,7 +150,7 @@ class WebRouter
 
     /**
      * Method createMicropubHandler
-     * @return Indieinabox\MicropubHandler
+     * @return \Indieinabox\MicropubHandler
      */
     protected function createMicropubHandler(): MicropubHandler
     {
@@ -159,7 +159,7 @@ class WebRouter
 
     /**
      * Method createMicropubClientHandler
-     * @return Indieinabox\MicropubClientHandler
+     * @return \Indieinabox\MicropubClientHandler
      */
     protected function createMicropubClientHandler(): MicropubClientHandler
     {
@@ -168,7 +168,7 @@ class WebRouter
 
     /**
      * Method createMicrosubHandler
-     * @return Indieinabox\MicrosubHandler
+     * @return \Indieinabox\MicrosubHandler
      */
     protected function createMicrosubHandler(): MicrosubHandler
     {
@@ -177,7 +177,7 @@ class WebRouter
 
     /**
      * Method createMicrosubReaderHandler
-     * @return Indieinabox\MicrosubReaderHandler
+     * @return \Indieinabox\MicrosubReaderHandler
      */
     protected function createMicrosubReaderHandler(): MicrosubReaderHandler
     {
@@ -186,7 +186,7 @@ class WebRouter
 
     /**
      * Method createActivityPubHandler
-     * @return Indieinabox\ActivityPubHandler
+     * @return \Indieinabox\ActivityPubHandler
      */
     protected function createActivityPubHandler(): ActivityPubHandler
     {

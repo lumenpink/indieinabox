@@ -5,12 +5,8 @@ use Indieinabox\SiteBuilder;
 use Indieinabox\Site;
 use Indieinabox\Site\Paths;
 
-/**
- * @property string $tempDir
- * @property Paths $paths
- * @property Site $site
- */
 beforeEach(function () {
+    /** @var \Tests\TestCase $this */
     $this->tempDir = sys_get_temp_dir() . '/indieinabox_post_kinds_test_' . uniqid();
     mkdir($this->tempDir);
     mkdir($this->tempDir . '/content', 0777, true);
@@ -44,10 +40,12 @@ beforeEach(function () {
 });
 
 afterEach(function () {
+    /** @var \Tests\TestCase $this */
     \Indieinabox\Helper::recursiveRmdir($this->tempDir);
 });
 
 test('note kind does not render p-name title from frontmatter', function () {
+    /** @var \Tests\TestCase $this */
     file_put_contents($this->tempDir . '/content/notes/test.md', "---\ntitle: Note Title\n---\nThis is a note.");
 
     $builder = new SiteBuilder($this->site);
@@ -61,6 +59,7 @@ test('note kind does not render p-name title from frontmatter', function () {
 });
 
 test('article kind does render title from frontmatter in summary', function () {
+    /** @var \Tests\TestCase $this */
     file_put_contents($this->tempDir . '/content/articles/test.md', "---\ntitle: Article Title\n---\nThis is an article.");
 
     $builder = new SiteBuilder($this->site);
@@ -74,6 +73,7 @@ test('article kind does render title from frontmatter in summary', function () {
 });
 
 test('h1 in markdown body gets p-name class added by renderer', function () {
+    /** @var \Tests\TestCase $this */
     file_put_contents($this->tempDir . '/content/articles/test.md', "---\nauthor: Someone\n---\n# My Explicit Title\n\nThis is an article.");
 
     $builder = new SiteBuilder($this->site);
@@ -88,6 +88,7 @@ test('h1 in markdown body gets p-name class added by renderer', function () {
 });
 
 test('garden kind renders content correctly', function () {
+    /** @var \Tests\TestCase $this */
     file_put_contents($this->tempDir . '/content/garden/test.md', "---\ntitle: My Garden\n---\nGrowing plants.");
 
     $builder = new SiteBuilder($this->site);
@@ -101,6 +102,7 @@ test('garden kind renders content correctly', function () {
 });
 
 test('kind link is present in rendered page', function () {
+    /** @var \Tests\TestCase $this */
     file_put_contents($this->tempDir . '/content/articles/test.md', "---\ntitle: Link Test\n---\nContent");
 
     $builder = new SiteBuilder($this->site);

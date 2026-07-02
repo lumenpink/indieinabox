@@ -31,7 +31,7 @@ class GophermapRenderer implements RendererInterface
      * Method __construct
      * @param string $host
      * @param int $port
-     * @param ?Indieinabox\Page $page
+     * @param ?\Indieinabox\Page $page
      */
     public function __construct(string $host = 'gopher.example.com', int $port = 70, ?\Indieinabox\Page $page = null)
     {
@@ -81,7 +81,7 @@ class GophermapRenderer implements RendererInterface
 
     /**
      * Method renderNode
-     * @param Indieinabox\Markdown\Node $node
+     * @param \Indieinabox\Markdown\Node $node
      * 
      * @return string
      */
@@ -221,7 +221,7 @@ class GophermapRenderer implements RendererInterface
 
     /**
      * Method renderPlain
-     * @param Indieinabox\Markdown\Node $node
+     * @param \Indieinabox\Markdown\Node $node
      * 
      * @return string
      */

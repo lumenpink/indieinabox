@@ -19,13 +19,13 @@ class BackgroundWorker
      */
     private PDO $db;
     /**
-     * @var Indieinabox\Site
+     * @var \Indieinabox\Site
      */
     private Site $site;
 
     /**
      * Method __construct
-     * @param Indieinabox\Site $site
+     * @param \Indieinabox\Site $site
      */
     public function __construct(Site $site)
     {

@@ -12,7 +12,7 @@ use PDO;
 class MicrosubHandler
 {
     /**
-     * @var Indieinabox\IndieAuthHandler
+     * @var \Indieinabox\IndieAuthHandler
      */
     private IndieAuthHandler $authHandler;
     /**
@@ -22,7 +22,7 @@ class MicrosubHandler
 
     /**
      * Method __construct
-     * @param Indieinabox\Site $site
+     * @param \Indieinabox\Site $site
      */
     public function __construct(Site $site)
     {

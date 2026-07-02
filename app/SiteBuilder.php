@@ -117,100 +117,110 @@ class SiteBuilder
         $defaultLang = $this->site->localization->defaultLang ?? 'en';
         $prettylinks = $this->site->options->prettylinks ?? true;
 
-        // Collect existing pages to quickly look them up by kind + nick + language
+        global $urltranslations;
+        $urlTranslationsArr = $urltranslations ?? [];
+        $reverseTranslations = [];
+        foreach ($urlTranslationsArr as $defaultNick => $translations) {
+            foreach ($translations as $l => $translatedNick) {
+                $reverseTranslations[$l][$translatedNick] = $defaultNick;
+            }
+        }
+
         $existing = [];
-        $defaultLangPages = [];
+        $pagesToProcess = [];
         foreach ($this->pages as $page) {
             $lang = $page->lang ?? $defaultLang;
             $nick = $page->nick ?? '';
             $kind = $page->kind ?? '';
 
             $existing["{$kind}:{$nick}:{$lang}"] = $page;
-
-            if ($lang === $defaultLang) {
-                $defaultLangPages[] = $page;
-            }
+            $pagesToProcess[] = $page;
         }
 
-        // For each page in the default language, check if it has a localized version in other languages
-        foreach ($defaultLangPages as $page) {
+        foreach ($pagesToProcess as $page) {
             if (in_array($page->kind, ['generic'], true)) {
                 if ($page->slug !== '' && $page->slug !== 'index.html' && $page->slug !== '/') {
                     continue;
                 }
             }
 
-            foreach ($langs as $lang) {
-                if ($lang === $defaultLang) {
+            $sourceLang = $page->lang ?? $defaultLang;
+            
+            // Find base nick
+            $baseNick = $page->nick;
+            if ($sourceLang !== $defaultLang) {
+                if (isset($reverseTranslations[$sourceLang][$page->nick])) {
+                    $baseNick = $reverseTranslations[$sourceLang][$page->nick];
+                }
+            }
+
+            foreach ($langs as $targetLang) {
+                if ($targetLang === $sourceLang) {
                     continue;
                 }
 
-                // Get translated nick if available
-                global $urltranslations;
-                $translatedNick = $page->nick;
-                if (!empty($urltranslations) && isset($urltranslations[$page->nick][$lang])) {
-                    $translatedNick = $urltranslations[$page->nick][$lang];
+                $targetNick = $baseNick;
+                if ($targetLang !== $defaultLang) {
+                    if (isset($urlTranslationsArr[$baseNick][$targetLang])) {
+                        $targetNick = $urlTranslationsArr[$baseNick][$targetLang];
+                    }
                 }
 
-                $key = "{$page->kind}:{$translatedNick}:{$lang}";
+                $key = "{$page->kind}:{$targetNick}:{$targetLang}";
                 if (!isset($existing[$key])) {
+                    $existing[$key] = true; // Mark as handled
+
                     if (php_sapi_name() === 'cli') {
                         echo "[WARNING] Missing translation for page '{$page->slug}'"
-                            . " in language '{$lang}'. Virtualizing...\n";
+                            . " in language '{$targetLang}'. Virtualizing...\n";
                     }
-                    // No translation exists for this language! Let's virtualize it!
+
                     $cloned = clone $page;
+                    $cloned->lang = $targetLang;
+                    $cloned->nick = $targetNick;
 
-                    // Update language of the cloned page
-                    $cloned->lang = $lang;
+                    $this->pseudoTranslate($cloned, $targetLang);
 
-                    // Adjust title or text
-                    $prefix = '[' . strtoupper($lang) . '] ';
-                    $hasTitle = !empty($cloned->title)
-                        && $cloned->title !== 'Untitled'
-                        && $cloned->title !== 'untitled';
-
-                    // Check if the kind config allows a title
-                    $kindConfig = \Indieinabox\Helper::getKindConfig($cloned->kind);
-                    if (isset($kindConfig['has_title']) && !$kindConfig['has_title']) {
-                        $hasTitle = false;
-                    }
-
-                    if ($hasTitle) {
-                        $cloned->title = $prefix . $cloned->title;
-                    } else {
-                        // Prepend language code directly to text
-                        $cloned->content->content = $prefix . $cloned->content->content;
-                        $cloned->content->rawBody = $prefix . $cloned->content->rawBody;
-                    }
-
-                    // Build its slug preserving subfolder structure
-                    $kindFolder = $this->getKindFolder($cloned->kind, $lang);
-
-                    $defaultKindFolder = $this->getKindFolder($page->kind, $defaultLang);
+                    $kindFolder = $this->getKindFolder($cloned->kind, $targetLang);
+                    $sourceKindFolder = $this->getKindFolder($page->kind, $sourceLang);
+                    
+                    if (in_array($sourceKindFolder, ['page', 'generic', 'home'], true)) $sourceKindFolder = '';
+                    if (in_array($kindFolder, ['page', 'generic', 'home'], true)) $kindFolder = '';
+                    
                     $cleanSlug = trim($page->slug, '/');
-                    // Remove defaultKindFolder prefix if present
-                    if (str_starts_with($cleanSlug, $defaultKindFolder . '/')) {
-                        $cleanSlug = substr($cleanSlug, strlen($defaultKindFolder . '/'));
-                    } elseif ($cleanSlug === $defaultKindFolder) {
+                    $sourceLangPrefix = $sourceLang !== $defaultLang ? $sourceLang . '/' : '';
+                    $sourcePrefix = $sourceLangPrefix . $sourceKindFolder;
+                    $sourcePrefix = trim($sourcePrefix, '/');
+                    
+                    if ($sourcePrefix !== '' && str_starts_with($cleanSlug, $sourcePrefix . '/')) {
+                        $cleanSlug = substr($cleanSlug, strlen($sourcePrefix . '/'));
+                    } elseif ($sourcePrefix !== '' && $cleanSlug === $sourcePrefix) {
                         $cleanSlug = '';
                     }
 
                     if ($cleanSlug === '' || $cleanSlug === 'index.html') {
-                        $cloned->slug = $lang . '/index.html';
+                        $cloned->slug = $targetLang !== $defaultLang ? $targetLang . '/index.html' : 'index.html';
                     } else {
+                        $targetPrefix = $targetLang !== $defaultLang ? $targetLang . '/' : '';
+                        if ($kindFolder !== '') {
+                            $targetPrefix .= $kindFolder . '/';
+                        }
+                        
                         if ($prettylinks) {
-                            $cloned->slug = $lang . '/' . $kindFolder . '/' . $cleanSlug . '/';
+                            $cloned->slug = $targetPrefix . $cleanSlug . '/';
                         } else {
-                            // For non-prettylinks, it ends in .html
                             if (str_ends_with($cleanSlug, '.html')) {
                                 $cleanSlug = substr($cleanSlug, 0, -5);
                             }
-                            $cloned->slug = $lang . '/' . $kindFolder . '/' . $cleanSlug . '.html';
+                            $cloned->slug = $targetPrefix . $cleanSlug . '.html';
                         }
                     }
 
-                    // Recalculate relative path
+                    $cloned->slug = trim(str_replace('//', '/', $cloned->slug), '/');
+                    if ($prettylinks && !str_ends_with($cloned->slug, '.html') && $cloned->slug !== '' && $cloned->slug !== 'index.html') {
+                        $cloned->slug .= '/';
+                    }
+
                     $cleanSlugPath = ltrim($cloned->slug, '/');
                     if ($cleanSlugPath === '' || $cleanSlugPath === 'index.html') {
                         $cloned->relpath = './';
@@ -219,19 +229,33 @@ class SiteBuilder
                         $cloned->relpath = $slashCount > 0 ? str_repeat('../', $slashCount) : './';
                     }
 
-                    // Process other language pathways through LanguageProcessor
-                    global $urltranslations;
-                    $urlTranslationsObj = new UrlTranslations($urltranslations ?? []);
+                    $urlTranslationsObj = new UrlTranslations($urlTranslationsArr);
                     $languageProcessor = new LanguageProcessor($this->site, $urlTranslationsObj);
                     $cloned = $languageProcessor->processLanguage($cloned);
 
-                    // Add to our pages collection
                     $this->pages->add($cloned);
-
-                    // Mark as existing so we don't duplicate
-                    $existing[$key] = $cloned;
                 }
             }
+        }
+    }
+
+    public function pseudoTranslate(\Indieinabox\Page $page, string $targetLang): void
+    {
+        $prefix = '[' . strtoupper($targetLang) . '] ';
+        $hasTitle = !empty($page->title)
+            && $page->title !== 'Untitled'
+            && $page->title !== 'untitled';
+
+        $kindConfig = \Indieinabox\Helper::getKindConfig($page->kind);
+        if (isset($kindConfig['has_title']) && !$kindConfig['has_title']) {
+            $hasTitle = false;
+        }
+
+        if ($hasTitle) {
+            $page->title = $prefix . $page->title;
+        } else {
+            $page->content->content = $prefix . $page->content->content;
+            $page->content->rawBody = $prefix . $page->content->rawBody;
         }
     }
 

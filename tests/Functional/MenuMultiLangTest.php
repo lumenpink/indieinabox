@@ -12,6 +12,7 @@ use Indieinabox\Site\Paths;
  * @property Paths $paths
  */
 beforeEach(function () {
+    /** @var \Tests\TestCase $this */
     $this->tempDir = sys_get_temp_dir() . '/indieinabox_menu_multilang_test_' . uniqid();
     mkdir($this->tempDir);
     mkdir($this->tempDir . '/content', 0777, true);
@@ -41,10 +42,12 @@ beforeEach(function () {
 });
 
 afterEach(function () {
+    /** @var \Tests\TestCase $this */
     \Indieinabox\Helper::recursiveRmdir($this->tempDir);
 });
 
 test('root md file in non-default language directory becomes page and uses slugified name', function () {
+    /** @var \Tests\TestCase $this */
     mkdir($this->tempDir . '/content/pt', 0777, true);
     file_put_contents($this->tempDir . '/content/pt/agora.md', "---\ntitle: Agora Page\n---\nContent");
     
@@ -59,6 +62,7 @@ test('root md file in non-default language directory becomes page and uses slugi
 });
 
 test('root md file in non-default language directory with slug tag uses the specified slug', function () {
+    /** @var \Tests\TestCase $this */
     mkdir($this->tempDir . '/content/es', 0777, true);
     file_put_contents($this->tempDir . '/content/es/ahora.md', "---\ntitle: Ahora Page\nslug: en-este-momento\n---\nContent");
     
@@ -71,6 +75,7 @@ test('root md file in non-default language directory with slug tag uses the spec
 });
 
 test('pages in non-default language appear in the localized menu by default', function () {
+    /** @var \Tests\TestCase $this */
     mkdir($this->tempDir . '/content/pt', 0777, true);
     file_put_contents($this->tempDir . '/content/pt/visivel.md', "---\ntitle: Visivel\n---\nContent");
     file_put_contents($this->tempDir . '/content/pt/oculto.md', "---\ntitle: Oculto\nmenu: false\n---\nContent");
@@ -105,6 +110,7 @@ test('pages in non-default language appear in the localized menu by default', fu
 });
 
 test('menu links for non-default language are ordered by menu_order then alphabetically', function () {
+    /** @var \Tests\TestCase $this */
     mkdir($this->tempDir . '/content/pt', 0777, true);
     file_put_contents($this->tempDir . '/content/pt/zeta.md', "---\ntitle: Zeta\n---\nContent");
     file_put_contents($this->tempDir . '/content/pt/alpha.md', "---\ntitle: Alpha\n---\nContent");
@@ -136,4 +142,66 @@ test('menu links for non-default language are ordered by menu_order then alphabe
     expect($links[1]['label'])->toBe('Second');
     expect($links[2]['label'])->toBe('Alpha');
     expect($links[3]['label'])->toBe('Zeta');
+});
+
+test('pages in secondary language are virtualized back to default language', function () {
+    /** @var \Tests\TestCase $this */
+    mkdir($this->tempDir . '/content/pt', 0777, true);
+    file_put_contents($this->tempDir . '/content/pt/somente-pt.md', "---\ntitle: Somente PT\n---\nEste post so existe em portugues.");
+    
+    $builder = new SiteBuilder($this->site);
+    $builder->scan($this->tempDir . '/content');
+    
+    $reflection = new \ReflectionClass(SiteBuilder::class);
+    $method = $reflection->getMethod('virtualizeMissingLanguages');
+    $method->setAccessible(true);
+    $method->invoke($builder);
+    
+    $pages = iterator_to_array($builder->getPages(), false);
+    
+    // Total pages should be 3 (one for 'pt', one virtualized for 'en', one virtualized for 'es')
+    expect(count($pages))->toBe(3);
+    
+    $enPage = null;
+    $esPage = null;
+    foreach ($pages as $p) {
+        if ($p->lang === 'en') $enPage = $p;
+        if ($p->lang === 'es') $esPage = $p;
+    }
+    
+    expect($enPage)->not->toBeNull();
+    expect($enPage->title)->toBe('[EN] Somente PT');
+    expect($enPage->slug)->toBe('somente-pt/'); // In English (default), slug has no prefix
+    
+    expect($esPage)->not->toBeNull();
+    expect($esPage->title)->toBe('[ES] Somente PT');
+    expect($esPage->slug)->toBe('es/somente-pt/');
+});
+
+test('pseudoTranslate mocks the translation format correctly', function () {
+    /** @var \Tests\TestCase $this */
+    $builder = new SiteBuilder($this->site);
+    $page = \Indieinabox\Page::fromArray([
+        'title' => 'Original Title',
+        'kind' => 'article'
+    ]);
+    $page->content = new \Indieinabox\Page\Content('Original content');
+    $page->content->rawBody = 'Original content';
+    
+    $builder->pseudoTranslate($page, 'es');
+    
+    expect($page->title)->toBe('[ES] Original Title');
+    expect($page->content->content)->toBe('Original content'); // Did not change body because it has a title
+    
+    // Test without title (e.g. note)
+    $pageNote = \Indieinabox\Page::fromArray([
+        'kind' => 'note'
+    ]);
+    $pageNote->content = new \Indieinabox\Page\Content('Original body');
+    $pageNote->content->rawBody = 'Original body';
+    
+    $builder->pseudoTranslate($pageNote, 'pt');
+    
+    expect($pageNote->title)->toBe('Untitled');
+    expect($pageNote->content->content)->toBe('[PT] Original body');
 });

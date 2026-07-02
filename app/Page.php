@@ -248,7 +248,7 @@ class Page
             (string) ($data['layout'] ?? 'page'),
             isset($data['maturity']) ? (string)$data['maturity'] : null,
             isset($data['reliability']) ? (string)$data['reliability'] : null,
-            isset($data['menu']) ? (bool)$data['menu'] : null,
+            isset($data['menu']) ? $data['menu'] : null,
             isset($data['menu_order']) ? (int)$data['menu_order'] : null
         );
 

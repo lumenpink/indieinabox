@@ -334,12 +334,15 @@ class SiteBuilder
     {
         $base = $this->site->paths->baseDir;
         $site = $this->site;
-        // Expose $p, $pages, $site, $langLinks and $footerLinks to the global scope for view template compatibility
-        global $p, $site, $pages, $langLinks, $footerLinks;
+        // Expose $p, $pages, $site, $langLinks, $headerLinks and $footerLinks to the global scope for view template compatibility
+        global $p, $site, $pages, $langLinks, $headerLinks, $footerLinks;
         $p = $page;
         $pages = $this->pages;
         $langLinks = $this->getLanguageLinks($page);
-        $footerLinks = $this->getFooterLinks($page);
+        
+        $menuLinks = $this->getMenuLinks($page);
+        $headerLinks = $menuLinks['header'];
+        $footerLinks = $menuLinks['footer'];
 
         if (in_array("draft", $page->metadata->tags)) {
             return;
@@ -826,17 +829,19 @@ class SiteBuilder
     }
 
     /**
-     * @return array<int, array<string, string>>
+     * @return array<string, array<int, array<string, string>>>
      */
-    private function getFooterLinks(Page $page): array
+    private function getMenuLinks(Page $page): array
     {
-        $links = [];
+        $headerLinks = [];
+        $footerLinks = [];
+        
         $lang = $page->lang ?? ($this->site->localization->defaultLang ?? 'en');
         $defaultLang = $this->site->localization->defaultLang ?? 'en';
         $langPrefix = ($lang === $defaultLang) ? '' : $lang . '/';
         $prettylinks = $this->site->options->prettylinks ?? true;
 
-        // 1. Post kinds defined in config
+        // 1. Post kinds defined in config (default to footer)
         if (!empty($this->site->config['kinds'])) {
             foreach ($this->site->config['kinds'] as $k => $conf) {
                 if (isset($conf['show_on_home']) && !$conf['show_on_home'] && $k !== 'garden') {
@@ -849,7 +854,7 @@ class SiteBuilder
                     $url = $page->relpath . $langPrefix . $folder . '/index.html';
                 }
                 $label = \Indieinabox\Helper::kindLabel($k, $lang);
-                $links[] = ['url' => $url, 'label' => $label, 'order' => PHP_INT_MAX];
+                $footerLinks[] = ['url' => $url, 'label' => $label, 'order' => PHP_INT_MAX];
             }
         }
 
@@ -857,19 +862,32 @@ class SiteBuilder
         foreach ($this->pages as $p) {
             $pLang = $p->lang ?? $defaultLang;
             
-            // By default, it appears unless menu is explicitly false
-            $hideMenu = isset($p->metadata->menu) && $p->metadata->menu === false;
+            $menuVal = $p->metadata->menu ?? 'footer';
+            if ($menuVal === 'hide') {
+                continue;
+            }
             
-            if ($pLang === $lang && $p->kind === 'page' && !$hideMenu) {
+            if ($pLang === $lang && $p->kind === 'page') {
                 $url = $page->relpath . ltrim($p->slug, '/');
                 $label = $p->title;
                 $order = $p->metadata->menu_order ?? PHP_INT_MAX;
-                $links[] = ['url' => $url, 'label' => $label, 'order' => $order];
+                
+                $linkItem = ['url' => $url, 'label' => $label, 'order' => $order];
+                
+                if ($menuVal === 'header') {
+                    $headerLinks[] = $linkItem;
+                } elseif ($menuVal === 'both') {
+                    $headerLinks[] = $linkItem;
+                    $footerLinks[] = $linkItem;
+                } else {
+                    // 'footer' or any omitted/default value
+                    $footerLinks[] = $linkItem;
+                }
             }
         }
 
         // 3. Sort links: numbered first, then alphabetically
-        usort($links, function($a, $b) {
+        $sortFn = function($a, $b) {
             $orderA = $a['order'] ?? PHP_INT_MAX;
             $orderB = $b['order'] ?? PHP_INT_MAX;
             
@@ -878,14 +896,23 @@ class SiteBuilder
             }
             
             return strcasecmp($a['label'] ?? '', $b['label'] ?? '');
-        });
+        };
+        
+        usort($headerLinks, $sortFn);
+        usort($footerLinks, $sortFn);
 
         // Strip order key to match original shape
-        foreach ($links as &$link) {
+        foreach ($headerLinks as &$link) {
+            unset($link['order']);
+        }
+        foreach ($footerLinks as &$link) {
             unset($link['order']);
         }
 
-        return $links;
+        return [
+            'header' => $headerLinks,
+            'footer' => $footerLinks
+        ];
     }
 
     private function getKindFolder(string $kind, string $lang): string
@@ -900,6 +927,10 @@ class SiteBuilder
     {
         $grouped = [];
         foreach ($pages as $p) {
+            if (basename($p->filepath) === 'intro.md') {
+                continue;
+            }
+
             $lang = $p->lang ?? 'en';
             $date = $p->date;
             $yearMonth = $date->format('Y-m');
@@ -935,7 +966,7 @@ class SiteBuilder
                     . $this->getKindFolder($targetKind, $lang) . '/' . $yearMonth . '/';
                 $monthPage = Page::fromArray([
                     'title' => $titleBase . " - " . $yearMonth,
-                    'layout' => 'timeline',
+                    'layout' => 'index_page',
                     'slug' => $monthSlug,
                     'date' => new \DateTime($yearMonth . '-01'),
                     'content' => '',
@@ -980,7 +1011,7 @@ class SiteBuilder
                 . $this->getKindFolder($targetKind, $lang) . '/';
             $indexPage = Page::fromArray([
                 'title' => $titleBase,
-                'layout' => 'timeline',
+                'layout' => 'index_page',
                 'slug' => $indexSlug,
                 'date' => time(),
                 'content' => '',
@@ -1022,20 +1053,20 @@ class SiteBuilder
 
     private function compileSitemap(): void
     {
-        $defaultLang = $this->site->localization->defaultLang;
-        $prettylinks = $this->site->options->prettylinks ?? true;
+        $defaultLang = $this->site->localization->defaultLang ?? 'en';
+        $indexSlugConfig = $this->site->config['index_slug'] ?? 'index';
 
-        $langs = $this->site->localization->lang;
-
-        foreach ($langs as $lang) {
-            $sitemapSlug = ($lang === $defaultLang ? '' : $lang . '/') . 'indice/';
-            if (!$prettylinks) {
-                $sitemapSlug = ($lang === $defaultLang ? '' : $lang . '/') . 'indice.html';
+        foreach ($this->site->localization->lang as $lang) {
+            $prettylinks = $this->site->options->prettylinks ?? true;
+            if ($prettylinks) {
+                $sitemapSlug = ($lang === $defaultLang ? '' : $lang . '/') . $indexSlugConfig . '/';
+            } else {
+                $sitemapSlug = ($lang === $defaultLang ? '' : $lang . '/') . $indexSlugConfig . '.html';
             }
 
             $sitemapPage = Page::fromArray([
                 'title' => "Índice",
-                'layout' => 'indice',
+                'layout' => 'index_page',
                 'slug' => $sitemapSlug,
                 'date' => time(),
                 'content' => '',

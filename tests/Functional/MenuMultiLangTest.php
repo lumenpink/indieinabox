@@ -78,7 +78,7 @@ test('pages in non-default language appear in the localized menu by default', fu
     /** @var \Tests\TestCase $this */
     mkdir($this->tempDir . '/content/pt', 0777, true);
     file_put_contents($this->tempDir . '/content/pt/visivel.md', "---\ntitle: Visivel\n---\nContent");
-    file_put_contents($this->tempDir . '/content/pt/oculto.md', "---\ntitle: Oculto\nmenu: false\n---\nContent");
+    file_put_contents($this->tempDir . '/content/pt/oculto.md', "---\ntitle: Oculto\nmenu: hide\n---\nContent");
     // Add an English page to ensure menus don't mix languages
     file_put_contents($this->tempDir . '/content/visible-en.md', "---\ntitle: Visible EN\n---\nContent");
     
@@ -86,7 +86,7 @@ test('pages in non-default language appear in the localized menu by default', fu
     $builder->scan($this->tempDir . '/content');
     
     $reflection = new \ReflectionClass(SiteBuilder::class);
-    $method = $reflection->getMethod('getFooterLinks');
+    $method = $reflection->getMethod('getMenuLinks');
     $method->setAccessible(true);
     
     $pages = iterator_to_array($builder->getPages(), false);
@@ -102,7 +102,7 @@ test('pages in non-default language appear in the localized menu by default', fu
     
     expect($ptPage)->not->toBeNull();
     
-    $links = $method->invoke($builder, $ptPage);
+    $links = $method->invoke($builder, $ptPage)['footer'];
     
     expect(count($links))->toBe(1);
     expect($links[0]['label'])->toBe('Visivel');
@@ -121,7 +121,7 @@ test('menu links for non-default language are ordered by menu_order then alphabe
     $builder->scan($this->tempDir . '/content');
     
     $reflection = new \ReflectionClass(SiteBuilder::class);
-    $method = $reflection->getMethod('getFooterLinks');
+    $method = $reflection->getMethod('getMenuLinks');
     $method->setAccessible(true);
     
     $pages = iterator_to_array($builder->getPages(), false);
@@ -134,7 +134,7 @@ test('menu links for non-default language are ordered by menu_order then alphabe
         }
     }
     
-    $links = $method->invoke($builder, $ptPage);
+    $links = $method->invoke($builder, $ptPage)['footer'];
     
     expect(count($links))->toBe(4);
     

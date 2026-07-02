@@ -74,24 +74,53 @@ test('root md file with publish: false is skipped', function () {
     expect($pages[0]->slug)->toBe('published/');
 });
 
-test('pages appear in menu by default unless menu: false is set', function () {
+test('pages appear in menu by default unless menu: hide is set', function () {
     file_put_contents($this->tempDir . '/content/visible.md', "---\ntitle: Visible\n---\nContent");
-    file_put_contents($this->tempDir . '/content/hidden.md', "---\ntitle: Hidden\nmenu: false\n---\nContent");
+    file_put_contents($this->tempDir . '/content/hidden.md', "---\ntitle: Hidden\nmenu: hide\n---\nContent");
     
     $builder = new SiteBuilder($this->site);
     $builder->scan($this->tempDir . '/content');
     
     $reflection = new \ReflectionClass(SiteBuilder::class);
-    $method = $reflection->getMethod('getFooterLinks');
+    $method = $reflection->getMethod('getMenuLinks');
     $method->setAccessible(true);
     
     $pages = iterator_to_array($builder->getPages(), false);
     $dummyPage = $pages[0]; // 'visible'
     
-    $links = $method->invoke($builder, $dummyPage);
+    $links = $method->invoke($builder, $dummyPage)['footer'];
     
     expect(count($links))->toBe(1);
     expect($links[0]['label'])->toBe('Visible');
+});
+
+test('menu flag directs pages to header, footer or both', function () {
+    file_put_contents($this->tempDir . '/content/header_only.md', "---\ntitle: Head\nmenu: \"header\"\n---\nContent");
+    file_put_contents($this->tempDir . '/content/footer_only.md', "---\ntitle: Foot\nmenu: \"footer\"\n---\nContent");
+    file_put_contents($this->tempDir . '/content/both.md', "---\ntitle: Both\nmenu: \"both\"\n---\nContent");
+    file_put_contents($this->tempDir . '/content/none.md', "---\ntitle: None\nmenu: hide\n---\nContent");
+    
+    $builder = new SiteBuilder($this->site);
+    $builder->scan($this->tempDir . '/content');
+    
+    $reflection = new \ReflectionClass(SiteBuilder::class);
+    $method = $reflection->getMethod('getMenuLinks');
+    $method->setAccessible(true);
+    
+    $pages = iterator_to_array($builder->getPages(), false);
+    
+    $links = $method->invoke($builder, $pages[0]);
+    $headerLinks = $links['header'];
+    $footerLinks = $links['footer'];
+    
+    expect(count($headerLinks))->toBe(2); // Both, Head
+    expect(count($footerLinks))->toBe(2); // Both, Foot
+    
+    expect($headerLinks[0]['label'])->toBe('Both');
+    expect($headerLinks[1]['label'])->toBe('Head');
+    
+    expect($footerLinks[0]['label'])->toBe('Both');
+    expect($footerLinks[1]['label'])->toBe('Foot');
 });
 
 test('menu links are ordered by menu_order then alphabetically', function () {
@@ -104,13 +133,13 @@ test('menu links are ordered by menu_order then alphabetically', function () {
     $builder->scan($this->tempDir . '/content');
     
     $reflection = new \ReflectionClass(SiteBuilder::class);
-    $method = $reflection->getMethod('getFooterLinks');
+    $method = $reflection->getMethod('getMenuLinks');
     $method->setAccessible(true);
     
     $pages = iterator_to_array($builder->getPages(), false);
     $dummyPage = $pages[0];
     
-    $links = $method->invoke($builder, $dummyPage);
+    $links = $method->invoke($builder, $dummyPage)['footer'];
     
     expect(count($links))->toBe(4);
     

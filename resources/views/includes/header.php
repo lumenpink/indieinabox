@@ -25,21 +25,14 @@ if (!isset($langLinks)) {
 
 $prettylinks = $site->options->prettylinks ?? true;
 
-$agoraSlug = 'now';
-if ($lang !== 'en' && isset($urltranslations['now'][$lang])) {
-    $agoraSlug = $urltranslations['now'][$lang];
-}
-
-$indiceSlug = 'indice';
+$indexSlugConfig = $site->config['index_slug'] ?? 'index';
 
 if ($prettylinks) {
     $homeLink = $page->relpath . $langPrefix;
-    $indiceLink = $page->relpath . $langPrefix . $indiceSlug . '/';
-    $agoraLink = $page->relpath . $langPrefix . $agoraSlug . '/';
+    $indexLink = $page->relpath . $langPrefix . $indexSlugConfig . '/';
 } else {
     $homeLink = $page->relpath . ($langPrefix ? $langPrefix . 'index.html' : 'index.html');
-    $indiceLink = $page->relpath . $langPrefix . $indiceSlug . '.html';
-    $agoraLink = $page->relpath . $langPrefix . $agoraSlug . '.html';
+    $indexLink = $page->relpath . $langPrefix . $indexSlugConfig . '.html';
 }
 ?>
 <header>
@@ -68,7 +61,20 @@ if ($prettylinks) {
         </div>
     <?php endif; ?>
     <nav class="top-nav" style="text-align: center;">
-        [ <a href="<?= $homeLink ?>"><?= \Indieinabox\Helper::translate('Home') ?></a> • <a href="<?= $indiceLink ?>"><?= \Indieinabox\Helper::translate('Index') ?></a> • <a href="<?= $agoraLink ?>"><?= \Indieinabox\Helper::translate('Now') ?></a> ]
+        <?php
+        global $headerLinks;
+        $navItems = [];
+        $navItems[] = '<a href="' . htmlspecialchars($homeLink) . '">' . \Indieinabox\Helper::translate('Home') . '</a>';
+        $navItems[] = '<a href="' . htmlspecialchars($indexLink) . '">' . \Indieinabox\Helper::translate('Index') . '</a>';
+        
+        if (!empty($headerLinks)) {
+            foreach ($headerLinks as $item) {
+                $navItems[] = '<a href="' . htmlspecialchars($item['url']) . '">' . htmlspecialchars($item['label']) . '</a>';
+            }
+        }
+        
+        echo '[ ' . implode(' &bull; ', $navItems) . ' ]';
+        ?>
     </nav>
     <hr>
 </header>

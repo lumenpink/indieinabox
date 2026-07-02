@@ -59,7 +59,7 @@ class Metadata
     public $reliability;
 
     /**
-     * @var bool|null
+     * @var string|bool|null
      */
     public $menu;
 
@@ -93,7 +93,7 @@ class Metadata
         string $layout = "page",
         ?string $maturity = null,
         ?string $reliability = null,
-        ?bool $menu = null,
+        $menu = null,
         ?int $menu_order = null
     ) {
         $this->category = $category;

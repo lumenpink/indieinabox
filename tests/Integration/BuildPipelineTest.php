@@ -68,7 +68,7 @@ function writeBasePageView(string $sandbox): void
 </html>
 PHP
     );
-    file_put_contents($sandbox . '/resources/views/indice.php', <<<PHP
+    file_put_contents($sandbox . '/resources/views/index_page.php', <<<PHP
 <!DOCTYPE html>
 <html>
 <head>
@@ -234,7 +234,7 @@ it('injects live-reload script when building with -d (dev mode)', function () us
 </html>
 PHP
     );
-    file_put_contents($sandbox . '/resources/views/indice.php', 'Dummy');
+    file_put_contents($sandbox . '/resources/views/index_page.php', 'Dummy');
     linkLiveJs($sandbox);
 
     // 4. Setup symlinks to app, bootstrap, data, vendor

@@ -106,7 +106,7 @@ it(
 PHP
     );
     file_put_contents(
-        $integrationSandbox . '/resources/views/indice.php',
+        $integrationSandbox . '/resources/views/index_page.php',
         <<<PHP
 <!DOCTYPE html>
 <html>

@@ -12,19 +12,21 @@
     
     <main>
         <h1><?= htmlspecialchars($page->title) ?></h1>
-        <div class="introduction" style="margin-left: 2em; margin-bottom: 5em;">
-            <?php
-            $introFile = __DIR__ . '/includes/introduction.' . $page->lang . '.php';
-            if (file_exists($introFile)) {
-                include($introFile);
-            } else {
-                echo "<p>Welcome to my static website.</p>";
-            }
-            ?>
-        </div>
+        <?php
+        $introFile = $site->paths->contentDir . '/' . $page->lang . '/intro.md';
+        if (!file_exists($introFile)) {
+            $introFile = $site->paths->contentDir . '/intro.md';
+        }
         
-        <hr>
+        if (file_exists($introFile)) {
+            echo '<div class="introduction" style="margin-left: 2em; margin-bottom: 5em;">';
+            $processor = new \Indieinabox\Markdown\ContentProcessor();
+            echo $processor->processContent(file_get_contents($introFile), $page);
+            echo '</div><hr>';
+        }
+        ?>
         
+
         <h2><?= \Indieinabox\Helper::translate('Recent posts') ?></h2>
         <div class="catalogue">
             <?= \Indieinabox\Helper::listposts() ?>

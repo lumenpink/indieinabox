@@ -79,6 +79,26 @@ class Metadata
     public $menu_order;
 
     /**
+     * @var bool|string|null
+     */
+    public $translated_by_ia;
+
+    /**
+     * @var string|null
+     */
+    public $description;
+
+    /**
+     * @var string|null
+     */
+    public $image;
+
+    /**
+     * @var string|null
+     */
+    public $image_alt;
+
+    /**
      * PageMetadata constructor.
      *
      * @param array<string> $category
@@ -106,7 +126,11 @@ class Metadata
         $menu = null,
         ?int $menu_order = null,
         bool $hide_title = false,
-        $hide_on_rss = false
+        $hide_on_rss = false,
+        $translated_by_ia = null,
+        ?string $description = null,
+        ?string $image = null,
+        ?string $image_alt = null
     ) {
         $this->category = $category;
         $this->tags = $tags;
@@ -121,5 +145,9 @@ class Metadata
         $this->menu_order = $menu_order;
         $this->hide_title = $hide_title;
         $this->hide_on_rss = $hide_on_rss;
+        $this->translated_by_ia = $translated_by_ia;
+        $this->description = $description;
+        $this->image = $image;
+        $this->image_alt = $image_alt;
     }
 }

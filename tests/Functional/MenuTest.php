@@ -12,6 +12,7 @@ use Indieinabox\Site\Paths;
  * @property Paths $paths
  */
 beforeEach(function () {
+    /** @var \Tests\TestCase|mixed $this */
     $this->tempDir = sys_get_temp_dir() . '/indieinabox_menu_test_' . uniqid();
     mkdir($this->tempDir);
     mkdir($this->tempDir . '/content', 0777, true);
@@ -36,10 +37,12 @@ beforeEach(function () {
 });
 
 afterEach(function () {
+    /** @var \Tests\TestCase|mixed $this */
     \Indieinabox\Helper::recursiveRmdir($this->tempDir);
 });
 
 test('root md file without publish tag becomes page and uses slugified name', function () {
+    /** @var \Tests\TestCase|mixed $this */
     file_put_contents($this->tempDir . '/content/now.md', "---\ntitle: Now Page\n---\nContent");
     
     $builder = new SiteBuilder($this->site);
@@ -52,6 +55,7 @@ test('root md file without publish tag becomes page and uses slugified name', fu
 });
 
 test('root md file with slug tag uses the specified slug', function () {
+    /** @var \Tests\TestCase|mixed $this */
     file_put_contents($this->tempDir . '/content/now.md', "---\ntitle: Now Page\nslug: right-now\n---\nContent");
     
     $builder = new SiteBuilder($this->site);
@@ -63,6 +67,7 @@ test('root md file with slug tag uses the specified slug', function () {
 });
 
 test('root md file with publish: false is skipped', function () {
+    /** @var \Tests\TestCase|mixed $this */
     file_put_contents($this->tempDir . '/content/draft.md', "---\ntitle: Draft\npublish: false\n---\nContent");
     file_put_contents($this->tempDir . '/content/published.md', "---\ntitle: Published\n---\nContent");
     
@@ -75,6 +80,7 @@ test('root md file with publish: false is skipped', function () {
 });
 
 test('pages appear in menu by default unless menu: hide is set', function () {
+    /** @var \Tests\TestCase|mixed $this */
     file_put_contents($this->tempDir . '/content/visible.md', "---\ntitle: Visible\n---\nContent");
     file_put_contents($this->tempDir . '/content/hidden.md', "---\ntitle: Hidden\nmenu: hide\n---\nContent");
     
@@ -95,6 +101,7 @@ test('pages appear in menu by default unless menu: hide is set', function () {
 });
 
 test('menu flag directs pages to header, footer or both', function () {
+    /** @var \Tests\TestCase|mixed $this */
     file_put_contents($this->tempDir . '/content/header_only.md', "---\ntitle: Head\nmenu: \"header\"\n---\nContent");
     file_put_contents($this->tempDir . '/content/footer_only.md', "---\ntitle: Foot\nmenu: \"footer\"\n---\nContent");
     file_put_contents($this->tempDir . '/content/both.md', "---\ntitle: Both\nmenu: \"both\"\n---\nContent");
@@ -124,6 +131,7 @@ test('menu flag directs pages to header, footer or both', function () {
 });
 
 test('menu links are ordered by menu_order then alphabetically', function () {
+    /** @var \Tests\TestCase|mixed $this */
     file_put_contents($this->tempDir . '/content/zeta.md', "---\ntitle: Zeta\n---\nContent");
     file_put_contents($this->tempDir . '/content/alpha.md', "---\ntitle: Alpha\n---\nContent");
     file_put_contents($this->tempDir . '/content/second.md', "---\ntitle: Second\nmenu_order: 2\n---\nContent");

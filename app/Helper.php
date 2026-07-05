@@ -1131,4 +1131,300 @@ class Helper
 
         return $result;
     }
+
+    /**
+     * Atkinson adaptive dithering with cropping to exact dimensions, saved as PNG
+     *
+     * @param string $caminhoOriginal
+     * @param string $caminhoDestino
+     * @param int $targetWidth
+     * @param int $targetHeight
+     * @param array $corBG
+     * @param array $corFG
+     * @param bool $aplicarAutomacao
+     * @return bool
+     */
+    public static function ditherAndCropImageToPng(
+        string $caminhoOriginal,
+        string $caminhoDestino,
+        int $targetWidth,
+        int $targetHeight,
+        array $corBG,
+        array $corFG,
+        bool $aplicarAutomacao = true
+    ): bool {
+        if (!is_dir(dirname($caminhoDestino))) {
+            mkdir(dirname($caminhoDestino), 0777, true);
+        }
+
+        $ext = strtolower(pathinfo($caminhoOriginal, PATHINFO_EXTENSION));
+        if ($ext === 'png') {
+            $imgOriginal = @imagecreatefrompng($caminhoOriginal);
+        } elseif ($ext === 'gif') {
+            $imgOriginal = @imagecreatefromgif($caminhoOriginal);
+        } elseif ($ext === 'webp') {
+            $imgOriginal = function_exists('imagecreatefromwebp') ? @imagecreatefromwebp($caminhoOriginal) : false;
+        } else {
+            $imgOriginal = @imagecreatefromjpeg($caminhoOriginal);
+            if ($imgOriginal && function_exists('exif_read_data')) {
+                $exif = @exif_read_data($caminhoOriginal);
+                if (!empty($exif['Orientation'])) {
+                    switch ($exif['Orientation']) {
+                        case 3:
+                            $imgOriginal = imagerotate($imgOriginal, 180, 0);
+                            break;
+                        case 6:
+                            $imgOriginal = imagerotate($imgOriginal, -90, 0);
+                            break;
+                        case 8:
+                            $imgOriginal = imagerotate($imgOriginal, 90, 0);
+                            break;
+                    }
+                }
+            }
+        }
+
+        if (!$imgOriginal) {
+            return false;
+        }
+
+        $origWidth = imagesx($imgOriginal);
+        $origHeight = imagesy($imgOriginal);
+
+        $targetRatio = $targetWidth / $targetHeight;
+        $origRatio = $origWidth / $origHeight;
+
+        if ($origRatio > $targetRatio) {
+            $cropHeight = $origHeight;
+            $cropWidth = (int)($origHeight * $targetRatio);
+            $cropX = (int)(($origWidth - $cropWidth) / 2);
+            $cropY = 0;
+        } else {
+            $cropWidth = $origWidth;
+            $cropHeight = (int)($origWidth / $targetRatio);
+            $cropX = 0;
+            $cropY = (int)(($origHeight - $cropHeight) / 2);
+        }
+
+        $imgRedimensionada = imagecreatetruecolor($targetWidth, $targetHeight);
+        imagecopyresampled(
+            $imgRedimensionada,
+            $imgOriginal,
+            0,
+            0,
+            $cropX,
+            $cropY,
+            $targetWidth,
+            $targetHeight,
+            $cropWidth,
+            $cropHeight
+        );
+        imagedestroy($imgOriginal);
+
+        $brilhoTotal = 0;
+        $amostras = 0;
+        for ($y = 0; $y < $targetHeight; $y += 10) {
+            for ($x = 0; $x < $targetWidth; $x += 10) {
+                $rgb = imagecolorat($imgRedimensionada, $x, $y);
+                $brilhoTotal += ((($rgb >> 16) & 0xFF) * 0.299 + (($rgb >> 8) & 0xFF) * 0.587 + ($rgb & 0xFF) * 0.114);
+                $amostras++;
+            }
+        }
+        $luminanciaMedia = ($brilhoTotal / $amostras) / 255;
+
+        $fatorGamma = 1.0;
+        $fatorContraste = 1.0;
+
+        if ($aplicarAutomacao) {
+            $alvoLuminancia = 0.40;
+            $desvio = $luminanciaMedia - $alvoLuminancia;
+            $fatorGamma = 1.0 + ($desvio * 0.65);
+            $fatorContraste = 1.0 + (abs($desvio) * 0.20);
+        }
+
+        $matrix = [];
+        for ($y = 0; $y < $targetHeight; $y++) {
+            for ($x = 0; $x < $targetWidth; $x++) {
+                $rgb = imagecolorat($imgRedimensionada, $x, $y);
+                $v = ((($rgb >> 16) & 0xFF) * 0.299 + (($rgb >> 8) & 0xFF) * 0.587 + ($rgb & 0xFF) * 0.114) / 255;
+
+                if ($aplicarAutomacao) {
+                    $v = pow($v, $fatorGamma);
+                    $v = (($v - 0.5) * $fatorContraste) + 0.5;
+                }
+
+                $matrix[$y][$x] = max(0, min(1, $v)) * 255;
+            }
+        }
+        imagedestroy($imgRedimensionada);
+
+        for ($y = 0; $y < $targetHeight; $y++) {
+            for ($x = 0; $x < $targetWidth; $x++) {
+                $oldPixel = $matrix[$y][$x];
+                $newPixel = ($oldPixel > 128) ? 255 : 0;
+                $matrix[$y][$x] = $newPixel;
+
+                $errorVal = ($oldPixel - $newPixel) / 8;
+
+                if ($x + 1 < $targetWidth) {
+                    $matrix[$y][$x + 1] += $errorVal;
+                }
+                if ($x + 2 < $targetWidth) {
+                    $matrix[$y][$x + 2] += $errorVal;
+                }
+                if ($y + 1 < $targetHeight) {
+                    if ($x - 1 >= 0) {
+                        $matrix[$y + 1][$x - 1] += $errorVal;
+                    }
+                    $matrix[$y + 1][$x] += $errorVal;
+                    if ($x + 1 < $targetWidth) {
+                        $matrix[$y + 1][$x + 1] += $errorVal;
+                    }
+                }
+                if ($y + 2 < $targetHeight) {
+                    $matrix[$y + 2][$x] += $errorVal;
+                }
+            }
+        }
+
+        $imgFinal = imagecreate($targetWidth, $targetHeight);
+        $allocatedBG = imagecolorallocate($imgFinal, $corBG[0], $corBG[1], $corBG[2]);
+        $allocatedFG = imagecolorallocate($imgFinal, $corFG[0], $corFG[1], $corFG[2]);
+
+        for ($y = 0; $y < $targetHeight; $y++) {
+            for ($x = 0; $x < $targetWidth; $x++) {
+                $color = ($matrix[$y][$x] > 128) ? $allocatedBG : $allocatedFG;
+                imagesetpixel($imgFinal, $x, $y, $color);
+            }
+        }
+
+        $result = imagepng($imgFinal, $caminhoDestino, 8);
+        imagedestroy($imgFinal);
+
+        return $result;
+    }
+
+    /**
+     * Generate social media images (OG, JSON-LD sizes)
+     * 
+     * @param string $caminhoOriginal
+     * @param string $caminhoDestinoBase
+     * @param array $corBG
+     * @param array $corFG
+     * @return array<string, string>
+     */
+    public static function generateSocialImages(
+        string $caminhoOriginal,
+        string $caminhoDestinoBase,
+        array $corBG,
+        array $corFG
+    ): array {
+        $sizes = [
+            '1200x630' => [1200, 630],
+            '1920x1080' => [1920, 1080],
+            '1440x1080' => [1440, 1080],
+            '1080x1080' => [1080, 1080],
+        ];
+
+        $results = [];
+        $dir = dirname($caminhoDestinoBase);
+        $filename = pathinfo($caminhoDestinoBase, PATHINFO_FILENAME);
+
+        foreach ($sizes as $suffix => $dims) {
+            $dest = $dir . DIRECTORY_SEPARATOR . $filename . '_' . $suffix . '.png';
+            if (self::ditherAndCropImageToPng($caminhoOriginal, $dest, $dims[0], $dims[1], $corBG, $corFG)) {
+                $results[$suffix] = $dest;
+            }
+        }
+
+        return $results;
+    }
+
+    /**
+     * Helper function to extract and normalize SEO metadata
+     * 
+     * @param Page $page
+     * @return array<string, string>
+     */
+    public static function getSeoMetadata(Page $page): array
+    {
+        // 1. Description Fallback (always truncated to 150 chars max for safety)
+        $description = $page->metadata->description ?? '';
+        if (empty($description)) {
+            $description = strip_tags((string)($page->content ?? ''));
+        }
+        
+        // Remove newlines and multiple spaces
+        $description = preg_replace('/\s+/', ' ', $description);
+        $description = trim($description);
+        
+        // Truncate safely (150 chars max)
+        if (mb_strlen($description) > 150) {
+            $description = mb_substr($description, 0, 147) . '...';
+        }
+
+        // 2. Image Fallback
+        $image = $page->metadata->image ?? '';
+        $image_alt = $page->metadata->image_alt ?? '';
+
+        if (empty($image) && !empty($page->content)) {
+            // Find first img tag
+            $contentStr = (string)$page->content;
+            if (preg_match('/<img[^>]+src=[\'"]([^\'"]+)[\'"][^>]*>/i', $contentStr, $matches)) {
+                $image = $matches[1];
+                // Try to extract alt
+                if (preg_match('/alt=[\'"]([^\'"]*)[\'"]/i', $matches[0], $altMatches)) {
+                    $image_alt = $altMatches[1];
+                }
+            }
+        }
+
+        // Default hardcoded image if still empty
+        if (empty($image)) {
+            global $site;
+            $baseUrl = rtrim($site->metadata->fqdn ?? '', '/');
+            $image = $baseUrl . '/media/default.png';
+            $image_alt = $site->metadata->title ?? 'Default site image';
+        } else {
+            // Ensure image URL is absolute
+            if (!preg_match('/^https?:\/\//i', $image)) {
+                global $site;
+                $baseUrl = rtrim($site->metadata->fqdn ?? '', '/');
+                if (str_starts_with($image, '/')) {
+                    $image = $baseUrl . $image;
+                } else {
+                    $image = $baseUrl . '/' . ltrim($page->relpath ?? '', '/') . $image;
+                }
+            }
+        }
+
+        if (empty($image_alt)) {
+            $image_alt = $page->title ?? 'Post thumbnail';
+        }
+
+        // 3. Schema.org Type Mapping
+        $kind = strtolower($page->kind ?? 'generic');
+        $schemaType = 'WebPage';
+        switch ($kind) {
+            case 'article':
+                $schemaType = 'BlogPosting';
+                break;
+            case 'photo':
+                $schemaType = 'ImageObject';
+                break;
+            case 'jardim':
+                $schemaType = 'Article';
+                break;
+            case 'note':
+                $schemaType = 'SocialMediaPosting';
+                break;
+        }
+
+        return [
+            'description' => $description,
+            'image' => $image,
+            'image_alt' => $image_alt,
+            'schema_type' => $schemaType
+        ];
+    }
 }

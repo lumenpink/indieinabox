@@ -10,6 +10,7 @@ use Indieinabox\Site\Metadata;
 use Indieinabox\Feeds\FeedManager;
 
 beforeEach(function () {
+    /** @var \Tests\TestCase|mixed $this */
     $this->feedManager = new FeedManager();
     $this->metadata = new Metadata();
     $this->metadata->sitename = "Test Site";
@@ -45,6 +46,7 @@ beforeEach(function () {
 });
 
 afterEach(function () {
+    /** @var \Tests\TestCase|mixed $this */
     // Cleanup temp dir
     $files = array_diff(scandir($this->tempDir), ['.', '..']);
     foreach ($files as $file) {
@@ -54,6 +56,7 @@ afterEach(function () {
 });
 
 it('generates a valid RSS feed with correct limits', function () {
+    /** @var \Tests\TestCase|mixed $this */
     $rssFile = $this->tempDir . DIRECTORY_SEPARATOR . 'rss.xml';
     
     // Limit to 3
@@ -74,6 +77,7 @@ it('generates a valid RSS feed with correct limits', function () {
 });
 
 it('generates a valid Atom feed with correct limits', function () {
+    /** @var \Tests\TestCase|mixed $this */
     $atomFile = $this->tempDir . DIRECTORY_SEPARATOR . 'atom.xml';
     
     // Limit to 2
@@ -92,6 +96,7 @@ it('generates a valid Atom feed with correct limits', function () {
 });
 
 it('respects the limit 0 (infinite)', function () {
+    /** @var \Tests\TestCase|mixed $this */
     $rssFile = $this->tempDir . DIRECTORY_SEPARATOR . 'rss.xml';
     
     // Limit to 0
@@ -104,6 +109,7 @@ it('respects the limit 0 (infinite)', function () {
 });
 
 it('respects hide_on_rss logic in frontmatter', function () {
+    /** @var \Tests\TestCase|mixed $this */
     $rssFile = $this->tempDir . DIRECTORY_SEPARATOR . 'rss.xml';
     $atomFile = $this->tempDir . DIRECTORY_SEPARATOR . 'atom.xml';
     
@@ -160,6 +166,7 @@ it('respects hide_on_rss logic in frontmatter', function () {
 });
 
 it('removes drafts and generic pages', function () {
+    /** @var \Tests\TestCase|mixed $this */
     $rssFile = $this->tempDir . DIRECTORY_SEPARATOR . 'rss.xml';
     
     $this->pages[] = Page::fromArray([

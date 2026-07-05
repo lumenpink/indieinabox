@@ -51,11 +51,11 @@ function formatType(?ReflectionType $type): string
         return 'mixed';
     }
     if ($type instanceof ReflectionUnionType) {
-        $types = array_map(fn($t) => $t->getName(), $type->getTypes());
+        $types = array_map(fn($t) => $t instanceof ReflectionNamedType ? $t->getName() : (string)$t, $type->getTypes());
         return implode('|', $types);
     }
     if ($type instanceof ReflectionIntersectionType) {
-        $types = array_map(fn($t) => $t->getName(), $type->getTypes());
+        $types = array_map(fn($t) => $t instanceof ReflectionNamedType ? $t->getName() : (string)$t, $type->getTypes());
         return implode('&', $types);
     }
     if ($type instanceof ReflectionNamedType) {

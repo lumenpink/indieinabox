@@ -14,12 +14,37 @@ if (!empty($kindConfig['palette'])) {
     $bg = $kindConfig['palette']['bg'] ?? $bg;
     $fg = $kindConfig['palette']['fg'] ?? $fg;
 }
+
+$seo = \Indieinabox\Helper::getSeoMetadata($page);
+$baseUrl = rtrim($site->metadata->fqdn ?? '', '/');
+$pageUrl = $baseUrl . '/' . ltrim($page->relpath ?? '', '/');
+$imageInfo = pathinfo($seo['image']);
+$ogImage = $imageInfo['dirname'] . '/' . $imageInfo['filename'] . '_1200x630.png';
 ?>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <meta name="generator" content="Indieinabox v0.1.0" />
 <title><?= empty($page->title) || $page->title == "Untitled" ? $site->metadata->author : $page->title . " | " . $site->metadata->author ?></title>
-<meta name="description" content="<?= htmlspecialchars($page->title) ?>">
+<meta name="description" content="<?= htmlspecialchars($seo['description']) ?>">
+<link rel="canonical" href="<?= htmlspecialchars($pageUrl) ?>">
+
+<meta property="og:site_name" content="<?= htmlspecialchars($site->metadata->author ?? 'Blog') ?>" />
+<meta property="og:type" content="<?= htmlspecialchars($seo['schema_type'] === 'BlogPosting' ? 'article' : 'website') ?>" />
+<meta property="og:title" content="<?= empty($page->title) || $page->title == "Untitled" ? htmlspecialchars($site->metadata->author ?? '') : htmlspecialchars($page->title) ?>" />
+<meta property="og:description" content="<?= htmlspecialchars($seo['description']) ?>" />
+<meta property="og:url" content="<?= htmlspecialchars($pageUrl) ?>" />
+<meta property="og:image" content="<?= htmlspecialchars($ogImage) ?>" />
+<meta property="og:image:alt" content="<?= htmlspecialchars($seo['image_alt']) ?>" />
+<?php if (!empty($page->isodate)): ?>
+<meta property="article:published_time" content="<?= htmlspecialchars($page->isodate) ?>" />
+<?php endif; ?>
+<meta property="article:author" content="<?= htmlspecialchars($site->metadata->author ?? '') ?>" />
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="<?= empty($page->title) || $page->title == "Untitled" ? htmlspecialchars($site->metadata->author ?? '') : htmlspecialchars($page->title) ?>">
+<meta name="twitter:description" content="<?= htmlspecialchars($seo['description']) ?>">
+<meta name="twitter:image" content="<?= htmlspecialchars($ogImage) ?>">
+<meta name="twitter:image:alt" content="<?= htmlspecialchars($seo['image_alt']) ?>">
 <meta name="author" content="<?= htmlspecialchars($site->metadata->author) ?>">
 <link rel="microsub" href="<?= rtrim($site->metadata->fqdn, '/') ?>/microsub">
 <link rel="alternate" type="application/rss+xml" title="RSS Feed" href="<?= $page->relpath ?>rss.xml">

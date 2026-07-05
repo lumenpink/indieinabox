@@ -8,6 +8,7 @@ use Indieinabox\Site;
 use Indieinabox\Site\Localization;
 
 beforeEach(function () {
+    /** @var \Tests\TestCase|mixed $this */
     $this->site = new Site();
     $this->site->localization = new Localization();
     $this->site->localization->lang = ['en', 'pt'];
@@ -17,6 +18,7 @@ beforeEach(function () {
 });
 
 it('throws exception when translation_auto is disabled and parity is missing', function () {
+    /** @var \Tests\TestCase|mixed $this */
     $this->site->options->translation_auto = 'disabled';
     
     $page = Page::fromArray([
@@ -38,6 +40,7 @@ it('throws exception when translation_auto is disabled and parity is missing', f
 });
 
 it('generates pseudo translations when translation_auto is pseudo', function () {
+    /** @var \Tests\TestCase|mixed $this */
     $this->site->options->translation_auto = 'pseudo';
     
     $page = Page::fromArray([
@@ -77,6 +80,7 @@ it('generates pseudo translations when translation_auto is pseudo', function () 
 });
 
 it('respects parity rules (from-main-only)', function () {
+    /** @var \Tests\TestCase|mixed $this */
     $this->site->options->translation_parity = 'from-main-only';
     
     // A sublang page (pt) - should NOT trigger virtualization to EN
@@ -101,6 +105,7 @@ it('respects parity rules (from-main-only)', function () {
 });
 
 it('getLanguageLinks falls back to home when parity is disabled and translation is missing', function () {
+    /** @var \Tests\TestCase|mixed $this */
     $this->site->options->translation_parity = 'disabled';
     
     $page = Page::fromArray([

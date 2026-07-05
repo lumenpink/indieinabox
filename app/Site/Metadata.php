@@ -37,6 +37,11 @@ class Metadata
     public ?string $indieauthPassword = null;
 
     /**
+     * @var string
+     */
+    public string $description;
+
+    /**
      * SiteMetadata constructor.
      *
      * @param string $title
@@ -44,18 +49,21 @@ class Metadata
      * @param string $author
      * @param string $defaultTitle
      * @param string $fqdn
+     * @param string $description
      */
     public function __construct(
         string $title = "My Site",
         string $sitename = "My Site",
         string $author = "Me",
         string $defaultTitle = "Untitled",
-        string $fqdn = "http://localhost:8080"
+        string $fqdn = "http://localhost:8080",
+        string $description = "My Site Description"
     ) {
         $this->title = $title;
         $this->sitename = $sitename;
         $this->author = $author;
         $this->defaultTitle = $defaultTitle;
         $this->fqdn = $fqdn;
+        $this->description = $description;
     }
 }

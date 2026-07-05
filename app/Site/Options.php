@@ -41,6 +41,15 @@ class Options
     public int $feed_limit;
 
     /**
+     * @var string
+     */
+    public string $translation_parity;
+    /**
+     * @var string
+     */
+    public string $translation_auto;
+
+    /**
      * SiteOptions constructor.
      *
      * @param bool $buildAll
@@ -49,6 +58,9 @@ class Options
      * @param bool $forceStaticOverride
      * @param string|null $htmlpostprocessing
      * @param bool $prettylinks
+     * @param int $feed_limit
+     * @param string $translation_parity
+     * @param string $translation_auto
      */
     public function __construct(
         bool $buildAll = true,
@@ -57,7 +69,9 @@ class Options
         bool $forceStaticOverride = false,
         ?string $htmlpostprocessing = null,
         bool $prettylinks = true,
-        int $feed_limit = 20
+        int $feed_limit = 20,
+        string $translation_parity = 'full',
+        string $translation_auto = 'pseudo'
     ) {
         $this->buildAll = $buildAll;
         $this->dev = $dev;
@@ -66,5 +80,7 @@ class Options
         $this->htmlpostprocessing = $htmlpostprocessing;
         $this->prettylinks = $prettylinks;
         $this->feed_limit = $feed_limit;
+        $this->translation_parity = $translation_parity;
+        $this->translation_auto = $translation_auto;
     }
 }

@@ -489,17 +489,21 @@ class SiteBuilder
         $reposts = \Indieinabox\Helper::getInteractions($page, 'repost');
         $replies = \Indieinabox\Helper::getInteractions($page, 'reply');
 
-        if (count($likes) > 0 || count($reposts) > 0) {
+        if (count($likes) > 0 || count($reposts) > 0 || count($replies) > 0) {
             $interactionsDir = dirname($destinationFile) . DIRECTORY_SEPARATOR . 'interactions';
             if (!is_dir($interactionsDir)) {
                 mkdir($interactionsDir, 0777, true);
             }
             $interactionsFile = $interactionsDir . DIRECTORY_SEPARATOR . 'index.html';
+            $interactionsPage = clone $page;
+            $interactionsPage->relpath .= '../';
             
             ob_start();
+            $viewVars = get_defined_vars();
+            $viewVars['page'] = $interactionsPage;
             ThemeManager::loadView(
                 $base . DIRECTORY_SEPARATOR . $themeDir . "/views/interactions_page.php",
-                get_defined_vars()
+                $viewVars
             );
             $interactionsContent = ob_get_clean();
             
@@ -521,11 +525,15 @@ class SiteBuilder
                 mkdir($replyDir, 0777, true);
             }
             $replyFile = $replyDir . DIRECTORY_SEPARATOR . 'index.html';
+            $replyPage = clone $page;
+            $replyPage->relpath .= '../../';
             
             ob_start();
+            $viewVars = array_merge(get_defined_vars(), ['reply' => $replyItem]);
+            $viewVars['page'] = $replyPage;
             ThemeManager::loadView(
                 $base . DIRECTORY_SEPARATOR . $themeDir . "/views/interaction_reply.php",
-                array_merge(get_defined_vars(), ['reply' => $replyItem])
+                $viewVars
             );
             $replyContent = ob_get_clean();
             

@@ -264,7 +264,8 @@ class HtmlRenderer implements RendererInterface
             
             if (isset($originalTarget)) {
                 $origEsc = htmlspecialchars($originalTarget, ENT_QUOTES | ENT_HTML5);
-                return "<a href=\"{$origEsc}\" class=\"dithered-image-link\">{$imgTag}</a>\n";
+                $linkText = \Indieinabox\Helper::translate('Original image');
+                return "{$imgTag}<br><a href=\"{$origEsc}\" class=\"dithered-image-link\" style=\"font-size: 0.85em; opacity: 0.8;\">[ {$linkText} ]</a>\n";
             }
             return $imgTag . "\n";
         }

@@ -14,7 +14,12 @@ $replies = \Indieinabox\Helper::getInteractions($p, 'reply');
                         <div class="p-comment h-cite" id="reply-<?= md5($reply['url']) ?>" style="margin-bottom: 1.5em; padding-left: 10px; border-left: 2px solid var(--accent);">
                             <div style="margin-bottom: 0.3em;">
                                 <strong><a class="p-author h-card" href="<?= htmlspecialchars($reply['url']) ?>" rel="nofollow"><?= htmlspecialchars($reply['author_name']) ?></a></strong>
-                                <a href="<?= $p->relpath ?><?= $p->slug ?>/reply/<?= md5($reply['url']) ?>" style="margin-left: 10px; font-size: 0.85em; opacity: 0.7;">
+                                <?php
+                                $baseDir = str_ends_with($p->slug, '.html') ? dirname($p->slug) : rtrim($p->slug, '/');
+                                if ($baseDir === '.' || $baseDir === '\\') $baseDir = '';
+                                $replyUrl = $p->relpath . ltrim($baseDir ? $baseDir . '/' : '', '/') . 'reply/' . md5($reply['url']) . '/';
+                                ?>
+                                <a href="<?= $replyUrl ?>" style="margin-left: 10px; font-size: 0.85em; opacity: 0.7;">
                                     <?= \Indieinabox\Helper::translate('Permalink') ?>
                                 </a>
                             </div>

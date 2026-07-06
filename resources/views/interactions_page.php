@@ -14,7 +14,7 @@
     
     <main>
         <article class="h-entry">
-            <h1>Interações em: <a href="<?= $page->relpath ?><?= $page->slug ?>"><?= htmlspecialchars($page->title) ?></a></h1>
+            <h1><?= \Indieinabox\Helper::translate('Interactions on') ?>: <a href="<?= $page->relpath ?><?= $page->slug ?>"><?= htmlspecialchars($page->title) ?></a></h1>
 
             <?php if (count($likes) > 0): ?>
                 <section style="margin-top: 2em;">

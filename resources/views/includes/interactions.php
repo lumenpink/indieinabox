@@ -31,7 +31,7 @@ $replies = \Indieinabox\Helper::getInteractions($p, 'reply');
                             <div style="margin-bottom: 0.3em;">
                                 <strong><a class="p-author h-card" href="<?= htmlspecialchars($reply['url']) ?>" rel="nofollow"><?= htmlspecialchars($reply['author_name']) ?></a></strong>
                                 <a href="<?= $p->relpath ?><?= $p->slug ?>/reply/<?= md5($reply['url']) ?>" style="margin-left: 10px; font-size: 0.85em; opacity: 0.7;">
-                                    Permalink
+                                    <?= \Indieinabox\Helper::translate('Permalink') ?>
                                 </a>
                             </div>
                             <div class="p-content" style="font-size: 0.95em; line-height: 1.4; opacity: 0.95;">

@@ -13,7 +13,7 @@
     
     <main>
         <article class="h-entry">
-            <h1>Resposta a: <a class="u-in-reply-to" href="<?= $page->relpath ?><?= $page->slug ?>"><?= htmlspecialchars($page->title) ?></a></h1>
+            <h1><?= \Indieinabox\Helper::translate('Reply to') ?>: <a class="u-in-reply-to" href="<?= $page->relpath ?><?= $page->slug ?>"><?= htmlspecialchars($page->title) ?></a></h1>
 
             <div class="p-comment h-cite" style="margin-top: 2em; padding: 1em; border-left: 4px solid var(--accent); background: rgba(0,0,0,0.02);">
                 <div style="margin-bottom: 1em;">
@@ -36,7 +36,7 @@
             </div>
             
             <div style="margin-top: 2em; font-size: 0.9em;">
-                <a href="<?= $page->relpath ?><?= $page->slug ?>">&larr; Voltar para a postagem original</a>
+                <a href="<?= $page->relpath ?><?= $page->slug ?>">&larr; <?= \Indieinabox\Helper::translate('Back to original post') ?></a>
             </div>
         </article>
     </main>

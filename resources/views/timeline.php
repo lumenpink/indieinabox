@@ -16,7 +16,7 @@ global $timeline, $mentions;
         
         <?php if (!empty($mentions)): ?>
             <section class="twtxt-mentions" style="margin-bottom: 3em;">
-                <h2>Menções Recentes</h2>
+                <h2><?= \Indieinabox\Helper::translate('Recent Mentions') ?></h2>
                 <ul style="list-style: none; padding-left: 0;">
                     <?php foreach ($mentions as $mention): ?>
                         <li style="margin-bottom: 1em; padding: 1em; background: rgba(0,0,0,0.03); border-left: 4px solid var(--accent);">
@@ -36,9 +36,9 @@ global $timeline, $mentions;
         <?php endif; ?>
 
         <section class="twtxt-timeline">
-            <h2>Timeline</h2>
+            <h2><?= \Indieinabox\Helper::translate('Timeline') ?></h2>
             <?php if (empty($timeline)): ?>
-                <p>Sua timeline está vazia. Siga alguém para ver atualizações aqui!</p>
+                <p><?= \Indieinabox\Helper::translate('Your timeline is empty. Follow someone to see updates here!') ?></p>
             <?php else: ?>
                 <ul style="list-style: none; padding-left: 0;">
                     <?php foreach ($timeline as $entry): ?>

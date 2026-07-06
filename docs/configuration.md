@@ -14,7 +14,7 @@ The primary generator settings are loaded from `config.yml` in the project root:
 | `sitename` | `string` | General website site name. |
 | `author` | `string` | Owner/Author name. |
 | `fqdn` | `string` | Absolute URL (FQDN) of the deployed site (e.g. `https://lumen.pink`). |
-| `contentdir` | `string` | Root folder containing source documents (default: `content`). |
+| `contentdir` | `string` | Root folder containing source documents. Can be a relative path (e.g. `content`) or an absolute path on the server. |
 | `outputdir` | `string` | Output folder where generation is written (default: `public`). |
 | `buildall` | `bool` | If true, compiles all documents. |
 | `htmlpostprocessing` | `string` | Minification / Beautification mode (`"minify"` or `"beautify"`). |

@@ -245,3 +245,36 @@ Atkinson adaptive dithering using GD to index 8-bit GIF
 @param array $corFG
 @param bool $aplicarAutomacao
 @return bool
+
+### ditherAndCropImageToPng()
+`public static function ditherAndCropImageToPng(string $caminhoOriginal, string $caminhoDestino, int $targetWidth, int $targetHeight, array $corBG, array $corFG, bool $aplicarAutomacao = true): bool`
+
+Atkinson adaptive dithering with cropping to exact dimensions, saved as PNG
+
+@param string $caminhoOriginal
+@param string $caminhoDestino
+@param int $targetWidth
+@param int $targetHeight
+@param array $corBG
+@param array $corFG
+@param bool $aplicarAutomacao
+@return bool
+
+### generateSocialImages()
+`public static function generateSocialImages(string $caminhoOriginal, string $caminhoDestinoBase, array $corBG, array $corFG): array`
+
+Generate social media images (OG, JSON-LD sizes)
+
+@param string $caminhoOriginal
+@param string $caminhoDestinoBase
+@param array $corBG
+@param array $corFG
+@return array<string, string>
+
+### getSeoMetadata()
+`public static function getSeoMetadata(Indieinabox\Page $page): array`
+
+Helper function to extract and normalize SEO metadata
+
+@param Page $page
+@return array<string, string>

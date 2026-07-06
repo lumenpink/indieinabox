@@ -11,15 +11,15 @@ and compiles feeds and assets into the output directory.
 
 ### `private Indieinabox\Site $site`
 
-@var Indieinabox\Site
+@var \Indieinabox\Site
 
 ### `private Indieinabox\Pages $pages`
 
-@var Indieinabox\Pages
+@var \Indieinabox\Pages
 
 ### `private Indieinabox\ParserInterface $parser`
 
-@var Indieinabox\ParserInterface
+@var \Indieinabox\ParserInterface
 
 ## Methods
 
@@ -27,15 +27,15 @@ and compiles feeds and assets into the output directory.
 `public function __construct(Indieinabox\Site $site, ?Indieinabox\Pages $pages = null, ?Indieinabox\ParserInterface $parser = null)`
 
 Method __construct
-@param Indieinabox\Site $site
-@param ?Indieinabox\Pages $pages
-@param ?Indieinabox\ParserInterface $parser
+@param \Indieinabox\Site $site
+@param ?\Indieinabox\Pages $pages
+@param ?\Indieinabox\ParserInterface $parser
 
 ### getPages()
 `public function getPages(): Indieinabox\Pages`
 
 Method getPages
-@return Indieinabox\Pages
+@return \Indieinabox\Pages
 
 ### build()
 `public function build(): void`
@@ -61,7 +61,7 @@ Method virtualizeMissingLanguages
 `public function pseudoTranslate(Indieinabox\Page $page, string $targetLang): void`
 
 Method pseudoTranslate
-@param Indieinabox\Page $page
+@param \Indieinabox\Page $page
 @param string $targetLang
 
 @return void
@@ -84,7 +84,7 @@ Method generateHTMLFiles
 `private function createHTMLFile(Indieinabox\Page $page): void`
 
 Method createHTMLFile
-@param Indieinabox\Page $page
+@param \Indieinabox\Page $page
 
 @return void
 
@@ -122,7 +122,7 @@ Method copyLiveJsFile
 `private function createGeminiFile(Indieinabox\Page $page): void`
 
 Method createGeminiFile
-@param Indieinabox\Page $page
+@param \Indieinabox\Page $page
 
 @return void
 
@@ -130,7 +130,7 @@ Method createGeminiFile
 `private function createGopherFile(Indieinabox\Page $page): void`
 
 Method createGopherFile
-@param Indieinabox\Page $page
+@param \Indieinabox\Page $page
 
 @return void
 

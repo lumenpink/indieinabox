@@ -92,7 +92,7 @@ class SiteBuilder
         Helper::recursiveRmdir($base . DIRECTORY_SEPARATOR . $this->site->paths->outputDirMedia);
 
         // Scan content
-        $this->scan($base . DIRECTORY_SEPARATOR . $this->site->paths->contentDir);
+        $this->scan($this->site->paths->getContentPath());
 
         // Virtualize missing translations
         $this->virtualizeMissingLanguages();
@@ -122,7 +122,7 @@ class SiteBuilder
     public function copyMedia(): void
     {
         $base = $this->site->paths->baseDir;
-        $contentMediaDir = $base . DIRECTORY_SEPARATOR . rtrim($this->site->paths->contentDir, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . 'media';
+        $contentMediaDir = rtrim($this->site->paths->getContentPath(), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . 'media';
         if (!is_dir($contentMediaDir)) {
             return;
         }

@@ -140,9 +140,13 @@ class Helper
             if (!isset($kind)) {
                 $isRoot = false;
                 if ($isObject) {
-                    $baseDir = $site->paths->baseDir ?? '';
-                    $contentDir = $site->paths->contentDir ?? 'content';
-                    $contentPath = $baseDir . DIRECTORY_SEPARATOR . $contentDir;
+                    if (isset($site->paths) && method_exists($site->paths, 'getContentPath')) {
+                        $contentPath = $site->paths->getContentPath();
+                    } else {
+                        $baseDir = $site->paths->baseDir ?? '';
+                        $contentDir = $site->paths->contentDir ?? 'content';
+                        $contentPath = $baseDir . DIRECTORY_SEPARATOR . $contentDir;
+                    }
                     $relPath = str_replace($contentPath, "", $page->filepath ?? '');
                     $relPath = trim($relPath, DIRECTORY_SEPARATOR);
                     

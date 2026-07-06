@@ -19,7 +19,7 @@ Class GemtextRenderer
 `public function __construct(?Indieinabox\Page $page = null)`
 
 Method __construct
-@param ?Indieinabox\Page $page
+@param ?\Indieinabox\Page $page
 
 ### render()
 `public function render(Indieinabox\Markdown\Node $node): string`
@@ -33,7 +33,7 @@ Renders a Node AST to Gemini/Gemtext format.
 `private function renderNode(Indieinabox\Markdown\Node $node): string`
 
 Method renderNode
-@param Indieinabox\Markdown\Node $node
+@param \Indieinabox\Markdown\Node $node
 
 @return string
 
@@ -41,6 +41,6 @@ Method renderNode
 `private function renderPlain(Indieinabox\Markdown\Node $node): string`
 
 Method renderPlain
-@param Indieinabox\Markdown\Node $node
+@param \Indieinabox\Markdown\Node $node
 
 @return string

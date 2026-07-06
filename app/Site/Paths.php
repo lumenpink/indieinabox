@@ -68,4 +68,19 @@ class Paths
         $this->contentDir = $contentDir;
         $this->themeDir = $themeDir;
     }
+
+    /**
+     * Retrieves the absolute path to the content directory.
+     * 
+     * @return string
+     */
+    public function getContentPath(): string
+    {
+        // Check if contentDir is already an absolute path (e.g., /var/www/content or C:\content)
+        if (str_starts_with($this->contentDir, DIRECTORY_SEPARATOR) || preg_match('#^[a-zA-Z]:\\\\#', $this->contentDir)) {
+            return rtrim($this->contentDir, DIRECTORY_SEPARATOR);
+        }
+        
+        return rtrim($this->baseDir, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . trim($this->contentDir, DIRECTORY_SEPARATOR);
+    }
 }

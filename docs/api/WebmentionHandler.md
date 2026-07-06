@@ -7,7 +7,7 @@ Class WebmentionHandler
 
 ### `private Indieinabox\Site $site`
 
-@var Indieinabox\Site
+@var \Indieinabox\Site
 
 ## Methods
 
@@ -15,7 +15,7 @@ Class WebmentionHandler
 `public function __construct(Indieinabox\Site $site)`
 
 Method __construct
-@param Indieinabox\Site $site
+@param \Indieinabox\Site $site
 
 ### handle()
 `public function handle(): void`

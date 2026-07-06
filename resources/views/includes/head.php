@@ -131,6 +131,11 @@ $ogImage = $imageInfo['dirname'] . '/' . $imageInfo['filename'] . '_1200x630.png
     a {
         transition: color 0.15s ease-in-out;
     }
+    a:focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 2px;
+        border-radius: 2px;
+    }
 </style>
 <?php if (isset($site->options->dev) && $site->options->dev): ?>
     <script src="<?= $page->relpath ?>js/live.js"></script>

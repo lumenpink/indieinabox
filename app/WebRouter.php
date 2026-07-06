@@ -214,7 +214,7 @@ class WebRouter
         $filePath = $base . DIRECTORY_SEPARATOR . $outputDir . $path;
 
         if (strpos($path, '/media/') === 0) {
-            $contentMediaPath = rtrim($base, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . 'content';
+            $contentMediaPath = rtrim($this->site->paths->getContentPath(), DIRECTORY_SEPARATOR);
             $contentMediaPath .= str_replace('/', DIRECTORY_SEPARATOR, $path);
             if (file_exists($contentMediaPath) && is_file($contentMediaPath)) {
                 $filePath = $contentMediaPath;

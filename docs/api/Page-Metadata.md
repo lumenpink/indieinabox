@@ -59,10 +59,26 @@ This class handles metadata related to the page.
 
 @var int|null
 
+### `public mixed $translated_by_ia`
+
+@var bool|string|null
+
+### `public mixed $description`
+
+@var string|null
+
+### `public mixed $image`
+
+@var string|null
+
+### `public mixed $image_alt`
+
+@var string|null
+
 ## Methods
 
 ### __construct()
-`public function __construct(array $category = [], array $tags = [], string $title = 'Untitled', string $nick = 'untitled', bool $noauthor = false, string $kind = 'note', string $layout = 'page', ?string $maturity = null, ?string $reliability = null, mixed $menu = null, ?int $menu_order = null, bool $hide_title = false, mixed $hide_on_rss = false)`
+`public function __construct(array $category = [], array $tags = [], string $title = 'Untitled', string $nick = 'untitled', bool $noauthor = false, string $kind = 'note', string $layout = 'page', ?string $maturity = null, ?string $reliability = null, mixed $menu = null, ?int $menu_order = null, bool $hide_title = false, mixed $hide_on_rss = false, mixed $translated_by_ia = null, ?string $description = null, ?string $image = null, ?string $image_alt = null)`
 
 PageMetadata constructor.
 

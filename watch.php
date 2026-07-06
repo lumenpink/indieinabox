@@ -1,8 +1,29 @@
 <?php
 
-echo "Watching for changes in resources, app, theme, and content...\n";
+$config = require '.config.php';
+$dbPath = $config['db_path'] ?? __DIR__ . '/data/indieinabox.sqlite';
+$contentDir = 'content';
+if (file_exists($dbPath)) {
+    try {
+        $db = new PDO('sqlite:' . $dbPath);
+        $stmt = $db->query("SELECT value FROM settings WHERE key = 'contentdir'");
+        if ($stmt) {
+            $result = $stmt->fetchColumn();
+            if ($result) {
+                $contentDir = $result;
+            }
+        }
+    } catch (PDOException $e) {
+        // Ignore and fallback to 'content'
+    }
+}
+$content_path = (str_starts_with($contentDir, DIRECTORY_SEPARATOR) || preg_match('#^[a-zA-Z]:\\\\#', $contentDir)) 
+    ? rtrim($contentDir, DIRECTORY_SEPARATOR) 
+    : __DIR__ . DIRECTORY_SEPARATOR . $contentDir;
 
-$directories = ['resources', 'app', 'content', 'theme'];
+echo "Watching for changes in resources, app, theme, and {$content_path}...\n";
+
+$directories = ['resources', 'app', $content_path, 'theme'];
 $lastHash = '';
 
 while (true) {

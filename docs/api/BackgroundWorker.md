@@ -11,7 +11,7 @@ Class BackgroundWorker
 
 ### `private Indieinabox\Site $site`
 
-@var Indieinabox\Site
+@var \Indieinabox\Site
 
 ## Methods
 
@@ -19,7 +19,7 @@ Class BackgroundWorker
 `public function __construct(Indieinabox\Site $site)`
 
 Method __construct
-@param Indieinabox\Site $site
+@param \Indieinabox\Site $site
 
 ### runAll()
 `public function runAll(): void`

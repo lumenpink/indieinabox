@@ -42,25 +42,25 @@ if ($prettylinks) {
 |/\/  | | |_| | | | | | |  __/ | | |
       |_|\__,_|_| |_| |_|\___|_| |_|</pre>
     <?php if (count($langs) > 1): ?>
-        <div class="lang-selector" style="text-align: center;">
+        <nav class="lang-selector" aria-label="Language selector" style="text-align: center;">
             <?php 
             $langLinksHTML = [];
             foreach ($langs as $l) {
                 $label = strtoupper($l);
                 if ($l === $lang) {
-                    $langLinksHTML[] = '<strong>' . htmlspecialchars($label) . '</strong>';
+                    $langLinksHTML[] = '<strong aria-current="true">' . htmlspecialchars($label) . '</strong>';
                 } else {
                     $url = $links[$l] ?? '';
                     if ($url !== '') {
-                        $langLinksHTML[] = '<a href="' . htmlspecialchars($url) . '">' . htmlspecialchars($label) . '</a>';
+                        $langLinksHTML[] = '<a href="' . htmlspecialchars($url) . '" hreflang="' . htmlspecialchars($l) . '">' . htmlspecialchars($label) . '</a>';
                     }
                 }
             }
             echo '[ ' . implode(' &bull; ', $langLinksHTML) . ' ]';
             ?>
-        </div>
+        </nav>
     <?php endif; ?>
-    <nav class="top-nav" style="text-align: center;">
+    <nav class="top-nav" aria-label="Main navigation" style="text-align: center;">
         <?php
         global $headerLinks;
         $navItems = [];

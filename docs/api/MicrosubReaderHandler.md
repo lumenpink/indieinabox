@@ -7,7 +7,7 @@ Class MicrosubReaderHandler
 
 ### `private Indieinabox\Site $site`
 
-@var Indieinabox\Site
+@var \Indieinabox\Site
 
 ## Methods
 
@@ -15,7 +15,7 @@ Class MicrosubReaderHandler
 `public function __construct(Indieinabox\Site $site)`
 
 Method __construct
-@param Indieinabox\Site $site
+@param \Indieinabox\Site $site
 
 ### handleRequest()
 `public function handleRequest(): void`

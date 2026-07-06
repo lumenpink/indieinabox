@@ -61,9 +61,10 @@ class FileProcessor
      */
     public function generateBaseSlug(string $file): string
     {
-        $slug = str_replace($this->base . DIRECTORY_SEPARATOR . $this->site->paths->contentDir, "", $file);
+        $slug = str_replace($this->site->paths->getContentPath(), "", $file);
         $slug = ltrim($slug, DIRECTORY_SEPARATOR);
-        return (string) preg_replace("/^" . $this->site->paths->contentDir . "/", "", $slug);
+        $contentDirRegex = preg_quote(trim($this->site->paths->contentDir, DIRECTORY_SEPARATOR), '/');
+        return ltrim((string) preg_replace("/^" . $contentDirRegex . "/", "", $slug), DIRECTORY_SEPARATOR);
     }
 
     /**

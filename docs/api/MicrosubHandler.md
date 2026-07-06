@@ -7,7 +7,7 @@ Class MicrosubHandler
 
 ### `private Indieinabox\IndieAuthHandler $authHandler`
 
-@var Indieinabox\IndieAuthHandler
+@var \Indieinabox\IndieAuthHandler
 
 ### `private PDO $db`
 
@@ -19,7 +19,7 @@ Class MicrosubHandler
 `public function __construct(Indieinabox\Site $site)`
 
 Method __construct
-@param Indieinabox\Site $site
+@param \Indieinabox\Site $site
 
 ### handleRequest()
 `public function handleRequest(): void`

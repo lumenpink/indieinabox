@@ -7,7 +7,7 @@ Class WebRouter
 
 ### `protected Indieinabox\Site $site`
 
-@var Indieinabox\Site
+@var \Indieinabox\Site
 
 ## Methods
 
@@ -15,7 +15,7 @@ Class WebRouter
 `public function __construct(Indieinabox\Site $site)`
 
 Method __construct
-@param Indieinabox\Site $site
+@param \Indieinabox\Site $site
 
 ### handleRequest()
 `public function handleRequest(): void`
@@ -27,49 +27,49 @@ Method handleRequest
 `protected function createWebmentionHandler(): Indieinabox\WebmentionHandler`
 
 Method createWebmentionHandler
-@return Indieinabox\WebmentionHandler
+@return \Indieinabox\WebmentionHandler
 
 ### createIndieAuthHandler()
 `protected function createIndieAuthHandler(): Indieinabox\IndieAuthHandler`
 
 Method createIndieAuthHandler
-@return Indieinabox\IndieAuthHandler
+@return \Indieinabox\IndieAuthHandler
 
 ### createConfigHandler()
 `protected function createConfigHandler(): Indieinabox\ConfigHandler`
 
 Method createConfigHandler
-@return Indieinabox\ConfigHandler
+@return \Indieinabox\ConfigHandler
 
 ### createMicropubHandler()
 `protected function createMicropubHandler(): Indieinabox\MicropubHandler`
 
 Method createMicropubHandler
-@return Indieinabox\MicropubHandler
+@return \Indieinabox\MicropubHandler
 
 ### createMicropubClientHandler()
 `protected function createMicropubClientHandler(): Indieinabox\MicropubClientHandler`
 
 Method createMicropubClientHandler
-@return Indieinabox\MicropubClientHandler
+@return \Indieinabox\MicropubClientHandler
 
 ### createMicrosubHandler()
 `protected function createMicrosubHandler(): Indieinabox\MicrosubHandler`
 
 Method createMicrosubHandler
-@return Indieinabox\MicrosubHandler
+@return \Indieinabox\MicrosubHandler
 
 ### createMicrosubReaderHandler()
 `protected function createMicrosubReaderHandler(): Indieinabox\MicrosubReaderHandler`
 
 Method createMicrosubReaderHandler
-@return Indieinabox\MicrosubReaderHandler
+@return \Indieinabox\MicrosubReaderHandler
 
 ### createActivityPubHandler()
 `protected function createActivityPubHandler(): Indieinabox\ActivityPubHandler`
 
 Method createActivityPubHandler
-@return Indieinabox\ActivityPubHandler
+@return \Indieinabox\ActivityPubHandler
 
 ### serveStatic()
 `private function serveStatic(): void`

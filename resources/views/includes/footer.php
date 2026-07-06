@@ -2,9 +2,9 @@
 /** @var \Indieinabox\Page $page */
 global $footerLinks;
 ?>
-<footer>
+<footer role="contentinfo">
     <hr>
-    <div class="footer-links" style="text-align: center;">
+    <nav class="footer-links" aria-label="Footer navigation" style="text-align: center;">
         <?php
         $linksHTML = [];
         if (!empty($footerLinks)) {
@@ -16,7 +16,7 @@ global $footerLinks;
         $linksHTML[] = '<a href="' . $page->relpath . 'atom.xml">ATOM</a>';
         echo implode(' | ', $linksHTML);
         ?>
-    </div>
+    </nav>
 </footer>
 
 <?php

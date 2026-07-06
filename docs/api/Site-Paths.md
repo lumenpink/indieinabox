@@ -49,3 +49,10 @@ SitePaths constructor.
 @param string $outputDirMedia
 @param string $contentDir
 @param string $themeDir
+
+### getContentPath()
+`public function getContentPath(): string`
+
+Retrieves the absolute path to the content directory.
+
+@return string

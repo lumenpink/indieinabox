@@ -31,3 +31,4 @@ $_kindLabel = \Indieinabox\Helper::kindLabel($page->kind);
         ?>
     </div>
 </article>
+<hr class="divisor-bloco">

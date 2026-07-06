@@ -510,7 +510,7 @@ class ConfigHandler
         }
         if (isset($config['outputdir'])) {
             $baseOut = $config['outputdir'];
-            $newSite->paths->outputDirHtml = $baseOut;
+            $newSite->paths->outputDirHtml = $baseOut . '_html';
             $newSite->paths->outputDirGemini = $baseOut . '_gemini';
             $newSite->paths->outputDirGopher = $baseOut . '_gopher';
             $newSite->paths->outputDirMedia = $baseOut . '_media';

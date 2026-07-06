@@ -102,7 +102,7 @@ if (isset($config['buildall'])) {
 }
 if (isset($config['outputdir'])) {
     $baseOut = $config['outputdir'];
-    $site->paths->outputDirHtml = $baseOut;
+    $site->paths->outputDirHtml = $baseOut . '_html';
     $site->paths->outputDirGemini = $baseOut . '_gemini';
     $site->paths->outputDirGopher = $baseOut . '_gopher';
     $site->paths->outputDirMedia = $baseOut . '_media';

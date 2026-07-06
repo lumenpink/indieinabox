@@ -73,6 +73,7 @@
                                                     echo $content;
                                                 ?>
                                             </div>
+                                            <?php include('includes/interactions.php'); ?>
                                         </div>
                                     <?php elseif ($displayMode === 'thumbnail_snippet'): ?>
                                         <div style="margin-bottom: 1em; display: flex; align-items: flex-start; gap: 15px;">
@@ -97,6 +98,7 @@
                                             <div>
                                                 <a href="<?= $p->relpath ?><?= $p->slug ?>" style="font-weight: bold; text-decoration: none;"><?= $p->localizeddate ?></a>
                                                 <p style="margin: 0.2em 0 0 0; font-size: 0.9em; opacity: 0.9;"><?= $snippet ?></p>
+                                                <?php include('includes/interactions.php'); ?>
                                             </div>
                                         </div>
                                     <?php else: ?>

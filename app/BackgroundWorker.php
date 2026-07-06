@@ -141,12 +141,18 @@ class BackgroundWorker
         $xpath = new DOMXPath($dom);
 
         $found = false;
+        $interactionType = 'webmention';
         foreach ($xpath->query('//a[@href]') as $link) {
             if ($link instanceof DOMElement) {
                 $href = $link->getAttribute('href');
+                $classes = explode(' ', $link->getAttribute('class'));
                 // Basic matching for now (can be improved)
                 if (strpos($href, parse_url($target, PHP_URL_PATH)) !== false || strpos($href, $target) !== false) {
                     $found = true;
+                    if (in_array('u-like-of', $classes)) $interactionType = 'like';
+                    elseif (in_array('u-repost-of', $classes)) $interactionType = 'repost';
+                    elseif (in_array('u-in-reply-to', $classes)) $interactionType = 'reply';
+                    elseif (in_array('u-bookmark-of', $classes)) $interactionType = 'bookmark';
                     break;
                 }
             }
@@ -209,6 +215,7 @@ class BackgroundWorker
             'published' => time(),
             'is_read' => 0,
             'type' => 'webmention',
+            'interaction_type' => $interactionType,
             'whostyle' => $whostyleData ?? []
         ];
 

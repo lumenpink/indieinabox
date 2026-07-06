@@ -1414,13 +1414,26 @@ class Helper
                 $schemaType = 'BlogPosting';
                 break;
             case 'photo':
-                $schemaType = 'ImageObject';
+            case 'video':
+            case 'audio':
+                $schemaType = 'MediaObject';
                 break;
             case 'jardim':
                 $schemaType = 'Article';
                 break;
             case 'note':
+            case 'like':
+            case 'repost':
+            case 'bookmark':
+            case 'read':
+            case 'listen':
+            case 'watch':
+            case 'checkin':
                 $schemaType = 'SocialMediaPosting';
+                break;
+            case 'reply':
+            case 'rsvp':
+                $schemaType = 'Comment';
                 break;
         }
 
@@ -1430,5 +1443,44 @@ class Helper
             'image_alt' => $image_alt,
             'schema_type' => $schemaType
         ];
+    }
+
+    /**
+     * Get incoming interactions (likes, reposts, replies) for a specific Page
+     * 
+     * @param Page $page
+     * @param string|null $type (e.g. 'like', 'repost', 'reply')
+     * @return array
+     */
+    public static function getInteractions(\Indieinabox\Page $page, ?string $type = null): array
+    {
+        $hash = md5($page->slug);
+        $dataDir = \Indieinabox\Database::$dataDir ?? (dirname(__DIR__) . '/data');
+        $notificationsDir = $dataDir . DIRECTORY_SEPARATOR . 'microsub' . DIRECTORY_SEPARATOR . 'inbox' . DIRECTORY_SEPARATOR . 'notifications';
+        
+        $interactions = [];
+        if (is_dir($notificationsDir)) {
+            $iter = new \DirectoryIterator($notificationsDir);
+            foreach ($iter as $file) {
+                if ($file->isFile() && $file->getExtension() === 'md') {
+                    if (str_starts_with($file->getFilename(), $hash . '_')) {
+                        $content = file_get_contents($file->getPathname());
+                        if ($content) {
+                            $yaml = new \Indieinabox\Yaml();
+                            $parsed = $yaml->loadString($content);
+                            if (isset($parsed['metadata'])) {
+                                $meta = $parsed['metadata'];
+                                $interactionType = $meta['interaction_type'] ?? 'webmention';
+                                if ($type === null || $interactionType === $type) {
+                                    $meta['interaction_content'] = $parsed['content'] ?? '';
+                                    $interactions[] = $meta;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return $interactions;
     }
 }

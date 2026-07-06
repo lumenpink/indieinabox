@@ -29,7 +29,7 @@ $ogImage = $imageInfo['dirname'] . '/' . $imageInfo['filename'] . '_1200x630.png
 <link rel="canonical" href="<?= htmlspecialchars($pageUrl) ?>">
 
 <meta property="og:site_name" content="<?= htmlspecialchars($site->metadata->author ?? 'Blog') ?>" />
-<meta property="og:type" content="<?= htmlspecialchars($seo['schema_type'] === 'BlogPosting' ? 'article' : 'website') ?>" />
+<meta property="og:type" content="<?= htmlspecialchars(in_array($seo['schema_type'], ['BlogPosting', 'Article', 'SocialMediaPosting', 'Comment']) ? 'article' : 'website') ?>" />
 <meta property="og:title" content="<?= empty($page->title) || $page->title == "Untitled" ? htmlspecialchars($site->metadata->author ?? '') : htmlspecialchars($page->title) ?>" />
 <meta property="og:description" content="<?= htmlspecialchars($seo['description']) ?>" />
 <meta property="og:url" content="<?= htmlspecialchars($pageUrl) ?>" />

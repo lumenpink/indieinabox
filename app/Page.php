@@ -120,7 +120,15 @@ class Page
             case 'localizedkind':
                 return $this->localization->localizedkind;
             case 'title':
-                return $this->metadata->title;
+                if (isset($this->metadata->title)) {
+                    return $this->metadata->title;
+                }
+                $kind = $this->kind ?? 'note';
+                $indiewebActionKinds = ['reply', 'like', 'repost', 'bookmark', 'rsvp', 'listen', 'watch', 'read'];
+                if (in_array($kind, $indiewebActionKinds)) {
+                    return \Indieinabox\Helper::translate($kind . '_a_post');
+                }
+                return \Indieinabox\Helper::translate('Untitled');
             case 'tags':
                 return $this->metadata->tags;
             case 'category':

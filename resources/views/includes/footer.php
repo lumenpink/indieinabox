@@ -1,6 +1,10 @@
 <?php
 /** @var \Indieinabox\Page $page */
 global $footerLinks;
+global $site;
+$baseUrl = rtrim($site->metadata->fqdn ?? '', '/');
+$seo = \Indieinabox\Helper::getSeoMetadata($page);
+$pageUrl = $baseUrl . '/' . ltrim($page->relpath ?? '', '/');
 ?>
 <footer role="contentinfo">
     <hr>
@@ -24,11 +28,6 @@ global $footerLinks;
 </footer>
 
 <?php
-$seo = \Indieinabox\Helper::getSeoMetadata($page);
-global $site;
-$baseUrl = rtrim($site->metadata->fqdn ?? '', '/');
-$pageUrl = $baseUrl . '/' . ltrim($page->relpath ?? '', '/');
-
 $imageInfo = pathinfo($seo['image']);
 $baseImageName = $imageInfo['dirname'] . '/' . $imageInfo['filename'];
 $img16x9 = $baseImageName . '_1920x1080.png';

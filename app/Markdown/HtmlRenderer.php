@@ -235,13 +235,27 @@ class HtmlRenderer implements RendererInterface
                             $slugDir = $slugTrimmed;            // "photos/my-first-photo"
                         }
                         $target = '/' . ltrim($slugDir . '/' . $gifName, '/');
+
+                        // Copy the original image to the public directory so we can link to it
+                        $originalDestino = $outputHtmlDir . DIRECTORY_SEPARATOR . basename($caminhoOriginal);
+                        if (!file_exists($originalDestino)) {
+                            copy($caminhoOriginal, $originalDestino);
+                        }
+                        $originalTarget = '/' . ltrim($slugDir . '/' . basename($caminhoOriginal), '/');
                     }
                 }
             }
 
             $targetEsc = htmlspecialchars($target, ENT_QUOTES | ENT_HTML5);
             $altEsc = htmlspecialchars($alt, ENT_QUOTES | ENT_HTML5);
-            return "<img src=\"{$targetEsc}\" alt=\"{$altEsc}\">\n";
+            $imgTag = "<img src=\"{$targetEsc}\" alt=\"{$altEsc}\">";
+
+            if (isset($originalTarget)) {
+                $originalTargetEsc = htmlspecialchars($originalTarget, ENT_QUOTES | ENT_HTML5);
+                return "<a href=\"{$originalTargetEsc}\" target=\"_blank\">{$imgTag}</a>\n";
+            }
+
+            return $imgTag . "\n";
         }
 
         return '';

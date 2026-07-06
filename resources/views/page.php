@@ -43,7 +43,34 @@
                 <?php endif; ?>
             </div>
             <?php endif; ?>
-            
+            <?php
+            $indiewebProps = [
+                'in_reply_to' => ['class' => 'u-in-reply-to', 'label' => 'In reply to'],
+                'like_of' => ['class' => 'u-like-of', 'label' => 'Liked'],
+                'repost_of' => ['class' => 'u-repost-of', 'label' => 'Reposted'],
+                'bookmark_of' => ['class' => 'u-bookmark-of', 'label' => 'Bookmarked'],
+                'watch_of' => ['class' => 'u-watch-of', 'label' => 'Watched'],
+                'read_of' => ['class' => 'u-read-of', 'label' => 'Read'],
+                'listen_of' => ['class' => 'u-listen-of', 'label' => 'Listened to']
+            ];
+            ?>
+            <div class="indieweb-context" style="margin-bottom: 1em; font-size: 0.9em; opacity: 0.8;">
+                <?php foreach ($indiewebProps as $prop => $data): ?>
+                    <?php if (!empty($page->metadata->$prop)): ?>
+                        <div class="context-item">
+                            <span class="context-label"><?= \Indieinabox\Helper::translate($data['label']) ?>:</span>
+                            <a href="<?= htmlspecialchars($page->metadata->$prop ?? '') ?>" class="<?= $data['class'] ?>"><?= htmlspecialchars($page->metadata->$prop ?? '') ?></a>
+                        </div>
+                    <?php endif; ?>
+                <?php endforeach; ?>
+                <?php if (!empty($page->metadata->rsvp)): ?>
+                    <div class="context-item">
+                        <span class="context-label">RSVP:</span>
+                        <data class="p-rsvp" value="<?= htmlspecialchars($page->metadata->rsvp ?? '') ?>"><?= htmlspecialchars($page->metadata->rsvp ?? '') ?></data>
+                    </div>
+                <?php endif; ?>
+            </div>
+
             <div class="e-content" style="margin-left: 2em;">
                 <?php if (isset($page->metadata->translated_by_ia) && $page->metadata->translated_by_ia !== false): ?>
                     <div class="ai-translation-notice" style="background: rgba(0,0,0,0.05); padding: 1em; border-left: 4px solid var(--accent); margin-bottom: 2em; font-size: 0.9em; font-style: italic;">
@@ -56,6 +83,11 @@
                 <?php endif; ?>
                 <?= $page->content ?>
             </div>
+
+            <?php
+            $p = $page;
+            include('includes/interactions.php');
+            ?>
         </article>
     </main>
     

@@ -165,18 +165,40 @@ class MicropubHandler
             $category = [$category];
         }
 
-        // Determine kind
-        $kind = 'note';
-        if ($name) {
-            $kind = 'article';
-        }
-
         // Photo uploads sent with the post
         $photos = [];
         if (isset($input['photo'])) {
             $photos = is_array($input['photo']) ? $input['photo'] : [$input['photo']];
-            if ($kind === 'note') {
+        }
+
+        // Post Type Discovery (W3C)
+        $kind = 'note';
+        $indiewebProps = [
+            'rsvp' => 'rsvp',
+            'in-reply-to' => 'reply',
+            'repost-of' => 'repost',
+            'like-of' => 'like',
+            'bookmark-of' => 'bookmark',
+            'watch-of' => 'watch',
+            'read-of' => 'read',
+            'listen-of' => 'listen',
+            'video' => 'video',
+            'audio' => 'audio',
+            'checkin' => 'checkin',
+        ];
+
+        foreach ($indiewebProps as $prop => $mappedKind) {
+            if (isset($input[$prop]) && !empty($input[$prop])) {
+                $kind = $mappedKind;
+                break;
+            }
+        }
+
+        if ($kind === 'note') {
+            if (!empty($photos)) {
                 $kind = 'photo';
+            } elseif ($name) {
+                $kind = 'article';
             }
         }
 
@@ -188,6 +210,13 @@ class MicropubHandler
         $frontmatter['date'] = date('Y-m-d H:i:s');
         if (!empty($category)) {
             $frontmatter['tags'] = $category;
+        }
+
+        // Add IndieWeb properties to frontmatter
+        foreach (array_keys($indiewebProps) as $prop) {
+            if (isset($input[$prop])) {
+                $frontmatter[str_replace('-', '_', $prop)] = $input[$prop];
+            }
         }
         
         $yaml = "---\n";

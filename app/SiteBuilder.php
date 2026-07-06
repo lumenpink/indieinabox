@@ -473,6 +473,62 @@ class SiteBuilder
         }
 
         file_put_contents($destinationFile, $fileContent);
+
+        // Build interactions pages if there are any interactions
+        $likes = \Indieinabox\Helper::getInteractions($page, 'like');
+        $reposts = \Indieinabox\Helper::getInteractions($page, 'repost');
+        $replies = \Indieinabox\Helper::getInteractions($page, 'reply');
+
+        if (count($likes) > 0 || count($reposts) > 0) {
+            $interactionsDir = dirname($destinationFile) . DIRECTORY_SEPARATOR . 'interactions';
+            if (!is_dir($interactionsDir)) {
+                mkdir($interactionsDir, 0777, true);
+            }
+            $interactionsFile = $interactionsDir . DIRECTORY_SEPARATOR . 'index.html';
+            
+            ob_start();
+            ThemeManager::loadView(
+                $base . DIRECTORY_SEPARATOR . $themeDir . "/views/interactions_page.php",
+                get_defined_vars()
+            );
+            $interactionsContent = ob_get_clean();
+            
+            if (isset($this->site->options->htmlpostprocessing)) {
+                if ($this->site->options->htmlpostprocessing == "beautify" || $this->site->options->dev) {
+                    $interactionsContent = Helper::beautifyhtml($interactionsContent);
+                }
+                if ($this->site->options->htmlpostprocessing == "minify" && !$this->site->options->dev) {
+                    $interactionsContent = Helper::minifyhtml($interactionsContent);
+                }
+            }
+            file_put_contents($interactionsFile, $interactionsContent);
+        }
+
+        foreach ($replies as $replyItem) {
+            $hash = md5($replyItem['url']);
+            $replyDir = dirname($destinationFile) . DIRECTORY_SEPARATOR . 'reply' . DIRECTORY_SEPARATOR . $hash;
+            if (!is_dir($replyDir)) {
+                mkdir($replyDir, 0777, true);
+            }
+            $replyFile = $replyDir . DIRECTORY_SEPARATOR . 'index.html';
+            
+            ob_start();
+            ThemeManager::loadView(
+                $base . DIRECTORY_SEPARATOR . $themeDir . "/views/interaction_reply.php",
+                array_merge(get_defined_vars(), ['reply' => $replyItem])
+            );
+            $replyContent = ob_get_clean();
+            
+            if (isset($this->site->options->htmlpostprocessing)) {
+                if ($this->site->options->htmlpostprocessing == "beautify" || $this->site->options->dev) {
+                    $replyContent = Helper::beautifyhtml($replyContent);
+                }
+                if ($this->site->options->htmlpostprocessing == "minify" && !$this->site->options->dev) {
+                    $replyContent = Helper::minifyhtml($replyContent);
+                }
+            }
+            file_put_contents($replyFile, $replyContent);
+        }
     }
 
     /**

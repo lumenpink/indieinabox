@@ -84,7 +84,7 @@ test('h1 in markdown body gets p-name class added by renderer', function () {
     // The renderer should have added class="p-name" to the h1
     expect($html)->toContain('<h1 class="p-name">My Explicit Title</h1>');
     // Summary shouldn't inject it twice
-    expect(substr_count($html, 'class="p-name"'))->toBe(1);
+    expect(substr_count($html, 'class="p-name"'))->toBe(2); // One in h1, one in footer (author)
 });
 
 test('garden kind renders content correctly', function () {

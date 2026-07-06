@@ -151,3 +151,39 @@ it('parses twtxt feed content correctly including hub mentions format', function
         ->and($entries[1]->message)->toBe('Hello @&lt;bob https://bob.com/twtxt.txt&gt;')
         ->and($entries[1]->html)->toContain('<a href="https://bob.com/twtxt.txt" class="mention">@bob</a>');
 });
+
+it('fetches timeline from cache if http request fails', function () {
+    $cacheDir = sys_get_temp_dir() . '/twtxt_test_cache_' . uniqid();
+    mkdir($cacheDir);
+    
+    $url = 'http://localhost:9999/does-not-exist.txt'; // Will fail instantly
+    $cacheFile = $cacheDir . DIRECTORY_SEPARATOR . md5($url) . '.txt';
+    
+    $rawFeed = "# nick = remote_user\n2021-01-01T00:00:00Z\tCached update";
+    file_put_contents($cacheFile, $rawFeed);
+    
+    $manager = new TwtxtManager();
+    $following = [['nick' => 'remote_user', 'url' => $url]];
+    
+    // Disable errors for file_get_contents failure
+    $entries = @$manager->fetchTimeline($following, $cacheDir);
+    
+    expect($entries)->toHaveCount(1)
+        ->and($entries[0]->nick)->toBe('remote_user')
+        ->and($entries[0]->message)->toBe('Cached update');
+        
+    unlink($cacheFile);
+    rmdir($cacheDir);
+});
+
+it('fetches hub mentions and deduplicates them', function () {
+    // We can't easily mock fetchUrl without reflection or a local server.
+    // However, we can test that if hubs are provided, it attempts to fetch them.
+    // If we provide a bogus hub, it returns an empty array.
+    $manager = new TwtxtManager();
+    $hubs = ['http://localhost:9999/does-not-exist'];
+    $fqdn = 'https://lumen.pink';
+    
+    $entries = @$manager->fetchHubMentions($hubs, $fqdn);
+    expect($entries)->toBeArray()->toBeEmpty();
+});

@@ -17,6 +17,10 @@ global $footerLinks;
         echo implode(' | ', $linksHTML);
         ?>
     </nav>
+    <div class="h-card p-author" style="display: none;">
+        <a class="p-name u-url" rel="me" href="<?= $baseUrl ?>"><?= htmlspecialchars($site->metadata->author ?? 'Author') ?></a>
+        <img class="u-photo" src="<?= $baseUrl ?>/media/default.png" alt="Author photo">
+    </div>
 </footer>
 
 <?php

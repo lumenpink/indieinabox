@@ -6,19 +6,19 @@ $_kindLabel = \Indieinabox\Helper::kindLabel($page->kind);
 <article class="h-entry the-summary" style="margin-bottom: 5em;">
     <header>
         <?php if (\Indieinabox\Helper::getKindConfig($page->kind)['has_title']): ?>
-            <h3 style="margin: 0 0 0.5em 0;">
-                <a href="<?= $page->relpath ?><?= $page->slug ?>"><?= htmlspecialchars($page->title) ?></a>
+            <h3 style="margin: 0 0 0.5em 0;" class="p-name">
+                <a href="<?= $page->relpath ?><?= $page->slug ?>" class="u-url" style="color: inherit; text-decoration: none;"><?= htmlspecialchars($page->title) ?></a>
             </h3>
         <?php endif; ?>
         <div class="post-metadata" style="font-size: 0.85em; opacity: 0.8; margin-bottom: 1em;">
             <?= \Indieinabox\Helper::kindLink($page, $page->kind) ?>
             <?php if (isset($page->date)): ?>
-                • <a href="<?= $page->relpath ?><?= $page->slug ?>"><time class="dt-published" datetime="<?= $page->isodate ?>"><?= $page->localizeddate ?></time></a>
+                • <a href="<?= $page->relpath ?><?= $page->slug ?>" class="u-url"><time class="dt-published" datetime="<?= $page->isodate ?>"><?= $page->localizeddate ?></time></a>
             <?php endif; ?>
             <?php if (!empty($page->tags)): ?>
                 •
                 <?php foreach ($page->tags as $tag): ?>
-                    <a href="<?= $page->relpath ?>tag/<?= $tag ?>/">#<?= htmlspecialchars($tag) ?></a>&#32;
+                    <a href="<?= $page->relpath ?>tag/<?= $tag ?>/" class="p-category">#<?= htmlspecialchars($tag) ?></a>&#32;
                 <?php endforeach; ?>
             <?php endif; ?>
         </div>

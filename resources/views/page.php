@@ -26,7 +26,13 @@
             <?php if ($showMetadata): ?>
             <div class="post-metadata">
                 <?= \Indieinabox\Helper::kindLink($page, $page->kind) ?>
-                <?php if (!in_array($page->kind, ['generic', 'home', 'page'], true)): ?>• <?php endif; ?><time class="dt-published" datetime="<?= $page->isodate ?>"><?= $page->localizeddate ?></time>
+                <?php if (!in_array($page->kind, ['generic', 'home', 'page'], true)): ?>• <?php endif; ?><a href="<?= $page->relpath ?><?= $page->slug ?>" class="u-url"><time class="dt-published" datetime="<?= $page->isodate ?>"><?= $page->localizeddate ?></time></a>
+                <?php if (!empty($page->tags)): ?>
+                    •
+                    <?php foreach ($page->tags as $tag): ?>
+                        <a href="<?= $page->relpath ?>tag/<?= $tag ?>/" class="p-category">#<?= htmlspecialchars($tag) ?></a>&#32;
+                    <?php endforeach; ?>
+                <?php endif; ?>
                 <?php if ($page->kind === 'jardim'): ?>
                     <?php if (isset($page->metadata->maturity)): ?>
                         • <?= \Indieinabox\Helper::translate('Maturity') ?>: <?= htmlspecialchars($page->metadata->maturity) ?>

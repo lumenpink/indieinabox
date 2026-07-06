@@ -11,6 +11,7 @@ use DateTime;
  *
  * This class handles metadata related to the page.
  */
+#[\AllowDynamicProperties]
 class Metadata
 {
     /**
@@ -57,6 +58,21 @@ class Metadata
      * @var string|null
      */
     public $reliability;
+
+    /**
+     * @var array<string>|null
+     */
+    public $flowerbed;
+
+    /**
+     * @var string|null
+     */
+    public $confidence;
+
+    /**
+     * @var string|null
+     */
+    public $importance;
 
     /**
      * @var string|bool|null

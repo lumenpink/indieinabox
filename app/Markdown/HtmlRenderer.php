@@ -161,9 +161,17 @@ class HtmlRenderer implements RendererInterface
             $target = $node->target;
             $alt = $node->label;
 
-            if ($this->page && $this->page->filepath && !preg_match('#^(https?:)?//#i', $target) && !str_starts_with($target, '/')) {
+            if ($this->page && $this->page->filepath && !preg_match('#^(https?:)?//#i', $target)) {
                 $markdownFileDir = dirname($this->page->filepath);
-                $caminhoOriginal = $markdownFileDir . DIRECTORY_SEPARATOR . $target;
+                
+                if (str_starts_with($target, '/')) {
+                    global $site;
+                    $base = $site?->paths?->baseDir ?? dirname(dirname(__DIR__));
+                    $contentDir = $site?->paths?->contentDir ?? 'content';
+                    $caminhoOriginal = $base . DIRECTORY_SEPARATOR . $contentDir . DIRECTORY_SEPARATOR . ltrim($target, '/');
+                } else {
+                    $caminhoOriginal = $markdownFileDir . DIRECTORY_SEPARATOR . $target;
+                }
 
                 if (file_exists($caminhoOriginal)) {
                     global $site;
@@ -178,6 +186,10 @@ class HtmlRenderer implements RendererInterface
                         $outputHtmlDir = dirname($base . DIRECTORY_SEPARATOR . $outputDirHtml . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, trim($slug, '/')));
                     } else {
                         $outputHtmlDir = $base . DIRECTORY_SEPARATOR . $outputDirHtml . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, trim($slug, '/'));
+                    }
+
+                    if (!is_dir($outputHtmlDir)) {
+                        @mkdir($outputHtmlDir, 0777, true);
                     }
 
                     $caminhoDestino = $outputHtmlDir . DIRECTORY_SEPARATOR . $gifName;
@@ -249,15 +261,13 @@ class HtmlRenderer implements RendererInterface
             $targetEsc = htmlspecialchars($target, ENT_QUOTES | ENT_HTML5);
             $altEsc = htmlspecialchars($alt, ENT_QUOTES | ENT_HTML5);
             $imgTag = "<img src=\"{$targetEsc}\" alt=\"{$altEsc}\">";
-
+            
             if (isset($originalTarget)) {
-                $originalTargetEsc = htmlspecialchars($originalTarget, ENT_QUOTES | ENT_HTML5);
-                return "<a href=\"{$originalTargetEsc}\" target=\"_blank\">{$imgTag}</a>\n";
+                $origEsc = htmlspecialchars($originalTarget, ENT_QUOTES | ENT_HTML5);
+                return "<a href=\"{$origEsc}\" class=\"dithered-image-link\">{$imgTag}</a>\n";
             }
-
             return $imgTag . "\n";
         }
-
         return '';
     }
 }

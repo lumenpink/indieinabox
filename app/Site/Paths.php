@@ -56,7 +56,7 @@ class Paths
         string $outputDirHtml = "public_html",
         string $outputDirGemini = "public_gemini",
         string $outputDirGopher = "public_gopher",
-        string $outputDirMedia = "public_media",
+        string $outputDirMedia = "public_html/media",
         string $contentDir = "content",
         string $themeDir = "resources"
     ) {

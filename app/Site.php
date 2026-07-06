@@ -19,27 +19,27 @@ class Site
     /** @var array<string, mixed> */
     public array $config = [];
     /**
-     * @var \Indieinabox\Site\Metadata
+     * @var Metadata
      */
     public Metadata $metadata;
     /**
-     * @var \Indieinabox\Site\Paths
+     * @var Paths
      */
     public Paths $paths;
     /**
-     * @var \Indieinabox\Site\Options
+     * @var Options
      */
     public Options $options;
     /**
-     * @var \Indieinabox\Site\Localization
+     * @var Localization
      */
     public Localization $localization;
     /**
-     * @var \Indieinabox\Site\Support
+     * @var Support
      */
     public Support $support;
     /**
-     * @var \Indieinabox\Site\Twtxt
+     * @var Twtxt
      */
     public Twtxt $twtxt;
 

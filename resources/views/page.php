@@ -34,15 +34,35 @@
                     <?php endforeach; ?>
                 <?php endif; ?>
                 <?php if ($page->kind === 'jardim'): ?>
-                    <?php if (isset($page->metadata->maturity)): ?>
-                        • <?= \Indieinabox\Helper::translate('Maturity') ?>: <?= htmlspecialchars($page->metadata->maturity) ?>
-                    <?php endif; ?>
-                    <?php if (isset($page->metadata->reliability)): ?>
-                        • <?= \Indieinabox\Helper::translate('Reliability') ?>: <?= htmlspecialchars($page->metadata->reliability) ?>
-                    <?php endif; ?>
+                    <?php
+                    $flowerbed = isset($page->metadata->flowerbed) && is_array($page->metadata->flowerbed) ? $page->metadata->flowerbed : ['general'];
+                    $confidence = $page->metadata->confidence ?? 'possible';
+                    $maturity = $page->metadata->maturity ?? 'sprout';
+                    $importance = $page->metadata->importance ?? 'trivial';
+                    
+                    $translatedFlowerbed = array_map(function($fb) { return \Indieinabox\Helper::translate($fb); }, $flowerbed);
+                    ?>
+                    • <?= \Indieinabox\Helper::translate('Flowerbed') ?>: <?= htmlspecialchars(implode(', ', $translatedFlowerbed)) ?><br>
+                    • <?= \Indieinabox\Helper::translate('Confidence') ?>: <?= htmlspecialchars(\Indieinabox\Helper::translate($confidence)) ?><br>
+                    • <?= \Indieinabox\Helper::translate('Maturity') ?>: <?= htmlspecialchars(\Indieinabox\Helper::translate($maturity)) ?><br>
+                    • <?= \Indieinabox\Helper::translate('Importance') ?>: <?= htmlspecialchars(\Indieinabox\Helper::translate($importance)) ?>
                 <?php endif; ?>
                 <?php if (!empty($page->shortlink)): ?>
                     • <?= \Indieinabox\Helper::translate('Shortlink') ?>: <a href="<?= htmlspecialchars($page->shortlink) ?>"><?= htmlspecialchars($page->shortlink) ?></a>
+                <?php endif; ?>
+                <?php
+                $likes = \Indieinabox\Helper::getInteractions($page, 'like');
+                $reposts = \Indieinabox\Helper::getInteractions($page, 'repost');
+                if (count($likes) > 0 || count($reposts) > 0):
+                ?>
+                    • <a href="<?= $page->relpath ?><?= $page->slug ?>/interactions" style="color: inherit; font-weight: bold; text-decoration: none;">
+                        <?php
+                        $counts = [];
+                        if (count($likes) > 0) $counts[] = count($likes) . ' ' . \Indieinabox\Helper::translate('Likes');
+                        if (count($reposts) > 0) $counts[] = count($reposts) . ' ' . \Indieinabox\Helper::translate('Reposts');
+                        echo implode(' / ', $counts);
+                        ?>
+                    </a>
                 <?php endif; ?>
             </div>
             <?php endif; ?>

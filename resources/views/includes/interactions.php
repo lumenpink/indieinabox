@@ -5,23 +5,7 @@ $reposts = \Indieinabox\Helper::getInteractions($p, 'repost');
 $replies = \Indieinabox\Helper::getInteractions($p, 'reply');
 ?>
 <?php if (count($likes) > 0 || count($reposts) > 0 || count($replies) > 0): ?>
-    <div class="post-interactions" style="margin-top: 1em; border-top: 1px solid var(--accent); padding-top: 0.5em; font-size: 0.85em; opacity: 0.9;">
-        <?php if (count($likes) > 0 || count($reposts) > 0): ?>
-            <div style="margin-bottom: 1em;">
-                <a href="<?= $p->relpath ?><?= $p->slug ?>/interactions" style="text-decoration: none; font-weight: bold;">
-                    [ 
-                    <?php if (count($likes) > 0): ?>
-                        <?= count($likes) ?> <?= \Indieinabox\Helper::translate('Likes') ?> 
-                    <?php endif; ?>
-                    <?php if (count($likes) > 0 && count($reposts) > 0): ?> | <?php endif; ?>
-                    <?php if (count($reposts) > 0): ?>
-                        <?= count($reposts) ?> <?= \Indieinabox\Helper::translate('Reposts') ?> 
-                    <?php endif; ?>
-                    ]
-                </a>
-            </div>
-        <?php endif; ?>
-
+    <div id="interactions" class="post-interactions" style="margin-top: 1em; border-top: 1px solid var(--accent); padding-top: 0.5em; font-size: 0.85em; opacity: 0.9;">
         <?php if (count($replies) > 0): ?>
             <div style="margin-top: 1.5em; width: 100%;">
                 <h3 style="margin-bottom: 1em; font-size: 1.1em;"><?= count($replies) ?> <?= \Indieinabox\Helper::translate('Replies') ?></h3>

@@ -101,7 +101,11 @@ if (isset($config['buildall'])) {
     $site->options->buildAll = (bool)$config['buildall'];
 }
 if (isset($config['outputdir'])) {
-    $site->paths->outputDir = $config['outputdir'];
+    $baseOut = $config['outputdir'];
+    $site->paths->outputDirHtml = $baseOut;
+    $site->paths->outputDirGemini = $baseOut . '_gemini';
+    $site->paths->outputDirGopher = $baseOut . '_gopher';
+    $site->paths->outputDirMedia = $baseOut . '_media';
 }
 if (isset($config['contentdir'])) {
     $site->paths->contentDir = $config['contentdir'];

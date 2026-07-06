@@ -55,14 +55,26 @@ class Helper
     public static function getKindConfig(string $kind): array
     {
         global $site;
+        if (!$site) {
+            echo "ERROR: global \$site is null!\n";
+        }
         $kind = strtolower($kind);
+        
+        if (empty($site->config['kinds'])) {
+            $site->config['kinds'] = \Indieinabox\Database::getKinds();
+        }
+        
         $config = $site->config['kinds'][$kind] ?? null;
 
         if (!$config) {
             static $warned = [];
             if (!isset($warned[$kind]) && !in_array($kind, ['generic', 'page', 'home'])) {
                 if (php_sapi_name() === 'cli') {
-                    echo "[WARNING] Missing config for kind '{$kind}'. Using defaults.\n";
+                    echo "[WARNING] Missing config for kind '{$kind}'. config is:\n";
+                    var_dump($site->config['kinds'][$kind] ?? 'null');
+                    echo "Keys in kinds are:\n";
+                    var_dump(array_keys($site->config['kinds'] ?? []));
+                    echo "Using defaults.\n";
                 }
                 $warned[$kind] = true;
             }
@@ -848,7 +860,7 @@ class Helper
                 get_defined_vars()
             );
             $count++;
-            if ($count >= 10) {
+            if ($count >= 5) {
                 break;
             }
         }

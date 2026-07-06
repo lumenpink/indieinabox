@@ -1070,8 +1070,8 @@ class SiteBuilder
         // 1. Post kinds defined in config (default to footer)
         if (!empty($this->site->config['kinds'])) {
             foreach ($this->site->config['kinds'] as $k => $conf) {
-                if (isset($conf['show_on_home']) && !$conf['show_on_home'] && $k !== 'garden') {
-                    // Just in case, usually all config kinds should be in menu according to the request.
+                if (isset($conf['show_on_home']) && !$conf['show_on_home'] && $k !== 'garden' && $k !== 'jardim') {
+                    continue;
                 }
                 $folder = $this->getKindFolder($k, $lang);
                 if ($prettylinks) {

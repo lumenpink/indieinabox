@@ -25,14 +25,18 @@ Com o arquivo salvo, na próxima vez que você buildar o site, a página "Sobre 
 
 ## A Introdução Dinâmica (intro.md)
 
-O layout da página inicial (`home.php`) tem um espaço especial reservado para uma pequena introdução ou mensagem de boas-vindas do site, que é exibida logo abaixo do título e acima das postagens recentes.
+O layout da página inicial (`home.php`) tem um espaço especial reservado para uma pequena introdução ou mensagem de boas-vindas do site, que é exibida logo abaixo do título e acima das postagens recentes. A intro é mostrada obrigatoriamente na página inicial (Home).
 
 Para usar este bloco:
 1. Crie um arquivo chamado **`intro.md`** diretamente na pasta `content/` (ou em `content/pt/` para português, por exemplo).
-2. Não é necessário incluir cabeçalho YAML para este arquivo (ele não se tornará uma página navegável independente). 
-3. Tudo que você escrever ali será compilado dinamicamente para HTML e aparecerá na introdução da Home.
+2. Não é necessário incluir cabeçalho YAML para este arquivo (ele não se tornará uma página navegável independente, ele apenas servirá para popular o bloco da Home).
+3. Tudo que você escrever ali será compilado dinamicamente para HTML e aparecerá na introdução da Home principal e na Home traduzida.
 
 Se você apagar ou não tiver esse arquivo, o bloco será simplesmente ocultado.
+
+## Interações e Contadores
+
+Todas as páginas geradas exibirão os links para suas interações (Likes, Reposts e Replies). Mesmo que uma postagem não tenha nenhuma interação, os contadores serão exibidos com valor 0 em formato de texto sem link (ex: `0 Likes / 0 Reposts / 0 Replies`), permitindo que a interface sempre mantenha sua consistência. Se as interações existirem, o texto se tornará um link navegável.
 
 ## Internacionalização (i18n)
 

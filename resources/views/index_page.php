@@ -65,7 +65,7 @@
                                     ?>
                                     <?php if ($displayMode === 'full_content'): ?>
                                         <div style="margin-bottom: 1em;">
-                                            <div style="font-size:0.85em; opacity:0.75; margin-bottom: 0.5em;">=&gt; <a href="<?= $p->relpath ?><?= $p->slug ?>"><?= $p->localizeddate ?></a></div>
+                                            <div style="font-size:0.85em; opacity:0.75; margin-bottom: 0.5em;">=&gt; <a href="<?= $page->relpath ?><?= ltrim($p->slug, '/') ?>"><?= $p->localizeddate ?></a></div>
                                             <div style="border-left: 2px solid var(--fg); padding-left: 10px; margin-left: 10px;">
                                                 <?php 
                                                     $content = $p->content;
@@ -89,20 +89,20 @@
                                                 }
                                             ?>
                                             <?php if ($thumbSrc): ?>
-                                                <a href="<?= $p->relpath ?><?= $p->slug ?>">
+                                                <a href="<?= $page->relpath ?><?= ltrim($p->slug, '/') ?>">
                                                     <img src="<?= $thumbSrc ?>" alt="Thumbnail" style="width: 64px; height: 64px; object-fit: cover; border-radius: 4px; margin: 0;">
                                                 </a>
                                             <?php else: ?>
                                                 <div style="width: 64px; height: 64px; background: rgba(0,0,0,0.05); border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.8em; opacity: 0.5;">img</div>
                                             <?php endif; ?>
                                             <div>
-                                                <a href="<?= $p->relpath ?><?= $p->slug ?>" style="font-weight: bold; text-decoration: none;"><?= $p->localizeddate ?></a>
+                                                <a href="<?= $page->relpath ?><?= ltrim($p->slug, '/') ?>" style="font-weight: bold; text-decoration: none;"><?= $p->localizeddate ?></a>
                                                 <p style="margin: 0.2em 0 0 0; font-size: 0.9em; opacity: 0.9;"><?= $snippet ?></p>
                                                 <?php include('includes/interactions.php'); ?>
                                             </div>
                                         </div>
                                     <?php else: ?>
-                                        =&gt; <a href="<?= $p->relpath ?><?= $p->slug ?>"><?= htmlspecialchars($p->title) ?></a>
+                                        =&gt; <a href="<?= $page->relpath ?><?= ltrim($p->slug, '/') ?>"><?= htmlspecialchars($p->title) ?></a>
                                         <span style="font-size:0.85em; opacity:0.75;">(<?= $p->localizeddate ?>)</span>
                                     <?php endif; ?>
                                 </li>

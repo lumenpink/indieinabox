@@ -94,6 +94,8 @@ class SiteBuilder
         // Scan content
         $this->scan($this->site->paths->getContentPath());
 
+        $this->ensureMandatoryHomepage();
+
         // Virtualize missing translations
         $this->virtualizeMissingLanguages();
 
@@ -618,8 +620,14 @@ class SiteBuilder
         }
 
         $liveJsFile = $base . "/" . $themeDir . "/views/livejs/live.js";
+        echo "Copying static files: from $liveJsFile to $jsDir/live.js\n";
         if (file_exists($liveJsFile)) {
-            copy($liveJsFile, $jsDir . "/live.js");
+            $success = copy($liveJsFile, $jsDir . "/live.js");
+            if (!$success) {
+                echo "Failed to copy $liveJsFile\n";
+            }
+        } else {
+            echo "File does not exist: $liveJsFile\n";
         }
     }
 
@@ -1329,6 +1337,10 @@ class SiteBuilder
 
         // Group by language
         $grouped = [];
+        $activeLangs = $this->site->localization->lang ?? [$defaultLang];
+        foreach ($activeLangs as $l) {
+            $grouped[$l] = [];
+        }
         foreach ($pages as $p) {
             if (!in_array('draft', $p->metadata->tags)) {
                 $grouped[$p->lang ?? $defaultLang][] = $p;
@@ -1343,20 +1355,23 @@ class SiteBuilder
                 });
 
                 $title = \Indieinabox\Helper::kindLabel($targetKind, $lang);
-
                 $displayMode = \Indieinabox\Helper::getKindConfig($targetKind)['display_mode'] ?? 'default';
+
+                $kindFolder = $this->getKindFolder($targetKind, $lang);
+                $kindSlug = ($lang === $defaultLang ? '' : $lang . '/') . $kindFolder . '/';
+                $indexRelpath = str_repeat('../', substr_count(ltrim($kindSlug, '/'), '/'));
 
                 $content = '<ul style="list-style-type: none; padding-left: 0;">';
             foreach ($kindPages as $p) {
                 $content .= '<li style="margin-bottom: 1.5em;">';
                 if ($displayMode === 'thumbnail_snippet') {
                     // For photos/thumbnails
-                    $content .= '<a href="' . $p->relpath . $p->slug . '">' . $p->content . '</a>';
+                    $content .= '<a href="' . $indexRelpath . ltrim($p->slug, '/') . '">' . $p->content . '</a>';
                     $content .= '<div style="font-size:0.9em; margin-top: 0.5em;">';
                     $content .= '<span style="opacity:0.8;">' . $p->localizeddate . '</span>';
                     $content .= '</div>';
                 } else {
-                    $content .= '<strong><a href="' . $p->relpath . $p->slug . '">'
+                    $content .= '<strong><a href="' . $indexRelpath . ltrim($p->slug, '/') . '">'
                         . htmlspecialchars($p->title) . '</a></strong>';
                     $content .= ' <span style="font-size:0.9em; opacity:0.8;">(' . $p->localizeddate . ')</span>';
                 }
@@ -1383,6 +1398,42 @@ class SiteBuilder
                 $this->createHTMLFile($indexPage);
                 $this->createGeminiFile($indexPage);
                 $this->createGopherFile($indexPage);
+        }
+    }
+    
+    /**
+     * Method ensureMandatoryHomepage
+     * @return void
+     */
+    private function ensureMandatoryHomepage(): void
+    {
+        $langs = $this->site->localization->lang ?? ['en'];
+        $defaultLang = $this->site->localization->defaultLang ?? 'en';
+        
+        foreach ($langs as $lang) {
+            $expectedSlug = ($lang === $defaultLang) ? '/' : $lang . '/';
+            $found = false;
+            foreach ($this->pages as $p) {
+                if ($p->slug === $expectedSlug || rtrim($p->slug, '/') === rtrim($expectedSlug, '/')) {
+                    $found = true;
+                    // Force the layout to home just in case
+                    $p->layout = 'home';
+                    break;
+                }
+            }
+            if (!$found) {
+                $page = Page::fromArray([
+                    'slug' => $expectedSlug,
+                    'nick' => 'index',
+                    'kind' => 'generic',
+                    'title' => $this->site->metadata->title ?? 'Home',
+                    'lang' => $lang,
+                    'layout' => 'home',
+                    'content' => '',
+                    'relpath' => ($lang === $defaultLang) ? '' : '../'
+                ]);
+                $this->pages->add($page);
+            }
         }
     }
 }

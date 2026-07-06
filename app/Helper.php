@@ -758,7 +758,19 @@ class Helper
         }
         if (!isset($found) || empty($found)) {
             $translations[$lang][$text] = '';
-            self::updateTranslations();
+            
+            // Insert the missing key immediately
+            $db = \Indieinabox\Database::getDb();
+            try {
+                $ins = $db->prepare('INSERT INTO translations (lang, phrase_key, phrase_value) VALUES (:lang, :key, :val)');
+                $ins->bindValue(':lang', $lang);
+                $ins->bindValue(':key', $text);
+                $ins->bindValue(':val', '');
+                $ins->execute();
+            } catch (\Exception $e) {
+                // Ignore unique constraint violation if another process inserted it concurrently
+            }
+            
             return $text;
         }
         return $translations[$lang][$found];
@@ -796,6 +808,7 @@ class Helper
         global $translations;
         self::recursiveKsort($translations);
         $db = \Indieinabox\Database::getDb();
+        $db->beginTransaction();
         foreach ($translations as $lang => $phrases) {
             foreach ($phrases as $key => $val) {
                 // Check if exists
@@ -823,6 +836,7 @@ class Helper
                 }
             }
         }
+        $db->commit();
     }
 
     /**
@@ -832,13 +846,14 @@ class Helper
      */
     public static function listposts(): string
     {
-        global $pages, $site, $p;
-        $currentLang = $p instanceof Page ? $p->lang : ($p['lang'] ?? ($site->localization->defaultLang ?? 'en'));
+        global $pages, $site, $page;
+        $mainPage = $page;
+        $currentLang = $mainPage instanceof Page ? $mainPage->lang : ($mainPage['lang'] ?? ($site->localization->defaultLang ?? 'en'));
         $base = $site->paths->baseDir;
         $localpages = $pages instanceof Pages ? $pages->all() : $pages;
         $localpages = array_filter($localpages, [self::class, 'removegeneric']);
-        $localpages = array_filter($localpages, function ($page) use ($currentLang) {
-            $lang = $page instanceof Page ? $page->lang : ($page['lang'] ?? 'en');
+        $localpages = array_filter($localpages, function ($pg) use ($currentLang) {
+            $lang = $pg instanceof Page ? $pg->lang : ($pg['lang'] ?? 'en');
             return $lang === $currentLang;
         });
         usort(
@@ -854,7 +869,12 @@ class Helper
         $count = 0;
         ob_start();
         $themeDir = $site->paths->themeDir ?? 'theme';
-        foreach ($localpages as $page) {
+        foreach ($localpages as $originalPage) {
+            $p = clone $originalPage; // the template summary.php expects $page, but since we have a global $page, let's pass it as $page! Wait, if we use $page in summary.php, we should override the global $page or pass it.
+            $page = clone $originalPage;
+            if ($mainPage instanceof Page) {
+                $page->relpath = $mainPage->relpath;
+            }
             ThemeManager::loadView(
                 $base . DIRECTORY_SEPARATOR . $themeDir . DIRECTORY_SEPARATOR . "views/includes/summary.php",
                 get_defined_vars()
@@ -907,12 +927,17 @@ class Helper
             mkdir(dirname($caminhoDestino), 0777, true);
         }
 
-        $ext = strtolower(pathinfo($caminhoOriginal, PATHINFO_EXTENSION));
-        if ($ext === 'png') {
+        $imageInfo = @getimagesize($caminhoOriginal);
+        if (!$imageInfo) {
+            return false;
+        }
+        $mimeType = $imageInfo['mime'];
+
+        if ($mimeType === 'image/png') {
             $imgOriginal = @imagecreatefrompng($caminhoOriginal);
-        } elseif ($ext === 'gif') {
+        } elseif ($mimeType === 'image/gif') {
             $imgOriginal = @imagecreatefromgif($caminhoOriginal);
-        } elseif ($ext === 'webp') {
+        } elseif ($mimeType === 'image/webp') {
             $imgOriginal = function_exists('imagecreatefromwebp') ? @imagecreatefromwebp($caminhoOriginal) : false;
         } else {
             $imgOriginal = @imagecreatefromjpeg($caminhoOriginal);
@@ -1015,12 +1040,17 @@ class Helper
             mkdir(dirname($caminhoDestino), 0777, true);
         }
 
-        $ext = strtolower(pathinfo($caminhoOriginal, PATHINFO_EXTENSION));
-        if ($ext === 'png') {
+        $imageInfo = @getimagesize($caminhoOriginal);
+        if (!$imageInfo) {
+            return false;
+        }
+        $mimeType = $imageInfo['mime'];
+
+        if ($mimeType === 'image/png') {
             $imgOriginal = @imagecreatefrompng($caminhoOriginal);
-        } elseif ($ext === 'gif') {
+        } elseif ($mimeType === 'image/gif') {
             $imgOriginal = @imagecreatefromgif($caminhoOriginal);
-        } elseif ($ext === 'webp') {
+        } elseif ($mimeType === 'image/webp') {
             $imgOriginal = function_exists('imagecreatefromwebp') ? @imagecreatefromwebp($caminhoOriginal) : false;
         } else {
             $imgOriginal = @imagecreatefromjpeg($caminhoOriginal);

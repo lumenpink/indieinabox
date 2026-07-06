@@ -28,17 +28,21 @@ $_kindLabel = \Indieinabox\Helper::kindLabel($page->kind);
             $likes = \Indieinabox\Helper::getInteractions($page, 'like');
             $reposts = \Indieinabox\Helper::getInteractions($page, 'repost');
             $replies = \Indieinabox\Helper::getInteractions($page, 'reply');
-            if (count($likes) > 0 || count($reposts) > 0 || count($replies) > 0):
+            $totalInteractions = count($likes) + count($reposts) + count($replies);
+            
+            $counts = [];
+            $counts[] = count($likes) . ' ' . \Indieinabox\Helper::translate('Likes');
+            $counts[] = count($reposts) . ' ' . \Indieinabox\Helper::translate('Reposts');
+            $counts[] = count($replies) . ' ' . \Indieinabox\Helper::translate('Replies');
+            $interactionsText = implode(' / ', $counts);
             ?>
-                • <a href="<?= $page->relpath ?><?= $page->slug ?>" style="color: inherit; font-weight: bold; text-decoration: none;">
-                    <?php
-                    $counts = [];
-                    if (count($likes) > 0) $counts[] = count($likes) . ' ' . \Indieinabox\Helper::translate('Likes');
-                    if (count($reposts) > 0) $counts[] = count($reposts) . ' ' . \Indieinabox\Helper::translate('Reposts');
-                    if (count($replies) > 0) $counts[] = count($replies) . ' ' . \Indieinabox\Helper::translate('Replies');
-                    echo implode(' / ', $counts);
-                    ?>
+            • 
+            <?php if ($totalInteractions > 0): ?>
+                <a href="<?= $page->relpath ?><?= $page->slug ?>/interactions" style="color: inherit; font-weight: bold; text-decoration: none;">
+                    <?= $interactionsText ?>
                 </a>
+            <?php else: ?>
+                <span style="opacity: 0.8; font-size: 0.9em;"><?= $interactionsText ?></span>
             <?php endif; ?>
         </div>
     </header>

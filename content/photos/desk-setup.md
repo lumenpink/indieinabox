@@ -4,6 +4,6 @@ kind: photo
 title: "My Desk Setup"
 ---
 
-![Desk](workspace.png)
+![Desk](/media/workspace.png)
 
 Cleaned up my desk. Finally.

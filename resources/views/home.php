@@ -21,7 +21,9 @@
         if (file_exists($introFile)) {
             echo '<div class="introduction" style="margin-left: 2em; margin-bottom: 5em;">';
             $processor = new \Indieinabox\Markdown\ContentProcessor();
-            echo $processor->processContent(file_get_contents($introFile), $page);
+            $rawIntro = file_get_contents($introFile);
+            $cleanIntro = $processor->removeYamlFrontMatter($rawIntro);
+            echo $processor->processContent($cleanIntro, $page);
             echo '</div><hr>';
         }
         ?>

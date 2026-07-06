@@ -309,6 +309,17 @@ class ConfigHandler
             'hubs' => $hubs
         ];
 
+        // --- Shortlink ---
+        if (isset($_POST['shortlink']) && is_array($_POST['shortlink'])) {
+            $currentConfig['shortlink'] = [
+                'enabled' => isset($_POST['shortlink']['enabled']),
+                'server' => trim($_POST['shortlink']['server'] ?? ''),
+                'parameter' => trim($_POST['shortlink']['parameter'] ?? 'shorten'),
+                'auth_header' => trim($_POST['shortlink']['auth_header'] ?? ''),
+                'auth_token' => trim($_POST['shortlink']['auth_token'] ?? '')
+            ];
+        }
+
         // --- Kinds ---
         $removeKind = isset($_POST['remove_kind']) ? trim($_POST['remove_kind']) : null;
         if (isset($_POST['kinds']) && is_array($_POST['kinds'])) {
@@ -1172,6 +1183,34 @@ class ConfigHandler
                             </div>
                         </div>
                     <?php endforeach; ?>
+                </fieldset>
+
+                <fieldset>
+                    <legend>Shortlink Service</legend>
+                    <div class="form-group checkbox-group">
+                        <input type="checkbox" name="shortlink[enabled]" id="shortlink_enabled" value="1" <?= !empty($config['shortlink']['enabled']) ? 'checked' : '' ?>>
+                        <label for="shortlink_enabled">Enable Shortlinks (Nullpointer / Rustypaste compatible)</label>
+                    </div>
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label>Server URL</label>
+                            <input type="url" name="shortlink[server]" value="<?= htmlspecialchars($config['shortlink']['server'] ?? 'https://0x0.st') ?>" placeholder="https://0x0.st">
+                        </div>
+                        <div class="form-group">
+                            <label>POST Parameter Name</label>
+                            <input type="text" name="shortlink[parameter]" value="<?= htmlspecialchars($config['shortlink']['parameter'] ?? 'shorten') ?>" placeholder="shorten or url">
+                        </div>
+                    </div>
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label>Auth Header Name (Optional)</label>
+                            <input type="text" name="shortlink[auth_header]" value="<?= htmlspecialchars($config['shortlink']['auth_header'] ?? '') ?>" placeholder="e.g. Authorization">
+                        </div>
+                        <div class="form-group">
+                            <label>Auth Token (Optional)</label>
+                            <input type="text" name="shortlink[auth_token]" value="<?= htmlspecialchars($config['shortlink']['auth_token'] ?? '') ?>" placeholder="Token value">
+                        </div>
+                    </div>
                 </fieldset>
 
                 <fieldset style="border-color: var(--accent);">

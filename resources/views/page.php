@@ -41,6 +41,9 @@
                         • <?= \Indieinabox\Helper::translate('Reliability') ?>: <?= htmlspecialchars($page->metadata->reliability) ?>
                     <?php endif; ?>
                 <?php endif; ?>
+                <?php if (!empty($page->shortlink)): ?>
+                    • <?= \Indieinabox\Helper::translate('Shortlink') ?>: <a href="<?= htmlspecialchars($page->shortlink) ?>"><?= htmlspecialchars($page->shortlink) ?></a>
+                <?php endif; ?>
             </div>
             <?php endif; ?>
             <?php

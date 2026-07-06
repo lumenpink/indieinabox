@@ -411,6 +411,14 @@ class SiteBuilder
     {
         $base = $this->site->paths->baseDir;
         $site = $this->site;
+        
+        // Generate shortlink if enabled
+        if (!empty($site->config['shortlink']['enabled'])) {
+            $shortlinkManager = new \Indieinabox\ShortlinkManager();
+            $fqdn = rtrim($site->metadata->fqdn ?? 'http://localhost', '/');
+            $page->shortlink = $shortlinkManager->getShortlink($page, $fqdn, $site->config['shortlink']);
+        }
+
         // Expose $p, $pages, $site, $langLinks, $headerLinks and $footerLinks to the global scope for view template compatibility
         global $p, $site, $pages, $langLinks, $headerLinks, $footerLinks;
         $p = $page;

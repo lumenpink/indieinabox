@@ -27,6 +27,9 @@ $ogImage = $imageInfo['dirname'] . '/' . $imageInfo['filename'] . '_1200x630.png
 <title><?= empty($page->title) || $page->title == "Untitled" ? $site->metadata->author : $page->title . " | " . $site->metadata->author ?></title>
 <meta name="description" content="<?= htmlspecialchars($seo['description']) ?>">
 <link rel="canonical" href="<?= htmlspecialchars($pageUrl) ?>">
+<?php if (!empty($page->shortlink)): ?>
+<link rel="shortlink" href="<?= htmlspecialchars($page->shortlink) ?>">
+<?php endif; ?>
 
 <meta property="og:site_name" content="<?= htmlspecialchars($site->metadata->author ?? 'Blog') ?>" />
 <meta property="og:type" content="<?= htmlspecialchars(in_array($seo['schema_type'], ['BlogPosting', 'Article', 'SocialMediaPosting', 'Comment']) ? 'article' : 'website') ?>" />

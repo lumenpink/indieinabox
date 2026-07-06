@@ -68,6 +68,11 @@ class Page
     /**
      * @var string|null
      */
+    public ?string $shortlink = null;
+
+    /**
+     * @var string|null
+     */
     public ?string $filepath = null;
 
     /**

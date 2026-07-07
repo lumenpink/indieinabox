@@ -1525,6 +1525,11 @@ class Helper
                                 $meta['interaction_content'] = $meta['content'] ?? $body;
                             }
                             
+                            $status = $meta['status'] ?? 'approved'; // backward compatibility
+                            if ($status !== 'approved') {
+                                continue;
+                            }
+                            
                             $interactionType = $meta['interaction_type'] ?? 'webmention';
                             if ($type === null || $interactionType === $type) {
                                 $interactions[] = $meta;

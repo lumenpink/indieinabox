@@ -216,6 +216,7 @@ class BackgroundWorker
             'is_read' => 0,
             'type' => 'webmention',
             'interaction_type' => $interactionType,
+            'status' => 'pending',
             'whostyle' => $whostyleData ?? []
         ];
 

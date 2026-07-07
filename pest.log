@@ -1,0 +1,26 @@
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Functional\ActivityPubTest[39m
+  [32;1m✓[39;22m[90m [39m[90mit returns webfinger JRD JSON[39m[90m                                       [39m [90m0.05s[39m  
+  [32;1m✓[39;22m[90m [39m[90mit returns actor ActivityStreams JSON[39m[90m                               [39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mit processes an incoming follow and queues an accept[39m[90m                [39m [90m0.09s[39m  
+Running Archive Queue processor...
+Archiving URL: https://example.com/post/1
+Archived: https://example.com/post/1
+Archive queue done.
+Running Archive Queue processor...
+Archiving URL: https://example.com/post/2
+Archive queue done.
+Running Archive Queue processor...
+Archiving URL: https://example.com/post/2
+Archived: https://example.com/post/2
+Archive queue done.
+Running Inbox Queue processor...
+Processing inbox item 1 (activitypub)...
+Inbox queue done.
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Functional\BackgroundWorkerTest[39m
+  [32;1m✓[39;22m[90m [39m[90mit processes archive queue and saves to db[39m[90m                          [39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mit skips archiving if already archived within 24h unless force_arch[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mit cannot run concurrently due to flock[39m[90m                             [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mit downloads avatar locally for activitypub create[39m[90m                  [39m [90m0.01s[39m  
+  [32;1m✓[39;22m[90m [39m[90mit processes build_site queue correctly[39m[90m                             [39m [90m0.03s[39m  

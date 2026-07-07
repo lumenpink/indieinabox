@@ -58,13 +58,17 @@ it('displays distinct interaction links on index and post pages', function () {
         mkdir($notificationsDir, 0777, true);
     }
     
-    // Add a like
-    $likeYaml = "---\ninteraction_type: like\nurl: https://example.com/like\nauthor_name: Test Liker\n---\n";
+    // Add an approved like
+    $likeYaml = "---\ninteraction_type: like\nurl: https://example.com/like\nauthor_name: Test Liker\nstatus: approved\n---\n";
     file_put_contents($notificationsDir . '/' . $hash . '_like1.md', $likeYaml);
     
-    // Add a reply
-    $replyYaml = "---\ninteraction_type: reply\nurl: https://example.com/reply\nauthor_name: Test Replier\n---\nThis is a test reply";
+    // Add an approved reply
+    $replyYaml = "---\ninteraction_type: reply\nurl: https://example.com/reply\nauthor_name: Test Replier\nstatus: approved\n---\nThis is a test reply";
     file_put_contents($notificationsDir . '/' . $hash . '_reply1.md', $replyYaml);
+    
+    // Add a pending reply
+    $pendingYaml = "---\ninteraction_type: reply\nurl: https://example.com/pending\nauthor_name: Test Pending\nstatus: pending\n---\nThis is a pending reply that should not be visible";
+    file_put_contents($notificationsDir . '/' . $hash . '_pending1.md', $pendingYaml);
 
     // Build the page
     $builder = new SiteBuilder($this->site);
@@ -103,6 +107,8 @@ it('displays distinct interaction links on index and post pages', function () {
     $replyHash = md5('https://example.com/reply');
     Assert::assertStringContainsString('reply/' . $replyHash . '/', $pageHtml);
     Assert::assertStringContainsString('This is a test reply', $pageHtml);
-
-    // Clean up
+    
+    // Check pending reply is NOT visible
+    Assert::assertStringNotContainsString('This is a pending reply', $pageHtml);
+    Assert::assertStringNotContainsString('Test Pending', $pageHtml);
 });

@@ -29,21 +29,21 @@ class MicrosubReaderHandler
      */
     public function handleRequest(): void
     {
-        header('Content-Type: text/html; charset=utf-8');
-        
+        // Require authentication
+        if (empty($_SESSION['admin_authenticated'])) {
+            $fqdn = rtrim($this->site->metadata->fqdn ?? '', '/');
+            header('Location: ' . $fqdn . '/admin/config');
+            return;
+        }
+
         $fqdn = rtrim($this->site->metadata->fqdn ?? '', '/');
         $endpoint = $fqdn . '/microsub';
         
-        echo <<<HTML
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nexus - Microsub Reader</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+        $activeTab = 'microsub';
+        $adminLayoutPath = dirname(__DIR__) . '/resources/views/admin_layout.php';
+        
+        ob_start();
+        ?>
     <style>
         :root {
             --glass-bg: rgba(17, 24, 39, 0.7);
@@ -54,23 +54,22 @@ class MicrosubReaderHandler
             --accent-gradient: var(--accent);
             --text-main: #f9fafb;
             --text-muted: #9ca3af;
-            --bg-gradient: linear-gradient(135deg, #090d16 0%, #111827 50%, #1e1b4b 100%);
+            --bg-gradient: transparent;
         }
 
-        body {
+        .microsub-wrapper {
             font-family: 'Outfit', system-ui, sans-serif;
             background: var(--bg-gradient);
-            background-attachment: fixed;
             color: var(--text-main);
             margin: 0;
             padding: 0;
-            min-height: 100vh;
+            height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
-        .glass {
+        .microsub-wrapper .glass {
             background: var(--glass-bg);
             backdrop-filter: var(--glass-blur);
             -webkit-backdrop-filter: var(--glass-blur);
@@ -353,9 +352,7 @@ class MicrosubReaderHandler
             }
         }
     </style>
-</head>
-<body>
-
+    <div class="microsub-wrapper">
     <div id="login-view" class="login-prompt glass" style="display: none;">
         <h1>Nexus Reader</h1>
         <p>Authenticate using your bearer token.</p>
@@ -515,21 +512,21 @@ class MicrosubReaderHandler
                     if (item.author) {
                         authorHtml = `
                             <div class="item-author">
-                                \${item.author.photo ? `<img src="\${item.author.photo}">` : ''}
+                                ${item.author.photo ? `<img src="${item.author.photo}">` : ''}
                                 <div>
-                                    <div class="name">\${item.author.name}</div>
-                                    <div class="date">\${new Date(item.published).toLocaleString()}</div>
+                                    <div class="name">${item.author.name}</div>
+                                    <div class="date">${new Date(item.published).toLocaleString()}</div>
                                 </div>
                             </div>
                         `;
                     }
 
                     div.innerHTML = `
-                        \${authorHtml}
-                        <div class="item-content">\${item.content.html || item.content.text || ''}</div>
+                        ${authorHtml}
+                        <div class="item-content">${item.content.html || item.content.text || ''}</div>
                         <div class="item-actions">
-                            <a href="\${item.url}" target="_blank">View Original</a>
-                            \${!item._is_read ? `<button onclick="markRead('\${item._id}')">Mark Read</button>` : ''}
+                            <a href="${item.url}" target="_blank">View Original</a>
+                            ${!item._is_read ? `<button onclick="markRead('${item._id}')">Mark Read</button>` : ''}
                         </div>
                     `;
                     container.appendChild(div);
@@ -557,9 +554,13 @@ class MicrosubReaderHandler
             }
         }
     </script>
-</body>
-</html>
-
-HTML;
+</div>
+<?php
+        $content = ob_get_clean();
+        if (file_exists($adminLayoutPath)) {
+            include $adminLayoutPath;
+        } else {
+            echo $content;
+        }
     }
 }

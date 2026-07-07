@@ -29,23 +29,23 @@ class MicropubClientHandler
      */
     public function handle(): void
     {
+        // Require authentication
+        if (empty($_SESSION['admin_authenticated'])) {
+            $fqdn = rtrim($this->site->metadata->fqdn ?? '', '/');
+            header('Location: ' . $fqdn . '/admin/config');
+            return;
+        }
+
         $fqdn = rtrim($this->site->metadata->fqdn ?? '', '/');
         
-        header('HTTP/1.1 200 OK');
-        header('Content-Type: text/html; charset=utf-8');
+        $activeTab = 'micropub';
+        $adminLayoutPath = dirname(__DIR__) . '/resources/views/admin_layout.php';
+        
+        ob_start();
         ?>
-        <!DOCTYPE html>
-        <html lang="en">
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Micropub Client</title>
-            <link rel="preconnect" href="https://fonts.googleapis.com">
-            <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-            <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
             <style>
                 :root {
-                    --bg-gradient: linear-gradient(135deg, #090d16 0%, #111827 50%, #1e1b4b 100%);
+                    --bg-gradient: transparent;
                     --card-bg: rgba(17, 24, 39, 0.7);
                     --accent: #eccb00;
                     --accent-glow: rgba(236, 203, 0, 0.35);
@@ -58,21 +58,17 @@ class MicropubClientHandler
                     --success-color: #10b981;
                 }
 
-                body {
+                .micropub-wrapper {
                     font-family: 'Outfit', sans-serif;
-                    background: var(--bg-gradient);
-                    background-attachment: fixed;
+                    background: transparent;
                     color: var(--text-primary);
-                    min-height: 100vh;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    margin: 0;
                     padding: 2rem 1.5rem;
                     box-sizing: border-box;
+                    display: flex;
+                    justify-content: center;
                 }
 
-                .container {
+                .micropub-wrapper .container {
                     backdrop-filter: blur(20px);
                     -webkit-backdrop-filter: blur(20px);
                     background: var(--card-bg);
@@ -88,7 +84,7 @@ class MicropubClientHandler
                     transition: transform 0.3s ease, box-shadow 0.3s ease;
                 }
 
-                .container::before {
+                .micropub-wrapper .container::before {
                     content: '';
                     position: absolute;
                     top: 0;
@@ -98,105 +94,131 @@ class MicropubClientHandler
                     background: linear-gradient(90deg, #eccb00, #f59e0b);
                 }
 
-                h1 {
-                    font-size: 2rem;
+                .micropub-wrapper h1 {
+                    font-size: 2.2rem;
                     font-weight: 800;
-                    margin-top: 0;
-                    margin-bottom: 0.5rem;
-                    background: linear-gradient(90deg, #ffffff, #eccb00);
+                    margin: 0 0 0.5rem 0;
+                    background: linear-gradient(to right, #ffffff, #d1d5db);
+                    background-clip: text;
                     -webkit-background-clip: text;
                     -webkit-text-fill-color: transparent;
                     letter-spacing: -0.02em;
                 }
 
-                .subtitle {
+                .micropub-wrapper .subtitle {
                     color: var(--text-secondary);
-                    font-size: 1rem;
-                    line-height: 1.5;
-                    margin-bottom: 2rem;
+                    font-size: 1.05rem;
+                    margin: 0 0 2rem 0;
+                    line-height: 1.6;
                 }
 
-                form {
-                    display: flex;
-                    flex-direction: column;
-                    gap: 1.5rem;
+                .micropub-wrapper .form-group {
+                    margin-bottom: 1.5rem;
                 }
 
-                .form-group {
-                    display: flex;
-                    flex-direction: column;
-                    gap: 0.5rem;
-                }
-
-                label {
+                .micropub-wrapper label {
+                    display: block;
                     font-weight: 600;
-                    font-size: 0.9rem;
-                    color: var(--text-secondary);
+                    margin-bottom: 0.6rem;
+                    color: #d1d5db;
+                    font-size: 0.95rem;
+                    letter-spacing: 0.01em;
                 }
 
-                input[type="text"], textarea, select {
-                    font-family: inherit;
+                .micropub-wrapper input[type="text"],
+                .micropub-wrapper input[type="file"],
+                .micropub-wrapper select,
+                .micropub-wrapper textarea {
+                    width: 100%;
                     background: var(--input-bg);
                     border: 1px solid var(--border);
-                    border-radius: 12px;
-                    padding: 0.85rem 1rem;
-                    font-size: 1rem;
                     color: var(--text-primary);
-                    transition: all 0.2s ease;
-                    width: 100%;
+                    padding: 14px 16px;
+                    border-radius: 12px;
+                    font-family: inherit;
+                    font-size: 1rem;
                     box-sizing: border-box;
+                    transition: all 0.2s ease;
                 }
 
-                textarea {
+                .micropub-wrapper textarea {
                     min-height: 150px;
                     resize: vertical;
+                    line-height: 1.5;
                 }
 
-                input:focus, textarea:focus, select:focus {
+                .micropub-wrapper input:focus,
+                .micropub-wrapper select:focus,
+                .micropub-wrapper textarea:focus {
                     outline: none;
                     border-color: var(--accent);
-                    box-shadow: 0 0 0 4px var(--input-focus);
-                    background: rgba(3, 7, 18, 0.8);
+                    background: var(--input-focus);
+                    box-shadow: 0 0 0 4px rgba(236, 203, 0, 0.1);
                 }
 
-                button {
-                    background: linear-gradient(135deg, #eccb00 0%, #d8b600 100%);
-                    color: #030712;
+                .micropub-wrapper button {
+                    background: var(--accent);
+                    color: #000;
                     border: none;
-                    padding: 0.95rem 1.5rem;
+                    padding: 16px 24px;
                     border-radius: 12px;
+                    font-family: inherit;
+                    font-weight: 700;
                     font-size: 1.05rem;
-                    font-weight: 600;
                     cursor: pointer;
+                    width: 100%;
+                    margin-top: 1rem;
                     transition: all 0.2s ease;
-                    box-shadow: 0 4px 12px var(--accent-glow);
+                    text-transform: uppercase;
+                    letter-spacing: 0.05em;
                 }
 
-                button:hover {
-                    transform: translateY(-1px);
-                    box-shadow: 0 6px 20px var(--accent-glow);
-                    background: linear-gradient(135deg, #fce029 0%, #eccb00 100%);
+                .micropub-wrapper button:hover {
+                    background: #f59e0b;
+                    transform: translateY(-2px);
+                    box-shadow: 0 10px 20px -10px var(--accent-glow);
                 }
 
-                button:disabled {
-                    opacity: 0.5;
-                    cursor: not-allowed;
+                .micropub-wrapper button:active {
+                    transform: translateY(0);
                 }
 
-                #auth-section { display: block; }
-                #compose-section { display: none; }
-                #status { margin-top: 1rem; font-weight: 600; }
-                .success { color: var(--success-color); }
-                .error { color: var(--error-color); }
+                .micropub-wrapper #status {
+                    margin-top: 1.5rem;
+                    padding: 14px;
+                    border-radius: 12px;
+                    font-weight: 600;
+                    text-align: center;
+                    display: none;
+                    animation: fadeIn 0.3s ease;
+                }
 
+                .micropub-wrapper .status-success {
+                    background: rgba(16, 185, 129, 0.1);
+                    color: var(--success-color);
+                    border: 1px solid rgba(16, 185, 129, 0.2);
+                }
+
+                .micropub-wrapper .status-error {
+                    background: rgba(239, 68, 68, 0.1);
+                    color: var(--error-color);
+                    border: 1px solid rgba(239, 68, 68, 0.2);
+                }
+
+                @keyframes fadeIn {
+                    from { opacity: 0; transform: translateY(-5px); }
+                    to { opacity: 1; transform: translateY(0); }
+                }
+
+                .micropub-wrapper #auth-section { display: block; }
+                .micropub-wrapper #compose-section { display: none; }
             </style>
-        </head>
-        <body>
+        <div class="micropub-wrapper">
             <div class="container">
-                <h1>Micropub Client</h1>
+                <h1>Publish</h1>
                 
                 <div id="auth-section">
-                    <p class="subtitle">Authenticate via IndieAuth to start posting.</p>
+                    <p class="subtitle">Authenticate with <strong><?= htmlspecialchars($fqdn) ?></strong> to publish content.</p>
                     <button id="btn-login">Login with IndieAuth</button>
                 </div>
 
@@ -542,8 +564,13 @@ class MicropubClientHandler
                     document.getElementById('btn-publish').disabled = false;
                 });
             </script>
-        </body>
-        </html>
+        </div>
         <?php
+        $content = ob_get_clean();
+        if (file_exists($adminLayoutPath)) {
+            include $adminLayoutPath;
+        } else {
+            echo $content;
+        }
     }
 }

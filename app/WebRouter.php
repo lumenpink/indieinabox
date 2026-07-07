@@ -109,11 +109,32 @@ class WebRouter
             return;
         }
 
+        // Admin Routes
+        $isAdminPath = (strpos($requestUriClean, '/admin') === 0);
+        if ($isAdminPath) {
+            if ($requestUriClean === '/admin') {
+                header('Location: /admin/config');
+                exit;
+            }
+            if (strpos($requestUriClean, '/admin/config') === 0) {
+                $handler = $this->createConfigHandler();
+            } elseif (strpos($requestUriClean, '/admin/micropub') === 0) {
+                $handler = $this->createMicropubClientHandler();
+            } elseif (strpos($requestUriClean, '/admin/microsub') === 0) {
+                $handler = $this->createMicrosubReaderHandler();
+            } elseif (strpos($requestUriClean, '/admin/moderation') === 0) {
+                $handler = $this->createModerationHandler();
+            }
+        }
+
+        // Backward compatibility for old config route
         $isConfigParam = isset($_GET['config']);
         $isConfigPath = (preg_match('#/config$#i', $requestUriClean) === 1);
-
         if ($isConfigParam || $isConfigPath) {
-            $handler = $this->createConfigHandler();
+            header('Location: /admin/config');
+            exit;
+        }
+        if (isset($handler)) {
             $handler->handle();
             return;
         }
@@ -182,6 +203,15 @@ class WebRouter
     protected function createMicrosubReaderHandler(): MicrosubReaderHandler
     {
         return new MicrosubReaderHandler($this->site);
+    }
+
+    /**
+     * Method createModerationHandler
+     * @return \Indieinabox\ModerationHandler
+     */
+    protected function createModerationHandler(): ModerationHandler
+    {
+        return new ModerationHandler($this->site);
     }
 
     /**

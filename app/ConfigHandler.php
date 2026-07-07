@@ -703,32 +703,28 @@ class ConfigHandler
         
         $prettyLinksActive = $config['prettylinks'] ?? $this->detectPrettyLinksSupport();
 
-        header('HTTP/1.1 200 OK');
-        header('Content-Type: text/html; charset=utf-8');
+        $activeTab = 'config';
+        $adminLayoutPath = dirname(__DIR__) . '/resources/views/admin_layout.php';
+        $fqdn = rtrim($this->site->metadata->fqdn ?? '', '/');
+
+        ob_start();
         ?>
-        <!DOCTYPE html>
-        <html lang="en">
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Web Settings - Indieinabox</title>
             <style>
                 :root {
-                    --bg: #F4F1EA;
+                    --bg: transparent; /* Use parent background */
                     --fg: #2C2E2F;
                     --accent: #ef4444; /* red accent to signify config area */
                     --border-color: rgba(44, 46, 47, 0.2);
                 }
-                body {
-                    background-color: var(--bg);
+                .config-wrapper {
+                    background-color: #F4F1EA;
                     color: var(--fg);
                     font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
                     line-height: 1.6;
-                    max-width: 800px;
-                    margin: 40px auto;
-                    padding: 0 16px;
+                    padding: 2em;
+                    min-height: 100%;
                 }
-                .nav-header {
+                .config-wrapper .nav-header {
                     display: flex;
                     justify-content: space-between;
                     align-items: baseline;
@@ -736,15 +732,15 @@ class ConfigHandler
                     border-bottom: 1px solid var(--fg);
                     padding-bottom: 0.5em;
                 }
-                h1 {
+                .config-wrapper h1 {
                     color: var(--accent);
                     margin: 0;
                 }
-                a.logout-btn {
+                .config-wrapper a.logout-btn {
                     color: var(--fg);
                     text-decoration: underline;
                 }
-                a.logout-btn:hover {
+                .config-wrapper a.logout-btn:hover {
                     text-decoration: none;
                     color: var(--accent);
                 }
@@ -864,8 +860,7 @@ class ConfigHandler
                     padding: 2px;
                 }
             </style>
-        </head>
-        <body>
+        <div class="config-wrapper">
             <div class="nav-header">
                 <h1>Configuration Panel</h1>
                 <a href="?action=logout" class="logout-btn">Log Out</a>
@@ -1241,9 +1236,14 @@ class ConfigHandler
                     }
                 }
             </script>
-        </body>
-        </html>
+        </div>
         <?php
+        $content = ob_get_clean();
+        if (file_exists($adminLayoutPath)) {
+            include $adminLayoutPath;
+        } else {
+            echo $content;
+        }
     }
 
     /**

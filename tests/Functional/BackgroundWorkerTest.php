@@ -87,6 +87,7 @@ beforeEach(function () use ($funcTempDir) {
     
     $paths = new \Indieinabox\Site\Paths($funcTempDir, $funcTempDir . '/public_html', $funcTempDir . '/public_gemini', $funcTempDir . '/public_gopher', $funcTempDir . '/public_media', $funcTempDir . '/content', $funcTempDir . '/resources');
     $this->site = new Site(null, $paths);
+    $GLOBALS['site'] = $this->site;
     
     $this->worker = new MockBackgroundWorkerBgTest($this->site);
 });

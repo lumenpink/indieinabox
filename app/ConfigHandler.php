@@ -244,6 +244,7 @@ class ConfigHandler
         
         $currentConfig['translation_parity'] = $_POST['translation_parity'] ?? 'full';
         $currentConfig['translation_auto'] = $_POST['translation_auto'] ?? 'pseudo';
+        $currentConfig['akismet_api_key'] = trim($_POST['akismet_api_key'] ?? '');
         
         // --- Booleans ---
         $currentConfig['buildall'] = isset($_POST['buildall']);
@@ -1205,6 +1206,14 @@ class ConfigHandler
                             <label>Auth Token (Optional)</label>
                             <input type="text" name="shortlink[auth_token]" value="<?= htmlspecialchars($config['shortlink']['auth_token'] ?? '') ?>" placeholder="Token value">
                         </div>
+                    </div>
+                </fieldset>
+
+                <fieldset>
+                    <legend>Spam Protection (Akismet)</legend>
+                    <div class="form-group">
+                        <label>Akismet API Key (Leave blank to disable)</label>
+                        <input type="text" name="akismet_api_key" value="<?= htmlspecialchars((string)($config['akismet_api_key'] ?? '')) ?>" placeholder="Enter API Key">
                     </div>
                 </fieldset>
 

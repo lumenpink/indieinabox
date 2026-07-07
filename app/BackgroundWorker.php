@@ -220,7 +220,24 @@ class BackgroundWorker
             'whostyle' => $whostyleData ?? []
         ];
 
-        $filepath = $notificationsDir . DIRECTORY_SEPARATOR . $newMention['id'] . '.md';
+        $isSpam = $this->checkAkismet([
+            'author_name' => $newMention['author_name'],
+            'author_url' => $source,
+            'content' => $content
+        ]);
+
+        if ($isSpam) {
+            $newMention['status'] = 'spam';
+            $targetDir = $dataDir . DIRECTORY_SEPARATOR . 'microsub' . DIRECTORY_SEPARATOR . 'inbox' . DIRECTORY_SEPARATOR . 'spam';
+        } else {
+            $targetDir = $notificationsDir;
+        }
+        
+        if (!is_dir($targetDir)) {
+            @mkdir($targetDir, 0755, true);
+        }
+
+        $filepath = $targetDir . DIRECTORY_SEPARATOR . $newMention['id'] . '.md';
         
         $yaml = new \Indieinabox\Yaml();
         $yamlStr = $yaml->dump($newMention);
@@ -371,7 +388,24 @@ class BackgroundWorker
         $yaml = new \Indieinabox\Yaml();
         $yamlStr = $yaml->dump($frontmatter);
 
-        $filepath = $inboxDir . DIRECTORY_SEPARATOR . $hash . '.md';
+        $isSpam = $this->checkAkismet([
+            'author_name' => $authorName,
+            'author_url' => $actor,
+            'content' => $content
+        ]);
+
+        if ($isSpam) {
+            $frontmatter['status'] = 'spam';
+            $targetDir = $dataDir . DIRECTORY_SEPARATOR . 'microsub' . DIRECTORY_SEPARATOR . 'inbox' . DIRECTORY_SEPARATOR . 'spam';
+        } else {
+            $targetDir = $inboxDir;
+        }
+
+        if (!is_dir($targetDir)) {
+            @mkdir($targetDir, 0755, true);
+        }
+
+        $filepath = $targetDir . DIRECTORY_SEPARATOR . $hash . '.md';
         $fileContent = "---\n" . trim($yamlStr) . "\n---\n\n" . $content;
 
         file_put_contents($filepath, $fileContent);
@@ -769,5 +803,46 @@ class BackgroundWorker
             }
         }
         return null;
+    }
+
+    /**
+     * Method checkAkismet
+     * @param array $commentData
+     * @return bool True if spam
+     */
+    private function checkAkismet(array $commentData): bool
+    {
+        $akismetKey = \Indieinabox\Database::getSetting('akismet_api_key');
+        if (empty($akismetKey)) {
+            return false;
+        }
+
+        $fqdn = \Indieinabox\Database::getSetting('fqdn');
+        if (empty($fqdn)) {
+            $fqdn = $this->site->metadata->fqdn ?? '';
+        }
+        $fqdn = rtrim((string)$fqdn, '/');
+
+        $endpoint = 'https://' . $akismetKey . '.rest.akismet.com/1.1/comment-check';
+
+        $data = [
+            'blog' => $fqdn,
+            'user_ip' => '127.0.0.1', // Server-to-server usually masks original IP
+            'user_agent' => 'Indieinabox/1.0 | Webmention',
+            'comment_type' => 'comment',
+            'comment_author' => $commentData['author_name'] ?? '',
+            'comment_author_url' => $commentData['author_url'] ?? '',
+            'comment_content' => $commentData['content'] ?? ''
+        ];
+
+        $ch = curl_init($endpoint);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
+        curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+        $res = curl_exec($ch);
+        curl_close($ch);
+
+        return trim((string)$res) === 'true';
     }
 }

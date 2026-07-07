@@ -6,6 +6,10 @@ namespace Indieinabox;
 
 /**
  * Class WebRouter
+ * 
+ * Handles incoming HTTP requests by mapping the request URI to the appropriate
+ * handler class (e.g., Micropub, Microsub, Admin panel, ActivityPub, Webmention).
+ * If no specific handler matches, it attempts to serve static HTML files.
  */
 class WebRouter
 {
@@ -15,8 +19,9 @@ class WebRouter
     protected Site $site;
 
     /**
-     * Method __construct
-     * @param \Indieinabox\Site $site
+     * Initializes the WebRouter with the global site configuration.
+     *
+     * @param \Indieinabox\Site $site The site configuration object.
      */
     public function __construct(Site $site)
     {
@@ -24,7 +29,10 @@ class WebRouter
     }
 
     /**
-     * Method handleRequest
+     * Main entry point for routing requests.
+     * Parses the current REQUEST_URI, checks against known API/Admin endpoints,
+     * and delegates to the respective handler. Falls back to serveStatic().
+     *
      * @return void
      */
     public function handleRequest(): void
@@ -143,7 +151,8 @@ class WebRouter
     }
 
     /**
-     * Method createWebmentionHandler
+     * Factory method to create a WebmentionHandler instance.
+     *
      * @return \Indieinabox\WebmentionHandler
      */
     protected function createWebmentionHandler(): WebmentionHandler
@@ -152,7 +161,8 @@ class WebRouter
     }
 
     /**
-     * Method createIndieAuthHandler
+     * Factory method to create an IndieAuthHandler instance.
+     *
      * @return \Indieinabox\IndieAuthHandler
      */
     protected function createIndieAuthHandler(): IndieAuthHandler
@@ -161,7 +171,8 @@ class WebRouter
     }
 
     /**
-     * Method createConfigHandler
+     * Factory method to create a ConfigHandler instance (Admin panel configuration).
+     *
      * @return \Indieinabox\ConfigHandler
      */
     protected function createConfigHandler(): ConfigHandler
@@ -170,7 +181,8 @@ class WebRouter
     }
 
     /**
-     * Method createMicropubHandler
+     * Factory method to create a MicropubHandler instance (Micropub Server).
+     *
      * @return \Indieinabox\MicropubHandler
      */
     protected function createMicropubHandler(): MicropubHandler
@@ -179,7 +191,8 @@ class WebRouter
     }
 
     /**
-     * Method createMicropubClientHandler
+     * Factory method to create a MicropubClientHandler instance (Admin panel publishing).
+     *
      * @return \Indieinabox\MicropubClientHandler
      */
     protected function createMicropubClientHandler(): MicropubClientHandler
@@ -188,7 +201,8 @@ class WebRouter
     }
 
     /**
-     * Method createMicrosubHandler
+     * Factory method to create a MicrosubHandler instance (Microsub Server).
+     *
      * @return \Indieinabox\MicrosubHandler
      */
     protected function createMicrosubHandler(): MicrosubHandler
@@ -197,7 +211,8 @@ class WebRouter
     }
 
     /**
-     * Method createMicrosubReaderHandler
+     * Factory method to create a MicrosubReaderHandler instance (Admin panel reader).
+     *
      * @return \Indieinabox\MicrosubReaderHandler
      */
     protected function createMicrosubReaderHandler(): MicrosubReaderHandler
@@ -206,7 +221,8 @@ class WebRouter
     }
 
     /**
-     * Method createModerationHandler
+     * Factory method to create a ModerationHandler instance (Admin panel moderation).
+     *
      * @return \Indieinabox\ModerationHandler
      */
     protected function createModerationHandler(): ModerationHandler
@@ -215,7 +231,8 @@ class WebRouter
     }
 
     /**
-     * Method createActivityPubHandler
+     * Factory method to create an ActivityPubHandler instance (Fediverse integration).
+     *
      * @return \Indieinabox\ActivityPubHandler
      */
     protected function createActivityPubHandler(): ActivityPubHandler
@@ -224,7 +241,10 @@ class WebRouter
     }
 
     /**
-     * Method serveStatic
+     * Attempts to serve static files from the output directory based on the request URI.
+     * Determines MIME types and outputs appropriate caching headers. If the file is 
+     * not found, delegates to archive checking.
+     *
      * @return void
      */
     private function serveStatic(): void
@@ -386,7 +406,10 @@ class WebRouter
     }
 
     /**
-     * Method handleArchiveForce
+     * Handles routing for Internet Archive / Wayback Machine fallback requests.
+     * Searches for archived versions of requested files.
+     *
+     * @param string $requestUri The original request URI to resolve.
      * @return void
      */
     private function handleArchiveForce(): void

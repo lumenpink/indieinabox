@@ -10,6 +10,9 @@ use PDOResult;
 
 /**
  * Class Database
+ * 
+ * Provides a singleton PDO connection to the SQLite database and offers helper 
+ * methods for fetching settings, translations, and content configurations.
  */
 class Database
 {
@@ -17,7 +20,11 @@ class Database
     public static ?string $dataDir = null;
 
     /**
-     * @throws Exception
+     * Connects to the SQLite database and initializes connection attributes.
+     * Sets PRAGMAs for WAL mode and foreign keys for optimized concurrent usage.
+     *
+     * @param string $path Path to the SQLite database file.
+     * @throws Exception If PDO extension is missing or connection fails.
      */
     public static function connect(string $path): void
     {
@@ -49,8 +56,11 @@ class Database
     }
 
     /**
-     * Method getDb
-     * @return PDO
+     * Retrieves the active PDO database connection.
+     * Throws an exception if the connection has not been established yet.
+     *
+     * @return PDO The active PDO instance.
+     * @throws Exception If the database is not connected.
      */
     public static function getDb(): PDO
     {
@@ -99,7 +109,10 @@ class Database
     }
 
     /**
-     * Gets all settings as an associative array
+     * Retrieves all rows from the settings table as an associative array.
+     * JSON values are automatically decoded into PHP arrays.
+     *
+     * @return array<string, mixed> Key-value pairs of all site settings.
      */
     public static function getAllSettings(): array
     {
@@ -123,8 +136,10 @@ class Database
     }
 
     /**
-     * Method getTranslations
-     * @return array
+     * Fetches interface translations from the database.
+     * Returns an array grouped by phrase key, containing mappings for each language.
+     *
+     * @return array<string, array<string, string>> Array of translations.
      */
     public static function getTranslations(): array
     {
@@ -150,8 +165,10 @@ class Database
     }
 
     /**
-     * Method getUrlTranslations
-     * @return array
+     * Fetches localized URL slugs translations.
+     * Groups results by the internal slug key, mapping it to localized values.
+     *
+     * @return array<string, array<string, string>> Array of URL translations.
      */
     public static function getUrlTranslations(): array
     {
@@ -177,8 +194,10 @@ class Database
     }
 
     /**
-     * Method getKinds
-     * @return array
+     * Retrieves content kind configurations (e.g., article, note, photo).
+     * Decodes the JSON configuration column for each kind into an array.
+     *
+     * @return array<string, array<string, mixed>> Associative array of kind configs.
      */
     public static function getKinds(): array
     {

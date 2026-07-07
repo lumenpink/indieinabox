@@ -15,8 +15,9 @@ class ConfigHandler
     private Site $site;
 
     /**
-     * Method __construct
-     * @param \Indieinabox\Site $site
+     * Initializes the ConfigHandler with the site context.
+     *
+     * @param \Indieinabox\Site $site Global site configuration and environment.
      */
     public function __construct(Site $site)
     {
@@ -24,7 +25,10 @@ class ConfigHandler
     }
 
     /**
-     * Method handle
+     * Main handler entry point.
+     * Manages bootstrapping, login, callbacks, configuration saving, and rendering 
+     * the admin configuration panel based on the request method and session state.
+     *
      * @return void
      */
     public function handle(): void
@@ -81,7 +85,9 @@ class ConfigHandler
     }
 
     /**
-     * Method handleBootstrap
+     * Handles the initial bootstrapping of a new site installation.
+     * Creates an admin user, hashes their password, and saves initial metadata.
+     *
      * @return void
      */
     private function handleBootstrap(): void
@@ -142,7 +148,10 @@ class ConfigHandler
     }
 
     /**
-     * Method handleCallback
+     * Processes the IndieAuth callback payload.
+     * Verifies the OAuth state and authorization code with the authorization endpoint
+     * to authenticate the admin user.
+     *
      * @return void
      */
     private function handleCallback(): void
@@ -191,7 +200,9 @@ class ConfigHandler
     }
 
     /**
-     * Method redirectToAuth
+     * Redirects the user to the IndieAuth authorization endpoint.
+     * Generates PKCE challenges, stores the state in the session, and initiates the OAuth flow.
+     *
      * @return void
      */
     private function redirectToAuth(): void
@@ -215,7 +226,10 @@ class ConfigHandler
     }
 
     /**
-     * Method saveConfig
+     * Processes form submissions from the configuration panel.
+     * Validates and saves metadata, options, themes, feeds, plugins, and kinds 
+     * into the database. Also triggers a site rebuild upon saving.
+     *
      * @return void
      */
     private function saveConfig(): void
@@ -473,7 +487,9 @@ class ConfigHandler
     }
 
     /**
-     * Method rebuildSite
+     * Triggers a site rebuild in the background by calling the CLI build script.
+     * Returns early while the build process runs asynchronously.
+     *
      * @return void
      */
     private function rebuildSite(): void
@@ -562,8 +578,10 @@ class ConfigHandler
     }
 
     /**
-     * Method detectPrettyLinksSupport
-     * @return bool
+     * Detects if the web server supports "pretty links" (URL rewriting).
+     * Usually checks the presence of Apache's mod_rewrite via server variables.
+     *
+     * @return bool True if pretty links are supported, false otherwise.
      */
     private function detectPrettyLinksSupport(): bool
     {
@@ -577,9 +595,10 @@ class ConfigHandler
     }
 
     /**
-     * Method renderBootstrapForm
-     * @param ?string $error
-     * 
+     * Renders the bootstrap (first-run) HTML form.
+     * Prompts the user for a password, site title, and fully qualified domain name.
+     *
+     * @param string|null $error Optional error message to display on the form.
      * @return void
      */
     private function renderBootstrapForm(?string $error = null): void
@@ -687,7 +706,10 @@ class ConfigHandler
     }
 
     /**
-     * Method renderConfigForm
+     * Renders the main configuration form inside the admin panel.
+     * Displays fields for metadata, kinds, translations, plugins, and shortlink settings.
+     * Uses output buffering and includes the global admin layout.
+     *
      * @return void
      */
     private function renderConfigForm(): void
@@ -1256,10 +1278,10 @@ class ConfigHandler
     }
 
     /**
-     * Method sendError
-     * @param int $code
-     * @param string $message
-     * 
+     * Sends a plain-text HTTP error response.
+     *
+     * @param int $code The HTTP status code (e.g., 400, 401, 500).
+     * @param string $message The error message to display.
      * @return void
      */
     private function sendError(int $code, string $message): void

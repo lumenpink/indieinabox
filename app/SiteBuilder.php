@@ -35,10 +35,11 @@ class SiteBuilder
     private ParserInterface $parser;
 
     /**
-     * Method __construct
-     * @param \Indieinabox\Site $site
-     * @param ?\Indieinabox\Pages $pages
-     * @param ?\Indieinabox\ParserInterface $parser
+     * SiteBuilder constructor.
+     *
+     * @param \Indieinabox\Site $site The site configuration and environment settings.
+     * @param \Indieinabox\Pages|null $pages An optional collection of parsed pages.
+     * @param \Indieinabox\ParserInterface|null $parser An optional markdown parser implementation.
      */
     public function __construct(Site $site, ?Pages $pages = null, ?ParserInterface $parser = null)
     {
@@ -66,8 +67,9 @@ class SiteBuilder
     }
 
     /**
-     * Method getPages
-     * @return \Indieinabox\Pages
+     * Retrieves the collection of processed pages.
+     *
+     * @return \Indieinabox\Pages The pages collection.
      */
     public function getPages(): Pages
     {
@@ -118,7 +120,9 @@ class SiteBuilder
         }
     }
     /**
-     * Method copyMedia
+     * Copies static media files from the content directory to the public media output directory.
+     * Preserves directory structures and handles file deduplication.
+     * 
      * @return void
      */
     public function copyMedia(): void
@@ -133,7 +137,10 @@ class SiteBuilder
         ThemeManager::copyStaticFiles($contentMediaDir, $base, $this->site->paths->outputDirMedia);
     }
     /**
-     * Method virtualizeMissingLanguages
+     * Generates pseudo-translated pages for missing languages to maintain parity.
+     * Uses configured rules (e.g., full parity, from-main-only) and translates 
+     * missing slugs according to URL translation mappings.
+     *
      * @return void
      */
     private function virtualizeMissingLanguages(): void
@@ -296,10 +303,11 @@ class SiteBuilder
     }
 
     /**
-     * Method pseudoTranslate
-     * @param \Indieinabox\Page $page
-     * @param string $targetLang
-     * 
+     * Applies a pseudo-translation prefix to a page's title or content.
+     * Used visually to flag that a page was automatically virtualized.
+     *
+     * @param \Indieinabox\Page $page The page to translate in place.
+     * @param string $targetLang The target language code used as the prefix.
      * @return void
      */
     public function pseudoTranslate(\Indieinabox\Page $page, string $targetLang): void
@@ -323,9 +331,11 @@ class SiteBuilder
     }
 
     /**
-     * Method scan
-     * @param string $dir
-     * 
+     * Recursively scans a directory for markdown content files.
+     * Parses valid markdown files into Page objects and adds them to the collection.
+     * Skips system directories (e.g., app, vendor, output dirs).
+     *
+     * @param string $dir The directory path to scan.
      * @return void
      */
     public function scan(string $dir): void
@@ -374,7 +384,9 @@ class SiteBuilder
     }
 
     /**
-     * Method generateHTMLFiles
+     * Iterates over all parsed pages and triggers the generation of HTML, 
+     * Gemini, and Gopher files for each. Also generates sitemaps and indexes.
+     *
      * @return void
      */
     public function generateHTMLFiles(): void
@@ -404,9 +416,10 @@ class SiteBuilder
     }
 
     /**
-     * Method createHTMLFile
-     * @param \Indieinabox\Page $page
-     * 
+     * Renders a single Page object into an HTML file using the configured theme.
+     * Handles slug resolution, metadata extraction, and shortlink generation.
+     *
+     * @param \Indieinabox\Page $page The page to render.
      * @return void
      */
     private function createHTMLFile(Page $page): void
@@ -550,7 +563,9 @@ class SiteBuilder
     }
 
     /**
-     * Method generateFeed
+     * Renders standard RSS and Atom feeds for the site.
+     * Uses the configured theme's feed view file if available.
+     *
      * @return void
      */
     public function generateFeed(): void
@@ -570,9 +585,9 @@ class SiteBuilder
     }
 
     /**
-     * Method copyAssets
-     * @param string $dir
-     * 
+     * Copies theme assets (e.g., CSS, JS, fonts) from the theme directory to the public output.
+     *
+     * @param string $dir The source directory containing theme assets.
      * @return void
      */
     public function copyAssets(string $dir): void
@@ -587,10 +602,11 @@ class SiteBuilder
     }
 
     /**
-     * Method copyStatic
-     * @param string $dir
-     * 
-     * @return bool
+     * Copies general static files from the given directory to the output HTML directory.
+     * Also triggers the injection of live.js for hot-reloading if dev mode is enabled.
+     *
+     * @param string $dir The source directory containing static files.
+     * @return bool True if copy was successful or no theme exists, false otherwise.
      */
     public function copyStatic(string $dir): bool
     {
@@ -613,9 +629,9 @@ class SiteBuilder
 
 
     /**
-     * Method copyLiveJsFile
-     * @param string $base
-     * 
+     * Copies the live.js script for live reloading during development.
+     *
+     * @param string $base The base installation directory.
      * @return void
      */
     private function copyLiveJsFile(string $base): void
@@ -640,9 +656,10 @@ class SiteBuilder
     }
 
     /**
-     * Method createGeminiFile
-     * @param \Indieinabox\Page $page
-     * 
+     * Renders a page into the Gemini protocol format (.gmi) and writes it to the gemini output directory.
+     * Parses the markdown AST and formats it according to Gemini conventions.
+     *
+     * @param \Indieinabox\Page $page The page to render.
      * @return void
      */
     private function createGeminiFile(Page $page): void
@@ -710,9 +727,10 @@ class SiteBuilder
     }
 
     /**
-     * Method createGopherFile
-     * @param \Indieinabox\Page $page
-     * 
+     * Renders a page into the Gopher protocol format (gophermap) and writes it to the gopher output directory.
+     * Formats links and metadata according to RFC 1436.
+     *
+     * @param \Indieinabox\Page $page The page to render.
      * @return void
      */
     private function createGopherFile(Page $page): void
@@ -791,7 +809,9 @@ class SiteBuilder
     }
 
     /**
-     * Method generateTwtxt
+     * Generates Twtxt (Microblogging) feed files for the site and each language.
+     * Extracts content specific to the Twtxt format (max 140 chars or full content).
+     *
      * @return void
      */
     public function generateTwtxt(): void
@@ -1158,11 +1178,12 @@ class SiteBuilder
     }
 
     /**
-     * Method getKindFolder
-     * @param string $kind
-     * @param string $lang
-     * 
-     * @return string
+     * Resolves the output folder name for a specific content kind and language.
+     * Checks localized configuration, default language fallbacks, and raw slugs.
+     *
+     * @param string $kind The internal content kind slug.
+     * @param string $lang The target language.
+     * @return string The resolved and slugified folder name.
      */
     private function getKindFolder(string $kind, string $lang): string
     {
@@ -1301,7 +1322,9 @@ class SiteBuilder
     }
 
     /**
-     * Method compileSitemap
+     * Generates a sitemap.xml file encompassing all non-draft pages.
+     * Creates standard sitemaps for the HTML site to assist search engine indexing.
+     *
      * @return void
      */
     private function compileSitemap(): void
@@ -1410,7 +1433,9 @@ class SiteBuilder
     }
     
     /**
-     * Method ensureMandatoryHomepage
+     * Ensures a mandatory homepage (index.html) exists in the output.
+     * If one was not provided in the content directory, it creates a generic fallback.
+     *
      * @return void
      */
     private function ensureMandatoryHomepage(): void

@@ -50,6 +50,7 @@
 <li><a href="/docs/api/html/Page.html">Page</a></li>
 <li><a href="/docs/api/html/Pages.html">Pages</a></li>
 <li><a href="/docs/api/html/ParserInterface.html">ParserInterface</a></li>
+<li><a href="/docs/api/html/ShortlinkManager.html">ShortlinkManager</a></li>
 <li><a href="/docs/api/html/Site-Localization.html">Site-Localization</a></li>
 <li><a href="/docs/api/html/Site-Metadata.html">Site-Metadata</a></li>
 <li><a href="/docs/api/html/Site-Options.html">Site-Options</a></li>
@@ -85,15 +86,18 @@
 <p>@var string</p>
 <h3><code>public ?string $indieauthPassword</code></h3>
 <p>@var ?string</p>
+<h3><code>public string $description</code></h3>
+<p>@var string</p>
 <h2>Methods</h2>
 <h3><em></em>construct()</h3>
-<p><code>public function __construct(string $title = &apos;My Site&apos;, string $sitename = &apos;My Site&apos;, string $author = &apos;Me&apos;, string $defaultTitle = &apos;Untitled&apos;, string $fqdn = &apos;http://localhost:8080&apos;)</code></p>
+<p><code>public function __construct(string $title = &apos;My Site&apos;, string $sitename = &apos;My Site&apos;, string $author = &apos;Me&apos;, string $defaultTitle = &apos;Untitled&apos;, string $fqdn = &apos;http://localhost:8080&apos;, string $description = &apos;My Site Description&apos;)</code></p>
 <p>SiteMetadata constructor.</p>
 <p>@param string $title
 @param string $sitename
 @param string $author
 @param string $defaultTitle
-@param string $fqdn</p>
+@param string $fqdn
+@param string $description</p>
 
     </div>
 </body>

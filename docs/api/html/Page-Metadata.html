@@ -50,6 +50,7 @@
 <li><a href="/docs/api/html/Page.html">Page</a></li>
 <li><a href="/docs/api/html/Pages.html">Pages</a></li>
 <li><a href="/docs/api/html/ParserInterface.html">ParserInterface</a></li>
+<li><a href="/docs/api/html/ShortlinkManager.html">ShortlinkManager</a></li>
 <li><a href="/docs/api/html/Site-Localization.html">Site-Localization</a></li>
 <li><a href="/docs/api/html/Site-Metadata.html">Site-Metadata</a></li>
 <li><a href="/docs/api/html/Site-Options.html">Site-Options</a></li>
@@ -91,6 +92,12 @@
 <p>@var string|null</p>
 <h3><code>public mixed $reliability</code></h3>
 <p>@var string|null</p>
+<h3><code>public mixed $flowerbed</code></h3>
+<p>@var array&lt;string&gt;|null</p>
+<h3><code>public mixed $confidence</code></h3>
+<p>@var string|null</p>
+<h3><code>public mixed $importance</code></h3>
+<p>@var string|null</p>
 <h3><code>public mixed $menu</code></h3>
 <p>@var string|bool|null</p>
 <h3><code>public mixed $hide_title</code></h3>
@@ -99,9 +106,17 @@
 <p>@var bool|string</p>
 <h3><code>public mixed $menu_order</code></h3>
 <p>@var int|null</p>
+<h3><code>public mixed $translated_by_ia</code></h3>
+<p>@var bool|string|null</p>
+<h3><code>public mixed $description</code></h3>
+<p>@var string|null</p>
+<h3><code>public mixed $image</code></h3>
+<p>@var string|null</p>
+<h3><code>public mixed $image_alt</code></h3>
+<p>@var string|null</p>
 <h2>Methods</h2>
 <h3><em></em>construct()</h3>
-<p><code>public function __construct(array $category = [], array $tags = [], string $title = &apos;Untitled&apos;, string $nick = &apos;untitled&apos;, bool $noauthor = false, string $kind = &apos;note&apos;, string $layout = &apos;page&apos;, ?string $maturity = null, ?string $reliability = null, mixed $menu = null, ?int $menu_order = null, bool $hide_title = false, mixed $hide_on_rss = false)</code></p>
+<p><code>public function __construct(array $category = [], array $tags = [], string $title = &apos;Untitled&apos;, string $nick = &apos;untitled&apos;, bool $noauthor = false, string $kind = &apos;note&apos;, string $layout = &apos;page&apos;, ?string $maturity = null, ?string $reliability = null, mixed $menu = null, ?int $menu_order = null, bool $hide_title = false, mixed $hide_on_rss = false, mixed $translated_by_ia = null, ?string $description = null, ?string $image = null, ?string $image_alt = null)</code></p>
 <p>PageMetadata constructor.</p>
 <p>@param array&lt;string&gt; $category
 @param array&lt;string&gt; $tags

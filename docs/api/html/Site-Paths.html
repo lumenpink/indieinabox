@@ -50,6 +50,7 @@
 <li><a href="/docs/api/html/Page.html">Page</a></li>
 <li><a href="/docs/api/html/Pages.html">Pages</a></li>
 <li><a href="/docs/api/html/ParserInterface.html">ParserInterface</a></li>
+<li><a href="/docs/api/html/ShortlinkManager.html">ShortlinkManager</a></li>
 <li><a href="/docs/api/html/Site-Localization.html">Site-Localization</a></li>
 <li><a href="/docs/api/html/Site-Metadata.html">Site-Metadata</a></li>
 <li><a href="/docs/api/html/Site-Options.html">Site-Options</a></li>
@@ -89,7 +90,7 @@
 <p>@var string</p>
 <h2>Methods</h2>
 <h3><em></em>construct()</h3>
-<p><code>public function __construct(string $baseDir = &apos;/&apos;, string $outputDirHtml = &apos;public_html&apos;, string $outputDirGemini = &apos;public_gemini&apos;, string $outputDirGopher = &apos;public_gopher&apos;, string $outputDirMedia = &apos;public_media&apos;, string $contentDir = &apos;content&apos;, string $themeDir = &apos;resources&apos;)</code></p>
+<p><code>public function __construct(string $baseDir = &apos;/&apos;, string $outputDirHtml = &apos;public_html&apos;, string $outputDirGemini = &apos;public_gemini&apos;, string $outputDirGopher = &apos;public_gopher&apos;, string $outputDirMedia = &apos;public_html/media&apos;, string $contentDir = &apos;content&apos;, string $themeDir = &apos;resources&apos;)</code></p>
 <p>SitePaths constructor.</p>
 <p>@param string $baseDir
 @param string $outputDirHtml
@@ -98,6 +99,10 @@
 @param string $outputDirMedia
 @param string $contentDir
 @param string $themeDir</p>
+<h3>getContentPath()</h3>
+<p><code>public function getContentPath(): string</code></p>
+<p>Retrieves the absolute path to the content directory.</p>
+<p>@return string</p>
 
     </div>
 </body>

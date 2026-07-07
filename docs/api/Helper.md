@@ -278,3 +278,12 @@ Helper function to extract and normalize SEO metadata
 
 @param Page $page
 @return array<string, string>
+
+### getInteractions()
+`public static function getInteractions(Indieinabox\Page $page, ?string $type = null): array`
+
+Get incoming interactions (likes, reposts, replies) for a specific Page
+
+@param Page $page
+@param string|null $type (e.g. 'like', 'repost', 'reply')
+@return array

@@ -50,6 +50,10 @@ This class represents a page and composes metadata, content, and localization.
 
 @var string
 
+### `public ?string $shortlink`
+
+@var string|null
+
 ### `public ?string $filepath`
 
 @var string|null

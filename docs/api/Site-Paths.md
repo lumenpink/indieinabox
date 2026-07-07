@@ -38,7 +38,7 @@ Holds directory paths related to the site.
 ## Methods
 
 ### __construct()
-`public function __construct(string $baseDir = '/', string $outputDirHtml = 'public_html', string $outputDirGemini = 'public_gemini', string $outputDirGopher = 'public_gopher', string $outputDirMedia = 'public_media', string $contentDir = 'content', string $themeDir = 'resources')`
+`public function __construct(string $baseDir = '/', string $outputDirHtml = 'public_html', string $outputDirGemini = 'public_gemini', string $outputDirGopher = 'public_gopher', string $outputDirMedia = 'public_html/media', string $contentDir = 'content', string $themeDir = 'resources')`
 
 SitePaths constructor.
 

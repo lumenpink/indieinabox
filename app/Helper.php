@@ -1509,14 +1509,25 @@ class Helper
                         $content = file_get_contents($file->getPathname());
                         if ($content) {
                             $yaml = new \Indieinabox\Yaml();
-                            $parsed = $yaml->loadString($content);
+                            if (preg_match('/^---\s*\n(.*?)\n---\s*\n(.*)$/s', $content, $matches)) {
+                                $parsed = $yaml->loadString($matches[1]);
+                                $body = trim($matches[2]);
+                            } else {
+                                $parsed = $yaml->loadString($content);
+                                $body = '';
+                            }
+
                             if (isset($parsed['metadata'])) {
                                 $meta = $parsed['metadata'];
-                                $interactionType = $meta['interaction_type'] ?? 'webmention';
-                                if ($type === null || $interactionType === $type) {
-                                    $meta['interaction_content'] = $parsed['content'] ?? '';
-                                    $interactions[] = $meta;
-                                }
+                                $meta['interaction_content'] = $parsed['content'] ?? $body;
+                            } else {
+                                $meta = $parsed;
+                                $meta['interaction_content'] = $meta['content'] ?? $body;
+                            }
+                            
+                            $interactionType = $meta['interaction_type'] ?? 'webmention';
+                            if ($type === null || $interactionType === $type) {
+                                $interactions[] = $meta;
                             }
                         }
                     }

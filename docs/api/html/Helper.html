@@ -50,6 +50,7 @@
 <li><a href="/docs/api/html/Page.html">Page</a></li>
 <li><a href="/docs/api/html/Pages.html">Pages</a></li>
 <li><a href="/docs/api/html/ParserInterface.html">ParserInterface</a></li>
+<li><a href="/docs/api/html/ShortlinkManager.html">ShortlinkManager</a></li>
 <li><a href="/docs/api/html/Site-Localization.html">Site-Localization</a></li>
 <li><a href="/docs/api/html/Site-Metadata.html">Site-Metadata</a></li>
 <li><a href="/docs/api/html/Site-Options.html">Site-Options</a></li>
@@ -229,6 +230,36 @@ The link points to the kind&apos;s index page in the corresponding language.</p>
 @param array $corFG
 @param bool $aplicarAutomacao
 @return bool</p>
+<h3>ditherAndCropImageToPng()</h3>
+<p><code>public static function ditherAndCropImageToPng(string $caminhoOriginal, string $caminhoDestino, int $targetWidth, int $targetHeight, array $corBG, array $corFG, bool $aplicarAutomacao = true): bool</code></p>
+<p>Atkinson adaptive dithering with cropping to exact dimensions, saved as PNG</p>
+<p>@param string $caminhoOriginal
+@param string $caminhoDestino
+@param int $targetWidth
+@param int $targetHeight
+@param array $corBG
+@param array $corFG
+@param bool $aplicarAutomacao
+@return bool</p>
+<h3>generateSocialImages()</h3>
+<p><code>public static function generateSocialImages(string $caminhoOriginal, string $caminhoDestinoBase, array $corBG, array $corFG): array</code></p>
+<p>Generate social media images (OG, JSON-LD sizes)</p>
+<p>@param string $caminhoOriginal
+@param string $caminhoDestinoBase
+@param array $corBG
+@param array $corFG
+@return array&lt;string, string&gt;</p>
+<h3>getSeoMetadata()</h3>
+<p><code>public static function getSeoMetadata(Indieinabox\Page $page): array</code></p>
+<p>Helper function to extract and normalize SEO metadata</p>
+<p>@param Page $page
+@return array&lt;string, string&gt;</p>
+<h3>getInteractions()</h3>
+<p><code>public static function getInteractions(Indieinabox\Page $page, ?string $type = null): array</code></p>
+<p>Get incoming interactions (likes, reposts, replies) for a specific Page</p>
+<p>@param Page $page
+@param string|null $type (e.g. &apos;like&apos;, &apos;repost&apos;, &apos;reply&apos;)
+@return array</p>
 
     </div>
 </body>

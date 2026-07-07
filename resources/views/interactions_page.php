@@ -17,7 +17,7 @@
             <h1><?= \Indieinabox\Helper::translate('Interactions on') ?>: <a href="<?= $page->relpath ?><?= $page->slug ?>"><?= htmlspecialchars($page->title) ?></a></h1>
 
             <?php if (count($likes) > 0): ?>
-                <section style="margin-top: 2em;">
+                <section id="likes" style="margin-top: 2em;">
                     <h2><?= count($likes) ?> <?= \Indieinabox\Helper::translate('Likes') ?></h2>
                     <ul style="list-style: none; padding-left: 0;">
                         <?php foreach ($likes as $like): ?>
@@ -32,7 +32,7 @@
             <?php endif; ?>
 
             <?php if (count($reposts) > 0): ?>
-                <section style="margin-top: 2em;">
+                <section id="reposts" style="margin-top: 2em;">
                     <h2><?= count($reposts) ?> <?= \Indieinabox\Helper::translate('Reposts') ?></h2>
                     <ul style="list-style: none; padding-left: 0;">
                         <?php foreach ($reposts as $repost): ?>
@@ -47,7 +47,7 @@
             <?php endif; ?>
 
             <?php if (count($replies) > 0): ?>
-                <section style="margin-top: 2em;">
+                <section id="replies" style="margin-top: 2em;">
                     <h2><?= count($replies) ?> <?= \Indieinabox\Helper::translate('Replies') ?></h2>
                     <div style="margin-left: 0.5em;">
                         <?php foreach ($replies as $reply): ?>

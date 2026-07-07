@@ -43,6 +43,18 @@ This class handles metadata related to the page.
 
 @var string|null
 
+### `public mixed $flowerbed`
+
+@var array<string>|null
+
+### `public mixed $confidence`
+
+@var string|null
+
+### `public mixed $importance`
+
+@var string|null
+
 ### `public mixed $menu`
 
 @var string|bool|null

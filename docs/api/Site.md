@@ -11,27 +11,27 @@ Class Site
 
 ### `public Indieinabox\Site\Metadata $metadata`
 
-@var \Indieinabox\Site\Metadata
+@var Metadata
 
 ### `public Indieinabox\Site\Paths $paths`
 
-@var \Indieinabox\Site\Paths
+@var Paths
 
 ### `public Indieinabox\Site\Options $options`
 
-@var \Indieinabox\Site\Options
+@var Options
 
 ### `public Indieinabox\Site\Localization $localization`
 
-@var \Indieinabox\Site\Localization
+@var Localization
 
 ### `public Indieinabox\Site\Support $support`
 
-@var \Indieinabox\Site\Support
+@var Support
 
 ### `public Indieinabox\Site\Twtxt $twtxt`
 
-@var \Indieinabox\Site\Twtxt
+@var Twtxt
 
 ## Methods
 

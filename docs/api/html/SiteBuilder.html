@@ -50,6 +50,7 @@
 <li><a href="/docs/api/html/Page.html">Page</a></li>
 <li><a href="/docs/api/html/Pages.html">Pages</a></li>
 <li><a href="/docs/api/html/ParserInterface.html">ParserInterface</a></li>
+<li><a href="/docs/api/html/ShortlinkManager.html">ShortlinkManager</a></li>
 <li><a href="/docs/api/html/Site-Localization.html">Site-Localization</a></li>
 <li><a href="/docs/api/html/Site-Metadata.html">Site-Metadata</a></li>
 <li><a href="/docs/api/html/Site-Options.html">Site-Options</a></li>
@@ -76,22 +77,22 @@ virtualizes missing translations, processes markdown into HTML/Gemtext/Gophermap
 and compiles feeds and assets into the output directory.</p>
 <h2>Properties</h2>
 <h3><code>private Indieinabox\Site $site</code></h3>
-<p>@var Indieinabox\Site</p>
+<p>@var \Indieinabox\Site</p>
 <h3><code>private Indieinabox\Pages $pages</code></h3>
-<p>@var Indieinabox\Pages</p>
+<p>@var \Indieinabox\Pages</p>
 <h3><code>private Indieinabox\ParserInterface $parser</code></h3>
-<p>@var Indieinabox\ParserInterface</p>
+<p>@var \Indieinabox\ParserInterface</p>
 <h2>Methods</h2>
 <h3><em></em>construct()</h3>
 <p><code>public function __construct(Indieinabox\Site $site, ?Indieinabox\Pages $pages = null, ?Indieinabox\ParserInterface $parser = null)</code></p>
 <p>Method <em></em>construct
-@param Indieinabox\Site $site
-@param ?Indieinabox\Pages $pages
-@param ?Indieinabox\ParserInterface $parser</p>
+@param \Indieinabox\Site $site
+@param ?\Indieinabox\Pages $pages
+@param ?\Indieinabox\ParserInterface $parser</p>
 <h3>getPages()</h3>
 <p><code>public function getPages(): Indieinabox\Pages</code></p>
 <p>Method getPages
-@return Indieinabox\Pages</p>
+@return \Indieinabox\Pages</p>
 <h3>build()</h3>
 <p><code>public function build(): void</code></p>
 <p>Executes the main build pipeline.</p>
@@ -108,7 +109,7 @@ and triggers generation of HTML, feeds, and static assets.</p>
 <h3>pseudoTranslate()</h3>
 <p><code>public function pseudoTranslate(Indieinabox\Page $page, string $targetLang): void</code></p>
 <p>Method pseudoTranslate
-@param Indieinabox\Page $page
+@param \Indieinabox\Page $page
 @param string $targetLang</p>
 <p>@return void</p>
 <h3>scan()</h3>
@@ -123,7 +124,7 @@ and triggers generation of HTML, feeds, and static assets.</p>
 <h3>createHTMLFile()</h3>
 <p><code>private function createHTMLFile(Indieinabox\Page $page): void</code></p>
 <p>Method createHTMLFile
-@param Indieinabox\Page $page</p>
+@param \Indieinabox\Page $page</p>
 <p>@return void</p>
 <h3>generateFeed()</h3>
 <p><code>public function generateFeed(): void</code></p>
@@ -147,12 +148,12 @@ and triggers generation of HTML, feeds, and static assets.</p>
 <h3>createGeminiFile()</h3>
 <p><code>private function createGeminiFile(Indieinabox\Page $page): void</code></p>
 <p>Method createGeminiFile
-@param Indieinabox\Page $page</p>
+@param \Indieinabox\Page $page</p>
 <p>@return void</p>
 <h3>createGopherFile()</h3>
 <p><code>private function createGopherFile(Indieinabox\Page $page): void</code></p>
 <p>Method createGopherFile
-@param Indieinabox\Page $page</p>
+@param \Indieinabox\Page $page</p>
 <p>@return void</p>
 <h3>generateTwtxt()</h3>
 <p><code>public function generateTwtxt(): void</code></p>
@@ -181,6 +182,10 @@ and triggers generation of HTML, feeds, and static assets.</p>
 <p><code>private function compileSectionIndexes(string $targetKind, array $pages): void</code></p>
 <p>@param string $targetKind
 @param array&lt;int, Page&gt; $pages</p>
+<h3>ensureMandatoryHomepage()</h3>
+<p><code>private function ensureMandatoryHomepage(): void</code></p>
+<p>Method ensureMandatoryHomepage
+@return void</p>
 
     </div>
 </body>

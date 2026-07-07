@@ -29,20 +29,30 @@ $_kindLabel = \Indieinabox\Helper::kindLabel($page->kind);
             $reposts = \Indieinabox\Helper::getInteractions($page, 'repost');
             $replies = \Indieinabox\Helper::getInteractions($page, 'reply');
             $totalInteractions = count($likes) + count($reposts) + count($replies);
-            
-            $counts = [];
-            $counts[] = count($likes) . ' ' . \Indieinabox\Helper::translate('Likes');
-            $counts[] = count($reposts) . ' ' . \Indieinabox\Helper::translate('Reposts');
-            $counts[] = count($replies) . ' ' . \Indieinabox\Helper::translate('Replies');
-            $interactionsText = implode(' / ', $counts);
             ?>
             • 
-            <?php if ($totalInteractions > 0): ?>
-                <a href="<?= $page->relpath ?><?= $page->slug ?>/interactions" style="color: inherit; font-weight: bold; text-decoration: none;">
-                    <?= $interactionsText ?>
+            <?php if (count($likes) > 0): ?>
+                <a href="<?= $page->relpath ?><?= $page->slug ?>/interactions#likes" style="color: inherit; text-decoration: none;">
+                    <?= count($likes) ?> <?= \Indieinabox\Helper::translate('Likes') ?>
                 </a>
             <?php else: ?>
-                <span style="opacity: 0.8; font-size: 0.9em;"><?= $interactionsText ?></span>
+                <span style="opacity: 0.8; font-size: 0.9em;">0 <?= \Indieinabox\Helper::translate('Likes') ?></span>
+            <?php endif; ?>
+            /
+            <?php if (count($reposts) > 0): ?>
+                <a href="<?= $page->relpath ?><?= $page->slug ?>/interactions#reposts" style="color: inherit; text-decoration: none;">
+                    <?= count($reposts) ?> <?= \Indieinabox\Helper::translate('Reposts') ?>
+                </a>
+            <?php else: ?>
+                <span style="opacity: 0.8; font-size: 0.9em;">0 <?= \Indieinabox\Helper::translate('Reposts') ?></span>
+            <?php endif; ?>
+            /
+            <?php if (count($replies) > 0): ?>
+                <a href="<?= $page->relpath ?><?= $page->slug ?>#interactions" style="color: inherit; text-decoration: none;">
+                    <?= count($replies) ?> <?= \Indieinabox\Helper::translate('Replies') ?>
+                </a>
+            <?php else: ?>
+                <span style="opacity: 0.8; font-size: 0.9em;">0 <?= \Indieinabox\Helper::translate('Replies') ?></span>
             <?php endif; ?>
         </div>
     </header>

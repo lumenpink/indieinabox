@@ -175,3 +175,9 @@ Method compileSitemap
 
 @param string $targetKind
 @param array<int, Page> $pages
+
+### ensureMandatoryHomepage()
+`private function ensureMandatoryHomepage(): void`
+
+Method ensureMandatoryHomepage
+@return void

@@ -21,8 +21,9 @@ class ActivityPubHandler
     private PDO $db;
 
     /**
-     * Method __construct
-     * @param \Indieinabox\Site $site
+     * Initializes the ActivityPubHandler and ensures cryptographic keys are generated.
+     *
+     * @param \Indieinabox\Site $site Global site configuration and environment.
      */
     public function __construct(Site $site)
     {
@@ -32,7 +33,9 @@ class ActivityPubHandler
     }
 
     /**
-     * Method ensureKeys
+     * Ensures an RSA key pair exists for signing ActivityPub payloads.
+     * If keys are missing, generates a new 2048-bit RSA pair and saves them to the data directory.
+     *
      * @return void
      */
     private function ensureKeys(): void
@@ -56,7 +59,9 @@ class ActivityPubHandler
     }
 
     /**
-     * Method handleWebFinger
+     * Handles WebFinger (.well-known/webfinger) requests for actor discovery.
+     * Returns a JSON JRD (JSON Resource Descriptor) mapping the requested alias to the actor profile.
+     *
      * @return void
      */
     public function handleWebFinger(): void
@@ -93,7 +98,9 @@ class ActivityPubHandler
     }
 
     /**
-     * Method handleActor
+     * Outputs the ActivityPub Actor profile (Person) in JSON-LD format.
+     * Defines inbox, outbox, public keys, and other identifying metadata.
+     *
      * @return void
      */
     public function handleActor(): void
@@ -130,7 +137,10 @@ class ActivityPubHandler
     }
 
     /**
-     * Method handleInbox
+     * Handles incoming activities (POST to /inbox).
+     * Processes Follow requests by enqueuing an Accept response to a background worker.
+     * Logs or ignores other types of incoming activities.
+     *
      * @return void
      */
     public function handleInbox(): void
@@ -156,10 +166,11 @@ class ActivityPubHandler
     }
 
     /**
-     * Method queueAcceptFollow
-     * @param array $followActivity
-     * @param string $targetInbox
-     * 
+     * Queues an Accept activity in response to a received Follow activity.
+     * Stores the intent in the outbox queue to be processed asynchronously.
+     *
+     * @param array $followActivity The received Follow activity payload.
+     * @param string $targetInbox The inbox URL of the actor who sent the Follow request.
      * @return void
      */
     private function queueAcceptFollow(array $followActivity, string $targetInbox): void
@@ -182,7 +193,10 @@ class ActivityPubHandler
     }
 
     /**
-     * Method handleOutbox
+     * Handles GET requests to the outbox (/outbox).
+     * Returns an empty OrderedCollection by default as full outbox pagination 
+     * is often not exposed or needed for static-site implementations.
+     *
      * @return void
      */
     public function handleOutbox(): void
@@ -199,11 +213,12 @@ class ActivityPubHandler
     }
 
     /**
-     * Method queueCreateActivity
-     * @param string $postUrl
-     * @param string $content
-     * @param ?string $name
-     * 
+     * Queues a Create activity for new posts.
+     * Saves the activity payload in the outbox queue for background distribution to followers.
+     *
+     * @param string $postUrl The URL of the post being created.
+     * @param string $content The text content of the post.
+     * @param ?string $name The title of the post (if applicable).
      * @return void
      */
     public function queueCreateActivity(string $postUrl, string $content, ?string $name): void

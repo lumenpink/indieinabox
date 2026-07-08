@@ -21,8 +21,9 @@ class MicrosubHandler
     private PDO $db;
 
     /**
-     * Method __construct
-     * @param \Indieinabox\Site $site
+     * Initializes the MicrosubHandler.
+     *
+     * @param \Indieinabox\Site $site Global site configuration and environment.
      */
     public function __construct(Site $site)
     {
@@ -31,7 +32,9 @@ class MicrosubHandler
     }
 
     /**
-     * Method handleRequest
+     * Main entry point for handling Microsub requests.
+     * Enforces authentication and routes to handleGet or handlePost.
+     *
      * @return void
      */
     public function handleRequest(): void
@@ -60,9 +63,10 @@ class MicrosubHandler
     }
 
     /**
-     * Method handleGet
-     * @param string $action
-     * 
+     * Handles Microsub GET actions (channels, timeline, search).
+     * Retrieves lists of subscribed feeds or items in a feed.
+     *
+     * @param string $action The requested action ('channels', 'timeline', 'search', etc).
      * @return void
      */
     private function handleGet(string $action): void
@@ -209,9 +213,10 @@ class MicrosubHandler
     }
 
     /**
-     * Method handlePost
-     * @param string $action
-     * 
+     * Handles Microsub POST actions (subscribe, unsubscribe, mute, block, mark read).
+     * Modifies subscriptions or state in the underlying JSON data files.
+     *
+     * @param string $action The requested action.
      * @return void
      */
     private function handlePost(string $action): void

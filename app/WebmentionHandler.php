@@ -15,8 +15,9 @@ class WebmentionHandler
     private Site $site;
 
     /**
-     * Method __construct
-     * @param \Indieinabox\Site $site
+     * Initializes the WebmentionHandler.
+     *
+     * @param \Indieinabox\Site $site Global site configuration and environment.
      */
     public function __construct(Site $site)
     {
@@ -24,7 +25,10 @@ class WebmentionHandler
     }
 
     /**
-     * Method handle
+     * Processes incoming webmentions via POST requests.
+     * Validates source/target URIs, downloads the source content, 
+     * discovers microformats (h-entry), and stores it for moderation.
+     *
      * @return void
      */
     public function handle(): void
@@ -279,10 +283,10 @@ class WebmentionHandler
     }
 
     /**
-     * Method sendResponse
-     * @param int $code
-     * @param string $message
-     * 
+     * Sends a plain-text HTTP response with a specific status code.
+     *
+     * @param int $code HTTP status code.
+     * @param string $message Response message.
      * @return void
      */
     private function sendResponse(int $code, string $message): void
@@ -296,7 +300,8 @@ class WebmentionHandler
     }
 
     /**
-     * Method sendHelpPage
+     * Renders a basic HTML help page for the webmention endpoint (used on GET requests).
+     *
      * @return void
      */
     private function sendHelpPage(): void

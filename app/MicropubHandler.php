@@ -19,8 +19,9 @@ class MicropubHandler
     private IndieAuthHandler $authHandler;
 
     /**
-     * Method __construct
-     * @param \Indieinabox\Site $site
+     * Initializes the MicropubHandler.
+     *
+     * @param \Indieinabox\Site $site Global site configuration and environment.
      */
     public function __construct(Site $site)
     {
@@ -29,7 +30,9 @@ class MicropubHandler
     }
 
     /**
-     * Method handle
+     * Main entry point for handling Micropub API requests.
+     * Validates authentication and delegates to GET or POST specific handlers.
+     *
      * @return void
      */
     public function handle(): void
@@ -66,8 +69,9 @@ class MicropubHandler
     }
 
     /**
-     * Method getRawInput
-     * @return string
+     * Reads the raw input stream. Used for parsing JSON payloads.
+     *
+     * @return string The raw request body.
      */
     protected function getRawInput(): string
     {
@@ -75,7 +79,9 @@ class MicropubHandler
     }
 
     /**
-     * Method handleGetRequest
+     * Handles Micropub GET queries (e.g., config, source, syndicate-to).
+     * Returns JSON configurations or existing post data.
+     *
      * @return void
      */
     private function handleGetRequest(): void
@@ -356,10 +362,12 @@ class MicropubHandler
     }
 
     /**
-     * Method sendSuccessResponse
-     * @param int $code
-     * @param array $headers
-     * @param mixed $body
+     * Sends a successful HTTP response, typically indicating creation (201 or 202).
+     * Includes a Location header for newly created resources.
+     *
+     * @param int $code HTTP status code.
+     * @param array $headers Headers to include in the response.
+     * @param mixed $body Optional body content.
      * 
      * @return void
      */
@@ -375,11 +383,11 @@ class MicropubHandler
     }
 
     /**
-     * Method sendResponse
-     * @param int $code
-     * @param string $error
-     * @param string $description
-     * 
+     * Sends a standard JSON-formatted HTTP error response.
+     *
+     * @param int $code HTTP status code.
+     * @param string $error Short error identifier (e.g., 'invalid_request').
+     * @param string $description Detailed error message.
      * @return void
      */
     protected function sendResponse(int $code, string $error, string $description): void
@@ -393,11 +401,11 @@ class MicropubHandler
     }
 
     /**
-     * Method moveUploadedFile
-     * @param string $tmpName
-     * @param string $destPath
-     * 
-     * @return bool
+     * Helper to move uploaded files to their destination.
+     *
+     * @param string $tmpName Path of the uploaded temporary file.
+     * @param string $destPath Final destination path.
+     * @return bool True on success, false on failure.
      */
     protected function moveUploadedFile(string $tmpName, string $destPath): bool
     {
@@ -405,10 +413,10 @@ class MicropubHandler
     }
 
     /**
-     * Method slugify
-     * @param string $text
-     * 
-     * @return string
+     * Converts a string into a URL-friendly slug.
+     *
+     * @param string $text The text to slugify.
+     * @return string The resulting slug.
      */
     private function slugify(string $text): string
     {

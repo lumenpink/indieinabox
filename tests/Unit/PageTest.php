@@ -62,3 +62,31 @@ it('casts Content object to string', function () {
     $content = new Content('Rendered Output', 'Source Output', []);
     expect((string) $content)->toBe('Rendered Output');
 });
+
+test('garden kind receives default tags if missing', function () {
+    $data = [
+        'kind' => 'garden',
+        'title' => 'My Digital Garden'
+    ];
+    $page = \Indieinabox\Page::fromArray($data);
+    expect($page->metadata->flowerbed)->toBe(['general']);
+    expect($page->metadata->confidence)->toBe('possible');
+    expect($page->metadata->maturity)->toBe('sprout');
+    expect($page->metadata->importance)->toBe('trivial');
+});
+
+test('garden kind respects provided tags', function () {
+    $data = [
+        'kind' => 'garden',
+        'title' => 'Advanced Garden',
+        'flowerbed' => ['tech', 'design'],
+        'confidence' => 'certain',
+        'maturity' => 'tree',
+        'importance' => 'critical'
+    ];
+    $page = \Indieinabox\Page::fromArray($data);
+    expect($page->metadata->flowerbed)->toBe(['tech', 'design']);
+    expect($page->metadata->confidence)->toBe('certain');
+    expect($page->metadata->maturity)->toBe('tree');
+    expect($page->metadata->importance)->toBe('critical');
+});

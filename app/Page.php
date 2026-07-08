@@ -251,6 +251,12 @@ class Page
      */
     public static function fromArray(array $data): self
     {
+        if (isset($data['kind']) && $data['kind'] === 'garden') {
+            $data['flowerbed'] = isset($data['flowerbed']) ? (array) $data['flowerbed'] : ['general'];
+            $data['confidence'] = $data['confidence'] ?? 'possible';
+            $data['maturity'] = $data['maturity'] ?? 'sprout';
+            $data['importance'] = $data['importance'] ?? 'trivial';
+        }
         $metadata = new Metadata(
             (array) ($data['category'] ?? ['No Category']),
             (array) ($data['tags'] ?? ['No Tag']),
@@ -266,6 +272,16 @@ class Page
             isset($data['hide_title']) ? (bool)$data['hide_title'] : false,
             isset($data['hide_on_rss']) ? $data['hide_on_rss'] : false
         );
+
+        if (isset($data['flowerbed'])) {
+            $metadata->flowerbed = (array) $data['flowerbed'];
+        }
+        if (isset($data['confidence'])) {
+            $metadata->confidence = (string) $data['confidence'];
+        }
+        if (isset($data['importance'])) {
+            $metadata->importance = (string) $data['importance'];
+        }
 
         $content = new Content(
             (string) ($data['content'] ?? 'Hello World'),

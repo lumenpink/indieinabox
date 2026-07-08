@@ -14,7 +14,7 @@ it(
         expect($paths->outputDirHtml)->toBe('public_html');
         expect($paths->outputDirGemini)->toBe('public_gemini');
         expect($paths->outputDirGopher)->toBe('public_gopher');
-        expect($paths->outputDirMedia)->toBe('public_media');
+        expect($paths->outputDirMedia)->toBe('public_html/media');
         expect($paths->contentDir)->toBe('content');
     }
 );
@@ -32,3 +32,13 @@ it(
         expect($paths->contentDir)->toBe('custom_content');
     }
 );
+
+it('resolves relative content path', function () {
+    $paths = new Paths('/var/www', 'public_html', 'public_gemini', 'public_gopher', 'public_media', 'content');
+    expect($paths->getContentPath())->toBe('/var/www/content');
+});
+
+it('resolves absolute content path', function () {
+    $paths = new Paths('/var/www', 'public_html', 'public_gemini', 'public_gopher', 'public_media', '/opt/external_content');
+    expect($paths->getContentPath())->toBe('/opt/external_content');
+});

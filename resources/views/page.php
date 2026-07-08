@@ -33,7 +33,7 @@
                         <a href="<?= $page->relpath ?>tag/<?= $tag ?>/" class="p-category">#<?= htmlspecialchars($tag) ?></a>&#32;
                     <?php endforeach; ?>
                 <?php endif; ?>
-                <?php if ($page->kind === 'jardim'): ?>
+                <?php if ($page->kind === 'garden' || $page->kind === 'jardim'): ?>
                     <?php
                     $flowerbed = isset($page->metadata->flowerbed) && is_array($page->metadata->flowerbed) ? $page->metadata->flowerbed : ['general'];
                     $confidence = $page->metadata->confidence ?? 'possible';

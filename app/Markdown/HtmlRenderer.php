@@ -61,6 +61,25 @@ class HtmlRenderer implements RendererInterface
     {
         if ($node instanceof RootNode) {
             $html = '';
+            
+            // Inject BookWyrm / IndieWeb read microformats
+            if ($this->page && isset($this->page->metadata->read_of)) {
+                $html .= '<div class="h-review reading-status-block" style="margin-bottom: 1em; padding: 1em; border-left: 4px solid #ccc;">';
+                $html .= '<strong>Lendo:</strong> <a href="' . htmlspecialchars((string)$this->page->metadata->read_of) . '" class="u-read-of">' . htmlspecialchars((string)$this->page->metadata->read_of) . '</a>';
+                
+                if (isset($this->page->metadata->read_status)) {
+                    $html .= ' <span class="p-read-status">(' . htmlspecialchars((string)$this->page->metadata->read_status) . ')</span>';
+                }
+                
+                if (isset($this->page->metadata->rating)) {
+                    $html .= '<br><strong>Avaliação:</strong> <data class="p-rating" value="' . htmlspecialchars((string)$this->page->metadata->rating) . '">' . htmlspecialchars((string)$this->page->metadata->rating) . '/5</data>';
+                } elseif (isset($this->page->metadata->p_rating)) {
+                    $html .= '<br><strong>Avaliação:</strong> <data class="p-rating" value="' . htmlspecialchars((string)$this->page->metadata->p_rating) . '">' . htmlspecialchars((string)$this->page->metadata->p_rating) . '/5</data>';
+                }
+                
+                $html .= '</div>' . "\n";
+            }
+            
             foreach ($node->children as $child) {
                 $html .= $this->render($child);
             }

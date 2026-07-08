@@ -221,7 +221,7 @@ class ActivityPubHandler
      * @param ?string $name The title of the post (if applicable).
      * @return void
      */
-    public function queueCreateActivity(string $postUrl, string $content, ?string $name): void
+    public function queueCreateActivity(string $postUrl, string $content, ?string $name, array $metadata = []): void
     {
         $handle = Database::getSetting('activitypub_handle') ?? 'lumen';
         $fqdn = rtrim($this->site->metadata->fqdn ?? '', '/');
@@ -245,6 +245,43 @@ class ActivityPubHandler
             $object['name'] = $name;
         }
 
+        if (isset($metadata['read_of'])) {
+            $object['type'] = 'Article'; // BookWyrm uses Article for reading activities/reviews
+            $object['inReplyToBook'] = $metadata['read_of'];
+            
+            if (isset($metadata['rating'])) {
+                $object['rating'] = (int) $metadata['rating'];
+            } elseif (isset($metadata['p_rating'])) {
+                $object['rating'] = (int) $metadata['p_rating'];
+            }
+            
+            if (isset($metadata['read_status'])) {
+                $object['readingStatus'] = $metadata['read_status'];
+            }
+        }
+
+        if (isset($metadata['reply'])) {
+            $object['inReplyTo'] = $metadata['reply'];
+        }
+
+        $to = ['https://www.w3.org/ns/activitystreams#Public'];
+        $cc = [$fqdn . '/followers'];
+
+        $syn = $metadata['syndicate_to'] ?? $metadata['mp_syndicate_to'] ?? null;
+        if ($syn) {
+            $syndicates = is_array($syn) ? $syn : [$syn];
+            foreach ($syndicates as $target) {
+                // If it's a URL, we treat it as an ActivityPub actor to CC or TO. 
+                // Lemmy / Kbin groups receive posts this way.
+                if (filter_var($target, FILTER_VALIDATE_URL)) {
+                    $to[] = $target;
+                }
+            }
+        }
+        
+        $object['to'] = $to;
+        $object['cc'] = $cc;
+
         $activityId = $postUrl . '#activity';
         $createActivity = [
             '@context' => 'https://www.w3.org/ns/activitystreams',
@@ -252,8 +289,8 @@ class ActivityPubHandler
             'type' => 'Create',
             'actor' => $actorId,
             'published' => gmdate('Y-m-d\TH:i:s\Z'),
-            'to' => ['https://www.w3.org/ns/activitystreams#Public'],
-            'cc' => [$fqdn . '/followers'],
+            'to' => $to,
+            'cc' => $cc,
             'object' => $object
         ];
 

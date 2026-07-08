@@ -318,6 +318,24 @@ class BackgroundWorker
             }
         } elseif ($type === 'Create') {
             $this->saveActivityPubCreate($activity);
+        } elseif ($type === 'Announce') {
+            // Lemmy/FEP-1b12: Groups Announce topics and replies.
+            // We unwrap the Announce and process the inner object as a Create.
+            if (isset($activity['object']) && is_array($activity['object'])) {
+                $announcedObj = $activity['object'];
+                $innerType = $announcedObj['type'] ?? '';
+                
+                if (in_array($innerType, ['Create', 'Note', 'Article', 'Page'])) {
+                    $innerObj = ($innerType === 'Create' && isset($announcedObj['object'])) ? $announcedObj['object'] : $announcedObj;
+                    
+                    // Construct a fake Create activity to process locally
+                    $fakeCreate = [
+                        'actor' => $innerObj['attributedTo'] ?? $announcedObj['actor'] ?? $activity['actor'],
+                        'object' => $innerObj
+                    ];
+                    $this->saveActivityPubCreate($fakeCreate);
+                }
+            }
         }
     }
 
@@ -352,7 +370,7 @@ class BackgroundWorker
         if (!$object || !is_array($object)) return;
 
         $type = $object['type'] ?? '';
-        if (!in_array($type, ['Note', 'Article'])) return;
+        if (!in_array($type, ['Note', 'Article', 'Page'])) return;
 
         $id = $object['id'] ?? '';
         if (!$id) return;
@@ -393,6 +411,16 @@ class BackgroundWorker
             'is_read' => 0,
             'type' => 'activitypub'
         ];
+
+        if (isset($object['inReplyToBook'])) {
+            $frontmatter['read_of'] = $object['inReplyToBook'];
+            if (isset($object['rating'])) {
+                $frontmatter['rating'] = $object['rating'];
+            }
+            if (isset($object['readingStatus'])) {
+                $frontmatter['read_status'] = $object['readingStatus'];
+            }
+        }
 
         $yaml = new \Indieinabox\Yaml();
         $yamlStr = $yaml->dump($frontmatter);

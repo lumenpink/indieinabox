@@ -225,6 +225,13 @@ class MicropubHandler
             }
         }
         
+        $otherProps = ['read-status', 'rating', 'p-rating', 'syndicate-to', 'mp-syndicate-to'];
+        foreach ($otherProps as $op) {
+            if (isset($input[$op])) {
+                $frontmatter[str_replace('-', '_', $op)] = $input[$op];
+            }
+        }
+        
         $yaml = "---\n";
         foreach ($frontmatter as $k => $v) {
             if (is_array($v)) {
@@ -302,7 +309,7 @@ class MicropubHandler
         // Queue ActivityPub outbox message
         if (class_exists('\\Indieinabox\\ActivityPubHandler')) {
             $apHandler = new \Indieinabox\ActivityPubHandler($this->site);
-            $apHandler->queueCreateActivity($postUrl, $content, $name);
+            $apHandler->queueCreateActivity($postUrl, $content, $name, $frontmatter);
         }
 
         $this->sendSuccessResponse(202, ['Location' => $postUrl]);

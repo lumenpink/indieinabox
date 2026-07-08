@@ -20,7 +20,7 @@ class MockBackgroundWorkerBgTest extends \Indieinabox\BackgroundWorker
     
     protected function fetchJsonUrl(string $url): ?array
     {
-        if (strpos($url, 'remote.example.com') !== false && $this->mockActorData !== null) {
+        if ($this->mockActorData !== null && (strpos($url, 'remote.example.com') !== false || strpos($url, 'lemmy.eco.br') !== false || strpos($url, 'bookwyrm.social') !== false)) {
             return $this->mockActorData;
         }
         return parent::fetchJsonUrl($url);
@@ -80,6 +80,13 @@ beforeEach(function () use ($funcTempDir) {
     \Indieinabox\Database::$dataDir = $funcTempDir;
     \Indieinabox\Database::connect($testDbPath);
     $db = \Indieinabox\Database::getDb();
+    
+    // Clear inbox
+    $inboxDir = $funcTempDir . '/microsub/inbox/inbox';
+    if (is_dir($inboxDir)) {
+        \Indieinabox\Helper::recursiveRmdir($inboxDir);
+    }
+    mkdir($inboxDir, 0777, true);
     
     // Read and execute schema
     $schema = file_get_contents(__DIR__ . '/../../database.sql');
@@ -235,4 +242,108 @@ it('processes build_site queue correctly', function () use ($funcTempDir) {
     expect($output)->toContain('Site rebuild completed.');
     expect($output)->toContain('Rebuilding static site...');
     expect($output)->toContain('Site rebuild completed.');
+});
+
+it('unwraps Lemmy Announce activities in inbox', function () use ($funcTempDir) {
+    $db = \Indieinabox\Database::getDb();
+    
+    // Clear queue from previous tests
+    $db->exec("DELETE FROM inbox_queue");
+    // Clear inbox files from previous tests
+    \Indieinabox\Helper::recursiveRmdir($funcTempDir . '/microsub/inbox/inbox');
+    mkdir($funcTempDir . '/microsub/inbox/inbox', 0777, true);
+
+    $activity = [
+        'type' => 'Announce',
+        'actor' => 'https://lemmy.eco.br/c/linux',
+        'object' => [
+            'type' => 'Page',
+            'id' => 'https://lemmy.eco.br/post/999',
+            'content' => 'Lemmy post content',
+            'published' => '2026-06-30T10:00:00Z',
+            'url' => 'https://lemmy.eco.br/post/999',
+            'attributedTo' => 'https://lemmy.eco.br/u/lumen'
+        ]
+    ];
+    
+    $payload = [
+        'headers' => ['signature' => 'keyId="https://lemmy.eco.br/c/linux#main-key"'],
+        'body' => json_encode($activity),
+        'method' => 'POST',
+        'path' => '/inbox'
+    ];
+    
+    $db->exec("INSERT INTO inbox_queue (type, payload_json, created_at) VALUES ('activitypub', '" . json_encode($payload) . "', " . time() . ")");
+    
+    $this->worker->mockActorData = [
+        'name' => 'Lumen Lemmy',
+        'icon' => ['url' => 'https://lemmy.eco.br/avatar.jpg'],
+        'publicKey' => [
+            'id' => 'https://lemmy.eco.br/c/linux#main-key',
+            'publicKeyPem' => 'dummy-pem'
+        ]
+    ];
+    
+    $this->worker->processInboxQueue();
+    
+    // Check microsub inbox file
+    $inboxDir = $funcTempDir . '/microsub/inbox/inbox';
+    $inboxFiles = glob($inboxDir . '/*.md');
+    
+    // We expect the post to be saved as from 'Lumen Lemmy' instead of the Group
+    $content = file_get_contents($inboxFiles[0]);
+    expect($content)->toContain('author_name: Lumen Lemmy');
+    expect($content)->toContain('Lemmy post content');
+});
+
+it('extracts BookWyrm properties from ActivityPub Create', function () use ($funcTempDir) {
+    $db = \Indieinabox\Database::getDb();
+    
+    $activity = [
+        'type' => 'Create',
+        'actor' => 'https://bookwyrm.social/user/reader',
+        'object' => [
+            'type' => 'Article',
+            'id' => 'https://bookwyrm.social/post/111',
+            'content' => 'Great read',
+            'published' => '2026-06-30T10:00:00Z',
+            'url' => 'https://bookwyrm.social/post/111',
+            'inReplyToBook' => 'https://bookwyrm.social/book/555',
+            'rating' => 5,
+            'readingStatus' => 'finished'
+        ]
+    ];
+    
+    $payload = [
+        'headers' => ['signature' => 'keyId="https://bookwyrm.social/user/reader#main-key"'],
+        'body' => json_encode($activity),
+        'method' => 'POST',
+        'path' => '/inbox'
+    ];
+    
+    // Clear queue from previous tests
+    $db->exec("DELETE FROM inbox_queue");
+    // Clear inbox files from previous tests
+    \Indieinabox\Helper::recursiveRmdir($funcTempDir . '/microsub/inbox/inbox');
+    mkdir($funcTempDir . '/microsub/inbox/inbox', 0777, true);
+
+    $db->exec("INSERT INTO inbox_queue (type, payload_json, created_at) VALUES ('activitypub', '" . json_encode($payload) . "', " . time() . ")");
+    
+    $this->worker->mockActorData = [
+        'name' => 'Reader',
+        'icon' => ['url' => 'https://bookwyrm.social/avatar.jpg'],
+        'publicKey' => [
+            'id' => 'https://bookwyrm.social/user/reader#main-key',
+            'publicKeyPem' => 'dummy-pem'
+        ]
+    ];
+    
+    $this->worker->processInboxQueue();
+    
+    $inboxDir = $funcTempDir . '/microsub/inbox/inbox';
+    $inboxFiles = glob($inboxDir . '/*.md');
+    
+    $content = file_get_contents($inboxFiles[0]);
+    expect($content)->toContain('read_of: https://bookwyrm.social/book/555');
+    expect($content)->toContain('rating: 5');
 });

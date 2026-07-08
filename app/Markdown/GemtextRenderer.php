@@ -20,8 +20,9 @@ class GemtextRenderer implements RendererInterface
     private ?\Indieinabox\Page $page = null;
 
     /**
-     * Method __construct
-     * @param ?\Indieinabox\Page $page
+     * Initializes the GemtextRenderer with the current page context.
+     *
+     * @param \Indieinabox\Page|null $page The page being rendered, used for resolving relative links.
      */
     public function __construct(?\Indieinabox\Page $page = null)
     {
@@ -53,10 +54,11 @@ class GemtextRenderer implements RendererInterface
     }
 
     /**
-     * Method renderNode
-     * @param \Indieinabox\Markdown\Node $node
-     * 
-     * @return string
+     * Recursively renders an AST node into Gemtext format.
+     * Handles specific node types like headings, lists, quotes, and links.
+     *
+     * @param Node $node The AST node to render.
+     * @return string The rendered Gemtext string.
      */
     private function renderNode(Node $node): string
     {
@@ -156,10 +158,11 @@ class GemtextRenderer implements RendererInterface
     }
 
     /**
-     * Method renderPlain
-     * @param \Indieinabox\Markdown\Node $node
-     * 
-     * @return string
+     * Renders an AST node as plain text, stripping out any formatting.
+     * Used for contexts where formatting is not supported (e.g., inside links).
+     *
+     * @param Node $node The AST node to render.
+     * @return string The plain text representation.
      */
     private function renderPlain(Node $node): string
     {

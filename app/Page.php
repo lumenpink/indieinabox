@@ -324,7 +324,8 @@ class Page
     }
 
     /**
-     * Method __clone
+     * Deep clones the Page object to ensure nested Metadata, Content, 
+     * and Localization objects are also duplicated.
      */
     public function __clone()
     {

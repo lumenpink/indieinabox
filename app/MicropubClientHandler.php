@@ -15,8 +15,9 @@ class MicropubClientHandler
     private Site $site;
 
     /**
-     * Method __construct
-     * @param \Indieinabox\Site $site
+     * Initializes the MicropubClientHandler.
+     *
+     * @param \Indieinabox\Site $site Global site configuration and environment.
      */
     public function __construct(Site $site)
     {
@@ -24,7 +25,9 @@ class MicropubClientHandler
     }
 
     /**
-     * Method handle
+     * Handles POST requests for the Micropub client interface.
+     * Processes form submissions to create new posts or upload media via Micropub.
+     *
      * @return void
      */
     public function handle(): void

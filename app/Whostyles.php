@@ -13,8 +13,10 @@ class Whostyles {
     private static $ALPHABET_MAP = null;
 
     /**
-     * Method getAlphabetMap
-     * @return array
+     * Retrieves the custom base-64 alphabet map used for encoding and decoding
+     * whostyle color payloads in URLs.
+     *
+     * @return array The alphabet map array.
      */
     private static function getAlphabetMap(): array {
         if (self::$ALPHABET_MAP === null) {
@@ -38,10 +40,10 @@ class Whostyles {
     ];
 
     /**
-     * Method decodeBase64
-     * @param string $str
-     * 
-     * @return int
+     * Decodes a custom base-64 encoded string back into an integer value.
+     *
+     * @param string $str The encoded string to decode.
+     * @return int The decoded integer value.
      */
     public static function decodeBase64(string $str): int {
         $map = self::getAlphabetMap();
@@ -73,10 +75,10 @@ class Whostyles {
     }
 
     /**
-     * Method decodeColor
-     * @param string $str
-     * 
-     * @return string
+     * Decodes a 3-character custom base-64 string into a hex color string.
+     *
+     * @param string $str The 3-character encoded color string.
+     * @return string The decoded hex color string.
      */
     public static function decodeColor(string $str): string {
         $map = self::getAlphabetMap();
@@ -89,10 +91,10 @@ class Whostyles {
     }
 
     /**
-     * Method encodeColor
-     * @param string $hex
-     * 
-     * @return string
+     * Encodes a hex color string into a 3-character custom base-64 string.
+     *
+     * @param string $hex The hex color string to encode.
+     * @return string The encoded string.
      */
     public static function encodeColor(string $hex): string {
         $val = hexdec(ltrim($hex, '#'));
@@ -105,10 +107,10 @@ class Whostyles {
     }
 
     /**
-     * Method decode
-     * @param string $hash
-     * 
-     * @return ?array
+     * Decodes a full Whostyles encoded string into a palette of RGB colors.
+     *
+     * @param string $hash The full Whostyles encoded string.
+     * @return array|null Array of RGB color arrays (e.g., background, text, link, etc.), or null on failure.
      */
     public static function decode(string $hash): ?array {
         if (PHP_INT_MAX < 179639500800) {
@@ -182,10 +184,11 @@ class Whostyles {
     }
 
     /**
-     * Method extract
-     * @param string $html
-     * 
-     * @return ?string
+     * Extracts a Whostyles payload from an HTML document or a specific URL.
+     * Searches for a meta tag or specific patterns containing the payload.
+     *
+     * @param string $html The HTML content to search.
+     * @return string|null The extracted Whostyles string, or null if not found.
      */
     public static function extract(string $html): ?string {
         $metaHash = null;
@@ -210,10 +213,11 @@ class Whostyles {
     }
 
     /**
-     * Method clean
-     * @param string $html
-     * 
-     * @return string
+     * Cleans HTML string to ensure extracted colors fall within acceptable luminance/contrast bounds
+     * and guarantees a minimum level of legibility (e.g., text against background).
+     *
+     * @param string $html The input HTML string containing whostyles.
+     * @return string The cleaned and adjusted HTML string.
      */
     public static function clean(string $html): string {
         return preg_replace_callback(
@@ -253,10 +257,10 @@ class Whostyles {
     ];
 
     /**
-     * Method getLuminance
-     * @param string $hex
-     * 
-     * @return float
+     * Calculates the relative luminance of a hex color.
+     *
+     * @param string $hex The hex color string.
+     * @return float The relative luminance (0.0 to 1.0).
      */
     private static function getLuminance(string $hex): float {
         $r = hexdec(substr($hex, 1, 2)) / 255.0;
@@ -271,11 +275,11 @@ class Whostyles {
     }
 
     /**
-     * Method getContrast
-     * @param string $hex1
-     * @param string $hex2
-     * 
-     * @return float
+     * Calculates the contrast ratio between two hex colors.
+     *
+     * @param string $hex1 The first hex color.
+     * @param string $hex2 The second hex color.
+     * @return float The contrast ratio (1.0 to 21.0).
      */
     private static function getContrast(string $hex1, string $hex2): float {
         $l1 = self::getLuminance($hex1);
@@ -284,10 +288,10 @@ class Whostyles {
     }
 
     /**
-     * Method generateAttributes
-     * @param string $hash
-     * 
-     * @return string
+     * Generates a string of HTML data attributes corresponding to a decoded palette.
+     *
+     * @param string $hash The encoded Whostyles payload.
+     * @return string A string of HTML data attributes (e.g., `data-bg="#..." data-text="#..."`).
      */
     public static function generateAttributes(string $hash): string {
         $decoded = self::decode($hash);

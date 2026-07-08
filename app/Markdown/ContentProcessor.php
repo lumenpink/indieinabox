@@ -22,7 +22,9 @@ class ContentProcessor
     private HtmlRenderer $htmlRenderer;
 
     /**
-     * Method __construct
+     * Initializes the ContentProcessor.
+     * Sets up the CommonMark environment with appropriate extensions 
+     * (e.g., frontmatter, headings, autolinks) to parse the markdown body.
      */
     public function __construct()
     {

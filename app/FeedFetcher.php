@@ -27,7 +27,8 @@ class FeedFetcher
     }
 
     /**
-     * Method fetchAll
+     * Iterates through all channels and subscriptions, fetching new items for each.
+     *
      * @return void
      */
     public function fetchAll(): void
@@ -45,10 +46,11 @@ class FeedFetcher
     }
 
     /**
-     * Method fetchSubscription
-     * @param string $channel
-     * @param string $url
-     * 
+     * Fetches and parses a single subscription URL.
+     * Automatically detects the feed format (JSON Feed, RSS, Atom, Twtxt).
+     *
+     * @param string $channel The Microsub channel ID (e.g., 'timeline').
+     * @param string $url The subscription URL to fetch.
      * @return void
      */
     private function fetchSubscription(string $channel, string $url): void
@@ -88,11 +90,11 @@ class FeedFetcher
     }
 
     /**
-     * Method parseTwtxt
-     * @param string $channel
-     * @param string $feedUrl
-     * @param string $content
-     * 
+     * Parses a Twtxt format feed and saves new entries.
+     *
+     * @param string $channel The Microsub channel ID.
+     * @param string $feedUrl The source URL.
+     * @param string $content The raw Twtxt feed content.
      * @return void
      */
     private function parseTwtxt(string $channel, string $feedUrl, string $content): void
@@ -118,11 +120,11 @@ class FeedFetcher
     }
 
     /**
-     * Method parseJsonFeed
-     * @param string $channel
-     * @param string $feedUrl
-     * @param array $json
-     * 
+     * Parses a JSON Feed and saves new entries.
+     *
+     * @param string $channel The Microsub channel ID.
+     * @param string $feedUrl The source URL.
+     * @param array $json The parsed JSON Feed data.
      * @return void
      */
     private function parseJsonFeed(string $channel, string $feedUrl, array $json): void
@@ -145,10 +147,11 @@ class FeedFetcher
     }
 
     /**
-     * Method parseRss
-     * @param string $channel
-     * @param string $feedUrl
-     * @param SimpleXMLElement $xml
+     * Parses an RSS feed and saves new entries.
+     *
+     * @param string $channel The Microsub channel ID.
+     * @param string $feedUrl The source URL.
+     * @param SimpleXMLElement $xml The parsed XML.
      * 
      * @return void
      */
@@ -171,10 +174,11 @@ class FeedFetcher
     }
 
     /**
-     * Method parseAtom
-     * @param string $channel
-     * @param string $feedUrl
-     * @param SimpleXMLElement $xml
+     * Parses an Atom feed.
+     *
+     * @param string $channel The Microsub channel ID.
+     * @param string $feedUrl The source URL.
+     * @param SimpleXMLElement $xml The parsed XML.
      * 
      * @return void
      */
@@ -213,14 +217,15 @@ class FeedFetcher
     }
 
     /**
-     * Method saveItem
-     * @param string $id
-     * @param string $channel
-     * @param string $url
-     * @param string $content
-     * @param int $published
-     * @param string $authorName
-     * @param string $authorPhoto
+     * Saves a parsed feed item to the local file system (Microsub item store).
+     *
+     * @param string $id The unique identifier for the item.
+     * @param string $channel The channel ID where the item belongs.
+     * @param string $url The source URL of the item.
+     * @param string $content The HTML or text content.
+     * @param int $published The publication timestamp.
+     * @param string $authorName The author's name.
+     * @param string $authorPhoto The author's avatar URL.
      * 
      * @return void
      */

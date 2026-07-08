@@ -91,11 +91,12 @@ class ThemeManager
     }
 
     /**
-     * Method copyFromDisk
-     * @param string $dir
-     * @param string $base
-     * @param string $outputDir
-     * 
+     * Copies a file from disk to the public output directory if it has been modified.
+     * Keeps track of timestamps to avoid unnecessary I/O.
+     *
+     * @param string $dir The source directory.
+     * @param string $base The base path of the file.
+     * @param string $outputDir The destination output directory.
      * @return void
      */
     private static function copyFromDisk(string $dir, string $base, string $outputDir): void
@@ -121,11 +122,9 @@ class ThemeManager
     }
 
     /**
-     * Method copyViewAssets
-     * @param string $dir
-     * @param string $base
-     * @param string $outputDir
-     * 
+     * Copies global assets from the `views/assets` directory to the public root.
+     * Scans for files and delegates to `copyFromDisk`.
+     *
      * @return void
      */
     public static function copyViewAssets(string $dir, string $base, string $outputDir): void
@@ -153,11 +152,12 @@ class ThemeManager
     }
 
     /**
-     * Method copyAssetsFromDisk
-     * @param string $dir
-     * @param string $base
-     * @param string $outputDir
-     * 
+     * Recursively copies assets from a theme's directory to the public output.
+     * Maintains directory structure and only copies updated files.
+     *
+     * @param string $dir The source directory.
+     * @param string $base The base path.
+     * @param string $outputDir The destination output directory.
      * @return void
      */
     private static function copyAssetsFromDisk(string $dir, string $base, string $outputDir): void

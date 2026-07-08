@@ -15,8 +15,9 @@ class IndieAuthHandler
     private Site $site;
 
     /**
-     * Method __construct
-     * @param \Indieinabox\Site $site
+     * Initializes the IndieAuthHandler.
+     *
+     * @param \Indieinabox\Site $site Global site configuration and environment.
      */
     public function __construct(Site $site)
     {
@@ -24,7 +25,10 @@ class IndieAuthHandler
     }
 
     /**
-     * Method handle
+     * Main entry point for IndieAuth requests.
+     * Routes the request to metadata, token exchange, or authorization endpoints 
+     * based on the URL path.
+     *
      * @return void
      */
     public function handle(): void
@@ -58,7 +62,9 @@ class IndieAuthHandler
     }
 
     /**
-     * Method sendMetadata
+     * Sends the OAuth 2.0 Authorization Server Metadata (JSON).
+     * Used by clients to discover the endpoints and supported features of this IndieAuth provider.
+     *
      * @return void
      */
     private function sendMetadata(): void
@@ -80,7 +86,10 @@ class IndieAuthHandler
     }
 
     /**
-     * Method handleAuthRequest
+     * Handles the authorization endpoint (`/auth`).
+     * Renders the login form for GET requests, and processes login submissions 
+     * or authorization code verifications for POST requests.
+     *
      * @return void
      */
     private function handleAuthRequest(): void
@@ -104,9 +113,10 @@ class IndieAuthHandler
     }
 
     /**
-     * Method renderLoginForm
-     * @param ?string $error
-     * 
+     * Renders the HTML login form for the authorization flow.
+     * Displays details about the requesting client application (client_id, scope).
+     *
+     * @param string|null $error Optional error message to display on the form.
      * @return void
      */
     private function renderLoginForm(?string $error = null): void
@@ -389,7 +399,10 @@ class IndieAuthHandler
     }
 
     /**
-     * Method processLogin
+     * Processes the submission of the login form.
+     * Validates the password, generates a temporary authorization code, 
+     * and redirects the user back to the client application's redirect URI.
+     *
      * @return void
      */
     private function processLogin(): void
@@ -443,7 +456,10 @@ class IndieAuthHandler
     }
 
     /**
-     * Method verifyAuthCode
+     * Verifies the authorization code exchanged by the client application.
+     * Validates the code, redirect URI, client ID, and PKCE challenge (if present),
+     * returning the authenticated user profile in JSON format upon success.
+     *
      * @return void
      */
     private function verifyAuthCode(): void
@@ -513,7 +529,10 @@ class IndieAuthHandler
     }
 
     /**
-     * Method handleTokenRequest
+     * Handles requests to the token endpoint (`/token`).
+     * Supports POST requests to exchange an authorization code for an access token,
+     * or GET requests to verify a token.
+     *
      * @return void
      */
     private function handleTokenRequest(): void
@@ -535,7 +554,10 @@ class IndieAuthHandler
     }
 
     /**
-     * Method exchangeCodeForToken
+     * Exchanges an authorization code for a Bearer access token.
+     * Validates the code and PKCE parameters, then generates a long-lived access token
+     * and stores it for the authenticated user/client.
+     *
      * @return void
      */
     private function exchangeCodeForToken(): void
@@ -618,10 +640,10 @@ class IndieAuthHandler
     }
 
     /**
-     * Method validateBearerToken
-     * @param ?string $tokenOut
-     * 
-     * @return ?array
+     * Validates a provided Bearer token against stored valid tokens.
+     *
+     * @param ?string $tokenOut Reference to the token string if found.
+     * @return ?array Array containing token details (me, client_id, scope) or null if invalid.
      */
     public function validateBearerToken(?string &$tokenOut = null): ?array
     {
@@ -663,7 +685,9 @@ class IndieAuthHandler
     }
 
     /**
-     * Method verifyToken
+     * Verifies the provided token (e.g., via a GET request to the token endpoint).
+     * Returns the token details (me, client_id, scope) if valid.
+     *
      * @return void
      */
     private function verifyToken(): void
@@ -686,10 +710,10 @@ class IndieAuthHandler
     }
 
     /**
-     * Method sendResponse
-     * @param int $code
-     * @param string $message
-     * 
+     * Sends a JSON-formatted HTTP response with a specific status code.
+     *
+     * @param int $code HTTP status code.
+     * @param string $message Response message.
      * @return void
      */
     private function sendResponse(int $code, string $message): void

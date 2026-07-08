@@ -24,8 +24,9 @@ class BackgroundWorker
     private Site $site;
 
     /**
-     * Method __construct
-     * @param \Indieinabox\Site $site
+     * Initializes the BackgroundWorker.
+     *
+     * @param \Indieinabox\Site $site Global site configuration and environment.
      */
     public function __construct(Site $site)
     {
@@ -34,7 +35,9 @@ class BackgroundWorker
     }
 
     /**
-     * Method runAll
+     * Executes all background tasks (inbox, outbox, archives).
+     * Normally called periodically via cron or CLI.
+     *
      * @return void
      */
     public function runAll(): void
@@ -58,7 +61,8 @@ class BackgroundWorker
     }
 
     /**
-     * Method processInboxQueue
+     * Processes the incoming queue (Webmentions, ActivityPub activities).
+     *
      * @return void
      */
     public function processInboxQueue(): void
@@ -100,7 +104,9 @@ class BackgroundWorker
     }
 
     /**
-     * Method handleBuildSite
+     * Triggers a site rebuild.
+     * Instantiates the SiteBuilder and recompiles static assets/pages.
+     *
      * @return void
      */
     private function handleBuildSite(): void
@@ -119,9 +125,10 @@ class BackgroundWorker
     }
 
     /**
-     * Method handleWebmention
-     * @param array $payload
-     * 
+     * Parses and handles a received Webmention.
+     * Retrieves the source page, extracts microformats, checks for spam, and saves as a comment/like/repost.
+     *
+     * @param array $payload The Webmention data (source, target).
      * @return void
      */
     private function handleWebmention(array $payload): void
@@ -250,9 +257,10 @@ class BackgroundWorker
     }
 
     /**
-     * Method handleActivityPub
-     * @param array $payload
-     * 
+     * Processes a received ActivityPub activity.
+     * Validates the HTTP signature and handles Follow, Undo, Create, or Like actions.
+     *
+     * @param array $payload The parsed ActivityPub JSON-LD data.
      * @return void
      */
     private function handleActivityPub(array $payload): void
@@ -332,9 +340,10 @@ class BackgroundWorker
     }
 
     /**
-     * Method saveActivityPubCreate
-     * @param array $activity
-     * 
+     * Saves a 'Create' Activity (e.g. a remote post or reply) to the local inbox/comments.
+     * Converts HTML content to Markdown, downloads avatars, and saves as a pending interaction.
+     *
+     * @param array $activity The ActivityPub Create activity object.
      * @return void
      */
     private function saveActivityPubCreate(array $activity): void
@@ -415,11 +424,12 @@ class BackgroundWorker
     }
 
     /**
-     * Method downloadAvatarLocally
-     * @param string $actorUrl
-     * @param string $photoUrl
-     * 
-     * @return string
+     * Downloads an actor's avatar to the local cache.
+     * Re-uses the cached version if already downloaded.
+     *
+     * @param string $actorUrl The URL of the actor profile.
+     * @param string $photoUrl The remote URL of the avatar image.
+     * @return string The local path to the downloaded avatar.
      */
     private function downloadAvatarLocally(string $actorUrl, string $photoUrl): string
     {
@@ -450,9 +460,10 @@ class BackgroundWorker
     }
 
     /**
-     * Method extractLinksToArchiveQueue
-     * @param string $htmlContent
-     * 
+     * Scans markdown content for external links and queues them for archiving.
+     * Used to automatically snapshot outgoing links to the Wayback Machine.
+     *
+     * @param string $htmlContent The content text to scan for links.
      * @return void
      */
     private function extractLinksToArchiveQueue(string $htmlContent): void
@@ -473,10 +484,11 @@ class BackgroundWorker
     }
 
     /**
-     * Method getPublicKey
-     * @param string $keyId
-     * 
-     * @return ?string
+     * Retrieves the public key of an ActivityPub actor.
+     * Caches the fetched key locally to speed up future signature verifications.
+     *
+     * @param string $keyId The URL of the actor to fetch the key for.
+     * @return string|null The PEM encoded public key, or null if not found.
      */
     private function getPublicKey(string $keyId): ?string
     {
@@ -502,10 +514,11 @@ class BackgroundWorker
     }
 
     /**
-     * Method fetchJsonUrl
-     * @param string $url
-     * 
-     * @return ?array
+     * Fetches a URL and decodes the JSON response.
+     * Assumes an ActivityPub/JSON-LD friendly Accept header.
+     *
+     * @param string $url The URL to fetch.
+     * @return array|null The decoded JSON array, or null on failure.
      */
     protected function fetchJsonUrl(string $url): ?array
     {
@@ -543,9 +556,11 @@ class BackgroundWorker
     }
 
     /**
-     * Method queueAcceptFollow
-     * @param array $followActivity
-     * @param string $targetInbox
+     * Queues an 'Accept' response to a 'Follow' activity.
+     * Places the payload into the outbox for background delivery.
+     *
+     * @param array $followActivity The received Follow activity data.
+     * @param string $targetInbox The inbox URL to deliver the Accept activity to.
      * 
      * @return void
      */
@@ -569,7 +584,9 @@ class BackgroundWorker
     }
 
     /**
-     * Method processOutbox
+     * Processes the outgoing queue (Outbox).
+     * Delivers queued activities (e.g., Creates, Accepts) to followers' inboxes using HTTP Signatures.
+     *
      * @return void
      */
     public function processOutbox(): void
@@ -660,7 +677,9 @@ class BackgroundWorker
     }
 
     /**
-     * Method processArchiveQueue
+     * Processes the archive queue.
+     * Submits external links to the Wayback Machine and optionally generates PDFs via Microlink.
+     *
      * @return void
      */
     public function processArchiveQueue(): void
@@ -740,10 +759,11 @@ class BackgroundWorker
     }
 
     /**
-     * Method resolveFinalUrl
-     * @param string $url
-     * 
-     * @return string
+     * Follows HTTP redirects to resolve the final destination URL.
+     * Prevents archiving tracking links or URL shorteners directly.
+     *
+     * @param string $url The original URL to resolve.
+     * @return string The final resolved URL.
      */
     protected function resolveFinalUrl(string $url): string
     {
@@ -763,9 +783,9 @@ class BackgroundWorker
     }
 
     /**
-     * Method sendToArchiveOrg
-     * @param string $url
-     * 
+     * Submits a URL to the Internet Archive's Wayback Machine.
+     *
+     * @param string $url The URL to archive.
      * @return void
      */
     protected function sendToArchiveOrg(string $url): void
@@ -780,12 +800,13 @@ class BackgroundWorker
     }
 
     /**
-     * Method fetchPdfFromMicrolink
-     * @param string $url
-     * @param string $normUrl
-     * @param string $pdfDir
-     * 
-     * @return ?string
+     * Generates and downloads a PDF snapshot of a URL using the Microlink API.
+     * Saves the PDF to the local archive directory.
+     *
+     * @param string $url The URL to snapshot.
+     * @param string $normUrl The normalized URL.
+     * @param string $pdfDir The local directory to save the PDF.
+     * @return string|null The relative path to the PDF, or null on failure.
      */
     protected function fetchPdfFromMicrolink(string $url, string $normUrl, string $pdfDir): ?string
     {
@@ -806,9 +827,10 @@ class BackgroundWorker
     }
 
     /**
-     * Method checkAkismet
-     * @param array $commentData
-     * @return bool True if spam
+     * Checks if a submitted comment or webmention is spam using the Akismet API.
+     *
+     * @param array $commentData The comment data containing 'author_name', 'author_url', and 'content'.
+     * @return bool True if the content is classified as spam, false otherwise.
      */
     private function checkAkismet(array $commentData): bool
     {

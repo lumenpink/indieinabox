@@ -275,6 +275,20 @@ class WebRouter
             $filePath = rtrim($filePath, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . 'index.html';
         }
 
+        $acceptsAP = (
+            strpos($_SERVER['HTTP_ACCEPT'] ?? '', 'application/activity+json') !== false ||
+            strpos($_SERVER['HTTP_ACCEPT'] ?? '', 'application/ld+json') !== false
+        );
+
+        if ($acceptsAP) {
+            $jsonPath = preg_replace('/\.html$/', '.json', $filePath);
+            if (file_exists($jsonPath) && is_file($jsonPath)) {
+                header('Content-Type: application/activity+json; charset=utf-8');
+                readfile($jsonPath);
+                return;
+            }
+        }
+
         if (file_exists($filePath) && is_file($filePath)) {
             $ext = pathinfo($filePath, PATHINFO_EXTENSION);
             $mimeTypes = [
@@ -409,7 +423,6 @@ class WebRouter
      * Handles routing for Internet Archive / Wayback Machine fallback requests.
      * Searches for archived versions of requested files.
      *
-     * @param string $requestUri The original request URI to resolve.
      * @return void
      */
     private function handleArchiveForce(): void

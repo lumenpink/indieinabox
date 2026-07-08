@@ -115,6 +115,11 @@ class Metadata
     public $image_alt;
 
     /**
+     * @var array<string>|string|null
+     */
+    public $syndication;
+
+    /**
      * PageMetadata constructor.
      *
      * @param array<string> $category

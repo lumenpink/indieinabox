@@ -212,28 +212,17 @@ class ActivityPubHandler
         ]);
     }
 
-    /**
-     * Queues a Create activity for new posts.
-     * Saves the activity payload in the outbox queue for background distribution to followers.
-     *
-     * @param string $postUrl The URL of the post being created.
-     * @param string $content The text content of the post.
-     * @param ?string $name The title of the post (if applicable).
-     * @return void
-     */
-    public function queueCreateActivity(string $postUrl, string $content, ?string $name, array $metadata = []): void
+    public static function buildObjectForPageArray(string $objectId, string $actorId, string $fqdn, string $content, ?string $name, array $metadata = []): array
     {
-        $handle = Database::getSetting('activitypub_handle') ?? 'lumen';
-        $fqdn = rtrim($this->site->metadata->fqdn ?? '', '/');
-        
-        $actorId = $fqdn . '/actor';
-        $objectId = $postUrl;
-        
         $object = [
+            '@context' => [
+                'https://www.w3.org/ns/activitystreams',
+                'https://w3id.org/security/v1'
+            ],
             'id' => $objectId,
             'type' => 'Note', // Default to Note for microblogging
             'published' => gmdate('Y-m-d\TH:i:s\Z'),
-            'url' => $postUrl,
+            'url' => $objectId,
             'attributedTo' => $actorId,
             'content' => $content,
             'to' => ['https://www.w3.org/ns/activitystreams#Public'],
@@ -281,7 +270,28 @@ class ActivityPubHandler
         
         $object['to'] = $to;
         $object['cc'] = $cc;
+        
+        return $object;
+    }
 
+    /**
+     * Queues a Create activity for a new post.
+     *
+     * @param string $postUrl The public URL of the new post.
+     * @param string $content The HTML content of the post.
+     * @param ?string $name The title of the post (if applicable).
+     * @return void
+     */
+    public function queueCreateActivity(string $postUrl, string $content, ?string $name, array $metadata = []): void
+    {
+        $handle = Database::getSetting('activitypub_handle') ?? 'lumen';
+        $fqdn = rtrim($this->site->metadata->fqdn ?? '', '/');
+
+        $actorId = $fqdn . '/actor';
+        $objectId = $postUrl;
+        
+        $object = self::buildObjectForPageArray($objectId, $actorId, $fqdn, $content, $name, $metadata);
+        
         $activityId = $postUrl . '#activity';
         $createActivity = [
             '@context' => 'https://www.w3.org/ns/activitystreams',
@@ -289,8 +299,8 @@ class ActivityPubHandler
             'type' => 'Create',
             'actor' => $actorId,
             'published' => gmdate('Y-m-d\TH:i:s\Z'),
-            'to' => $to,
-            'cc' => $cc,
+            'to' => $object['to'] ?? [],
+            'cc' => $object['cc'] ?? [],
             'object' => $object
         ];
 

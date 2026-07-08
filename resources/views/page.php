@@ -123,6 +123,20 @@
                 <?= $page->content ?>
             </div>
 
+            <?php if (!empty($page->metadata->syndication)): ?>
+                <div class="syndication-links" style="margin-top: 1.5em; font-size: 0.9em; opacity: 0.8;">
+                    <?= \Indieinabox\Helper::translate('Also on') ?>:
+                    <?php 
+                    $syndications = is_array($page->metadata->syndication) ? $page->metadata->syndication : [$page->metadata->syndication];
+                    foreach ($syndications as $synd):
+                    ?>
+                        <a href="<?= htmlspecialchars($synd) ?>" class="u-syndication" rel="syndication" style="margin-left: 0.5em;">
+                            <?= htmlspecialchars(parse_url($synd, PHP_URL_HOST) ?? $synd) ?>
+                        </a>
+                    <?php endforeach; ?>
+                </div>
+            <?php endif; ?>
+
             <?php
             $p = $page;
             include('includes/interactions.php');

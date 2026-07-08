@@ -283,6 +283,20 @@ class Page
             $metadata->importance = (string) $data['importance'];
         }
 
+        // Map any unhandled properties into metadata
+        $handledKeys = [
+            'category', 'tags', 'title', 'nick', 'noauthor', 'kind', 'layout', 'maturity', 'reliability',
+            'menu', 'menu_order', 'hide_title', 'hide_on_rss', 'flowerbed', 'confidence', 'importance',
+            'content', 'originalcontent', 'images', 'rawBody', 'lang', 'langpath', 'langslug',
+            'otherlang', 'otherlangpath', 'localizeddate', 'localizedkind', 'date', 'slug', 'relpath'
+        ];
+        
+        foreach ($data as $key => $value) {
+            if (!in_array($key, $handledKeys)) {
+                $metadata->{$key} = $value;
+            }
+        }
+
         $content = new Content(
             (string) ($data['content'] ?? 'Hello World'),
             (string) ($data['originalcontent'] ?? 'Hello World'),

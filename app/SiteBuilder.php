@@ -497,6 +497,23 @@ class SiteBuilder
 
         file_put_contents($destinationFile, $fileContent);
 
+        // Build ActivityPub JSON representation
+        $fqdn = rtrim($this->site->metadata->fqdn ?? '', '/');
+        $actorId = $fqdn . '/actor';
+        $postUrl = $fqdn . '/' . $destination;
+        if (str_ends_with($postUrl, '.html')) {
+            $postUrl = substr($postUrl, 0, -5);
+        }
+        $metadataArray = (array) $page->metadata;
+        $title = $page->metadata->title === 'Untitled' ? null : $page->metadata->title;
+        $apObject = \Indieinabox\ActivityPubHandler::buildObjectForPageArray($postUrl, $actorId, $fqdn, $page->content->content, $title, $metadataArray);
+        
+        $jsonDestination = dirname($destinationFile) . DIRECTORY_SEPARATOR . 'index.json';
+        if (str_ends_with($destinationFile, '.html') && basename($destinationFile) !== 'index.html') {
+            $jsonDestination = substr($destinationFile, 0, -5) . '.json';
+        }
+        file_put_contents($jsonDestination, json_encode($apObject, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT));
+
         // Build interactions pages if there are any interactions
         $likes = \Indieinabox\Helper::getInteractions($page, 'like');
         $reposts = \Indieinabox\Helper::getInteractions($page, 'repost');

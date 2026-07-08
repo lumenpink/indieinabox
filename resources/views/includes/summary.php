@@ -78,5 +78,19 @@ $_kindLabel = \Indieinabox\Helper::kindLabel($page->kind);
         }
         ?>
     </div>
+
+    <?php if (!empty($page->metadata->syndication)): ?>
+        <div class="syndication-links" style="margin-top: 1em; margin-left: 2em; font-size: 0.85em; opacity: 0.8;">
+            <?= \Indieinabox\Helper::translate('Also on') ?>:
+            <?php 
+            $syndications = is_array($page->metadata->syndication) ? $page->metadata->syndication : [$page->metadata->syndication];
+            foreach ($syndications as $synd):
+            ?>
+                <a href="<?= htmlspecialchars($synd) ?>" class="u-syndication" rel="syndication" style="margin-left: 0.5em;">
+                    <?= htmlspecialchars(parse_url($synd, PHP_URL_HOST) ?? $synd) ?>
+                </a>
+            <?php endforeach; ?>
+        </div>
+    <?php endif; ?>
 </article>
 <hr class="divisor-bloco">

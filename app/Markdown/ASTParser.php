@@ -107,6 +107,22 @@ class ImageNode extends InlineNode
 }
 
 /**
+ * Represents a block of raw HTML (e.g. <iframe>, <div>).
+ */
+class RawHtmlBlockNode extends Node
+{
+    public string $html = '';
+}
+
+/**
+ * Represents an inline raw HTML tag (e.g. <br>, <span>).
+ */
+class RawHtmlInlineNode extends Node
+{
+    public string $html = '';
+}
+
+/**
  * --------------------------------------------------------------------------
  * AST Parser
  * --------------------------------------------------------------------------
@@ -163,7 +179,24 @@ class ASTParser
                 continue;
             }
 
-            // 3. Paragraph Node
+            // 3. HTML Block Node
+            if ($currentBlock instanceof RawHtmlBlockNode) {
+                $currentBlock->html .= "\n" . $line;
+                continue;
+            }
+            
+            if (preg_match('/^<([a-zA-Z0-9\-]+)(?:\s|>|\/>)/', $trimmed, $matches)) {
+                $tag = strtolower($matches[1]);
+                $inlineTags = ['a', 'span', 'b', 'strong', 'i', 'em', 'code', 'kbd', 'del', 'sub', 'sup'];
+                if (!in_array($tag, $inlineTags)) {
+                    $currentBlock = new RawHtmlBlockNode();
+                    $currentBlock->html = $line;
+                    $root->children[] = $currentBlock;
+                    continue;
+                }
+            }
+
+            // 4. Paragraph Node
             if ($currentBlock instanceof ParagraphNode) {
                 $currentBlock->rawText .= "\n" . $line;
             } else {
@@ -212,6 +245,22 @@ class ASTParser
         $plainStart = 0;
 
         while ($i < $len) {
+            // 0. Inline HTML tag: <tag> or </tag>
+            if ($text[$i] === '<') {
+                if (preg_match('/^<([\/a-zA-Z0-9\-]+\s*[^>]*)>/', substr($text, $i), $matches)) {
+                    if ($i > $plainStart) {
+                        $nodes[] = new TextNode(substr($text, $plainStart, $i - $plainStart));
+                    }
+                    $htmlNode = new RawHtmlInlineNode();
+                    $htmlNode->html = $matches[0];
+                    $nodes[] = $htmlNode;
+                    
+                    $i += strlen($matches[0]);
+                    $plainStart = $i;
+                    continue;
+                }
+            }
+
             // 1. Wikilinks: [[Target]] or [[Target|Alias]]
             if ($i + 1 < $len && $text[$i] === '[' && $text[$i + 1] === '[') {
                 if ($i > $plainStart) {

@@ -927,6 +927,12 @@ class Helper
             mkdir(dirname($caminhoDestino), 0777, true);
         }
 
+        if (file_exists($caminhoDestino) && file_exists($caminhoOriginal)) {
+            if (filemtime($caminhoDestino) >= filemtime($caminhoOriginal)) {
+                return true;
+            }
+        }
+
         $imageInfo = @getimagesize($caminhoOriginal);
         if (!$imageInfo) {
             return false;
@@ -1038,6 +1044,12 @@ class Helper
     ): bool {
         if (!is_dir(dirname($caminhoDestino))) {
             mkdir(dirname($caminhoDestino), 0777, true);
+        }
+
+        if (file_exists($caminhoDestino) && file_exists($caminhoOriginal)) {
+            if (filemtime($caminhoDestino) >= filemtime($caminhoOriginal)) {
+                return true;
+            }
         }
 
         $imageInfo = @getimagesize($caminhoOriginal);

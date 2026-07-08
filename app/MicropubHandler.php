@@ -332,9 +332,11 @@ class MicropubHandler
         }
 
         $file = $_FILES['file'];
-        $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
-        if (empty($ext)) {
-            $ext = 'bin';
+        $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+        $allowedExts = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'mp4', 'mp3', 'ogg', 'wav', 'webm', 'pdf'];
+        if (empty($ext) || !in_array($ext, $allowedExts, true)) {
+            $this->sendResponse(400, 'Bad Request', 'Invalid or unsupported file extension.');
+            return;
         }
 
         $baseFilename = date('dHis');

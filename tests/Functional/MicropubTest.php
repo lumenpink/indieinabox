@@ -266,3 +266,48 @@ it('rejects media upload if token lacks media scope', function () {
     
     expect($this->router->micropubMock->lastResponse['status'])->toBe(403);
 });
+
+it('accepts media uploads and returns 201 with Location header', function () {
+    /** @var \Tests\TestCase|mixed $this */
+    $_SERVER['REQUEST_METHOD'] = 'POST';
+    $_SERVER['REQUEST_URI'] = '/micropub/media';
+    $_SERVER['HTTP_AUTHORIZATION'] = 'Bearer valid-token-123';
+    
+    $tmpName = __DIR__ . '/tmp_functional_micropub/dummy.jpg';
+    $_FILES['file'] = [
+        'name' => 'test-image.jpg',
+        'type' => 'image/jpeg',
+        'tmp_name' => $tmpName,
+        'error' => UPLOAD_ERR_OK,
+        'size' => 1234
+    ];
+    file_put_contents($tmpName, 'dummy image content');
+
+    ob_start();
+    $mockHandler = new class($this->site) extends \Indieinabox\MicropubHandler {
+        public $capturedHeaders = [];
+        protected function moveUploadedFile(string $tmpName, string $dest): bool {
+            if (!copy($tmpName, $dest)) {
+                echo "Failed to copy from $tmpName to $dest\n";
+                return false;
+            }
+            return true;
+        }
+        protected function sendSuccessResponse(int $code, array $headers = [], $body = null): void {
+            $this->capturedHeaders = $headers;
+            http_response_code($code);
+        }
+    };
+    
+    $mockHandler->handle();
+    $out = ob_get_clean();
+    if (http_response_code() === 500) {
+        var_dump($out);
+    }
+
+    $location = $mockHandler->capturedHeaders['Location'] ?? null;
+    
+    expect(http_response_code())->toBe(201);
+    expect($location)->toContain('/media/' . date('Y') . '/' . date('m') . '/');
+    expect($location)->toEndWith('.jpg');
+});

@@ -125,6 +125,14 @@ class HtmlRenderer implements RendererInterface
             return htmlspecialchars($node->text, ENT_QUOTES | ENT_HTML5);
         }
 
+        if ($node instanceof RawHtmlBlockNode) {
+            return $node->html . "\n";
+        }
+
+        if ($node instanceof RawHtmlInlineNode) {
+            return $node->html;
+        }
+
         if ($node instanceof StrongNode) {
             $inner = '';
             foreach ($node->children as $child) {

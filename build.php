@@ -110,7 +110,9 @@ if (isset($config['outputdir'])) {
 if (isset($config['contentdir'])) {
     $site->paths->contentDir = $config['contentdir'];
 }
-if (isset($config['themedir'])) {
+if (isset($config['active_theme']) && $config['active_theme'] !== 'default') {
+    $site->paths->themeDir = \Indieinabox\Database::$dataDir . DIRECTORY_SEPARATOR . 'themes' . DIRECTORY_SEPARATOR . $config['active_theme'];
+} elseif (isset($config['themedir'])) {
     $site->paths->themeDir = $config['themedir'];
 }
 if (isset($config['defaultcategory'])) {

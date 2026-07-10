@@ -260,6 +260,18 @@ class ConfigHandler
         $currentConfig['translation_auto'] = $_POST['translation_auto'] ?? 'pseudo';
         $currentConfig['akismet_api_key'] = trim($_POST['akismet_api_key'] ?? '');
         
+        $currentConfig['active_theme'] = trim($_POST['active_theme'] ?? 'default');
+        
+        // Handle Official Theme Install
+        if (!empty($_POST['install_official_theme'])) {
+            $this->installThemeFromUrl($_POST['install_official_theme']);
+        }
+
+        // Handle Custom Theme Upload
+        if (!empty($_FILES['custom_theme_zip']['tmp_name'])) {
+            $this->installThemeFromZip($_FILES['custom_theme_zip']['tmp_name']);
+        }
+
         // --- Booleans ---
         $currentConfig['buildall'] = isset($_POST['buildall']);
         $currentConfig['dev'] = isset($_POST['dev']);
@@ -474,7 +486,6 @@ class ConfigHandler
                 }
             }
         }
-
         // Rebuild the site using newly saved settings
         $this->rebuildSite();
 
@@ -484,6 +495,64 @@ class ConfigHandler
         }
         header('Location: ' . $fqdn . '/config?saved=1');
         return;
+    }
+
+    private function recursiveDeleteDir(string $dir): bool
+    {
+        if (!is_dir($dir)) return true;
+        $files = array_diff(scandir($dir) ?: [], ['.', '..']);
+        foreach ($files as $file) {
+            is_dir("$dir/$file") ? $this->recursiveDeleteDir("$dir/$file") : unlink("$dir/$file");
+        }
+        return rmdir($dir);
+    }
+
+    private function installThemeFromUrl(string $url): void
+    {
+        $tmpFile = tempnam(sys_get_temp_dir(), 'theme_');
+        $content = @file_get_contents($url);
+        if ($content !== false) {
+            file_put_contents($tmpFile, $content);
+            $this->installThemeFromZip($tmpFile);
+        }
+        @unlink($tmpFile);
+    }
+
+    private function installThemeFromZip(string $zipPath): void
+    {
+        if (!class_exists('\ZipArchive')) {
+            // Cannot extract zip without ZipArchive extension
+            return;
+        }
+        $zip = new \ZipArchive();
+        if ($zip->open($zipPath) === true) {
+            $tmpExtr = sys_get_temp_dir() . DIRECTORY_SEPARATOR . uniqid('theme_extr_', true);
+            mkdir($tmpExtr);
+            $zip->extractTo($tmpExtr);
+            $zip->close();
+            
+            $items = scandir($tmpExtr) ?: [];
+            $themeDirName = null;
+            foreach ($items as $item) {
+                if ($item !== '.' && $item !== '..' && is_dir($tmpExtr . DIRECTORY_SEPARATOR . $item)) {
+                    $themeDirName = $item;
+                    break;
+                }
+            }
+            
+            if ($themeDirName) {
+                $themesPath = \Indieinabox\Database::$dataDir . DIRECTORY_SEPARATOR . 'themes';
+                if (!is_dir($themesPath)) {
+                    mkdir($themesPath, 0777, true);
+                }
+                $targetDir = $themesPath . DIRECTORY_SEPARATOR . $themeDirName;
+                if (is_dir($targetDir)) {
+                    $this->recursiveDeleteDir($targetDir);
+                }
+                rename($tmpExtr . DIRECTORY_SEPARATOR . $themeDirName, $targetDir);
+            }
+            $this->recursiveDeleteDir($tmpExtr);
+        }
     }
 
     /**
@@ -895,7 +964,7 @@ class ConfigHandler
                 </div>
             <?php endif; ?>
 
-            <form action="" method="POST" id="configForm">
+            <form action="" method="POST" id="configForm" enctype="multipart/form-data">
                 
                 <fieldset>
                     <legend>General Settings</legend>
@@ -923,6 +992,55 @@ class ConfigHandler
                         <label>Base Path</label>
                         <input type="text" name="base" value="<?= htmlspecialchars($config['base'] ?? '/') ?>">
                     </div>
+                </fieldset>
+
+                <?php
+                $themesDir = \Indieinabox\Database::$dataDir . '/themes';
+                $availableThemes = ['default'];
+                if (is_dir($themesDir)) {
+                    $items = scandir($themesDir) ?: [];
+                    foreach ($items as $item) {
+                        if ($item !== '.' && $item !== '..' && is_dir($themesDir . '/' . $item)) {
+                            $availableThemes[] = $item;
+                        }
+                    }
+                }
+                $activeTheme = $config['active_theme'] ?? 'default';
+                
+                $officialThemes = [
+                    '' => '-- Select Theme --',
+                    'https://github.com/lumen/theme-minimal/archive/refs/heads/main.zip' => 'Minimal Theme',
+                    'https://github.com/lumen/theme-dark/archive/refs/heads/main.zip' => 'Dark Theme'
+                ];
+                ?>
+                <fieldset>
+                    <legend>Theme Settings</legend>
+                    <div class="form-group">
+                        <label>Active Theme</label>
+                        <select name="active_theme">
+                            <?php foreach ($availableThemes as $t): ?>
+                                <option value="<?= htmlspecialchars($t) ?>" <?= $activeTheme === $t ? 'selected' : '' ?>><?= htmlspecialchars($t) ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    
+                    <div class="grid-2">
+                        <div class="form-group" style="border: 1px solid var(--border-color); padding: 1em;">
+                            <label>Install Official Theme</label>
+                            <p style="font-size: 0.9em; color: #666; margin-top: 0;">Select a theme to download and install.</p>
+                            <select name="install_official_theme">
+                                <?php foreach ($officialThemes as $url => $name): ?>
+                                    <option value="<?= htmlspecialchars($url) ?>"><?= htmlspecialchars($name) ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <div class="form-group" style="border: 1px solid var(--border-color); padding: 1em;">
+                            <label>Upload Custom Theme (.zip)</label>
+                            <p style="font-size: 0.9em; color: #666; margin-top: 0;">Upload your own theme zip file.</p>
+                            <input type="file" name="custom_theme_zip" accept=".zip">
+                        </div>
+                    </div>
+                    <small>Note: Installing or uploading a new theme will automatically extract it to your themes directory. You still need to set it as Active Theme above to use it.</small>
                 </fieldset>
 
                 <fieldset>

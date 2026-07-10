@@ -11,7 +11,7 @@
     <?php include('includes/header.php'); ?>
     
     <main>
-        <h1><?= htmlspecialchars($page->title) ?></h1>
+
         <?php
         $introFile = $site->paths->contentDir . '/' . $page->lang . '/intro.md';
         if (!file_exists($introFile)) {

@@ -1,9 +1,9 @@
 ---
-date: 2026-07-06T02:31:07+00:00
+date: 2026-07-14T04:34:44+00:00
 kind: photo
 lang: pt
 ---
 
 ![Coffee](/media/coffee.png)
 
-Trabalhando no meu café local favorito hoje.
+Trabalhando do meu café favorito.

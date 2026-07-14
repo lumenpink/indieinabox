@@ -1323,9 +1323,10 @@ class ConfigHandler
 
                 <fieldset>
                     <legend>Shortlink Service</legend>
-                    <div class="form-group checkbox-group">
+                    <div class="form-group">
+                        <p style="margin-top: 0;"><small>If enabled, IndieInABox will attempt to automatically shorten your links using a remote service. If disabled, it will use a local short hash instead (e.g. <code>/s/a1b2c3d4</code>).</small></p>
                         <input type="checkbox" name="shortlink[enabled]" id="shortlink_enabled" value="1" <?= !empty($config['shortlink']['enabled']) ? 'checked' : '' ?>>
-                        <label for="shortlink_enabled">Enable Shortlinks (Nullpointer / Rustypaste compatible)</label>
+                        <label for="shortlink_enabled">Enable Remote Shortlinks (Nullpointer / Rustypaste compatible)</label>
                     </div>
                     <div class="grid-2">
                         <div class="form-group">

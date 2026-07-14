@@ -1,7 +1,7 @@
 ---
-date: 2026-07-06T04:31:07+00:00
+date: 2026-07-14T07:34:44+00:00
 kind: note
 lang: en
 ---
 
-Setting up my new server today.
+Just setting up my #indieweb site.

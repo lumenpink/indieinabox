@@ -49,7 +49,7 @@ while (true) {
     
     $currentHash = md5($currentHash);
     
-    if ($lastHash !== '' && $currentHash !== $lastHash) {
+    if ($currentHash !== $lastHash) {
         echo "[" . date('H:i:s') . "] Changes detected! Rebuilding...\n";
         passthru('php build.php -d');
     }

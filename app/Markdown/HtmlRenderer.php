@@ -241,6 +241,7 @@ class HtmlRenderer implements RendererInterface
                         $globalColors['fg'],
                         true
                     );
+                    \Indieinabox\SiteBuilder::addManifest($caminhoDestinoGlobal);
 
                     $gifNameThumb = $pathInfo['filename'] . '_thumb.gif';
                     $caminhoDestinoThumb = $outputHtmlDir . DIRECTORY_SEPARATOR . $gifNameThumb;
@@ -252,6 +253,7 @@ class HtmlRenderer implements RendererInterface
                         $globalColors['bg'],
                         $globalColors['fg']
                     );
+                    \Indieinabox\SiteBuilder::addManifest($caminhoDestinoThumb);
 
                     $success = \Indieinabox\Helper::ditherImageToGif(
                         $caminhoOriginal,
@@ -261,6 +263,7 @@ class HtmlRenderer implements RendererInterface
                         $corFG,
                         true
                     );
+                    \Indieinabox\SiteBuilder::addManifest($caminhoDestino);
 
                     if ($success) {
                         // Build a root-relative src so the image loads correctly
@@ -280,6 +283,7 @@ class HtmlRenderer implements RendererInterface
                         if (!file_exists($originalDestino)) {
                             copy($caminhoOriginal, $originalDestino);
                         }
+                        \Indieinabox\SiteBuilder::addManifest($originalDestino);
                         $originalTarget = '/' . ltrim($slugDir . '/' . basename($caminhoOriginal), '/');
                     }
                 }

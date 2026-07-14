@@ -30,63 +30,29 @@ class ShortlinkManager
      * @param array $config
      * @return string|null
      */
-    public function getShortlink(Page $page, string $fqdn, array $config): ?string
+    public function getShortlink(Page $page, string $fqdn, array $config, bool $isDev = false): ?string
     {
-        if (empty($config['enabled'])) {
-            return null;
+        $url = rtrim($fqdn, '/') . '/' . ltrim($page->slug, '/');
+        
+        $localHash = rtrim($fqdn, '/') . '/s/' . substr(md5($url), 0, 8);
+
+        if (empty($config['enabled']) || $isDev) {
+            return $localHash;
         }
 
         if (!is_dir($this->cacheDir)) {
             @mkdir($this->cacheDir, 0777, true);
         }
 
-        $url = rtrim($fqdn, '/') . '/' . ltrim($page->slug, '/');
         $cacheFile = $this->cacheDir . DIRECTORY_SEPARATOR . md5($url) . '.txt';
 
         if (is_file($cacheFile)) {
             return file_get_contents($cacheFile);
         }
 
-        $server = $config['server'] ?? 'https://0x0.st';
-        $parameter = $config['parameter'] ?? 'shorten';
-        
-        // Prepare multipart/form-data for the POST request
-        $boundary = self::generateBoundary(24);
-        $content = "--" . $boundary . "\r\n";
-        $content .= "Content-Disposition: form-data; name=\"" . $parameter . "\"\r\n\r\n";
-        $content .= $url . "\r\n";
-        $content .= "--" . $boundary . "--\r\n";
-
-        $headers = [
-            "Content-Type: multipart/form-data; boundary=" . $boundary,
-            "User-Agent: Indieinabox/1.0 (Shortlink Fetcher)"
-        ];
-
-        if (!empty($config['auth_header']) && !empty($config['auth_token'])) {
-            $headers[] = $config['auth_header'] . ": " . $config['auth_token'];
-        }
-
-        $options = [
-            'http' => [
-                'method' => 'POST',
-                'header' => implode("\r\n", $headers) . "\r\n",
-                'content' => $content,
-                'timeout' => 5.0
-            ]
-        ];
-
-        $context = stream_context_create($options);
-        $response = @file_get_contents($server, false, $context);
-
-        if ($response !== false) {
-            $shortlink = trim($response);
-            if (filter_var($shortlink, FILTER_VALIDATE_URL)) {
-                file_put_contents($cacheFile, $shortlink);
-                return $shortlink;
-            }
-        }
-
-        return null; // Return null if it failed
+        // Network operation is deferred to the cron worker. 
+        // During the static build, we return the local hash if not cached.
+        return $localHash;
     }
 
     private static function generateBoundary(int $length = 24): string {

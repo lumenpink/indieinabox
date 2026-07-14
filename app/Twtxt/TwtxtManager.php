@@ -275,9 +275,10 @@ class TwtxtManager
      *
      * @param array<int, array<string, string>> $following
      * @param string $cacheDir
+     * @param bool $fetchOnline If false, only reads from local cache.
      * @return TwtxtEntry[]
      */
-    public function fetchTimeline(array $following, string $cacheDir): array
+    public function fetchTimeline(array $following, string $cacheDir, bool $fetchOnline = false): array
     {
         if (!is_dir($cacheDir)) {
             mkdir($cacheDir, 0777, true);
@@ -294,7 +295,10 @@ class TwtxtManager
             $url = $follow['url'];
             $cacheFile = $cacheDir . DIRECTORY_SEPARATOR . md5($url) . '.txt';
 
-            $feedContent = self::fetchUrl($url);
+            $feedContent = false;
+            if ($fetchOnline) {
+                $feedContent = self::fetchUrl($url);
+            }
 
             if ($feedContent !== false) {
                 // Save to cache
@@ -323,18 +327,37 @@ class TwtxtManager
      *
      * @param array<int, string> $hubs
      * @param string $fqdn
+     * @param string $cacheDir
+     * @param bool $fetchOnline If false, only reads from local cache.
      * @return TwtxtEntry[]
      */
-    public function fetchHubMentions(array $hubs, string $fqdn): array
+    public function fetchHubMentions(array $hubs, string $fqdn, string $cacheDir, bool $fetchOnline = false): array
     {
         /** @var TwtxtEntry[] $allMentions */
         $allMentions = [];
         $feedUrl = rtrim($fqdn, '/') . '/twtxt.txt';
 
+        if (!is_dir($cacheDir)) {
+            mkdir($cacheDir, 0777, true);
+        }
+
         foreach ($hubs as $hub) {
             $hub = rtrim($hub, '/');
             $endpoint = "{$hub}/api/plain/mentions?url=" . urlencode($feedUrl);
-            $content = self::fetchUrl($endpoint);
+            $cacheFile = $cacheDir . DIRECTORY_SEPARATOR . 'hub_' . md5($endpoint) . '.txt';
+
+            $content = false;
+            if ($fetchOnline) {
+                $content = self::fetchUrl($endpoint);
+            }
+
+            if ($content !== false) {
+                // Save to cache
+                file_put_contents($cacheFile, $content);
+            } elseif (is_file($cacheFile)) {
+                // Read from cache
+                $content = file_get_contents($cacheFile);
+            }
 
             if ($content) {
                 $entries = self::parseFeedContent($content, 'hub_mention');

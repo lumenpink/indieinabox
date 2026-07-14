@@ -118,6 +118,7 @@ class ThemeManager
                     mkdir($destDir, 0777, true);
                 }
                 copy($entry, $destination);
+                \Indieinabox\SiteBuilder::addManifest($destination);
             }
         }
     }
@@ -144,8 +145,9 @@ class ThemeManager
                         if (!is_dir($assetsDir)) {
                             mkdir($assetsDir, 0777, true);
                         }
-
-                        file_put_contents($assetsDir . DIRECTORY_SEPARATOR . $filename . "." . $ext, $content);
+                        $destPath = $assetsDir . DIRECTORY_SEPARATOR . $filename . "." . $ext;
+                        file_put_contents($destPath, $content);
+                        \Indieinabox\SiteBuilder::addManifest($destPath);
                     }
                 }
             }
@@ -183,8 +185,9 @@ class ThemeManager
                         if (!is_dir($assetsDir)) {
                             mkdir($assetsDir, 0777, true);
                         }
-
-                        copy($path, $assetsDir . DIRECTORY_SEPARATOR . $filename . "." . $ext);
+                        $destPath = $assetsDir . DIRECTORY_SEPARATOR . $filename . "." . $ext;
+                        copy($path, $destPath);
+                        \Indieinabox\SiteBuilder::addManifest($destPath);
                     }
                 } elseif (is_dir($path)) {
                     self::copyAssetsFromDisk($path, $base, $outputDir);

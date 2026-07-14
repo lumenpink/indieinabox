@@ -1,7 +1,7 @@
 ---
-date: 2026-07-06T03:31:07+00:00
+date: 2026-07-14T06:34:44+00:00
 kind: note
 lang: pt
 ---
 
-Configurando meu novo servidor hoje.
+Apenas configurando meu site #indieweb.

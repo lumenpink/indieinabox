@@ -1,6 +1,8 @@
 ---
-date: 2026-07-06T11:31:07+00:00
-lang: en
+date: 2026-07-14T14:34:44+00:00
+kind: page
+lang: pt
+title: "Bem Vindo"
 ---
 
-Welcome to my indie site. Fully multilingual.
+Bem-vindo ao meu site indie. Totalmente multilíngue.

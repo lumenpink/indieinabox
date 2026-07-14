@@ -54,10 +54,44 @@ class BackgroundWorker
             $this->processInboxQueue();
             $this->processOutbox();
             $this->processArchiveQueue();
+            $this->processTwtxtFeeds();
         } finally {
             flock($fp, LOCK_UN);
             fclose($fp);
         }
+    }
+
+    /**
+     * Fetches remote Twtxt timeline and hub mentions asynchronously.
+     * Rebuilds the site to update the static timeline page if new entries are found.
+     */
+    public function processTwtxtFeeds(): void
+    {
+        echo "Running Twtxt Feed processor...\n";
+        
+        $twtxtManager = new \Indieinabox\Twtxt\TwtxtManager();
+        $cacheDir = $this->site->paths->baseDir . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'twtxt_cache';
+        
+        $fetched = false;
+
+        if (!empty($this->site->twtxt->following)) {
+            echo "Fetching twtxt timeline feeds...\n";
+            $twtxtManager->fetchTimeline($this->site->twtxt->following, $cacheDir, true);
+            $fetched = true;
+        }
+
+        if (!empty($this->site->twtxt->hubs)) {
+            echo "Fetching twtxt hub mentions...\n";
+            $twtxtManager->fetchHubMentions($this->site->twtxt->hubs, $this->site->metadata->fqdn, $cacheDir, true);
+            $fetched = true;
+        }
+
+        if ($fetched) {
+            echo "Triggering incremental build to update timeline...\n";
+            passthru('php build.php -d');
+        }
+        
+        echo "Twtxt Feed processor done.\n";
     }
 
     /**

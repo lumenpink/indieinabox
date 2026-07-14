@@ -1,5 +1,5 @@
 ---
-date: 2026-07-05T05:31:07+00:00
+date: 2026-07-13T08:34:44+00:00
 kind: read
 lang: pt
 title: "Livro"

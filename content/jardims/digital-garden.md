@@ -1,5 +1,5 @@
 ---
-date: 2026-07-05T14:31:07+00:00
+date: 2026-07-13T17:34:44+00:00
 kind: jardim
 lang: en
 title: "Digital Garden"

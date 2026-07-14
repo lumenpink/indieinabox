@@ -1,5 +1,5 @@
 ---
-date: 2026-07-04T19:31:07+00:00
+date: 2026-07-12T22:34:44+00:00
 kind: like
 lang: pt
 like_of: https://example.com/2

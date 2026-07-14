@@ -1,5 +1,5 @@
 ---
-date: 2026-07-05T03:31:07+00:00
+date: 2026-07-13T06:34:44+00:00
 kind: read
 lang: pt
 title: "Artigo"

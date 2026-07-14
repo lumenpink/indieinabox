@@ -18,7 +18,18 @@ $config = require __DIR__ . '/.config.php';
 Database::$dataDir = dirname($config['db_path']);
 Database::connect($config['db_path']);
 
-$site = new Site(__DIR__);
+$site = new Site();
+$site->paths->baseDir = __DIR__;
+$site->config = \Indieinabox\Database::getAllSettings();
+if (isset($site->config['fqdn'])) {
+    $site->metadata->fqdn = $site->config['fqdn'];
+}
+if (isset($site->config['twtxt_following'])) {
+    $site->twtxt->following = $site->config['twtxt_following'];
+}
+if (isset($site->config['twtxt_hubs'])) {
+    $site->twtxt->hubs = $site->config['twtxt_hubs'];
+}
 
 $worker = new BackgroundWorker($site);
 

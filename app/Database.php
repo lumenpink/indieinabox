@@ -129,6 +129,24 @@ class Database
                     $settings[$row['key']] = $value;
                 }
             }
+
+            // Load .env overrides
+            $envPath = __DIR__ . '/../.env';
+            if (file_exists($envPath)) {
+                $lines = file($envPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+                foreach ($lines as $line) {
+                    $line = trim($line);
+                    if (strpos($line, '#') === 0 || empty($line)) continue;
+                    $parts = explode('=', $line, 2);
+                    if (count($parts) === 2) {
+                        $envKey = trim($parts[0]);
+                        $envVal = trim(trim($parts[1]), '"\'');
+                        if (in_array($envKey, ['APP_URL', 'FQDN'])) {
+                            $settings['fqdn'] = $envVal;
+                        }
+                    }
+                }
+            }
         } catch (Exception $e) {
             error_log("Database error in getAllSettings: " . $e->getMessage());
         }

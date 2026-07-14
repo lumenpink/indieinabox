@@ -274,8 +274,15 @@ class ConfigHandler
 
         // --- Booleans ---
         $currentConfig['buildall'] = isset($_POST['buildall']);
-        $currentConfig['dev'] = isset($_POST['dev']);
         $currentConfig['prettylinks'] = isset($_POST['prettylinks']);
+        $currentConfig['dev'] = isset($_POST['dev']);
+        $currentConfig['disable_shortlinks'] = isset($_POST['disable_shortlinks']);
+        $currentConfig['skipstatic'] = isset($_POST['skipstatic']);
+        $currentConfig['forcestaticoverride'] = isset($_POST['forcestaticoverride']);
+        $currentConfig['activitypub_enabled'] = isset($_POST['activitypub_enabled']);
+
+        // --- ActivityPub ---
+        $currentConfig['activitypub_handle'] = trim($_POST['activitypub_handle'] ?? 'schwartz');
         $currentConfig['feed_limit'] = isset($_POST['feed_limit']) ? (int)$_POST['feed_limit'] : 20;
 
         // --- Arrays ---
@@ -1285,6 +1292,19 @@ class ConfigHandler
                     <div class="form-group">
                         <label>Configured Hubs (one URL per line)</label>
                         <textarea name="twtxt_hubs" placeholder="https://hub.twtxt.org"><?= htmlspecialchars(implode("\n", $config['twtxt']['hubs'] ?? [])) ?></textarea>
+                    </div>
+                </fieldset>
+
+                <fieldset>
+                    <legend>Federation (ActivityPub)</legend>
+                    <div class="checkbox-group" style="margin-bottom: 1em;">
+                        <input type="checkbox" name="activitypub_enabled" id="activitypub_enabled" <?= !empty($config['activitypub_enabled']) ? 'checked' : '' ?>>
+                        <label for="activitypub_enabled">Enable ActivityPub Federation (Mastodon, Misskey, etc.)</label>
+                    </div>
+                    <div class="form-group">
+                        <label>Fediverse Handle (e.g. 'schwartz')</label>
+                        <input type="text" name="activitypub_handle" value="<?= htmlspecialchars($config['activitypub_handle'] ?? 'schwartz') ?>">
+                        <small>Your full handle will be <code>@your_handle@your_fqdn</code></small>
                     </div>
                 </fieldset>
 

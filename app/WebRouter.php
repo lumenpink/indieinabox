@@ -93,27 +93,37 @@ class WebRouter
             return;
         }
 
-        if ($requestUriClean === '/.well-known/webfinger') {
-            $handler = $this->createActivityPubHandler();
-            $handler->handleWebFinger();
-            return;
+        if (!empty($this->site->config['activitypub_enabled'])) {
+            if ($requestUriClean === '/.well-known/webfinger') {
+                $handler = $this->createActivityPubHandler();
+                $handler->handleWebFinger();
+                return;
+            }
+
+            if ($requestUriClean === '/actor') {
+                $handler = $this->createActivityPubHandler();
+                $handler->handleActor();
+                return;
+            }
+
+            if ($requestUriClean === '/inbox') {
+                $handler = $this->createActivityPubHandler();
+                $handler->handleInbox();
+                return;
+            }
+
+            if ($requestUriClean === '/outbox') {
+                $handler = $this->createActivityPubHandler();
+                $handler->handleOutbox();
+                return;
+            }
         }
 
-        if ($requestUriClean === '/actor') {
-            $handler = $this->createActivityPubHandler();
-            $handler->handleActor();
-            return;
-        }
-
-        if ($requestUriClean === '/inbox') {
-            $handler = $this->createActivityPubHandler();
-            $handler->handleInbox();
-            return;
-        }
-
-        if ($requestUriClean === '/outbox') {
-            $handler = $this->createActivityPubHandler();
-            $handler->handleOutbox();
+        if ($requestUriClean === '/cron') {
+            require_once __DIR__ . '/BackgroundWorker.php';
+            $worker = new \Indieinabox\BackgroundWorker($this->site);
+            $worker->run();
+            echo "OK";
             return;
         }
 

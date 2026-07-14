@@ -122,7 +122,7 @@ class WebRouter
         if ($requestUriClean === '/cron') {
             require_once __DIR__ . '/BackgroundWorker.php';
             $worker = new \Indieinabox\BackgroundWorker($this->site);
-            $worker->run();
+            $worker->runAll();
             echo "OK";
             return;
         }

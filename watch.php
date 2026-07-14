@@ -21,8 +21,17 @@ $content_path = (str_starts_with($contentDir, DIRECTORY_SEPARATOR) || preg_match
     ? rtrim($contentDir, DIRECTORY_SEPARATOR) 
     : __DIR__ . DIRECTORY_SEPARATOR . $contentDir;
 
-echo "Watching for changes in resources, app, theme, and {$content_path}...\n";
+echo "Starting PHP development server on localhost:8081...\n";
+$server = proc_open('php -S localhost:8081 build.php', [STDIN, STDOUT, STDERR], $pipes);
+if (!is_resource($server)) {
+    die("Failed to start development server.\n");
+}
+register_shutdown_function(function() use ($server) {
+    echo "Stopping development server...\n";
+    proc_terminate($server);
+});
 
+echo "Watching for changes in resources, app, theme, and {$content_path}...\n";
 $directories = ['resources', 'app', $content_path, 'theme'];
 $lastHash = '';
 

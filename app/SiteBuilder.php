@@ -564,15 +564,13 @@ class SiteBuilder
             }
             $destinationFile = $outDir . DIRECTORY_SEPARATOR . $destination;
         } else {
-            if (!is_dir($outDir . DIRECTORY_SEPARATOR . $destination)) {
-                mkdir($outDir . DIRECTORY_SEPARATOR . $destination, 0777, true);
+            $destDir = $destination === '' ? $outDir : $outDir . DIRECTORY_SEPARATOR . $destination;
+            if (!is_dir($destDir)) {
+                mkdir($destDir, 0777, true);
             }
-            $destinationFile = $outDir
-                . DIRECTORY_SEPARATOR
-                . $destination
-                . DIRECTORY_SEPARATOR
-                . "index.html";
+            $destinationFile = $destDir . DIRECTORY_SEPARATOR . "index.html";
         }
+        $destinationFile = preg_replace('#' . preg_quote(DIRECTORY_SEPARATOR, '#') . '+#', DIRECTORY_SEPARATOR, $destinationFile);
         $themeDir = $this->site->paths->themeDir ?? 'theme';
         
         // True incremental build: skip if destination is newer than source and theme (only in dev mode)
@@ -859,15 +857,13 @@ class SiteBuilder
                 . DIRECTORY_SEPARATOR
                 . str_replace($ext, '.gmi', $destination);
         } else {
-            if (!is_dir($outDirGemini . DIRECTORY_SEPARATOR . $destination)) {
-                mkdir($outDirGemini . DIRECTORY_SEPARATOR . $destination, 0777, true);
+            $destDir = $destination === '' ? $outDirGemini : $outDirGemini . DIRECTORY_SEPARATOR . $destination;
+            if (!is_dir($destDir)) {
+                mkdir($destDir, 0777, true);
             }
-            $destinationFile = $outDirGemini
-                . DIRECTORY_SEPARATOR
-                . $destination
-                . DIRECTORY_SEPARATOR
-                . "index.gmi";
+            $destinationFile = $destDir . DIRECTORY_SEPARATOR . "index.gmi";
         }
+        $destinationFile = preg_replace('#' . preg_quote(DIRECTORY_SEPARATOR, '#') . '+#', DIRECTORY_SEPARATOR, $destinationFile);
         // True incremental build: skip if destination is newer than source (only in dev mode)
         $skipGeneration = false;
         if (isset($this->site->options->dev) && $this->site->options->dev) {
@@ -939,15 +935,13 @@ class SiteBuilder
             $destinationFile = $outDirGopher . DIRECTORY_SEPARATOR . dirname($destination)
                 . DIRECTORY_SEPARATOR . basename($destination, $ext) . '.gophermap';
         } else {
-            if (!is_dir($outDirGopher . DIRECTORY_SEPARATOR . $destination)) {
-                mkdir($outDirGopher . DIRECTORY_SEPARATOR . $destination, 0777, true);
+            $destDir = $destination === '' ? $outDirGopher : $outDirGopher . DIRECTORY_SEPARATOR . $destination;
+            if (!is_dir($destDir)) {
+                mkdir($destDir, 0777, true);
             }
-            $destinationFile = $outDirGopher
-                . DIRECTORY_SEPARATOR
-                . $destination
-                . DIRECTORY_SEPARATOR
-                . "gophermap";
+            $destinationFile = $destDir . DIRECTORY_SEPARATOR . "gophermap";
         }
+        $destinationFile = preg_replace('#' . preg_quote(DIRECTORY_SEPARATOR, '#') . '+#', DIRECTORY_SEPARATOR, $destinationFile);
 
         // True incremental build: skip if destination is newer than source (only in dev mode)
         $skipGeneration = false;

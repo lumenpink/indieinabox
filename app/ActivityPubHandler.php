@@ -67,7 +67,7 @@ class ActivityPubHandler
     public function handleWebFinger(): void
     {
         $resource = $_GET['resource'] ?? '';
-        $handle = Database::getSetting('activitypub_handle') ?? 'lumen';
+        $handle = Database::getSetting('activitypub_handle') ?? 'schwartz';
         $fqdn = rtrim($this->site->metadata->fqdn ?? '', '/');
         $domain = parse_url($fqdn, PHP_URL_HOST);
 
@@ -105,7 +105,7 @@ class ActivityPubHandler
      */
     public function handleActor(): void
     {
-        $handle = Database::getSetting('activitypub_handle') ?? 'lumen';
+        $handle = Database::getSetting('activitypub_handle') ?? 'schwartz';
         $fqdn = rtrim($this->site->metadata->fqdn ?? '', '/');
 
         $stmt = $this->db->query("SELECT public_key FROM activitypub_keys WHERE key_id = 'main-key'");
@@ -284,7 +284,7 @@ class ActivityPubHandler
      */
     public function queueCreateActivity(string $postUrl, string $content, ?string $name, array $metadata = []): void
     {
-        $handle = Database::getSetting('activitypub_handle') ?? 'lumen';
+        $handle = Database::getSetting('activitypub_handle') ?? 'schwartz';
         $fqdn = rtrim($this->site->metadata->fqdn ?? '', '/');
 
         $actorId = $fqdn . '/actor';

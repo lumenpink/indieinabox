@@ -36,19 +36,19 @@ Below is the exact skeleton that your template system should generate for each b
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{Post Title} | DevLumen Blog</title>
+    <title>{Post Title} | Free All Knowledge</title>
 
     <meta name="description" content="{Post summary up to 160 characters.}">
     <link rel="canonical" href="{POST_ABSOLUTE_URL}">
 
-    <meta property="og:site_name" content="DevLumen Blog" />
+    <meta property="og:site_name" content="Free All Knowledge" />
     <meta property="og:type" content="article" />
     <meta property="og:title" content="{Post Title}" />
     <meta property="og:description" content="{Post summary.}" />
     <meta property="og:url" content="{POST_ABSOLUTE_URL}" />
     <meta property="og:image" content="{IMAGE_URL_1200x630.png}" />
     <meta property="article:published_time" content="{DATE_ISO_8601_EX_2026-07-01T09:00:00-03:00}" />
-    <meta property="article:author" content="Lumen" />
+    <meta property="article:author" content="Aaron Schwartz" />
 
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="{Post Title}">
@@ -84,16 +84,16 @@ Below is the exact skeleton that your template system should generate for each b
       "dateModified": "{MODIFICATION_DATE_ISO_8601_UPDATE_WHENEVER_EDITED}",
       "author": {
         "@type": "Person",
-        "name": "Lumen",
-        "jobTitle": "Software Engineer",
-        "url": "https://devlumen.com.br/about"
+        "name": "Aaron Schwartz",
+        "jobTitle": "Internet Hacktivist",
+        "url": "https://freeallknowledge.com/about"
       },
       "publisher": {
         "@type": "Organization",
-        "name": "DevLumen",
+        "name": "Free All Knowledge",
         "logo": {
           "@type": "ImageObject",
-          "url": "https://devlumen.com.br/assets/images/logo.png"
+          "url": "https://freeallknowledge.com/assets/images/logo.png"
         }
       }
     }

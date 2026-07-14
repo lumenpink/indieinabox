@@ -754,12 +754,12 @@ class ConfigHandler
 
                 <div class="form-group">
                     <label for="title">Site Title</label>
-                    <input type="text" name="title" id="title" value="Lumen Pink" required>
+                    <input type="text" name="title" id="title" value="Aaron Schwartz" required>
                 </div>
 
                 <div class="form-group">
                     <label for="sitename">Site Name</label>
-                    <input type="text" name="sitename" id="sitename" value="A nova rede social da Lumen" required>
+                    <input type="text" name="sitename" id="sitename" value="A nova rede social de Aaron Schwartz" required>
                 </div>
 
                 <div class="form-group">

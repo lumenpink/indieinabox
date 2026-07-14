@@ -759,7 +759,7 @@ class ConfigHandler
 
                 <div class="form-group">
                     <label for="sitename">Site Name</label>
-                    <input type="text" name="sitename" id="sitename" value="A nova rede social de Aaron Schwartz" required>
+                    <input type="text" name="sitename" id="sitename" value="Aaron Schwartz's new social network" required>
                 </div>
 
                 <div class="form-group">

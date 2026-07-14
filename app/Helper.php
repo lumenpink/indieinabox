@@ -733,12 +733,15 @@ class Helper
         }
 
         // 1. Try config-based translations first
+        $found = null;
         if ($site && !empty($site->config['translations'])) {
             foreach ($site->config['translations'] as $original => $langs) {
                 if (strcasecmp($original, $text) === 0) {
+                    $found = $original;
                     if (isset($langs[$lang]) && $langs[$lang] !== '') {
                         return $langs[$lang];
                     }
+                    break;
                 }
             }
         }
@@ -747,19 +750,9 @@ class Helper
             return $text;
         }
 
-        // 2. Fallback to translations.php array
-        if (isset($translations[$lang])) {
-            foreach ($translations[$lang] as $o => $v) {
-                if (mb_stripos($o, $text) !== false && !empty($v)) {
-                    $found = $o;
-                    break;
-                }
-            }
-        }
-        if (!isset($found) || empty($found)) {
-            $translations[$lang][$text] = '';
-            
-            // Insert the missing key immediately
+        // If not found in the target language, we might need to insert a blank translation row
+        // so it appears in the admin panel.
+        if ($found === null || !isset($site->config['translations'][$found][$lang])) {
             $db = \Indieinabox\Database::getDb();
             try {
                 $ins = $db->prepare('INSERT INTO translations (lang, phrase_key, phrase_value) VALUES (:lang, :key, :val)');
@@ -767,13 +760,20 @@ class Helper
                 $ins->bindValue(':key', $text);
                 $ins->bindValue(':val', '');
                 $ins->execute();
+                
+                // Update runtime config to avoid inserting again
+                if ($site) {
+                    if (!isset($site->config['translations'][$text])) {
+                        $site->config['translations'][$text] = [];
+                    }
+                    $site->config['translations'][$text][$lang] = '';
+                }
             } catch (\Exception $e) {
-                // Ignore unique constraint violation if another process inserted it concurrently
+                // Ignore unique constraints if any
             }
-            
-            return $text;
         }
-        return $translations[$lang][$found];
+
+        return $text;
     }
 
     /**
@@ -846,8 +846,8 @@ class Helper
      */
     public static function listposts(): string
     {
-        global $pages, $site, $page;
-        $mainPage = $page;
+        global $pages, $site, $p;
+        $mainPage = $p;
         $currentLang = $mainPage instanceof Page ? $mainPage->lang : ($mainPage['lang'] ?? ($site->localization->defaultLang ?? 'en'));
         $base = $site->paths->baseDir;
         $localpages = $pages instanceof Pages ? $pages->all() : $pages;

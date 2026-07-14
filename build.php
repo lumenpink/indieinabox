@@ -27,6 +27,8 @@ mb_internal_encoding("UTF-8");
 
 $config = \Indieinabox\Database::getAllSettings();
 $config['kinds'] = \Indieinabox\Database::getKinds();
+$config['translations'] = \Indieinabox\Database::getTranslations();
+$config['urltranslations'] = \Indieinabox\Database::getUrlTranslations();
 if (empty($config['title'])) {
     // Default fallback if DB is somehow empty
     $config = [

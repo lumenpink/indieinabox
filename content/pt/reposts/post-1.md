@@ -1,5 +1,5 @@
 ---
-date: 2026-07-12T20:34:44+00:00
+date: 2026-07-13T03:03:56+00:00
 kind: repost
 lang: pt
 repost_of: https://example.com/1

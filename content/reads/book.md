@@ -1,5 +1,5 @@
 ---
-date: 2026-07-13T09:34:44+00:00
+date: 2026-07-13T16:03:56+00:00
 kind: read
 lang: en
 title: "Book"

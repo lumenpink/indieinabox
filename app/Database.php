@@ -151,11 +151,11 @@ class Database
                     $lang = $row['lang'];
                     $key = $row['phrase_key'];
                     $val = $row['phrase_value'];
-                    
-                    if (!isset($translations[$key])) {
-                        $translations[$key] = [];
+                    if (!isset($translations[$key])) $translations[$key] = [];
+                    // Only overwrite if the new value is not empty, or if we don't have a value yet
+                    if (!isset($translations[$key][$lang]) || ($translations[$key][$lang] === '' && $val !== '')) {
+                        $translations[$key][$lang] = $val;
                     }
-                    $translations[$key][$lang] = $val;
                 }
             }
         } catch (Exception $e) {

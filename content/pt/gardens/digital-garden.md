@@ -1,12 +1,12 @@
 ---
-date: 2026-07-13T17:34:44+00:00
-kind: jardim
-lang: en
-title: "Digital Garden"
+date: 2026-07-13T23:03:56+00:00
+kind: garden
+lang: pt
+title: "Jardim Digital"
 flowerbed: ["general"]
 confidence: possible
 maturity: sprout
 importance: trivial
 ---
 
-My garden.
+Meu jardim.

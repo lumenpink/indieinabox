@@ -1,6 +1,6 @@
 ---
-date: 2026-07-05T14:31:07+00:00
-kind: jardim
+date: 2026-07-14T00:03:56+00:00
+kind: garden
 lang: en
 title: "Digital Garden"
 flowerbed: ["general"]

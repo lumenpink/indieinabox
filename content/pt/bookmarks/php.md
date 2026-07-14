@@ -1,5 +1,5 @@
 ---
-date: 2026-07-13T18:34:44+00:00
+date: 2026-07-14T01:03:56+00:00
 kind: bookmark
 lang: pt
 title: "PHP.net"

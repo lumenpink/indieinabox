@@ -42,7 +42,7 @@ class WebRouter
 
         // Route matching
         $isWebmentionParam = isset($_GET['webmention']);
-        $isWebmentionPath = (preg_match('#/webmentions?$#i', $requestUriClean) === 1);
+        $isWebmentionPath = (preg_match('#^/webmentions?$#i', $requestUriClean) === 1);
 
         if ($isWebmentionParam || $isWebmentionPath) {
             $handler = $this->createWebmentionHandler();
@@ -51,9 +51,9 @@ class WebRouter
         }
 
         $isAuthParam = isset($_GET['auth']);
-        $isAuthPath = (preg_match('#/auth$#i', $requestUriClean) === 1);
+        $isAuthPath = (preg_match('#^/auth$#i', $requestUriClean) === 1);
         $isTokenParam = isset($_GET['token']);
-        $isTokenPath = (preg_match('#/token$#i', $requestUriClean) === 1);
+        $isTokenPath = (preg_match('#^/token$#i', $requestUriClean) === 1);
         $isMetadataPath = ($requestUriClean === '/.well-known/oauth-authorization-server');
 
         if ($isAuthParam || $isAuthPath || $isTokenParam || $isTokenPath || $isMetadataPath) {
@@ -147,7 +147,7 @@ class WebRouter
 
         // Backward compatibility for old config route
         $isConfigParam = isset($_GET['config']);
-        $isConfigPath = (preg_match('#/config$#i', $requestUriClean) === 1);
+        $isConfigPath = (preg_match('#^/config$#i', $requestUriClean) === 1);
         if ($isConfigParam || $isConfigPath) {
             header('Location: /admin/config');
             exit;

@@ -106,7 +106,11 @@ class LanguageProcessor
         if (str_ends_with($cleanSlug, '.html')) {
             $cleanSlug = substr($cleanSlug, 0, -5);
         }
-        $nick = str_replace($page->localization->lang, '', $cleanSlug);
+        $langPrefix = $page->localization->lang . '/';
+        if (strpos($cleanSlug, $langPrefix) === 0) {
+            $cleanSlug = substr($cleanSlug, strlen($langPrefix));
+        }
+        $nick = $cleanSlug;
         $nick = trim($nick, '/');
         $parts = explode("/", $nick);
         $nick = end($parts);

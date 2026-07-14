@@ -135,3 +135,6 @@ The following next-generation features are scheduled for development:
 - [ ] **Inbox & Outbox Handling**: Create an ActivityPub Inbox/Outbox system supporting HTTP Signatures verification.
 - [ ] **Publishing & Reading**: Publish new site posts automatically to followers' inboxes, and utilize the local Microsub endpoint as a centralized hub to fetch, store, and display incoming feed items from the Fediverse.
 - [ ] **Extended Protocols**: Investigate possibilities of supporting forum protocols and BookWyrm alongside ActivityPub.
+
+### 🧩 Phase 19: Theme Data Abstraction Layer
+- [ ] **Autonomous Data Methods**: Refactor the generation of template data (e.g., footer links, page titles, OpenGraph/meta tags) into autonomous helper methods or a dedicated abstraction layer. This will decouple low-level data logic from the presentation layer, allowing future theme designers to build themes easily without writing complex PHP logic.

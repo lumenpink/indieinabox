@@ -32,6 +32,10 @@ class MicropubClientHandler
      */
     public function handle(): void
     {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
         // Require authentication
         if (empty($_SESSION['admin_authenticated'])) {
             $fqdn = rtrim($this->site->metadata->fqdn ?? '', '/');

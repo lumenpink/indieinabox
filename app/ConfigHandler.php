@@ -59,7 +59,7 @@ class ConfigHandler
                 );
             }
             session_destroy();
-            header('Location: ' . rtrim($this->site->metadata->fqdn, '/') . '/config');
+            header('Location: ' . rtrim($this->site->metadata->fqdn, '/') . '/admin/config');
             return;
         }
 
@@ -140,7 +140,7 @@ class ConfigHandler
             $this->rebuildSite();
 
             // Redirect to normal login endpoint
-            header('Location: ' . $fqdn . '/config');
+            header('Location: ' . $fqdn . '/admin/config');
             return;
         }
 
@@ -185,7 +185,7 @@ class ConfigHandler
             return;
         }
 
-        $expectedClientId = rtrim($this->site->metadata->fqdn, '/') . '/config';
+        $expectedClientId = rtrim($this->site->metadata->fqdn, '/') . '/admin/config';
         if (rtrim($codeData['client_id'], '/') !== rtrim($expectedClientId, '/')) {
             $this->sendError(400, 'Client ID mismatch.');
             return;
@@ -195,7 +195,7 @@ class ConfigHandler
         $_SESSION['admin_authenticated'] = true;
         unset($_SESSION['auth_state']);
 
-        header('Location: ' . rtrim($this->site->metadata->fqdn, '/') . '/config');
+        header('Location: ' . rtrim($this->site->metadata->fqdn, '/') . '/admin/config');
         return;
     }
 
@@ -211,8 +211,8 @@ class ConfigHandler
         $_SESSION['auth_state'] = $state;
 
         $fqdn = rtrim($this->site->metadata->fqdn, '/');
-        $clientId = $fqdn . '/config';
-        $redirectUri = $fqdn . '/config';
+        $clientId = $fqdn . '/admin/config';
+        $redirectUri = $fqdn . '/admin/config';
 
         $authUrl = $fqdn . '/auth'
             . '?client_id=' . urlencode($clientId)
@@ -570,6 +570,7 @@ class ConfigHandler
      */
     private function rebuildSite(): void
     {
+        ob_start();
         $basePath = $this->site->paths->baseDir;
         $config = \Indieinabox\Database::getAllSettings();
         $config['kinds'] = \Indieinabox\Database::getKinds();
@@ -648,6 +649,7 @@ class ConfigHandler
         // Rebuild!
         $builder = new \Indieinabox\SiteBuilder($newSite);
         $builder->build();
+        ob_end_clean();
         
         // Also update local site reference in handler
         $this->site = $newSite;

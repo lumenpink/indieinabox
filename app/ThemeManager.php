@@ -46,9 +46,9 @@ class ThemeManager
             // Standardize path separator to forward slash for the embedded keys
             $relativePath = str_replace('\\', '/', $relativePath);
 
-            $content = \DefaultTheme::getView($relativePath);
-            if ($content !== null) {
-                eval('?>' . $content);
+            $__tm_content = \DefaultTheme::getView($relativePath);
+            if ($__tm_content !== null) {
+                eval('?>' . $__tm_content);
                 return;
             }
         }

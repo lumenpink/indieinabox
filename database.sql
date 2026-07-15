@@ -36,6 +36,56 @@ INSERT OR REPLACE INTO kinds (kind_key, config_json) VALUES ('article',
     '{"content_dir":"articles","title":{"en":"Articles"},"palette":{"bg":"#FDF6E3","fg":"#3A2E2A"},' ||
     '"has_title":true,"show_on_home":true,"display_mode":"default"}'
 );
+INSERT OR REPLACE INTO kinds (kind_key, config_json) VALUES ('note', 
+    '{"content_dir":"notes","title":{"en":"Notes"},"palette":{"bg":"#F5F5F5","fg":"#333333"},' ||
+    '"has_title":false,"show_on_home":true,"display_mode":"default"}'
+);
+INSERT OR REPLACE INTO kinds (kind_key, config_json) VALUES ('garden', 
+    '{"content_dir":"garden","title":{"en":"Digital Garden"},"palette":{"bg":"#E8F5E9","fg":"#1B5E20"},' ||
+    '"has_title":true,"show_on_home":true,"display_mode":"default"}'
+);
+INSERT OR REPLACE INTO kinds (kind_key, config_json) VALUES ('reply', 
+    '{"content_dir":"replies","title":{"en":"Replies"},"palette":{"bg":"#E3F2FD","fg":"#0D47A1"},' ||
+    '"has_title":false,"show_on_home":true,"display_mode":"default"}'
+);
+INSERT OR REPLACE INTO kinds (kind_key, config_json) VALUES ('like', 
+    '{"content_dir":"likes","title":{"en":"Likes"},"palette":{"bg":"#FCE4EC","fg":"#880E4F"},' ||
+    '"has_title":false,"show_on_home":true,"display_mode":"default"}'
+);
+INSERT OR REPLACE INTO kinds (kind_key, config_json) VALUES ('repost', 
+    '{"content_dir":"reposts","title":{"en":"Reposts"},"palette":{"bg":"#F3E5F5","fg":"#4A148C"},' ||
+    '"has_title":false,"show_on_home":true,"display_mode":"default"}'
+);
+INSERT OR REPLACE INTO kinds (kind_key, config_json) VALUES ('bookmark', 
+    '{"content_dir":"bookmarks","title":{"en":"Bookmarks"},"palette":{"bg":"#FFF8E1","fg":"#FF6F00"},' ||
+    '"has_title":true,"show_on_home":true,"display_mode":"default"}'
+);
+INSERT OR REPLACE INTO kinds (kind_key, config_json) VALUES ('photo', 
+    '{"content_dir":"photos","title":{"en":"Photos"},"palette":{"bg":"#FAFAFA","fg":"#212121"},' ||
+    '"has_title":false,"show_on_home":true,"display_mode":"default"}'
+);
+INSERT OR REPLACE INTO kinds (kind_key, config_json) VALUES ('video', 
+    '{"content_dir":"videos","title":{"en":"Videos"},"palette":{"bg":"#ECEFF1","fg":"#263238"},' ||
+    '"has_title":false,"show_on_home":true,"display_mode":"default"}'
+);
+INSERT OR REPLACE INTO kinds (kind_key, config_json) VALUES ('checkin', 
+    '{"content_dir":"checkins","title":{"en":"Checkins"},"palette":{"bg":"#E0F7FA","fg":"#006064"},' ||
+    '"has_title":false,"show_on_home":true,"display_mode":"default"}'
+);
+INSERT OR REPLACE INTO kinds (kind_key, config_json) VALUES ('rsvp', 
+    '{"content_dir":"rsvps","title":{"en":"RSVPs"},"palette":{"bg":"#FBE9E7","fg":"#BF360C"},' ||
+    '"has_title":false,"show_on_home":true,"display_mode":"default"}'
+);
+INSERT INTO translations (lang, phrase_key, phrase_value) VALUES ('en', 'Notes', 'Notes');
+INSERT INTO translations (lang, phrase_key, phrase_value) VALUES ('en', 'Digital Garden', 'Digital Garden');
+INSERT INTO translations (lang, phrase_key, phrase_value) VALUES ('en', 'Replies', 'Replies');
+INSERT INTO translations (lang, phrase_key, phrase_value) VALUES ('en', 'Likes', 'Likes');
+INSERT INTO translations (lang, phrase_key, phrase_value) VALUES ('en', 'Reposts', 'Reposts');
+INSERT INTO translations (lang, phrase_key, phrase_value) VALUES ('en', 'Bookmarks', 'Bookmarks');
+INSERT INTO translations (lang, phrase_key, phrase_value) VALUES ('en', 'Photos', 'Photos');
+INSERT INTO translations (lang, phrase_key, phrase_value) VALUES ('en', 'Videos', 'Videos');
+INSERT INTO translations (lang, phrase_key, phrase_value) VALUES ('en', 'Checkins', 'Checkins');
+INSERT INTO translations (lang, phrase_key, phrase_value) VALUES ('en', 'RSVPs', 'RSVPs');
 INSERT INTO translations (lang, phrase_key, phrase_value) VALUES ('en', 'Home', 'Home');
 INSERT INTO translations (lang, phrase_key, phrase_value) VALUES ('en', 'Index', 'Index');
 INSERT INTO translations (lang, phrase_key, phrase_value) VALUES ('en', 'Now', 'Now');
@@ -66,7 +116,7 @@ INSERT INTO settings (key, value) VALUES ('originalmonths',
     '"September","October","November","December"]'
 );
 
-INSERT INTO settings (key, value) VALUES ('kindspath', '{"article":["articles"]}');
+INSERT INTO settings (key, value) VALUES ('kindspath', '{"article":["articles"], "note":["notes"], "garden":["garden"], "reply":["replies"], "like":["likes"], "repost":["reposts"], "bookmark":["bookmarks"], "photo":["photos"], "video":["videos"], "checkin":["checkins"], "rsvp":["rsvps"]}');
 
 CREATE TABLE IF NOT EXISTS indieauth_codes (
     code_hash TEXT PRIMARY KEY,

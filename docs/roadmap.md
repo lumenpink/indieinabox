@@ -142,3 +142,32 @@ The following next-generation features are scheduled for development:
 ### 🚀 Phase 20: Incremental Build & Garbage Collection
 - [x] **Incremental Generation**: The site builder now caches image processing across builds because `public` directories are no longer wiped entirely before a build.
 - [x] **Garbage Collector**: The site builder tracks every generated file (HTML, JSON, feeds, images) in a manifest array. Post-build, it automatically deletes orphaned files and directories that are no longer part of the current site state.
+
+### 📦 Phase 21: Official Distribution & Setup
+- [ ] **Clean Build Process**: Modify the release build script to generate `index.php` as the final artifact, rather than `indieinabox.php`.
+- [ ] **Default Production Content**: Define a minimal, out-of-the-box content set for the official distribution (English only, default theme). This should include a "Welcome to indieinabox" article (explaining the Indieweb and app with a link to docs) and one note (highlighting data ownership).
+- [ ] **Remove Dummy Content**: Ensure the robust dummy content (currently in the `content` folder) is excluded from the final release build, leaving only the default production content.
+- [ ] **i18n Out-of-the-box (Backlog)**: Future implementation of translations ready for the end-user.
+
+### 🧪 Phase 22: Dev/Demo Environment
+- [ ] **Maintain Dummy Structure**: Keep the current comprehensive `content` directory for development purposes, theme testing, and ensuring all content types and interactions work flawlessly.
+- [ ] **Automated Demo Instance**: (Optional) Set up an automated pipeline to deploy the `main` branch with all dummy content to a public demo instance.
+
+### 🔄 Phase 23: Simplified Self-hosting Updates (Dogfooding)
+- [ ] **CLI Update Command**: Create a simple CLI mechanism (e.g., a curl script or internal PHP command like `php indieinabox.php update`) that fetches the latest compiled version from the `main` branch and safely overwrites the current instance (preferably with a `.bak` backup).
+- [ ] **UI Update Button**: Add an update trigger in the Settings/Config UI that initiates the same update process, allowing for fast, friction-less dogfooding.
+
+### 🌐 Phase 24: Full Integration Testing Ecosystem (Docker)
+- [ ] **Isolated E2E Project**: Create a separate repository or dedicated directory outside the main tree for end-to-end integration testing, preventing clutter in the main codebase.
+- [ ] **Docker Compose Network**: Configure a comprehensive `docker-compose.yml` to spin up essential fediverse/indieweb platforms for real-world integration testing:
+    - [ ] Mastodon
+    - [ ] Misskey
+    - [ ] WordPress (with Indieweb plugins)
+    - [ ] Lemmy
+    - [ ] Bookwyrm
+    - [ ] Yarns (Microsub server)
+    - [ ] Bridgy (for testing bridging capabilities)
+    - [ ] Aperture (another Microsub client)
+    - [ ] Indigenous (or similar generic Micropub clients)
+- [ ] **Networking & FQDNs**: Set up a reverse proxy (e.g., Traefik/Nginx) or Cloudflare Tunnels to provide valid FQDNs for each local container.
+- [ ] **Automated Setup Scripts**: Create scripts to automatically provision test users, generate necessary tokens, and configure instances upon container startup.

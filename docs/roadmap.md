@@ -162,6 +162,8 @@ The following next-generation features are scheduled for development:
 - [ ] **Docker Compose Network**: Configure a comprehensive `docker-compose.yml` to spin up essential fediverse/indieweb platforms for real-world integration testing:
     - [ ] Mastodon
     - [ ] Misskey
+    - [ ] Pleroma
+    - [ ] Pixelfed
     - [ ] WordPress (with Indieweb plugins)
     - [ ] Lemmy
     - [ ] Bookwyrm

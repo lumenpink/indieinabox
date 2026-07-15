@@ -360,14 +360,6 @@ class MicrosubReaderHandler
         }
     </style>
     <div class="microsub-wrapper">
-    <div id="login-view" class="login-prompt glass" style="display: none;">
-        <h1>Nexus Reader</h1>
-        <p>Authenticate using your bearer token.</p>
-        <input type="password" id="token-input" placeholder="Bearer Token">
-        <button class="btn" onclick="login()">Connect</button>
-        <div id="error-msg"></div>
-    </div>
-
     <div id="reader-view" style="display: none;">
         <aside class="sidebar glass">
             <div class="sidebar-header">
@@ -407,41 +399,21 @@ class MicrosubReaderHandler
     </div>
 
     <script>
-        const ENDPOINT = "{$endpoint}";
-        let token = localStorage.getItem('microsub_token');
+        const ENDPOINT = "<?= $endpoint ?>";
         let currentChannel = 'inbox';
 
         window.onload = () => {
-            if (token) {
-                document.getElementById('reader-view').style.display = 'grid';
-                loadChannels();
-            } else {
-                document.getElementById('login-view').style.display = 'block';
-            }
+            document.getElementById('reader-view').style.display = 'grid';
+            loadChannels();
         };
 
-        function login() {
-            const input = document.getElementById('token-input').value.trim();
-            if (input) {
-                token = input;
-                localStorage.setItem('microsub_token', token);
-                document.getElementById('login-view').style.display = 'none';
-                document.getElementById('reader-view').style.display = 'grid';
-                loadChannels();
-            }
-        }
-
         function logout() {
-            localStorage.removeItem('microsub_token');
-            location.reload();
+            window.location.href = '/admin/config?action=logout';
         }
 
         async function api(action, method = 'GET', body = null) {
-            const headers = {
-                'Authorization': 'Bearer ' + token
-            };
             let url = ENDPOINT;
-            let options = { method, headers };
+            let options = { method, credentials: 'same-origin', headers: {} };
 
             if (method === 'GET') {
                 url += '?action=' + action;

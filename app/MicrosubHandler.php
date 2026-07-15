@@ -39,9 +39,13 @@ class MicrosubHandler
      */
     public function handleRequest(): void
     {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
         $tokenData = $this->authHandler->validateBearerToken();
 
-        if (!$tokenData) {
+        if (!$tokenData && empty($_SESSION['admin_authenticated'])) {
             http_response_code(401);
             echo json_encode(['error' => 'unauthorized', 'error_description' => 'Missing or invalid token']);
             return;

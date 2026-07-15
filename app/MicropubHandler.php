@@ -40,9 +40,13 @@ class MicropubHandler
         $requestUri = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
         $requestUriClean = rtrim($requestUri, '/');
 
-        // Verify Bearer Token
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
+        // Verify Bearer Token or Admin Session
         $tokenData = $this->authHandler->validateBearerToken();
-        if (!$tokenData) {
+        if (!$tokenData && empty($_SESSION['admin_authenticated'])) {
             $this->sendResponse(401, 'Unauthorized', 'Missing or invalid Bearer token.');
             return;
         }

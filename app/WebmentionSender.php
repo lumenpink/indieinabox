@@ -14,6 +14,11 @@ class WebmentionSender
      */
     public static function queueOutgoingWebmentions(string $sourceUrl, array $frontmatter, string $content): void
     {
+        $settings = \Indieinabox\Database::getAllSettings();
+        if (empty($settings['webmention_enabled'])) {
+            return;
+        }
+
         $links = [];
 
         // 1. Extract from frontmatter properties (in-reply-to, like-of, repost-of, etc)

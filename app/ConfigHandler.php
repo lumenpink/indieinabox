@@ -77,6 +77,20 @@ class ConfigHandler
 
         // Process POST updates
         if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
+            if (isset($_POST['action'])) {
+                if ($_POST['action'] === 'manual_update' && !empty($_POST['download_url'])) {
+                    require_once __DIR__ . '/Updater.php';
+                    $success = \Indieinabox\Updater::downloadAndInstall($_POST['download_url']);
+                    header('Location: ' . rtrim($this->site->metadata->fqdn, '/') . '/admin/config?saved=1');
+                    exit;
+                }
+                if ($_POST['action'] === 'rollback_update' && !empty($_POST['backup_filename'])) {
+                    require_once __DIR__ . '/Updater.php';
+                    $success = \Indieinabox\Updater::rollback($_POST['backup_filename']);
+                    header('Location: ' . rtrim($this->site->metadata->fqdn, '/') . '/admin/config?saved=1');
+                    exit;
+                }
+            }
             $this->saveConfig();
             return;
         }
@@ -275,11 +289,15 @@ class ConfigHandler
         // --- Booleans ---
         $currentConfig['buildall'] = isset($_POST['buildall']);
         $currentConfig['prettylinks'] = isset($_POST['prettylinks']);
-        $currentConfig['dev'] = isset($_POST['dev']);
+        $currentConfig['activitypub_enabled'] = isset($_POST['activitypub_enabled']);
+        $currentConfig['webmention_enabled'] = isset($_POST['webmention_enabled']);
+        $currentConfig['webarchive_enabled'] = isset($_POST['webarchive_enabled']);
         $currentConfig['disable_shortlinks'] = isset($_POST['disable_shortlinks']);
         $currentConfig['skipstatic'] = isset($_POST['skipstatic']);
         $currentConfig['forcestaticoverride'] = isset($_POST['forcestaticoverride']);
         $currentConfig['activitypub_enabled'] = isset($_POST['activitypub_enabled']);
+        $currentConfig['auto_upgrade_stable'] = !empty($_POST['auto_upgrade_stable']);
+        $currentConfig['auto_upgrade_nightly'] = !empty($_POST['auto_upgrade_nightly']);
 
         // --- ActivityPub ---
         $currentConfig['activitypub_handle'] = trim($_POST['activitypub_handle'] ?? 'schwartz');
@@ -1103,6 +1121,74 @@ class ConfigHandler
                     <button type="button" class="config-tab-btn" onclick="showTab('tab-kinds')">Content Kinds</button>
                     <button type="button" class="config-tab-btn" onclick="showTab('tab-social')">Social & Federation</button>
                     <button type="button" class="config-tab-btn" onclick="showTab('tab-services')">Services & Security</button>
+                    <button type="button" class="config-tab-btn" onclick="showTab('tab-updates')">Updates</button>
+                </div>
+
+                <div id="tab-updates" class="tab-content">
+                    <fieldset>
+                        <legend>Dogfooding & Updates</legend>
+                        <p style="font-size: 0.9em; margin-top: 0; color: var(--text-muted);">
+                            Configure auto-updates or manually trigger updates. The list of versions is fetched asynchronously in the background.
+                        </p>
+                        <div class="grid-2">
+                            <div class="form-group checkbox-group">
+                                <label>
+                                    <input type="hidden" name="auto_upgrade_stable" value="0">
+                                    <input type="checkbox" name="auto_upgrade_stable" value="1" <?= !empty($config['auto_upgrade_stable']) ? 'checked' : '' ?>>
+                                    Auto-upgrade Stable Releases
+                                </label>
+                            </div>
+                            <div class="form-group checkbox-group">
+                                <label>
+                                    <input type="hidden" name="auto_upgrade_nightly" value="0">
+                                    <input type="checkbox" name="auto_upgrade_nightly" value="1" <?= !empty($config['auto_upgrade_nightly']) ? 'checked' : '' ?>>
+                                    Auto-upgrade Nightly Builds
+                                </label>
+                            </div>
+                        </div>
+
+                        <?php
+                        $availableUpdates = \Indieinabox\Database::getSetting('available_updates', []);
+                        $lastCheck = \Indieinabox\Database::getSetting('last_update_check', 0);
+                        if (empty($availableUpdates)) {
+                            echo '<p>No updates available or checking hasn\'t run yet. (Last check: ' . ($lastCheck ? date('Y-m-d H:i:s', $lastCheck) : 'Never') . ')</p>';
+                        } else {
+                            echo '<h4>Available Versions</h4><ul>';
+                            foreach (array_slice($availableUpdates, 0, 5) as $update) {
+                                $badge = $update['prerelease'] ? '<span style="background: #eab308; color: #000; padding: 2px 6px; border-radius: 4px; font-size: 0.8em;">Nightly</span>' : '<span style="background: #22c55e; color: #fff; padding: 2px 6px; border-radius: 4px; font-size: 0.8em;">Stable</span>';
+                                echo '<li style="margin-bottom: 10px;">';
+                                echo '<strong>' . htmlspecialchars($update['name']) . '</strong> ' . $badge;
+                                echo '<br><small>Published: ' . htmlspecialchars($update['published_at']) . '</small>';
+                                echo '<form method="POST" style="margin-top: 5px; display: inline-block;">';
+                                echo '<input type="hidden" name="action" value="manual_update">';
+                                echo '<input type="hidden" name="download_url" value="' . htmlspecialchars($update['download_url']) . '">';
+                                echo '<button type="submit" class="btn" style="padding: 4px 10px; font-size: 0.9em;">Update to this version</button>';
+                                echo '</form>';
+                                echo '</li>';
+                            }
+                            echo '</ul>';
+                        }
+                        ?>
+
+                        <?php
+                        require_once __DIR__ . '/Updater.php';
+                        $backups = \Indieinabox\Updater::getLocalBackups();
+                        if (!empty($backups)) {
+                            echo '<h4>Local Backups (Rollback)</h4><ul>';
+                            foreach ($backups as $bkp) {
+                                echo '<li style="margin-bottom: 10px;">';
+                                echo htmlspecialchars($bkp['filename']) . ' <small>(' . date('Y-m-d H:i:s', $bkp['date']) . ', ' . round($bkp['size'] / 1024, 2) . ' KB)</small>';
+                                echo '<form method="POST" style="margin-top: 5px; display: inline-block; margin-left: 10px;">';
+                                echo '<input type="hidden" name="action" value="rollback_update">';
+                                echo '<input type="hidden" name="backup_filename" value="' . htmlspecialchars($bkp['filename']) . '">';
+                                echo '<button type="submit" class="btn" style="padding: 4px 10px; font-size: 0.9em; background: var(--accent); color: white; border: none;">Rollback</button>';
+                                echo '</form>';
+                                echo '</li>';
+                            }
+                            echo '</ul>';
+                        }
+                        ?>
+                    </fieldset>
                 </div>
 
                 <div id="tab-general" class="tab-content active">
@@ -1495,6 +1581,19 @@ class ConfigHandler
                         <p style="margin-top: 0;"><small>If enabled, IndieInABox will attempt to automatically shorten your links using a remote service. If disabled, it will use a local short hash instead (e.g. <code>/s/a1b2c3d4</code>).</small></p>
                         <input type="checkbox" name="shortlink[enabled]" id="shortlink_enabled" value="1" <?= !empty($config['shortlink']['enabled']) ? 'checked' : '' ?>>
                         <label for="shortlink_enabled">Enable Remote Shortlinks (Nullpointer / Rustypaste compatible)</label>
+                        <p class="help">If disabled, shortlinks will be generated locally (e.g. /s/abc12345).</p>
+                        
+                        <div style="margin-top: 1rem;">
+                            <input type="checkbox" name="webarchive_enabled" id="webarchive_enabled" value="1" <?= !empty($config['webarchive_enabled']) ? 'checked' : '' ?>>
+                            <label for="webarchive_enabled">Enable automatic WebArchive (archive.org) submissions</label>
+                            <p class="help">If enabled, all external links in your posts will be automatically submitted to the Wayback Machine.</p>
+                        </div>
+                        
+                        <div style="margin-top: 1rem;">
+                            <input type="checkbox" name="webmention_enabled" id="webmention_enabled" value="1" <?= !empty($config['webmention_enabled']) ? 'checked' : '' ?>>
+                            <label for="webmention_enabled">Enable automatic outgoing Webmentions</label>
+                            <p class="help">If enabled, IndieInABox will attempt to notify other sites when you link to them.</p>
+                        </div>
                     </div>
                     <div class="grid-2">
                         <div class="form-group">

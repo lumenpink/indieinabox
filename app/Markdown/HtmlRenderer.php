@@ -168,7 +168,7 @@ class HtmlRenderer implements RendererInterface
                 global $site;
                 $fqdn = $site?->metadata?->fqdn ?? '';
                 if ($fqdn === '' || strpos($target, $fqdn) !== 0) {
-                    $ts = $this->page && current($this->page->frontmatter) && isset($this->page->frontmatter['published']) 
+                    $ts = $this->page && is_array($this->page->frontmatter) && isset($this->page->frontmatter['published']) 
                           ? strtotime((string)$this->page->frontmatter['published']) 
                           : time();
                     

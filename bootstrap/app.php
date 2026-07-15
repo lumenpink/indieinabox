@@ -112,7 +112,13 @@ if (!isset($dbConfig['data_dir'])) {
 
 // 5. Connect to the SQLite Database
 try {
-    $dbPath = $dbConfig['data_dir'] . '/indieinabox.sqlite';
+    $dbPath = $dbConfig['data_dir'] . '/.indieinabox.sqlite';
+    
+    // Check if path is provided in config explicitly
+    if (isset($dbConfig['db_path']) && file_exists($dbConfig['db_path'])) {
+        $dbPath = $dbConfig['db_path'];
+    }
+
     \Indieinabox\Database::$dataDir = $dbConfig['data_dir'];
     \Indieinabox\Database::connect($dbPath);
 } catch (\Exception $e) {

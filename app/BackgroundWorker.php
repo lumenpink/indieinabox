@@ -648,6 +648,10 @@ class BackgroundWorker
      */
     private function extractLinksToArchiveQueue(string $htmlContent): void
     {
+        $settings = \Indieinabox\Database::getAllSettings();
+        if (empty($settings['webarchive_enabled'])) {
+            return;
+        }
         if (preg_match_all('/href=["\'](http[^"\']+)["\']/i', $htmlContent, $matches)) {
             $links = array_unique($matches[1]);
             foreach ($links as $link) {

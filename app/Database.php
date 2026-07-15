@@ -118,6 +118,34 @@ class Database
     }
 
     /**
+     * Saves a setting value to the database.
+     * Arrays and objects are automatically JSON-encoded.
+     *
+     * @param string $key
+     * @param mixed $value
+     * @return bool True on success, false on failure.
+     */
+    public static function saveSetting(string $key, mixed $value): bool
+    {
+        try {
+            $db = self::getDb();
+            $stmt = $db->prepare('INSERT INTO settings (key, value) VALUES (:key, :value) ON CONFLICT(key) DO UPDATE SET value = excluded.value');
+            if (!$stmt) {
+                return false;
+            }
+            
+            $encodedValue = (is_array($value) || is_object($value)) ? json_encode($value, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) : (string)$value;
+            $stmt->bindValue(':key', $key, PDO::PARAM_STR);
+            $stmt->bindValue(':value', $encodedValue, PDO::PARAM_STR);
+            
+            return $stmt->execute();
+        } catch (Exception $e) {
+            error_log("Database error in saveSetting: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
      * Retrieves all rows from the settings table as an associative array.
      * JSON values are automatically decoded into PHP arrays.
      *

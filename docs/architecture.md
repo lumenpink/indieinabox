@@ -50,3 +50,11 @@ Here is a breakdown of the workspace layout and its main contents:
 * **Image Dithering:** All images (like photos) copied from `content/` will be processed and dithered into a global palette GIF and a small thumbnail.
 * **Interactions:** The SiteBuilder tracks Webmentions/Interactions (like, repost, reply). Interaction counts are always shown, even when 0.
 * **Dynamic Indexing:** Category indexes and timelines are compiled natively, creating fully populated indexes for every configured site `kind` in all active languages.
+
+## UI Network Policy
+
+To guarantee maximum resilience and speed, the admin panel (UI) operates strictly on an **"offline-first"** policy.
+- The user interface must **never** make synchronous outbound network requests to third-party APIs (e.g., checking for updates, resolving domains, or polling external services) during page load or rendering.
+- All interactions with the outside world (such as federation, webmentions, or fetching available app updates) must be handled asynchronously via background tasks (`cron.php` or `BackgroundWorker`).
+- Background tasks save their results locally to the database or cache files. The UI must only read from these local sources, ensuring that a degraded external network or API rate limits will never block or slow down the admin interface.
+- **Exception:** Direct user-triggered actions that are guaranteed to be small and fast (like downloading an update under 1MB after manually clicking the "Update" button) are permitted to run synchronously.

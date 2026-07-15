@@ -309,6 +309,12 @@ class ConfigHandler
         if (empty($langs)) {
             $langs = ['en'];
         }
+
+        $oldLangs = $currentConfig['lang'] ?? ['en'];
+        if (!is_array($oldLangs)) $oldLangs = [$oldLangs];
+        $addedLangs = array_diff($langs, $oldLangs);
+        $defaultOldLang = $oldLangs[0] ?? 'en';
+
         $currentConfig['lang'] = $langs;
         $currentConfig['defaultlang'] = $langs[0];
 
@@ -439,6 +445,55 @@ class ConfigHandler
             $currentConfig['translations'] = $newTranslations;
         }
 
+        // --- URL Translations ---
+        if (isset($_POST['urltranslations']) && is_array($_POST['urltranslations'])) {
+            $newUrlTranslations = [];
+            foreach ($_POST['urltranslations'] as $origUrl => $langsData) {
+                if (is_array($langsData)) {
+                    foreach ($langsData as $langCode => $val) {
+                        $newUrlTranslations[trim($origUrl)][trim($langCode)] = trim($val);
+                    }
+                }
+            }
+            $currentConfig['urltranslations'] = $newUrlTranslations;
+        }
+
+        // --- Auto-fill Translations for new languages ---
+        if (!empty($addedLangs)) {
+            if (!empty($currentConfig['translations'])) {
+                foreach ($currentConfig['translations'] as $phraseKey => &$langVals) {
+                    foreach ($addedLangs as $nl) {
+                        if (!isset($langVals[$nl]) || $langVals[$nl] === '') {
+                            $langVals[$nl] = $langVals[$defaultOldLang] ?? $phraseKey;
+                        }
+                    }
+                }
+                unset($langVals);
+            }
+            if (!empty($currentConfig['urltranslations'])) {
+                foreach ($currentConfig['urltranslations'] as $urlKey => &$langVals) {
+                    foreach ($addedLangs as $nl) {
+                        if (!isset($langVals[$nl]) || $langVals[$nl] === '') {
+                            $langVals[$nl] = $langVals[$defaultOldLang] ?? $urlKey;
+                        }
+                    }
+                }
+                unset($langVals);
+            }
+            if (!empty($currentConfig['kinds'])) {
+                foreach ($currentConfig['kinds'] as $k => &$kindData) {
+                    if (isset($kindData['title']) && is_array($kindData['title'])) {
+                        foreach ($addedLangs as $nl) {
+                            if (!isset($kindData['title'][$nl]) || $kindData['title'][$nl] === '') {
+                                $kindData['title'][$nl] = $kindData['title'][$defaultOldLang] ?? ucfirst($k);
+                            }
+                        }
+                    }
+                }
+                unset($kindData);
+            }
+        }
+
         // --- Security ---
         if (!empty($_POST['new_password'])) {
             $currentConfig['indieauth_password'] = password_hash($_POST['new_password'], PASSWORD_BCRYPT);
@@ -493,6 +548,33 @@ class ConfigHandler
                 }
             }
         }
+
+        if (isset($currentConfig['urltranslations']) && is_array($currentConfig['urltranslations'])) {
+            foreach ($currentConfig['urltranslations'] as $url_key => $langs) {
+                if (is_array($langs)) {
+                    foreach ($langs as $lang => $url_value) {
+                        $stmt = $db->prepare('SELECT id FROM urltranslations WHERE lang = :lang AND slug_key = :key');
+                        $stmt->bindValue(':lang', $lang);
+                        $stmt->bindValue(':key', $url_key);
+                        $stmt->execute();
+                        $row = $stmt->fetch(\PDO::FETCH_ASSOC);
+                        if ($row) {
+                            $upd = $db->prepare('UPDATE urltranslations SET slug_value = :val WHERE id = :id');
+                            $upd->bindValue(':val', $url_value);
+                            $upd->bindValue(':id', $row['id']);
+                            $upd->execute();
+                        } else {
+                            $ins = $db->prepare('INSERT INTO urltranslations (lang, slug_key, slug_value) VALUES (:lang, :key, :val)');
+                            $ins->bindValue(':lang', $lang);
+                            $ins->bindValue(':key', $url_key);
+                            $ins->bindValue(':val', $url_value);
+                            $ins->execute();
+                        }
+                    }
+                }
+            }
+        }
+
         // Rebuild the site using newly saved settings
         $this->rebuildSite();
 
@@ -854,10 +936,51 @@ class ConfigHandler
                 }
                 fieldset {
                     border: 1px solid var(--border-color);
-                    margin-bottom: 2em;
-                    padding: 1.5em;
-                    background: rgba(0,0,0,0.02);
+                    border-radius: 8px;
+                    padding: 1.5rem;
+                    margin-bottom: 2rem;
+                    background: rgba(255, 255, 255, 0.02);
                 }
+
+                .config-tabs {
+                    display: flex;
+                    gap: 10px;
+                    margin-bottom: 20px;
+                    border-bottom: 1px solid var(--border-color);
+                    padding-bottom: 10px;
+                    overflow-x: auto;
+                }
+
+                .config-tab-btn {
+                    background: transparent;
+                    border: none;
+                    color: var(--text-muted);
+                    font-size: 1rem;
+                    font-weight: 600;
+                    padding: 8px 16px;
+                    cursor: pointer;
+                    border-radius: 6px;
+                    transition: all 0.2s;
+                }
+
+                .config-tab-btn:hover {
+                    color: var(--text-main);
+                    background: rgba(255,255,255,0.05);
+                }
+
+                .config-tab-btn.active {
+                    color: var(--accent);
+                    background: rgba(236, 203, 0, 0.1);
+                }
+
+                .tab-content {
+                    display: none;
+                }
+
+                .tab-content.active {
+                    display: block;
+                }
+
                 legend {
                     font-weight: bold;
                     background: var(--bg);
@@ -974,7 +1097,15 @@ class ConfigHandler
             <?php endif; ?>
 
             <form action="" method="POST" id="configForm" enctype="multipart/form-data">
-                
+                <div class="config-tabs">
+                    <button type="button" class="config-tab-btn active" onclick="showTab('tab-general')">General</button>
+                    <button type="button" class="config-tab-btn" onclick="showTab('tab-localization')">Localization</button>
+                    <button type="button" class="config-tab-btn" onclick="showTab('tab-kinds')">Content Kinds</button>
+                    <button type="button" class="config-tab-btn" onclick="showTab('tab-social')">Social & Federation</button>
+                    <button type="button" class="config-tab-btn" onclick="showTab('tab-services')">Services & Security</button>
+                </div>
+
+                <div id="tab-general" class="tab-content active">
                 <fieldset>
                     <legend>General Settings</legend>
                     <div class="grid-2">
@@ -1128,7 +1259,9 @@ class ConfigHandler
                         </div>
                     </div>
                 </fieldset>
+                </div>
 
+                <div id="tab-localization" class="tab-content">
                 <fieldset>
                     <legend>Translations & Parity</legend>
                     <div class="form-group">
@@ -1150,7 +1283,9 @@ class ConfigHandler
                         </select>
                     </div>
                 </fieldset>
+                </div>
 
+                <div id="tab-kinds" class="tab-content">
                 <fieldset>
                     <legend>Content Kinds</legend>
                     <?php
@@ -1177,18 +1312,6 @@ class ConfigHandler
                                 </div>
                             </div>
                             
-                            <div class="form-group">
-                                <label>Translations</label>
-                                <div class="grid-2">
-                                    <?php foreach ($langArr as $l): ?>
-                                    <div class="color-picker" style="margin-bottom: 5px;">
-                                        <span style="width: 50px;"><?= htmlspecialchars($l) ?></span>
-                                        <input type="text" name="kinds[<?= htmlspecialchars($k) ?>][title][<?= htmlspecialchars($l) ?>]" value="<?= htmlspecialchars($data['title'][$l] ?? '') ?>">
-                                    </div>
-                                    <?php endforeach; ?>
-                                </div>
-                            </div>
-
                             <div class="grid-2">
                                 <div class="form-group color-picker">
                                     <label>BG Color</label>
@@ -1264,7 +1387,9 @@ class ConfigHandler
                         </div>
                     </div>
                 </fieldset>
+                </div>
 
+                <div id="tab-social" class="tab-content">
                 <fieldset>
                     <legend>TwTxt / Social Settings</legend>
                     <div class="grid-2">
@@ -1309,7 +1434,9 @@ class ConfigHandler
                         <small>Your full handle will be <code>@your_handle@your_fqdn</code></small>
                     </div>
                 </fieldset>
+                </div>
 
+                <div id="tab-localization-global" class="tab-content">
                 <fieldset>
                     <legend>Global Translations</legend>
                     <?php
@@ -1343,6 +1470,25 @@ class ConfigHandler
                     <?php endforeach; ?>
                 </fieldset>
 
+                <fieldset>
+                    <legend>Content Kinds Translations</legend>
+                    <?php foreach ($kinds as $k => $data): ?>
+                        <div class="form-group" style="margin-bottom: 1.5rem;">
+                            <label><?= htmlspecialchars(ucfirst($k)) ?> Translations</label>
+                            <div class="grid-2">
+                                <?php foreach ($langArr as $l): ?>
+                                <div class="color-picker" style="margin-bottom: 5px;">
+                                    <span style="width: 50px;"><?= htmlspecialchars($l) ?></span>
+                                    <input type="text" name="kinds[<?= htmlspecialchars($k) ?>][title][<?= htmlspecialchars($l) ?>]" value="<?= htmlspecialchars($data['title'][$l] ?? '') ?>">
+                                </div>
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                </fieldset>
+                </div>
+
+                <div id="tab-services" class="tab-content">
                 <fieldset>
                     <legend>Shortlink Service</legend>
                     <div class="form-group">
@@ -1387,11 +1533,28 @@ class ConfigHandler
                         <input type="password" name="new_password" placeholder="Leave blank to keep current password">
                     </div>
                 </fieldset>
+                </div>
 
-                <button type="submit" class="save-btn" style="width: 100%; font-size: 1.2rem; padding: 15px;">Save Settings & Rebuild</button>
+                <div class="submit-group" style="position: sticky; bottom: 0; background: var(--glass-bg, #111827); padding: 15px; border-top: 1px solid var(--border-color); z-index: 100; margin-top: 2rem; border-radius: 8px;">
+                    <button type="submit" class="save-btn btn" style="width: 100%; font-size: 1.2rem; padding: 15px;">Save Settings & Rebuild</button>
+                </div>
             </form>
 
             <script>
+                function showTab(tabId) {
+                    document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+                    document.querySelectorAll('.config-tab-btn').forEach(el => el.classList.remove('active'));
+                    
+                    if (tabId === 'tab-localization') {
+                        document.getElementById('tab-localization').classList.add('active');
+                        document.getElementById('tab-localization-global').classList.add('active');
+                    } else {
+                        document.getElementById(tabId).classList.add('active');
+                    }
+                    
+                    event.currentTarget.classList.add('active');
+                }
+
                 function addLanguage() {
                     let langCode = prompt("Enter the new language code (e.g. fr, de):");
                     if (langCode) {

@@ -404,6 +404,7 @@ class MicrosubReaderHandler
     <script>
         const ENDPOINT = "<?= $endpoint ?>";
         let currentChannel = 'inbox';
+        window.timelineItems = [];
 
         window.onload = () => {
             document.getElementById('reader-view').style.display = 'grid';
@@ -481,12 +482,14 @@ class MicrosubReaderHandler
                 const data = await api('timeline', 'GET', { channel: currentChannel });
                 container.innerHTML = '';
                 
-                if (!data.items || data.items.length === 0) {
+                window.timelineItems = data.items || [];
+
+                if (!window.timelineItems || window.timelineItems.length === 0) {
                     container.innerHTML = '<p style="text-align: center; color: var(--text-muted); margin-top: 2rem;">No items found.</p>';
                     return;
                 }
 
-                data.items.forEach(item => {
+                window.timelineItems.forEach(item => {
                     const div = document.createElement('div');
                     div.className = 'item glass' + (item._is_read ? ' read' : '');
                     
@@ -540,6 +543,21 @@ class MicrosubReaderHandler
             if (action === 'reply') {
                 content = prompt("Enter your reply:");
                 if (!content) return;
+                
+                // Find item context
+                const item = window.timelineItems.find(i => i.url === targetUrl);
+                if (item) {
+                    let originalText = item.content.text || item.content.html || '';
+                    // Strip HTML if it's HTML
+                    originalText = originalText.replace(/<[^>]+>/g, '').trim();
+                    // Truncate to 150 chars
+                    if (originalText.length > 150) {
+                        originalText = originalText.substring(0, 150) + '...';
+                    }
+                    
+                    content += "\n\n> " + originalText + "\n>\n> -- [" + (item.author ? item.author.name : "Original Post") + "](" + item.url + ")";
+                }
+
                 payload['in-reply-to'] = targetUrl;
                 payload.content = content;
                 payload['mp-slug'] = 'reply-' + Date.now();

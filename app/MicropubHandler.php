@@ -316,6 +316,11 @@ class MicropubHandler
             $apHandler->queueCreateActivity($postUrl, $content, $name, $frontmatter);
         }
 
+        // Queue outgoing webmentions
+        if (class_exists('\\Indieinabox\\WebmentionSender')) {
+            \Indieinabox\WebmentionSender::queueOutgoingWebmentions($postUrl, $frontmatter, $content);
+        }
+
         $this->sendSuccessResponse(202, ['Location' => $postUrl]);
     }
 

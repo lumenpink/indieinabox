@@ -53,6 +53,7 @@ class BackgroundWorker
         try {
             $this->processInboxQueue();
             $this->processOutbox();
+            $this->processOutgoingWebmentions();
             $this->processArchiveQueue();
             $this->processTwtxtFeeds();
         } finally {
@@ -519,6 +520,123 @@ class BackgroundWorker
         // Return relative path for web access (depends on how web serves data dir)
         // For simplicity we use a virtual path
         return '/data/avatars/' . $actorHost . '/' . $filename;
+    }
+
+    /**
+     * Processes outgoing webmentions.
+     */
+    private function processOutgoingWebmentions(): void
+    {
+        echo "Running Outgoing Webmention processor...\n";
+        
+        // Clean up old ones (older than 7 days)
+        $sevenDaysAgo = time() - (7 * 86400);
+        $this->db->exec("DELETE FROM outgoing_webmentions WHERE status IN ('sent', 'failed') AND created_at < $sevenDaysAgo");
+
+        $stmt = $this->db->query("SELECT id, source_url, target_url FROM outgoing_webmentions WHERE status = 'pending' LIMIT 20");
+        $webmentions = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+        if (empty($webmentions)) {
+            echo "No outgoing webmentions pending.\n";
+            return;
+        }
+
+        foreach ($webmentions as $wm) {
+            $id = (int)$wm['id'];
+            $source = $wm['source_url'];
+            $target = $wm['target_url'];
+
+            echo "Sending webmention from $source to $target...\n";
+
+            $endpoint = $this->discoverWebmentionEndpoint($target);
+            if (!$endpoint) {
+                echo "No webmention endpoint found for $target\n";
+                $this->db->prepare("UPDATE outgoing_webmentions SET status = 'failed' WHERE id = ?")->execute([$id]);
+                continue;
+            }
+
+            echo "Found endpoint: $endpoint\n";
+
+            $ch = curl_init($endpoint);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_POST, true);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query(['source' => $source, 'target' => $target]));
+            curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+            curl_setopt($ch, CURLOPT_USERAGENT, 'Indieinabox Webmention Sender/1.0');
+            $response = curl_exec($ch);
+            $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            curl_close($ch);
+
+            if ($code >= 200 && $code < 300) {
+                echo "Webmention sent successfully.\n";
+                $this->db->prepare("UPDATE outgoing_webmentions SET status = 'sent' WHERE id = ?")->execute([$id]);
+            } else {
+                echo "Webmention failed with HTTP $code.\n";
+                $this->db->prepare("UPDATE outgoing_webmentions SET status = 'failed' WHERE id = ?")->execute([$id]);
+            }
+        }
+        
+        echo "Outgoing Webmention processor done.\n";
+    }
+
+    /**
+     * Discovers a webmention endpoint from a target URL.
+     *
+     * @param string $url The target URL.
+     * @return string|null The endpoint URL or null if not found.
+     */
+    private function discoverWebmentionEndpoint(string $url): ?string
+    {
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HEADER, true);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        curl_setopt($ch, CURLOPT_MAXREDIRS, 3);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+        curl_setopt($ch, CURLOPT_USERAGENT, 'Indieinabox Endpoint Discoverer/1.0');
+        $response = curl_exec($ch);
+        
+        if ($response === false) {
+            return null;
+        }
+
+        $headerSize = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+        $headers = substr($response, 0, $headerSize);
+        $body = substr($response, $headerSize);
+        curl_close($ch);
+
+        // 1. Check Link headers
+        if (preg_match('/Link:\s*<([^>]+)>;\s*rel=[\'"]?(?:[^>]*\s+)?webmention(?:\s+[^>]+)?[\'"]?/i', $headers, $matches)) {
+            return $this->resolveUrl($url, $matches[1]);
+        }
+
+        // 2. Check HTML body for <link rel="webmention">
+        if (preg_match('/<link\s+[^>]*rel=[\'"]?(?:[^>]*\s+)?webmention(?:\s+[^>]+)?[\'"]?[^>]*href=[\'"]([^>"\']+)[\'"]/i', $body, $matches) || 
+            preg_match('/<link\s+[^>]*href=[\'"]([^>"\']+)[\'"][^>]*rel=[\'"]?(?:[^>]*\s+)?webmention(?:\s+[^>]+)?[\'"]?/i', $body, $matches)) {
+            return $this->resolveUrl($url, $matches[1]);
+        }
+
+        return null;
+    }
+
+    /**
+     * Resolves a relative URL against a base URL.
+     */
+    private function resolveUrl(string $base, string $rel): string
+    {
+        if (parse_url($rel, PHP_URL_SCHEME) != '') return $rel;
+        if ($rel[0] == '#' || $rel[0] == '?') return $base . $rel;
+        extract(parse_url($base));
+        /** @var string $scheme */
+        /** @var string $host */
+        /** @var string $path */
+        if (!isset($path)) $path = '/';
+        $path = preg_replace('#/[^/]*$#', '', $path);
+        if ($rel[0] == '/') $path = '';
+        $abs = "$host$path/$rel";
+        $re = ['#(/\.?/)#', '#/(?!\.\.)[^/]+/\.\./#'];
+        for ($n = 1; $n > 0; $abs = preg_replace($re, '/', $abs, -1, $n)) {}
+        return $scheme . '://' . $abs;
     }
 
     /**

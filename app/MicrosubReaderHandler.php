@@ -390,7 +390,10 @@ class MicrosubReaderHandler
         <main class="main-content">
             <div class="timeline-header">
                 <h1 id="current-channel-title">Inbox</h1>
-                <button class="btn" onclick="fetchFeeds()">Sync Feeds</button>
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn" onclick="addFeed()">Add Feed</button>
+                    <button class="btn" onclick="fetchFeeds()">Sync Feeds</button>
+                </div>
             </div>
             <div id="timeline">
                 <p style="text-align: center; color: var(--text-muted); margin-top: 2rem;">Loading...</p>
@@ -505,6 +508,9 @@ class MicrosubReaderHandler
                         <div class="item-content">${item.content.html || item.content.text || ''}</div>
                         <div class="item-actions">
                             <a href="${item.url}" target="_blank">View Original</a>
+                            <button onclick="interactPost('like', '${item.url}')">Like</button>
+                            <button onclick="interactPost('repost', '${item.url}')">Repost</button>
+                            <button onclick="interactPost('reply', '${item.url}')">Reply</button>
                             ${!item._is_read ? `<button onclick="markRead('${item._id}')">Mark Read</button>` : ''}
                         </div>
                     `;
@@ -523,12 +529,75 @@ class MicrosubReaderHandler
                 alert("Failed to mark as read");
             }
         }
+        
+        async function interactPost(action, targetUrl) {
+            let content = '';
+            let payload = {
+                action: 'create',
+                h: 'entry'
+            };
+            
+            if (action === 'reply') {
+                content = prompt("Enter your reply:");
+                if (!content) return;
+                payload['in-reply-to'] = targetUrl;
+                payload.content = content;
+                payload['mp-slug'] = 'reply-' + Date.now();
+            } else if (action === 'like') {
+                payload['like-of'] = targetUrl;
+                payload['mp-slug'] = 'like-' + Date.now();
+            } else if (action === 'repost') {
+                payload['repost-of'] = targetUrl;
+                payload['mp-slug'] = 'repost-' + Date.now();
+            }
+
+            try {
+                const formData = new URLSearchParams(payload);
+                const res = await fetch('/micropub', {
+                    method: 'POST',
+                    body: formData,
+                    credentials: 'same-origin',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    }
+                });
+                
+                if (res.ok || res.status === 202) {
+                    alert(action.charAt(0).toUpperCase() + action.slice(1) + " sent successfully!");
+                } else {
+                    const text = await res.text();
+                    alert("Failed to " + action + ": " + text);
+                }
+            } catch (err) {
+                console.error(err);
+                alert("Failed to send interaction");
+            }
+        }
 
         async function fetchFeeds() {
             try {
                 await api('fetch', 'POST');
                 setTimeout(loadTimeline, 1000);
             } catch (err) {
+                console.error(err);
+            }
+        }
+
+        async function addFeed() {
+            if (!currentChannel) return;
+            const url = prompt("Enter feed URL (RSS, Atom, JSON, Twtxt, or Fediverse account):");
+            if (!url) return;
+            
+            try {
+                const res = await api('subscribe', 'POST', { channel: currentChannel, url: url });
+                if (res.error) {
+                    alert("Error: " + res.error_description);
+                } else {
+                    alert("Subscribed successfully! Now click Sync Feeds to fetch the content.");
+                    fetchFeeds();
+                }
+            } catch (err) {
+                alert("Failed to subscribe to feed. See console for details.");
                 console.error(err);
             }
         }

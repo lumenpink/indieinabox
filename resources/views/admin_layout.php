@@ -80,7 +80,7 @@
         <nav class="admin-nav">
             <a href="<?= $fqdn ?>/admin/config" class="<?= ($activeTab ?? '') === 'config' ? 'active' : '' ?>">Configuration</a>
             <a href="<?= $fqdn ?>/admin/micropub" class="<?= ($activeTab ?? '') === 'micropub' ? 'active' : '' ?>">Publish (Micropub)</a>
-            <a href="<?= $fqdn ?>/admin/microsub" class="<?= ($activeTab ?? '') === 'microsub' ? 'active' : '' ?>">Reader (Microsub)</a>
+            <a href="<?= $fqdn ?>/admin/microsub" class="<?= ($activeTab ?? '') === 'microsub' ? 'active' : '' ?>">Feed Reader</a>
             <a href="<?= $fqdn ?>/admin/moderation" class="<?= ($activeTab ?? '') === 'moderation' ? 'active' : '' ?>">Moderation</a>
             <a href="<?= $fqdn ?>/logout" style="margin-top: auto; border-top: 1px solid var(--border-color);">Logout</a>
         </nav>

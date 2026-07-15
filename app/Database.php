@@ -50,6 +50,15 @@ class Database
 
             // Foreign keys
             self::$db->exec('PRAGMA foreign_keys = ON;');
+
+            // Ensure outgoing webmentions table exists
+            self::$db->exec('CREATE TABLE IF NOT EXISTS outgoing_webmentions (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                source_url TEXT NOT NULL,
+                target_url TEXT NOT NULL,
+                status TEXT DEFAULT \'pending\',
+                created_at INTEGER NOT NULL
+            )');
         } catch (Exception $e) {
             throw new Exception("Failed to connect to database: " . $e->getMessage());
         }

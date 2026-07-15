@@ -623,10 +623,10 @@ class MicrosubReaderHandler
 </div>
 <?php
         $content = ob_get_clean();
-        if (file_exists($adminLayoutPath)) {
-            include $adminLayoutPath;
-        } else {
-            echo $content;
-        }
+        \Indieinabox\ThemeManager::loadView($adminLayoutPath, [
+            'content' => $content,
+            'activeTab' => $activeTab,
+            'fqdn' => $fqdn
+        ]);
     }
 }

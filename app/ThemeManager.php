@@ -58,6 +58,17 @@ class ThemeManager
     }
 
     /**
+     * Helper to include view partials (like includes/head.php) properly resolving the theme path.
+     */
+    public static function includeView(string $relativePath, array $data = []): void
+    {
+        global $site;
+        $themeDir = isset($site) && isset($site->paths->themeDir) ? $site->paths->themeDir : 'resources';
+        $fullPath = rtrim($themeDir, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR . ltrim($relativePath, '/');
+        self::loadView($fullPath, $data);
+    }
+
+    /**
      * Copies static files. If the directory exists on disk, it uses file system copy.
      * Otherwise, it writes the embedded static files to the destination.
      */

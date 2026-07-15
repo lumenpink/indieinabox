@@ -5,10 +5,10 @@
 <!DOCTYPE html>
 <html lang="<?= $page->lang ?>">
 <head>
-    <?php include('includes/head.php'); ?>
+    <?php \Indieinabox\ThemeManager::includeView('includes/head.php', get_defined_vars()); ?>
 </head>
 <body>
-    <?php include('includes/header.php'); ?>
+    <?php \Indieinabox\ThemeManager::includeView('includes/header.php', get_defined_vars()); ?>
     
     <main>
 
@@ -35,6 +35,6 @@
         </div>
     </main>
     
-    <?php include('includes/footer.php'); ?>
+    <?php \Indieinabox\ThemeManager::includeView('includes/footer.php', get_defined_vars()); ?>
 </body>
 </html>

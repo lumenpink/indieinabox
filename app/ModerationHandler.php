@@ -274,12 +274,10 @@ class ModerationHandler
         <?php
         $content = ob_get_clean();
         
-        if (file_exists($adminLayoutPath)) {
-            // Include admin layout, which expects $activeTab and $content to be set
-            include $adminLayoutPath;
-        } else {
-            // Fallback if admin layout is not yet created
-            echo $content;
-        }
+        \Indieinabox\ThemeManager::loadView($adminLayoutPath, [
+            'content' => $content,
+            'activeTab' => $activeTab,
+            'fqdn' => $fqdn
+        ]);
     }
 }

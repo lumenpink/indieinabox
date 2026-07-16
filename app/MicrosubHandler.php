@@ -37,7 +37,7 @@ class MicrosubHandler
      *
      * @return void
      */
-    public function handleRequest(): void
+    public function handle(): void
     {
         if (session_status() === PHP_SESSION_NONE) {
             session_start();

@@ -78,11 +78,11 @@
     <div class="admin-sidebar">
         <h1>Indieinabox</h1>
         <nav class="admin-nav">
-            <a href="<?= $fqdn ?>/admin/config" class="<?= ($activeTab ?? '') === 'config' ? 'active' : '' ?>">Configuration</a>
-            <a href="<?= $fqdn ?>/admin/micropub" class="<?= ($activeTab ?? '') === 'micropub' ? 'active' : '' ?>">Publish (Micropub)</a>
-            <a href="<?= $fqdn ?>/admin/microsub" class="<?= ($activeTab ?? '') === 'microsub' ? 'active' : '' ?>">Feed Reader</a>
-            <a href="<?= $fqdn ?>/admin/moderation" class="<?= ($activeTab ?? '') === 'moderation' ? 'active' : '' ?>">Moderation</a>
-            <a href="<?= $fqdn ?>/logout" style="margin-top: auto; border-top: 1px solid var(--border-color);">Logout</a>
+            <a href="/admin/microsub" class="<?= ($activeTab ?? '') === 'microsub' ? 'active' : '' ?>">Timeline</a>
+            <a href="/admin/moderation" class="<?= ($activeTab ?? '') === 'moderation' ? 'active' : '' ?>">Moderation</a>
+            <a href="/admin/micropub" class="<?= ($activeTab ?? '') === 'micropub' ? 'active' : '' ?>">Publisher</a>
+            <a href="/admin/config" class="<?= ($activeTab ?? '') === 'config' ? 'active' : '' ?>">Configuration</a>
+            <a href="/admin/config?action=logout" style="margin-top: auto; border-top: 1px solid var(--border-color);">Logout</a>
         </nav>
     </div>
     <div class="admin-content">

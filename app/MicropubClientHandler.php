@@ -217,19 +217,7 @@ class MicropubClientHandler
                     to { opacity: 1; transform: translateY(0); }
                 }
 
-                .micropub-wrapper #auth-section { display: block; }
-                .micropub-wrapper #compose-section { display: none; }
-            </style>
-        <div class="micropub-wrapper">
-            <div class="container">
-                <h1>Publish</h1>
-                
-                <div id="auth-section">
-                    <p class="subtitle">Authenticate with <strong><?= htmlspecialchars($fqdn) ?></strong> to publish content.</p>
-                    <button id="btn-login">Login with IndieAuth</button>
-                </div>
-
-                <div id="compose-section">
+                <div id="compose-section" style="display:block;">
                     <p class="subtitle">Compose a new post to <strong><?= htmlspecialchars($fqdn) ?></strong></p>
                     <form id="post-form">
                         <div class="form-group">
@@ -269,101 +257,9 @@ class MicropubClientHandler
             <script>
                 const fqdn = <?= json_encode($fqdn) ?>;
                 const micropubUrl = fqdn + '/micropub';
-                const authUrl = fqdn + '/auth';
-                const tokenUrl = fqdn + '/token';
-                const redirectUri = window.location.origin + window.location.pathname;
                 
-                const authSection = document.getElementById('auth-section');
                 const composeSection = document.getElementById('compose-section');
                 const statusDiv = document.getElementById('status');
-                
-                let accessToken = localStorage.getItem('ia_access_token');
-
-                // Generate random string for PKCE and State
-                function generateRandomString(length) {
-                    const array = new Uint8Array(length);
-                    window.crypto.getRandomValues(array);
-                    return Array.from(array, dec => ('0' + dec.toString(16)).substr(-2)).join('');
-                }
-
-                // SHA256 base64url encoded for PKCE
-                async function generateCodeChallenge(codeVerifier) {
-                    const encoder = new TextEncoder();
-                    const data = encoder.encode(codeVerifier);
-                    const hash = await window.crypto.subtle.digest('SHA-256', data);
-                    return btoa(String.fromCharCode.apply(null, new Uint8Array(hash)))
-                        .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
-                }
-
-                document.getElementById('btn-login').addEventListener('click', async () => {
-                    const state = generateRandomString(16);
-                    const codeVerifier = generateRandomString(32);
-                    const codeChallenge = await generateCodeChallenge(codeVerifier);
-                    
-                    sessionStorage.setItem('ia_state', state);
-                    sessionStorage.setItem('ia_code_verifier', codeVerifier);
-                    
-                    const params = new URLSearchParams({
-                        me: fqdn,
-                        client_id: fqdn + '/micropub/client',
-                        redirect_uri: redirectUri,
-                        response_type: 'code',
-                        scope: 'create media',
-                        state: state,
-                        code_challenge: codeChallenge,
-                        code_challenge_method: 'S256'
-                    });
-                    
-                    window.location.href = authUrl + '?' + params.toString();
-                });
-
-                // Check for auth callback
-                window.addEventListener('load', async () => {
-                    const urlParams = new URLSearchParams(window.location.search);
-                    const code = urlParams.get('code');
-                    const state = urlParams.get('state');
-                    
-                    if (code && state) {
-                        const savedState = sessionStorage.getItem('ia_state');
-                        const codeVerifier = sessionStorage.getItem('ia_code_verifier');
-                        
-                        if (state === savedState) {
-                            // Exchange code for token
-                            const body = new URLSearchParams({
-                                grant_type: 'authorization_code',
-                                code: code,
-                                client_id: fqdn + '/micropub/client',
-                                redirect_uri: redirectUri,
-                                code_verifier: codeVerifier
-                            });
-                            
-                            try {
-                                const response = await fetch(tokenUrl, {
-                                    method: 'POST',
-                                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                                    body: body.toString()
-                                });
-                                
-                                const data = await response.json();
-                                if (data.access_token) {
-                                    localStorage.setItem('ia_access_token', data.access_token);
-                                    window.history.replaceState({}, document.title, redirectUri);
-                                    accessToken = data.access_token;
-                                    showCompose();
-                                }
-                            } catch (e) {
-                                alert("Failed to exchange token.");
-                            }
-                        }
-                    } else if (accessToken) {
-                        showCompose();
-                    }
-                });
-
-                function showCompose() {
-                    authSection.style.display = 'none';
-                    composeSection.style.display = 'block';
-                }
 
                 // --- Post Type UI Logic ---
                 const postTypeSelect = document.getElementById('post-type');
@@ -485,17 +381,17 @@ class MicropubClientHandler
                         formData.append('file', file);
 
                         try {
-                            const res = await fetch(micropubUrl + '/media', {
+                            const response = await fetch(micropubUrl + '/media', {
                                 method: 'POST',
-                                headers: { 'Authorization': 'Bearer ' + accessToken },
+                                credentials: 'include',
                                 body: formData
                             });
 
-                            if (res.status === 201) {
-                                const location = res.headers.get('Location');
+                            if (response.status === 201) {
+                                const location = response.headers.get('Location');
                                 uploadedPhotos.push(location);
                             } else {
-                                const err = await res.json();
+                                const err = await response.json();
                                 alert('Failed to upload ' + file.name + ': ' + (err.error_description || err.error));
                             }
                         } catch(err) {
@@ -543,8 +439,8 @@ class MicropubClientHandler
                     try {
                         const response = await fetch(micropubUrl, {
                             method: 'POST',
+                            credentials: 'include',
                             headers: {
-                                'Authorization': 'Bearer ' + accessToken,
                                 'Content-Type': 'application/json'
                             },
                             body: JSON.stringify(payload)

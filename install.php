@@ -45,7 +45,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['data_dir'])) {
                     // Save the user's initial settings
                     $title = $_POST['title'] ?? 'My Site';
                     $sitename = $_POST['sitename'] ?? 'My Site Name';
-                    $fqdn = rtrim($_POST['fqdn'] ?? '', '/');
+                    $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+                    $detectedFqdn = $scheme . '://' . ($_SERVER['HTTP_HOST'] ?? 'localhost:8081');
+                    $fqdn = rtrim($_POST['fqdn'] ?? $detectedFqdn, '/');
                     $password = $_POST['password'] ?? '';
                     
                     $stmt = $db->prepare("INSERT INTO settings (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value=excluded.value");
@@ -107,7 +109,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['data_dir'])) {
                 $builder->build();
             }
             
-            header("Location: /admin/config");
+            header("Location: /admin/microsub");
             exit;
         } else {
             $error = "Failed to write .config.php file. Check permissions on root folder.";
@@ -171,7 +173,11 @@ $defaultFqdn = $scheme . '://' . ($_SERVER['HTTP_HOST'] ?? 'localhost:8081');
             <div class="form-group">
                 <label for="fqdn">Site URL (FQDN)</label>
                 <input type="url" id="fqdn" name="fqdn" value="<?php echo htmlspecialchars($defaultFqdn); ?>" required>
+                <small style="color: #666; display: block; margin-top: 0.5rem;">
+                    Automatically detected. Change this only if you are configuring the site through a proxy with a different domain.
+                </small>
             </div>
+
             <div class="form-group">
                 <label for="password">Admin Password</label>
                 <input type="password" id="password" name="password" required>

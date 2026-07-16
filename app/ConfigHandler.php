@@ -59,7 +59,7 @@ class ConfigHandler
                 );
             }
             session_destroy();
-            header('Location: ' . rtrim($this->site->metadata->fqdn, '/') . '/admin/config');
+            header('Location: /admin/config');
             return;
         }
 
@@ -79,15 +79,13 @@ class ConfigHandler
         if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
             if (isset($_POST['action'])) {
                 if ($_POST['action'] === 'manual_update' && !empty($_POST['download_url'])) {
-                    require_once __DIR__ . '/Updater.php';
                     $success = \Indieinabox\Updater::downloadAndInstall($_POST['download_url']);
-                    header('Location: ' . rtrim($this->site->metadata->fqdn, '/') . '/admin/config?saved=1');
+                    header('Location: /admin/config?saved=1');
                     exit;
                 }
                 if ($_POST['action'] === 'rollback_update' && !empty($_POST['backup_filename'])) {
-                    require_once __DIR__ . '/Updater.php';
                     $success = \Indieinabox\Updater::rollback($_POST['backup_filename']);
-                    header('Location: ' . rtrim($this->site->metadata->fqdn, '/') . '/admin/config?saved=1');
+                    header('Location: /admin/config?saved=1');
                     exit;
                 }
             }
@@ -154,7 +152,7 @@ class ConfigHandler
             $this->rebuildSite();
 
             // Redirect to normal login endpoint
-            header('Location: ' . $fqdn . '/admin/config');
+            header('Location: /admin/config');
             return;
         }
 
@@ -209,7 +207,7 @@ class ConfigHandler
         $_SESSION['admin_authenticated'] = true;
         unset($_SESSION['auth_state']);
 
-        header('Location: ' . rtrim($this->site->metadata->fqdn, '/') . '/admin/config');
+        header('Location: /admin/config');
         return;
     }
 
@@ -600,7 +598,7 @@ class ConfigHandler
         if (empty($fqdn)) {
             $fqdn = '';
         }
-        header('Location: ' . $fqdn . '/config?saved=1');
+        header('Location: /admin/config?saved=1');
         return;
     }
 
@@ -1171,7 +1169,6 @@ class ConfigHandler
                         ?>
 
                         <?php
-                        require_once __DIR__ . '/Updater.php';
                         $backups = \Indieinabox\Updater::getLocalBackups();
                         if (!empty($backups)) {
                             echo '<h4>Local Backups (Rollback)</h4><ul>';

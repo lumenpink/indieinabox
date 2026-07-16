@@ -83,13 +83,13 @@ class WebRouter
 
         if (strpos($requestUriClean, '/microsub/reader') === 0) {
             $handler = $this->createMicrosubReaderHandler();
-            $handler->handleRequest();
+            $handler->handle();
             return;
         }
 
         if (strpos($requestUriClean, '/microsub') === 0) {
             $handler = $this->createMicrosubHandler();
-            $handler->handleRequest();
+            $handler->handle();
             return;
         }
 
@@ -131,7 +131,7 @@ class WebRouter
         $isAdminPath = (strpos($requestUriClean, '/admin') === 0);
         if ($isAdminPath) {
             if ($requestUriClean === '/admin') {
-                header('Location: /admin/config');
+                header('Location: /admin/microsub');
                 exit;
             }
             if (strpos($requestUriClean, '/admin/config') === 0) {

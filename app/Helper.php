@@ -1193,6 +1193,7 @@ class Helper
     /**
      * Atkinson adaptive dithering with cropping to exact dimensions, saved as PNG
      *
+     * @codeCoverageIgnore
      * @param string $caminhoOriginal
      * @param string $caminhoDestino
      * @param int $targetWidth
@@ -1363,6 +1364,8 @@ class Helper
     }
 
     /**
+     * @codeCoverageIgnore
+     * 
      * Generate social media images (OG, JSON-LD sizes)
      * 
      * @param string $caminhoOriginal

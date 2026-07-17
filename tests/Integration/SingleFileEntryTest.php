@@ -165,10 +165,14 @@ PHP
     ];
 
     // Server 1 (Router for the App)
+    $process1 = null;
+    $pipes1 = null;
     $srvCmd1 = "exec php -S $host1 " . escapeshellarg($integrationSandbox . '/indieinabox.php');
     $process1 = proc_open($srvCmd1, $descriptorspec, $pipes1);
 
     // Server 2 (Static server for the source link to avoid deadlock)
+    $process2 = null;
+    $pipes2 = null;
     $srvCmd2 = "exec php -S $host2 -t " . escapeshellarg($integrationSandbox . '/public_html');
     $process2 = proc_open($srvCmd2, $descriptorspec, $pipes2);
 

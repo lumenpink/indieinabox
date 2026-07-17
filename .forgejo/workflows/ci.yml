@@ -111,7 +111,7 @@ jobs:
   # ─────────────────────────────────────────────────────────────────────────────
   psalm:
     name: "Psalm — Static Security Analysis"
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     needs: test           # Only runs if tests pass
 
     steps:
@@ -166,7 +166,7 @@ jobs:
   # ─────────────────────────────────────────────────────────────────────────────
   dependency-check:
     name: "OWASP Dependency-Check"
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     needs: test
 
     steps:
@@ -208,7 +208,7 @@ jobs:
   # ─────────────────────────────────────────────────────────────────────────────
   sonarqube:
     name: "SonarQube Analysis"
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     needs: [test, psalm]      # Requires coverage and Psalm reports
     # Only runs on main branch or PRs (avoids running on feature branches without SONAR_TOKEN)
     if: github.actor != 'dependabot[bot]'
@@ -254,8 +254,8 @@ jobs:
             -Dsonar.php.coverage.reportPaths=coverage/clover.xml
             -Dsonar.externalIssuesReportPaths=coverage/psalm.json
 
-      # ── Option B: SonarQube self-hosted (uncomment if preferred) ──────────────
-      # - name: "SonarQube Scan (self-hosted)"
+      # ── Option B: SonarQube ubuntu-latest (uncomment if preferred) ──────────────
+      # - name: "SonarQube Scan (ubuntu-latest)"
       #   if: env.SONAR_TOKEN != ''
       #   uses: https://github.com/SonarSource/sonarqube-scan-action@713881670b6b3676cda39549040e2d88c70d582e # v8.2.0
       #   env:
@@ -266,7 +266,7 @@ jobs:
   # ─────────────────────────────────────────────────────────────────────────────
   nightly-release:
     name: "Nightly Release"
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     needs: [test, psalm]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     steps:
@@ -310,7 +310,7 @@ jobs:
   # ─────────────────────────────────────────────────────────────────────────────
   stable-release:
     name: "Stable Release"
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     needs: [test, psalm]
     if: startsWith(github.ref, 'refs/tags/v')
     steps:

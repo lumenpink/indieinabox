@@ -25,7 +25,7 @@ it(
             'outputDirHtml' => 'public_html',
             'outputDirGemini' => 'public_gemini',
             'outputDirGopher' => 'public_gopher',
-            'outputDirMedia' => 'public_media',
+            'outputDirMedia' => 'public_html/media',
             'contentDir' => 'content'
         ]);
         expect($site->localization)->toMatchObject([

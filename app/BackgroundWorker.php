@@ -89,7 +89,8 @@ class BackgroundWorker
 
         if ($fetched) {
             echo "Triggering incremental build to update timeline...\n";
-            passthru('php build.php -d');
+            $builder = new \Indieinabox\SiteBuilder($this->site);
+            $builder->build();
         }
         
         echo "Twtxt Feed processor done.\n";

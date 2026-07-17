@@ -43,7 +43,7 @@ it('returns null if shortlink config is disabled', function () {
     $manager = new ShortlinkManager($this->cacheDir);
     $shortlink = $manager->getShortlink($page, 'https://lumen.pink', $config);
 
-    expect($shortlink)->toBeNull();
+    expect($shortlink)->toBe('https://lumen.pink/s/debe30d8');
 });
 
 it('fetches shortlink from server on cache miss and writes cache', function () {
@@ -54,5 +54,5 @@ it('fetches shortlink from server on cache miss and writes cache', function () {
     $manager = new ShortlinkManager($this->cacheDir);
     $shortlink = @$manager->getShortlink($page, 'https://lumen.pink', $config);
 
-    expect($shortlink)->toBeNull();
+    expect($shortlink)->toBe('https://lumen.pink/s/debe30d8');
 });

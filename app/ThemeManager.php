@@ -22,6 +22,7 @@ class ThemeManager
     public static function loadView(string $__tm_view_path, array $data = []): void
     {
         extract($data, EXTR_SKIP);
+        error_log("ThemeManager loading: " . $__tm_view_path);
         if (file_exists($__tm_view_path)) {
             include $__tm_view_path;
             return;

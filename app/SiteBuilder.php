@@ -120,8 +120,9 @@ class SiteBuilder
         $s3 = microtime(true);
         $timings['Generate HTML/GMI/Gopher'] = ($s3 - $s2) * 1000;
         
-        // Twtxt update is now handled by cron/BackgroundWorker to avoid online dependencies during build
-        
+        // Twtxt update is now handled by cron/BackgroundWorker to avoid online dependencies during build,
+        // but we still generate local feeds and static timeline from the cache.
+        $this->generateTwtxt();
         $this->generateFeed();
         $s4 = microtime(true);
         $timings['Generate Feeds'] = ($s4 - $s3) * 1000;

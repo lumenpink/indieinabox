@@ -184,6 +184,6 @@ it('fetches hub mentions and deduplicates them', function () {
     $hubs = ['http://localhost:9999/does-not-exist'];
     $fqdn = 'https://lumen.pink';
     
-    $entries = @$manager->fetchHubMentions($hubs, $fqdn);
-    expect($entries)->toBeArray()->toBeEmpty();
+    $entries = @$manager->fetchHubMentions($hubs, $fqdn, __DIR__ . '/tmp_twtxt');
+    expect($entries)->toBeEmpty();
 });

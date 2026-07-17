@@ -64,7 +64,7 @@ it(
         $integrationSandbox . '/.config.php',
         "<?php\nreturn ['data_dir' => '" . $integrationSandbox . "'];\n"
     );
-    $db = new \PDO('sqlite:' . $integrationSandbox . '/indieinabox.sqlite');
+    $db = new \PDO('sqlite:' . $integrationSandbox . '/.indieinabox.sqlite');
     $db->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
     $db->exec(file_get_contents($root . '/database.sql'));
 
@@ -74,8 +74,9 @@ it(
     $stmt->execute([':key' => 'sitename', ':value' => 'Integration Test Site']);
     $stmt->execute([':key' => 'author', ':value' => 'Antigravity']);
     $stmt->execute([':key' => 'fqdn', ':value' => 'https://example.com']);
-    $stmt->execute([':key' => 'outputdir', ':value' => 'public_html']);
+    $stmt->execute([':key' => 'outputdir', ':value' => 'public']);
     $stmt->execute([':key' => 'contentdir', ':value' => 'content']);
+    $stmt->execute([':key' => 'themedir', ':value' => 'resources']);
     $stmt->execute([':key' => 'lang', ':value' => '["en"]']);
     $db = null;
 
@@ -89,7 +90,6 @@ it(
         "---\ntitle: About Page\nlayout: page\n---\nAbout page content."
     );
 
-    // Simple page view template
     file_put_contents(
         $integrationSandbox . '/resources/views/page.php',
         <<<PHP
@@ -106,12 +106,12 @@ it(
 PHP
     );
     file_put_contents(
-        $integrationSandbox . '/resources/views/index_page.php',
+        $integrationSandbox . '/resources/views/home.php',
         <<<PHP
 <!DOCTYPE html>
 <html>
 <head>
-    <title><?= \$page->title ?></title>
+    <title><?= \$page->title ?> | <?= \$site->metadata->sitename ?></title>
 </head>
 <body>
     <h1><?= \$page->title ?></h1>
@@ -120,6 +120,7 @@ PHP
 </html>
 PHP
     );
+
 
     // 3. Symlink dependencies into sandbox and copy compiled single-file script as build.php
     symlink($root . '/vendor', $integrationSandbox . '/vendor');
@@ -133,24 +134,21 @@ PHP
             symlink($sourcePath, $integrationSandbox . '/data/' . $item);
         }
     }
-    copy($root . '/indieinabox.php', $integrationSandbox . '/build.php');
+    copy($root . '/indieinabox.php', $integrationSandbox . '/indieinabox.php');
 
     // 4. Test CLI Mode: Run build process
-    $cliCmd = 'php ' . escapeshellarg($integrationSandbox . '/build.php');
-    $cliOutput = shell_exec($cliCmd);
-    if (!is_dir($integrationSandbox . '/public_html')) {
-        echo "CLI OUTPUT:\n" . $cliOutput . "\n";
-    }
+    $cmd = 'php ' . escapeshellarg($integrationSandbox . '/indieinabox.php') . ' -c ' . escapeshellarg($integrationSandbox . '/.config.php') . ' 2>&1';
+    $output = shell_exec($cmd);
+    echo "CLI OUTPUT:\n" . $output . "\n";
     if (!file_exists($integrationSandbox . '/public_html/about/index.html')) {
-        echo "ABOUT.MD output:\n" . $cliOutput . "\n";
+        echo "ABOUT.MD output:\n" . $output . "\n";
     }
-
     expect(is_dir($integrationSandbox . '/public_html'))->toBeTrue();
     expect(file_exists($integrationSandbox . '/public_html/index.html'))->toBeTrue();
     expect(file_exists($integrationSandbox . '/public_html/about/index.html'))->toBeTrue();
 
     $indexHtml = file_get_contents($integrationSandbox . '/public_html/index.html');
-    expect($indexHtml)->toContain('<title>Home Page</title>')
+    expect($indexHtml)->toContain('<title>Home Page | Integration Test Site</title>')
         ->and($indexHtml)->toContain('Welcome home!');
 
     // 5. Test Web Mode: Run PHP built-in servers
@@ -167,7 +165,7 @@ PHP
     ];
 
     // Server 1 (Router for the App)
-    $srvCmd1 = "exec php -S $host1 " . escapeshellarg($integrationSandbox . '/build.php');
+    $srvCmd1 = "exec php -S $host1 " . escapeshellarg($integrationSandbox . '/indieinabox.php');
     $process1 = proc_open($srvCmd1, $descriptorspec, $pipes1);
 
     // Server 2 (Static server for the source link to avoid deadlock)
@@ -224,7 +222,7 @@ PHP
             ->and($json['message'])->toContain('Webmention accepted');
 
         // Run background worker to process the queued webmention
-        $cronCmd = 'cd ' . escapeshellarg($integrationSandbox) . ' && php build.php cron 2>&1';
+        $cronCmd = 'cd ' . escapeshellarg($integrationSandbox) . ' && php indieinabox.php cron 2>&1';
         $cronOut = shell_exec($cronCmd);
 
         // Check that webmention data is created correctly in Markdown

@@ -63,7 +63,7 @@ it('renders setup form if config file is missing (Bootstrap Mode)', function () 
     $site->metadata->indieauthPassword = '';
 
     $_SERVER['REQUEST_METHOD'] = 'GET';
-    $_SERVER['REQUEST_URI'] = '/config';
+    $_SERVER['REQUEST_URI'] = '/admin/config';
 
     $router = new WebRouter($site);
     
@@ -76,6 +76,7 @@ it('renders setup form if config file is missing (Bootstrap Mode)', function () 
 });
 
 it('processes bootstrap password configuration and writes .config.yml', function () use ($configTestTempDir) {
+    global $site;
     $site = new Site();
     $site->paths->baseDir = $configTestTempDir;
     $site->metadata->indieauthPassword = '';
@@ -83,7 +84,7 @@ it('processes bootstrap password configuration and writes .config.yml', function
     // Create a mock content directory (already created in beforeEach)
 
     $_SERVER['REQUEST_METHOD'] = 'POST';
-    $_SERVER['REQUEST_URI'] = '/config';
+    $_SERVER['REQUEST_URI'] = '/admin/config';
     $_POST = [
         'indieauth_password' => 'mysecurepwd123',
         'title' => 'Bootstrap Title',
@@ -109,6 +110,7 @@ it('processes bootstrap password configuration and writes .config.yml', function
 });
 
 it('redirects to auth if password is set but user is unauthenticated', function () use ($configTestTempDir) {
+    global $site;
     $site = new Site();
     $site->paths->baseDir = $configTestTempDir;
     $site->metadata->indieauthPassword = 'configured_password';
@@ -119,7 +121,7 @@ it('redirects to auth if password is set but user is unauthenticated', function 
     file_put_contents($configTestTempDir . '/.config.yml', $yaml->dump(['indieauth_password' => 'configured_password']));
 
     $_SERVER['REQUEST_METHOD'] = 'GET';
-    $_SERVER['REQUEST_URI'] = '/config';
+    $_SERVER['REQUEST_URI'] = '/admin/config';
 
     $router = new WebRouter($site);
     
@@ -142,6 +144,7 @@ it('redirects to auth if password is set but user is unauthenticated', function 
 });
 
 it('authenticates user and sets session on valid authorization callback', function () use ($configTestTempDir) {
+    global $site;
     $site = new Site();
     $site->paths->baseDir = $configTestTempDir;
     $site->metadata->indieauthPassword = 'configured_password';
@@ -157,8 +160,8 @@ it('authenticates user and sets session on valid authorization callback', functi
     $code = 'auth_code_111';
     $codeData = [
         'code' => $code,
-        'client_id' => 'https://mysite.com/config',
-        'redirect_uri' => 'https://mysite.com/config',
+        'client_id' => 'https://mysite.com/admin/config',
+        'redirect_uri' => 'https://mysite.com/admin/config',
         'state' => 'state_xyz',
         'expires_at' => time() + 600,
         'me' => 'https://mysite.com/'
@@ -167,8 +170,8 @@ it('authenticates user and sets session on valid authorization callback', functi
     $db = \Indieinabox\Database::getDb();
     $stmt = $db->prepare('INSERT INTO indieauth_codes (code_hash, client_id, redirect_uri, state, scope, code_challenge, code_challenge_method, expires_at, me) VALUES (:hash, :client_id, :redirect_uri, :state, :scope, :challenge, :method, :expires, :me)');
     $stmt->bindValue(':hash', hash('sha256', $code));
-    $stmt->bindValue(':client_id', 'https://mysite.com/config');
-    $stmt->bindValue(':redirect_uri', 'https://mysite.com/config');
+    $stmt->bindValue(':client_id', 'https://mysite.com/admin/config');
+    $stmt->bindValue(':redirect_uri', 'https://mysite.com/admin/config');
     $stmt->bindValue(':state', 'state_xyz');
     $stmt->bindValue(':scope', '');
     $stmt->bindValue(':challenge', '');
@@ -178,7 +181,7 @@ it('authenticates user and sets session on valid authorization callback', functi
     $stmt->execute();
 
     $_SERVER['REQUEST_METHOD'] = 'GET';
-    $_SERVER['REQUEST_URI'] = '/config';
+    $_SERVER['REQUEST_URI'] = '/admin/config';
     $_GET = [
         'code' => $code,
         'state' => 'state_xyz'
@@ -233,6 +236,7 @@ it('formats slugs correctly for pretty links and ugly links', function () use ($
 });
 
 it('saves config and processes lang/kind removals and fallbacks', function () use ($configTestTempDir) {
+    global $site;
     $site = new Site();
     $site->paths->baseDir = $configTestTempDir;
     $site->metadata->indieauthPassword = 'configured_password';
@@ -262,7 +266,7 @@ it('saves config and processes lang/kind removals and fallbacks', function () us
 
     // Simulate POST request to save settings, also requesting to remove language 'pt'
     $_SERVER['REQUEST_METHOD'] = 'POST';
-    $_SERVER['REQUEST_URI'] = '/config';
+    $_SERVER['REQUEST_URI'] = '/admin/config';
     $_POST = [
         'title' => 'My Site',
         'sitename' => 'My Site Name',

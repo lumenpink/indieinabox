@@ -32,13 +32,6 @@ beforeEach(function () {
     $sql = file_get_contents(dirname(__DIR__, 2) . '/database.sql');
     \Indieinabox\Database::getDb()->exec($sql);
 
-    $translations = [
-        'es' => [
-            'Welcome Friend' => 'Bienvenido Amigo',
-            'Hello' => 'Hola',
-        ]
-    ];
-
     $site = new Site(
         null,
         new Paths('vfs://root'),
@@ -46,6 +39,11 @@ beforeEach(function () {
         new Localization('en'),
         null
     );
+    
+    $site->config['translations'] = [
+        'Welcome Friend' => ['es' => 'Bienvenido Amigo'],
+        'Hello' => ['es' => 'Hola'],
+    ];
 
     $page = null;
     $p = null;
@@ -88,12 +86,11 @@ it('resolves active language from global page structures', function () {
     expect(translate('Hello'))->toBe('Hola');
 });
 
-it('adds missing keys to translations file dynamically', function () {
-    global $translations;
+it('adds missing keys to database dynamically', function () {
+    global $site;
 
     expect(translate('Missing key example', 'es'))->toBe('Missing key example');
-    expect($translations['es'])->toHaveKey('Missing key example');
-    expect($translations['es']['Missing key example'])->toBe('');
+    expect($site->config['translations']['Missing key example']['es'])->toBe('');
 
     $db = \Indieinabox\Database::getDb();
     $stmt = $db->query("SELECT * FROM translations WHERE phrase_key = 'Missing key example' AND lang = 'es'");
@@ -104,8 +101,10 @@ it('adds missing keys to translations file dynamically', function () {
 });
 
 it('formats translations using lowercase and slugize helpers', function () {
-    global $page;
+    global $page, $site;
     $page = ['lang' => 'es'];
+    $site->config['translations']['Welcome Friend']['es'] = 'bienvenido amigo';
+    $site->config['translations']['Hello']['es'] = 'hola';
 
     expect(translateLowercase('Welcome Friend'))->toBe('bienvenido amigo')
         ->and(tl('Hello'))->toBe('hola')

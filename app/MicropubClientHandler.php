@@ -217,6 +217,7 @@ class MicropubClientHandler
                     to { opacity: 1; transform: translateY(0); }
                 }
 
+                </style>
                 <div id="compose-section" style="display:block;">
                     <p class="subtitle">Compose a new post to <strong><?= htmlspecialchars($fqdn) ?></strong></p>
                     <form id="post-form">

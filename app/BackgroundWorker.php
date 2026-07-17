@@ -535,7 +535,7 @@ class BackgroundWorker
         $this->db->exec("DELETE FROM outgoing_webmentions WHERE status IN ('sent', 'failed') AND created_at < $sevenDaysAgo");
 
         $stmt = $this->db->query("SELECT id, source_url, target_url FROM outgoing_webmentions WHERE status = 'pending' LIMIT 20");
-        $webmentions = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        $webmentions = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         if (empty($webmentions)) {
             echo "No outgoing webmentions pending.\n";

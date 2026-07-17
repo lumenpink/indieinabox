@@ -246,12 +246,23 @@ PHP
         expect($savedData['target'])->toBe($targetUrl);
     } finally {
         // Terminate background web server processes
+        if (isset($pipes1)) {
+            foreach ($pipes1 as $pipe) {
+                if (is_resource($pipe)) fclose($pipe);
+            }
+        }
         if (is_resource($process1)) {
-            proc_terminate($process1);
+            proc_terminate($process1, 9);
             proc_close($process1);
         }
+        
+        if (isset($pipes2)) {
+            foreach ($pipes2 as $pipe) {
+                if (is_resource($pipe)) fclose($pipe);
+            }
+        }
         if (is_resource($process2)) {
-            proc_terminate($process2);
+            proc_terminate($process2, 9);
             proc_close($process2);
         }
     }

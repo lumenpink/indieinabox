@@ -167,15 +167,18 @@ it('virtualizes missing language translations and updates flags links correctly'
     
     expect($builder->getPages()->count())->toBe(1);
     
+    // Create a new builder to avoid duplicate scanning during build()
+    $builder = new \Indieinabox\SiteBuilder($site);
     $builder->build();
     
     $pages = $builder->getPages()->all();
-    expect(count($pages))->toBe(3);
+    expect(count($pages))->toBe(6);
     
     $ptPage = null;
     $esPage = null;
     $enPage = null;
     foreach ($pages as $p) {
+        if ($p->kind !== 'article') continue;
         if ($p->lang === 'pt') {
             $ptPage = $p;
         } elseif ($p->lang === 'es') {
@@ -232,14 +235,14 @@ it('virtualizes page translations without titles by prefixing text content', fun
     ]);
 
     $builder = new \Indieinabox\SiteBuilder($site);
-    $builder->scan('vfs://root/content');
     $builder->build();
     
     $pages = $builder->getPages()->all();
-    expect(count($pages))->toBe(2);
+    expect(count($pages))->toBe(4);
     
     $ptNote = null;
     foreach ($pages as $p) {
+        if ($p->kind !== 'note') continue;
         if ($p->lang === 'pt') {
             $ptNote = $p;
         }

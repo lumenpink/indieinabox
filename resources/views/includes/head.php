@@ -35,8 +35,10 @@ $colors = ThemeData::getThemeColors($page);
         color: var(--accent);
         text-decoration: underline;
     }
-    a:hover {
+    a:hover, a:focus-visible {
         text-decoration: none;
+        outline: 2px solid var(--accent);
+        outline-offset: 2px;
     }
     hr {
         border: none;

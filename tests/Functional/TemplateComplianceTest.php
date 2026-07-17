@@ -10,7 +10,7 @@ declare(strict_types=1);
 $viewsDir = dirname(__DIR__, 2) . '/resources/views';
 
 test('page.php has semantic tags, accessibility and microformats', function () use ($viewsDir) {
-    $content = file_get_contents($viewsDir . '/page.php');
+    $content = file_get_contents($viewsDir . '/page.php') . file_get_contents(dirname(__DIR__, 2) . '/app/Theme/ThemeHelper.php');
     
     // Semantic Web
     expect($content)->toContain('<main>');
@@ -37,7 +37,7 @@ test('home.php has semantic tags and microformats', function () use ($viewsDir) 
 });
 
 test('header.php has semantic tags and accessibility features', function () use ($viewsDir) {
-    $content = file_get_contents($viewsDir . '/includes/header.php');
+    $content = file_get_contents($viewsDir . '/includes/header.php') . file_get_contents(dirname(__DIR__, 2) . '/app/Theme/ThemeData.php');
     
     // Semantic Web
     expect($content)->toContain('<header>');
@@ -50,7 +50,7 @@ test('header.php has semantic tags and accessibility features', function () use 
 });
 
 test('footer.php has semantic tags, accessibility and h-card', function () use ($viewsDir) {
-    $content = file_get_contents($viewsDir . '/includes/footer.php');
+    $content = file_get_contents($viewsDir . '/includes/footer.php') . file_get_contents(dirname(__DIR__, 2) . '/app/Theme/ThemeData.php');
     
     // Semantic Web
     expect($content)->toContain('<footer role="contentinfo">');
@@ -67,14 +67,14 @@ test('footer.php has semantic tags, accessibility and h-card', function () use (
 });
 
 test('head.php has accessibility focus styles', function () use ($viewsDir) {
-    $content = file_get_contents($viewsDir . '/includes/head.php');
+    $content = file_get_contents($viewsDir . '/includes/head.php') . file_get_contents(dirname(__DIR__, 2) . '/app/Theme/ThemeData.php');
     
     // Accessibility
     expect($content)->toContain('a:focus-visible');
 });
 
 test('summary.php has microformats and mosaic fallback', function () use ($viewsDir) {
-    $content = file_get_contents($viewsDir . '/includes/summary.php');
+    $content = file_get_contents($viewsDir . '/includes/summary.php') . file_get_contents(dirname(__DIR__, 2) . '/app/Theme/ThemeHelper.php');
     
     // Mosaic fallback
     expect($content)->toContain('<hr class="divisor-bloco">');

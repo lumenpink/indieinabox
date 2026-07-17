@@ -49,6 +49,7 @@ beforeEach(function () use ($funcTempDir) {
     $_POST = [];
     $_SERVER = [];
     $_REQUEST = [];
+    $_SESSION = [];
 
     // Set up test database
     $ref = new \ReflectionClass(\Indieinabox\Database::class);

@@ -5,6 +5,10 @@ if (!defined('DS')) {
     define('DS', DIRECTORY_SEPARATOR);
 }
 
+if (!defined('PEST_TESTING')) {
+    define('PEST_TESTING', true);
+}
+
 if (getenv('TEST_COMPILED') === 'true' || getenv('TEST_COMPILED') === '1') {
     require_once __DIR__ . '/../indieinabox.php'; // NOSONAR
 } else {

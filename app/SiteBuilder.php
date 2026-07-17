@@ -571,7 +571,8 @@ class SiteBuilder
             }
             $destinationFile = $destDir . DIRECTORY_SEPARATOR . "index.html";
         }
-        $destinationFile = preg_replace('#' . preg_quote(DIRECTORY_SEPARATOR, '#') . '+#', DIRECTORY_SEPARATOR, $destinationFile);
+        $destinationFile = preg_replace('#([^:])(' . preg_quote(DIRECTORY_SEPARATOR, '#') . '){2,}#', '$1' . DIRECTORY_SEPARATOR, $destinationFile);
+        $destinationFile = preg_replace('#^(' . preg_quote(DIRECTORY_SEPARATOR, '#') . '){2,}#', DIRECTORY_SEPARATOR, $destinationFile);
         $themeDir = $this->site->paths->themeDir ?? 'theme';
         
         // True incremental build: skip if destination is newer than source and theme (only in dev mode)
@@ -625,6 +626,10 @@ class SiteBuilder
                 }
             }
 
+            if (str_starts_with($destinationFile, 'vfs:/root')) {
+                var_dump("DEST_FILE: " . $destinationFile);
+                debug_print_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
+            }
             file_put_contents($destinationFile, $fileContent);
 
             // Build ActivityPub JSON representation
@@ -864,7 +869,8 @@ class SiteBuilder
             }
             $destinationFile = $destDir . DIRECTORY_SEPARATOR . "index.gmi";
         }
-        $destinationFile = preg_replace('#' . preg_quote(DIRECTORY_SEPARATOR, '#') . '+#', DIRECTORY_SEPARATOR, $destinationFile);
+        $destinationFile = preg_replace('#([^:])(' . preg_quote(DIRECTORY_SEPARATOR, '#') . '){2,}#', '$1' . DIRECTORY_SEPARATOR, $destinationFile);
+        $destinationFile = preg_replace('#^(' . preg_quote(DIRECTORY_SEPARATOR, '#') . '){2,}#', DIRECTORY_SEPARATOR, $destinationFile);
         // True incremental build: skip if destination is newer than source (only in dev mode)
         $skipGeneration = false;
         if (isset($this->site->options->dev) && $this->site->options->dev) {
@@ -942,7 +948,8 @@ class SiteBuilder
             }
             $destinationFile = $destDir . DIRECTORY_SEPARATOR . "gophermap";
         }
-        $destinationFile = preg_replace('#' . preg_quote(DIRECTORY_SEPARATOR, '#') . '+#', DIRECTORY_SEPARATOR, $destinationFile);
+        $destinationFile = preg_replace('#([^:])(' . preg_quote(DIRECTORY_SEPARATOR, '#') . '){2,}#', '$1' . DIRECTORY_SEPARATOR, $destinationFile);
+        $destinationFile = preg_replace('#^(' . preg_quote(DIRECTORY_SEPARATOR, '#') . '){2,}#', DIRECTORY_SEPARATOR, $destinationFile);
 
         // True incremental build: skip if destination is newer than source (only in dev mode)
         $skipGeneration = false;

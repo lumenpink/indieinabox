@@ -69,7 +69,7 @@ class Helper
         if (!$config) {
             static $warned = [];
             if (!isset($warned[$kind]) && !in_array($kind, ['generic', 'page', 'home'])) {
-                if (php_sapi_name() === 'cli') {
+                if (php_sapi_name() === 'cli' && !defined('PEST_TESTING')) {
                     echo "[WARNING] Missing config for kind '{$kind}'. config is:\n";
                     var_dump($site->config['kinds'][$kind] ?? 'null');
                     echo "Keys in kinds are:\n";

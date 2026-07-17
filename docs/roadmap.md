@@ -144,9 +144,9 @@ The following next-generation features are scheduled for development:
 - [x] **Garbage Collector**: The site builder tracks every generated file (HTML, JSON, feeds, images) in a manifest array. Post-build, it automatically deletes orphaned files and directories that are no longer part of the current site state.
 
 ### 📦 Phase 21: Official Distribution & Setup
-- [ ] **Clean Build Process**: Modify the release build script to generate `index.php` as the final artifact, rather than `indieinabox.php`.
-- [ ] **Default Production Content**: Define a minimal, out-of-the-box content set for the official distribution (English only, default theme). This should include a "Welcome to indieinabox" article (explaining the Indieweb and app with a link to docs) and one note (highlighting data ownership).
-- [ ] **Remove Dummy Content**: Ensure the robust dummy content (currently in the `content` folder) is excluded from the final release build, leaving only the default production content.
+- [x] **Clean Build Process**: Modify the release build script to generate `index.php` as the final artifact, rather than `indieinabox.php`.
+- [x] **Default Production Content**: Define a minimal, out-of-the-box content set for the official distribution (English only, default theme). This should include a "Welcome to indieinabox" article (explaining the Indieweb and app with a link to docs) and one note (highlighting data ownership).
+- [x] **Remove Dummy Content**: Ensure the robust dummy content (currently in the `content` folder) is excluded from the final release build, leaving only the default production content.
 - [ ] **i18n Out-of-the-box (Backlog)**: Future implementation of translations ready for the end-user.
 
 ### 🧪 Phase 22: Dev/Demo Environment

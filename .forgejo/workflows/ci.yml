@@ -58,7 +58,9 @@ jobs:
 
       # ── PHP Version Compatibility ────────────────────────────────────────
       - name: "PHP Compatibility Sniffer (8.2 - 8.4)"
-        run: composer sniffer
+        run: |
+          composer sniffer
+          sleep 2
 
       # ── Create dummy database config for tests ───────────────────────────
       - name: "Setup test database"
@@ -78,9 +80,12 @@ jobs:
           ./vendor/bin/pest \
             --coverage-clover coverage/clover.xml \
             --log-junit coverage/junit.xml
+          sleep 2
 
       - name: "PEST — Compiled suite"
-        run: TEST_COMPILED=true ./vendor/bin/pest
+        run: |
+          TEST_COMPILED=true ./vendor/bin/pest
+          sleep 2
 
       # ── Coverage artifacts ───────────────────────────────────────────────
       - name: "Upload Clover report"
@@ -140,6 +145,7 @@ jobs:
             --report-show-info=true \
             --no-progress \
             --output-format=github   # Native PR annotations
+          sleep 2
 
       - name: "Upload Psalm report (JSON)"
         if: always()

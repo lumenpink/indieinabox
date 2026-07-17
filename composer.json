@@ -45,9 +45,6 @@
         "test:all": "composer test && composer test:compiled",
         "docs:api": "php scripts/generate_api_docs.php",
         "docs:api:html": "php scripts/generate_api_docs.php --html",
-        "sniffer": "composer sniffer:php82 && composer sniffer:php83 && composer sniffer:php84",
-        "sniffer:php82": "phpcs ./app ./bootstrap ./build.php --standard=vendor/phpcompatibility/php-compatibility/PHPCompatibility --runtime-set testVersion 8.2",
-        "sniffer:php83": "phpcs ./app ./bootstrap ./build.php --standard=vendor/phpcompatibility/php-compatibility/PHPCompatibility --runtime-set testVersion 8.3",
-        "sniffer:php84": "phpcs ./app ./bootstrap ./build.php --standard=vendor/phpcompatibility/php-compatibility/PHPCompatibility --runtime-set testVersion 8.4"
+        "sniffer": "phpcs ./app ./bootstrap ./build.php --standard=vendor/phpcompatibility/php-compatibility/PHPCompatibility --runtime-set testVersion 8.2-8.4"
     }
 }

@@ -36,6 +36,10 @@ beforeEach(function () use ($funcTempDir) {
     // Ensure we have fqdn and handle set
     $db->exec("INSERT OR REPLACE INTO settings (key, value) VALUES ('fqdn', 'http://localhost:8080')");
     $db->exec("INSERT OR REPLACE INTO settings (key, value) VALUES ('activitypub_handle', 'lumen')");
+    
+    $GLOBALS['test_ap_site']->config = \Indieinabox\Database::getAllSettings();
+    $GLOBALS['test_ap_site']->config['activitypub_enabled'] = '1';
+    
     $GLOBALS['test_ap_db'] = $db;
 });
 

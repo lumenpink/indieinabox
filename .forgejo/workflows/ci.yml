@@ -18,7 +18,7 @@ jobs:
   # ─────────────────────────────────────────────────────────────────────────────
   test:
     name: "PHP ${{ matrix.php }} — Tests & Lint"
-    runs-on: codeberg-tiny
+    runs-on: self-hosted
     strategy:
       fail-fast: true          # Stop at the first error in any version
       matrix:
@@ -63,7 +63,6 @@ jobs:
       - name: "PHP Compatibility Sniffer (8.2 - 8.4)"
         run: |
           composer sniffer
-          sleep 2
 
       # ── Create dummy database config for tests ───────────────────────────
       - name: "Setup test database"
@@ -83,12 +82,10 @@ jobs:
           ./vendor/bin/pest \
             --coverage-clover coverage/clover.xml \
             --log-junit coverage/junit.xml
-          sleep 2
 
       - name: "PEST — Compiled suite"
         run: |
           TEST_COMPILED=true ./vendor/bin/pest
-          sleep 2
 
       # ── Coverage artifacts ───────────────────────────────────────────────
       - name: "Upload Clover report"
@@ -112,7 +109,7 @@ jobs:
   # ─────────────────────────────────────────────────────────────────────────────
   psalm:
     name: "Psalm — Static Security Analysis"
-    runs-on: codeberg-tiny
+    runs-on: self-hosted
     needs: test           # Only runs if tests pass
 
     steps:
@@ -153,7 +150,6 @@ jobs:
             --report-show-info=true \
             --no-progress \
             --output-format=github   # Native PR annotations
-          sleep 2
 
       - name: "Upload Psalm report (JSON)"
         if: always()
@@ -168,7 +164,7 @@ jobs:
   # ─────────────────────────────────────────────────────────────────────────────
   dependency-check:
     name: "OWASP Dependency-Check"
-    runs-on: codeberg-tiny
+    runs-on: self-hosted
     needs: test
 
     steps:
@@ -210,7 +206,7 @@ jobs:
   # ─────────────────────────────────────────────────────────────────────────────
   sonarqube:
     name: "SonarQube Analysis"
-    runs-on: codeberg-tiny
+    runs-on: self-hosted
     needs: [test, psalm]      # Requires coverage and Psalm reports
     # Only runs on main branch or PRs (avoids running on feature branches without SONAR_TOKEN)
     if: github.actor != 'dependabot[bot]'
@@ -268,7 +264,7 @@ jobs:
   # ─────────────────────────────────────────────────────────────────────────────
   nightly-release:
     name: "Nightly Release"
-    runs-on: codeberg-tiny
+    runs-on: self-hosted
     needs: [test, psalm]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     steps:
@@ -312,7 +308,7 @@ jobs:
   # ─────────────────────────────────────────────────────────────────────────────
   stable-release:
     name: "Stable Release"
-    runs-on: codeberg-tiny
+    runs-on: self-hosted
     needs: [test, psalm]
     if: startsWith(github.ref, 'refs/tags/v')
     steps:

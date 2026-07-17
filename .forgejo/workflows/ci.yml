@@ -306,6 +306,18 @@ jobs:
           git tag -f ${{ steps.date.outputs.DATED_TAG }}
           git push -f origin ${{ steps.date.outputs.DATED_TAG }}
 
+      - name: Delete Existing Nightly Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          API_URL: ${{ env.GITHUB_API_URL || 'https://codeberg.org/api/v1' }}
+          REPO: ${{ github.repository }}
+        run: |
+          REL_ID=$(curl -s -H "Authorization: token $GITHUB_TOKEN" "$API_URL/repos/$REPO/releases/tags/nightly" | jq -r '.id // empty')
+          if [ -n "$REL_ID" ] && [ "$REL_ID" != "null" ]; then
+            echo "Deleting existing nightly release ID: $REL_ID to prevent asset update 404"
+            curl -s -X DELETE -H "Authorization: token $GITHUB_TOKEN" "$API_URL/repos/$REPO/releases/$REL_ID"
+          fi
+
       - name: Create or Update Nightly Release
         uses: https://github.com/softprops/action-gh-release@v2
         with:

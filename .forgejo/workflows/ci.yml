@@ -289,12 +289,22 @@ jobs:
       - name: Rename Artifact
         run: mv indieinabox.php index.php
 
-      - name: Move Nightly Tag
+      - name: Generate Date Tag
+        id: date
+        run: echo "DATED_TAG=nightly-$(date +'%Y%m%d-%H%M%S')" >> $GITHUB_OUTPUT
+
+      - name: Move Nightly Tags
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # Move the rolling 'nightly' tag to the current commit
           git tag -f nightly
           git push -f origin nightly
+          
+          # Create the dated nightly tag
+          git tag -f ${{ steps.date.outputs.DATED_TAG }}
+          git push -f origin ${{ steps.date.outputs.DATED_TAG }}
 
       - name: Create or Update Nightly Release
         uses: https://github.com/softprops/action-gh-release@v2
@@ -304,6 +314,43 @@ jobs:
           prerelease: true
           files: index.php
           body: "Automatic nightly build from main."
+
+      - name: Create Dated Nightly Release
+        uses: https://github.com/softprops/action-gh-release@v2
+        with:
+          tag_name: "${{ steps.date.outputs.DATED_TAG }}"
+          name: "Nightly Build (${{ steps.date.outputs.DATED_TAG }})"
+          prerelease: true
+          files: index.php
+          body: "Automatic nightly build from main."
+
+      - name: Clean Old Nightlies
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # In Forgejo/Gitea, GITHUB_API_URL is automatically set to /api/v1 of the instance
+          API_URL: ${{ env.GITHUB_API_URL || 'https://codeberg.org/api/v1' }}
+          REPO: ${{ github.repository }}
+        run: |
+          # Fetch all releases
+          RELEASES=$(curl -s -H "Authorization: token $GITHUB_TOKEN" "$API_URL/repos/$REPO/releases")
+          
+          # Extract release IDs for tags starting with "nightly-2" (ignoring the main "nightly" tag)
+          # Sort them descending (newest first based on tag name YYYYMMDD)
+          # Keep the first 5, delete the rest
+          echo "$RELEASES" | jq -r '.[] | select(.tag_name | startswith("nightly-2")) | "\(.tag_name) \(.id)"' | sort -r > all_nightlies.txt
+          
+          echo "All dated nightlies found:"
+          cat all_nightlies.txt
+          
+          # Skip the first 4 (since the new one makes 5, we keep 5 total)
+          # 'tail -n +6' prints from line 6 onwards.
+          tail -n +6 all_nightlies.txt | while read -r TAG_NAME REL_ID; do
+            echo "Deleting old nightly release: $TAG_NAME (ID: $REL_ID)"
+            # Delete Release via API
+            curl -s -X DELETE -H "Authorization: token $GITHUB_TOKEN" "$API_URL/repos/$REPO/releases/$REL_ID"
+            # Delete Git Tag
+            git push --delete origin "$TAG_NAME" || true
+          done
 
   # ─────────────────────────────────────────────────────────────────────────────
   # JOB 6 — Stable Release (only on tags after tests pass)

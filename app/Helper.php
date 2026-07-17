@@ -315,14 +315,60 @@ class Helper
     public static function localizeddate($page): array
     {
         global $originaldaysofweek, $originalmonths, $intl;
-        if ($intl === null) {
+        if (empty($intl)) {
             $intl = \Indieinabox\Database::getSetting('intl', []);
+            if (empty($intl)) {
+                $intl = [
+                    'pt-br' => [
+                        'localizeddate' => [
+                            'date' => 'd \d\e F \de\ Y',
+                            'time' => 'H:iP',
+                            'full' => 'l, d \d\e F \d\e Y \à\s H:i e',
+                            'shortdate' => 'd/m/Y',
+                            'shorttime' => 'H:i',
+                            'shortfull' => 'd/m/Y H:i',
+                            'daysofweek' => ["Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado"],
+                            'months' => ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"],
+                        ],
+                    ],
+                    'en' => [
+                        'localizeddate' => [
+                            'date' => 'F d, Y',
+                            'time' => 'h:i A',
+                            'full' => 'l, F d, Y \a\t h:i A',
+                            'shortdate' => 'm/d/Y',
+                            'shorttime' => 'h:i A',
+                            'shortfull' => 'm/d/Y h:i A',
+                            'daysofweek' => ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+                            'months' => ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+                        ],
+                    ],
+                    'es' => [
+                        'localizeddate' => [
+                            'date' => 'd \d\e F \d\e Y',
+                            'time' => 'H:iP',
+                            'full' => 'l, d \d\e F \d\e Y \à\s H:iP',
+                            'shortdate' => 'd/m/Y',
+                            'shorttime' => 'H:i',
+                            'shortfull' => 'd/m/Y H:i',
+                            'daysofweek' => ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"],
+                            'months' => ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
+                        ],
+                    ],
+                ];
+            }
         }
-        if ($originaldaysofweek === null) {
+        if (empty($originaldaysofweek)) {
             $originaldaysofweek = \Indieinabox\Database::getSetting('originaldaysofweek', []);
+            if (empty($originaldaysofweek)) {
+                $originaldaysofweek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+            }
         }
-        if ($originalmonths === null) {
+        if (empty($originalmonths)) {
             $originalmonths = \Indieinabox\Database::getSetting('originalmonths', []);
+            if (empty($originalmonths)) {
+                $originalmonths = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            }
         }
         setlocale(LC_TIME, 'en-us');
 

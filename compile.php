@@ -68,14 +68,14 @@ foreach ($appFiles as $file) {
     }
     
     // Clean content
-    // Remove opening <?php
-    $cleaned = preg_replace('/^<\?php\s*/', '', $content);
-    // Remove strict types
-    $cleaned = preg_replace('/declare\(\s*strict_types\s*=\s*1\s*\);/', '', $cleaned);
-    // Remove namespace statement
-    $cleaned = preg_replace('/^\s*namespace\s+[^;{\s]+\s*;/m', '', $cleaned);
+    $content = preg_replace('/^\s*<\?php\s*/', '', $content);
+    $content = preg_replace('/^\s*declare\s*\(\s*strict_types\s*=\s*1\s*\)\s*;/m', '', $content);
+    $content = preg_replace('/^\s*namespace\s+[^;{\s]+\s*;/m', '', $content);
     
-    $cleaned = trim($cleaned);
+    // Fix directory traversals because compiled file is one level higher than app/ directory
+    $content = str_replace('dirname(__DIR__)', '__DIR__', $content);
+    
+    $cleaned = trim($content);
     $relativeName = str_replace($base . '/', '', $file);
     
     if ($namespace !== '') {

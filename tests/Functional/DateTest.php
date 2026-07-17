@@ -6,9 +6,6 @@ use Indieinabox\Page;
 
 beforeEach(function () {
     global $originaldaysofweek, $originalmonths, $intl;
-    if (empty($intl)) {
-        include __DIR__ . '/../../data/intl.php';
-    }
 });
 
 it('formats localized dates correctly for english (en)', function () {

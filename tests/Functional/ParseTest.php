@@ -16,10 +16,6 @@ beforeEach(function () {
     global $site, $base, $parsedown, $urltranslations, $originaldaysofweek, $originalmonths, $intl;
     global $backupSite, $backupBase, $backupParsedown, $backupUrltranslations;
 
-    if (empty($intl)) {
-        include __DIR__ . '/../../data/intl.php';
-    }
-
     vfsStream::setup('root', null, [
         'content' => [
             'blog' => [

@@ -7,9 +7,6 @@ if (!defined('DS')) {
 
 if (getenv('TEST_COMPILED') === 'true' || getenv('TEST_COMPILED') === '1') {
     require_once __DIR__ . '/../indieinabox.php'; // NOSONAR
-    foreach (glob(__DIR__ . '/../data/*.php') as $filename) {
-        include_once $filename;
-    }
 } else {
     require_once __DIR__ . '/../bootstrap/app.php'; // NOSONAR
 }

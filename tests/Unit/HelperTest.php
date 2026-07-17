@@ -41,9 +41,6 @@ it('classifies page kinds correctly', function () {
 
 it('formats localized dates', function () {
     global $originaldaysofweek, $originalmonths, $intl;
-    if (empty($intl)) {
-        include __DIR__ . '/../../data/intl.php';
-    }
 
     $timestamp = 1609459200; // 2021-01-01 00:00:00 UTC
     $page = ['date' => $timestamp, 'lang' => 'en'];

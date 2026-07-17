@@ -14,7 +14,7 @@ beforeEach(function () {
     mkdir($this->tempDir . '/data/microsub/inbox/notifications', 0777, true);
     
     $this->paths = new Paths(
-        $this->tempDir,
+        realpath(__DIR__ . '/../../'),
         'public_html',
         'public_gemini',
         'public_gopher',

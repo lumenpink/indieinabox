@@ -18,7 +18,9 @@ jobs:
   # ─────────────────────────────────────────────────────────────────────────────
   test:
     name: "PHP ${{ matrix.php }} — Tests & Lint"
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
+    # container:
+    #   image: thecodingmachine/php:8.4-v4-cli
     strategy:
       fail-fast: true          # Stop at the first error in any version
       matrix:

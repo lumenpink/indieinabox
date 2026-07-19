@@ -285,6 +285,7 @@ class ConfigHandler
         }
 
         // --- Booleans ---
+        $currentConfig['dev'] = isset($_POST['dev']);
         $currentConfig['buildall'] = isset($_POST['buildall']);
         $currentConfig['prettylinks'] = isset($_POST['prettylinks']);
         $currentConfig['activitypub_enabled'] = isset($_POST['activitypub_enabled']);

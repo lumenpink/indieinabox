@@ -35,8 +35,9 @@ php build.php [-d] [-s] [-f]
 
 *   **`-d` (Development Mode)**:
     - Enables dev flags in templates.
-    - Automatically injects the `live.js` live-reload script in headers.
-    - Forces HTML post-processing to `"beautify"` format.
+    - Disables minification and forces HTML post-processing to `"beautify"` format for readability.
+    - Injects the `live.js` live-reload script into headers/footers.
+    - *Note: To keep the repository minimal and secure, the `live.js` file is not bundled by default. When Dev Mode is enabled via the Web UI, the system automatically downloads it on-demand to the local `data/` directory.*
 *   **`-s` (Skip Static Files)**:
     - Skips copying assets from `resources/static/` directory to save build time.
 *   **`-f` (Force Overwrites)**:

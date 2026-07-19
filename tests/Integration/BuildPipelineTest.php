@@ -247,7 +247,7 @@ it('injects live-reload script when building with -d (dev mode)', function () us
 <head>
     <title><?= \$page->title ?></title>
     <?php if (\$site->dev): ?>
-        <script src="<?= \$site->paths->baseDir ?>/js/live.js"></script>
+        <script src="/js/live.js"></script>
     <?php endif; ?>
 </head>
 <body>
@@ -257,7 +257,7 @@ it('injects live-reload script when building with -d (dev mode)', function () us
 </html>
 PHP
     );
-    $devScript = '<?php if (isset($site->options->dev) && $site->options->dev): ?><script src="<?= $site->paths->baseDir ?>/js/live.js"></script><?php endif; ?>';
+    $devScript = '<?php if (isset($site->options->dev) && $site->options->dev): ?><script src="/js/live.js"></script><?php endif; ?>';
     file_put_contents($sandbox . '/resources/views/home.php', '<head>' . $devScript . '</head><body>Dummy</body>');
     file_put_contents($sandbox . '/resources/views/page.php', '<head>' . $devScript . '</head><body>Dummy</body>');
     file_put_contents($sandbox . '/resources/views/index_page.php', '<head>' . $devScript . '</head><body>Dummy</body>');

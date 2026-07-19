@@ -43,7 +43,8 @@ To keep templates clean, the `Page` class implements magic shortcuts for propert
 The `Site` class serves as the root configuration settings block loaded from `config.yml`. It aggregates config namespaces:
 
 * **`Site\Metadata`**: High-level details (`$title`, `$sitename`, `$author`, `$defaultTitle`, `$fqdn`).
-* **`Site\Paths`**: Workspace directories (`$baseDir`, `$outputDir`, `$contentDir`).
+* **`Site\Paths`**: Workspace directories (`$baseDir`, `$outputDir`, `$contentDir`).  
+  > ⚠️ **SECURITY WARNING:** Do NOT use `$site->paths->baseDir` inside HTML template views (`resources/views/`). It exposes the absolute server filesystem path, which is a major security flaw. For web URLs, use `$site->metadata->fqdn` or `$baseUrl` instead.
 * **`Site\Options`**: Generation options (`$buildAll`, `$dev`, `$skipStatic`, `$forceStaticOverride`, `$htmlpostprocessing`).
 * **`Site\Localization`**: Locales settings (`$lang` array, `$defaultLang`).
 * **`Site\Support`**: Valid extensions list (`$support` array, `$defaultCategory`).

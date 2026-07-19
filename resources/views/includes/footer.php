@@ -19,5 +19,5 @@ $baseUrl = rtrim($site->metadata->fqdn ?? '', '/');
 <?= ThemeData::getJsonLd($page, $site) ?>
 
 <?php if (isset($site->options->dev) && $site->options->dev): ?>
-<script src="<?= $site->paths->baseDir ?? '' ?>/js/live.js"></script>
+<script src="<?= htmlspecialchars($baseUrl) ?>/js/live.js"></script>
 <?php endif; ?>

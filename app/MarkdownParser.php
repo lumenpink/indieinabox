@@ -72,7 +72,7 @@ class MarkdownParser implements ParserInterface
 
         $hasFrontMatter = !empty($page);
 
-        $page = $this->contentProcessor->setTitle($page, $content, $this->site->metadata->defaultTitle);
+        $page = $this->contentProcessor->setTitle($page, $content, $fileInfo['filename']);
         $page = $this->contentProcessor->setDate($page, $file);
         $page = $this->contentProcessor->processTags($page, $content);
 

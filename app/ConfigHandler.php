@@ -88,6 +88,11 @@ class ConfigHandler
                     header('Location: /admin/config?saved=1');
                     exit;
                 }
+                if ($_POST['action'] === 'rebuild_site') {
+                    $this->rebuildSite();
+                    header('Location: /admin/config?rebuilt=1');
+                    exit;
+                }
             }
             $this->saveConfig();
             return;
@@ -1125,6 +1130,12 @@ class ConfigHandler
                 </div>
             <?php endif; ?>
 
+            <?php if (isset($_GET['rebuilt'])): ?>
+                <div class="alert-saved">
+                    Site has been successfully rebuilt!
+                </div>
+            <?php endif; ?>
+
             <form action="" method="POST" id="configForm" enctype="multipart/form-data">
                 <div class="config-tabs">
                     <button type="button" class="config-tab-btn active" onclick="showTab('tab-general')">General</button>
@@ -1666,8 +1677,9 @@ class ConfigHandler
                 </fieldset>
                 </div>
 
-                <div class="submit-group" style="position: sticky; bottom: 0; background: var(--glass-bg, #111827); padding: 15px; border-top: 1px solid var(--border-color); z-index: 100; margin-top: 2rem; border-radius: 8px;">
-                    <button type="submit" class="save-btn btn" style="width: 100%; font-size: 1.2rem; padding: 15px;">Save Settings & Rebuild</button>
+                <div class="submit-group" style="position: sticky; bottom: 0; background: var(--glass-bg, #111827); padding: 15px; border-top: 1px solid var(--border-color); z-index: 100; margin-top: 2rem; border-radius: 8px; display: flex; gap: 10px;">
+                    <button type="submit" name="action" value="rebuild_site" class="btn" style="flex: 1; font-size: 1.2rem; padding: 15px; background: transparent; border: 1px solid var(--border-color); color: var(--fg);">Rebuild Only</button>
+                    <button type="submit" class="save-btn btn" style="flex: 2; font-size: 1.2rem; padding: 15px;">Save Settings & Rebuild</button>
                 </div>
             </form>
 

@@ -404,6 +404,7 @@ class ConfigHandler
                     ],
                     'has_title' => isset($data['has_title']),
                     'show_on_home' => isset($data['show_on_home']),
+                    'show_in_menu' => isset($data['show_in_menu']),
                     'display_mode' => trim($data['display_mode'] ?? 'default'),
                 ];
             }
@@ -422,6 +423,7 @@ class ConfigHandler
                     ],
                     'has_title' => true,
                     'show_on_home' => true,
+                    'show_in_menu' => true,
                     'display_mode' => 'default',
                 ];
             }
@@ -443,6 +445,7 @@ class ConfigHandler
                     ],
                     'has_title' => true,
                     'show_on_home' => true,
+                    'show_in_menu' => true,
                     'display_mode' => 'default',
                 ]
             ];
@@ -1409,10 +1412,10 @@ class ConfigHandler
                             <div class="checkbox-group">
                                 <input type="checkbox" name="kinds[<?= htmlspecialchars($k) ?>][has_title]" id="kinds_<?= htmlspecialchars($k) ?>_ht" <?= !empty($data['has_title']) ? 'checked' : '' ?>>
                                 <label for="kinds_<?= htmlspecialchars($k) ?>_ht">Has Title</label>
-                            </div>
-                            <div class="checkbox-group">
                                 <input type="checkbox" name="kinds[<?= htmlspecialchars($k) ?>][show_on_home]" id="kinds_<?= htmlspecialchars($k) ?>_soh" <?= !empty($data['show_on_home']) ? 'checked' : '' ?>>
                                 <label for="kinds_<?= htmlspecialchars($k) ?>_soh">Show on Home</label>
+                                <input type="checkbox" name="kinds[<?= htmlspecialchars($k) ?>][show_in_menu]" id="kinds_<?= htmlspecialchars($k) ?>_sim" <?= (!isset($data['show_in_menu']) || !empty($data['show_in_menu'])) ? 'checked' : '' ?>>
+                                <label for="kinds_<?= htmlspecialchars($k) ?>_sim">Show in Menu</label>
                             </div>
                         </div>
                         <?php
@@ -1463,10 +1466,10 @@ class ConfigHandler
                         <div class="checkbox-group">
                             <input type="checkbox" name="kinds[__new__][has_title]" id="kinds_new_ht">
                             <label for="kinds_new_ht">Has Title</label>
-                        </div>
-                        <div class="checkbox-group">
                             <input type="checkbox" name="kinds[__new__][show_on_home]" id="kinds_new_soh">
                             <label for="kinds_new_soh">Show on Home</label>
+                            <input type="checkbox" name="kinds[__new__][show_in_menu]" id="kinds_new_sim" checked>
+                            <label for="kinds_new_sim">Show in Menu</label>
                         </div>
                     </div>
                 </fieldset>

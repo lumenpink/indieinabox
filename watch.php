@@ -51,6 +51,7 @@ while (true) {
     
     if ($currentHash !== $lastHash) {
         echo "[" . date('H:i:s') . "] Changes detected! Rebuilding...\n";
+        passthru('php compile.php');
         passthru('php build.php -d');
     }
     

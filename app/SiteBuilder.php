@@ -503,6 +503,13 @@ class SiteBuilder
         $kinds = $this->site->config['kinds'] ?? [];
         foreach ($kinds as $kind => $config) {
             $pagesForKind = $pagesByKind[$kind] ?? [];
+            if (empty($pagesForKind)) {
+                continue;
+            }
+            if (isset($config['show_in_menu']) && !$config['show_in_menu']) {
+                continue;
+            }
+
             $displayMode = $config['display_mode'] ?? 'default';
 
             if ($displayMode === 'full_content') {
@@ -1310,8 +1317,28 @@ class SiteBuilder
         if (!empty($this->site->config['kinds'])) {
             foreach ($this->site->config['kinds'] as $k => $conf) {
                 if (isset($conf['show_on_home']) && !$conf['show_on_home'] && $k !== 'garden' && $k !== 'jardim') {
+                    // Do not skip here just for home, since this is for menu
+                }
+                
+                // Hide if explicitly configured
+                if (isset($conf['show_in_menu']) && !$conf['show_in_menu']) {
                     continue;
                 }
+                
+                // Check if there are any pages for this kind
+                $hasPages = false;
+                foreach ($this->pages as $p) {
+                    $pLang = $p->lang ?? $defaultLang;
+                    if ($p->kind === $k && $pLang === $lang) {
+                        $hasPages = true;
+                        break;
+                    }
+                }
+                
+                if (!$hasPages) {
+                    continue;
+                }
+                
                 $folder = $this->getKindFolder($k, $lang);
                 if ($prettylinks) {
                     $url = $page->relpath . $langPrefix . $folder . '/';

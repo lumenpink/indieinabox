@@ -287,8 +287,13 @@ class Helper
 
         $label = self::kindLabel($kind, $lang);
 
-        // If it's a generic kind, don't link it
-        if (in_array($kind, ['generic', 'home', 'page'], true)) {
+        // If it's a generic kind or hidden from menu, don't link it
+        $isHidden = false;
+        if (isset($site->config['kinds'][$kind]['show_in_menu']) && !$site->config['kinds'][$kind]['show_in_menu']) {
+            $isHidden = true;
+        }
+
+        if ($isHidden || in_array($kind, ['generic', 'home', 'page'], true)) {
             return '[' . strtoupper(htmlspecialchars($label)) . ']';
         }
 

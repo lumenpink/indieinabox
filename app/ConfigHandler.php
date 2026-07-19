@@ -1538,7 +1538,29 @@ class ConfigHandler
                         'Articles' => 'Articles footer link / kind label fallback',
                         'Notes' => 'Notes footer link / kind label fallback',
                         'Photos' => 'Photos footer link / kind label fallback',
-                        'Garden' => 'Garden footer link / kind label fallback'
+                        'Garden' => 'Garden footer link / kind label fallback',
+                        'Shortlink' => 'Shortlink label',
+                        'Like' => 'Singular for Like',
+                        'Likes' => 'Plural for Likes',
+                        'Repost' => 'Singular for Repost',
+                        'Reposts' => 'Plural for Reposts',
+                        'Reply' => 'Singular for Reply',
+                        'Replies' => 'Plural for Replies',
+                        'Interactions on' => 'Interactions page title prefix',
+                        'Permalink' => 'Permalink text in replies',
+                        'Flowerbed' => 'Flowerbed label for garden posts',
+                        'Confidence' => 'Confidence label for garden posts',
+                        'Importance' => 'Importance label for garden posts',
+                        'Also on' => 'Syndication links prefix',
+                        'In reply to' => 'IndieWeb context prefix',
+                        'Liked' => 'IndieWeb context prefix',
+                        'Reposted' => 'IndieWeb context prefix',
+                        'Bookmarked' => 'IndieWeb context prefix',
+                        'Watched' => 'IndieWeb context prefix',
+                        'Read' => 'IndieWeb context prefix',
+                        'Listened to' => 'IndieWeb context prefix',
+                        'This page was automatically translated by AI.' => 'AI translation notice',
+                        'This page was automatically translated by AI and revised by a human.' => 'AI translation notice (revised)'
                     ];
                     foreach ($globalStrings as $origText => $desc):
                     ?>

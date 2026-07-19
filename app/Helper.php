@@ -828,6 +828,21 @@ class Helper
     }
 
     /**
+     * Translation lookup with pluralization support
+     *
+     * @param  string $singular
+     * @param  string $plural
+     * @param  int $count
+     * @param  string|null $lang
+     * @return string
+     */
+    public static function translatePlural(string $singular, string $plural, int $count, ?string $lang = null): string
+    {
+        $text = $count === 1 ? $singular : $plural;
+        return self::translate($text, $lang);
+    }
+
+    /**
      * Translate and make lowercase
      *
      * @param  string $text

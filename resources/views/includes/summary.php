@@ -33,26 +33,26 @@ $_kindLabel = \Indieinabox\Helper::kindLabel($page->kind);
             • 
             <?php if (count($likes) > 0): ?>
                 <a href="<?= $page->relpath ?><?= $page->slug ?>/interactions#likes" style="color: inherit; text-decoration: none;">
-                    <?= count($likes) ?> <?= \Indieinabox\Helper::translate('Likes') ?>
+                    <?= count($likes) ?> <?= \Indieinabox\Helper::translatePlural('Like', 'Likes', count($likes)) ?>
                 </a>
             <?php else: ?>
-                <span style="opacity: 0.8; font-size: 0.9em;">0 <?= \Indieinabox\Helper::translate('Likes') ?></span>
+                <span style="opacity: 0.8; font-size: 0.9em;">0 <?= \Indieinabox\Helper::translatePlural('Like', 'Likes', 0) ?></span>
             <?php endif; ?>
             /
             <?php if (count($reposts) > 0): ?>
                 <a href="<?= $page->relpath ?><?= $page->slug ?>/interactions#reposts" style="color: inherit; text-decoration: none;">
-                    <?= count($reposts) ?> <?= \Indieinabox\Helper::translate('Reposts') ?>
+                    <?= count($reposts) ?> <?= \Indieinabox\Helper::translatePlural('Repost', 'Reposts', count($reposts)) ?>
                 </a>
             <?php else: ?>
-                <span style="opacity: 0.8; font-size: 0.9em;">0 <?= \Indieinabox\Helper::translate('Reposts') ?></span>
+                <span style="opacity: 0.8; font-size: 0.9em;">0 <?= \Indieinabox\Helper::translatePlural('Repost', 'Reposts', 0) ?></span>
             <?php endif; ?>
             /
             <?php if (count($replies) > 0): ?>
                 <a href="<?= $page->relpath ?><?= $page->slug ?>#interactions" style="color: inherit; text-decoration: none;">
-                    <?= count($replies) ?> <?= \Indieinabox\Helper::translate('Replies') ?>
+                    <?= count($replies) ?> <?= \Indieinabox\Helper::translatePlural('Reply', 'Replies', count($replies)) ?>
                 </a>
             <?php else: ?>
-                <span style="opacity: 0.8; font-size: 0.9em;">0 <?= \Indieinabox\Helper::translate('Replies') ?></span>
+                <span style="opacity: 0.8; font-size: 0.9em;">0 <?= \Indieinabox\Helper::translatePlural('Reply', 'Replies', 0) ?></span>
             <?php endif; ?>
         </div>
     </header>

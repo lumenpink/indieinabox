@@ -69,23 +69,23 @@ class ThemeHelper
 
         $html .= ' • ';
         if (count($likes) > 0) {
-            $html .= '<a href="' . $page->relpath . ltrim($page->slug, '/') . '/interactions#likes" style="color: inherit; text-decoration: none;">' . count($likes) . ' ' . Helper::translate('Likes') . '</a>';
+            $html .= '<a href="' . $page->relpath . ltrim($page->slug, '/') . '/interactions#likes" style="color: inherit; text-decoration: none;">' . count($likes) . ' ' . Helper::translatePlural('Like', 'Likes', count($likes)) . '</a>';
         } else {
-            $html .= '<span style="opacity: 0.8; font-size: 0.9em;">0 ' . Helper::translate('Likes') . '</span>';
+            $html .= '<span style="opacity: 0.8; font-size: 0.9em;">0 ' . Helper::translatePlural('Like', 'Likes', 0) . '</span>';
         }
         $html .= ' / ';
 
         if (count($reposts) > 0) {
-            $html .= '<a href="' . $page->relpath . ltrim($page->slug, '/') . '/interactions#reposts" style="color: inherit; text-decoration: none;">' . count($reposts) . ' ' . Helper::translate('Reposts') . '</a>';
+            $html .= '<a href="' . $page->relpath . ltrim($page->slug, '/') . '/interactions#reposts" style="color: inherit; text-decoration: none;">' . count($reposts) . ' ' . Helper::translatePlural('Repost', 'Reposts', count($reposts)) . '</a>';
         } else {
-            $html .= '<span style="opacity: 0.8; font-size: 0.9em;">0 ' . Helper::translate('Reposts') . '</span>';
+            $html .= '<span style="opacity: 0.8; font-size: 0.9em;">0 ' . Helper::translatePlural('Repost', 'Reposts', 0) . '</span>';
         }
         $html .= ' / ';
 
         if (count($replies) > 0) {
-            $html .= '<a href="' . $page->relpath . ltrim($page->slug, '/') . '#interactions" style="color: inherit; text-decoration: none;">' . count($replies) . ' ' . Helper::translate('Replies') . '</a>';
+            $html .= '<a href="' . $page->relpath . ltrim($page->slug, '/') . '#interactions" style="color: inherit; text-decoration: none;">' . count($replies) . ' ' . Helper::translatePlural('Reply', 'Replies', count($replies)) . '</a>';
         } else {
-            $html .= '<span style="opacity: 0.8; font-size: 0.9em;">0 ' . Helper::translate('Replies') . '</span>';
+            $html .= '<span style="opacity: 0.8; font-size: 0.9em;">0 ' . Helper::translatePlural('Reply', 'Replies', 0) . '</span>';
         }
 
         $html .= '</div>';
@@ -194,12 +194,12 @@ class ThemeHelper
             $html .= '<div style="margin-bottom: 1em; font-size: 1.1em;">';
             if (count($likes) > 0) {
                 $html .= '<a href="' . $page->relpath . ltrim($page->slug, '/') . '/interactions#likes" style="color: inherit; text-decoration: none; margin-right: 1em;">';
-                $html .= '<strong>' . count($likes) . '</strong> ' . Helper::translate('Likes');
+                $html .= '<strong>' . count($likes) . '</strong> ' . Helper::translatePlural('Like', 'Likes', count($likes));
                 $html .= '</a>';
             }
             if (count($reposts) > 0) {
                 $html .= '<a href="' . $page->relpath . ltrim($page->slug, '/') . '/interactions#reposts" style="color: inherit; text-decoration: none;">';
-                $html .= '<strong>' . count($reposts) . '</strong> ' . Helper::translate('Reposts');
+                $html .= '<strong>' . count($reposts) . '</strong> ' . Helper::translatePlural('Repost', 'Reposts', count($reposts));
                 $html .= '</a>';
             }
             $html .= '</div>';
@@ -207,7 +207,7 @@ class ThemeHelper
 
         if (count($replies) > 0) {
             $html .= '<div style="margin-top: 1.5em; width: 100%;">';
-            $html .= '<h3 style="margin-bottom: 1em; font-size: 1.1em;">' . count($replies) . ' ' . Helper::translate('Replies') . '</h3>';
+            $html .= '<h3 style="margin-bottom: 1em; font-size: 1.1em;">' . count($replies) . ' ' . Helper::translatePlural('Reply', 'Replies', count($replies)) . '</h3>';
             $html .= '<div style="margin-left: 0.5em;">';
             foreach ($replies as $reply) {
                 $html .= '<div class="p-comment h-cite" id="reply-' . md5($reply['url']) . '" style="margin-bottom: 1.5em; padding-left: 10px; border-left: 2px solid var(--accent);">';

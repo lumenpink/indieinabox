@@ -18,7 +18,7 @@
 
             <?php if (count($likes) > 0): ?>
                 <section id="likes" style="margin-top: 2em;">
-                    <h2><?= count($likes) ?> <?= \Indieinabox\Helper::translate('Likes') ?></h2>
+                    <h2><?= count($likes) ?> <?= \Indieinabox\Helper::translatePlural('Like', 'Likes', count($likes)) ?></h2>
                     <ul style="list-style: none; padding-left: 0;">
                         <?php foreach ($likes as $like): ?>
                             <li style="margin-bottom: 0.5em;">
@@ -33,7 +33,7 @@
 
             <?php if (count($reposts) > 0): ?>
                 <section id="reposts" style="margin-top: 2em;">
-                    <h2><?= count($reposts) ?> <?= \Indieinabox\Helper::translate('Reposts') ?></h2>
+                    <h2><?= count($reposts) ?> <?= \Indieinabox\Helper::translatePlural('Repost', 'Reposts', count($reposts)) ?></h2>
                     <ul style="list-style: none; padding-left: 0;">
                         <?php foreach ($reposts as $repost): ?>
                             <li style="margin-bottom: 0.5em;">
@@ -48,7 +48,7 @@
 
             <?php if (count($replies) > 0): ?>
                 <section id="replies" style="margin-top: 2em;">
-                    <h2><?= count($replies) ?> <?= \Indieinabox\Helper::translate('Replies') ?></h2>
+                    <h2><?= count($replies) ?> <?= \Indieinabox\Helper::translatePlural('Reply', 'Replies', count($replies)) ?></h2>
                     <div style="margin-left: 0.5em;">
                         <?php foreach ($replies as $reply): ?>
                             <div class="p-comment h-cite" id="reply-<?= md5($reply['url']) ?>" style="margin-bottom: 1.5em; padding-left: 10px; border-left: 2px solid var(--accent);">

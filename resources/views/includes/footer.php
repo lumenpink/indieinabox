@@ -17,3 +17,7 @@ $baseUrl = rtrim($site->metadata->fqdn ?? '', '/');
 </footer>
 
 <?= ThemeData::getJsonLd($page, $site) ?>
+
+<?php if (isset($site->options->dev) && $site->options->dev): ?>
+<script src="<?= $site->paths->baseDir ?? '' ?>/js/live.js"></script>
+<?php endif; ?>

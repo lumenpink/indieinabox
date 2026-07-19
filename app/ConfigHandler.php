@@ -286,6 +286,15 @@ class ConfigHandler
 
         // --- Booleans ---
         $currentConfig['dev'] = isset($_POST['dev']);
+        if ($currentConfig['dev']) {
+            $liveJsFile = \Indieinabox\Database::$dataDir . DIRECTORY_SEPARATOR . 'live.js';
+            if (!file_exists($liveJsFile)) {
+                $content = @file_get_contents('https://raw.githubusercontent.com/MartinKool/livejs/master/live.js');
+                if ($content !== false) {
+                    file_put_contents($liveJsFile, $content);
+                }
+            }
+        }
         $currentConfig['buildall'] = isset($_POST['buildall']);
         $currentConfig['prettylinks'] = isset($_POST['prettylinks']);
         $currentConfig['activitypub_enabled'] = isset($_POST['activitypub_enabled']);

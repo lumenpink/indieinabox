@@ -821,9 +821,9 @@ class SiteBuilder
             mkdir($jsDir, 0777, true);
         }
 
-        $liveJsFile = $base . "/" . $themeDir . "/views/livejs/live.js";
-        echo "Copying static files: from $liveJsFile to $jsDir/live.js\n";
+        $liveJsFile = \Indieinabox\Database::$dataDir . DIRECTORY_SEPARATOR . 'live.js';
         if (file_exists($liveJsFile)) {
+            echo "Copying static files: from $liveJsFile to $jsDir/live.js\n";
             $destFile = $jsDir . "/live.js";
             $success = copy($liveJsFile, $destFile);
             if (!$success) {
@@ -832,7 +832,7 @@ class SiteBuilder
                 \Indieinabox\SiteBuilder::addManifest($destFile);
             }
         } else {
-            echo "File does not exist: $liveJsFile\n";
+            echo "File does not exist (skip copying): $liveJsFile\n";
         }
     }
 

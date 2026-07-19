@@ -348,28 +348,4 @@ class MarkdownValidator
  * Test block (only runs when script is executed directly from CLI)
  * --------------------------------------------------------------------------
  */
-if (php_sapi_name() === 'cli' && realpath($_SERVER['SCRIPT_FILENAME'] ?? '') === __FILE__) {
-    $corruptedMarkdown = <<<MARKDOWN
----
-title: Corrupted Note Example
-tags:
-  - testing
-author broken yaml line  # Error YAML: No colon
----
 
-#Título Glued Glued  # Warning Heading
-
-Este parágrafo possui um wikilink [[Aberto sem fechamento e um código `sem fechar na mesma linha.
-Além disso, temos um wikilink malformado [[]] e outro [[ | com alias inválido]].
-
-Aqui iniciamos um **negrito que nunca é fechado até o fim do parágrafo.
-MARKDOWN;
-
-    $validator = new MarkdownValidator($corruptedMarkdown);
-    $result = $validator->validate();
-
-    echo "=== CORRUPTED MARKDOWN INBOUND ===\n";
-    echo $corruptedMarkdown . "\n\n";
-    echo "=== DIAGNOSTIC REPORT (JSON) ===\n";
-    echo json_encode($result, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "\n";
-}

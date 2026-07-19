@@ -11,48 +11,54 @@ $_kindLabel = \Indieinabox\Helper::kindLabel($page->kind);
             </h3>
         <?php endif; ?>
         <div class="post-metadata" style="font-size: 0.85em; opacity: 0.8; margin-bottom: 1em;">
-            <?= \Indieinabox\Helper::kindLink($page, $page->kind) ?>
-            <?php if (isset($page->date)): ?>
-                • <a href="<?= $page->relpath ?><?= $page->slug ?>" class="u-url"><time class="dt-published" datetime="<?= $page->isodate ?>"><?= $page->localizeddate ?></time></a>
-            <?php endif; ?>
-            <?php if (!empty($page->tags)): ?>
-                •
-                <?php foreach ($page->tags as $tag): ?>
-                    <a href="<?= $page->relpath ?>tag/<?= $tag ?>/" class="p-category">#<?= htmlspecialchars($tag) ?></a>&#32;
-                <?php endforeach; ?>
-            <?php endif; ?>
-            <?php if (!empty($page->shortlink)): ?>
-                • <a href="<?= htmlspecialchars($page->shortlink) ?>" style="color: inherit; text-decoration: none; opacity: 0.8;">🔗</a>
-            <?php endif; ?>
+            <div class="meta-line-1">
+                <?= \Indieinabox\Helper::kindLink($page, $page->kind) ?>
+                <?php if (isset($page->date)): ?>
+                    - <a href="<?= $page->relpath ?><?= $page->slug ?>" class="u-url"><time class="dt-published" datetime="<?= $page->isodate ?>"><?= $page->localizeddate ?></time></a>
+                <?php endif; ?>
+            </div>
+            
             <?php
             $likes = \Indieinabox\Helper::getInteractions($page, 'like');
             $reposts = \Indieinabox\Helper::getInteractions($page, 'repost');
             $replies = \Indieinabox\Helper::getInteractions($page, 'reply');
-            $totalInteractions = count($likes) + count($reposts) + count($replies);
             ?>
-            • 
-            <?php if (count($likes) > 0): ?>
-                <a href="<?= $page->relpath ?><?= $page->slug ?>/interactions#likes" style="color: inherit; text-decoration: none;">
-                    <?= count($likes) ?> <?= \Indieinabox\Helper::translatePlural('Like', 'Likes', count($likes)) ?>
-                </a>
-            <?php else: ?>
-                <span style="opacity: 0.8; font-size: 0.9em;">0 <?= \Indieinabox\Helper::translatePlural('Like', 'Likes', 0) ?></span>
-            <?php endif; ?>
-            /
-            <?php if (count($reposts) > 0): ?>
-                <a href="<?= $page->relpath ?><?= $page->slug ?>/interactions#reposts" style="color: inherit; text-decoration: none;">
-                    <?= count($reposts) ?> <?= \Indieinabox\Helper::translatePlural('Repost', 'Reposts', count($reposts)) ?>
-                </a>
-            <?php else: ?>
-                <span style="opacity: 0.8; font-size: 0.9em;">0 <?= \Indieinabox\Helper::translatePlural('Repost', 'Reposts', 0) ?></span>
-            <?php endif; ?>
-            /
-            <?php if (count($replies) > 0): ?>
-                <a href="<?= $page->relpath ?><?= $page->slug ?>#interactions" style="color: inherit; text-decoration: none;">
-                    <?= count($replies) ?> <?= \Indieinabox\Helper::translatePlural('Reply', 'Replies', count($replies)) ?>
-                </a>
-            <?php else: ?>
-                <span style="opacity: 0.8; font-size: 0.9em;">0 <?= \Indieinabox\Helper::translatePlural('Reply', 'Replies', 0) ?></span>
+            <div class="meta-line-2" style="margin-left: 0.6em;">
+                <?php if (!empty($page->shortlink)): ?>
+                    <a href="<?= htmlspecialchars($page->shortlink) ?>" style="color: inherit; text-decoration: none; opacity: 0.8;">🔗</a> - 
+                <?php endif; ?>
+                
+                <?php if (count($likes) > 0): ?>
+                    <a href="<?= $page->relpath ?><?= $page->slug ?>/interactions#likes" style="color: inherit; text-decoration: none;">
+                        <?= count($likes) ?> <?= \Indieinabox\Helper::translatePlural('Like', 'Likes', count($likes)) ?>
+                    </a>
+                <?php else: ?>
+                    <span style="opacity: 0.8; font-size: 0.9em;">0 <?= \Indieinabox\Helper::translatePlural('Like', 'Likes', 0) ?></span>
+                <?php endif; ?>
+                /
+                <?php if (count($reposts) > 0): ?>
+                    <a href="<?= $page->relpath ?><?= $page->slug ?>/interactions#reposts" style="color: inherit; text-decoration: none;">
+                        <?= count($reposts) ?> <?= \Indieinabox\Helper::translatePlural('Repost', 'Reposts', count($reposts)) ?>
+                    </a>
+                <?php else: ?>
+                    <span style="opacity: 0.8; font-size: 0.9em;">0 <?= \Indieinabox\Helper::translatePlural('Repost', 'Reposts', 0) ?></span>
+                <?php endif; ?>
+                /
+                <?php if (count($replies) > 0): ?>
+                    <a href="<?= $page->relpath ?><?= $page->slug ?>#interactions" style="color: inherit; text-decoration: none;">
+                        <?= count($replies) ?> <?= \Indieinabox\Helper::translatePlural('Reply', 'Replies', count($replies)) ?>
+                    </a>
+                <?php else: ?>
+                    <span style="opacity: 0.8; font-size: 0.9em;">0 <?= \Indieinabox\Helper::translatePlural('Reply', 'Replies', 0) ?></span>
+                <?php endif; ?>
+            </div>
+
+            <?php if (!empty($page->tags)): ?>
+                <div class="meta-line-3" style="margin-left: 0.6em;">
+                    <?php foreach ($page->tags as $tag): ?>
+                        <a href="<?= $page->relpath ?>tag/<?= $tag ?>/" class="p-category">#<?= htmlspecialchars($tag) ?></a>&#32;
+                    <?php endforeach; ?>
+                </div>
             <?php endif; ?>
         </div>
     </header>

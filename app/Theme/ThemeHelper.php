@@ -31,43 +31,24 @@ class ThemeHelper
         }
 
         $html = '<div class="post-metadata">';
+        
+        // Line 1: [TIPO] - Data
+        $html .= '<div class="meta-line-1">';
         $html .= Helper::kindLink($page, $page->kind);
+        $html .= ' - <a href="' . $page->relpath . ltrim($page->slug, '/') . '" class="u-url"><time class="dt-published" datetime="' . $page->isodate . '">' . $page->localizeddate . '</time></a>';
+        $html .= '</div>';
 
-        if (!in_array($page->kind, ['generic', 'home', 'page'], true)) {
-            $html .= ' • ';
-        }
-
-        $html .= '<a href="' . $page->relpath . ltrim($page->slug, '/') . '" class="u-url"><time class="dt-published" datetime="' . $page->isodate . '">' . $page->localizeddate . '</time></a>';
-
-        if (!empty($page->tags)) {
-            $html .= ' • ';
-            foreach ($page->tags as $tag) {
-                $html .= '<a href="' . $page->relpath . 'tag/' . $tag . '/" class="p-category">#' . htmlspecialchars($tag) . '</a>&#32;';
-            }
-        }
-
-        if ($page->kind === 'garden' || $page->kind === 'jardim') {
-            $flowerbed = isset($page->metadata->flowerbed) && is_array($page->metadata->flowerbed) ? $page->metadata->flowerbed : ['general'];
-            $confidence = $page->metadata->confidence ?? 'possible';
-            $maturity = $page->metadata->maturity ?? 'sprout';
-            $importance = $page->metadata->importance ?? 'trivial';
-            
-            $translatedFlowerbed = array_map(function($fb) { return Helper::translate($fb); }, $flowerbed);
-            $html .= ' • ' . Helper::translate('Flowerbed') . ': ' . htmlspecialchars(implode(', ', $translatedFlowerbed)) . '<br>';
-            $html .= ' • ' . Helper::translate('Confidence') . ': ' . htmlspecialchars(Helper::translate($confidence)) . '<br>';
-            $html .= ' • ' . Helper::translate('Maturity') . ': ' . htmlspecialchars(Helper::translate($maturity)) . '<br>';
-            $html .= ' • ' . Helper::translate('Importance') . ': ' . htmlspecialchars(Helper::translate($importance));
-        }
-
+        // Line 2: Shortlink - Likes / Reposts / Replies
+        $html .= '<div class="meta-line-2" style="margin-left: 0.6em;">';
+        $interactionsStart = '';
         if (!empty($page->shortlink)) {
-            $html .= ' • ' . Helper::translate('Shortlink') . ': <a href="' . htmlspecialchars($page->shortlink) . '">' . htmlspecialchars($page->shortlink) . '</a>';
+            $html .= '<a href="' . htmlspecialchars($page->shortlink) . '" style="color: inherit; text-decoration: none; opacity: 0.8;">🔗</a> - ';
         }
 
         $likes = Helper::getInteractions($page, 'like');
         $reposts = Helper::getInteractions($page, 'repost');
         $replies = Helper::getInteractions($page, 'reply');
 
-        $html .= ' • ';
         if (count($likes) > 0) {
             $html .= '<a href="' . $page->relpath . ltrim($page->slug, '/') . '/interactions#likes" style="color: inherit; text-decoration: none;">' . count($likes) . ' ' . Helper::translatePlural('Like', 'Likes', count($likes)) . '</a>';
         } else {
@@ -86,6 +67,33 @@ class ThemeHelper
             $html .= '<a href="' . $page->relpath . ltrim($page->slug, '/') . '#interactions" style="color: inherit; text-decoration: none;">' . count($replies) . ' ' . Helper::translatePlural('Reply', 'Replies', count($replies)) . '</a>';
         } else {
             $html .= '<span style="opacity: 0.8; font-size: 0.9em;">0 ' . Helper::translatePlural('Reply', 'Replies', 0) . '</span>';
+        }
+
+        $html .= '</div>';
+
+        // Line 3: Tags
+        if (!empty($page->tags)) {
+            $html .= '<div class="meta-line-3" style="margin-left: 0.6em;">';
+            foreach ($page->tags as $tag) {
+                $html .= '<a href="' . $page->relpath . 'tag/' . $tag . '/" class="p-category">#' . htmlspecialchars($tag) . '</a>&#32;';
+            }
+            $html .= '</div>';
+        }
+
+        // Custom Garden Fields (if any, append to line 2 or create new block)
+        if ($page->kind === 'garden' || $page->kind === 'jardim') {
+            $flowerbed = isset($page->metadata->flowerbed) && is_array($page->metadata->flowerbed) ? $page->metadata->flowerbed : ['general'];
+            $confidence = $page->metadata->confidence ?? 'possible';
+            $maturity = $page->metadata->maturity ?? 'sprout';
+            $importance = $page->metadata->importance ?? 'trivial';
+            
+            $translatedFlowerbed = array_map(function($fb) { return Helper::translate($fb); }, $flowerbed);
+            $html .= '<div class="meta-garden-fields" style="margin-left: 0.6em;">';
+            $html .= ' • ' . Helper::translate('Flowerbed') . ': ' . htmlspecialchars(implode(', ', $translatedFlowerbed)) . '<br>';
+            $html .= ' • ' . Helper::translate('Confidence') . ': ' . htmlspecialchars(Helper::translate($confidence)) . '<br>';
+            $html .= ' • ' . Helper::translate('Maturity') . ': ' . htmlspecialchars(Helper::translate($maturity)) . '<br>';
+            $html .= ' • ' . Helper::translate('Importance') . ': ' . htmlspecialchars(Helper::translate($importance));
+            $html .= '</div>';
         }
 
         $html .= '</div>';

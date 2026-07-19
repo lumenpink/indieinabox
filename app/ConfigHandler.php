@@ -569,18 +569,18 @@ class ConfigHandler
             foreach ($currentConfig['urltranslations'] as $url_key => $langs) {
                 if (is_array($langs)) {
                     foreach ($langs as $lang => $url_value) {
-                        $stmt = $db->prepare('SELECT id FROM urltranslations WHERE lang = :lang AND slug_key = :key');
+                        $stmt = $db->prepare('SELECT id FROM url_translations WHERE lang = :lang AND slug_key = :key');
                         $stmt->bindValue(':lang', $lang);
                         $stmt->bindValue(':key', $url_key);
                         $stmt->execute();
                         $row = $stmt->fetch(\PDO::FETCH_ASSOC);
                         if ($row) {
-                            $upd = $db->prepare('UPDATE urltranslations SET slug_value = :val WHERE id = :id');
+                            $upd = $db->prepare('UPDATE url_translations SET slug_value = :val WHERE id = :id');
                             $upd->bindValue(':val', $url_value);
                             $upd->bindValue(':id', $row['id']);
                             $upd->execute();
                         } else {
-                            $ins = $db->prepare('INSERT INTO urltranslations (lang, slug_key, slug_value) VALUES (:lang, :key, :val)');
+                            $ins = $db->prepare('INSERT INTO url_translations (lang, slug_key, slug_value) VALUES (:lang, :key, :val)');
                             $ins->bindValue(':lang', $lang);
                             $ins->bindValue(':key', $url_key);
                             $ins->bindValue(':val', $url_value);

@@ -35,11 +35,14 @@ class ThemeManager
 
             // Extract relative path inside the theme folder
             // e.g. /var/www/resources/views/page.php -> views/page.php
-            $searchStr = DIRECTORY_SEPARATOR . trim($themeDir, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
-            $pos = strpos($__tm_view_path, $searchStr);
+            $searchStr = trim($themeDir, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+            $pos = strpos($__tm_view_path, DIRECTORY_SEPARATOR . $searchStr);
             if ($pos !== false) {
-                $dirLen = strlen($searchStr);
+                $dirLen = strlen(DIRECTORY_SEPARATOR . $searchStr);
                 $relativePath = substr($__tm_view_path, $pos + $dirLen);
+            } elseif (strpos($__tm_view_path, $searchStr) === 0) {
+                $dirLen = strlen($searchStr);
+                $relativePath = substr($__tm_view_path, $dirLen);
             } else {
                 $relativePath = basename($__tm_view_path);
             }

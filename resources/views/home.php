@@ -19,7 +19,7 @@
         }
         
         if (file_exists($introFile)) {
-            echo '<div class="introduction" style="margin-left: 2em; margin-bottom: 5em;">';
+            echo '<div class="introduction" style="margin-left: 2em;">';
             $processor = new \Indieinabox\Markdown\ContentProcessor();
             $rawIntro = file_get_contents($introFile);
             $cleanIntro = $processor->removeYamlFrontMatter($rawIntro);

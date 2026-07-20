@@ -402,8 +402,18 @@ class ConfigHandler
                     continue;
                 }
 
+                $contentDirData = $data['content_dir'] ?? '';
+                $cleanContentDir = [];
+                if (is_array($contentDirData)) {
+                    foreach ($contentDirData as $langCode => $dirName) {
+                        $cleanContentDir[trim($langCode)] = trim($dirName);
+                    }
+                } else {
+                    $cleanContentDir = trim((string)$contentDirData);
+                }
+
                 $newKinds[$k] = [
-                    'content_dir' => trim($data['content_dir'] ?? ''),
+                    'content_dir' => $cleanContentDir,
                     'title' => $data['title'] ?? [],
                     'palette' => [
                         'bg' => trim($data['palette']['bg'] ?? '#ffffff'),
@@ -418,11 +428,13 @@ class ConfigHandler
             
             if (empty($newKinds)) {
                 $defaultKindTitle = [];
+                $defaultContentDir = [];
                 foreach ($langs as $l) {
                     $defaultKindTitle[$l] = 'Articles';
+                    $defaultContentDir[$l] = 'articles';
                 }
                 $newKinds['article'] = [
-                    'content_dir' => 'articles',
+                    'content_dir' => $defaultContentDir,
                     'title' => $defaultKindTitle,
                     'palette' => [
                         'bg' => '#ffffff',
@@ -439,12 +451,14 @@ class ConfigHandler
 
         if (empty($currentConfig['kinds'])) {
             $defaultKindTitle = [];
+            $defaultContentDir = [];
             foreach ($langs as $l) {
                 $defaultKindTitle[$l] = 'Articles';
+                $defaultContentDir[$l] = 'articles';
             }
             $currentConfig['kinds'] = [
                 'article' => [
-                    'content_dir' => 'articles',
+                    'content_dir' => $defaultContentDir,
                     'title' => $defaultKindTitle,
                     'palette' => [
                         'bg' => '#ffffff',
@@ -512,6 +526,22 @@ class ConfigHandler
                         foreach ($addedLangs as $nl) {
                             if (!isset($kindData['title'][$nl]) || $kindData['title'][$nl] === '') {
                                 $kindData['title'][$nl] = $kindData['title'][$defaultOldLang] ?? ucfirst($k);
+                            }
+                        }
+                    }
+                    if (isset($kindData['content_dir'])) {
+                        if (is_string($kindData['content_dir'])) {
+                            $baseDir = $kindData['content_dir'];
+                            $kindData['content_dir'] = [];
+                            foreach ($currentConfig['lang'] as $l) {
+                                $kindData['content_dir'][$l] = $baseDir;
+                            }
+                        }
+                        if (is_array($kindData['content_dir'])) {
+                            foreach ($addedLangs as $nl) {
+                                if (!isset($kindData['content_dir'][$nl]) || $kindData['content_dir'][$nl] === '') {
+                                    $kindData['content_dir'][$nl] = $kindData['content_dir'][$defaultOldLang] ?? $k;
+                                }
                             }
                         }
                     }
@@ -1397,9 +1427,9 @@ class ConfigHandler
                                 <button type="submit" name="remove_kind" value="<?= htmlspecialchars($k) ?>" class="btn-secondary" style="margin: 0; padding: 4px 8px; font-size: 0.8rem;">Remove</button>
                             </h3>
                             <div class="grid-2">
-                                <div class="form-group">
+                                <div class="form-group" style="display:none;">
                                     <label>Content Directory</label>
-                                    <input type="text" name="kinds[<?= htmlspecialchars($k) ?>][content_dir]" value="<?= htmlspecialchars($data['content_dir'] ?? '') ?>">
+                                    <input type="hidden" name="kinds[<?= htmlspecialchars($k) ?>][content_dir_legacy]" value="<?= htmlspecialchars(is_string($data['content_dir'] ?? '') ? $data['content_dir'] : '') ?>">
                                 </div>
                                 <div class="form-group">
                                     <label>Display Mode</label>
@@ -1442,9 +1472,9 @@ class ConfigHandler
                                 <label>Kind ID (e.g. video)</label>
                                 <input type="text" name="kinds[__new__][key]" placeholder="video">
                             </div>
-                            <div class="form-group">
+                            <div class="form-group" style="display:none;">
                                 <label>Content Directory</label>
-                                <input type="text" name="kinds[__new__][content_dir]" placeholder="videos">
+                                <input type="hidden" name="kinds[__new__][content_dir_legacy]" placeholder="videos">
                             </div>
                         </div>
                         <div class="form-group">
@@ -1459,9 +1489,12 @@ class ConfigHandler
                             <label>Translations</label>
                             <div class="grid-2">
                                 <?php foreach ($langArr as $l): ?>
-                                <div class="color-picker" style="margin-bottom: 5px;">
-                                    <span style="width: 50px;"><?= htmlspecialchars($l) ?></span>
-                                    <input type="text" name="kinds[__new__][title][<?= htmlspecialchars($l) ?>]">
+                                <div class="color-picker" style="margin-bottom: 5px; flex-direction: column; align-items: flex-start;">
+                                    <strong><?= htmlspecialchars($l) ?></strong>
+                                    <label style="font-size: 0.85rem;">Title:</label>
+                                    <input type="text" name="kinds[__new__][title][<?= htmlspecialchars($l) ?>]" style="margin-bottom: 5px;">
+                                    <label style="font-size: 0.85rem;">Directory Path:</label>
+                                    <input type="text" name="kinds[__new__][content_dir][<?= htmlspecialchars($l) ?>]" placeholder="e.g. videos">
                                 </div>
                                 <?php endforeach; ?>
                             </div>
@@ -1616,9 +1649,12 @@ class ConfigHandler
                             <label><?= htmlspecialchars(ucfirst($k)) ?> Translations</label>
                             <div class="grid-2">
                                 <?php foreach ($langArr as $l): ?>
-                                <div class="color-picker" style="margin-bottom: 5px;">
-                                    <span style="width: 50px;"><?= htmlspecialchars($l) ?></span>
+                                <div class="color-picker" style="margin-bottom: 10px; flex-direction: column; align-items: flex-start;">
+                                    <strong><?= htmlspecialchars($l) ?></strong>
+                                    <label style="font-size: 0.85rem; margin-top: 5px;">Title:</label>
                                     <input type="text" name="kinds[<?= htmlspecialchars($k) ?>][title][<?= htmlspecialchars($l) ?>]" value="<?= htmlspecialchars($data['title'][$l] ?? '') ?>">
+                                    <label style="font-size: 0.85rem; margin-top: 5px;">Directory Path:</label>
+                                    <input type="text" name="kinds[<?= htmlspecialchars($k) ?>][content_dir][<?= htmlspecialchars($l) ?>]" value="<?= htmlspecialchars(is_array($data['content_dir'] ?? null) ? ($data['content_dir'][$l] ?? '') : ($data['content_dir'] ?? '')) ?>">
                                 </div>
                                 <?php endforeach; ?>
                             </div>

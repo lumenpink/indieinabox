@@ -206,37 +206,20 @@ class Helper
             return $kind;
         }
 
-        // 1. If content_dir is defined as an array mapped by language, use that
-        if (isset($config['content_dir']) && is_array($config['content_dir'])) {
-            $folder = $config['content_dir'][$lang] ?? reset($config['content_dir']);
-            if ($folder) {
-                return self::slugize((string)$folder);
+        // Use content_dir if defined
+        if (isset($config['content_dir'])) {
+            if (is_array($config['content_dir'])) {
+                $folder = $config['content_dir'][$lang] ?? reset($config['content_dir']);
+                if ($folder) {
+                    return self::slugize((string)$folder);
+                }
+            } else {
+                return self::slugize((string)$config['content_dir']);
             }
         }
 
-        // 2. Otherwise, check if we have a title translation for this language
-        if (!empty($config['title']) && is_array($config['title'])) {
-            if (isset($config['title'][$lang])) {
-                return self::slugize((string)$config['title'][$lang]);
-            }
-            // Fallback to defaultlang or first title
-            global $site;
-            $defaultLang = $site->localization->defaultLang ?? 'en';
-            if (isset($config['title'][$defaultLang])) {
-                return self::slugize((string)$config['title'][$defaultLang]);
-            }
-            if (isset($config['title']['en'])) {
-                return self::slugize((string)$config['title']['en']);
-            }
-            $first = reset($config['title']);
-            if ($first) {
-                return self::slugize((string)$first);
-            }
-        }
-
-        // 3. Fallback to kind's content_dir if it's a string, or the kind itself
-        $contentDir = $config['content_dir'] ?? $kind;
-        return self::slugize((string)$contentDir);
+        // Fallback to the kind itself
+        return self::slugize($kind);
     }
 
     /**

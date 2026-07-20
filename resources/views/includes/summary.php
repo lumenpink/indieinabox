@@ -68,19 +68,43 @@ $_kindLabel = \Indieinabox\Helper::kindLabel($page->kind);
         $content = preg_replace('/src="([^"]+)\.gif"/', 'src="$1_global.gif"', (string)$content);
         
         $kindConf = \Indieinabox\Helper::getKindConfig($page->kind);
-        if (isset($kindConf['has_title']) && !$kindConf['has_title']) {
+        $hasTitle = $kindConf['has_title'] ?? true;
+        
+        $hasExcerpt = !empty($page->metadata->excerpt);
+        $dontExcerpt = !empty($page->metadata->dont_excerpt);
+        
+        $readMoreLink = ' <a href="' . $page->relpath . ltrim($page->slug, '/') . '" class="u-url">' . \Indieinabox\Helper::translate('Read more') . '</a>';
+        
+        if ($dontExcerpt) {
+            echo $content;
+        } elseif ($hasExcerpt) {
+            echo '<p>' . nl2br(htmlspecialchars($page->metadata->excerpt)) . '...' . $readMoreLink . '</p>';
+        } else {
             $text = strip_tags($content);
-            $snippet = mb_strlen($text) > 200 ? mb_substr($text, 0, 200) . '...' : $text;
+            $words = preg_split('/\s+/', trim($text), -1, PREG_SPLIT_NO_EMPTY);
             
-            $thumb = '';
-            if (preg_match('/<img[^>]+src="([^"]+_global\.gif)"/i', $content, $matches)) {
-                $thumbSrc = str_replace('_global.gif', '_thumb.gif', $matches[1]);
-                $thumb = '<img src="' . htmlspecialchars($thumbSrc) . '" alt="Thumbnail" style="max-width:100px; float:left; margin-right:1em;">';
+            if (count($words) > 55) {
+                $snippet = implode(' ', array_slice($words, 0, 55)) . '...';
+                $needsReadMore = true;
+            } else {
+                $snippet = $text;
+                $needsReadMore = false;
             }
             
-            echo $thumb . '<p style="margin:0;">' . htmlspecialchars(trim($snippet)) . '</p><div style="clear:both;"></div>';
-        } else {
-            echo $content;
+            if (!$hasTitle) {
+                $thumb = '';
+                if (preg_match('/<img[^>]+src="([^"]+_global\.gif)"/i', $content, $matches)) {
+                    $thumbSrc = str_replace('_global.gif', '_thumb.gif', $matches[1]);
+                    $thumb = '<img src="' . htmlspecialchars($thumbSrc) . '" alt="Thumbnail" style="max-width:100px; float:left; margin-right:1em;">';
+                }
+                echo $thumb . '<p style="margin:0;">' . htmlspecialchars(trim($snippet)) . ($needsReadMore ? $readMoreLink : '') . '</p><div style="clear:both;"></div>';
+            } else {
+                if ($needsReadMore) {
+                    echo '<p>' . htmlspecialchars(trim($snippet)) . $readMoreLink . '</p>';
+                } else {
+                    echo $content;
+                }
+            }
         }
         ?>
     </div>

@@ -21,6 +21,8 @@ Markdown files in IndieinaBox can include a YAML front-matter block at the top o
   - `"revised"`: Displays a warning that the content was translated by AI but revised by a human.
   - `false` (or omitted): No warning is displayed.
 - **`hide_on_rss`** (boolean|string): Set to `true` or `"yes"` to exclude this page from the RSS and Atom feeds.
+- **`excerpt`** (string): If provided, this text will be used as the summary of the post instead of the full content, followed by a "...read more" link.
+- **`dont_excerpt`** (boolean): Set to `true` to disable automatic truncation of long posts (55 words limit) in the summary lists.
 
 ## Menu Tags
 

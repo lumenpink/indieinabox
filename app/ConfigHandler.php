@@ -1585,7 +1585,8 @@ class ConfigHandler
                         'Read' => 'IndieWeb context prefix',
                         'Listened to' => 'IndieWeb context prefix',
                         'This page was automatically translated by AI.' => 'AI translation notice',
-                        'This page was automatically translated by AI and revised by a human.' => 'AI translation notice (revised)'
+                        'This page was automatically translated by AI and revised by a human.' => 'AI translation notice (revised)',
+                        'Read more' => 'Read more link'
                     ];
                     foreach ($globalStrings as $origText => $desc):
                     ?>

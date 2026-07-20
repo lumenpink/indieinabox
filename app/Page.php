@@ -251,7 +251,7 @@ class Page
      */
     public static function fromArray(array $data): self
     {
-        if (isset($data['kind']) && $data['kind'] === 'garden') {
+        if (isset($data['kind']) && in_array($data['kind'], ['garden', 'jardim'], true)) {
             $data['flowerbed'] = isset($data['flowerbed']) ? (array) $data['flowerbed'] : ['general'];
             $data['confidence'] = $data['confidence'] ?? 'possible';
             $data['maturity'] = $data['maturity'] ?? 'sprout';

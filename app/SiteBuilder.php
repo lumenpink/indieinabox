@@ -526,6 +526,9 @@ class SiteBuilder
                 $this->compileSectionIndexes($kind, $pagesForKind);
             }
         }
+        
+        $this->compileTaxonomyIndexes('tag', 'tags', $this->pages);
+        $this->compileTaxonomyIndexes('flowerbed', 'flowerbed', $this->pages);
     }
 
     /**
@@ -1667,6 +1670,121 @@ class SiteBuilder
                 $this->createHTMLFile($indexPage);
                 $this->createGeminiFile($indexPage);
                 $this->createGopherFile($indexPage);
+        }
+    }
+    
+    /**
+     * Compiles index pages for a taxonomy (e.g. tags or flowerbeds).
+     *
+     * @param string $taxonomyName The internal slug (e.g. 'tag', 'flowerbed')
+     * @param string $taxonomyKey The metadata key (e.g. 'tags', 'flowerbed')
+     * @param iterable $pages
+     */
+    private function compileTaxonomyIndexes(string $taxonomyName, string $taxonomyKey, iterable $pages): void
+    {
+        $grouped = [];
+        foreach ($pages as $p) {
+            if (($p->filepath && basename($p->filepath) === 'intro.md') || in_array('draft', $p->metadata->tags)) {
+                continue;
+            }
+
+            $lang = $p->lang ?? 'en';
+            $terms = $p->metadata->{$taxonomyKey} ?? [];
+            if (!is_array($terms)) {
+                $terms = [$terms];
+            }
+
+            foreach ($terms as $term) {
+                if (empty(trim($term))) continue;
+                $grouped[$lang][$term][] = $p;
+            }
+        }
+
+        $base = $this->site->paths->baseDir;
+        $themeDir = $this->site->paths->themeDir ?? 'theme';
+        $summaryFile = $base . DIRECTORY_SEPARATOR . $themeDir . DIRECTORY_SEPARATOR . "views"
+            . DIRECTORY_SEPARATOR . "includes" . DIRECTORY_SEPARATOR . "summary.php";
+
+        foreach ($grouped as $lang => $terms) {
+            uksort($terms, 'strcasecmp');
+            
+            $globalContent = "<ul>\n";
+            $globalRaw = "";
+
+            foreach ($terms as $term => $termPages) {
+                usort($termPages, function ($a, $b) {
+                    return $b->date->getTimestamp() <=> $a->date->getTimestamp();
+                });
+
+                $termSlug = ($lang === $this->site->localization->defaultLang ? '' : $lang . '/')
+                    . $taxonomyName . '/' . \Indieinabox\Helper::slugize($term) . '/';
+                
+                $count = count($termPages);
+                $globalContent .= '<li><a href="/' . $termSlug . '">' . htmlspecialchars($term) . '</a> (' . $count . ')</li>' . "\n";
+                $globalRaw .= "=> /" . $termSlug . " " . $term . " (" . $count . ")\n";
+                
+                $termTitleBase = \Indieinabox\Helper::translate(ucfirst($taxonomyName)) . ': ' . $term;
+                
+                $termPage = Page::fromArray([
+                    'title' => $termTitleBase,
+                    'layout' => 'index_page',
+                    'slug' => $termSlug,
+                    'date' => time(),
+                    'content' => '',
+                    'rawBody' => '',
+                    'lang' => $lang,
+                    'kind' => 'generic'
+                ]);
+
+                $termContent = '';
+                $termRaw = '';
+                foreach ($termPages as $idx => $p) {
+                    if ($idx > 0) {
+                        $termContent .= "\n<hr class=\"divisor-bloco\">\n";
+                        $termRaw .= "\n\n---\n\n";
+                    }
+
+                    if (file_exists($summaryFile)) {
+                        ob_start();
+                        global $site;
+                        $site = $this->site;
+                        $page = clone $p;
+                        $page->relpath = $termPage->relpath;
+                        ThemeManager::loadView($summaryFile, get_defined_vars());
+                        $termContent .= ob_get_clean();
+                    } else {
+                        $termContent .= $p->content;
+                    }
+                    $termRaw .= $p->rawBody;
+                }
+
+                $termPage->content->content = $termContent;
+                $termPage->content->rawBody = $termRaw;
+
+                $this->createHTMLFile($termPage);
+                $this->createGeminiFile($termPage);
+                $this->createGopherFile($termPage);
+            }
+            
+            $globalContent .= "</ul>\n";
+            
+            $globalTitleBase = \Indieinabox\Helper::translate(ucfirst($taxonomyName) . 's');
+            $globalSlug = ($lang === $this->site->localization->defaultLang ? '' : $lang . '/')
+                . $taxonomyName . '/';
+            $globalPage = Page::fromArray([
+                'title' => $globalTitleBase,
+                'layout' => 'page',
+                'slug' => $globalSlug,
+                'date' => time(),
+                'content' => $globalContent,
+                'rawBody' => $globalRaw,
+                'lang' => $lang,
+                'kind' => 'generic'
+            ]);
+            
+            $this->createHTMLFile($globalPage);
+            $this->createGeminiFile($globalPage);
+            $this->createGopherFile($globalPage);
         }
     }
     

@@ -75,7 +75,7 @@ class ThemeHelper
         if (!empty($page->tags)) {
             $html .= '<div class="meta-line-3" style="margin-left: 0.6em;">';
             foreach ($page->tags as $tag) {
-                $html .= '<a href="' . $page->relpath . 'tag/' . $tag . '/" class="p-category">#' . htmlspecialchars($tag) . '</a>&#32;';
+                $html .= '<a href="' . $page->relpath . 'tag/' . Helper::slugize($tag) . '/" class="p-category">#' . htmlspecialchars($tag) . '</a>&#32;';
             }
             $html .= '</div>';
         }
@@ -87,9 +87,12 @@ class ThemeHelper
             $maturity = $page->metadata->maturity ?? 'sprout';
             $importance = $page->metadata->importance ?? 'trivial';
             
-            $translatedFlowerbed = array_map(function($fb) { return Helper::translate($fb); }, $flowerbed);
+            $flowerbedLinks = [];
+            foreach ($flowerbed as $fb) {
+                $flowerbedLinks[] = '<a href="' . $page->relpath . 'flowerbed/' . Helper::slugize($fb) . '/">' . htmlspecialchars(Helper::translate($fb)) . '</a>';
+            }
             $html .= '<div class="meta-garden-fields" style="margin-left: 0.6em;">';
-            $html .= ' • ' . Helper::translate('Flowerbed') . ': ' . htmlspecialchars(implode(', ', $translatedFlowerbed)) . '<br>';
+            $html .= ' • ' . Helper::translate('Flowerbed') . ': ' . implode(', ', $flowerbedLinks) . '<br>';
             $html .= ' • ' . Helper::translate('Confidence') . ': ' . htmlspecialchars(Helper::translate($confidence)) . '<br>';
             $html .= ' • ' . Helper::translate('Maturity') . ': ' . htmlspecialchars(Helper::translate($maturity)) . '<br>';
             $html .= ' • ' . Helper::translate('Importance') . ': ' . htmlspecialchars(Helper::translate($importance));

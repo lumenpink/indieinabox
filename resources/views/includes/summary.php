@@ -80,7 +80,7 @@ $_kindLabel = \Indieinabox\Helper::kindLabel($page->kind);
         } elseif ($hasExcerpt) {
             echo '<p>' . nl2br(htmlspecialchars($page->metadata->excerpt)) . '...' . $readMoreLink . '</p>';
         } else {
-            $text = strip_tags($content);
+            $text = html_entity_decode(strip_tags($content), ENT_QUOTES | ENT_HTML5, 'UTF-8');
             $words = preg_split('/\s+/', trim($text), -1, PREG_SPLIT_NO_EMPTY);
             
             if (count($words) > 55) {

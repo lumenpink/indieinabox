@@ -1586,7 +1586,21 @@ class ConfigHandler
                         'Listened to' => 'IndieWeb context prefix',
                         'This page was automatically translated by AI.' => 'AI translation notice',
                         'This page was automatically translated by AI and revised by a human.' => 'AI translation notice (revised)',
-                        'Read more' => 'Read more link'
+                        'Read more' => 'Read more link',
+                        'general' => 'Default flowerbed',
+                        'sprout' => 'Maturity level',
+                        'seedling' => 'Maturity level',
+                        'budding' => 'Maturity level',
+                        'evergreen' => 'Maturity level',
+                        'possible' => 'Reliability level',
+                        'certain' => 'Reliability level',
+                        'uncertain' => 'Reliability level',
+                        'trivial' => 'Importance level',
+                        'important' => 'Importance level',
+                        'critical' => 'Importance level',
+                        'Tag' => 'Tag singular label',
+                        'Tags' => 'Tag plural label',
+                        'Flowerbeds' => 'Flowerbed plural label'
                     ];
                     foreach ($globalStrings as $origText => $desc):
                     ?>

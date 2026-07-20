@@ -110,13 +110,6 @@ Method copyStatic
 
 @return bool
 
-### copyLiveJsFile()
-`private function copyLiveJsFile(string $base): void`
-
-Method copyLiveJsFile
-@param string $base
-
-@return void
 
 ### createGeminiFile()
 `private function createGeminiFile(Indieinabox\Page $page): void`

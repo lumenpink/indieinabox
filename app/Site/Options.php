@@ -15,10 +15,7 @@ class Options
      * @var bool
      */
     public bool $buildAll;
-    /**
-     * @var bool
-     */
-    public bool $dev;
+
     /**
      * @var bool
      */
@@ -65,7 +62,6 @@ class Options
      * SiteOptions constructor.
      *
      * @param bool $buildAll
-     * @param bool $dev
      * @param bool $skipStatic
      * @param bool $forceStaticOverride
      * @param string|null $htmlpostprocessing
@@ -76,7 +72,6 @@ class Options
      */
     public function __construct(
         bool $buildAll = true,
-        bool $dev = false,
         bool $skipStatic = false,
         bool $forceStaticOverride = false,
         bool $forceRebuild = false,
@@ -89,7 +84,6 @@ class Options
         string $translation_auto = 'pseudo'
     ) {
         $this->buildAll = $buildAll;
-        $this->dev = $dev;
         $this->skipStatic = $skipStatic;
         $this->forceStaticOverride = $forceStaticOverride;
         $this->forceRebuild = $forceRebuild;

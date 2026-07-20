@@ -97,13 +97,7 @@ PHP
     );
 }
 
-/**
- * Symlinks the live.js file into the sandbox livejs view directory.
- */
-function linkLiveJs(string $sandbox): void
-{
-    file_put_contents($sandbox . '/live.js', 'console.log("live");');
-}
+
 
 /**
  * Sets up vendor/app/bootstrap/data symlinks and copies the build script
@@ -133,7 +127,6 @@ beforeEach(function () use ($sandbox) {
     mkdir($sandbox . '/content', 0777, true);
     mkdir($sandbox . '/resources', 0777, true);
     mkdir($sandbox . '/resources/views', 0777, true);
-    mkdir($sandbox . '/resources/views/livejs', 0777, true);
     mkdir($sandbox . '/resources/static', 0777, true);
 });
 
@@ -186,9 +179,7 @@ file_put_contents(\$base . DIRECTORY_SEPARATOR . \$site->paths->outputDirHtml . 
 PHP
     );
 
-    // 4. Create static asset and live.js symlink
     file_put_contents($sandbox . '/resources/static/app.css', 'body { color: red; }');
-    linkLiveJs($sandbox);
 
     // 5. Setup symlinks to app, bootstrap, data, vendor
     setupSandboxRunner($sandbox);
@@ -230,48 +221,4 @@ PHP
     expect($cssContent)->toContain('body { color: red; }');
 });
 
-it('injects live-reload script when building with -d (dev mode)', function () use ($sandbox, $outputDir) {
-    // 1. Create config.yml
-    writeSandboxConfig($sandbox);
 
-    // 2. Create markdown content
-    file_put_contents($sandbox . '/content/index.md', "---\ntitle: Home Page\nlayout: page\n---\nWelcome home!");
-
-    // 3. Create views with livejs support and live.js symlink
-    file_put_contents($sandbox . '/resources/views/page.php', <<<PHP
-<!DOCTYPE html>
-<html>
-<head>
-    <title><?= \$page->title ?></title>
-    <?php if (\$site->dev): ?>
-        <script src="/js/live.js"></script>
-    <?php endif; ?>
-</head>
-<body>
-    <h1><?= \$page->title ?></h1>
-    <article><?= \$page->content ?></article>
-</body>
-</html>
-PHP
-    );
-    $devScript = '<?php if (isset($site->options->dev) && $site->options->dev): ?><script src="/js/live.js"></script><?php endif; ?>';
-    file_put_contents($sandbox . '/resources/views/home.php', '<head>' . $devScript . '</head><body>Dummy</body>');
-    file_put_contents($sandbox . '/resources/views/page.php', '<head>' . $devScript . '</head><body>Dummy</body>');
-    file_put_contents($sandbox . '/resources/views/index_page.php', '<head>' . $devScript . '</head><body>Dummy</body>');
-    linkLiveJs($sandbox);
-
-    // 4. Setup symlinks to app, bootstrap, data, vendor
-    setupSandboxRunner($sandbox);
-
-    // 5. Run build pipeline with -d (dev mode option)
-    $cmd = 'php ' . escapeshellarg($sandbox . '/build.php') . ' -d';
-    $output = shell_exec($cmd);
-
-    // 6. Verify output
-    expect(is_file($outputDir . '/index.html'))->toBeTrue();
-    expect(is_file($outputDir . '/js/live.js'))->toBeTrue(); // Copied from livejs view
-
-    $indexHtml = file_get_contents($outputDir . '/index.html');
-    // Check live.js injection in <head> tag
-    expect($indexHtml)->toContain('live.js');
-});

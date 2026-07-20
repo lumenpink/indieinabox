@@ -808,44 +808,14 @@ class SiteBuilder
         echo "Copying static files\n";
         ThemeManager::copyStaticFiles($dir, $base, $this->site->paths->outputDirHtml);
 
-        if ($this->site->options->dev) {
-            $this->copyLiveJsFile($base);
-        }
+
 
         return true;
     }
 
 
 
-    /**
-     * Copies the live.js script for live reloading during development.
-     *
-     * @param string $base The base installation directory.
-     * @return void
-     */
-    private function copyLiveJsFile(string $base): void
-    {
-        $themeDir = $this->site->paths->themeDir ?? 'theme';
-        $jsDir = $base . DIRECTORY_SEPARATOR . $this->site->paths->outputDirHtml . DIRECTORY_SEPARATOR . "js";
 
-        if (!is_dir($jsDir)) {
-            mkdir($jsDir, 0777, true);
-        }
-
-        $liveJsFile = \Indieinabox\Database::$dataDir . DIRECTORY_SEPARATOR . 'live.js';
-        if (file_exists($liveJsFile)) {
-            echo "Copying static files: from $liveJsFile to $jsDir/live.js\n";
-            $destFile = $jsDir . "/live.js";
-            $success = copy($liveJsFile, $destFile);
-            if (!$success) {
-                echo "Failed to copy $liveJsFile\n";
-            } else {
-                \Indieinabox\SiteBuilder::addManifest($destFile);
-            }
-        } else {
-            echo "File does not exist (skip copying): $liveJsFile\n";
-        }
-    }
 
     /**
      * Renders a page into the Gemini protocol format (.gmi) and writes it to the gemini output directory.

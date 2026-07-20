@@ -16,7 +16,6 @@ it(
 
         expect($site->options)->toMatchObject([
             'buildAll' => true,
-            'dev' => false,
             'skipStatic' => false,
             'forceStaticOverride' => false
         ]);
@@ -59,7 +58,6 @@ it(
 
         expect($site->options)->toMatchObject([
             'buildAll' => false,
-            'dev' => true,
             'skipStatic' => true,
             'forceStaticOverride' => true
         ]);

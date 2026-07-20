@@ -291,16 +291,7 @@ class ConfigHandler
         }
 
         // --- Booleans ---
-        $currentConfig['dev'] = isset($_POST['dev']);
-        if ($currentConfig['dev']) {
-            $liveJsFile = \Indieinabox\Database::$dataDir . DIRECTORY_SEPARATOR . 'live.js';
-            if (!file_exists($liveJsFile)) {
-                $content = @file_get_contents('https://raw.githubusercontent.com/MartinKool/livejs/master/live.js');
-                if ($content !== false) {
-                    file_put_contents($liveJsFile, $content);
-                }
-            }
-        }
+
         $currentConfig['buildall'] = isset($_POST['buildall']);
         $currentConfig['prettylinks'] = isset($_POST['prettylinks']);
         $currentConfig['activitypub_enabled'] = isset($_POST['activitypub_enabled']);
@@ -735,9 +726,7 @@ class ConfigHandler
         if (isset($config['htmlpostprocessing'])) {
             $newSite->options->htmlpostprocessing = $config['htmlpostprocessing'];
         }
-        if (isset($config['dev'])) {
-            $newSite->options->dev = (bool)$config['dev'];
-        }
+
         if (isset($config['prettylinks'])) {
             $newSite->options->prettylinks = (bool)$config['prettylinks'];
         }
@@ -1365,8 +1354,7 @@ class ConfigHandler
                             <label for="buildall">Build pages without frontmatter</label>
                         </div>
                         <div class="checkbox-group">
-                            <input type="checkbox" name="dev" id="dev" <?= ($config['dev'] ?? false) ? 'checked' : '' ?>>
-                            <label for="dev">Dev mode (live-reload script)</label>
+
                         </div>
                     </div>
                 </fieldset>

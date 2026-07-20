@@ -27,7 +27,7 @@ if (php_sapi_name() === 'cli') {
     }
 }
 // -s - skip the static copy
-// -d - enable dev mode (include live-reload script)
+
 // -f - force static override
 // -a - force rebuild all pages (ignore partials)
 // -M - skip media processing
@@ -57,9 +57,6 @@ if (empty($config['title'])) {
         'defaultlang' => 'en',
         'support' => ['md', 'txt', 'html', 'htm']
     ];
-}
-if (isset($options["d"])) {
-    $config["dev"] = true;
 }
 if (isset($options["s"])) {
     $config["skipstatic"] = true;
@@ -151,9 +148,7 @@ if (isset($config['htmlpostprocessing'])) {
 if (isset($config['prettylinks'])) {
     $site->options->prettylinks = (bool)$config['prettylinks'];
 }
-if (isset($config['dev'])) {
-    $site->options->dev = (bool)$config['dev'];
-}
+
 if (isset($config['skipstatic'])) {
     $site->options->skipStatic = (bool)$config['skipstatic'];
 }

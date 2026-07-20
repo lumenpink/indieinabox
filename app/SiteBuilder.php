@@ -1365,12 +1365,15 @@ class SiteBuilder
         foreach ($this->pages as $p) {
             $pLang = $p->lang ?? $defaultLang;
             
-            $menuVal = $p->metadata->menu ?? 'footer';
+            $menuVal = $p->metadata->menu ?? 'header';
             if ($menuVal === 'hide') {
                 continue;
             }
             
             if ($pLang === $lang && $p->kind === 'page') {
+                if (trim($p->slug, '/') === 'intro' || $p->nick === 'intro') {
+                    continue;
+                }
                 $url = $page->relpath . ltrim($p->slug, '/');
                 $label = $p->title;
                 $order = $p->metadata->menu_order ?? PHP_INT_MAX;

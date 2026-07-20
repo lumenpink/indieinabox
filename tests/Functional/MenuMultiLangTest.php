@@ -102,7 +102,7 @@ test('pages in non-default language appear in the localized menu by default', fu
     
     expect($ptPage)->not->toBeNull();
     
-    $links = $method->invoke($builder, $ptPage)['footer'];
+    $links = $method->invoke($builder, $ptPage)['header'];
     
     expect(count($links))->toBe(1);
     expect($links[0]['label'])->toBe('Visivel');
@@ -134,7 +134,7 @@ test('menu links for non-default language are ordered by menu_order then alphabe
         }
     }
     
-    $links = $method->invoke($builder, $ptPage)['footer'];
+    $links = $method->invoke($builder, $ptPage)['header'];
     
     expect(count($links))->toBe(4);
     

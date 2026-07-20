@@ -102,10 +102,7 @@ PHP
  */
 function linkLiveJs(string $sandbox): void
 {
-    symlink(
-        dirname(dirname(__DIR__)) . '/resources/views/livejs/live.js',
-        $sandbox . '/resources/views/livejs/live.js'
-    );
+    file_put_contents($sandbox . '/live.js', 'console.log("live");');
 }
 
 /**

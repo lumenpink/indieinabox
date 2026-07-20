@@ -318,20 +318,20 @@ jobs:
             curl -s -X DELETE -H "Authorization: token $GITHUB_TOKEN" "$API_URL/repos/$REPO/releases/$REL_ID"
           fi
 
-      - name: Create or Update Nightly Release
-        uses: https://github.com/softprops/action-gh-release@v2
-        with:
-          tag_name: "nightly"
-          name: "Nightly Build"
-          prerelease: true
-          files: index.php
-          body: "Automatic nightly build from main."
-
       - name: Create Dated Nightly Release
         uses: https://github.com/softprops/action-gh-release@v2
         with:
           tag_name: "${{ steps.date.outputs.DATED_TAG }}"
           name: "Nightly Build (${{ steps.date.outputs.DATED_TAG }})"
+          prerelease: true
+          files: index.php
+          body: "Automatic nightly build from main."
+
+      - name: Create or Update Nightly Release
+        uses: https://github.com/softprops/action-gh-release@v2
+        with:
+          tag_name: "nightly"
+          name: "Nightly Build"
           prerelease: true
           files: index.php
           body: "Automatic nightly build from main."

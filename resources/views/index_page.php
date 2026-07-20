@@ -60,51 +60,7 @@
                         <ul style="list-style-type: none; padding-left: 20px; margin-top: 0.5em;">
                             <?php foreach ($list as $p): ?>
                                 <li style="margin-bottom: 0.5em;">
-                                    <?php 
-                                        $displayMode = \Indieinabox\Helper::getKindConfig($p->kind)['display_mode'] ?? 'default';
-                                    ?>
-                                    <?php if ($displayMode === 'full_content'): ?>
-                                        <div style="margin-bottom: 1em;">
-                                            <div style="font-size:0.85em; opacity:0.75; margin-bottom: 0.5em;">=&gt; <a href="<?= $page->relpath ?><?= ltrim($p->slug, '/') ?>"><?= $p->localizeddate ?></a></div>
-                                            <div style="border-left: 2px solid var(--fg); padding-left: 10px; margin-left: 10px;">
-                                                <?php 
-                                                    $content = $p->content;
-                                                    $content = preg_replace('/src="([^"]+)\.gif"/', 'src="$1_global.gif"', (string)$content);
-                                                    echo $content;
-                                                ?>
-                                            </div>
-                                            <?php \Indieinabox\ThemeManager::includeView('includes/interactions.php', get_defined_vars()); ?>
-                                        </div>
-                                    <?php elseif ($displayMode === 'thumbnail_snippet'): ?>
-                                        <div style="margin-bottom: 1em; display: flex; align-items: flex-start; gap: 15px;">
-                                            <?php
-                                                $thumbSrc = '';
-                                                if (preg_match('/src="([^"]+)\.gif"/', $p->content, $matches)) {
-                                                    $thumbSrc = $matches[1] . '_thumb.gif';
-                                                }
-                                                $snippet = strip_tags($p->content);
-                                                $snippet = trim(preg_replace('/\s+/', ' ', $snippet));
-                                                if (mb_strlen($snippet) > 100) {
-                                                    $snippet = mb_substr($snippet, 0, 97) . '...';
-                                                }
-                                            ?>
-                                            <?php if ($thumbSrc): ?>
-                                                <a href="<?= $page->relpath ?><?= ltrim($p->slug, '/') ?>">
-                                                    <img src="<?= $thumbSrc ?>" alt="Thumbnail" style="width: 64px; height: 64px; object-fit: cover; border-radius: 4px; margin: 0;">
-                                                </a>
-                                            <?php else: ?>
-                                                <div style="width: 64px; height: 64px; background: rgba(0,0,0,0.05); border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.8em; opacity: 0.5;">img</div>
-                                            <?php endif; ?>
-                                            <div>
-                                                <a href="<?= $page->relpath ?><?= ltrim($p->slug, '/') ?>" style="font-weight: bold; text-decoration: none;"><?= $p->localizeddate ?></a>
-                                                <p style="margin: 0.2em 0 0 0; font-size: 0.9em; opacity: 0.9;"><?= $snippet ?></p>
-                                                <?php \Indieinabox\ThemeManager::includeView('includes/interactions.php', get_defined_vars()); ?>
-                                            </div>
-                                        </div>
-                                    <?php else: ?>
-                                        =&gt; <a href="<?= $page->relpath ?><?= ltrim($p->slug, '/') ?>"><?= htmlspecialchars($p->title) ?></a>
-                                        <span style="font-size:0.85em; opacity:0.75;">(<?= $p->localizeddate ?>)</span>
-                                    <?php endif; ?>
+                                    <?= \Indieinabox\Theme\ThemeHelper::renderPostSnippet($page, $p) ?>
                                 </li>
                             <?php endforeach; ?>
                         </ul>

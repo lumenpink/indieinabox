@@ -253,4 +253,58 @@ class ThemeHelper
         $html .= '</div>';
         return $html;
     }
+
+    /**
+     * Renders a post snippet for list views (like indices and taxonomies).
+     *
+     * @param Page $contextPage The page where this list is being rendered (for relative paths).
+     * @param Page $post The post being rendered.
+     * @return string
+     */
+    public static function renderPostSnippet(Page $contextPage, Page $post): string
+    {
+        $displayMode = Helper::getKindConfig($post->kind)['display_mode'] ?? 'default';
+        $html = '';
+
+        if ($displayMode === 'full_content') {
+            $html .= '<div style="margin-bottom: 1em;">';
+            $html .= '<div style="font-size:0.85em; opacity:0.75; margin-bottom: 0.5em;">=&gt; <a href="' . $contextPage->relpath . ltrim($post->slug, '/') . '">' . $post->localizeddate . '</a></div>';
+            $html .= '<div style="border-left: 2px solid var(--fg); padding-left: 10px; margin-left: 10px;">';
+            $content = preg_replace('/src="([^"]+)\.gif"/', 'src="$1_global.gif"', (string)$post->content);
+            $html .= $content;
+            $html .= '</div>';
+            $html .= self::getInteractionsHtml($post);
+            $html .= '</div>';
+        } elseif ($displayMode === 'thumbnail_snippet') {
+            $html .= '<div style="margin-bottom: 1em; display: flex; align-items: flex-start; gap: 15px;">';
+            $thumbSrc = '';
+            if (preg_match('/src="([^"]+)\.gif"/', (string)$post->content, $matches)) {
+                $thumbSrc = $matches[1] . '_thumb.gif';
+            }
+            $snippet = strip_tags((string)$post->content);
+            $snippet = trim(preg_replace('/\s+/', ' ', $snippet));
+            if (mb_strlen($snippet) > 100) {
+                $snippet = mb_substr($snippet, 0, 97) . '...';
+            }
+            
+            if ($thumbSrc) {
+                $html .= '<a href="' . $contextPage->relpath . ltrim($post->slug, '/') . '">';
+                $html .= '<img src="' . htmlspecialchars($thumbSrc) . '" alt="Thumbnail" style="width: 64px; height: 64px; object-fit: cover; border-radius: 4px; margin: 0;">';
+                $html .= '</a>';
+            } else {
+                $html .= '<div style="width: 64px; height: 64px; background: rgba(0,0,0,0.05); border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.8em; opacity: 0.5;">img</div>';
+            }
+            
+            $html .= '<div>';
+            $html .= '<a href="' . $contextPage->relpath . ltrim($post->slug, '/') . '" style="font-weight: bold; text-decoration: none;">' . $post->localizeddate . '</a>';
+            $html .= '<p style="margin: 0.2em 0 0 0; font-size: 0.9em; opacity: 0.9;">' . htmlspecialchars($snippet) . '</p>';
+            $html .= self::getInteractionsHtml($post);
+            $html .= '</div></div>';
+        } else {
+            $html .= '=&gt; <a href="' . $contextPage->relpath . ltrim($post->slug, '/') . '">' . htmlspecialchars($post->title) . '</a> ';
+            $html .= '<span style="font-size:0.85em; opacity:0.75;">(' . $post->localizeddate . ')</span>';
+        }
+
+        return $html;
+    }
 }

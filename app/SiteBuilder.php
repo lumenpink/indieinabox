@@ -1740,27 +1740,19 @@ class SiteBuilder
                     'kind' => 'generic'
                 ]);
 
-                $termContent = '';
+                $termContent = '<ul style="list-style-type: none; padding-left: 0;">' . "\n";
                 $termRaw = '';
                 foreach ($termPages as $idx => $p) {
+                    $termContent .= '<li style="margin-bottom: 1.5em;">' . "\n";
+                    $termContent .= \Indieinabox\Theme\ThemeHelper::renderPostSnippet($termPage, $p);
+                    $termContent .= '</li>' . "\n";
+                    
                     if ($idx > 0) {
-                        $termContent .= "\n<hr class=\"divisor-bloco\">\n";
                         $termRaw .= "\n\n---\n\n";
-                    }
-
-                    if (file_exists($summaryFile)) {
-                        ob_start();
-                        global $site;
-                        $site = $this->site;
-                        $page = clone $p;
-                        $page->relpath = $termPage->relpath;
-                        ThemeManager::loadView($summaryFile, get_defined_vars());
-                        $termContent .= ob_get_clean();
-                    } else {
-                        $termContent .= $p->content;
                     }
                     $termRaw .= $p->rawBody;
                 }
+                $termContent .= "</ul>\n";
 
                 $termPage->content->content = $termContent;
                 $termPage->content->rawBody = $termRaw;

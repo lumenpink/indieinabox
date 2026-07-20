@@ -34,3 +34,14 @@ When rendering a specific kind, the template engine automatically looks for `res
 
 - **Snippets & Thumbnails**: For kinds lacking a title (`has_title = false`), `summary.php` extracts the first ~200 characters of plaintext to act as a summary, and detects any dithered image (`_global.gif`) to swap for its thumbnail (`_thumb.gif`).
 - **IndieWeb Context**: The `resources/views/page.php` layout automatically injects context metadata (e.g., `in_reply_to`, `bookmark_of`) at the top of the post to provide native semantic HTML (`u-in-reply-to`, etc.) for webmention consumers.
+
+## Metapages and Wikilinks
+
+When authoring posts with wikilinks (`[[target]]`), the system searches all pages in the current language by their title, slug, or nickname. 
+If you want to intentionally link to a **metapage** (such as the main index of a kind, or the site home), prefix the link with a `%`. The target following the `%` must strictly be the internal Kind ID (e.g., `garden`, `article`) or `index`/`home`.
+
+Examples:
+- `[[%index]]`: Links to the site homepage.
+- `[[%garden]]`: Links to the directory listing of the "Garden" kind.
+
+This approach guarantees that linking to an internal kind's index will never collide with a user-created post of the same title (e.g. creating a post titled "Garden").

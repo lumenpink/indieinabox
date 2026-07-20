@@ -155,31 +155,54 @@ class HtmlRenderer implements RendererInterface
 
         if ($node instanceof WikilinkNode) {
             $target = trim($node->target);
-            $slugTarget = \Indieinabox\Helper::slugize($target);
             
             global $pages, $site;
             $foundPage = null;
             $currentPageLang = $this->page ? ($this->page->lang ?? 'en') : 'en';
+            
+            $relpath = $this->page ? $this->page->relpath : './';
+            $defaultLang = $site->localization->defaultLang ?? 'en';
+            $langPrefix = ($currentPageLang !== $defaultLang) ? $currentPageLang . '/' : '';
+            
+            $isMeta = false;
+            $url = '';
 
-            if (isset($pages) && ($pages instanceof \Indieinabox\Pages || is_iterable($pages))) {
-                // Try to find in the same language first
-                foreach ($pages as $p) {
-                    $pLang = $p->lang ?? 'en';
-                    if ($pLang !== $currentPageLang) continue;
-                    
-                    $pTitle = \Indieinabox\Helper::slugize($p->title ?? '');
-                    $pSlug = \Indieinabox\Helper::slugize(basename($p->slug ?? ''));
-                    $pNick = \Indieinabox\Helper::slugize($p->nick ?? '');
-                    
-                    if ($slugTarget === $pTitle || $slugTarget === $pSlug || $slugTarget === $pNick) {
-                        $foundPage = $p;
-                        break;
+            // Check if it is explicitly marked as a metapage link using '%'
+            if (str_starts_with($target, '%')) {
+                $isMeta = true;
+                $metaKey = \Indieinabox\Helper::slugize(substr($target, 1)); // e.g. 'garden' or 'index'
+                
+                if ($metaKey === 'index' || $metaKey === 'home') {
+                    $url = $relpath . $langPrefix;
+                } else {
+                    $matchedKind = null;
+                    if (!empty($site->config['kinds'])) {
+                        foreach ($site->config['kinds'] as $k => $kindData) {
+                            if ($metaKey === \Indieinabox\Helper::slugize($k)) {
+                                $matchedKind = $k;
+                                break;
+                            }
+                        }
+                    }
+                    if ($matchedKind) {
+                        $folder = \Indieinabox\Helper::getKindFolder($matchedKind, $currentPageLang);
+                        $url = $relpath . $langPrefix . ltrim($folder . '/', '/');
+                    } else {
+                        // Invalid metapage key
+                        $url = $relpath . $langPrefix . $metaKey . '/';
+                        $isMeta = false; // Mark as missing
                     }
                 }
+            } else {
+                // Normal page link
+                $slugTarget = \Indieinabox\Helper::slugize($target);
                 
-                // If not found, try any language
-                if (!$foundPage) {
+                if (isset($pages) && ($pages instanceof \Indieinabox\Pages || is_iterable($pages))) {
+                    // Try to find in the same language first
                     foreach ($pages as $p) {
+                        $pLang = $p->lang ?? 'en';
+                        if ($pLang !== $currentPageLang) continue;
+                        
                         $pTitle = \Indieinabox\Helper::slugize($p->title ?? '');
                         $pSlug = \Indieinabox\Helper::slugize(basename($p->slug ?? ''));
                         $pNick = \Indieinabox\Helper::slugize($p->nick ?? '');
@@ -189,23 +212,32 @@ class HtmlRenderer implements RendererInterface
                             break;
                         }
                     }
+                    
+                    // If not found, try any language
+                    if (!$foundPage) {
+                        foreach ($pages as $p) {
+                            $pTitle = \Indieinabox\Helper::slugize($p->title ?? '');
+                            $pSlug = \Indieinabox\Helper::slugize(basename($p->slug ?? ''));
+                            $pNick = \Indieinabox\Helper::slugize($p->nick ?? '');
+                            
+                            if ($slugTarget === $pTitle || $slugTarget === $pSlug || $slugTarget === $pNick) {
+                                $foundPage = $p;
+                                break;
+                            }
+                        }
+                    }
                 }
-            }
-
-            $relpath = $this->page ? $this->page->relpath : './';
-            
-            if ($foundPage) {
-                $url = $relpath . ltrim($foundPage->slug, '/');
-            } else {
-                // Fallback if the page doesn't exist yet
-                $defaultLang = $site->localization->defaultLang ?? 'en';
-                $langPrefix = ($currentPageLang !== $defaultLang) ? $currentPageLang . '/' : '';
-                $url = $relpath . $langPrefix . $slugTarget . '/';
+                
+                if ($foundPage) {
+                    $url = $relpath . ltrim($foundPage->slug, '/');
+                } else {
+                    $url = $relpath . $langPrefix . $slugTarget . '/';
+                }
             }
 
             $urlEsc = htmlspecialchars($url, ENT_QUOTES | ENT_HTML5);
             $labelEsc = htmlspecialchars($node->label, ENT_QUOTES | ENT_HTML5);
-            $cssClass = $foundPage ? "wikilink" : "wikilink missing";
+            $cssClass = ($foundPage || $isMeta) ? "wikilink" : "wikilink missing";
             return "<a href=\"{$urlEsc}\" class=\"{$cssClass}\">{$labelEsc}</a>";
         }
 

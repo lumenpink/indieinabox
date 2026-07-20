@@ -99,4 +99,3 @@ $_kindLabel = \Indieinabox\Helper::kindLabel($page->kind);
         </div>
     <?php endif; ?>
 </article>
-<hr class="divisor-bloco">

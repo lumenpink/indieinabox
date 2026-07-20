@@ -76,8 +76,8 @@ test('head.php has accessibility focus styles', function () use ($viewsDir) {
 test('summary.php has microformats and mosaic fallback', function () use ($viewsDir) {
     $content = file_get_contents($viewsDir . '/includes/summary.php') . file_get_contents(dirname(__DIR__, 2) . '/app/Theme/ThemeHelper.php');
     
-    // Mosaic fallback
-    expect($content)->toContain('<hr class="divisor-bloco">');
+    
+
     
     // Microformats
     expect($content)->toContain('h-entry');

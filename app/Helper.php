@@ -941,6 +941,9 @@ class Helper
             if ($mainPage instanceof Page) {
                 $page->relpath = $mainPage->relpath;
             }
+            if ($count > 0) {
+                echo "<hr class=\"divisor-bloco\">\n";
+            }
             ThemeManager::loadView(
                 $base . DIRECTORY_SEPARATOR . $themeDir . DIRECTORY_SEPARATOR . "views/includes/summary.php",
                 get_defined_vars()

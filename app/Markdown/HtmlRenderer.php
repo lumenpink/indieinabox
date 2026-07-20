@@ -154,12 +154,59 @@ class HtmlRenderer implements RendererInterface
         }
 
         if ($node instanceof WikilinkNode) {
-            $slug = \Indieinabox\Helper::slugize($node->target);
+            $target = trim($node->target);
+            $slugTarget = \Indieinabox\Helper::slugize($target);
+            
+            global $pages, $site;
+            $foundPage = null;
+            $currentPageLang = $this->page ? ($this->page->lang ?? 'en') : 'en';
+
+            if (isset($pages) && ($pages instanceof \Indieinabox\Pages || is_iterable($pages))) {
+                // Try to find in the same language first
+                foreach ($pages as $p) {
+                    $pLang = $p->lang ?? 'en';
+                    if ($pLang !== $currentPageLang) continue;
+                    
+                    $pTitle = \Indieinabox\Helper::slugize($p->title ?? '');
+                    $pSlug = \Indieinabox\Helper::slugize(basename($p->slug ?? ''));
+                    $pNick = \Indieinabox\Helper::slugize($p->nick ?? '');
+                    
+                    if ($slugTarget === $pTitle || $slugTarget === $pSlug || $slugTarget === $pNick) {
+                        $foundPage = $p;
+                        break;
+                    }
+                }
+                
+                // If not found, try any language
+                if (!$foundPage) {
+                    foreach ($pages as $p) {
+                        $pTitle = \Indieinabox\Helper::slugize($p->title ?? '');
+                        $pSlug = \Indieinabox\Helper::slugize(basename($p->slug ?? ''));
+                        $pNick = \Indieinabox\Helper::slugize($p->nick ?? '');
+                        
+                        if ($slugTarget === $pTitle || $slugTarget === $pSlug || $slugTarget === $pNick) {
+                            $foundPage = $p;
+                            break;
+                        }
+                    }
+                }
+            }
+
             $relpath = $this->page ? $this->page->relpath : './';
-            $url = $relpath . 'jardim/' . $slug . '/';
+            
+            if ($foundPage) {
+                $url = $relpath . ltrim($foundPage->slug, '/');
+            } else {
+                // Fallback if the page doesn't exist yet
+                $defaultLang = $site->localization->defaultLang ?? 'en';
+                $langPrefix = ($currentPageLang !== $defaultLang) ? $currentPageLang . '/' : '';
+                $url = $relpath . $langPrefix . $slugTarget . '/';
+            }
+
             $urlEsc = htmlspecialchars($url, ENT_QUOTES | ENT_HTML5);
             $labelEsc = htmlspecialchars($node->label, ENT_QUOTES | ENT_HTML5);
-            return "<a href=\"{$urlEsc}\">{$labelEsc}</a>";
+            $cssClass = $foundPage ? "wikilink" : "wikilink missing";
+            return "<a href=\"{$urlEsc}\" class=\"{$cssClass}\">{$labelEsc}</a>";
         }
 
         if ($node instanceof LinkNode) {

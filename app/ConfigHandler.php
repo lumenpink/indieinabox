@@ -1560,10 +1560,7 @@ class ConfigHandler
                         'About' => 'About link',
                         'Maturity' => 'Maturity label',
                         'Reliability' => 'Reliability label',
-                        'Articles' => 'Articles footer link / kind label fallback',
-                        'Notes' => 'Notes footer link / kind label fallback',
-                        'Photos' => 'Photos footer link / kind label fallback',
-                        'Garden' => 'Garden footer link / kind label fallback',
+
                         'Shortlink' => 'Shortlink label',
                         'Like' => 'Singular for Like',
                         'Likes' => 'Plural for Likes',

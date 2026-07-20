@@ -1688,6 +1688,10 @@ class SiteBuilder
                 continue;
             }
 
+            if ($taxonomyKey === 'flowerbed' && !in_array($p->kind, ['jardim', 'garden'])) {
+                continue;
+            }
+
             $lang = $p->lang ?? 'en';
             $terms = $p->metadata->{$taxonomyKey} ?? [];
             if (!is_array($terms)) {
@@ -1727,7 +1731,7 @@ class SiteBuilder
                 
                 $termPage = Page::fromArray([
                     'title' => $termTitleBase,
-                    'layout' => 'index_page',
+                    'layout' => 'page',
                     'slug' => $termSlug,
                     'date' => time(),
                     'content' => '',

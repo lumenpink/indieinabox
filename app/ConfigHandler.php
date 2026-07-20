@@ -762,6 +762,9 @@ class ConfigHandler
             $newSite->twtxt->hubs = (array) ($twtxtData['hubs'] ?? []);
         }
 
+        $newSite->options->forceRebuild = true;
+        $newSite->options->skipMedia = true;
+
         // Rebuild!
         $builder = new \Indieinabox\SiteBuilder($newSite);
         $builder->build();

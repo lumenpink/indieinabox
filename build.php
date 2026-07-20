@@ -13,7 +13,18 @@ require_once __DIR__ . '/bootstrap/app.php';
 
 $options = [];
 if (php_sapi_name() === 'cli') {
-    $options = getopt("sdfaMm"); // Get the options passed to the script
+    global $argv;
+    $options = [];
+    if (isset($argv)) {
+        foreach ($argv as $arg) {
+            if ($arg === '-s') $options['s'] = false;
+            if ($arg === '-d') $options['d'] = false;
+            if ($arg === '-f') $options['f'] = false;
+            if ($arg === '-a') $options['a'] = false;
+            if ($arg === '-M') $options['M'] = false;
+            if ($arg === '-m') $options['m'] = false;
+        }
+    }
 }
 // -s - skip the static copy
 // -d - enable dev mode (include live-reload script)

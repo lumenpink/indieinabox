@@ -42,6 +42,9 @@
 
                 foreach ($pages as $p) {
                     if ($p->lang === $page->lang) {
+                        if (in_array($p->kind, ['generic', 'page'])) {
+                            continue;
+                        }
                         if (!isset($grouped[$p->kind])) {
                             $grouped[$p->kind] = [];
                         }

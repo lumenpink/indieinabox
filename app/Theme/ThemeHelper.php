@@ -301,8 +301,8 @@ class ThemeHelper
             $html .= self::getInteractionsHtml($post);
             $html .= '</div></div>';
         } else {
-            $html .= '=&gt; <a href="' . $contextPage->relpath . ltrim($post->slug, '/') . '">' . htmlspecialchars($post->title) . '</a> ';
-            $html .= '<span style="font-size:0.85em; opacity:0.75;">(' . $post->localizeddate . ')</span>';
+            $html .= '<span style="font-size:0.85em; opacity:0.75; margin-right: 0.5em;">' . $post->localizeddate . '</span> ';
+            $html .= '=&gt; <a href="' . $contextPage->relpath . ltrim($post->slug, '/') . '">' . htmlspecialchars($post->title) . '</a>';
         }
 
         return $html;

@@ -14,6 +14,11 @@ class Options
     /**
      * @var bool
      */
+    public bool $dev = false;
+
+    /**
+     * @var bool
+     */
     public bool $buildAll;
 
     /**

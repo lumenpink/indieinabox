@@ -510,6 +510,9 @@ class SiteBuilder
 
         $kinds = $this->site->config['kinds'] ?? [];
         foreach ($kinds as $kind => $config) {
+            if (in_array($kind, ['generic', 'page'])) {
+                continue;
+            }
             $pagesForKind = $pagesByKind[$kind] ?? [];
             if (empty($pagesForKind)) {
                 continue;
@@ -1301,8 +1304,12 @@ class SiteBuilder
                     // Do not skip here just for home, since this is for menu
                 }
                 
-                // Hide if explicitly configured
+                // Hide if explicitly configured or if it's a system kind (generic/page)
                 if (isset($conf['show_in_menu']) && !$conf['show_in_menu']) {
+                    continue;
+                }
+                
+                if (in_array($k, ['generic', 'page'])) {
                     continue;
                 }
                 
@@ -1616,9 +1623,9 @@ class SiteBuilder
                     $content .= '<span style="opacity:0.8;">' . $p->localizeddate . '</span>';
                     $content .= '</div>';
                 } else {
+                    $content .= '<span style="font-size:0.9em; opacity:0.8; margin-right: 0.5em;">' . $p->localizeddate . '</span> ';
                     $content .= '<strong><a href="' . $indexRelpath . ltrim($p->slug, '/') . '">'
                         . htmlspecialchars($p->title) . '</a></strong>';
-                    $content .= ' <span style="font-size:0.9em; opacity:0.8;">(' . $p->localizeddate . ')</span>';
                 }
                 $content .= '</li>';
             }

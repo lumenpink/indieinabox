@@ -246,7 +246,7 @@ class MarkdownParser implements ParserInterface
         }
 
         $dateResult = Helper::localizeddate($page);
-        $page->localizeddate = $page->isodate;
+        $page->localizeddate = $page->date->format('Y-m-d');
 
         return $page;
     }

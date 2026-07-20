@@ -35,7 +35,8 @@ class ThemeHelper
         // Line 1: [TIPO] - Data
         $html .= '<div class="meta-line-1">';
         $html .= Helper::kindLink($page, $page->kind);
-        $html .= ' - <a href="' . $page->relpath . ltrim($page->slug, '/') . '" class="u-url"><time class="dt-published" datetime="' . $page->isodate . '">' . $page->localizeddate . '</time></a>';
+        $formattedDate = $page->kind === 'photo' ? date('y/m/dHis', strtotime($page->isodate)) : $page->localizeddate;
+        $html .= ' - <a href="' . $page->relpath . ltrim($page->slug, '/') . '" class="u-url"><time class="dt-published" datetime="' . $page->isodate . '">' . $formattedDate . '</time></a>';
         $html .= '</div>';
 
         // Line 2: Shortlink - Likes / Reposts / Replies
@@ -267,8 +268,9 @@ class ThemeHelper
         $html = '';
 
         if ($displayMode === 'full_content') {
+            $formattedDate = $post->kind === 'photo' ? date('y/m/dHis', strtotime($post->isodate)) : $post->localizeddate;
             $html .= '<div style="margin-bottom: 1em;">';
-            $html .= '<div style="font-size:0.85em; opacity:0.75; margin-bottom: 0.5em;">=&gt; <a href="' . $contextPage->relpath . ltrim($post->slug, '/') . '">' . $post->localizeddate . '</a></div>';
+            $html .= '<div style="font-size:0.85em; opacity:0.75; margin-bottom: 0.5em;">=&gt; <a href="' . $contextPage->relpath . ltrim($post->slug, '/') . '">' . $formattedDate . '</a></div>';
             $html .= '<div style="border-left: 2px solid var(--fg); padding-left: 10px; margin-left: 10px;">';
             $content = preg_replace('/src="([^"]+)\.gif"/', 'src="$1_global.gif"', (string)$post->content);
             $html .= $content;
@@ -282,9 +284,10 @@ class ThemeHelper
                 $thumbSrc = $matches[1] . '_thumb.gif';
             }
             $snippet = strip_tags((string)$post->content);
+            $snippet = html_entity_decode($snippet, ENT_QUOTES | ENT_HTML5, 'UTF-8');
             $snippet = trim(preg_replace('/\s+/', ' ', $snippet));
-            if (mb_strlen($snippet) > 100) {
-                $snippet = mb_substr($snippet, 0, 97) . '...';
+            if (mb_strlen($snippet) > 45) {
+                $snippet = mb_substr($snippet, 0, 42) . '...';
             }
             
             if ($thumbSrc) {
@@ -296,13 +299,31 @@ class ThemeHelper
             }
             
             $html .= '<div>';
-            $html .= '<a href="' . $contextPage->relpath . ltrim($post->slug, '/') . '" style="font-weight: bold; text-decoration: none;">' . $post->localizeddate . '</a>';
+            $formattedDate = $post->kind === 'photo' ? date('y/m/dHis', strtotime($post->isodate)) : $post->localizeddate;
+            $html .= '<a href="' . $contextPage->relpath . ltrim($post->slug, '/') . '" style="font-weight: bold; text-decoration: none;">' . $formattedDate . '</a>';
             $html .= '<p style="margin: 0.2em 0 0 0; font-size: 0.9em; opacity: 0.9;">' . htmlspecialchars($snippet) . '</p>';
             $html .= self::getInteractionsHtml($post);
             $html .= '</div></div>';
         } else {
-            $html .= '<span style="font-size:0.85em; opacity:0.75; margin-right: 0.5em;">' . $post->localizeddate . '</span> ';
-            $html .= '=&gt; <a href="' . $contextPage->relpath . ltrim($post->slug, '/') . '">' . htmlspecialchars($post->title) . '</a>';
+            $hasTitle = Helper::getKindConfig($post->kind)['has_title'] ?? true;
+            $formattedDate = $post->kind === 'photo' ? date('y/m/dHis', strtotime($post->isodate)) : $post->localizeddate;
+            $html .= '<span style="font-size:0.85em; opacity:0.75; margin-right: 0.5em;">' . $formattedDate . '</span> ';
+            
+            if (!$hasTitle) {
+                $snippet = strip_tags((string)$post->content);
+                $snippet = html_entity_decode($snippet, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+                $snippet = trim(preg_replace('/\s+/', ' ', $snippet));
+                if (mb_strlen($snippet) > 45) {
+                    $snippet = mb_substr($snippet, 0, 42) . '...';
+                }
+                $html .= '=&gt; <a href="' . $contextPage->relpath . ltrim($post->slug, '/') . '">' . htmlspecialchars($snippet) . '</a>';
+            } else {
+                $title = html_entity_decode((string)$post->title, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+                if (mb_strlen($title) > 45) {
+                    $title = mb_substr($title, 0, 42) . '...';
+                }
+                $html .= '=&gt; <a href="' . $contextPage->relpath . ltrim($post->slug, '/') . '">' . htmlspecialchars($title) . '</a>';
+            }
         }
 
         return $html;

@@ -1611,41 +1611,29 @@ class SiteBuilder
 
                 $kindFolder = $this->getKindFolder($targetKind, $lang);
                 $kindSlug = ($lang === $defaultLang ? '' : $lang . '/') . $kindFolder . '/';
-                $indexRelpath = str_repeat('../', substr_count(ltrim($kindSlug, '/'), '/'));
-
-                $content = '<ul style="list-style-type: none; padding-left: 0;">';
-            foreach ($kindPages as $p) {
-                $content .= '<li style="margin-bottom: 1.5em;">';
-                if ($displayMode === 'thumbnail_snippet') {
-                    // For photos/thumbnails
-                    $content .= '<a href="' . $indexRelpath . ltrim($p->slug, '/') . '">' . $p->content . '</a>';
-                    $content .= '<div style="font-size:0.9em; margin-top: 0.5em;">';
-                    $content .= '<span style="opacity:0.8;">' . $p->localizeddate . '</span>';
-                    $content .= '</div>';
-                } else {
-                    $content .= '<span style="font-size:0.9em; opacity:0.8; margin-right: 0.5em;">' . $p->localizeddate . '</span> ';
-                    $content .= '<strong><a href="' . $indexRelpath . ltrim($p->slug, '/') . '">'
-                        . htmlspecialchars($p->title) . '</a></strong>';
+                if (!$prettylinks) {
+                    $kindSlug = ($lang === $defaultLang ? '' : $lang . '/') . $kindFolder . '.html';
                 }
-                $content .= '</li>';
-            }
-                $content .= '</ul>';
-
-                $kindFolder = $this->getKindFolder($targetKind, $lang);
-                $kindSlug = ($lang === $defaultLang ? '' : $lang . '/') . $kindFolder . '/';
-            if (!$prettylinks) {
-                $kindSlug = ($lang === $defaultLang ? '' : $lang . '/') . $kindFolder . '.html';
-            }
 
                 $indexPage = Page::fromArray([
                     'title'   => $title,
                     'layout'  => 'page',
                     'slug'    => $kindSlug,
                     'rawBody' => '',
-                    'content' => $content,
+                    'content' => '',
                     'lang'    => $lang,
                     'kind'    => $targetKind
                 ]);
+
+                $content = '<ul style="list-style-type: none; padding-left: 0;">';
+                foreach ($kindPages as $p) {
+                    $content .= '<li style="margin-bottom: 1.0em;">';
+                    $content .= \Indieinabox\Theme\ThemeHelper::renderPostSnippet($indexPage, $p);
+                    $content .= '</li>';
+                }
+                $content .= '</ul>';
+                
+                $indexPage->content->content = $content;
 
                 $this->createHTMLFile($indexPage);
                 $this->createGeminiFile($indexPage);
@@ -1723,7 +1711,7 @@ class SiteBuilder
                 $termContent = '<ul style="list-style-type: none; padding-left: 0;">' . "\n";
                 $termRaw = '';
                 foreach ($termPages as $idx => $p) {
-                    $termContent .= '<li style="margin-bottom: 1.5em;">' . "\n";
+                    $termContent .= '<li style="margin-bottom: 1.0em;">' . "\n";
                     $termContent .= \Indieinabox\Theme\ThemeHelper::renderPostSnippet($termPage, $p);
                     $termContent .= '</li>' . "\n";
                     

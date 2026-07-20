@@ -570,13 +570,31 @@ class ConfigHandler
 
         $db->exec('DELETE FROM kinds');
         if (isset($currentConfig['kinds']) && is_array($currentConfig['kinds'])) {
+            $newKindspath = [];
             foreach ($currentConfig['kinds'] as $k => $v) {
+                if (isset($v['content_dir']) && is_string($v['content_dir'])) {
+                    $decoded = json_decode($v['content_dir'], true);
+                    if (json_last_error() === JSON_ERROR_NONE) {
+                        $v['content_dir'] = $decoded;
+                    }
+                }
                 $valStr = is_array($v) ? json_encode($v, JSON_UNESCAPED_UNICODE) : (string)$v;
                 $stmt = $db->prepare('INSERT INTO kinds (kind_key, config_json) VALUES (:k, :v)');
                 $stmt->bindValue(':k', (string)$k);
                 $stmt->bindValue(':v', $valStr);
                 $stmt->execute();
+
+                $cd = $v['content_dir'] ?? [];
+                if (is_array($cd)) {
+                    $newKindspath[$k] = array_values($cd);
+                } else {
+                    $newKindspath[$k] = [$cd];
+                }
             }
+            $stmt = $db->prepare('INSERT OR REPLACE INTO settings (key, value) VALUES (:key, :val)');
+            $stmt->bindValue(':key', 'kindspath');
+            $stmt->bindValue(':val', json_encode($newKindspath, JSON_UNESCAPED_UNICODE));
+            $stmt->execute();
         }
 
         if (isset($currentConfig['translations']) && is_array($currentConfig['translations'])) {
@@ -1204,11 +1222,9 @@ class ConfigHandler
                                 echo '<li style="margin-bottom: 10px;">';
                                 echo '<strong>' . htmlspecialchars($update['name']) . '</strong> ' . $badge;
                                 echo '<br><small>Published: ' . htmlspecialchars($update['published_at']) . '</small>';
-                                echo '<form method="POST" style="margin-top: 5px; display: inline-block;">';
-                                echo '<input type="hidden" name="action" value="manual_update">';
-                                echo '<input type="hidden" name="download_url" value="' . htmlspecialchars($update['download_url']) . '">';
-                                echo '<button type="submit" class="btn" style="padding: 4px 10px; font-size: 0.9em;">Update to this version</button>';
-                                echo '</form>';
+                                echo '<div style="margin-top: 5px; display: inline-block;">';
+                                echo '<button type="button" class="btn" style="padding: 4px 10px; font-size: 0.9em;" onclick="submitActionForm(\'manual_update\', \'download_url\', \'' . htmlspecialchars($update['download_url']) . '\')">Update to this version</button>';
+                                echo '</div>';
                                 echo '</li>';
                             }
                             echo '</ul>';
@@ -1222,11 +1238,9 @@ class ConfigHandler
                             foreach ($backups as $bkp) {
                                 echo '<li style="margin-bottom: 10px;">';
                                 echo htmlspecialchars($bkp['filename']) . ' <small>(' . date('Y-m-d H:i:s', $bkp['date']) . ', ' . round($bkp['size'] / 1024, 2) . ' KB)</small>';
-                                echo '<form method="POST" style="margin-top: 5px; display: inline-block; margin-left: 10px;">';
-                                echo '<input type="hidden" name="action" value="rollback_update">';
-                                echo '<input type="hidden" name="backup_filename" value="' . htmlspecialchars($bkp['filename']) . '">';
-                                echo '<button type="submit" class="btn" style="padding: 4px 10px; font-size: 0.9em; background: var(--accent); color: white; border: none;">Rollback</button>';
-                                echo '</form>';
+                                echo '<div style="margin-top: 5px; display: inline-block; margin-left: 10px;">';
+                                echo '<button type="button" class="btn" style="padding: 4px 10px; font-size: 0.9em; background: var(--accent); color: white; border: none;" onclick="submitActionForm(\'rollback_update\', \'backup_filename\', \'' . htmlspecialchars($bkp['filename']) . '\')">Rollback</button>';
+                                echo '</div>';
                                 echo '</li>';
                             }
                             echo '</ul>';
@@ -1429,7 +1443,7 @@ class ConfigHandler
                             <div class="grid-2">
                                 <div class="form-group" style="display:none;">
                                     <label>Content Directory</label>
-                                    <input type="hidden" name="kinds[<?= htmlspecialchars($k) ?>][content_dir_legacy]" value="<?= htmlspecialchars(is_string($data['content_dir'] ?? '') ? $data['content_dir'] : '') ?>">
+                                    <input type="hidden" name="kinds[<?= htmlspecialchars($k) ?>][content_dir]" value="<?= htmlspecialchars(is_array($data['content_dir'] ?? '') ? json_encode($data['content_dir'], JSON_UNESCAPED_UNICODE) : (is_string($data['content_dir'] ?? '') ? $data['content_dir'] : '')) ?>">
                                 </div>
                                 <div class="form-group">
                                     <label>Display Mode</label>
@@ -1758,6 +1772,29 @@ class ConfigHandler
                             form.submit();
                         }
                     }
+                }
+
+                function submitActionForm(action, paramName, paramValue) {
+                    let form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = '';
+                    
+                    let actionInput = document.createElement('input');
+                    actionInput.type = 'hidden';
+                    actionInput.name = 'action';
+                    actionInput.value = action;
+                    form.appendChild(actionInput);
+                    
+                    if (paramName) {
+                        let paramInput = document.createElement('input');
+                        paramInput.type = 'hidden';
+                        paramInput.name = paramName;
+                        paramInput.value = paramValue;
+                        form.appendChild(paramInput);
+                    }
+                    
+                    document.body.appendChild(form);
+                    form.submit();
                 }
             </script>
         </div>

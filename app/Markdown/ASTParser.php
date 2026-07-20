@@ -287,8 +287,27 @@ class ASTParser
                 }
             }
 
-            // 1.4. Images: ![Label](URL)
+            // 1.4. Images: ![Label](URL) or ![[Target]]
             if ($i + 1 < $len && $text[$i] === '!' && $text[$i + 1] === '[') {
+                // Check if it is an image wikilink: ![[Target]]
+                if ($i + 2 < $len && $text[$i + 2] === '[') {
+                    $closePos = strpos($text, ']]', $i + 3);
+                    if ($closePos !== false) {
+                        if ($i > $plainStart) {
+                            $nodes[] = new TextNode(substr($text, $plainStart, $i - $plainStart));
+                        }
+                        $inner = substr($text, $i + 3, $closePos - ($i + 3));
+                        $parts = explode('|', $inner, 2);
+                        $target = trim($parts[0]);
+                        $label = count($parts) === 2 ? trim($parts[1]) : $target;
+                        
+                        $nodes[] = new ImageNode($label, $target);
+                        $i = $closePos + 2;
+                        $plainStart = $i;
+                        continue;
+                    }
+                }
+
                 if ($i > $plainStart) {
                     $nodes[] = new TextNode(substr($text, $plainStart, $i - $plainStart));
                 }

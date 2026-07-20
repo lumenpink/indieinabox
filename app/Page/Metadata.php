@@ -57,7 +57,7 @@ class Metadata
     /**
      * @var string|null
      */
-    public $reliability;
+
 
     /**
      * @var array<string>|null
@@ -130,7 +130,6 @@ class Metadata
      * @param string $kind
      * @param string $layout
      * @param string|null $maturity
-     * @param string|null $reliability
      * @param bool|null $menu
      * @param int|null $menu_order
      */
@@ -143,7 +142,6 @@ class Metadata
         string $kind = "note",
         string $layout = "page",
         ?string $maturity = null,
-        ?string $reliability = null,
         $menu = null,
         ?int $menu_order = null,
         bool $hide_title = false,
@@ -161,7 +159,6 @@ class Metadata
         $this->kind = $kind;
         $this->layout = $layout;
         $this->maturity = $maturity;
-        $this->reliability = $reliability;
         $this->menu = $menu;
         $this->menu_order = $menu_order;
         $this->hide_title = $hide_title;

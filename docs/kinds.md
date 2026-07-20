@@ -12,9 +12,9 @@ Kinds are registered in the SQLite database (`kinds` table) with a JSON configur
 - `bookmark`: Links to external resources.
 - `jardim` (Garden): Evergreen notes acting as a digital garden. Garden posts (**MUST**) possess 4 specific metadata tags for categorization. If missing, they fallback to default values:
   - `flowerbed`: (Array) Default `['general']`.
-  - `confidence`: Default `'possible'`. (Options: `impossible`, `unlikely`, `possible`, `likely`, `certain`).
+  - `confidence`: Default `'possible'`. (Options: `certain`, `likely`, `possible`, `unlikely`, `impossible`).
   - `maturity`: Default `'sprout'`. (Options: `sprout`, `seedling`, `tree`, `wilted`, `stone`).
-  - `importance`: Default `'trivial'`. (Options: `trivial`, `minor`, `moderate`, `critical`).
+  - `importance`: Default `'trivial'`. (Options: `trivial`, `minor`, `moderate`, `major`, `critical`).
 - `listen`, `read`, `watch`: Media consumption logs.
 - `like`, `repost`: Social interactions.
 

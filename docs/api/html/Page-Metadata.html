@@ -90,8 +90,7 @@
 <p>@var string</p>
 <h3><code>public mixed $maturity</code></h3>
 <p>@var string|null</p>
-<h3><code>public mixed $reliability</code></h3>
-<p>@var string|null</p>
+
 <h3><code>public mixed $flowerbed</code></h3>
 <p>@var array&lt;string&gt;|null</p>
 <h3><code>public mixed $confidence</code></h3>
@@ -116,7 +115,7 @@
 <p>@var string|null</p>
 <h2>Methods</h2>
 <h3><em></em>construct()</h3>
-<p><code>public function __construct(array $category = [], array $tags = [], string $title = &apos;Untitled&apos;, string $nick = &apos;untitled&apos;, bool $noauthor = false, string $kind = &apos;note&apos;, string $layout = &apos;page&apos;, ?string $maturity = null, ?string $reliability = null, mixed $menu = null, ?int $menu_order = null, bool $hide_title = false, mixed $hide_on_rss = false, mixed $translated_by_ia = null, ?string $description = null, ?string $image = null, ?string $image_alt = null)</code></p>
+<p><code>public function __construct(array $category = [], array $tags = [], string $title = &apos;Untitled&apos;, string $nick = &apos;untitled&apos;, bool $noauthor = false, string $kind = &apos;note&apos;, string $layout = &apos;page&apos;, ?string $maturity = null, mixed $menu = null, ?int $menu_order = null, bool $hide_title = false, mixed $hide_on_rss = false, mixed $translated_by_ia = null, ?string $description = null, ?string $image = null, ?string $image_alt = null)</code></p>
 <p>PageMetadata constructor.</p>
 <p>@param array&lt;string&gt; $category
 @param array&lt;string&gt; $tags
@@ -126,17 +125,10 @@
 @param string $kind
 @param string $layout
 @param string|null $maturity
-@param string|null $reliability
-@param bool|null $menu
-@param int|null $menu@param array&lt;string&gt; $category
-@param array&lt;string&gt; $tags
-@param string $title
-@param string $nick
-@param bool $noauthor
 @param string $kind
 @param string $layout
 @param string|null $maturity
-@param string|null $reliability
+
 @param bool|null $menu
 @param int|null $menu_order</p>
 

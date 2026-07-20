@@ -266,7 +266,6 @@ class Page
             (string) ($data['kind'] ?? 'note'),
             (string) ($data['layout'] ?? 'page'),
             isset($data['maturity']) ? (string)$data['maturity'] : null,
-            isset($data['reliability']) ? (string)$data['reliability'] : null,
             isset($data['menu']) ? $data['menu'] : null,
             isset($data['menu_order']) ? (int)$data['menu_order'] : null,
             isset($data['hide_title']) ? (bool)$data['hide_title'] : false,
@@ -285,7 +284,7 @@ class Page
 
         // Map any unhandled properties into metadata
         $handledKeys = [
-            'category', 'tags', 'title', 'nick', 'noauthor', 'kind', 'layout', 'maturity', 'reliability',
+            'category', 'tags', 'title', 'nick', 'noauthor', 'kind', 'layout', 'maturity',
             'menu', 'menu_order', 'hide_title', 'hide_on_rss', 'flowerbed', 'confidence', 'importance',
             'content', 'originalcontent', 'images', 'rawBody', 'lang', 'langpath', 'langslug',
             'otherlang', 'otherlangpath', 'localizeddate', 'localizedkind', 'date', 'slug', 'relpath'

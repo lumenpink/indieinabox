@@ -39,9 +39,6 @@ This class handles metadata related to the page.
 
 @var string|null
 
-### `public mixed $reliability`
-
-@var string|null
 
 ### `public mixed $flowerbed`
 
@@ -90,7 +87,7 @@ This class handles metadata related to the page.
 ## Methods
 
 ### __construct()
-`public function __construct(array $category = [], array $tags = [], string $title = 'Untitled', string $nick = 'untitled', bool $noauthor = false, string $kind = 'note', string $layout = 'page', ?string $maturity = null, ?string $reliability = null, mixed $menu = null, ?int $menu_order = null, bool $hide_title = false, mixed $hide_on_rss = false, mixed $translated_by_ia = null, ?string $description = null, ?string $image = null, ?string $image_alt = null)`
+`public function __construct(array $category = [], array $tags = [], string $title = 'Untitled', string $nick = 'untitled', bool $noauthor = false, string $kind = 'note', string $layout = 'page', ?string $maturity = null, mixed $menu = null, ?int $menu_order = null, bool $hide_title = false, mixed $hide_on_rss = false, mixed $translated_by_ia = null, ?string $description = null, ?string $image = null, ?string $image_alt = null)`
 
 PageMetadata constructor.
 
@@ -102,6 +99,6 @@ PageMetadata constructor.
 @param string $kind
 @param string $layout
 @param string|null $maturity
-@param string|null $reliability
+
 @param bool|null $menu
 @param int|null $menu_order

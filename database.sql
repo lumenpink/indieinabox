@@ -98,7 +98,7 @@ INSERT INTO translations (lang, phrase_key, phrase_value) VALUES ('en',
 INSERT INTO translations (lang, phrase_key, phrase_value) VALUES ('en', 'Articles', 'Articles');
 INSERT INTO translations (lang, phrase_key, phrase_value) VALUES ('en', 'About', 'About');
 INSERT INTO translations (lang, phrase_key, phrase_value) VALUES ('en', 'Maturity', 'Maturity');
-INSERT INTO translations (lang, phrase_key, phrase_value) VALUES ('en', 'Reliability', 'Reliability');
+
 INSERT INTO url_translations (lang, slug_key, slug_value) VALUES ('en', 'index', 'index');
 INSERT OR REPLACE INTO settings (key, value) VALUES ('copyright', '');
 

@@ -12,8 +12,11 @@ Markdown files in IndieinaBox can include a YAML front-matter block at the top o
 - **`noauthor`** (boolean): Set to `true` to hide author information for the page.
 - **`kind`** (string): Defines the content type (e.g., `note`, `article`, `bookmark`, `page`). 
 - **`layout`** (string): The view layout file used to render the page (e.g., `page`, `home`).
-- **`maturity`** (string): Indicates the maturity state of a digital garden note (e.g., `seedling`, `budding`, `evergreen`).
-- **`reliability`** (string): Indicates the reliability of the note (e.g., `certain`, `uncertain`).
+- **`maturity`** (string): Indicates the maturity state of a digital garden note (e.g., `sprout`, `seedling`, `tree`, `wilted`, `stone`). Default: `sprout`.
+- **`confidence`** (string): Indicates the confidence level of the information. Options: `certain`, `likely`, `possible`, `unlikely`, `impossible`. Default: `possible`.
+- **`importance`** (string): Indicates the importance of the note. Options: `trivial`, `minor`, `moderate`, `major`, `critical`. Default: `trivial`.
+- **`flowerbed`** (array): Categories/sections the garden post belongs to. Default: `['general']`.
+
 - **`slug`** (string): Overrides the default generated URL slug.
 - **`publish`** (boolean): Set to `false` to prevent the page from being compiled into the final site. Pages are compiled by default unless disabled.
 - **`translated_by_ia`** (boolean|string): Used to flag if the content was translated by AI.

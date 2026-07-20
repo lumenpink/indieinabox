@@ -33,6 +33,7 @@ class MicrosubReaderHandler
     public function handle(): void
     {
         if (session_status() === PHP_SESSION_NONE) {
+            session_set_cookie_params(43200);
             session_start();
         }
 

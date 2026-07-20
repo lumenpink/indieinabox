@@ -84,8 +84,19 @@ class ThemeHelper
         if ($page->kind === 'garden' || $page->kind === 'jardim') {
             $flowerbed = isset($page->metadata->flowerbed) && is_array($page->metadata->flowerbed) ? $page->metadata->flowerbed : ['general'];
             $confidence = $page->metadata->confidence ?? 'possible';
+            if (!in_array($confidence, ['certain', 'likely', 'possible', 'unlikely', 'impossible'])) {
+                $confidence = 'unknown';
+            }
+            
             $maturity = $page->metadata->maturity ?? 'sprout';
+            if (!in_array($maturity, ['sprout', 'seedling', 'tree', 'wilted', 'stone'])) {
+                $maturity = 'unknown';
+            }
+            
             $importance = $page->metadata->importance ?? 'trivial';
+            if (!in_array($importance, ['trivial', 'minor', 'moderate', 'major', 'critical'])) {
+                $importance = 'unknown';
+            }
             
             $flowerbedLinks = [];
             foreach ($flowerbed as $fb) {

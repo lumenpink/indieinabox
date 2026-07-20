@@ -25,23 +25,44 @@ The primary generator settings are loaded from `config.yml` in the project root:
 
 ---
 
-## 🚀 CLI switches (`build.php`)
+## 🚀 CLI Actions & Switches
 
-When running the pipeline via terminal, flags modify compilation options:
+When running the pipeline via terminal, you can pass a primary action command and optional modifier flags.
+
+### Available Actions
 
 ```bash
-php build.php [-d] [-s] [-f]
+php indieinabox.php [action]
+```
+
+*   **`build`** (default): Generates the static site.
+*   **`fetch`**: Forces a manual fetch of all followed RSS/Twtxt feeds.
+*   **`cron`**: Runs pending background tasks (such as retrying failed webmentions).
+
+### Compilation Flags
+
+When using the `build` action (or no action), the following flags modify compilation options:
+
+```bash
+php indieinabox.php build [-d] [-s] [-f] [-a] [-m] [-M]
 ```
 
 *   **`-d` (Development Mode)**:
     - Enables dev flags in templates.
     - Disables minification and forces HTML post-processing to `"beautify"` format for readability.
+    - Enables incremental partial builds.
     - Injects the `live.js` live-reload script into headers/footers.
     - *Note: To keep the repository minimal and secure, the `live.js` file is not bundled by default. When Dev Mode is enabled via the Web UI, the system automatically downloads it on-demand to the local `data/` directory.*
 *   **`-s` (Skip Static Files)**:
     - Skips copying assets from `resources/static/` directory to save build time.
 *   **`-f` (Force Overwrites)**:
     - Overwrites generated layout templates and outputs forcefully.
+*   **`-a` (Force Full Rebuild)**:
+    - Forces a rebuild from scratch, ignoring partial/incremental checks.
+*   **`-M` (Skip Media)**:
+    - Rebuilds the site but skips media processing.
+*   **`-m` (Only Media)**:
+    - Skips generation of pages and static files, only processing media.
 
 ---
 

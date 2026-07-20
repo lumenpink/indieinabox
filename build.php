@@ -13,11 +13,14 @@ require_once __DIR__ . '/bootstrap/app.php';
 
 $options = [];
 if (php_sapi_name() === 'cli') {
-    $options = getopt("sdf"); // Get the options passed to the script
+    $options = getopt("sdfaMm"); // Get the options passed to the script
 }
 // -s - skip the static copy
 // -d - enable dev mode (include live-reload script)
 // -f - force static override
+// -a - force rebuild all pages (ignore partials)
+// -M - skip media processing
+// -m - only rebuild media (skip pages)
 
 $base = __DIR__;
 
@@ -57,6 +60,15 @@ if (strlen($config["base"]) > 0) {
 
 if (isset($options["f"])) {
     $config["forcestaticoverride"] = true;
+}
+if (isset($options["a"])) {
+    $config["forcerebuild"] = true;
+}
+if (isset($options["M"])) {
+    $config["skipmedia"] = true;
+}
+if (isset($options["m"])) {
+    $config["skippages"] = true;
 }
 
 if (!isset($config["lang"])) {
@@ -136,6 +148,15 @@ if (isset($config['skipstatic'])) {
 }
 if (isset($config['forcestaticoverride'])) {
     $site->options->forceStaticOverride = (bool)$config['forcestaticoverride'];
+}
+if (isset($config['forcerebuild'])) {
+    $site->options->forceRebuild = (bool)$config['forcerebuild'];
+}
+if (isset($config['skipmedia'])) {
+    $site->options->skipMedia = (bool)$config['skipmedia'];
+}
+if (isset($config['skippages'])) {
+    $site->options->skipPages = (bool)$config['skippages'];
 }
 
 if (isset($config['twtxt'])) {

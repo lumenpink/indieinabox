@@ -28,6 +28,18 @@ class Options
      */
     public bool $forceStaticOverride;
     /**
+     * @var bool
+     */
+    public bool $forceRebuild;
+    /**
+     * @var bool
+     */
+    public bool $skipMedia;
+    /**
+     * @var bool
+     */
+    public bool $skipPages;
+    /**
      * @var ?string
      */
     public ?string $htmlpostprocessing;
@@ -67,6 +79,9 @@ class Options
         bool $dev = false,
         bool $skipStatic = false,
         bool $forceStaticOverride = false,
+        bool $forceRebuild = false,
+        bool $skipMedia = false,
+        bool $skipPages = false,
         ?string $htmlpostprocessing = null,
         bool $prettylinks = true,
         int $feed_limit = 20,
@@ -77,6 +92,9 @@ class Options
         $this->dev = $dev;
         $this->skipStatic = $skipStatic;
         $this->forceStaticOverride = $forceStaticOverride;
+        $this->forceRebuild = $forceRebuild;
+        $this->skipMedia = $skipMedia;
+        $this->skipPages = $skipPages;
         $this->htmlpostprocessing = $htmlpostprocessing;
         $this->prettylinks = $prettylinks;
         $this->feed_limit = $feed_limit;

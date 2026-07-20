@@ -36,25 +36,40 @@ Make sure you have PHP (7.4 to 8.4+) and Composer installed:
 composer install
 ```
 
-### Static Site Generation
+### Running Commands
 
-To compile the static site from your content files:
+To compile the static site or run background tasks:
 
 ```bash
 # Execute standard build
-php build.php
+php indieinabox.php build
 
 # Execute development build (with live-reload script injections)
-php build.php -d
+php indieinabox.php build -d
 
 # Skip copying static assets
-php build.php -s
+php indieinabox.php build -s
 
 # Force overwrite of static files
-php build.php -f
+php indieinabox.php build -f
+
+# Force rebuild from zero (ignore partials)
+php indieinabox.php build -a
+
+# Rebuild from zero (minus media)
+php indieinabox.php build -a -M
+
+# Only rebuild media (minus pages)
+php indieinabox.php build -m
+
+# Fetch RSS/Twtxt feeds manually
+php indieinabox.php fetch
+
+# Run pending background tasks (webmentions, retries)
+php indieinabox.php cron
 ```
 
-The output static files will be compiled and written to the `public/` directory.
+The output static files will be compiled and written to the `public/` directory (when using the build command).
 
 ### Single-File Application
 

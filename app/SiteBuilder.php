@@ -116,7 +116,11 @@ class SiteBuilder
         $timings['Scan + Virtualize'] = ($s2 - $s1) * 1000;
 
         // Generate files
-        $this->generateHTMLFiles();
+        if (isset($this->site->options->skipPages) && $this->site->options->skipPages) {
+            echo "Skipping page generation\n";
+        } else {
+            $this->generateHTMLFiles();
+        }
         $s3 = microtime(true);
         $timings['Generate HTML/GMI/Gopher'] = ($s3 - $s2) * 1000;
         
@@ -133,7 +137,11 @@ class SiteBuilder
         $timings['Copy Assets'] = ($s5 - $s4) * 1000;
 
         // Copy Media
-        $this->copyMedia();
+        if (isset($this->site->options->skipMedia) && $this->site->options->skipMedia) {
+            echo "Skipping media files\n";
+        } else {
+            $this->copyMedia();
+        }
         $s6 = microtime(true);
         $timings['Copy Media'] = ($s6 - $s5) * 1000;
 
@@ -584,7 +592,7 @@ class SiteBuilder
         
         // True incremental build: skip if destination is newer than source and theme (only in dev mode)
         $skipGeneration = false;
-        if (isset($this->site->options->dev) && $this->site->options->dev) {
+        if (isset($this->site->options->dev) && $this->site->options->dev && empty($this->site->options->forceRebuild)) {
             $mdMtime = ($page->filepath && file_exists($page->filepath)) ? filemtime($page->filepath) : 0;
             static $maxThemeMtime = null;
             if ($maxThemeMtime === null) {
@@ -880,7 +888,7 @@ class SiteBuilder
         $destinationFile = preg_replace('#^(' . preg_quote(DIRECTORY_SEPARATOR, '#') . '){2,}#', DIRECTORY_SEPARATOR, $destinationFile);
         // True incremental build: skip if destination is newer than source (only in dev mode)
         $skipGeneration = false;
-        if (isset($this->site->options->dev) && $this->site->options->dev) {
+        if (isset($this->site->options->dev) && $this->site->options->dev && empty($this->site->options->forceRebuild)) {
             $mdMtime = ($page->filepath && file_exists($page->filepath)) ? filemtime($page->filepath) : 0;
             if (file_exists($destinationFile) && filemtime($destinationFile) >= $mdMtime) {
                 $skipGeneration = true;
@@ -960,7 +968,7 @@ class SiteBuilder
 
         // True incremental build: skip if destination is newer than source (only in dev mode)
         $skipGeneration = false;
-        if (isset($this->site->options->dev) && $this->site->options->dev) {
+        if (isset($this->site->options->dev) && $this->site->options->dev && empty($this->site->options->forceRebuild)) {
             $mdMtime = ($page->filepath && file_exists($page->filepath)) ? filemtime($page->filepath) : 0;
             if (file_exists($destinationFile) && filemtime($destinationFile) >= $mdMtime) {
                 $skipGeneration = true;

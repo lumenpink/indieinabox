@@ -35,7 +35,7 @@ class ThemeHelper
         // Line 1: [TIPO] - Data
         $html .= '<div class="meta-line-1">';
         $html .= Helper::kindLink($page, $page->kind);
-        $formattedDate = $page->kind === 'photo' ? date('y/m/dHis', strtotime($page->isodate)) : $page->localizeddate;
+        $formattedDate = $page->kind === 'photo' ? date('Y-m-d', strtotime($page->isodate)) : $page->localizeddate;
         $html .= ' - <a href="' . $page->relpath . ltrim($page->slug, '/') . '" class="u-url"><time class="dt-published" datetime="' . $page->isodate . '">' . $formattedDate . '</time></a>';
         $html .= '</div>';
 
@@ -268,7 +268,7 @@ class ThemeHelper
         $html = '';
 
         if ($displayMode === 'full_content') {
-            $formattedDate = $post->kind === 'photo' ? date('y/m/dHis', strtotime($post->isodate)) : $post->localizeddate;
+            $formattedDate = $post->kind === 'photo' ? date('Y-m-d', strtotime($post->isodate)) : $post->localizeddate;
             $html .= '<div style="margin-bottom: 1em;">';
             $html .= '<div style="font-size:0.85em; opacity:0.75; margin-bottom: 0.5em;">=&gt; <a href="' . $contextPage->relpath . ltrim($post->slug, '/') . '">' . $formattedDate . '</a></div>';
             $html .= '<div style="border-left: 2px solid var(--fg); padding-left: 10px; margin-left: 10px;">';
@@ -278,7 +278,6 @@ class ThemeHelper
             $html .= self::getInteractionsHtml($post);
             $html .= '</div>';
         } elseif ($displayMode === 'thumbnail_snippet') {
-            $html .= '<div style="margin-bottom: 1em; display: flex; align-items: flex-start; gap: 15px;">';
             $thumbSrc = '';
             if (preg_match('/src="([^"]+)\.gif"/', (string)$post->content, $matches)) {
                 $thumbSrc = $matches[1] . '_thumb.gif';
@@ -287,27 +286,30 @@ class ThemeHelper
             $snippet = strip_tags($cleanContent);
             $snippet = html_entity_decode($snippet, ENT_QUOTES | ENT_HTML5, 'UTF-8');
             $snippet = trim(preg_replace('/\s+/', ' ', $snippet));
-            if (mb_strlen($snippet) > 45) {
-                $snippet = mb_substr($snippet, 0, 42) . '...';
+            if (mb_strlen($snippet) > 160) {
+                $snippet = mb_substr($snippet, 0, 157) . '...';
             }
+            
+            $formattedDate = $post->kind === 'photo' ? date('Y-m-d', strtotime($post->isodate)) : $post->localizeddate;
+            
+            $html .= '<div style="display: flex; align-items: flex-start;">';
+            $html .= '<div style="flex-shrink: 0; margin-right: 0.5em;">';
+            $html .= '<span style="font-size:0.85em; opacity:0.75; margin-right: 0.5em;">' . $formattedDate . '</span> =&gt;';
+            $html .= '</div>';
             
             if ($thumbSrc) {
-                $html .= '<a href="' . $contextPage->relpath . ltrim($post->slug, '/') . '">';
-                $html .= '<img src="' . htmlspecialchars($thumbSrc) . '" alt="Thumbnail" style="width: 64px; height: 64px; object-fit: cover; border-radius: 4px; margin: 0;">';
+                $html .= '<a href="' . $contextPage->relpath . ltrim($post->slug, '/') . '" style="flex-shrink: 0; margin-right: 0.5em; display: block;">';
+                $html .= '<img src="' . htmlspecialchars($thumbSrc) . '" alt="Thumbnail" style="width: 4.5em; height: 4.5em; object-fit: cover; border-radius: 4px; margin: 0;">';
                 $html .= '</a>';
-            } else {
-                $html .= '<div style="width: 64px; height: 64px; background: rgba(0,0,0,0.05); border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.8em; opacity: 0.5;">img</div>';
             }
             
-            $html .= '<div>';
-            $formattedDate = $post->kind === 'photo' ? date('y/m/dHis', strtotime($post->isodate)) : $post->localizeddate;
-            $html .= '<a href="' . $contextPage->relpath . ltrim($post->slug, '/') . '" style="font-weight: bold; text-decoration: none;">' . $formattedDate . '</a>';
-            $html .= '<p style="margin: 0.2em 0 0 0; font-size: 0.9em; opacity: 0.9;">' . htmlspecialchars($snippet) . '</p>';
-            $html .= self::getInteractionsHtml($post);
-            $html .= '</div></div>';
+            $html .= '<a href="' . $contextPage->relpath . ltrim($post->slug, '/') . '" style="flex: 1; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden;">';
+            $html .= htmlspecialchars($snippet);
+            $html .= '</a>';
+            $html .= '</div>';
         } else {
             $hasTitle = Helper::getKindConfig($post->kind)['has_title'] ?? true;
-            $formattedDate = $post->kind === 'photo' ? date('y/m/dHis', strtotime($post->isodate)) : $post->localizeddate;
+            $formattedDate = $post->kind === 'photo' ? date('Y-m-d', strtotime($post->isodate)) : $post->localizeddate;
             $html .= '<span style="font-size:0.85em; opacity:0.75; margin-right: 0.5em;">' . $formattedDate . '</span> ';
             
             if (!$hasTitle) {

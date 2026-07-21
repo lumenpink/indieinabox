@@ -328,7 +328,7 @@ class HtmlRenderer implements RendererInterface
                     \Indieinabox\Helper::createThumbnail(
                         $caminhoOriginal,
                         $caminhoDestinoThumb,
-                        64,
+                        96,
                         $globalColors['bg'],
                         $globalColors['fg']
                     );

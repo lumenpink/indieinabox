@@ -3,7 +3,7 @@
 /** @var \Indieinabox\Site $site */
 $_kindLabel = \Indieinabox\Helper::kindLabel($page->kind);
 ?>
-<article class="h-entry the-summary" style="margin-bottom: 5em;">
+<article class="h-entry the-summary" style="margin-bottom: 2em;">
     <header>
         <?php if (\Indieinabox\Helper::getKindConfig($page->kind)['has_title']): ?>
             <h3 style="margin: 0 0 0.5em 0;" class="p-name">

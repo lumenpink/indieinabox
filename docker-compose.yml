@@ -11,5 +11,4 @@ services:
       - .:/app
     environment:
       - ENVIRONMENT=development
-    # Rodar o servidor embutido do PHP (caso não seja sobrescrito)
-    command: php -S 0.0.0.0:8081 build.php
+

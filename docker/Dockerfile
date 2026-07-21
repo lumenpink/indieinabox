@@ -1,15 +1,4 @@
-FROM php:8.3-cli
-
-# Instala dependências do sistema
-RUN apt-get update && apt-get install -y \
-    git \
-    unzip \
-    libzip-dev \
-    libsqlite3-dev \
-    libonig-dev \
-    libicu-dev \
-    curl \
-    && apt-get clean && rm -rf /var/lib/apt/lists/*
+FROM dunglas/frankenphp:php8.4
 
 # Instala o Bun (para o Tailwind CSS)
 RUN curl -fsSL https://bun.sh/install | bash
@@ -17,20 +6,22 @@ RUN curl -fsSL https://bun.sh/install | bash
 # Adiciona o Bun ao PATH
 ENV PATH="/root/.bun/bin:${PATH}"
 
-# Instala extensões necessárias do PHP
-RUN docker-php-ext-install \
-    pdo \
+# O FrankenPHP tem um script mágico `install-php-extensions` que já lida com apt-get e dependências por baixo dos panos!
+RUN install-php-extensions \
     pdo_sqlite \
     mbstring \
     intl \
     zip \
-    opcache
-
-# Instala o Composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+    gd \
+    exif \
+    opcache \
+    @composer
 
 # Define o diretório de trabalho
 WORKDIR /app
 
-# O comando padrão, caso queira rodar o servidor de dev
-CMD ["php", "-S", "0.0.0.0:8081", "build.php"]
+# O FrankenPHP serve os arquivos a partir de /app/public por padrão.
+# Como o projeto usa a pasta raiz e o build.php como roteador, injetamos nosso Caddyfile:
+COPY docker/Caddyfile /etc/caddy/Caddyfile
+
+

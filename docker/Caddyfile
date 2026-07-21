@@ -1,0 +1,20 @@
+{
+    frankenphp
+    order php_server before file_server
+}
+
+# Inicia o servidor na porta 8081 sem HTTPS forçado (ideal para dev local)
+:8081 {
+    # Habilita compressão moderna
+    encode zstd gzip
+
+    # Define a pasta onde está a aplicação
+    root * /app
+
+    # Tenta servir o arquivo estático (ex: imagens, css). 
+    # Se não existir, joga a requisição para o seu roteador (build.php)
+    try_files {path} /build.php?{query}
+
+    # Habilita o processamento de arquivos PHP
+    php_server
+}

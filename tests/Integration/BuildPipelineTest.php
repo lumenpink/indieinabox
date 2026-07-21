@@ -73,7 +73,7 @@ PHP
 <!DOCTYPE html>
 <html>
 <head>
-    <title><?= \$page->title ?> | <?= \$site->metadata->title ?></title>
+    <title><?= \$page->title ?> | <?= \$site->metadata->sitename ?></title>
 </head>
 <body>
     <h1><?= \$page->title ?></h1>
@@ -86,7 +86,7 @@ PHP
 <!DOCTYPE html>
 <html>
 <head>
-    <title><?= \$page->title ?> | <?= \$site->metadata->title ?></title>
+    <title><?= \$page->title ?> | <?= \$site->metadata->sitename ?></title>
 </head>
 <body>
     <h1><?= \$page->title ?></h1>
@@ -204,7 +204,7 @@ PHP
 
     $indexHtml = file_get_contents($outputDir . '/index.html');
     echo "INDEX HTML:\n$indexHtml\n";
-    expect($indexHtml)->toContain('<title>Home Page | Integration Site</title>');
+    expect($indexHtml)->toContain('<title>Home Page | My Integration Site</title>');
     expect($indexHtml)->toContain('<h1>Home Page</h1>');
     expect($indexHtml)->toContain('Welcome home!');
     expect($indexHtml)->not->toContain('live.js'); // Not in dev mode

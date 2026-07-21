@@ -15,7 +15,6 @@ INSERT OR IGNORE INTO microsub_channels (uid, name) VALUES ('inbox', 'Timeline')
 INSERT OR IGNORE INTO microsub_channels (uid, name) VALUES ('notifications', 'Notifications');
 
 INSERT OR REPLACE INTO settings (key, value) VALUES ('base', '/');
-INSERT OR REPLACE INTO settings (key, value) VALUES ('title', 'My Blog');
 INSERT OR REPLACE INTO settings (key, value) VALUES ('sitename', 'A simple generic blog');
 INSERT OR REPLACE INTO settings (key, value) VALUES ('fqdn', 'http://localhost:8081');
 INSERT OR REPLACE INTO settings (key, value) VALUES ('author', 'Author Name');

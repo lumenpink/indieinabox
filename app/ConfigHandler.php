@@ -112,7 +112,6 @@ class ConfigHandler
     {
         if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
             $password = $_POST['indieauth_password'] ?? '';
-            $title = $_POST['title'] ?? 'My Site';
             $sitename = $_POST['sitename'] ?? 'My Site Name';
             $fqdn = $_POST['fqdn'] ?? '';
 
@@ -130,7 +129,6 @@ class ConfigHandler
             // Build bootstrap config array
             $newConfig = [
                 'base' => '/',
-                'title' => $title,
                 'sitename' => $sitename,
                 'fqdn' => $fqdn,
                 'author' => '~admin',
@@ -265,7 +263,6 @@ class ConfigHandler
             $currentConfig['base'] = '/';
         }
         
-        $currentConfig['title'] = trim($_POST['title'] ?? 'My Site');
         $currentConfig['sitename'] = trim($_POST['sitename'] ?? 'My Site Name');
         $currentConfig['fqdn'] = rtrim(trim($_POST['fqdn'] ?? ''), '/');
         $currentConfig['author'] = trim($_POST['author'] ?? '');
@@ -737,9 +734,6 @@ class ConfigHandler
         $newSite->paths->baseDir = $basePath;
         $newSite->config = $config;
 
-        if (isset($config['title'])) {
-            $newSite->metadata->title = $config['title'];
-        }
         if (isset($config['sitename'])) {
             $newSite->metadata->sitename = $config['sitename'];
         }
@@ -918,10 +912,6 @@ class ConfigHandler
                     <input type="password" name="indieauth_password" id="indieauth_password" required placeholder="••••••••" autofocus>
                 </div>
 
-                <div class="form-group">
-                    <label for="title">Site Title</label>
-                    <input type="text" name="title" id="title" value="Aaron Schwartz" required>
-                </div>
 
                 <div class="form-group">
                     <label for="sitename">Site Name</label>
@@ -1253,10 +1243,6 @@ class ConfigHandler
                 <fieldset>
                     <legend>General Settings</legend>
                     <div class="grid-2">
-                        <div class="form-group">
-                            <label>Site Title</label>
-                            <input type="text" name="title" value="<?= htmlspecialchars($config['title'] ?? '') ?>" required>
-                        </div>
                         <div class="form-group">
                             <label>Site Name</label>
                             <input type="text" name="sitename" value="<?= htmlspecialchars($config['sitename'] ?? '') ?>" required>

@@ -1497,7 +1497,7 @@ class Helper
             global $site;
             $baseUrl = rtrim($site->metadata->fqdn ?? '', '/');
             $image = $baseUrl . '/media/default.png';
-            $image_alt = $site->metadata->title ?? 'Default site image';
+            $image_alt = $site->metadata->sitename ?? 'Default site image';
         } else {
             // Ensure image URL is absolute
             if (!preg_match('/^https?:\/\//i', $image)) {

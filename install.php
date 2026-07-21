@@ -43,7 +43,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['data_dir'])) {
                     $db->exec($sql);
                     
                     // Save the user's initial settings
-                    $title = $_POST['title'] ?? 'My Site';
                     $sitename = $_POST['sitename'] ?? 'My Site Name';
                     $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
                     $detectedFqdn = $scheme . '://' . ($_SERVER['HTTP_HOST'] ?? 'localhost:8081');
@@ -51,7 +50,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['data_dir'])) {
                     $password = $_POST['password'] ?? '';
                     
                     $stmt = $db->prepare("INSERT INTO settings (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value=excluded.value");
-                    $stmt->execute(['title', $title]);
                     $stmt->execute(['sitename', $sitename]);
                     if (!empty($fqdn)) {
                         $stmt->execute(['fqdn', $fqdn]);
@@ -163,8 +161,6 @@ $defaultFqdn = $scheme . '://' . ($_SERVER['HTTP_HOST'] ?? 'localhost:8081');
                 </small>
             </div>
             <div class="form-group">
-                <label for="title">Site Title</label>
-                <input type="text" id="title" name="title" value="My Site" required>
             </div>
             <div class="form-group">
                 <label for="sitename">Site Name (Short)</label>

@@ -25,11 +25,11 @@ class ThemeData
      */
     public static function getPageTitle(Page $page, Site $site): string
     {
-        $author = $site->metadata->author ?? '';
+        $sitename = $site->metadata->sitename ?? '';
         if (empty($page->title) || $page->title === 'Untitled') {
-            return $author;
+            return $sitename;
         }
-        return $page->title . ' | ' . $author;
+        return $page->title . ' | ' . $sitename;
     }
 
     /**
@@ -94,7 +94,7 @@ class ThemeData
 
         $type = in_array($seo['schema_type'], ['BlogPosting', 'Article', 'SocialMediaPosting', 'Comment']) ? 'article' : 'website';
 
-        $html = '<meta property="og:site_name" content="' . htmlspecialchars($site->metadata->author ?? 'Blog') . '" />' . "\n";
+        $html = '<meta property="og:site_name" content="' . htmlspecialchars($site->metadata->sitename ?? 'Blog') . '" />' . "\n";
         $html .= '<meta property="og:type" content="' . htmlspecialchars($type) . '" />' . "\n";
         $html .= '<meta property="og:title" content="' . htmlspecialchars(self::getPageTitle($page, $site)) . '" />' . "\n";
         $html .= '<meta property="og:description" content="' . htmlspecialchars($seo['description']) . '" />' . "\n";
@@ -158,7 +158,7 @@ class ThemeData
                 "@type" => "WebPage",
                 "@id" => $pageUrl
             ],
-            "headline" => empty($page->title) || $page->title === 'Untitled' ? ($site->metadata->author ?? '') : $page->title,
+            "headline" => empty($page->title) || $page->title === 'Untitled' ? ($site->metadata->sitename ?? '') : $page->title,
             "description" => $seo['description'],
             "image" => [
                 $img16x9,

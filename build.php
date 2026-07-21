@@ -43,11 +43,10 @@ $config = \Indieinabox\Database::getAllSettings();
 $config['kinds'] = \Indieinabox\Database::getKinds();
 $config['translations'] = \Indieinabox\Database::getTranslations();
 $config['urltranslations'] = \Indieinabox\Database::getUrlTranslations();
-if (empty($config['title'])) {
+if (empty($config['sitename'])) {
     // Default fallback if DB is somehow empty
     $config = [
         'base' => '/',
-        'title' => 'My Site',
         'sitename' => 'My Site Name',
         'fqdn' => 'http://localhost:8080',
         'outputdir' => 'public',
@@ -101,9 +100,6 @@ if (php_sapi_name() === 'cli') {
 $site = new Site();
 $site->paths->baseDir = $base;
 $site->config = $config;
-if (isset($config['title'])) {
-    $site->metadata->title = $config['title'];
-}
 if (isset($config['sitename'])) {
     $site->metadata->sitename = $config['sitename'];
 }

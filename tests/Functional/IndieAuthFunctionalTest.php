@@ -44,8 +44,8 @@ it('prioritizes hidden .config.yml configuration file', function () use ($authFu
     // Write both config.yml and .config.yml
     $yaml = new Yaml();
     
-    $configDefault = ['title' => 'Default Title', 'fqdn' => 'https://default.com/'];
-    $configHidden = ['title' => 'Hidden Title', 'fqdn' => 'https://hidden.com/', 'indieauth_password' => 'secret123'];
+    $configDefault = ['sitename' => 'Default Title', 'fqdn' => 'https://default.com/'];
+    $configHidden = ['sitename' => 'Hidden Title', 'fqdn' => 'https://hidden.com/', 'indieauth_password' => 'secret123'];
     
     file_put_contents($authFuncTempDir . '/config.yml', $yaml->dump($configDefault));
     file_put_contents($authFuncTempDir . '/.config.yml', $yaml->dump($configHidden));
@@ -59,11 +59,11 @@ it('prioritizes hidden .config.yml configuration file', function () use ($authFu
     $config = $yaml->loadFile($configFile);
     
     $site = new Site();
-    $site->metadata->title = $config['title'] ?? 'Default Title';
+    $site->metadata->sitename = $config['sitename'] ?? 'Default Title';
     $site->metadata->fqdn = $config['fqdn'] ?? 'https://default.com/';
     $site->metadata->indieauthPassword = (string)($config['indieauth_password'] ?? '');
 
-    expect($site->metadata->title)->toBe('Hidden Title')
+    expect($site->metadata->sitename)->toBe('Hidden Title')
         ->and($site->metadata->fqdn)->toBe('https://hidden.com/')
         ->and($site->metadata->indieauthPassword)->toBe('secret123');
 });

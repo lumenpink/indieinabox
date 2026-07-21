@@ -220,7 +220,6 @@ $runnerCode .= <<<'EOT'
                             $db->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
                             $db->exec($__SQL_SCHEMA__);
                             
-                            $title = $_POST['title'] ?? 'My Site';
                             $sitename = $_POST['sitename'] ?? 'My Site Name';
                             $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
                             $detectedFqdn = $scheme . '://' . ($_SERVER['HTTP_HOST'] ?? 'localhost:8081');
@@ -228,7 +227,6 @@ $runnerCode .= <<<'EOT'
                             $password = $_POST['password'] ?? '';
                             
                             $stmt = $db->prepare("INSERT INTO settings (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value=excluded.value");
-                            $stmt->execute(['title', $title]);
                             $stmt->execute(['sitename', $sitename]);
                             if (!empty($fqdn)) {
                                 $stmt->execute(['fqdn', $fqdn]);
@@ -335,8 +333,6 @@ HTML;
                 </small>
             </div>
             <div class="form-group">
-                <label for="title">Site Title</label>
-                <input type="text" id="title" name="title" value="My Site" required>
             </div>
             <div class="form-group">
                 <label for="sitename">Site Name (Short)</label>

@@ -14,10 +14,6 @@ class Metadata
     /**
      * @var string
      */
-    public string $title;
-    /**
-     * @var string
-     */
     public string $sitename;
     /**
      * @var string
@@ -43,8 +39,6 @@ class Metadata
 
     /**
      * SiteMetadata constructor.
-     *
-     * @param string $title
      * @param string $sitename
      * @param string $author
      * @param string $defaultTitle
@@ -52,14 +46,12 @@ class Metadata
      * @param string $description
      */
     public function __construct(
-        string $title = "My Site",
         string $sitename = "My Site",
         string $author = "Me",
         string $defaultTitle = "Untitled",
         string $fqdn = "http://localhost:8080",
         string $description = "My Site Description"
     ) {
-        $this->title = $title;
         $this->sitename = $sitename;
         $this->author = $author;
         $this->defaultTitle = $defaultTitle;

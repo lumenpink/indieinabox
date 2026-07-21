@@ -36,7 +36,6 @@ it(
             'defaultCategory' => 'General'
         ]);
         expect($site->metadata)->toMatchObject([
-            'title' => 'My Site',
             'sitename' => 'My Site',
             'author' => 'Me',
             'defaultTitle' => 'Untitled',
@@ -49,7 +48,7 @@ it(
     'Create Site class with custom values',
     function () {
         $site = new Site(
-            new Metadata('title', 'description', 'keywords', 'NoTitle', 'http://example.com'),
+            new Metadata('description', 'keywords', 'NoTitle', 'http://example.com'),
             new Paths('/custom', 'custom_html', 'custom_gemini', 'custom_gopher', 'custom_media', 'custom_content'),
             new Options(false, true, true, true),
             new Localization(['en', 'fr'], 'pt'),
@@ -78,7 +77,6 @@ it(
             'defaultCategory' => 'None'
         ]);
         expect($site->metadata)->toMatchObject([
-            'title' => 'title',
             'sitename' => 'description',
             'author' => 'keywords',
             'defaultTitle' => 'NoTitle',

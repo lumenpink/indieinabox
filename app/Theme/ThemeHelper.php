@@ -283,7 +283,8 @@ class ThemeHelper
             if (preg_match('/src="([^"]+)\.gif"/', (string)$post->content, $matches)) {
                 $thumbSrc = $matches[1] . '_thumb.gif';
             }
-            $snippet = strip_tags((string)$post->content);
+            $cleanContent = preg_replace('/<a[^>]*class="[^"]*dithered-image-link[^"]*"[^>]*>.*?<\/a>/is', '', (string)$post->content);
+            $snippet = strip_tags($cleanContent);
             $snippet = html_entity_decode($snippet, ENT_QUOTES | ENT_HTML5, 'UTF-8');
             $snippet = trim(preg_replace('/\s+/', ' ', $snippet));
             if (mb_strlen($snippet) > 45) {
@@ -310,7 +311,8 @@ class ThemeHelper
             $html .= '<span style="font-size:0.85em; opacity:0.75; margin-right: 0.5em;">' . $formattedDate . '</span> ';
             
             if (!$hasTitle) {
-                $snippet = strip_tags((string)$post->content);
+                $cleanContent = preg_replace('/<a[^>]*class="[^"]*dithered-image-link[^"]*"[^>]*>.*?<\/a>/is', '', (string)$post->content);
+                $snippet = strip_tags($cleanContent);
                 $snippet = html_entity_decode($snippet, ENT_QUOTES | ENT_HTML5, 'UTF-8');
                 $snippet = trim(preg_replace('/\s+/', ' ', $snippet));
                 if (mb_strlen($snippet) > 45) {

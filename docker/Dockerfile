@@ -1,5 +1,8 @@
 FROM dunglas/frankenphp:php8.4
 
+# Instala dependências necessárias para o Bun
+RUN apt-get update && apt-get install -y unzip && apt-get clean && rm -rf /var/lib/apt/lists/*
+
 # Instala o Bun (para o Tailwind CSS)
 RUN curl -fsSL https://bun.sh/install | bash
 

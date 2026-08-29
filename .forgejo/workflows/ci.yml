@@ -271,10 +271,12 @@ jobs:
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     steps:
       - name: Checkout
-        uses: https://github.com/actions/checkout@v4
+        uses: https://github.com/actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          fetch-depth: 0
 
       - name: Setup PHP
-        uses: https://github.com/shivammathur/setup-php@v2
+        uses: https://github.com/shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2.37.2
         with:
           php-version: '8.4'
           extensions: mbstring, json, fileinfo, pdo_sqlite, sqlite3
@@ -293,32 +295,14 @@ jobs:
         id: date
         run: echo "DATED_TAG=nightly-$(date +'%Y%m%d-%H%M%S')" >> $GITHUB_OUTPUT
 
-      - name: Move Nightly Tags
+      - name: "Create Dated Tag"
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          
-          # Move the rolling 'nightly' tag to the current commit
-          git tag -f nightly
-          git push -f origin nightly
-          
-          # Create the dated nightly tag
           git tag -f ${{ steps.date.outputs.DATED_TAG }}
           git push -f origin ${{ steps.date.outputs.DATED_TAG }}
 
-      - name: Delete Existing Nightly Release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          API_URL: ${{ env.GITHUB_API_URL || 'https://codeberg.org/api/v1' }}
-          REPO: ${{ github.repository }}
-        run: |
-          REL_ID=$(curl -s -H "Authorization: token $GITHUB_TOKEN" "$API_URL/repos/$REPO/releases/tags/nightly" | jq -r '.id // empty')
-          if [ -n "$REL_ID" ] && [ "$REL_ID" != "null" ]; then
-            echo "Deleting existing nightly release ID: $REL_ID to prevent asset update 404"
-            curl -s -X DELETE -H "Authorization: token $GITHUB_TOKEN" "$API_URL/repos/$REPO/releases/$REL_ID"
-          fi
-
-      - name: Create Dated Nightly Release
+      - name: "Create Dated Nightly Release"
         uses: https://github.com/softprops/action-gh-release@v2
         with:
           tag_name: "${{ steps.date.outputs.DATED_TAG }}"
@@ -327,7 +311,43 @@ jobs:
           files: index.php
           body: "Automatic nightly build from main."
 
-      - name: Create or Update Nightly Release
+      - name: "Delete Nightly Git Tag and Release"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          API_URL: ${{ env.GITHUB_API_URL || 'https://codeberg.org/api/v1' }}
+          REPO: ${{ github.repository }}
+        run: |
+          # Delete remote git tag — forces softprops to CREATE (not UPDATE) the release,
+          # guaranteeing a fresh created_at timestamp.
+          git push --delete origin nightly 2>/dev/null \
+            && echo "Remote nightly tag deleted" \
+            || echo "Remote nightly tag not found (first run?)"
+
+          # Delete the existing nightly release via API
+          REL_ID=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
+            "$API_URL/repos/$REPO/releases/tags/nightly" | jq -r '.id // empty')
+          if [ -n "$REL_ID" ] && [ "$REL_ID" != "null" ]; then
+            echo "Deleting nightly release ID: $REL_ID"
+            if curl -sf -X DELETE -H "Authorization: token $GITHUB_TOKEN" \
+              "$API_URL/repos/$REPO/releases/$REL_ID"; then
+              echo "Release deleted successfully"
+            else
+              echo "Warning: Failed to delete release $REL_ID" >&2
+            fi
+          else
+            echo "No existing nightly release found"
+          fi
+
+      - name: "Create Annotated Nightly Tag"
+        run: |
+          # Annotated tags carry a tagger date (= now), unlike lightweight tags
+          # which use the commit date. This ensures Forgejo sorts 'nightly' as
+          # the most recently tagged, regardless of when the HEAD commit was made.
+          git tag -d nightly 2>/dev/null || true
+          git tag -a nightly -m "Nightly build - $(date -u '+%Y-%m-%dT%H:%M:%SZ')"
+          git push origin nightly
+
+      - name: "Create Nightly Release"
         uses: https://github.com/softprops/action-gh-release@v2
         with:
           tag_name: "nightly"
@@ -354,7 +374,7 @@ jobs:
           echo "All dated nightlies found:"
           cat all_nightlies.txt
           
-          # Skip the first 4 (since the new one makes 5, we keep 5 total)
+          # Skip the first 5 (keep the 5 most recent dated nightlies, delete the rest)
           # 'tail -n +6' prints from line 6 onwards.
           tail -n +6 all_nightlies.txt | while read -r TAG_NAME REL_ID; do
             echo "Deleting old nightly release: $TAG_NAME (ID: $REL_ID)"
@@ -374,10 +394,12 @@ jobs:
     if: startsWith(github.ref, 'refs/tags/v')
     steps:
       - name: Checkout
-        uses: https://github.com/actions/checkout@v4
+        uses: https://github.com/actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          fetch-depth: 0
 
       - name: Setup PHP
-        uses: https://github.com/shivammathur/setup-php@v2
+        uses: https://github.com/shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2.37.2
         with:
           php-version: '8.4'
           extensions: mbstring, json, fileinfo, pdo_sqlite, sqlite3

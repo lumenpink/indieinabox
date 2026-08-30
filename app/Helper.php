@@ -126,7 +126,12 @@ class Helper
             if (!empty($site->config['kinds'])) {
                 foreach ($site->config['kinds'] as $k => $conf) {
                     $cDir = $conf['content_dir'] ?? $k;
-                    if ($cDir === $localizedkindSegment) {
+                    if (is_array($cDir)) {
+                        if (in_array($localizedkindSegment, $cDir, true)) {
+                            $kind = $k;
+                            break;
+                        }
+                    } elseif ($cDir === $localizedkindSegment) {
                         $kind = $k;
                         break;
                     }
@@ -787,8 +792,8 @@ class Helper
         // If not found in the target language, we might need to insert a blank translation row
         // so it appears in the admin panel.
         if ($found === null || !isset($site->config['translations'][$found][$lang])) {
-            $db = \Indieinabox\Database::getDb();
             try {
+                $db = \Indieinabox\Database::getDb();
                 $ins = $db->prepare('INSERT INTO translations (lang, phrase_key, phrase_value) VALUES (:lang, :key, :val)');
                 $ins->bindValue(':lang', $lang);
                 $ins->bindValue(':key', $text);

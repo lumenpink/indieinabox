@@ -175,6 +175,7 @@ it('virtualizes missing language translations and updates flags links correctly'
     $builder->build();
     
     $pages = $builder->getPages()->all();
+    
     expect(count($pages))->toBe(6);
     
     $ptPage = null;

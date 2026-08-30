@@ -208,7 +208,13 @@ class MarkdownParser implements ParserInterface
                 global $kindspath;
                 if (!empty($this->site->config['kinds'])) {
                     foreach ($this->site->config['kinds'] as $k => $conf) {
-                        if (($conf['content_dir'] ?? $k) === $oldFolder) {
+                        $cDir = $conf['content_dir'] ?? $k;
+                        if (is_array($cDir)) {
+                            if (in_array($oldFolder, $cDir, true)) {
+                                $matchedKind = $k;
+                                break;
+                            }
+                        } elseif ($cDir === $oldFolder) {
                             $matchedKind = $k;
                             break;
                         }

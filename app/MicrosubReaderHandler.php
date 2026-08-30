@@ -608,7 +608,7 @@ class MicrosubReaderHandler
             if (!url) return;
             
             try {
-                const res = await api('subscribe', 'POST', { channel: currentChannel, url: url });
+                const res = await api('follow', 'POST', { channel: currentChannel, url: url });
                 if (res.error) {
                     alert("Error: " + res.error_description);
                 } else {

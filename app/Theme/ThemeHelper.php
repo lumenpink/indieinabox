@@ -83,7 +83,7 @@ class ThemeHelper
 
         // Custom Garden Fields (if any, append to line 2 or create new block)
         if ($page->kind === 'garden' || $page->kind === 'jardim') {
-            $flowerbed = isset($page->metadata->flowerbed) && is_array($page->metadata->flowerbed) ? $page->metadata->flowerbed : ['general'];
+            $flowerbed = isset($page->metadata->flowerbed) && is_array($page->metadata->flowerbed) ? $page->metadata->flowerbed : [Helper::translate('general', $page->lang ?? null)];
             $confidence = $page->metadata->confidence ?? 'possible';
             if (!in_array($confidence, ['certain', 'likely', 'possible', 'unlikely', 'impossible'])) {
                 $confidence = 'unknown';

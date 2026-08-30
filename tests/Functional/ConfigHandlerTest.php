@@ -364,5 +364,5 @@ it('saves config and processes lang/kind removals and fallbacks', function () us
     }
     
     expect(array_keys($kinds))->toBe(['article']);
-    expect($kinds['article']['content_dir'])->toBe('articles');
+    expect($kinds['article']['content_dir'])->toBe(['en' => 'articles']);
 });

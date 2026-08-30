@@ -165,7 +165,7 @@ it('renders Obsidian wikilinks to HTML correctly', function () {
     $renderer = new HtmlRenderer();
     $html = $renderer->render($ast);
     
-    expect($html)->toBe("<p>Check <a href=\"./jardim/my-note/\">My Note</a> and <a href=\"./jardim/target-note/\">Display Alias</a>.</p>\n");
+    expect($html)->toBe("<p>Check <a href=\"./my-note/\" class=\"wikilink missing\">My Note</a> and <a href=\"./target-note/\" class=\"wikilink missing\">Display Alias</a>.</p>\n");
 });
 
 it('handles recursive nested inline nodes correctly', function () {

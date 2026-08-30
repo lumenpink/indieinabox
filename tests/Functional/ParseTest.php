@@ -95,7 +95,10 @@ it('detects language from top-level directory path and sets correct slug/kind', 
     $site->localization->defaultLang = 'en';
     $site->config['kinds'] = [
         'article' => [
-            'content_dir' => 'articles',
+            'content_dir' => [
+                'en' => 'articles',
+                'pt' => 'artigos'
+            ],
             'title' => [
                 'en' => 'Articles',
                 'pt' => 'Artigos'
@@ -141,7 +144,11 @@ it('virtualizes missing language translations and updates flags links correctly'
     $site->localization->defaultLang = 'en';
     $site->config['kinds'] = [
         'article' => [
-            'content_dir' => 'articles',
+            'content_dir' => [
+                'en' => 'articles',
+                'pt' => 'artigos',
+                'es' => 'articulos'
+            ],
             'title' => [
                 'en' => 'Articles',
                 'pt' => 'Artigos',

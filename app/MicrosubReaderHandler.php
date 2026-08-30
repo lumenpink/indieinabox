@@ -393,6 +393,7 @@ class MicrosubReaderHandler
                 <h1 id="current-channel-title">Inbox</h1>
                 <div style="display: flex; gap: 10px;">
                     <button class="btn" onclick="addFeed()">Add Feed</button>
+                    <button class="btn" onclick="manageFeeds()">Manage Feeds</button>
                     <button class="btn" onclick="fetchFeeds()">Sync Feeds</button>
                 </div>
             </div>
@@ -400,6 +401,16 @@ class MicrosubReaderHandler
                 <p style="text-align: center; color: var(--text-muted); margin-top: 2rem;">Loading...</p>
             </div>
         </main>
+    </div>
+
+    <div id="manage-feeds-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center;">
+        <div style="background: var(--bg); padding: 2rem; border-radius: 12px; width: 90%; max-width: 600px; max-height: 80vh; overflow-y: auto; border: 1px solid var(--glass-border);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <h2 style="margin: 0;">Manage Feeds</h2>
+                <button class="btn" style="padding: 0.5rem 1rem;" onclick="closeManageFeeds()">Close</button>
+            </div>
+            <div id="manage-feeds-list">Loading...</div>
+        </div>
     </div>
 
     <script>
@@ -617,6 +628,53 @@ class MicrosubReaderHandler
                 }
             } catch (err) {
                 alert("Failed to subscribe to feed. See console for details.");
+                console.error(err);
+            }
+        }
+
+        async function manageFeeds() {
+            if (!currentChannel) return;
+            document.getElementById('manage-feeds-modal').style.display = 'flex';
+            const listContainer = document.getElementById('manage-feeds-list');
+            listContainer.innerHTML = 'Loading...';
+            try {
+                const res = await api('follow', 'GET', { channel: currentChannel });
+                if (res.items && res.items.length > 0) {
+                    let html = '<ul style="list-style: none; padding: 0; margin: 0;">';
+                    res.items.forEach(feed => {
+                        html += `
+                            <li style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; border-bottom: 1px solid var(--glass-border);">
+                                <div style="word-break: break-all; margin-right: 1rem;">${feed.url}</div>
+                                <button class="btn" style="padding: 0.5rem 1rem; font-size: 0.9rem; background: #ff4b4b; color: white;" onclick="unfollowFeed('${feed.url}')">Unfollow</button>
+                            </li>
+                        `;
+                    });
+                    html += '</ul>';
+                    listContainer.innerHTML = html;
+                } else {
+                    listContainer.innerHTML = '<p>No feeds subscribed in this channel.</p>';
+                }
+            } catch (err) {
+                listContainer.innerHTML = '<p style="color: red;">Failed to load feeds.</p>';
+                console.error(err);
+            }
+        }
+
+        function closeManageFeeds() {
+            document.getElementById('manage-feeds-modal').style.display = 'none';
+        }
+
+        async function unfollowFeed(url) {
+            if (!confirm('Are you sure you want to unfollow this feed?')) return;
+            try {
+                const res = await api('unfollow', 'POST', { channel: currentChannel, url: url });
+                if (res.error) {
+                    alert("Error: " + res.error_description);
+                } else {
+                    manageFeeds(); // refresh list
+                }
+            } catch (err) {
+                alert("Failed to unfollow feed. See console for details.");
                 console.error(err);
             }
         }

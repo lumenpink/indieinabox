@@ -210,6 +210,21 @@ class MicrosubHandler
                 echo json_encode(['results' => $results]);
                 break;
 
+            case 'follow':
+                $channel = $_GET['channel'] ?? 'inbox';
+                $stmt = $this->db->prepare('SELECT url FROM microsub_subscriptions WHERE channel_uid = :channel');
+                $stmt->bindValue(':channel', $channel, \PDO::PARAM_STR);
+                $stmt->execute();
+                $items = [];
+                while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+                    $items[] = [
+                        'type' => 'feed',
+                        'url' => $row['url']
+                    ];
+                }
+                echo json_encode(['items' => $items]);
+                break;
+
             default:
                 http_response_code(400);
                 echo json_encode(['error' => 'invalid_request', 'error_description' => 'Unknown action']);

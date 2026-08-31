@@ -123,10 +123,9 @@ jobs:
       #   run: php build.php
 
       - name: "Lychee Link Checker"
-        uses: https://github.com/lycheeverse/lychee-action@v2
+        uses: docker://lycheeverse/lychee:latest
         with:
           args: --verbose --no-progress './public_html/**/*.html'
-          fail: true
 
   # ─────────────────────────────────────────────────────────────────────────────
   # JOB 2 — Static security analysis with Psalm

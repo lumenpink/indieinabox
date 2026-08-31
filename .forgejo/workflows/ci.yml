@@ -107,6 +107,28 @@ jobs:
           retention-days: 7
 
   # ─────────────────────────────────────────────────────────────────────────────
+  # JOB 1.5 — Link Checker (Lychee)
+  # ─────────────────────────────────────────────────────────────────────────────
+  link-checker:
+    name: "Check for 404s (Lychee)"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: "Checkout"
+        uses: https://github.com/actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+
+      # Se o seu site não estiver no repositório e for gerado na hora, 
+      # você precisará rodar o build antes do Lychee. Exemplo:
+      # - name: "Build Site"
+      #   run: php build.php
+
+      - name: "Lychee Link Checker"
+        uses: https://github.com/lycheeverse/lychee-action@v2
+        with:
+          args: --verbose --no-progress './public_html/**/*.html'
+          fail: true
+
+  # ─────────────────────────────────────────────────────────────────────────────
   # JOB 2 — Static security analysis with Psalm
   # ─────────────────────────────────────────────────────────────────────────────
   psalm:

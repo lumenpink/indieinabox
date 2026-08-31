@@ -117,10 +117,20 @@ jobs:
       - name: "Checkout"
         uses: https://github.com/actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
 
-      # Se o seu site não estiver no repositório e for gerado na hora, 
-      # você precisará rodar o build antes do Lychee. Exemplo:
-      # - name: "Build Site"
-      #   run: php build.php
+      - name: "Setup PHP"
+        uses: https://github.com/shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2.37.2
+        with:
+          php-version: "8.4"
+          extensions: mbstring, json, fileinfo, pdo_sqlite, sqlite3
+
+      - name: "Setup test database"
+        run: |
+          mkdir -p data
+          echo "<?php return ['db_path' => __DIR__ . '/data/indieinabox.sqlite'];" > .config.php
+          php -r '$db = new PDO("sqlite:" . __DIR__ . "/data/indieinabox.sqlite"); $db->exec(file_get_contents("database.sql"));'
+
+      - name: "Build Site"
+        run: php build.php
 
       - name: "Lychee Link Checker"
         uses: docker://lycheeverse/lychee:latest

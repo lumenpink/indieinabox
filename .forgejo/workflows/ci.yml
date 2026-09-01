@@ -132,10 +132,29 @@ jobs:
       - name: "Build Site"
         run: php build.php
 
-      - name: "Lychee Link Checker"
-        uses: docker://lycheeverse/lychee:latest
-        with:
-          args: --verbose --no-progress './public_html/**/*.html'
+      - name: "Start Server & Run Lychee"
+        run: |
+          # 1. Cria um roteador simples para o PHP lidar com URLs sem extensão (.html)
+          cat << 'EOF' > router.php
+          <?php
+          $path = parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH);
+          $file = $_SERVER["DOCUMENT_ROOT"] . $path;
+          if (is_file($file)) return false;
+          if (is_file($file . '.html')) { header("Content-Type: text/html"); readfile($file . '.html'); return true; }
+          if (is_file(rtrim($file, '/') . '/index.html')) { header("Content-Type: text/html"); readfile(rtrim($file, '/') . '/index.html'); return true; }
+          http_response_code(404); echo "404 Not Found";
+          EOF
+          
+          # 2. Inicia o servidor local na porta 8081 (mesma do FQDN no banco)
+          php -S localhost:8081 -t public_html router.php &
+          sleep 2 # Aguarda o servidor subir
+          
+          # 3. Baixa a versão MUSL do Lychee (que não depende do GLIBC do runner!)
+          wget -q https://github.com/lycheeverse/lychee/releases/download/lychee-v0.24.2/lychee-x86_64-unknown-linux-musl.tar.gz
+          tar -xzf lychee-x86_64-unknown-linux-musl.tar.gz
+          
+          # 4. Roda o Lychee contra o servidor vivo, aceitando 530 (Anti-bot do Cloudflare no lumen.pink)
+          ./lychee --verbose --no-progress --accept 530 'http://localhost:8081/'
 
   # ─────────────────────────────────────────────────────────────────────────────
   # JOB 2 — Static security analysis with Psalm

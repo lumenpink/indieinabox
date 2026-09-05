@@ -118,7 +118,7 @@ class SiteBuilder
         $pages = $this->pages;
         $site = $this->site;
 
-        $contentProcessor = new \Indieinabox\Markdown\ContentProcessor();
+        $contentProcessor = new ContentProcessor();
         foreach ($this->pages as $page) {
             if (isset($page->rawBody) && $page->rawBody !== '') {
                 $renderedContent = $contentProcessor->processContent($page->rawBody, $page);

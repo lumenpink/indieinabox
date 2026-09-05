@@ -135,7 +135,7 @@ class MarkdownParser implements ParserInterface
 
         $slugBase = trim($slugBase, '/');
         $slugBaseParts = explode('/', $slugBase);
-        $slugBaseParts = array_map('\Indieinabox\Helper::slugize', $slugBaseParts);
+        $slugBaseParts = array_map([\Indieinabox\Helper::class, 'slugize'], $slugBaseParts);
         $slugBase = implode('/', $slugBaseParts);
 
         // Build final slug with language prefix if non-default

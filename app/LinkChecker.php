@@ -189,7 +189,8 @@ class LinkChecker
                 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
                 curl_setopt($ch, CURLOPT_TIMEOUT, 10);
                 curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-                curl_setopt($ch, CURLOPT_USERAGENT, 'Indieinabox LinkChecker/1.0');
+                $userAgent = 'Indieinabox LinkChecker/1.0';
+                curl_setopt($ch, CURLOPT_USERAGENT, $userAgent);
                 curl_multi_add_handle($mh, $ch);
                 $curlHandles[$url] = $ch;
             }
@@ -210,10 +211,12 @@ class LinkChecker
                     curl_setopt($chGet, CURLOPT_RETURNTRANSFER, true);
                     curl_setopt($chGet, CURLOPT_TIMEOUT, 10);
                     curl_setopt($chGet, CURLOPT_FOLLOWLOCATION, true);
-                    curl_setopt($chGet, CURLOPT_USERAGENT, 'Indieinabox LinkChecker/1.0');
+                    $userAgent = 'Indieinabox LinkChecker/1.0';
+                    curl_setopt($chGet, CURLOPT_USERAGENT, $userAgent);
                     curl_setopt($chGet, CURLOPT_HEADER, true);
                     curl_setopt($chGet, CURLOPT_NOBODY, false);
-                    curl_setopt($chGet, CURLOPT_RANGE, '0-100');
+                    $range = '0-100';
+                    curl_setopt($chGet, CURLOPT_RANGE, $range);
                     curl_exec($chGet);
                     $getCode = curl_getinfo($chGet, CURLINFO_HTTP_CODE);
                     curl_close($chGet);

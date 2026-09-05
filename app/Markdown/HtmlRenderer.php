@@ -195,7 +195,7 @@ class HtmlRenderer implements RendererInterface
                 }
             } else {
                 // Normal page link
-                $slugTargetParts = array_map('\Indieinabox\Helper::slugize', explode('/', $target));
+                $slugTargetParts = array_map([\Indieinabox\Helper::class, 'slugize'], explode('/', $target));
                 $slugTarget = end($slugTargetParts);
                 $slugTargetFull = implode('/', $slugTargetParts);
                 
@@ -233,7 +233,7 @@ class HtmlRenderer implements RendererInterface
                         if (str_contains($target, '/')) {
                             foreach ($matches as $m) {
                                 $mSlugClean = preg_replace('/\.html$/', '', $m->slug ?? '');
-                                $mSlugParts = array_map('\Indieinabox\Helper::slugize', explode('/', $mSlugClean));
+                                $mSlugParts = array_map([\Indieinabox\Helper::class, 'slugize'], explode('/', $mSlugClean));
                                 $mSlugFull = implode('/', $mSlugParts);
                                 if ($mSlugFull === $slugTargetFull || str_ends_with($mSlugFull, '/' . $slugTargetFull)) {
                                     $foundPage = $m;

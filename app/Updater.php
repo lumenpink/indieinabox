@@ -38,10 +38,10 @@ class Updater
             foreach ($releases as $release) {
                 if (empty($release['assets'])) continue;
                 
-                // Find the index.php asset
+                // Find the indieinabox.php asset
                 $assetUrl = null;
                 foreach ($release['assets'] as $asset) {
-                    if ($asset['name'] === 'index.php') {
+                    if ($asset['name'] === 'indieinabox.php') {
                         $assetUrl = $asset['browser_download_url'];
                         break;
                     }

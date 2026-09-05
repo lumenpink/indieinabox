@@ -182,6 +182,9 @@ if (php_sapi_name() === 'cli') {
     } elseif (isset($argv[1]) && $argv[1] === 'cron') {
         $worker = new \Indieinabox\BackgroundWorker($site);
         $worker->runAll();
+    } elseif (isset($argv[1]) && $argv[1] === 'test-links') {
+        $checker = new \Indieinabox\LinkChecker($site);
+        $checker->run();
     } else {
         $builder = new \Indieinabox\SiteBuilder($site);
         $builder->build();

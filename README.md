@@ -92,4 +92,7 @@ composer test
 
 # Run code linter and compatibility checks
 composer sniffer
+
+# Run native local link checker against the compiled site
+php indieinabox.php test-links
 ```

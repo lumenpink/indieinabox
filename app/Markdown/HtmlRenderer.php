@@ -122,7 +122,7 @@ class HtmlRenderer implements RendererInterface
         }
 
         if ($node instanceof TextNode) {
-            return htmlspecialchars($node->text, ENT_QUOTES | ENT_HTML5);
+            return nl2br(htmlspecialchars($node->text, ENT_QUOTES | ENT_HTML5));
         }
 
         if ($node instanceof RawHtmlBlockNode) {

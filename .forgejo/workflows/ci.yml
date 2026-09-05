@@ -373,6 +373,8 @@ jobs:
           # Annotated tags carry a tagger date (= now), unlike lightweight tags
           # which use the commit date. This ensures Forgejo sorts 'nightly' as
           # the most recently tagged, regardless of when the HEAD commit was made.
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
           git tag -d nightly 2>/dev/null || true
           git tag -a nightly -m "Nightly build - $(date -u '+%Y-%m-%dT%H:%M:%SZ')"
           git push origin nightly

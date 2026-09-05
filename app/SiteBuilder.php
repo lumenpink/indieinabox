@@ -717,6 +717,41 @@ class SiteBuilder
                 }
                 file_put_contents($interactionsFile, $interactionsContent);
             }
+            
+            // Generate local shortlink redirect
+            if (isset($page->shortlink) && str_starts_with($page->shortlink, rtrim($fqdn, '/') . '/s/')) {
+                $localShortlinkHash = substr(strrchr($page->shortlink, '/'), 1);
+                $shortlinkDir = $outDir . DIRECTORY_SEPARATOR . 's' . DIRECTORY_SEPARATOR . $localShortlinkHash;
+                if (!is_dir($shortlinkDir)) {
+                    mkdir($shortlinkDir, 0777, true);
+                }
+                
+                $targetUrl = rtrim($fqdn, '/') . '/' . ltrim($destination, '/');
+                // Remove trailing index.html for cleaner URLs if prettylinks are likely
+                if (str_ends_with($targetUrl, '/index.html')) {
+                    $targetUrl = substr($targetUrl, 0, -10);
+                }
+                
+                $redirectContent = '<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Redirecting...</title>
+    <meta http-equiv="refresh" content="0; url=' . htmlspecialchars($targetUrl, ENT_QUOTES, 'UTF-8') . '">
+    <link rel="canonical" href="' . htmlspecialchars($targetUrl, ENT_QUOTES, 'UTF-8') . '">
+</head>
+<body>
+    <p>Redirecting to <a href="' . htmlspecialchars($targetUrl, ENT_QUOTES, 'UTF-8') . '">' . htmlspecialchars($targetUrl, ENT_QUOTES, 'UTF-8') . '</a></p>
+    <script>window.location.replace("' . htmlspecialchars($targetUrl, ENT_QUOTES, 'UTF-8') . '");</script>
+</body>
+</html>';
+
+                $shortlinkFile = $shortlinkDir . DIRECTORY_SEPARATOR . 'index.html';
+                file_put_contents($shortlinkFile, $redirectContent);
+                \Indieinabox\SiteBuilder::addManifest($shortlinkFile);
+                \Indieinabox\SiteBuilder::addManifest($shortlinkDir);
+                \Indieinabox\SiteBuilder::addManifest($outDir . DIRECTORY_SEPARATOR . 's');
+            }
         }
         
         // Add to manifest

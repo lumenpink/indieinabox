@@ -175,8 +175,6 @@ class MarkdownParser implements ParserInterface
         $pageObj = $this->languageProcessor->processLanguage($pageObj);
         $pageObj = $this->setMetadata($pageObj, $page);
 
-        $renderedContent = $this->contentProcessor->processContent($content, $pageObj);
-        $pageObj->content->content = trim($renderedContent, " \n\r\t");
 
         return $pageObj;
     }

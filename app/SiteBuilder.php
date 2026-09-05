@@ -112,6 +112,20 @@ class SiteBuilder
         $this->scan($this->site->paths->getContentPath());
         $this->ensureMandatoryHomepage();
         $this->virtualizeMissingLanguages();
+
+        // Pass 2: Render Markdown to HTML now that all pages are scanned
+        global $pages, $site;
+        $pages = $this->pages;
+        $site = $this->site;
+
+        $contentProcessor = new \Indieinabox\Markdown\ContentProcessor();
+        foreach ($this->pages as $page) {
+            if (isset($page->rawBody) && $page->rawBody !== '') {
+                $renderedContent = $contentProcessor->processContent($page->rawBody, $page);
+                $page->content->content = trim($renderedContent, " \n\r\t");
+            }
+        }
+
         $s2 = microtime(true);
         $timings['Scan + Virtualize'] = ($s2 - $s1) * 1000;
 

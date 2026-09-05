@@ -195,9 +195,12 @@ class HtmlRenderer implements RendererInterface
                 }
             } else {
                 // Normal page link
-                $slugTarget = \Indieinabox\Helper::slugize($target);
+                $slugTargetParts = array_map('\Indieinabox\Helper::slugize', explode('/', $target));
+                $slugTarget = end($slugTargetParts);
+                $slugTargetFull = implode('/', $slugTargetParts);
                 
                 if (isset($pages) && ($pages instanceof \Indieinabox\Pages || is_iterable($pages))) {
+                    $matches = [];
                     // Try to find in the same language first
                     foreach ($pages as $p) {
                         $pLang = $p->lang ?? 'en';
@@ -208,22 +211,51 @@ class HtmlRenderer implements RendererInterface
                         $pNick = \Indieinabox\Helper::slugize($p->nick ?? '');
                         
                         if ($slugTarget === $pTitle || $slugTarget === $pSlug || $slugTarget === $pNick) {
-                            $foundPage = $p;
-                            break;
+                            $matches[] = $p;
                         }
                     }
                     
                     // If not found, try any language
-                    if (!$foundPage) {
+                    if (empty($matches)) {
                         foreach ($pages as $p) {
                             $pTitle = \Indieinabox\Helper::slugize($p->title ?? '');
                             $pSlug = \Indieinabox\Helper::slugize(basename($p->slug ?? ''));
                             $pNick = \Indieinabox\Helper::slugize($p->nick ?? '');
                             
                             if ($slugTarget === $pTitle || $slugTarget === $pSlug || $slugTarget === $pNick) {
-                                $foundPage = $p;
-                                break;
+                                $matches[] = $p;
                             }
+                        }
+                    }
+
+                    if (!empty($matches)) {
+                        // 1. Exact path match precedence (if target contains path)
+                        if (str_contains($target, '/')) {
+                            foreach ($matches as $m) {
+                                $mSlugClean = preg_replace('/\.html$/', '', $m->slug ?? '');
+                                $mSlugParts = array_map('\Indieinabox\Helper::slugize', explode('/', $mSlugClean));
+                                $mSlugFull = implode('/', $mSlugParts);
+                                if ($mSlugFull === $slugTargetFull || str_ends_with($mSlugFull, '/' . $slugTargetFull)) {
+                                    $foundPage = $m;
+                                    break;
+                                }
+                            }
+                        }
+                        
+                        // 2. 'jardim' folder precedence
+                        if (!$foundPage) {
+                            foreach ($matches as $m) {
+                                $mSlugClean = preg_replace('/\.html$/', '', $m->slug ?? '');
+                                if (str_starts_with($mSlugClean, 'jardim/') || dirname($mSlugClean) === 'jardim') {
+                                    $foundPage = $m;
+                                    break;
+                                }
+                            }
+                        }
+                        
+                        // 3. First match fallback
+                        if (!$foundPage) {
+                            $foundPage = $matches[0];
                         }
                     }
                 }
@@ -231,7 +263,7 @@ class HtmlRenderer implements RendererInterface
                 if ($foundPage) {
                     $url = $relpath . ltrim($foundPage->slug, '/');
                 } else {
-                    $url = $relpath . $langPrefix . $slugTarget . '/';
+                    $url = $relpath . $langPrefix . $slugTargetFull . '/';
                 }
             }
 

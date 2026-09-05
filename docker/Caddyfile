@@ -3,8 +3,8 @@
     order php_server before file_server
 }
 
-# Inicia o servidor na porta 8081 sem HTTPS forçado (ideal para dev local)
-:8081 {
+# Inicia o servidor usando a variável de ambiente APP_DOMAIN ou localhost como fallback
+{$APP_DOMAIN:localhost} {
     # Habilita compressão moderna
     encode zstd gzip
 

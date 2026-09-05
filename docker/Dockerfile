@@ -1,15 +1,13 @@
 FROM dunglas/frankenphp:php8.4
 
-# Instala dependências necessárias para o Bun
-RUN apt-get update && apt-get install -y unzip && apt-get clean && rm -rf /var/lib/apt/lists/*
+# Instala dependências necessárias
+RUN apt-get update && apt-get install -y unzip curl rsync git && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Instala o Bun (para o Tailwind CSS)
+# Instala o Bun (para o Tailwind CSS, etc, caso necessário no runtime)
 RUN curl -fsSL https://bun.sh/install | bash
-
-# Adiciona o Bun ao PATH
 ENV PATH="/root/.bun/bin:${PATH}"
 
-# O FrankenPHP tem um script mágico `install-php-extensions` que já lida com apt-get e dependências por baixo dos panos!
+# O FrankenPHP tem um script mágico `install-php-extensions`
 RUN install-php-extensions \
     pdo_sqlite \
     mbstring \
@@ -20,11 +18,19 @@ RUN install-php-extensions \
     opcache \
     @composer
 
-# Define o diretório de trabalho
+# Define o diretório de trabalho padrão
 WORKDIR /app
 
-# O FrankenPHP serve os arquivos a partir de /app/public por padrão.
-# Como o projeto usa a pasta raiz e o build.php como roteador, injetamos nosso Caddyfile:
+# Copia o Caddyfile customizado
 COPY docker/Caddyfile /etc/caddy/Caddyfile
 
+# Copia o código fonte atual para um diretório de backup/origem
+# Isso permite que o entrypoint popule o volume /app caso esteja vazio
+COPY . /usr/src/indieinabox/
 
+# Copia e configura o entrypoint
+COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+CMD ["frankenphp", "run", "--config", "/etc/caddy/Caddyfile"]

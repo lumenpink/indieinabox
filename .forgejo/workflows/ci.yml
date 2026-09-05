@@ -338,9 +338,6 @@ jobs:
       - name: Compile App
         run: php compile.php
 
-      - name: Rename Artifact
-        run: mv indieinabox.php index.php
-
       - name: "Delete Nightly Git Tag and Release"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -385,7 +382,7 @@ jobs:
           tag_name: "nightly"
           name: "Nightly Build"
           prerelease: true
-          files: index.php
+          files: indieinabox.php
           body: "Automatic nightly build from main."
 
   # ─────────────────────────────────────────────────────────────────────────────
@@ -415,11 +412,8 @@ jobs:
       - name: Compile App
         run: php compile.php
 
-      - name: Rename Artifact
-        run: mv indieinabox.php index.php
-
       - name: Create Stable Release
         uses: https://github.com/softprops/action-gh-release@v2
         with:
           prerelease: false
-          files: index.php
+          files: indieinabox.php

@@ -134,7 +134,9 @@ class MarkdownParser implements ParserInterface
         }
 
         $slugBase = trim($slugBase, '/');
-        $slugBase = strtolower($slugBase);
+        $slugBaseParts = explode('/', $slugBase);
+        $slugBaseParts = array_map('\Indieinabox\Helper::slugize', $slugBaseParts);
+        $slugBase = implode('/', $slugBaseParts);
 
         // Build final slug with language prefix if non-default
         $finalSlug = $slugBase;
@@ -234,7 +236,7 @@ class MarkdownParser implements ParserInterface
                 }
 
                 if ($matchedKind === $page->kind) {
-                    $parts[$folderIndex] = $page->localizedkind;
+                    $parts[$folderIndex] = \Indieinabox\Helper::slugize($page->localizedkind);
                     $page->slug = implode('/', $parts);
 
                     // Re-calculate the relative path based on the updated slug

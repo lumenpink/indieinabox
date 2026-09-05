@@ -391,6 +391,14 @@ class MicrosubReaderHandler
         <main class="main-content">
             <div class="timeline-header">
                 <h1 id="current-channel-title">Inbox</h1>
+                <div style="display: flex; gap: 10px; align-items: center; flex: 1; margin: 0 20px;">
+                    <input type="text" id="article-search" placeholder="Search / Filtrar..." style="flex: 1; padding: 0.5rem 1rem; border-radius: 8px; border: 1px solid var(--glass-border); background: rgba(0,0,0,0.2); color: white; outline: none;" oninput="filterTimeline()">
+                    <select id="article-filter" style="padding: 0.5rem; border-radius: 8px; border: 1px solid var(--glass-border); background: rgba(0,0,0,0.2); color: white; outline: none;" onchange="filterTimeline()">
+                        <option value="all">Todos</option>
+                        <option value="unread">Não lidos</option>
+                        <option value="read">Lidos</option>
+                    </select>
+                </div>
                 <div style="display: flex; gap: 10px;">
                     <button class="btn" onclick="addFeed()">Add Feed</button>
                     <button class="btn" onclick="manageFeeds()">Manage Feeds</button>
@@ -404,7 +412,7 @@ class MicrosubReaderHandler
     </div>
 
     <div id="manage-feeds-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center;">
-        <div style="background: var(--bg); padding: 2rem; border-radius: 12px; width: 90%; max-width: 600px; max-height: 80vh; overflow-y: auto; border: 1px solid var(--glass-border);">
+        <div style="background: #111827; padding: 2rem; border-radius: 12px; width: 90%; max-width: 600px; max-height: 80vh; overflow-y: auto; border: 1px solid var(--glass-border); box-shadow: 0 25px 50px rgba(0,0,0,0.5);">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
                 <h2 style="margin: 0;">Manage Feeds</h2>
                 <button class="btn" style="padding: 0.5rem 1rem;" onclick="closeManageFeeds()">Close</button>
@@ -414,6 +422,24 @@ class MicrosubReaderHandler
     </div>
 
     <script>
+        function filterTimeline() {
+            const query = document.getElementById('article-search').value.toLowerCase();
+            const filterType = document.getElementById('article-filter').value;
+            const items = document.querySelectorAll('#timeline .item');
+            
+            items.forEach(item => {
+                const text = item.textContent.toLowerCase();
+                const matchesSearch = text.includes(query);
+                const isRead = item.classList.contains('read');
+                
+                let matchesFilter = true;
+                if (filterType === 'unread' && isRead) matchesFilter = false;
+                if (filterType === 'read' && !isRead) matchesFilter = false;
+                
+                item.style.display = (matchesSearch && matchesFilter) ? '' : 'none';
+            });
+        }
+
         const ENDPOINT = "<?= $endpoint ?>";
         let currentChannel = 'inbox';
         window.timelineItems = [];

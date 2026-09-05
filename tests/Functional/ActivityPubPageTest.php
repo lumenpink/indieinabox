@@ -32,8 +32,7 @@ it('generates index.json ActivityPub representation for posts', function () {
     file_put_contents($this->tempDir . '/content/post/test-ap.md', $yaml);
 
     $builder = new SiteBuilder($this->site);
-    $builder->scan($this->tempDir . '/content');
-    $builder->generateHTMLFiles();
+    $builder->build();
 
     $jsonFile = $this->tempDir . '/public_html/post/test-ap/index.json';
     expect(file_exists($jsonFile))->toBeTrue();
@@ -53,8 +52,7 @@ it('serves index.json via WebRouter when Accept header requests ActivityPub', fu
     file_put_contents($this->tempDir . '/content/post/router-test.md', $yaml);
 
     $builder = new SiteBuilder($this->site);
-    $builder->scan($this->tempDir . '/content');
-    $builder->generateHTMLFiles();
+    $builder->build();
 
     $_SERVER['REQUEST_URI'] = '/post/router-test';
     $_SERVER['HTTP_ACCEPT'] = 'application/activity+json, application/json';

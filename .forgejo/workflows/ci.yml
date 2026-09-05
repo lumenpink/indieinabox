@@ -154,7 +154,7 @@ jobs:
           tar -xzf lychee-x86_64-unknown-linux-musl.tar.gz
           
           # 4. Roda o Lychee contra o servidor vivo, aceitando 530 (Anti-bot do Cloudflare no lumen.pink)
-          ./lychee --verbose --no-progress --accept 530 'http://localhost:8081/'
+          ./lychee-x86_64-unknown-linux-musl/lychee --verbose --no-progress --accept 530 'http://localhost:8081/'
 
   # ─────────────────────────────────────────────────────────────────────────────
   # JOB 2 — Static security analysis with Psalm

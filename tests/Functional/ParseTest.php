@@ -85,6 +85,7 @@ it('parses markdown file and extracts tags and formats links', function () {
         ->and($page->tags)->toContain('anothertag')
         ->and(count($page->tags))->toBe(3);
 
+    $page->content->content = trim($contentProcessor->processContent($page->rawBody, $page), " \n\r\t");
     expect((string) $page->content)->toContain('<a href="/blog/other-post/">my link</a>');
 });
 

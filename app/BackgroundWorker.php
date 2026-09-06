@@ -56,10 +56,41 @@ class BackgroundWorker
             $this->processOutgoingWebmentions();
             $this->processArchiveQueue();
             $this->processTwtxtFeeds();
+            $this->processBackups();
         } finally {
             flock($fp, LOCK_UN);
             fclose($fp);
         }
+    }
+
+    /**
+     * Executes the daily backup if cron is enabled.
+     */
+    public function processBackups(): void
+    {
+        $config = \Indieinabox\Database::getAllSettings();
+        if (empty($config['backup_cron_enabled'])) {
+            return;
+        }
+
+        $today = date('Y-m-d');
+        if (($config['last_backup_date'] ?? '') === $today) {
+            return;
+        }
+
+        echo "Running automatic daily backup...\n";
+        
+        if (!class_exists('\\Indieinabox\\BackupManager')) {
+            require_once __DIR__ . '/BackupManager.php';
+        }
+        
+        $backupManager = new \Indieinabox\BackupManager($this->site);
+        $backupManager->run();
+        
+        $stmt = $this->db->prepare("INSERT OR REPLACE INTO settings (key, value) VALUES ('last_backup_date', ?)");
+        $stmt->execute([$today]);
+        
+        echo "Daily backup complete.\n";
     }
 
     /**
@@ -563,7 +594,7 @@ class BackgroundWorker
             curl_setopt($ch, CURLOPT_POST, true);
             curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query(['source' => $source, 'target' => $target]));
             curl_setopt($ch, CURLOPT_TIMEOUT, 10);
-            curl_setopt($ch, CURLOPT_USERAGENT, 'Indieinabox Webmention Sender/1.0');
+            curl_setopt($ch, CURLOPT_HTTPHEADER, ['User-Agent: Indieinabox Webmention Sender/1.0']);
             $response = curl_exec($ch);
             $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
             curl_close($ch);
@@ -594,7 +625,7 @@ class BackgroundWorker
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
         curl_setopt($ch, CURLOPT_MAXREDIRS, 3);
         curl_setopt($ch, CURLOPT_TIMEOUT, 10);
-        curl_setopt($ch, CURLOPT_USERAGENT, 'Indieinabox Endpoint Discoverer/1.0');
+        curl_setopt($ch, CURLOPT_HTTPHEADER, ['User-Agent: Indieinabox Endpoint Discoverer/1.0']);
         $response = curl_exec($ch);
         
         if ($response === false) {
@@ -731,7 +762,7 @@ class BackgroundWorker
     {
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_USERAGENT, "Indieinabox BackgroundWorker");
+        curl_setopt($ch, CURLOPT_HTTPHEADER, ['User-Agent: Indieinabox BackgroundWorker']);
         curl_setopt($ch, CURLOPT_TIMEOUT, 10);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
@@ -979,7 +1010,7 @@ class BackgroundWorker
         $ch = curl_init($archiveOrgUrl);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_TIMEOUT, 5);
-        curl_setopt($ch, CURLOPT_USERAGENT, "Indieinabox WebArchiver");
+        curl_setopt($ch, CURLOPT_HTTPHEADER, ['User-Agent: Indieinabox WebArchiver']);
         curl_exec($ch);
         curl_close($ch);
     }

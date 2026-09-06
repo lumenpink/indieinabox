@@ -301,6 +301,13 @@ class ConfigHandler
         $currentConfig['auto_upgrade_stable'] = !empty($_POST['auto_upgrade_stable']);
         $currentConfig['auto_upgrade_nightly'] = !empty($_POST['auto_upgrade_nightly']);
 
+        // --- Backups ---
+        $currentConfig['backup_dir'] = trim($_POST['backup_dir'] ?? '../backup');
+        $currentConfig['backup_limit'] = isset($_POST['backup_limit']) ? max(1, (int)$_POST['backup_limit']) : 5;
+        $currentConfig['backup_cron_enabled'] = isset($_POST['backup_cron_enabled']);
+        $currentConfig['backup_skip_content'] = isset($_POST['backup_skip_content']);
+        $currentConfig['backup_skip_media'] = isset($_POST['backup_skip_media']);
+
         // --- ActivityPub ---
         $currentConfig['activitypub_handle'] = trim($_POST['activitypub_handle'] ?? 'schwartz');
         $currentConfig['feed_limit'] = isset($_POST['feed_limit']) ? (int)$_POST['feed_limit'] : 20;
@@ -1175,6 +1182,44 @@ class ConfigHandler
                     <button type="button" class="config-tab-btn" onclick="showTab('tab-social')">Social & Federation</button>
                     <button type="button" class="config-tab-btn" onclick="showTab('tab-services')">Services & Security</button>
                     <button type="button" class="config-tab-btn" onclick="showTab('tab-updates')">Updates</button>
+                    <button type="button" class="config-tab-btn" onclick="showTab('tab-backups')">Backups</button>
+                </div>
+
+
+                <div id="tab-backups" class="tab-content">
+                    <fieldset>
+                        <legend>Backup Configuration</legend>
+                        <p style="margin-top:0;">Configure where and how backups are stored.</p>
+
+                        <div class="form-group">
+                            <label for="backup_dir">Backup Destination Directory</label>
+                            <input type="text" name="backup_dir" id="backup_dir" value="<?= htmlspecialchars($config['backup_dir'] ?? '../backup') ?>">
+                            <small>Absolute path or relative to the project root.</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="backup_limit">Keep Last N Backups</label>
+                            <input type="number" name="backup_limit" id="backup_limit" value="<?= htmlspecialchars((string)($config['backup_limit'] ?? 5)) ?>" min="1">
+                        </div>
+
+                        <div class="checkbox-group">
+                            <input type="hidden" name="backup_cron_enabled" value="0">
+                            <input type="checkbox" name="backup_cron_enabled" id="backup_cron_enabled" value="1" <?= !empty($config['backup_cron_enabled']) ? 'checked' : '' ?>>
+                            <label for="backup_cron_enabled">Enable Automatic Daily Backups (via Cron)</label>
+                        </div>
+                        
+                        <div class="checkbox-group" style="margin-top: 10px;">
+                            <input type="hidden" name="backup_skip_content" value="0">
+                            <input type="checkbox" name="backup_skip_content" id="backup_skip_content" value="1" <?= !empty($config['backup_skip_content']) ? 'checked' : '' ?>>
+                            <label for="backup_skip_content">Skip Content Directory (`--no-content`)</label>
+                        </div>
+
+                        <div class="checkbox-group" style="margin-top: 10px;">
+                            <input type="hidden" name="backup_skip_media" value="0">
+                            <input type="checkbox" name="backup_skip_media" id="backup_skip_media" value="1" <?= !empty($config['backup_skip_media']) ? 'checked' : '' ?>>
+                            <label for="backup_skip_media">Skip Media Directory (`--no-media`)</label>
+                        </div>
+                    </fieldset>
                 </div>
 
                 <div id="tab-updates" class="tab-content">

@@ -185,6 +185,11 @@ if (php_sapi_name() === 'cli') {
     } elseif (isset($argv[1]) && $argv[1] === 'test-links') {
         $checker = new \Indieinabox\LinkChecker($site);
         $checker->run();
+    } elseif (isset($argv[1]) && $argv[1] === 'backup') {
+        $skipContent = in_array('--no-content', $argv, true);
+        $skipMedia = in_array('--no-media', $argv, true);
+        $backupManager = new \Indieinabox\BackupManager($site);
+        $backupManager->run($skipContent, $skipMedia);
     } else {
         $builder = new \Indieinabox\SiteBuilder($site);
         $builder->build();

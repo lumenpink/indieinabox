@@ -246,7 +246,7 @@ class SiteBuilder
     {
         $base = $this->site->paths->baseDir;
         $contentMediaDir = rtrim($this->site->paths->getContentPath(), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . 'media';
-        $destMedia = $this->site->paths->outputDirHtml . DIRECTORY_SEPARATOR . 'media';
+        $destMedia = $this->site->paths->outputDirMedia;
         if (is_dir($contentMediaDir)) {
             echo "Copying media files\n";
             ThemeManager::copyStaticFiles($contentMediaDir, $base, $destMedia);

@@ -187,6 +187,10 @@ class FeedFetcher
                         if (!is_array($obj)) continue;
                         
                         $id = $obj['id'] ?? md5(json_encode($obj));
+                        if ($this->itemExists((string)$id, $channel)) {
+                            continue;
+                        }
+
                         $url = $obj['url'] ?? $id;
                         $contentHtml = $obj['content'] ?? $obj['summary'] ?? '';
                         $contentHtml = $this->processHtmlMedia($contentHtml);
@@ -311,6 +315,10 @@ class FeedFetcher
                 $id = (string)($item->guid ?? $url);
                 if (!$id) $id = md5((string)$item->title);
 
+                if ($this->itemExists($id, $channel)) {
+                    continue;
+                }
+
                 $content = (string)($item->description ?? '');
                 $content = $this->processHtmlMedia($content);
                 $published = isset($item->pubDate) ? strtotime((string)$item->pubDate) : time();
@@ -343,6 +351,10 @@ class FeedFetcher
             foreach ($xml->entry as $entry) {
                 $id = (string)($entry->id ?? '');
                 
+                if ($this->itemExists($id, $channel)) {
+                    continue;
+                }
+                
                 $url = '';
                 if (isset($entry->link)) {
                     foreach ($entry->link as $link) {
@@ -369,6 +381,14 @@ class FeedFetcher
                 $this->saveItem($id, $channel, $url, $content, $published, $entryAuthor, $authorPhoto);
             }
         }
+    }
+
+    private function itemExists(string $id, string $channel): bool
+    {
+        $dataDir = \Indieinabox\Database::$dataDir ?? (dirname(__DIR__) . '/data');
+        $channelDir = $dataDir . DIRECTORY_SEPARATOR . 'microsub' . DIRECTORY_SEPARATOR . 'inbox' . DIRECTORY_SEPARATOR . preg_replace('/[^a-zA-Z0-9_-]/', '', $channel);
+        $filepath = $channelDir . DIRECTORY_SEPARATOR . md5($id) . '.md';
+        return file_exists($filepath);
     }
 
     /**

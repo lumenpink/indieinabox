@@ -469,6 +469,46 @@ class BackgroundWorker
         $published = isset($object['published']) ? strtotime($object['published']) : time();
         $content = $object['content'] ?? ($object['summary'] ?? '');
         
+        // Custom Emojis parsing
+        $tags = $object['tag'] ?? [];
+        if (!is_array($tags)) {
+            $tags = [$tags];
+        }
+        $config = \Indieinabox\Database::getAllSettings();
+        $cacheEmojis = !empty($config['activitypub_cache_remote_emojis']);
+        $emojiDir = $dataDir . DIRECTORY_SEPARATOR . 'media' . DIRECTORY_SEPARATOR . 'microsub' . DIRECTORY_SEPARATOR . 'emojis';
+        if ($cacheEmojis && !is_dir($emojiDir)) {
+            @mkdir($emojiDir, 0755, true);
+        }
+
+        foreach ($tags as $tag) {
+            if (isset($tag['type']) && $tag['type'] === 'Emoji' && isset($tag['name']) && isset($tag['icon']['url'])) {
+                $shortcode = $tag['name'];
+                $iconUrl = $tag['icon']['url'];
+                $finalUrl = $iconUrl;
+                
+                if ($cacheEmojis) {
+                    $ext = strtolower(pathinfo(parse_url($iconUrl, PHP_URL_PATH), PATHINFO_EXTENSION));
+                    if (!$ext) $ext = 'png';
+                    $safeName = preg_replace('/[^a-zA-Z0-9_-]/', '', trim($shortcode, ':')) . '.' . $ext;
+                    $localPath = $emojiDir . DIRECTORY_SEPARATOR . $safeName;
+                    
+                    if (!file_exists($localPath)) {
+                        $imgData = @file_get_contents($iconUrl);
+                        if ($imgData) {
+                            @file_put_contents($localPath, $imgData);
+                        }
+                    }
+                    if (file_exists($localPath)) {
+                        $finalUrl = '/data/media/microsub/emojis/' . $safeName;
+                    }
+                }
+                
+                $content = str_replace($shortcode, '<img src="' . htmlspecialchars($finalUrl) . '" class="custom-emoji" alt="' . htmlspecialchars($shortcode) . '" title="' . htmlspecialchars($shortcode) . '">', $content);
+            }
+        }
+        
+
         $frontmatter = [
             'id' => $hash,
             'url' => $object['url'] ?? $id,

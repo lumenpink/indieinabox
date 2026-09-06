@@ -314,6 +314,7 @@ class ConfigHandler
 
         // --- ActivityPub ---
         $currentConfig['activitypub_handle'] = trim($_POST['activitypub_handle'] ?? 'schwartz');
+        $currentConfig['activitypub_cache_remote_emojis'] = isset($_POST['activitypub_cache_remote_emojis']);
         $currentConfig['feed_limit'] = isset($_POST['feed_limit']) ? (int)$_POST['feed_limit'] : 20;
 
         // --- Arrays ---
@@ -1613,6 +1614,10 @@ class ConfigHandler
                         <label>Fediverse Handle (e.g. 'schwartz')</label>
                         <input type="text" name="activitypub_handle" value="<?= htmlspecialchars($config['activitypub_handle'] ?? 'schwartz') ?>">
                         <small>Your full handle will be <code>@your_handle@your_fqdn</code></small>
+                    </div>
+                    <div class="checkbox-group" style="margin-top: 1em;">
+                        <input type="checkbox" name="activitypub_cache_remote_emojis" id="activitypub_cache_remote_emojis" <?= !empty($config['activitypub_cache_remote_emojis']) ? 'checked' : '' ?>>
+                        <label for="activitypub_cache_remote_emojis">Cache remote custom emojis locally</label>
                     </div>
                 </fieldset>
 

@@ -256,6 +256,63 @@ class ActivityPubHandler
         $to = ['https://www.w3.org/ns/activitystreams#Public'];
         $cc = [$fqdn . '/followers'];
 
+        // Add Image Attachments for Pixelfed/Mastodon
+        $attachments = [];
+        $photos = $metadata['photo'] ?? [];
+        if (!is_array($photos)) {
+            $photos = [$photos];
+        }
+        foreach ($photos as $photo) {
+            $photoUrl = filter_var($photo, FILTER_VALIDATE_URL) ? $photo : rtrim($fqdn, '/') . '/' . ltrim($photo, '/');
+            $ext = strtolower(pathinfo(parse_url($photoUrl, PHP_URL_PATH), PATHINFO_EXTENSION));
+            $mediaType = 'image/jpeg';
+            if ($ext === 'png') $mediaType = 'image/png';
+            elseif ($ext === 'gif') $mediaType = 'image/gif';
+            elseif ($ext === 'webp') $mediaType = 'image/webp';
+            
+            $attachments[] = [
+                'type' => 'Document',
+                'mediaType' => $mediaType,
+                'url' => $photoUrl,
+                'name' => 'Image'
+            ];
+        }
+        if (!empty($attachments)) {
+            $object['attachment'] = $attachments;
+        }
+
+        // Add Custom Emojis tags
+        $tags = [];
+        if (preg_match_all('/:([a-zA-Z0-9_]+):/', $content, $matches)) {
+            $uniqueEmojis = array_unique($matches[1]);
+            $config = \Indieinabox\Database::getAllSettings();
+            $contentDirName = $config['contentdir'] ?? 'content';
+            $emojiDir = dirname(__DIR__) . '/' . $contentDirName . '/media/emojis';
+            
+            if (is_dir($emojiDir)) {
+                foreach ($uniqueEmojis as $shortcode) {
+                    foreach (['png', 'gif', 'jpg', 'webp'] as $ext) {
+                        if (file_exists($emojiDir . '/' . $shortcode . '.' . $ext)) {
+                            $tags[] = [
+                                'type' => 'Emoji',
+                                'id' => rtrim($fqdn, '/') . '/media/emojis/' . $shortcode . '.' . $ext,
+                                'name' => ':' . $shortcode . ':',
+                                'icon' => [
+                                    'type' => 'Image',
+                                    'mediaType' => 'image/' . ($ext === 'jpg' ? 'jpeg' : $ext),
+                                    'url' => rtrim($fqdn, '/') . '/media/emojis/' . $shortcode . '.' . $ext
+                                ]
+                            ];
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        if (!empty($tags)) {
+            $object['tag'] = $tags;
+        }
+
         $syn = $metadata['syndicate_to'] ?? $metadata['mp_syndicate_to'] ?? null;
         if ($syn) {
             $syndicates = is_array($syn) ? $syn : [$syn];

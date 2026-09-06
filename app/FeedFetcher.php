@@ -570,7 +570,7 @@ class FeedFetcher
             });
         }
 
-        curl_setopt($ch, CURLOPT_USERAGENT, 'Indieinabox-Fetcher');
+        curl_setopt($ch, CURLOPT_USERAGENT, 'IndieInABox Fetcher Bot');
 
         $result = curl_exec($ch);
         $error = curl_errno($ch);

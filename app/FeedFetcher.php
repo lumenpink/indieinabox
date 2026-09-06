@@ -531,7 +531,7 @@ class FeedFetcher
         $maxSizeMB = $maxSizeStr !== null && $maxSizeStr !== '' ? (float)$maxSizeStr : 10.0;
         $maxSizeBytes = $maxSizeMB * 1024 * 1024;
 
-        $baseDir = dirname(__DIR__) . '/public_media/microsub';
+        $baseDir = dirname(__DIR__) . '/data/microsub/media';
         if (!is_dir($baseDir)) {
             @mkdir($baseDir, 0755, true);
         }

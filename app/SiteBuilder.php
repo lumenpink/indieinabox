@@ -251,10 +251,10 @@ class SiteBuilder
             ThemeManager::copyStaticFiles($contentMediaDir, $base, $this->site->paths->outputDirMedia);
         }
 
-        $publicMediaDir = $base . DIRECTORY_SEPARATOR . 'public_media';
-        if (is_dir($publicMediaDir)) {
-            echo "Copying public media files\n";
-            ThemeManager::copyStaticFiles($publicMediaDir, $base, $this->site->paths->outputDirMedia);
+        $microsubMediaDir = $base . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'microsub' . DIRECTORY_SEPARATOR . 'media';
+        if (is_dir($microsubMediaDir)) {
+            echo "Copying microsub media files\n";
+            ThemeManager::copyStaticFiles($microsubMediaDir, $base, $this->site->paths->outputDirMedia . DIRECTORY_SEPARATOR . 'microsub');
         }
     }
     /**

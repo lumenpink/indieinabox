@@ -168,14 +168,14 @@ class FeedFetcher
         if (!$outboxUrl) return;
 
         $ctx = stream_context_create(['http' => ['header' => "Accept: application/activity+json\r\nUser-Agent: Indieinabox/1.0\r\n"]]);
-        $outboxData = @file_get_contents($outboxUrl, false, $ctx);
+        $outboxData = $this->fetchApJson($outboxUrl, $ctx);
         if (!$outboxData) return;
 
         $outbox = json_decode($outboxData, true);
         if (isset($outbox['first'])) {
             $firstUrl = is_string($outbox['first']) ? $outbox['first'] : ($outbox['first']['id'] ?? '');
             if ($firstUrl) {
-                $pageData = @file_get_contents($firstUrl, false, $ctx);
+                $pageData = $this->fetchApJson($firstUrl, $ctx);
                 if ($pageData) {
                     $page = json_decode($pageData, true);
                     $items = $page['orderedItems'] ?? $page['items'] ?? [];
@@ -189,7 +189,7 @@ class FeedFetcher
                         
                         $inReplyTo = $obj['inReplyTo'] ?? $obj['quote'] ?? $obj['_misskey_quote'] ?? '';
                         if ($inReplyTo && is_string($inReplyTo)) {
-                            $parentData = @file_get_contents($inReplyTo, false, $ctx);
+                            $parentData = $this->fetchApJson($inReplyTo, $ctx);
                             if ($parentData) {
                                 $parentObj = json_decode($parentData, true);
                                 if ($parentObj && is_array($parentObj)) {
@@ -208,7 +208,7 @@ class FeedFetcher
                                     $parentAuthorUrl = $parentObj['attributedTo'] ?? $parentObj['actor'] ?? '';
                                     $parentAuthorName = 'Unknown';
                                     if (is_string($parentAuthorUrl) && $parentAuthorUrl) {
-                                        $parentAuthorData = @file_get_contents($parentAuthorUrl, false, $ctx);
+                                        $parentAuthorData = $this->fetchApJson($parentAuthorUrl, $ctx);
                                         if ($parentAuthorData) {
                                             $parentAuthorObj = json_decode($parentAuthorData, true);
                                             if ($parentAuthorObj && isset($parentAuthorObj['name'])) {
@@ -384,5 +384,55 @@ class FeedFetcher
             
             file_put_contents($filepath, $fileContent);
         }
+    }
+
+    /**
+     * Fetches ActivityPub JSON, automatically attempting HTTP Signatures if available.
+     * Uses the provided stream context as a fallback if signing fails or is not possible.
+     */
+    private function fetchApJson(string $url, $fallbackCtx)
+    {
+        $stmt = $this->db->query("SELECT private_key FROM activitypub_keys WHERE key_id = 'main-key'");
+        $row = $stmt->fetch(\PDO::FETCH_ASSOC);
+        
+        if ($row && !empty($row['private_key']) && class_exists('\Indieinabox\HttpSignature')) {
+            $privateKey = $row['private_key'];
+            $fqdn = \Indieinabox\Database::getSetting('fqdn');
+            
+            if ($fqdn) {
+                $fqdn = rtrim($fqdn, '/');
+                $keyId = $fqdn . '/actor#main-key';
+                
+                $sigHeaders = \Indieinabox\HttpSignature::sign(
+                    $keyId,
+                    $privateKey,
+                    'GET',
+                    $url,
+                    '',
+                    ['Accept' => 'application/activity+json']
+                );
+                
+                $headersList = [
+                    "Accept: application/activity+json",
+                    "User-Agent: Indieinabox/1.0"
+                ];
+                
+                foreach ($sigHeaders as $k => $v) {
+                    $headersList[] = "$k: $v";
+                }
+                
+                $ctx = stream_context_create([
+                    'http' => [
+                        'method' => 'GET',
+                        'header' => implode("\r\n", $headersList) . "\r\n"
+                    ]
+                ]);
+                
+                $data = @file_get_contents($url, false, $ctx);
+                if ($data) return $data;
+            }
+        }
+        
+        return @file_get_contents($url, false, $fallbackCtx);
     }
 }

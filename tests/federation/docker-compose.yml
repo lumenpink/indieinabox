@@ -23,36 +23,37 @@ services:
       - ../../data:/app
 
   # ==========================================
-  # MASTODON
+  # SHARED DATABASES (Otimização de RAM)
   # ==========================================
-  mastodon-db:
-    image: postgres:14-alpine
-    container_name: mastodon_db
+  federation-db:
+    image: postgres:15-alpine
+    container_name: federation_db
     environment:
-      - POSTGRES_USER=mastodon
-      - POSTGRES_PASSWORD=mastodon_pass
-      - POSTGRES_DB=mastodon
+      - POSTGRES_PASSWORD=root_pass
     volumes:
-      - mastodon_db_data:/var/lib/postgresql/data
+      - federation_db_data:/var/lib/postgresql/data
+      - ./init-dbs.sql:/docker-entrypoint-initdb.d/init.sql
 
-  mastodon-redis:
+  federation-redis:
     image: redis:7-alpine
-    container_name: mastodon_redis
+    container_name: federation_redis
     volumes:
-      - mastodon_redis_data:/data
+      - federation_redis_data:/data
 
+  # ==========================================
+  # MASTODON (Usa Postgres DB 'mastodon' e Redis DB 0)
+  # ==========================================
   mastodon-web:
     image: ghcr.io/mastodon/mastodon:v4.2.8
     container_name: mastodon_web
     restart: unless-stopped
     depends_on:
-      - mastodon-db
-      - mastodon-redis
+      - federation-db
+      - federation-redis
     environment:
       - LOCAL_DOMAIN=${MASTODON_DOMAIN}
-      - REDIS_HOST=mastodon-redis
-      - REDIS_PORT=6379
-      - DB_HOST=mastodon-db
+      - REDIS_URL=redis://federation-redis:6379/0
+      - DB_HOST=federation-db
       - DB_USER=mastodon
       - DB_NAME=mastodon
       - DB_PASS=mastodon_pass
@@ -69,13 +70,12 @@ services:
     image: ghcr.io/mastodon/mastodon:v4.2.8
     container_name: mastodon_sidekiq
     depends_on:
-      - mastodon-db
-      - mastodon-redis
+      - federation-db
+      - federation-redis
     environment:
       - LOCAL_DOMAIN=${MASTODON_DOMAIN}
-      - REDIS_HOST=mastodon-redis
-      - REDIS_PORT=6379
-      - DB_HOST=mastodon-db
+      - REDIS_URL=redis://federation-redis:6379/0
+      - DB_HOST=federation-db
       - DB_USER=mastodon
       - DB_NAME=mastodon
       - DB_PASS=mastodon_pass
@@ -87,73 +87,41 @@ services:
       - mastodon_public:/mastodon/public/system
 
   # ==========================================
-  # MISSKEY
+  # MISSKEY (Usa Postgres DB 'misskey' e Redis DB 1)
   # ==========================================
-  misskey-db:
-    image: postgres:15-alpine
-    container_name: misskey_db
-    environment:
-      - POSTGRES_USER=misskey
-      - POSTGRES_PASSWORD=misskey_pass
-      - POSTGRES_DB=misskey
-    volumes:
-      - misskey_db_data:/var/lib/postgresql/data
-
-  misskey-redis:
-    image: redis:7-alpine
-    container_name: misskey_redis
-    volumes:
-      - misskey_redis_data:/data
-
   misskey-web:
     image: misskey/misskey:latest
     container_name: misskey_web
     depends_on:
-      - misskey-db
-      - misskey-redis
+      - federation-db
+      - federation-redis
     volumes:
       - ./misskey/default.yml:/misskey/.config/default.yml
       - misskey_files:/misskey/files
 
   # ==========================================
-  # PIXELFED
+  # PIXELFED (Usa Postgres DB 'pixelfed' e Redis DB 2)
   # ==========================================
-  pixelfed-db:
-    image: mariadb:10.5
-    container_name: pixelfed_db
-    environment:
-      - MYSQL_DATABASE=pixelfed
-      - MYSQL_USER=pixelfed
-      - MYSQL_PASSWORD=pixelfed_pass
-      - MYSQL_RANDOM_ROOT_PASSWORD=yes
-    volumes:
-      - pixelfed_db_data:/var/lib/mysql
-
-  pixelfed-redis:
-    image: redis:7-alpine
-    container_name: pixelfed_redis
-    volumes:
-      - pixelfed_redis_data:/data
-
   pixelfed-web:
     image: pixelfed/pixelfed:latest
     container_name: pixelfed_web
     depends_on:
-      - pixelfed-db
-      - pixelfed-redis
+      - federation-db
+      - federation-redis
     environment:
       - APP_NAME=PixelfedLocal
       - APP_ENV=production
       - APP_KEY=base64:dummykeyfortestingonly1234567890123456789=
       - APP_DEBUG=false
       - APP_URL=https://${PIXELFED_DOMAIN}
-      - DB_CONNECTION=mysql
-      - DB_HOST=pixelfed-db
-      - DB_PORT=3306
+      - DB_CONNECTION=pgsql
+      - DB_HOST=federation-db
+      - DB_PORT=5432
       - DB_DATABASE=pixelfed
       - DB_USERNAME=pixelfed
       - DB_PASSWORD=pixelfed_pass
-      - REDIS_HOST=pixelfed-redis
+      - REDIS_HOST=federation-redis
+      - REDIS_DATABASE=2
       - REDIS_PASSWORD=null
       - REDIS_PORT=6379
       - BROADCAST_DRIVER=redis
@@ -164,12 +132,8 @@ services:
       - pixelfed_app:/var/www/
 
 volumes:
-  mastodon_db_data:
-  mastodon_redis_data:
+  federation_db_data:
+  federation_redis_data:
   mastodon_public:
-  misskey_db_data:
-  misskey_redis_data:
   misskey_files:
-  pixelfed_db_data:
-  pixelfed_redis_data:
   pixelfed_app:

@@ -1,4 +1,5 @@
 url: https://misskey.test.meudominio.com
+port: 3000
 
 db:
   host: federation-db

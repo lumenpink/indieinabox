@@ -154,15 +154,12 @@ class MicrosubReaderHandler
             max-width: 1200px;
             height: 90vh;
             display: grid;
-            grid-template-columns: 280px 1fr;
+            grid-template-columns: 1fr;
             gap: 2rem;
         }
 
         .sidebar {
-            padding: 2rem;
-            display: flex;
-            flex-direction: column;
-            overflow-y: auto;
+            display: none;
         }
 
         .sidebar-header {
@@ -362,31 +359,7 @@ class MicrosubReaderHandler
     </style>
     <div class="microsub-wrapper">
     <div id="reader-view" style="display: none;">
-        <aside class="sidebar glass">
-            <div class="sidebar-header">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="url(#grad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <defs>
-                        <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" style="stop-color:#a770ef" />
-                            <stop offset="100%" style="stop-color:#fdb99b" />
-                        </linearGradient>
-                    </defs>
-                    <path d="M4 11a9 9 0 0 1 9 9"></path>
-                    <path d="M4 4a16 16 0 0 1 16 16"></path>
-                    <circle cx="5" cy="19" r="1"></circle>
-                </svg>
-                <h2>Nexus</h2>
-            </div>
-            
-            <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1rem; text-transform: uppercase; font-weight: 600;">Channels</div>
-            <ul class="channels-list" id="channels-list">
-                <!-- Channels injected here -->
-            </ul>
 
-            <div class="sidebar-footer">
-                <button class="btn" onclick="logout()">Disconnect</button>
-            </div>
-        </aside>
 
         <main class="main-content">
             <div class="timeline-header">
@@ -441,13 +414,8 @@ class MicrosubReaderHandler
         }
 
         const ENDPOINT = "<?= $endpoint ?>";
-        let currentChannel = 'inbox';
+        let currentChannel = "<?= htmlspecialchars($_GET['channel'] ?? 'inbox') ?>";
         window.timelineItems = [];
-
-        window.onload = () => {
-            document.getElementById('reader-view').style.display = 'grid';
-            loadChannels();
-        };
 
         function logout() {
             window.location.href = '/admin/config?action=logout';
@@ -477,38 +445,21 @@ class MicrosubReaderHandler
             return await res.json();
         }
 
-        async function loadChannels() {
+        window.onload = () => {
+            document.getElementById('reader-view').style.display = 'grid';
+            loadChannelTitle();
+            loadTimeline();
+        };
+
+        async function loadChannelTitle() {
             try {
                 const data = await api('channels');
-                const list = document.getElementById('channels-list');
-                list.innerHTML = '';
-                
-                let first = true;
-                data.channels.forEach(ch => {
-                    const li = document.createElement('li');
-                    li.className = 'channel-item' + (first ? ' active' : '');
-                    li.textContent = ch.name;
-                    li.onclick = () => {
-                        document.querySelectorAll('.channel-item').forEach(el => el.classList.remove('active'));
-                        li.classList.add('active');
-                        currentChannel = ch.uid;
-                        document.getElementById('current-channel-title').textContent = ch.name;
-                        loadTimeline();
-                    };
-                    list.appendChild(li);
-                    
-                    if (first) {
-                        currentChannel = ch.uid;
-                        document.getElementById('current-channel-title').textContent = ch.name;
-                        first = false;
-                    }
-                });
-                
-                if (!first) {
-                    loadTimeline();
+                const ch = data.channels.find(c => c.uid === currentChannel);
+                if (ch) {
+                    document.getElementById('current-channel-title').textContent = ch.name;
                 }
             } catch (err) {
-                document.getElementById('error-msg').textContent = err.message;
+                console.error(err);
             }
         }
 

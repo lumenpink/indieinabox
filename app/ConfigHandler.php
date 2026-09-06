@@ -156,7 +156,7 @@ class ConfigHandler
             $this->rebuildSite();
 
             // Redirect to normal login endpoint
-            header('Location: /admin/config');
+            header('Location: /admin/microsub');
             return;
         }
 
@@ -211,7 +211,7 @@ class ConfigHandler
         $_SESSION['admin_authenticated'] = true;
         unset($_SESSION['auth_state']);
 
-        header('Location: /admin/config');
+        header('Location: /admin/microsub');
         return;
     }
 

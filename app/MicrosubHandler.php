@@ -242,6 +242,34 @@ class MicrosubHandler
     private function handlePost(string $action): void
     {
         switch ($action) {
+            case 'channels':
+                $method = $_POST['method'] ?? '';
+                if ($method === 'create') {
+                    $name = trim($_POST['name'] ?? '');
+                    if ($name) {
+                        $uid = strtolower(preg_replace('/[^a-zA-Z0-9]/', '', $name));
+                        if (!$uid) $uid = 'channel_' . time();
+                        $sql = 'INSERT INTO microsub_channels (uid, name) VALUES (:uid, :name)';
+                        $stmt = $this->db->prepare($sql);
+                        $stmt->bindValue(':uid', $uid, PDO::PARAM_STR);
+                        $stmt->bindValue(':name', $name, PDO::PARAM_STR);
+                        try {
+                            $stmt->execute();
+                            echo json_encode(['uid' => $uid, 'name' => $name]);
+                        } catch (\PDOException $e) {
+                            http_response_code(500);
+                            echo json_encode(['error' => 'server_error', 'error_description' => 'Failed to create channel']);
+                        }
+                    } else {
+                        http_response_code(400);
+                        echo json_encode(['error' => 'invalid_request', 'error_description' => 'Missing channel name']);
+                    }
+                } else {
+                    http_response_code(400);
+                    echo json_encode(['error' => 'invalid_request', 'error_description' => 'Unsupported method for channels']);
+                }
+                break;
+
             case 'timeline':
                 $method = $_POST['method'] ?? '';
                 if ($method === 'mark_read') {

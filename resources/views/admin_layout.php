@@ -78,7 +78,53 @@
     <div class="admin-sidebar">
         <h1>Indieinabox</h1>
         <nav class="admin-nav">
+            <?php 
+                $channels = [];
+                $currentChannel = 'inbox';
+                if (($activeTab ?? '') === 'microsub') {
+                    $db = \Indieinabox\Database::getDb();
+                    $stmt = $db->query('SELECT uid, name FROM microsub_channels');
+                    if ($stmt) {
+                        $channels = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                    }
+                    $currentChannel = $_GET['channel'] ?? 'inbox';
+                }
+            ?>
             <a href="/admin/microsub" class="<?= ($activeTab ?? '') === 'microsub' ? 'active' : '' ?>">Timeline</a>
+            <?php if (($activeTab ?? '') === 'microsub'): ?>
+                <div class="channels-accordion" style="background: rgba(0,0,0,0.2); margin-bottom: 0.5rem; padding: 0.5rem 0;">
+                    <?php foreach ($channels as $ch): ?>
+                        <a href="/admin/microsub?channel=<?= urlencode($ch['uid']) ?>" style="padding: 0.5rem 1.5rem 0.5rem 2.5rem; font-size: 0.9em; <?= $currentChannel === $ch['uid'] ? 'color: var(--accent); border-left: 2px solid var(--accent); padding-left: calc(2.5rem - 2px);' : 'border-left: 2px solid transparent; padding-left: calc(2.5rem - 2px);' ?>">
+                            <?= htmlspecialchars($ch['name']) ?>
+                        </a>
+                    <?php endforeach; ?>
+                    <a href="#" onclick="createChannel(event)" style="padding: 0.5rem 1.5rem 0.5rem 2.5rem; font-size: 0.9em; color: #a770ef; border-left: 2px solid transparent; padding-left: calc(2.5rem - 2px);">
+                        + Novo Canal
+                    </a>
+                </div>
+                <script>
+                    async function createChannel(e) {
+                        e.preventDefault();
+                        const name = prompt("Nome do novo canal:");
+                        if (!name) return;
+                        try {
+                            const res = await fetch('/microsub', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                                body: new URLSearchParams({ action: 'channels', method: 'create', name: name })
+                            });
+                            if (res.ok) {
+                                window.location.reload();
+                            } else {
+                                alert("Erro ao criar canal.");
+                            }
+                        } catch (err) {
+                            console.error(err);
+                            alert("Erro ao criar canal.");
+                        }
+                    }
+                </script>
+            <?php endif; ?>
             <a href="/admin/moderation" class="<?= ($activeTab ?? '') === 'moderation' ? 'active' : '' ?>">Moderation</a>
             <a href="/admin/micropub" class="<?= ($activeTab ?? '') === 'micropub' ? 'active' : '' ?>">Publisher</a>
             <a href="/admin/config" class="<?= ($activeTab ?? '') === 'config' ? 'active' : '' ?>">Configuration</a>

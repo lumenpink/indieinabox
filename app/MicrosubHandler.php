@@ -264,6 +264,30 @@ class MicrosubHandler
                         http_response_code(400);
                         echo json_encode(['error' => 'invalid_request', 'error_description' => 'Missing channel name']);
                     }
+                } elseif ($method === 'delete') {
+                    $uid = trim($_POST['uid'] ?? '');
+                    if ($uid) {
+                        if ($uid === 'inbox' || $uid === 'notifications') {
+                            http_response_code(400);
+                            echo json_encode(['error' => 'invalid_request', 'error_description' => 'Cannot delete default channels']);
+                            break;
+                        }
+                        try {
+                            $stmt = $this->db->prepare('DELETE FROM microsub_channels WHERE uid = :uid');
+                            $stmt->bindValue(':uid', $uid, PDO::PARAM_STR);
+                            $stmt->execute();
+                            $stmtSubs = $this->db->prepare('DELETE FROM microsub_subscriptions WHERE channel_uid = :uid');
+                            $stmtSubs->bindValue(':uid', $uid, PDO::PARAM_STR);
+                            $stmtSubs->execute();
+                            echo json_encode(['success' => 'ok']);
+                        } catch (\PDOException $e) {
+                            http_response_code(500);
+                            echo json_encode(['error' => 'server_error', 'error_description' => 'Failed to delete channel']);
+                        }
+                    } else {
+                        http_response_code(400);
+                        echo json_encode(['error' => 'invalid_request', 'error_description' => 'Missing channel uid']);
+                    }
                 } else {
                     http_response_code(400);
                     echo json_encode(['error' => 'invalid_request', 'error_description' => 'Unsupported method for channels']);

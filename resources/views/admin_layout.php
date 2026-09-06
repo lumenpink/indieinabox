@@ -94,15 +94,38 @@
             <?php if (($activeTab ?? '') === 'microsub'): ?>
                 <div class="channels-accordion" style="background: rgba(0,0,0,0.2); margin-bottom: 0.5rem; padding: 0.5rem 0;">
                     <?php foreach ($channels as $ch): ?>
-                        <a href="/admin/microsub?channel=<?= urlencode($ch['uid']) ?>" style="padding: 0.5rem 1.5rem 0.5rem 2.5rem; font-size: 0.9em; <?= $currentChannel === $ch['uid'] ? 'color: var(--accent); border-left: 2px solid var(--accent); padding-left: calc(2.5rem - 2px);' : 'border-left: 2px solid transparent; padding-left: calc(2.5rem - 2px);' ?>">
-                            <?= htmlspecialchars($ch['name']) ?>
-                        </a>
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding-right: 1rem;">
+                            <a href="/admin/microsub?channel=<?= urlencode($ch['uid']) ?>" style="flex: 1; padding: 0.5rem 1.5rem 0.5rem 2.5rem; font-size: 0.9em; <?= $currentChannel === $ch['uid'] ? 'color: var(--accent); border-left: 2px solid var(--accent); padding-left: calc(2.5rem - 2px);' : 'border-left: 2px solid transparent; padding-left: calc(2.5rem - 2px);' ?>">
+                                <?= htmlspecialchars($ch['name']) ?>
+                            </a>
+                            <?php if ($ch['uid'] !== 'inbox' && $ch['uid'] !== 'notifications'): ?>
+                                <button onclick="deleteChannel('<?= htmlspecialchars($ch['uid']) ?>', '<?= htmlspecialchars(addslashes($ch['name'])) ?>')" style="background: none; border: none; color: #ff6b6b; cursor: pointer; padding: 0 0.5rem; font-size: 1.1em;" title="Remover canal">&times;</button>
+                            <?php endif; ?>
+                        </div>
                     <?php endforeach; ?>
                     <a href="#" onclick="createChannel(event)" style="padding: 0.5rem 1.5rem 0.5rem 2.5rem; font-size: 0.9em; color: #a770ef; border-left: 2px solid transparent; padding-left: calc(2.5rem - 2px);">
                         + Novo Canal
                     </a>
                 </div>
                 <script>
+                    async function deleteChannel(uid, name) {
+                        if (!confirm('Tem certeza que deseja remover o canal "' + name + '"?')) return;
+                        try {
+                            const res = await fetch('/microsub', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                                body: new URLSearchParams({ action: 'channels', method: 'delete', uid: uid })
+                            });
+                            if (res.ok) {
+                                window.location.href = '/admin/microsub';
+                            } else {
+                                alert("Erro ao remover canal.");
+                            }
+                        } catch (err) {
+                            console.error(err);
+                            alert("Erro ao remover canal.");
+                        }
+                    }
                     async function createChannel(e) {
                         e.preventDefault();
                         const name = prompt("Nome do novo canal:");

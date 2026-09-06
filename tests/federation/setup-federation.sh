@@ -14,6 +14,17 @@ fi
 
 source .env
 
+if [ "$COMMAND" == "--update" ]; then
+    echo "Compiling latest local version of indieinabox..."
+    cd ../../
+    # Gera o executável a partir do repositório local
+    php compile.php
+    # Copia para o diretório de dados montado no container
+    cp indieinabox.php data/indieinabox.php
+    echo "Local build updated in data/indieinabox.php!"
+    exit 0
+fi
+
 if [ "$COMMAND" == "--wipe" ]; then
     echo "Wiping federation environment..."
     docker compose -f docker-compose.federation.yml down -v
@@ -78,4 +89,4 @@ if [ "$COMMAND" == "--seed" ]; then
     exit 0
 fi
 
-echo "Usage: ./setup-federation.sh [--wipe | --seed]"
+echo "Usage: ./setup-federation.sh [--wipe | --seed | --update]"

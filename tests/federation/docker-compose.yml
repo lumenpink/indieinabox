@@ -15,7 +15,7 @@ services:
       - INDIEINABOX_DOMAIN=${INDIEINABOX_DOMAIN}
 
   indieinabox-app:
-    image: ghcr.io/seu-usuario/indieinabox:latest
+    image: ghcr.io/lumenpink/indieinabox:latest
     container_name: federation_indieinabox
     environment:
       - APP_DOMAIN=${INDIEINABOX_DOMAIN}

@@ -246,12 +246,16 @@ class SiteBuilder
     {
         $base = $this->site->paths->baseDir;
         $contentMediaDir = rtrim($this->site->paths->getContentPath(), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . 'media';
-        if (!is_dir($contentMediaDir)) {
-            return;
+        if (is_dir($contentMediaDir)) {
+            echo "Copying media files\n";
+            ThemeManager::copyStaticFiles($contentMediaDir, $base, $this->site->paths->outputDirMedia);
         }
 
-        echo "Copying media files\n";
-        ThemeManager::copyStaticFiles($contentMediaDir, $base, $this->site->paths->outputDirMedia);
+        $publicMediaDir = $base . DIRECTORY_SEPARATOR . 'public_media';
+        if (is_dir($publicMediaDir)) {
+            echo "Copying public media files\n";
+            ThemeManager::copyStaticFiles($publicMediaDir, $base, $this->site->paths->outputDirMedia);
+        }
     }
     /**
      * Generates pseudo-translated pages for missing languages to maintain parity.

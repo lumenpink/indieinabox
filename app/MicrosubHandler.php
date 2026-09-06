@@ -213,10 +213,10 @@ class MicrosubHandler
             case 'follow':
                 $channel = $_GET['channel'] ?? 'inbox';
                 $stmt = $this->db->prepare('SELECT url, type, name, photo FROM microsub_subscriptions WHERE channel_uid = :channel');
-                $stmt->bindValue(':channel', $channel, \PDO::PARAM_STR);
+                $stmt->bindValue(':channel', $channel, PDO::PARAM_STR);
                 $stmt->execute();
                 $items = [];
-                while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+                while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                     $items[] = [
                         'type' => 'feed',
                         'url' => $row['url'],

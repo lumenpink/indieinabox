@@ -186,6 +186,57 @@ class FeedFetcher
                         $id = $obj['id'] ?? md5(json_encode($obj));
                         $url = $obj['url'] ?? $id;
                         $contentHtml = $obj['content'] ?? $obj['summary'] ?? '';
+                        
+                        $inReplyTo = $obj['inReplyTo'] ?? $obj['quote'] ?? $obj['_misskey_quote'] ?? '';
+                        if ($inReplyTo && is_string($inReplyTo)) {
+                            $parentData = @file_get_contents($inReplyTo, false, $ctx);
+                            if ($parentData) {
+                                $parentObj = json_decode($parentData, true);
+                                if ($parentObj && is_array($parentObj)) {
+                                    $parentContent = $parentObj['content'] ?? $parentObj['summary'] ?? '';
+                                    
+                                    if (!empty($parentObj['attachment']) && is_array($parentObj['attachment'])) {
+                                        foreach ($parentObj['attachment'] as $att) {
+                                            if (isset($att['type']) && $att['type'] === 'Document' && isset($att['url'])) {
+                                                if (strpos($att['mediaType'] ?? '', 'image/') === 0) {
+                                                    $parentContent .= '<div style="margin-top: 1rem;"><img src="' . htmlspecialchars($att['url']) . '" style="max-width: 100%; border-radius: 8px;"></div>';
+                                                }
+                                            }
+                                        }
+                                    }
+                                    
+                                    $parentAuthorUrl = $parentObj['attributedTo'] ?? $parentObj['actor'] ?? '';
+                                    $parentAuthorName = 'Unknown';
+                                    if (is_string($parentAuthorUrl) && $parentAuthorUrl) {
+                                        $parentAuthorData = @file_get_contents($parentAuthorUrl, false, $ctx);
+                                        if ($parentAuthorData) {
+                                            $parentAuthorObj = json_decode($parentAuthorData, true);
+                                            if ($parentAuthorObj) {
+                                                $parentAuthorName = $parentAuthorObj['name'] ?? $parentAuthorObj['preferredUsername'] ?? 'Unknown';
+                                            }
+                                        }
+                                    }
+                                    
+                                    $quoteBlock = "<blockquote style=\"border-left: 4px solid var(--primary); background: rgba(0, 0, 0, 0.2); padding: 1rem; margin-bottom: 1rem; border-radius: 4px;\">";
+                                    $quoteBlock .= "<div style=\"margin-bottom: 0.5rem; font-size: 0.9em; opacity: 0.8;\"><strong>" . htmlspecialchars($parentAuthorName) . "</strong> wrote:</div>";
+                                    $quoteBlock .= $parentContent;
+                                    $quoteBlock .= "</blockquote>";
+                                    
+                                    $contentHtml = $quoteBlock . $contentHtml;
+                                }
+                            }
+                        }
+                        
+                        if (!empty($obj['attachment']) && is_array($obj['attachment'])) {
+                            foreach ($obj['attachment'] as $att) {
+                                if (isset($att['type']) && $att['type'] === 'Document' && isset($att['url'])) {
+                                    if (strpos($att['mediaType'] ?? '', 'image/') === 0) {
+                                        $contentHtml .= '<div style="margin-top: 1rem;"><img src="' . htmlspecialchars($att['url']) . '" style="max-width: 100%; border-radius: 8px;"></div>';
+                                    }
+                                }
+                            }
+                        }
+
                         $published = isset($obj['published']) ? strtotime($obj['published']) : time();
                         
                         $this->saveItem((string)$id, $channel, $url, $contentHtml, $published, $authorName, $authorPhoto);

@@ -485,12 +485,21 @@ class MicrosubReaderHandler
                     let authorHtml = '';
                     if (item.author) {
                         authorHtml = `
-                            <div class="item-author">
-                                ${item.author.photo ? `<img src="${item.author.photo}">` : ''}
-                                <div>
-                                    <div class="name">${item.author.name}</div>
-                                    <div class="date">${new Date(item.published).toLocaleString()}</div>
+                            <div class="item-author" style="display: flex; justify-content: space-between; align-items: flex-start;">
+                                <div style="display: flex; align-items: center; gap: 1rem;">
+                                    ${item.author.photo ? `<img src="${item.author.photo}">` : ''}
+                                    <div>
+                                        <div class="name">${item.author.name}</div>
+                                        <div class="date">${new Date(item.published).toLocaleString()}</div>
+                                    </div>
                                 </div>
+                                <button onclick="this.closest('.item').nextElementSibling?.scrollIntoView({behavior: 'smooth', block: 'start'})" class="btn" style="padding: 4px 8px; font-size: 0.8rem; background: transparent; border: 1px solid var(--glass-border); color: var(--text-muted);" title="Skip to next post">Next ↓</button>
+                            </div>
+                        `;
+                    } else {
+                        authorHtml = `
+                            <div class="item-author" style="display: flex; justify-content: flex-end;">
+                                <button onclick="this.closest('.item').nextElementSibling?.scrollIntoView({behavior: 'smooth', block: 'start'})" class="btn" style="padding: 4px 8px; font-size: 0.8rem; background: transparent; border: 1px solid var(--glass-border); color: var(--text-muted);" title="Skip to next post">Next ↓</button>
                             </div>
                         `;
                     }

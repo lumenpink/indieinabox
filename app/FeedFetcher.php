@@ -211,9 +211,27 @@ class FeedFetcher
                                         $parentAuthorData = @file_get_contents($parentAuthorUrl, false, $ctx);
                                         if ($parentAuthorData) {
                                             $parentAuthorObj = json_decode($parentAuthorData, true);
-                                            if ($parentAuthorObj) {
+                                            if ($parentAuthorObj && isset($parentAuthorObj['name'])) {
                                                 $parentAuthorName = $parentAuthorObj['name'] ?? $parentAuthorObj['preferredUsername'] ?? 'Unknown';
                                             }
+                                        }
+                                        
+                                        // Fallback to Mentions in the original post if fetching the actor failed (e.g. requires HTTP signature)
+                                        if ($parentAuthorName === 'Unknown' && !empty($obj['tag']) && is_array($obj['tag'])) {
+                                            foreach ($obj['tag'] as $tag) {
+                                                if (isset($tag['type']) && $tag['type'] === 'Mention' && isset($tag['href']) && $tag['href'] === $parentAuthorUrl) {
+                                                    if (!empty($tag['name'])) {
+                                                        $parentAuthorName = ltrim($tag['name'], '@');
+                                                        break;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        
+                                        // Final fallback: just use the username from the URL
+                                        if ($parentAuthorName === 'Unknown') {
+                                            $parts = explode('/', rtrim($parentAuthorUrl, '/'));
+                                            $parentAuthorName = end($parts);
                                         }
                                     }
                                     

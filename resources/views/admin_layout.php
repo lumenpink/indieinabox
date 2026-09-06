@@ -137,7 +137,8 @@
                                 body: new URLSearchParams({ action: 'channels', method: 'create', name: name })
                             });
                             if (res.ok) {
-                                window.location.reload();
+                                const data = await res.json();
+                                window.location.href = '/admin/microsub?channel=' + data.uid;
                             } else {
                                 alert("Erro ao criar canal.");
                             }

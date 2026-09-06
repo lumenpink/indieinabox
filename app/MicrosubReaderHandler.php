@@ -657,7 +657,7 @@ class MicrosubReaderHandler
                 if (res.error) {
                     alert("Error: " + res.error_description);
                 } else {
-                    alert("Subscribed successfully! Now click Sync Feeds to fetch the content.");
+                    alert("Subscribed successfully! Syncing feeds in the background...");
                     fetchFeeds();
                 }
             } catch (err) {

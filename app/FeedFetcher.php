@@ -220,6 +220,13 @@ class FeedFetcher
                                     $quoteBlock = "<blockquote style=\"border-left: 4px solid var(--primary); background: rgba(0, 0, 0, 0.2); padding: 1rem; margin-bottom: 1rem; border-radius: 4px;\">";
                                     $quoteBlock .= "<div style=\"margin-bottom: 0.5rem; font-size: 0.9em; opacity: 0.8;\"><strong>" . htmlspecialchars($parentAuthorName) . "</strong> wrote:</div>";
                                     $quoteBlock .= $parentContent;
+                                    
+                                    $parentInReplyTo = $parentObj['inReplyTo'] ?? $parentObj['quote'] ?? $parentObj['_misskey_quote'] ?? '';
+                                    if ($parentInReplyTo) {
+                                        $parentViewUrl = $parentObj['url'] ?? $parentObj['id'] ?? $inReplyTo;
+                                        $quoteBlock .= "<div style=\"margin-top: 0.75rem; font-size: 0.85em; opacity: 0.7;\">↳ <a href=\"" . htmlspecialchars(is_string($parentViewUrl) ? $parentViewUrl : $inReplyTo) . "\" target=\"_blank\" style=\"color: var(--accent); text-decoration: none; font-style: italic;\">This post is also a reply. View the full thread...</a></div>";
+                                    }
+                                    
                                     $quoteBlock .= "</blockquote>";
                                     
                                     $contentHtml = $quoteBlock . $contentHtml;

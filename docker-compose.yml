@@ -1,6 +1,6 @@
 services:
   web:
-    image: ghcr.io/lumenpink/indieinabox:latest
+    image: lumenpink/indieinabox:latest
     container_name: indieinabox_web
     restart: unless-stopped
     ports:
@@ -15,7 +15,7 @@ services:
       - cron
 
   cron:
-    image: ghcr.io/lumenpink/indieinabox:latest
+    image: lumenpink/indieinabox:latest
     container_name: indieinabox_cron
     restart: unless-stopped
     command: ["cron"] # Aciona a lógica de cron no entrypoint

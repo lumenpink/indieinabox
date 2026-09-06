@@ -6,9 +6,8 @@ on:
     tags: ["v*"]
 
 env:
-  REGISTRY: ghcr.io
-  # github.repository defaults to username/repo
-  IMAGE_NAME: ${{ github.repository }}
+  # Define your Docker Hub repository here (e.g., username/repo)
+  IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/indieinabox
 
 jobs:
   build-and-push-image:
@@ -21,18 +20,17 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Log in to the Container registry
+      - name: Log in to Docker Hub
         uses: docker/login-action@v3
         with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Extract metadata (tags, labels) for Docker
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          images: ${{ env.IMAGE_NAME }}
           tags: |
             type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
             type=ref,event=tag

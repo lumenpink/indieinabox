@@ -246,15 +246,16 @@ class SiteBuilder
     {
         $base = $this->site->paths->baseDir;
         $contentMediaDir = rtrim($this->site->paths->getContentPath(), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . 'media';
+        $destMedia = $this->site->paths->outputDirHtml . DIRECTORY_SEPARATOR . 'media';
         if (is_dir($contentMediaDir)) {
             echo "Copying media files\n";
-            ThemeManager::copyStaticFiles($contentMediaDir, $base, $this->site->paths->outputDirMedia);
+            ThemeManager::copyStaticFiles($contentMediaDir, $base, $destMedia);
         }
 
         $microsubMediaDir = $base . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'microsub' . DIRECTORY_SEPARATOR . 'media';
         if (is_dir($microsubMediaDir)) {
             echo "Copying microsub media files\n";
-            ThemeManager::copyStaticFiles($microsubMediaDir, $base, $this->site->paths->outputDirMedia . DIRECTORY_SEPARATOR . 'microsub');
+            ThemeManager::copyStaticFiles($microsubMediaDir, $base, $destMedia . DIRECTORY_SEPARATOR . 'microsub');
         }
     }
     /**

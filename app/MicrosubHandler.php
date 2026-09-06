@@ -212,14 +212,17 @@ class MicrosubHandler
 
             case 'follow':
                 $channel = $_GET['channel'] ?? 'inbox';
-                $stmt = $this->db->prepare('SELECT url FROM microsub_subscriptions WHERE channel_uid = :channel');
+                $stmt = $this->db->prepare('SELECT url, type, name, photo FROM microsub_subscriptions WHERE channel_uid = :channel');
                 $stmt->bindValue(':channel', $channel, \PDO::PARAM_STR);
                 $stmt->execute();
                 $items = [];
                 while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
                     $items[] = [
                         'type' => 'feed',
-                        'url' => $row['url']
+                        'url' => $row['url'],
+                        'feed_type' => $row['type'] ?? 'rss',
+                        'name' => $row['name'] ?? $row['url'],
+                        'photo' => $row['photo'] ?? ''
                     ];
                 }
                 echo json_encode(['items' => $items]);
@@ -339,19 +342,174 @@ class MicrosubHandler
                 }
                 break;
 
+            case 'interact':
+                $targetUrl = $_POST['target_url'] ?? '';
+                $actionType = $_POST['interaction_type'] ?? ''; // 'like', 'repost', 'reply'
+                $content = $_POST['content'] ?? '';
+
+                if (!$targetUrl || !$actionType) {
+                    http_response_code(400);
+                    echo json_encode(['error' => 'invalid_request', 'error_description' => 'Missing target or action']);
+                    break;
+                }
+
+                $ctx = stream_context_create(['http' => ['header' => "Accept: application/activity+json\r\nUser-Agent: Indieinabox/1.0\r\n"]]);
+                $postData = @file_get_contents($targetUrl, false, $ctx);
+                if (!$postData) {
+                    http_response_code(400);
+                    echo json_encode(['error' => 'invalid_target', 'error_description' => 'Could not fetch target post']);
+                    break;
+                }
+                $postObj = json_decode($postData, true);
+                $actorUrl = $postObj['attributedTo'] ?? $postObj['actor'] ?? '';
+                if (is_array($actorUrl)) {
+                    $actorUrl = $actorUrl['id'] ?? $actorUrl[0] ?? '';
+                }
+                if (!$actorUrl || !is_string($actorUrl)) {
+                    http_response_code(400);
+                    echo json_encode(['error' => 'invalid_target', 'error_description' => 'Could not find actor for target post']);
+                    break;
+                }
+
+                $actorData = @file_get_contents($actorUrl, false, $ctx);
+                if (!$actorData) {
+                    http_response_code(400);
+                    echo json_encode(['error' => 'invalid_target', 'error_description' => 'Could not fetch actor profile']);
+                    break;
+                }
+                $actorObj = json_decode($actorData, true);
+                $inboxUrl = $actorObj['inbox'] ?? '';
+                if (!$inboxUrl) {
+                    http_response_code(400);
+                    echo json_encode(['error' => 'invalid_target', 'error_description' => 'Actor has no inbox']);
+                    break;
+                }
+
+                $fqdn = rtrim(\Indieinabox\Database::getSetting('fqdn') ?? 'http://localhost', '/');
+                $myActor = $fqdn . '/actor';
+                $activityId = $fqdn . '/activity/' . uniqid();
+                
+                $payload = [
+                    '@context' => 'https://www.w3.org/ns/activitystreams',
+                    'id' => $activityId,
+                    'actor' => $myActor,
+                ];
+
+                if ($actionType === 'like') {
+                    $payload['type'] = 'Like';
+                    $payload['object'] = $targetUrl;
+                } elseif ($actionType === 'repost') {
+                    $payload['type'] = 'Announce';
+                    $payload['object'] = $targetUrl;
+                } elseif ($actionType === 'reply') {
+                    $payload['type'] = 'Create';
+                    $noteId = $fqdn . '/note/' . uniqid();
+                    $payload['object'] = [
+                        'id' => $noteId,
+                        'type' => 'Note',
+                        'published' => date('Y-m-d\TH:i:s\Z'),
+                        'attributedTo' => $myActor,
+                        'inReplyTo' => $targetUrl,
+                        'content' => $content,
+                        'to' => ['https://www.w3.org/ns/activitystreams#Public'],
+                        'cc' => [$actorUrl]
+                    ];
+                } else {
+                    http_response_code(400);
+                    echo json_encode(['error' => 'invalid_action']);
+                    break;
+                }
+
+                $sql = "INSERT INTO activitypub_outbox (payload_json, target_inbox, status, created_at) VALUES (?, ?, 'pending', ?)";
+                $stmt = $this->db->prepare($sql);
+                $stmt->execute([json_encode($payload, JSON_UNESCAPED_SLASHES), $inboxUrl, time()]);
+
+                echo json_encode(['success' => 'ok', 'activity_id' => $activityId]);
+                break;
+
             case 'follow':
                 $channel = $_POST['channel'] ?? 'inbox';
                 $url = $_POST['url'] ?? '';
                 if ($url) {
-                    $sql = 'INSERT INTO microsub_subscriptions (channel_uid, url) VALUES (:channel, :url)';
+                    $type = 'rss';
+                    $name = '';
+                    $photo = '';
+                    $finalUrl = $url;
+                    
+                    if (preg_match('/^@?([^@]+)@([^@]+)$/', $url, $matches)) {
+                        $domain = $matches[2];
+                        $user = $matches[1];
+                        $wfUrl = "https://{$domain}/.well-known/webfinger?resource=acct:{$user}@{$domain}";
+                        $wfCtx = stream_context_create(['http' => ['header' => 'Accept: application/jrd+json']]);
+                        $wfData = @file_get_contents($wfUrl, false, $wfCtx);
+                        if ($wfData) {
+                            $wfJson = json_decode($wfData, true);
+                            if (isset($wfJson['links'])) {
+                                foreach ($wfJson['links'] as $link) {
+                                    if (($link['rel'] ?? '') === 'self' && ($link['type'] ?? '') === 'application/activity+json') {
+                                        $finalUrl = $link['href'];
+                                        $type = 'ap';
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    $ctx = stream_context_create(['http' => ['header' => "Accept: application/activity+json, application/json, application/rss+xml, application/atom+xml, text/html\r\nUser-Agent: Indieinabox/1.0\r\n"]]);
+                    $content = @file_get_contents($finalUrl, false, $ctx);
+                    
+                    if ($content) {
+                        $content = trim($content);
+                        if (strpos($content, '{') === 0) {
+                            $json = json_decode($content, true);
+                            if (isset($json['@context']) && (in_array('https://www.w3.org/ns/activitystreams', (array)$json['@context']))) {
+                                $type = 'ap';
+                                $name = $json['name'] ?? $json['preferredUsername'] ?? '';
+                                $photo = $json['icon']['url'] ?? '';
+                            } elseif (isset($json['version']) && strpos($json['version'], 'https://jsonfeed.org/version/') === 0) {
+                                $type = 'json';
+                                $name = $json['title'] ?? '';
+                                $photo = $json['icon'] ?? $json['favicon'] ?? '';
+                            }
+                        } elseif (strpos($content, '# nick') === 0 || preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}/m', $content)) {
+                            $type = 'twtxt';
+                            if (preg_match('/^# nick\s*=\s*(.+)$/m', $content, $m)) {
+                                $name = trim($m[1]);
+                            }
+                        } else {
+                            libxml_use_internal_errors(true);
+                            $xml = simplexml_load_string($content);
+                            if ($xml !== false) {
+                                if (isset($xml->channel)) {
+                                    $type = 'rss';
+                                    $name = (string)($xml->channel->title ?? '');
+                                    $photo = (string)($xml->channel->image->url ?? '');
+                                } elseif (isset($xml->entry) || isset($xml->title)) {
+                                    $type = 'atom';
+                                    $name = (string)($xml->title ?? '');
+                                    $photo = (string)($xml->icon ?? $xml->logo ?? '');
+                                }
+                            }
+                        }
+                    }
+
+                    if (!$name) $name = $finalUrl;
+
+                    $sql = 'INSERT INTO microsub_subscriptions (channel_uid, url, type, name, photo) VALUES (:channel, :url, :type, :name, :photo)';
                     $stmt = $this->db->prepare($sql);
                     $stmt->bindValue(':channel', $channel, PDO::PARAM_STR);
-                    $stmt->bindValue(':url', $url, PDO::PARAM_STR);
+                    $stmt->bindValue(':url', $finalUrl, PDO::PARAM_STR);
+                    $stmt->bindValue(':type', $type, PDO::PARAM_STR);
+                    $stmt->bindValue(':name', $name, PDO::PARAM_STR);
+                    $stmt->bindValue(':photo', $photo, PDO::PARAM_STR);
                     $stmt->execute();
                     
                     echo json_encode([
                         'type' => 'feed',
-                        'url' => $url
+                        'url' => $finalUrl,
+                        'feed_type' => $type,
+                        'name' => $name
                     ]);
                 } else {
                     http_response_code(400);

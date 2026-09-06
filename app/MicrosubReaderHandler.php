@@ -500,9 +500,11 @@ class MicrosubReaderHandler
                         <div class="item-content">${item.content.html || item.content.text || ''}</div>
                         <div class="item-actions">
                             <a href="${item.url}" target="_blank">View Original</a>
-                            <button onclick="interactPost('like', '${item.url}')">Like</button>
-                            <button onclick="interactPost('repost', '${item.url}')">Repost</button>
-                            <button onclick="interactPost('reply', '${item.url}')">Reply</button>
+                            <button onclick="interactPostAP('like', '${item.url}')" title="Native AP Like">Like</button>
+                            <button onclick="interactPostAP('repost', '${item.url}')" title="Native AP Repost">Repost</button>
+                            <button onclick="interactPostAP('reply', '${item.url}')" title="Native AP Reply">Reply</button>
+                            <button onclick="interactPostMicropub('repost', '${item.url}')" title="Create a local post on your blog">Share on Blog</button>
+                            <button onclick="interactPostMicropub('reply', '${item.url}')" title="Reply from your blog">Reply from Blog</button>
                             ${!item._is_read ? `<button onclick="markRead('${item._id}')">Mark Read</button>` : ''}
                         </div>
                     `;
@@ -522,7 +524,31 @@ class MicrosubReaderHandler
             }
         }
         
-        async function interactPost(action, targetUrl) {
+        async function interactPostAP(action, targetUrl) {
+            let content = '';
+            if (action === 'reply') {
+                content = prompt("Enter your native ActivityPub reply:");
+                if (!content) return;
+            }
+
+            try {
+                const res = await api('interact', 'POST', {
+                    interaction_type: action,
+                    target_url: targetUrl,
+                    content: content
+                });
+                if (res.success || res.activity_id) {
+                    alert(action.charAt(0).toUpperCase() + action.slice(1) + " queued via ActivityPub!");
+                } else {
+                    alert("Failed to " + action + ": " + (res.error_description || "Unknown error"));
+                }
+            } catch (err) {
+                console.error(err);
+                alert("Failed to send interaction");
+            }
+        }
+
+        async function interactPostMicropub(action, targetUrl) {
             let content = '';
             let payload = {
                 action: 'create',
@@ -619,9 +645,16 @@ class MicrosubReaderHandler
                 if (res.items && res.items.length > 0) {
                     let html = '<ul style="list-style: none; padding: 0; margin: 0;">';
                     res.items.forEach(feed => {
+                        let typeBadge = `<span style="font-size: 0.7rem; padding: 2px 6px; background: var(--primary); color: white; border-radius: 4px; margin-right: 8px;">${feed.feed_type ? feed.feed_type.toUpperCase() : 'RSS'}</span>`;
+                        let photoHtml = feed.photo ? `<img src="${feed.photo}" style="width: 24px; height: 24px; border-radius: 50%; margin-right: 8px; vertical-align: middle;">` : '';
+                        let displayName = feed.name ? `<strong>${feed.name}</strong><br><small style="opacity: 0.7;">${feed.url}</small>` : feed.url;
+                        
                         html += `
                             <li style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; border-bottom: 1px solid var(--glass-border);">
-                                <div style="word-break: break-all; margin-right: 1rem;">${feed.url}</div>
+                                <div style="word-break: break-all; margin-right: 1rem;">
+                                    <div>${photoHtml}${typeBadge}</div>
+                                    <div style="margin-top: 4px;">${displayName}</div>
+                                </div>
                                 <button class="btn" style="padding: 0.5rem 1rem; font-size: 0.9rem; background: #ff4b4b; color: white;" onclick="unfollowFeed('${feed.url}')">Unfollow</button>
                             </li>
                         `;

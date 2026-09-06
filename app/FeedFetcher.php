@@ -55,7 +55,8 @@ class FeedFetcher
      */
     private function fetchSubscription(string $channel, string $url): void
     {
-        $content = @file_get_contents($url);
+        $ctx = stream_context_create(['http' => ['header' => "Accept: application/activity+json, application/json, application/rss+xml, application/atom+xml, text/html\r\nUser-Agent: Indieinabox/1.0\r\n"]]);
+        $content = @file_get_contents($url, false, $ctx);
         if ($content === false) {
             throw new Exception("Could not retrieve URL content.");
         }
@@ -68,9 +69,13 @@ class FeedFetcher
             return;
         }
 
-        // Is it JSON Feed?
+        // Is it JSON Feed or ActivityPub?
         if (strpos($content, '{') === 0) {
             $json = json_decode($content, true);
+            if (isset($json['@context']) && in_array('https://www.w3.org/ns/activitystreams', (array)$json['@context'])) {
+                $this->parseActivityPub($channel, $url, $json);
+                return;
+            }
             if (isset($json['version']) && strpos($json['version'], 'https://jsonfeed.org/version/') === 0) {
                 $this->parseJsonFeed($channel, $url, $json);
                 return;
@@ -142,6 +147,50 @@ class FeedFetcher
                 $itemAvatar = $item['author']['avatar'] ?? '';
 
                 $this->saveItem((string)$id, $channel, $url, $contentHtml, $published, $itemAuthor, $itemAvatar);
+            }
+        }
+    }
+
+    /**
+     * Parses an ActivityPub Actor profile and fetches their outbox.
+     *
+     * @param string $channel The Microsub channel ID.
+     * @param string $feedUrl The source URL.
+     * @param array $json The parsed JSON ActivityPub data.
+     * @return void
+     */
+    private function parseActivityPub(string $channel, string $feedUrl, array $json): void
+    {
+        $authorName = $json['name'] ?? $json['preferredUsername'] ?? 'Unknown';
+        $authorPhoto = $json['icon']['url'] ?? '';
+
+        $outboxUrl = $json['outbox'] ?? '';
+        if (!$outboxUrl) return;
+
+        $ctx = stream_context_create(['http' => ['header' => "Accept: application/activity+json\r\nUser-Agent: Indieinabox/1.0\r\n"]]);
+        $outboxData = @file_get_contents($outboxUrl, false, $ctx);
+        if (!$outboxData) return;
+
+        $outbox = json_decode($outboxData, true);
+        if (isset($outbox['first'])) {
+            $firstUrl = is_string($outbox['first']) ? $outbox['first'] : ($outbox['first']['id'] ?? '');
+            if ($firstUrl) {
+                $pageData = @file_get_contents($firstUrl, false, $ctx);
+                if ($pageData) {
+                    $page = json_decode($pageData, true);
+                    $items = $page['orderedItems'] ?? $page['items'] ?? [];
+                    foreach ($items as $item) {
+                        $obj = is_string($item) ? null : ($item['object'] ?? $item);
+                        if (!is_array($obj)) continue;
+                        
+                        $id = $obj['id'] ?? md5(json_encode($obj));
+                        $url = $obj['url'] ?? $id;
+                        $contentHtml = $obj['content'] ?? $obj['summary'] ?? '';
+                        $published = isset($obj['published']) ? strtotime($obj['published']) : time();
+                        
+                        $this->saveItem((string)$id, $channel, $url, $contentHtml, $published, $authorName, $authorPhoto);
+                    }
+                }
             }
         }
     }

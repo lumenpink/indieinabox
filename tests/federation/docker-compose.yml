@@ -103,7 +103,7 @@ services:
   # PIXELFED (Usa Postgres DB 'pixelfed' e Redis DB 2)
   # ==========================================
   pixelfed-web:
-    image: pixelfed/pixelfed:latest
+    image: ghcr.io/pixelfed/pixelfed:latest
     container_name: pixelfed_web
     depends_on:
       - federation-db

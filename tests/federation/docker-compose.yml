@@ -62,7 +62,7 @@ services:
       - OTP_SECRET=dummy_otp_secret_for_testing_only
       - VAPID_PRIVATE_KEY=
       - VAPID_PUBLIC_KEY=
-    command: bash -c "rm -f /mastodon/tmp/pids/server.pid; bundle exec rails s -p 3000"
+    command: bash -c "rm -f /mastodon/tmp/pids/server.pid; bundle exec rails db:prepare || true; bundle exec rails s -p 3000"
     volumes:
       - mastodon_public:/mastodon/public/system
 

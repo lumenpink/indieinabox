@@ -617,11 +617,33 @@ class MicrosubReaderHandler
         }
 
         async function fetchFeeds() {
+            const btn = document.querySelector('button[onclick="fetchFeeds()"]');
+            if (btn) {
+                btn.disabled = true;
+                btn.innerHTML = 'Syncing... ⏳';
+                btn.style.opacity = '0.7';
+                btn.style.cursor = 'wait';
+            }
             try {
                 await api('fetch', 'POST');
-                setTimeout(loadTimeline, 1000);
+                setTimeout(async () => {
+                    await loadTimeline();
+                    if (btn) {
+                        btn.disabled = false;
+                        btn.innerHTML = 'Sync Feeds';
+                        btn.style.opacity = '1';
+                        btn.style.cursor = 'pointer';
+                    }
+                }, 1000);
             } catch (err) {
                 console.error(err);
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = 'Sync Feeds';
+                    btn.style.opacity = '1';
+                    btn.style.cursor = 'pointer';
+                }
+                alert('Error syncing feeds: ' + err.message);
             }
         }
 

@@ -270,7 +270,7 @@ class FeedFetcher
             }
         } else {
             // Pixelfed workaround: outbox does not expose posts via AP GET, so we fallback to .atom
-            $actorUrl = $json['url'] ?? $json['id'] ?? '';
+            $actorUrl = $json['id'] ?? $json['url'] ?? '';
             if ($actorUrl) {
                 $atomUrl = rtrim($actorUrl, '/') . '.atom';
                 $fallbackCtx = stream_context_create(['http' => ['header' => "Accept: application/atom+xml\r\nUser-Agent: Indieinabox/1.0\r\n"]]);
@@ -404,10 +404,10 @@ class FeedFetcher
      * Fetches ActivityPub JSON, automatically attempting HTTP Signatures if available.
      * Uses the provided stream context as a fallback if signing fails or is not possible.
      */
-    private function fetchApJson(string $url, $fallbackCtx)
+    private function fetchApJson(string $url, $fallbackCtx = null)
     {
         $stmt = $this->db->query("SELECT private_key FROM activitypub_keys WHERE key_id = 'main-key'");
-        $row = $stmt->fetch(\PDO::FETCH_ASSOC);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
         
         if ($row && !empty($row['private_key']) && class_exists('\Indieinabox\HttpSignature')) {
             $privateKey = $row['private_key'];

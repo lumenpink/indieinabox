@@ -12,8 +12,8 @@
     root * /app
 
     # Tenta servir o arquivo estático (ex: imagens, css). 
-    # Se não existir, joga a requisição para o seu roteador (build.php)
-    try_files {path} /build.php?{query}
+    # Se não existir, joga a requisição para o seu roteador (indieinabox.php)
+    try_files {path} /indieinabox.php?{query}
 
     # Habilita o processamento de arquivos PHP
     php_server

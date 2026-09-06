@@ -24,9 +24,14 @@ WORKDIR /app
 # Copia o Caddyfile customizado
 COPY docker/Caddyfile /etc/caddy/Caddyfile
 
-# Copia o código fonte atual para um diretório de backup/origem
-# Isso permite que o entrypoint popule o volume /app caso esteja vazio
+# Copia o código fonte para fazer o build e deixar de backup
 COPY . /usr/src/indieinabox/
+WORKDIR /usr/src/indieinabox
+RUN composer install --no-dev --optimize-autoloader || true
+RUN php compile.php
+
+# Retorna pro workdir padrao
+WORKDIR /app
 
 # Copia e configura o entrypoint
 COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh

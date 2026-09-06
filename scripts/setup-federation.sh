@@ -3,9 +3,12 @@ set -e
 
 COMMAND=$1
 
+source tests/federation/.env.federation
+
 if [ "$COMMAND" == "--wipe" ]; then
     echo "Wiping federation environment..."
-    docker compose -f docker-compose.federation.yml down -v
+    cd tests/federation
+    docker compose down -v
     echo "Environment wiped."
     exit 0
 fi
@@ -13,13 +16,21 @@ fi
 if [ "$COMMAND" == "--seed" ]; then
     echo "Seeding federation environment with test posts..."
     
-    # Exemplo: Mastodon CLI
-    # docker exec federation_mastodon tootctl accounts create admin --email admin@${MASTODON_DOMAIN} --confirmed
+    # 1. Setup Mastodon
+    echo ">> Setting up Mastodon DB and User..."
+    docker exec mastodon_web bash -c "RAILS_ENV=production bundle exec rails db:setup"
+    docker exec mastodon_web bash -c "RAILS_ENV=production bin/tootctl accounts create admin --email admin@${MASTODON_DOMAIN} --confirmed --role admin"
     
-    # Exemplo: Pixelfed CLI
-    # docker exec federation_pixelfed php artisan user:create ...
+    # 2. Setup Pixelfed
+    echo ">> Setting up Pixelfed DB and User..."
+    docker exec pixelfed_web php artisan migrate --force
+    docker exec pixelfed_web php artisan user:create --name admin --email admin@${PIXELFED_DOMAIN} --username admin --password adminpass --is_admin
     
-    echo "Data seeded! You can now test ActivityPub federation."
+    # 3. Setup Misskey
+    # Misskey DB is initialized automatically by the image, but creating users via CLI is tricky
+    # Typically done via API calls once the server is up.
+    
+    echo "Data seeded! Note: Depending on the platform, you might need to login via web UI to generate tokens for API posts."
     exit 0
 fi
 

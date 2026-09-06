@@ -20,30 +20,156 @@ services:
     environment:
       - APP_DOMAIN=${INDIEINABOX_DOMAIN}
     volumes:
-      - ../../data:/app # Aponta para a raiz do projeto real
+      - ../../data:/app
 
-  # -------------------------------------------------------------
-  # MOCK STUBS: Devido ao tamanho massivo de Mastodon/Misskey,
-  # estamos declarando os stubs aqui.
-  # Para rodá-los de verdade, você precisará dos blocos de
-  # Postgres/Redis para cada um.
-  # -------------------------------------------------------------
-  
+  # ==========================================
+  # MASTODON
+  # ==========================================
+  mastodon-db:
+    image: postgres:14-alpine
+    container_name: mastodon_db
+    environment:
+      - POSTGRES_USER=mastodon
+      - POSTGRES_PASSWORD=mastodon_pass
+      - POSTGRES_DB=mastodon
+    volumes:
+      - mastodon_db_data:/var/lib/postgresql/data
+
+  mastodon-redis:
+    image: redis:7-alpine
+    container_name: mastodon_redis
+    volumes:
+      - mastodon_redis_data:/data
+
   mastodon-web:
-    image: ghcr.io/mastodon/mastodon:latest
-    container_name: federation_mastodon
+    image: ghcr.io/mastodon/mastodon:v4.2.8
+    container_name: mastodon_web
+    restart: unless-stopped
+    depends_on:
+      - mastodon-db
+      - mastodon-redis
     environment:
       - LOCAL_DOMAIN=${MASTODON_DOMAIN}
-      # ... db configs ...
-      
+      - REDIS_HOST=mastodon-redis
+      - REDIS_PORT=6379
+      - DB_HOST=mastodon-db
+      - DB_USER=mastodon
+      - DB_NAME=mastodon
+      - DB_PASS=mastodon_pass
+      - DB_PORT=5432
+      - SECRET_KEY_BASE=dummy_secret_for_testing_only
+      - OTP_SECRET=dummy_otp_secret_for_testing_only
+      - VAPID_PRIVATE_KEY=
+      - VAPID_PUBLIC_KEY=
+    command: bash -c "rm -f /mastodon/tmp/pids/server.pid; bundle exec rails s -p 3000"
+    volumes:
+      - mastodon_public:/mastodon/public/system
+
+  mastodon-sidekiq:
+    image: ghcr.io/mastodon/mastodon:v4.2.8
+    container_name: mastodon_sidekiq
+    depends_on:
+      - mastodon-db
+      - mastodon-redis
+    environment:
+      - LOCAL_DOMAIN=${MASTODON_DOMAIN}
+      - REDIS_HOST=mastodon-redis
+      - REDIS_PORT=6379
+      - DB_HOST=mastodon-db
+      - DB_USER=mastodon
+      - DB_NAME=mastodon
+      - DB_PASS=mastodon_pass
+      - DB_PORT=5432
+      - SECRET_KEY_BASE=dummy_secret_for_testing_only
+      - OTP_SECRET=dummy_otp_secret_for_testing_only
+    command: bundle exec sidekiq
+    volumes:
+      - mastodon_public:/mastodon/public/system
+
+  # ==========================================
+  # MISSKEY
+  # ==========================================
+  misskey-db:
+    image: postgres:15-alpine
+    container_name: misskey_db
+    environment:
+      - POSTGRES_USER=misskey
+      - POSTGRES_PASSWORD=misskey_pass
+      - POSTGRES_DB=misskey
+    volumes:
+      - misskey_db_data:/var/lib/postgresql/data
+
+  misskey-redis:
+    image: redis:7-alpine
+    container_name: misskey_redis
+    volumes:
+      - misskey_redis_data:/data
+
   misskey-web:
     image: misskey/misskey:latest
-    container_name: federation_misskey
+    container_name: misskey_web
+    depends_on:
+      - misskey-db
+      - misskey-redis
+    volumes:
+      - ./misskey/default.yml:/misskey/.config/default.yml
+      - misskey_files:/misskey/files
+
+  # ==========================================
+  # PIXELFED
+  # ==========================================
+  pixelfed-db:
+    image: mariadb:10.5
+    container_name: pixelfed_db
     environment:
-      # ... configs ...
-      
+      - MYSQL_DATABASE=pixelfed
+      - MYSQL_USER=pixelfed
+      - MYSQL_PASSWORD=pixelfed_pass
+      - MYSQL_RANDOM_ROOT_PASSWORD=yes
+    volumes:
+      - pixelfed_db_data:/var/lib/mysql
+
+  pixelfed-redis:
+    image: redis:7-alpine
+    container_name: pixelfed_redis
+    volumes:
+      - pixelfed_redis_data:/data
+
   pixelfed-web:
     image: pixelfed/pixelfed:latest
-    container_name: federation_pixelfed
+    container_name: pixelfed_web
+    depends_on:
+      - pixelfed-db
+      - pixelfed-redis
     environment:
-      # ... configs ...
+      - APP_NAME=PixelfedLocal
+      - APP_ENV=production
+      - APP_KEY=base64:dummykeyfortestingonly1234567890123456789=
+      - APP_DEBUG=false
+      - APP_URL=https://${PIXELFED_DOMAIN}
+      - DB_CONNECTION=mysql
+      - DB_HOST=pixelfed-db
+      - DB_PORT=3306
+      - DB_DATABASE=pixelfed
+      - DB_USERNAME=pixelfed
+      - DB_PASSWORD=pixelfed_pass
+      - REDIS_HOST=pixelfed-redis
+      - REDIS_PASSWORD=null
+      - REDIS_PORT=6379
+      - BROADCAST_DRIVER=redis
+      - CACHE_DRIVER=redis
+      - QUEUE_CONNECTION=redis
+      - SESSION_DRIVER=redis
+    volumes:
+      - pixelfed_app:/var/www/
+
+volumes:
+  mastodon_db_data:
+  mastodon_redis_data:
+  mastodon_public:
+  misskey_db_data:
+  misskey_redis_data:
+  misskey_files:
+  pixelfed_db_data:
+  pixelfed_redis_data:
+  pixelfed_app:

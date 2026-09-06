@@ -268,6 +268,20 @@ class FeedFetcher
                     }
                 }
             }
+        } else {
+            // Pixelfed workaround: outbox does not expose posts via AP GET, so we fallback to .atom
+            $actorUrl = $json['url'] ?? $json['id'] ?? '';
+            if ($actorUrl) {
+                $atomUrl = rtrim($actorUrl, '/') . '.atom';
+                $fallbackCtx = stream_context_create(['http' => ['header' => "Accept: application/atom+xml\r\nUser-Agent: Indieinabox/1.0\r\n"]]);
+                $atomData = @file_get_contents($atomUrl, false, $fallbackCtx);
+                if ($atomData) {
+                    $xml = @simplexml_load_string($atomData);
+                    if ($xml !== false) {
+                        $this->parseAtom($channel, $atomUrl, $xml);
+                    }
+                }
+            }
         }
     }
 

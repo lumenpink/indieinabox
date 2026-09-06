@@ -55,7 +55,7 @@ class FeedFetcher
      */
     private function fetchSubscription(string $channel, string $url): void
     {
-        $ctx = stream_context_create(['http' => ['header' => "Accept: application/activity+json, application/json, application/rss+xml, application/atom+xml, text/html\r\nUser-Agent: Indieinabox/1.0\r\n"]]);
+        $ctx = stream_context_create(['http' => ['header' => "Accept: application/activity+json, application/json, application/rss+xml, application/atom+xml, text/html\r\nUser-Agent: Indieinabox-Fetcher\r\n"]]);
         $content = @file_get_contents($url, false, $ctx);
         if ($content === false) {
             throw new Exception("Could not retrieve URL content.");
@@ -170,7 +170,7 @@ class FeedFetcher
         $outboxUrl = $json['outbox'] ?? '';
         if (!$outboxUrl) return;
 
-        $ctx = stream_context_create(['http' => ['header' => "Accept: application/activity+json\r\nUser-Agent: Indieinabox/1.0\r\n"]]);
+        $ctx = stream_context_create(['http' => ['header' => "Accept: application/activity+json\r\nUser-Agent: Indieinabox-Fetcher\r\n"]]);
         $outboxData = $this->fetchApJson($outboxUrl, $ctx);
         if (!$outboxData) return;
 
@@ -284,7 +284,7 @@ class FeedFetcher
             $actorUrl = $json['id'] ?? $json['url'] ?? '';
             if ($actorUrl) {
                 $atomUrl = rtrim($actorUrl, '/') . '.atom';
-                $fallbackCtx = stream_context_create(['http' => ['header' => "Accept: application/atom+xml\r\nUser-Agent: Indieinabox/1.0\r\n"]]);
+                $fallbackCtx = stream_context_create(['http' => ['header' => "Accept: application/atom+xml\r\nUser-Agent: Indieinabox-Fetcher\r\n"]]);
                 $atomData = @file_get_contents($atomUrl, false, $fallbackCtx);
                 if ($atomData) {
                     $xml = @simplexml_load_string($atomData);
@@ -337,7 +337,7 @@ class FeedFetcher
      * 
      * @return void
      */
-    private function parseAtom(string $channel, string $feedUrl, \SimpleXMLElement $xml): void
+    private function parseAtom(string $channel, string $feedUrl, SimpleXMLElement $xml): void
     {
         $authorName = (string)($xml->title ?? 'Unknown');
         $authorPhoto = '';
@@ -464,7 +464,7 @@ class FeedFetcher
                 
                 $headersList = [
                     "Accept: application/activity+json",
-                    "User-Agent: Indieinabox/1.0"
+                    "User-Agent: Indieinabox-Fetcher"
                 ];
                 
                 foreach ($sigHeaders as $k => $v) {
@@ -570,7 +570,7 @@ class FeedFetcher
             });
         }
 
-        curl_setopt($ch, CURLOPT_USERAGENT, 'Indieinabox/1.0');
+        curl_setopt($ch, CURLOPT_USERAGENT, 'Indieinabox-Fetcher');
 
         $result = curl_exec($ch);
         $error = curl_errno($ch);

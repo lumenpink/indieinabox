@@ -163,6 +163,9 @@ class FeedFetcher
     {
         $authorName = $json['name'] ?? $json['preferredUsername'] ?? 'Unknown';
         $authorPhoto = $json['icon']['url'] ?? '';
+        if ($authorPhoto) {
+            $authorPhoto = $this->downloadMedia($authorPhoto, 'image');
+        }
 
         $outboxUrl = $json['outbox'] ?? '';
         if (!$outboxUrl) return;
@@ -186,6 +189,7 @@ class FeedFetcher
                         $id = $obj['id'] ?? md5(json_encode($obj));
                         $url = $obj['url'] ?? $id;
                         $contentHtml = $obj['content'] ?? $obj['summary'] ?? '';
+                        $contentHtml = $this->processHtmlMedia($contentHtml);
                         
                         $inReplyTo = $obj['inReplyTo'] ?? $obj['quote'] ?? $obj['_misskey_quote'] ?? '';
                         if ($inReplyTo && is_string($inReplyTo)) {
@@ -194,12 +198,14 @@ class FeedFetcher
                                 $parentObj = json_decode($parentData, true);
                                 if ($parentObj && is_array($parentObj)) {
                                     $parentContent = $parentObj['content'] ?? $parentObj['summary'] ?? '';
+                                    $parentContent = $this->processHtmlMedia($parentContent);
                                     
                                     if (!empty($parentObj['attachment']) && is_array($parentObj['attachment'])) {
                                         foreach ($parentObj['attachment'] as $att) {
                                             if (isset($att['type']) && $att['type'] === 'Document' && isset($att['url'])) {
                                                 if (strpos($att['mediaType'] ?? '', 'image/') === 0) {
-                                                    $parentContent .= '<div style="margin-top: 1rem;"><img src="' . htmlspecialchars($att['url']) . '" style="max-width: 100%; border-radius: 8px;"></div>';
+                                                    $localUrl = $this->downloadMedia($att['url'], 'image');
+                                                    $parentContent .= '<div style="margin-top: 1rem;"><img src="' . htmlspecialchars($localUrl) . '" style="max-width: 100%; border-radius: 8px;"></div>';
                                                 }
                                             }
                                         }
@@ -256,7 +262,8 @@ class FeedFetcher
                             foreach ($obj['attachment'] as $att) {
                                 if (isset($att['type']) && $att['type'] === 'Document' && isset($att['url'])) {
                                     if (strpos($att['mediaType'] ?? '', 'image/') === 0) {
-                                        $contentHtml .= '<div style="margin-top: 1rem;"><img src="' . htmlspecialchars($att['url']) . '" style="max-width: 100%; border-radius: 8px;"></div>';
+                                        $localUrl = $this->downloadMedia($att['url'], 'image');
+                                        $contentHtml .= '<div style="margin-top: 1rem;"><img src="' . htmlspecialchars($localUrl) . '" style="max-width: 100%; border-radius: 8px;"></div>';
                                     }
                                 }
                             }
@@ -305,6 +312,7 @@ class FeedFetcher
                 if (!$id) $id = md5((string)$item->title);
 
                 $content = (string)($item->description ?? '');
+                $content = $this->processHtmlMedia($content);
                 $published = isset($item->pubDate) ? strtotime((string)$item->pubDate) : time();
                 
                 $this->saveItem($id, $channel, $url, $content, $published, $authorName, '');
@@ -321,9 +329,15 @@ class FeedFetcher
      * 
      * @return void
      */
-    private function parseAtom(string $channel, string $feedUrl, SimpleXMLElement $xml): void
+    private function parseAtom(string $channel, string $feedUrl, \SimpleXMLElement $xml): void
     {
         $authorName = (string)($xml->title ?? 'Unknown');
+        $authorPhoto = '';
+        if (isset($xml->icon)) {
+            $authorPhoto = $this->downloadMedia((string)$xml->icon, 'image');
+        } elseif (isset($xml->logo)) {
+            $authorPhoto = $this->downloadMedia((string)$xml->logo, 'image');
+        }
         
         if (isset($xml->entry)) {
             foreach ($xml->entry as $entry) {
@@ -345,12 +359,14 @@ class FeedFetcher
                 } elseif (isset($entry->summary)) {
                     $content = (string)$entry->summary;
                 }
+                
+                $content = $this->processHtmlMedia($content);
 
                 $published = isset($entry->published) ? strtotime((string)$entry->published) : (isset($entry->updated) ? strtotime((string)$entry->updated) : time());
                 
                 $entryAuthor = isset($entry->author->name) ? (string)$entry->author->name : $authorName;
 
-                $this->saveItem($id, $channel, $url, $content, $published, $entryAuthor, '');
+                $this->saveItem($id, $channel, $url, $content, $published, $entryAuthor, $authorPhoto);
             }
         }
     }
@@ -448,5 +464,104 @@ class FeedFetcher
         }
         
         return @file_get_contents($url, false, $fallbackCtx);
+    }
+
+    /**
+     * Replaces remote media URLs in HTML content with local cached URLs.
+     */
+    private function processHtmlMedia(string $html): string
+    {
+        // Match <img>, <video>, <audio>, <source> src attributes
+        return preg_replace_callback('/<(img|video|audio|source)[^>]+src=[\'"]([^\'"]+)[\'"][^>]*>/i', function($matches) {
+            $fullTag = $matches[0];
+            $tagType = strtolower($matches[1]);
+            $url = $matches[2];
+            
+            $type = 'image';
+            if ($tagType === 'video' || $tagType === 'source') $type = 'video';
+            if ($tagType === 'audio') $type = 'audio';
+            
+            $localUrl = $this->downloadMedia($url, $type);
+            
+            return str_replace($url, $localUrl, $fullTag);
+        }, $html);
+    }
+
+    /**
+     * Downloads a media file locally.
+     */
+    private function downloadMedia(string $url, string $type): string
+    {
+        if (!$url || filter_var($url, FILTER_VALIDATE_URL) === false) {
+            return $url;
+        }
+
+        $fqdn = rtrim(\Indieinabox\Database::getSetting('fqdn') ?? '', '/');
+        if (strpos($url, '/media/') === 0 || ($fqdn && strpos($url, $fqdn) === 0)) {
+            return $url;
+        }
+
+        $enabledStr = \Indieinabox\Database::getSetting("download_media_{$type}");
+        $enabled = $enabledStr === null || $enabledStr === '' || $enabledStr === '1' || $enabledStr === 'true'; 
+        if (!$enabled) {
+            return $url;
+        }
+
+        $maxSizeStr = \Indieinabox\Database::getSetting("download_media_max_size_mb");
+        $maxSizeMB = $maxSizeStr !== null && $maxSizeStr !== '' ? (float)$maxSizeStr : 10.0;
+        $maxSizeBytes = $maxSizeMB * 1024 * 1024;
+
+        $baseDir = dirname(__DIR__) . '/public_media/microsub';
+        if (!is_dir($baseDir)) {
+            @mkdir($baseDir, 0755, true);
+        }
+
+        $parsedPath = parse_url($url, PHP_URL_PATH);
+        $ext = $parsedPath ? pathinfo($parsedPath, PATHINFO_EXTENSION) : '';
+        if (!$ext || strlen($ext) > 5) {
+            $ext = $type === 'image' ? 'jpg' : ($type === 'video' ? 'mp4' : 'mp3');
+        }
+        
+        $filename = md5($url) . '.' . $ext;
+        $filepath = $baseDir . '/' . $filename;
+        $localUrl = '/media/microsub/' . $filename;
+
+        if (file_exists($filepath)) {
+            return $localUrl;
+        }
+
+        $ch = curl_init($url);
+        $fp = @fopen($filepath, 'wb');
+        if (!$fp) return $url;
+
+        curl_setopt($ch, CURLOPT_FILE, $fp);
+        curl_setopt($ch, CURLOPT_HEADER, 0);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        curl_setopt($ch, CURLOPT_MAXREDIRS, 3);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 10); 
+        
+        if ($maxSizeBytes > 0) {
+            curl_setopt($ch, CURLOPT_NOPROGRESS, false);
+            curl_setopt($ch, CURLOPT_PROGRESSFUNCTION, function($ch, $download_size, $downloaded, $upload_size, $uploaded) use ($maxSizeBytes) {
+                if ($maxSizeBytes > 0 && ($download_size > $maxSizeBytes || $downloaded > $maxSizeBytes)) {
+                    return 1;
+                }
+                return 0;
+            });
+        }
+
+        curl_setopt($ch, CURLOPT_USERAGENT, 'Indieinabox/1.0');
+
+        $result = curl_exec($ch);
+        $error = curl_errno($ch);
+        curl_close($ch);
+        fclose($fp);
+
+        if ($result === false || $error) {
+            @unlink($filepath);
+            return $url; 
+        }
+
+        return $localUrl;
     }
 }

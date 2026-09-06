@@ -295,6 +295,10 @@ class ConfigHandler
         $currentConfig['webmention_enabled'] = isset($_POST['webmention_enabled']);
         $currentConfig['webarchive_enabled'] = isset($_POST['webarchive_enabled']);
         $currentConfig['disable_shortlinks'] = isset($_POST['disable_shortlinks']);
+        $currentConfig['download_media_image'] = isset($_POST['download_media_image']);
+        $currentConfig['download_media_video'] = isset($_POST['download_media_video']);
+        $currentConfig['download_media_audio'] = isset($_POST['download_media_audio']);
+        $currentConfig['download_media_max_size_mb'] = isset($_POST['download_media_max_size_mb']) ? (float)$_POST['download_media_max_size_mb'] : 10;
         $currentConfig['skipstatic'] = isset($_POST['skipstatic']);
         $currentConfig['forcestaticoverride'] = isset($_POST['forcestaticoverride']);
         $currentConfig['activitypub_enabled'] = isset($_POST['activitypub_enabled']);
@@ -1609,6 +1613,27 @@ class ConfigHandler
                         <label>Fediverse Handle (e.g. 'schwartz')</label>
                         <input type="text" name="activitypub_handle" value="<?= htmlspecialchars($config['activitypub_handle'] ?? 'schwartz') ?>">
                         <small>Your full handle will be <code>@your_handle@your_fqdn</code></small>
+                    </div>
+                </fieldset>
+
+                <fieldset>
+                    <legend>Microsub Feeds & Media</legend>
+                    <div class="checkbox-group">
+                        <input type="checkbox" name="download_media_image" id="download_media_image" <?= ($config['download_media_image'] ?? true) ? 'checked' : '' ?>>
+                        <label for="download_media_image">Download remote images locally</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" name="download_media_video" id="download_media_video" <?= ($config['download_media_video'] ?? true) ? 'checked' : '' ?>>
+                        <label for="download_media_video">Download remote videos locally</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" name="download_media_audio" id="download_media_audio" <?= ($config['download_media_audio'] ?? true) ? 'checked' : '' ?>>
+                        <label for="download_media_audio">Download remote audio locally</label>
+                    </div>
+                    <div class="form-group" style="margin-top: 1em;">
+                        <label>Max Download Size (MB)</label>
+                        <input type="number" name="download_media_max_size_mb" value="<?= htmlspecialchars((string)($config['download_media_max_size_mb'] ?? 10)) ?>" step="0.1" min="0">
+                        <small>Files larger than this limit will not be downloaded. Set to 0 to disable size limit.</small>
                     </div>
                 </fieldset>
                 </div>

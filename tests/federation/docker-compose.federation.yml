@@ -1,0 +1,49 @@
+services:
+  caddy-proxy:
+    image: caddy:alpine
+    container_name: federation_caddy
+    restart: unless-stopped
+    ports:
+      - "${HTTP_PORT:-80}:80"
+      - "${HTTPS_PORT:-443}:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+    environment:
+      - MASTODON_DOMAIN=${MASTODON_DOMAIN}
+      - MISSKEY_DOMAIN=${MISSKEY_DOMAIN}
+      - PIXELFED_DOMAIN=${PIXELFED_DOMAIN}
+      - INDIEINABOX_DOMAIN=${INDIEINABOX_DOMAIN}
+
+  indieinabox-app:
+    image: ghcr.io/seu-usuario/indieinabox:latest
+    container_name: federation_indieinabox
+    environment:
+      - APP_DOMAIN=${INDIEINABOX_DOMAIN}
+    volumes:
+      - ../../data:/app # Aponta para a raiz do projeto real
+
+  # -------------------------------------------------------------
+  # MOCK STUBS: Devido ao tamanho massivo de Mastodon/Misskey,
+  # estamos declarando os stubs aqui.
+  # Para rodá-los de verdade, você precisará dos blocos de
+  # Postgres/Redis para cada um.
+  # -------------------------------------------------------------
+  
+  mastodon-web:
+    image: ghcr.io/mastodon/mastodon:latest
+    container_name: federation_mastodon
+    environment:
+      - LOCAL_DOMAIN=${MASTODON_DOMAIN}
+      # ... db configs ...
+      
+  misskey-web:
+    image: misskey/misskey:latest
+    container_name: federation_misskey
+    environment:
+      # ... configs ...
+      
+  pixelfed-web:
+    image: pixelfed/pixelfed:latest
+    container_name: federation_pixelfed
+    environment:
+      # ... configs ...

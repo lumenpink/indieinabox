@@ -459,14 +459,42 @@ class MicrosubHandler
                     $ctx = stream_context_create(['http' => ['header' => "Accept: application/activity+json, application/json, application/rss+xml, application/atom+xml, text/html\r\nUser-Agent: Indieinabox/1.0\r\n"]]);
                     $content = @file_get_contents($finalUrl, false, $ctx);
                     
+                    $inboxUrl = '';
                     if ($content) {
                         $content = trim($content);
+                        if (stripos($content, '<html') !== false) {
+                            if (preg_match_all('/<link\s+[^>]*rel="alternate"[^>]*>/i', $content, $linkMatches)) {
+                                $apHref = '';
+                                $rssHref = '';
+                                $atomHref = '';
+                                foreach ($linkMatches[0] as $linkTag) {
+                                    if (stripos($linkTag, 'type="application/activity+json"') !== false) {
+                                        if (preg_match('/href="([^"]+)"/i', $linkTag, $hrefM)) $apHref = $hrefM[1];
+                                    } elseif (stripos($linkTag, 'type="application/rss+xml"') !== false) {
+                                        if (preg_match('/href="([^"]+)"/i', $linkTag, $hrefM)) $rssHref = $hrefM[1];
+                                    } elseif (stripos($linkTag, 'type="application/atom+xml"') !== false) {
+                                        if (preg_match('/href="([^"]+)"/i', $linkTag, $hrefM)) $atomHref = $hrefM[1];
+                                    }
+                                }
+                                if ($apHref) {
+                                    $finalUrl = $apHref;
+                                    $content = @file_get_contents($finalUrl, false, $ctx);
+                                    if ($content) $content = trim($content);
+                                } elseif ($atomHref || $rssHref) {
+                                    $finalUrl = $atomHref ?: $rssHref;
+                                    $content = @file_get_contents($finalUrl, false, $ctx);
+                                    if ($content) $content = trim($content);
+                                }
+                            }
+                        }
+
                         if (strpos($content, '{') === 0) {
                             $json = json_decode($content, true);
                             if (isset($json['@context']) && (in_array('https://www.w3.org/ns/activitystreams', (array)$json['@context']))) {
                                 $type = 'ap';
                                 $name = $json['name'] ?? $json['preferredUsername'] ?? '';
                                 $photo = $json['icon']['url'] ?? '';
+                                $inboxUrl = $json['inbox'] ?? ($json['endpoints']['sharedInbox'] ?? '');
                             } elseif (isset($json['version']) && strpos($json['version'], 'https://jsonfeed.org/version/') === 0) {
                                 $type = 'json';
                                 $name = $json['title'] ?? '';
@@ -505,6 +533,21 @@ class MicrosubHandler
                     $stmt->bindValue(':photo', $photo, PDO::PARAM_STR);
                     $stmt->execute();
                     
+                    if ($type === 'ap' && !empty($inboxUrl)) {
+                        $fqdn = rtrim(\Indieinabox\Database::getSetting('fqdn') ?? 'http://localhost', '/');
+                        $myActor = $fqdn . '/actor';
+                        $activityId = $fqdn . '/activity/' . uniqid();
+                        $payload = [
+                            '@context' => 'https://www.w3.org/ns/activitystreams',
+                            'id' => $activityId,
+                            'type' => 'Follow',
+                            'actor' => $myActor,
+                            'object' => $finalUrl
+                        ];
+                        $stmtAp = $this->db->prepare("INSERT INTO activitypub_outbox (payload_json, target_inbox, status, created_at) VALUES (?, ?, 'pending', ?)");
+                        $stmtAp->execute([json_encode($payload, JSON_UNESCAPED_SLASHES), $inboxUrl, time()]);
+                    }
+                    
                     echo json_encode([
                         'type' => 'feed',
                         'url' => $finalUrl,
@@ -521,11 +564,76 @@ class MicrosubHandler
                 $channel = $_POST['channel'] ?? 'inbox';
                 $url = $_POST['url'] ?? '';
                 if ($url) {
+                    // Get type before delete
+                    $stmtType = $this->db->prepare('SELECT type FROM microsub_subscriptions WHERE channel_uid = :channel AND url = :url LIMIT 1');
+                    $stmtType->execute([':channel' => $channel, ':url' => $url]);
+                    $subType = $stmtType->fetchColumn();
+
                     $sql = 'DELETE FROM microsub_subscriptions WHERE channel_uid = :channel AND url = :url';
                     $stmt = $this->db->prepare($sql);
                     $stmt->bindValue(':channel', $channel, PDO::PARAM_STR);
                     $stmt->bindValue(':url', $url, PDO::PARAM_STR);
                     $stmt->execute();
+                    
+                    // Check if other channels have it
+                    $stmtCheck = $this->db->prepare('SELECT COUNT(*) FROM microsub_subscriptions WHERE url = :url');
+                    $stmtCheck->execute([':url' => $url]);
+                    $count = (int)$stmtCheck->fetchColumn();
+                    
+                    if ($count === 0 && $subType === 'ap') {
+                        // Undo Follow
+                        $ctx = stream_context_create(['http' => ['header' => "Accept: application/activity+json\r\nUser-Agent: Indieinabox/1.0\r\n"]]);
+                        $actorData = @file_get_contents($url, false, $ctx);
+                        if ($actorData) {
+                            $actorObj = json_decode($actorData, true);
+                            $inboxUrl = $actorObj['inbox'] ?? ($actorObj['endpoints']['sharedInbox'] ?? '');
+                            if ($inboxUrl) {
+                                $fqdn = rtrim(\Indieinabox\Database::getSetting('fqdn') ?? 'http://localhost', '/');
+                                $myActor = $fqdn . '/actor';
+                                $payload = [
+                                    '@context' => 'https://www.w3.org/ns/activitystreams',
+                                    'id' => $fqdn . '/activity/' . uniqid(),
+                                    'type' => 'Undo',
+                                    'actor' => $myActor,
+                                    'object' => [
+                                        'type' => 'Follow',
+                                        'actor' => $myActor,
+                                        'object' => $url
+                                    ]
+                                ];
+                                $stmtAp = $this->db->prepare("INSERT INTO activitypub_outbox (payload_json, target_inbox, status, created_at) VALUES (?, ?, 'pending', ?)");
+                                $stmtAp->execute([json_encode($payload, JSON_UNESCAPED_SLASHES), $inboxUrl, time()]);
+                            }
+                        }
+                    }
+                    
+                    // Delete posts for this channel
+                    $dataDir = \Indieinabox\Database::$dataDir ?? (dirname(__DIR__) . '/data');
+                    $channelDir = $dataDir . DIRECTORY_SEPARATOR . 'microsub' . DIRECTORY_SEPARATOR . 'inbox' . DIRECTORY_SEPARATOR . preg_replace('/[^a-zA-Z0-9_-]/', '', $channel);
+                    if (is_dir($channelDir)) {
+                        $files = glob($channelDir . DIRECTORY_SEPARATOR . '*.md');
+                        $urlDomain = parse_url($url, PHP_URL_HOST);
+                        if ($files) {
+                            // We need a processor to extract frontmatter
+                            require_once dirname(__DIR__) . '/app/Markdown/ContentProcessor.php';
+                            $processor = new \Indieinabox\Markdown\ContentProcessor();
+                            foreach ($files as $file) {
+                                $content = file_get_contents($file);
+                                $fm = $processor->extractYamlFrontMatter($content);
+                                if ($fm) {
+                                    if (isset($fm['feed_url']) && $fm['feed_url'] === $url) {
+                                        @unlink($file);
+                                    } elseif (!isset($fm['feed_url']) && isset($fm['url']) && $urlDomain) {
+                                        $postDomain = parse_url($fm['url'], PHP_URL_HOST);
+                                        if ($postDomain === $urlDomain) {
+                                            @unlink($file);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    
                     echo json_encode(['success' => 'ok']);
                 } else {
                     http_response_code(400);

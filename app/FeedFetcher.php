@@ -119,7 +119,7 @@ class FeedFetcher
                 $text = $matches[2];
                 $id = md5($feedUrl . $published . $text);
 
-                $this->saveItem($id, $channel, $feedUrl, $text, $published, $authorName, '');
+                $this->saveItem($id, $channel, $feedUrl, $text, $published, $authorName, '', $feedUrl);
             }
         }
     }
@@ -146,7 +146,7 @@ class FeedFetcher
                 $itemAuthor = $item['author']['name'] ?? $authorName;
                 $itemAvatar = $item['author']['avatar'] ?? '';
 
-                $this->saveItem((string)$id, $channel, $url, $contentHtml, $published, $itemAuthor, $itemAvatar);
+                $this->saveItem((string)$id, $channel, $url, $contentHtml, $published, $itemAuthor, $itemAvatar, $feedUrl);
             }
         }
     }
@@ -275,7 +275,7 @@ class FeedFetcher
 
                         $published = isset($obj['published']) ? strtotime($obj['published']) : time();
                         
-                        $this->saveItem((string)$id, $channel, $url, $contentHtml, $published, $authorName, $authorPhoto);
+                        $this->saveItem((string)$id, $channel, $url, $contentHtml, $published, $authorName, $authorPhoto, $feedUrl);
                     }
                 }
             }
@@ -323,7 +323,7 @@ class FeedFetcher
                 $content = $this->processHtmlMedia($content);
                 $published = isset($item->pubDate) ? strtotime((string)$item->pubDate) : time();
                 
-                $this->saveItem($id, $channel, $url, $content, $published, $authorName, '');
+                $this->saveItem($id, $channel, $url, $content, $published, $authorName, '', $feedUrl);
             }
         }
     }
@@ -373,12 +373,11 @@ class FeedFetcher
                 }
                 
                 $content = $this->processHtmlMedia($content);
-
                 $published = isset($entry->published) ? strtotime((string)$entry->published) : (isset($entry->updated) ? strtotime((string)$entry->updated) : time());
-                
+
                 $entryAuthor = isset($entry->author->name) ? (string)$entry->author->name : $authorName;
 
-                $this->saveItem($id, $channel, $url, $content, $published, $entryAuthor, $authorPhoto);
+                $this->saveItem($id, $channel, $url, $content, $published, $entryAuthor, $authorPhoto, $feedUrl);
             }
         }
     }
@@ -401,10 +400,11 @@ class FeedFetcher
      * @param int $published The publication timestamp.
      * @param string $authorName The author's name.
      * @param string $authorPhoto The author's avatar URL.
+     * @param string $feedUrl The URL of the feed this item belongs to.
      * 
      * @return void
      */
-    private function saveItem(string $id, string $channel, string $url, string $content, int $published, string $authorName, string $authorPhoto): void
+    private function saveItem(string $id, string $channel, string $url, string $content, int $published, string $authorName, string $authorPhoto, string $feedUrl = ''): void
     {
         $dataDir = \Indieinabox\Database::$dataDir ?? (dirname(__DIR__) . '/data');
         
@@ -421,6 +421,7 @@ class FeedFetcher
             $frontmatter = [
                 'id' => $id,
                 'url' => $url,
+                'feed_url' => $feedUrl,
                 'author_name' => $authorName,
                 'author_photo' => $authorPhoto,
                 'published' => $published,

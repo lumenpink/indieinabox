@@ -108,11 +108,16 @@ if [ "$COMMAND" == "--seed" ]; then
     docker exec --user root misskey_web chown -R misskey:misskey /misskey/files || true
     echo ">> Waiting for Misskey to be ready..."
     sleep 5
-    echo ">> Creating Misskey User via API..."
-    docker run --rm --network federation_default curlimages/curl -s -X POST http://misskey_web:3000/api/signup -H "Content-Type: application/json" -d '{"username":"aaron", "password":"aaronpass"}' || true
+    echo ">> Creating Misskey Admin User via API..."
+    MISSKEY_TOKEN=$(docker run --rm --network federation_default curlimages/curl -s -X POST http://misskey_web:3000/api/admin/accounts/create -H "Content-Type: application/json" -d '{"username":"aaron", "password":"aaronpass"}' | grep -o '"token":"[^"]*"' | cut -d'"' -f4)
     
-    echo ">> Creating Misskey Post via API..."
-    docker run --rm --network federation_default curlimages/curl -s -X POST http://misskey_web:3000/api/notes/create -H "Content-Type: application/json" -d '{"text":"Hello from Misskey 🦊"}' || true
+    if [ -n "$MISSKEY_TOKEN" ]; then
+        echo ">> Successfully created Misskey Admin and obtained token."
+        echo ">> Creating Misskey Post via API..."
+        docker run --rm --network federation_default curlimages/curl -s -X POST http://misskey_web:3000/api/notes/create -H "Content-Type: application/json" -d "{\"i\":\"$MISSKEY_TOKEN\", \"text\":\"Hello from Misskey 🦊\"}" || true
+    else
+        echo ">> Failed to obtain Misskey token. Maybe setup was already done?"
+    fi
 
     # 4. Cross-Interactions (Follows)
     # Exemplo: Mastodon segue o aaron do Misskey

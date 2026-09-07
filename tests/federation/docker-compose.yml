@@ -8,6 +8,14 @@ services:
       - "${HTTPS_PORT:-443}:443"
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+    networks:
+      default:
+        aliases:
+          - ${MASTODON_DOMAIN}
+          - ${MISSKEY_DOMAIN}
+          - ${PIXELFED_DOMAIN}
+          - ${INDIEINABOX_DOMAIN}
     environment:
       - MASTODON_DOMAIN=${MASTODON_DOMAIN}
       - MISSKEY_DOMAIN=${MISSKEY_DOMAIN}
@@ -62,9 +70,11 @@ services:
       - OTP_SECRET=dummy_otp_secret_for_testing_only
       - VAPID_PRIVATE_KEY=
       - VAPID_PUBLIC_KEY=
+      - ALLOWED_PRIVATE_ADDRESSES=10.0.0.0/8,172.16.0.0/12,192.168.0.0/16
     command: bash -c "rm -f /mastodon/tmp/pids/server.pid; bundle exec rails db:prepare || true; bundle exec rails s -p 3000"
     volumes:
       - ../../data/mastodon_public:/mastodon/public/system
+      - caddy_data:/caddy-data
 
   mastodon-sidekiq:
     image: ghcr.io/mastodon/mastodon:v4.2.8
@@ -83,9 +93,11 @@ services:
       - DB_PORT=5432
       - SECRET_KEY_BASE=dummy_secret_for_testing_only
       - OTP_SECRET=dummy_otp_secret_for_testing_only
+      - ALLOWED_PRIVATE_ADDRESSES=10.0.0.0/8,172.16.0.0/12,192.168.0.0/16
     command: bundle exec sidekiq
     volumes:
       - ../../data/mastodon_public:/mastodon/public/system
+      - caddy_data:/caddy-data
 
   # ==========================================
   # MISSKEY (Usa Postgres DB 'misskey' e Redis DB 1)
@@ -98,10 +110,12 @@ services:
       - federation-redis
     environment:
       - MISSKEY_DOMAIN=${MISSKEY_DOMAIN}
+      - NODE_EXTRA_CA_CERTS=/caddy-data/caddy/pki/authorities/local/root.crt
     command: sh -c "mkdir -p /misskey/.config && sed \"s/\\$${MISSKEY_DOMAIN}/$MISSKEY_DOMAIN/g\" /misskey/template.yml > /misskey/.config/default.yml && pnpm run migrate && pnpm run start"
     volumes:
       - ./misskey/template.yml:/misskey/template.yml
       - ../../data/misskey_files:/misskey/files
+      - caddy_data:/caddy-data
 
   # ==========================================
   # PIXELFED (Usa Postgres DB 'pixelfed' e Redis DB 2)
@@ -118,6 +132,9 @@ services:
       - APP_KEY=base64:RRjoo5T0EywRLsGh7LENJQ3MsI0NU7tlkkMn4j/wmiI=
       - APP_DEBUG=false
       - APP_URL=https://${PIXELFED_DOMAIN}
+      - APP_DOMAIN=${PIXELFED_DOMAIN}
+      - TRUST_PROXIES=*
+      - ACTIVITY_PUB=true
       - DB_CONNECTION=pgsql
       - DB_HOST=federation-db
       - DB_PORT=5432
@@ -130,9 +147,13 @@ services:
       - REDIS_PORT=6379
       - BROADCAST_DRIVER=redis
       - CACHE_DRIVER=redis
-      - QUEUE_CONNECTION=redis
+      - QUEUE_DRIVER=redis
       - SESSION_DRIVER=redis
     volumes:
       - ../../data/pixelfed_app:/var/www/html/storage
+      - caddy_data:/caddy-data
+
+volumes:
+  caddy_data:
 
 

@@ -50,7 +50,17 @@ if [ "$COMMAND" == "--fresh-start" ]; then
     echo "Performing a fresh start: wiping, starting, and seeding..."
     $0 --wipe
     
-    echo "Starting containers..."
+    echo "Starting caddy proxy first to generate local SSL..."
+    docker compose up -d caddy-proxy
+    
+    echo -n "Waiting for internal SSL certificate..."
+    until docker exec federation_caddy test -f /data/caddy/pki/authorities/local/root.crt 2>/dev/null; do
+        echo -n "."
+        sleep 1
+    done
+    echo " Ready!"
+    
+    echo "Starting all other containers..."
     docker compose up -d
     
     echo ">> Waiting for apps to initialize (Health checks)..."
@@ -59,17 +69,34 @@ if [ "$COMMAND" == "--fresh-start" ]; then
         local url=$2
         local method=${3:-GET}
         echo -n "Waiting for $name..."
-        until docker run --rm --network federation_default curlimages/curl -s -X $method $url > /dev/null; do
+        until docker run --rm --network federation_default curlimages/curl -sk -X $method $url > /dev/null; do
             echo -n "."
             sleep 2
         done
         echo " Ready!"
     }
 
-    wait_for "Mastodon" "http://mastodon_web:3000/api/v1/instance"
-    wait_for "Pixelfed" "http://pixelfed_web:8080/api/v1/instance"
-    wait_for "Misskey" "http://misskey_web:3000/api/meta" "POST"
+    wait_for "Mastodon" "https://${MASTODON_DOMAIN}/api/v1/instance"
+    wait_for "Pixelfed" "https://${PIXELFED_DOMAIN}/api/v1/instance"
+    wait_for "Misskey" "https://${MISSKEY_DOMAIN}/api/meta" "POST"
     wait_for "IndieInABox" "http://federation_indieinabox:80/"
+    
+    echo "Injecting Caddy Local CA into containers..."
+    # Fix CA cert and directory permissions so Misskey node process can read it
+    docker exec -u root mastodon_web bash -c "chmod 755 /caddy-data/caddy/pki /caddy-data/caddy/pki/authorities /caddy-data/caddy/pki/authorities/local"
+    docker exec -u root mastodon_web bash -c "chmod 644 /caddy-data/caddy/pki/authorities/local/root.crt"
+    # Mastodon (Debian base)
+    docker exec -u root mastodon_web bash -c "cp /caddy-data/caddy/pki/authorities/local/root.crt /usr/local/share/ca-certificates/caddy-root.crt && update-ca-certificates"
+    docker exec -u root mastodon_sidekiq bash -c "cp /caddy-data/caddy/pki/authorities/local/root.crt /usr/local/share/ca-certificates/caddy-root.crt && update-ca-certificates"
+    # Pixelfed (Debian/Alpine base)
+    docker exec -u root pixelfed_web bash -c "cp /caddy-data/caddy/pki/authorities/local/root.crt /usr/local/share/ca-certificates/caddy-root.crt && update-ca-certificates"
+    
+    echo "Restarting Mastodon and Pixelfed to pick up new CA..."
+    docker compose restart mastodon-web mastodon-sidekiq pixelfed-web
+    
+    echo "Waiting for Mastodon and Pixelfed to come back up..."
+    wait_for "Mastodon" "https://${MASTODON_DOMAIN}/api/v1/instance"
+    wait_for "Pixelfed" "https://${PIXELFED_DOMAIN}/api/v1/instance"
     
     $0 --seed
     
@@ -132,65 +159,109 @@ EOF
     docker exec pixelfed_web php artisan migrate --force
     docker exec pixelfed_web php artisan storage:link || true
     docker exec pixelfed_web php artisan user:create --name "Aaron Pixelfed" --email aaron@hero.com --username aaron --password aaronpass --is_admin || true
+    docker exec pixelfed_web php artisan passport:keys --force
+    docker exec pixelfed_web php artisan passport:client --personal --no-interaction || true
     
-    docker cp data/media pixelfed_web:/tmp/media
-    docker exec --user root pixelfed_web chown -R 33:33 /tmp/media || true
-    docker exec pixelfed_web php artisan tinker --execute="
-      \$user = App\\Models\\User::where('username', 'aaron')->first();
-      if (!\$user->email_verified_at) { \$user->email_verified_at = now(); \$user->save(); }
-      \$profile = \$user->profile;
-      \$profile->name = 'Aaron Pixelfed';
-      \$profile->bio = 'Sou um bot de teste no Pixelfed.';
-      \$profile->save();
-      \$avatar = App\\Models\\Avatar::firstOrNew(['profile_id' => \$profile->id]);
-      \$avatar->media_path = 'public/avatars/default.png';
-      \$avatar->change_count = 1;
-      \$avatar->save();
-    "
+    cat << 'EOF' > data/pixelfed_init.php
+<?php
+require '/var/www/html/vendor/autoload.php';
+$app = require_once '/var/www/html/bootstrap/app.php';
+$kernel = $app->make(Illuminate\Contracts\Console\Kernel::class);
+$kernel->bootstrap();
+
+$user = App\Models\User::where('username', 'aaron')->first();
+if (!$user->email_verified_at) { $user->email_verified_at = now(); $user->save(); }
+$profile = $user->profile;
+$profile->name = 'Aaron Pixelfed';
+$profile->bio = 'Sou um bot de teste no Pixelfed.';
+$avatar = App\Models\Avatar::firstOrCreate(['profile_id' => $profile->id]);
+$avatar->media_path = 'public/avatars/aaron.png';
+$avatar->save();
+$profile->save();
+EOF
+    
+    docker cp data/pixelfed_init.php pixelfed_web:/tmp/pixelfed_init.php
+    docker exec pixelfed_web mkdir -p /var/www/html/storage/app/public/avatars && docker cp data/media/avatar_pixelfed.png pixelfed_web:/var/www/html/storage/app/public/avatars/aaron.png
+    docker exec pixelfed_web php /tmp/pixelfed_init.php
+    docker exec pixelfed_web sed -i "/public static function isPublicIp/,/}/c\    public static function isPublicIp(string \$ip): bool\\n    {\\n        return true;\\n    }" app/Util/ActivityPub/Helpers.php
+    docker exec pixelfed_web mkdir -p /var/www/html/storage/app/remcache
+    docker exec pixelfed_web chown -R www-data:www-data /var/www/html/storage/app/remcache
+    docker exec pixelfed_web php artisan instance:actor
 
     # 3. Initialize Misskey Profile
+    echo ">> Initializing Misskey Admin User via API..."
+    MISSKEY_CREATE_RESP=$(docker exec misskey_web curl -s -X POST http://127.0.0.1:3000/api/admin/accounts/create -H "Content-Type: application/json" -d '{"username":"aaron", "password":"aaronpass"}')
+    echo ">> Misskey user creation response: $MISSKEY_CREATE_RESP"
+    
+    # Always inject a permanent API token via DB so it survives the restart
+    echo ">> Injecting permanent Misskey API token via DB..."
+    MISSKEY_USER_ID=$(docker exec federation_db psql -U misskey -d misskey -t -c "SELECT id FROM \"user\" WHERE username='aaron';" | tr -d ' \n\r')
+    MISSKEY_TOKEN=$(openssl rand -hex 32)
+    TOKEN_HASH=$(echo -n "$MISSKEY_TOKEN" | sha256sum | cut -d' ' -f1)
+    TOKEN_ID=$(openssl rand -hex 16 | head -c 32)
+    docker exec federation_db psql -U misskey -d misskey -c "
+        INSERT INTO access_token (id, token, hash, \"userId\", permission, fetched, name)
+        VALUES ('$TOKEN_ID', '$MISSKEY_TOKEN', '$TOKEN_HASH', '$MISSKEY_USER_ID',
+                ARRAY['write:notes','write:following','write:drive','read:account','write:account']::varchar[], false, 'seed-script')
+        ON CONFLICT DO NOTHING;" > /dev/null
+    echo ">> Successfully obtained Misskey token: ${MISSKEY_TOKEN:0:8}..."
+    
     echo ">> Fixing Misskey Permissions..."
     docker exec --user root misskey_web chown -R misskey:misskey /misskey/files || true
     docker cp data/media misskey_web:/tmp/media
     docker exec --user root misskey_web chown -R misskey:misskey /tmp/media || true
     
-    echo ">> Initializing Misskey Admin User via API..."
-    MISSKEY_TOKEN=$(docker run --rm --network federation_default curlimages/curl -s -X POST http://misskey_web:3000/api/admin/accounts/create -H "Content-Type: application/json" -d '{"username":"aaron", "password":"aaronpass"}' | grep -o '"token":"[^"]*"' | cut -d'"' -f4)
     
     if [ -n "$MISSKEY_TOKEN" ]; then
         echo ">> Successfully created Misskey Admin and obtained token."
         AVATAR_ID=$(docker exec misskey_web curl -s -X POST http://127.0.0.1:3000/api/drive/files/create -H "Content-Type: multipart/form-data" -F "i=$MISSKEY_TOKEN" -F "file=@/tmp/media/avatar_misskey.png" | grep -o '"id":"[^"]*"' | head -n1 | cut -d'"' -f4)
         HEADER_ID=$(docker exec misskey_web curl -s -X POST http://127.0.0.1:3000/api/drive/files/create -H "Content-Type: multipart/form-data" -F "i=$MISSKEY_TOKEN" -F "file=@/tmp/media/header_misskey.png" | grep -o '"id":"[^"]*"' | head -n1 | cut -d'"' -f4)
         docker exec misskey_web curl -s -X POST http://127.0.0.1:3000/api/i/update -H "Content-Type: application/json" -d "{\"i\":\"$MISSKEY_TOKEN\", \"name\":\"Aaron Misskey\", \"description\":\"Sou um bot de teste no Misskey.\", \"avatarId\":\"$AVATAR_ID\", \"bannerId\":\"$HEADER_ID\"}"
+        
+        echo ">> Fixing Misskey Permissions & Federation..."
+        docker exec federation_db psql -U misskey -d misskey -c "UPDATE meta SET federation='all';"
+        # Bypass setup wizard in DB
+        docker exec federation_db psql -U misskey -d misskey -c "UPDATE \"user_profile\" SET \"clientData\" = '{\"hasSetupProfile\":true, \"accountSetupWizard\":-1}'::jsonb WHERE \"userId\" = (SELECT id FROM \"user\" WHERE username = 'aaron' AND host IS NULL);"
+        # Restart Misskey to flush in-memory federation cache
+        echo ">> Restarting Misskey to apply federation setting..."
+        docker compose restart misskey-web
+        echo -n "Waiting for Misskey..."
+        until docker run --rm --network federation_default curlimages/curl -sk -X POST "https://${MISSKEY_DOMAIN}/api/meta" -H 'Content-Type: application/json' -d '{}' > /dev/null; do
+            echo -n "."
+            sleep 2
+        done
+        echo " Ready!"
     fi
 
     # 4. Cross-Interactions (Follows BEFORE Posts!)
     echo ">> Performing cross-interactions (Follows)..."
-    
     # Mastodon Follows Pixelfed and Misskey
     docker exec mastodon_web bash -c "RAILS_ENV=production bundle exec rails runner \"
       mastodon_account = Account.find_by(username: 'aaron')
       ['aaron@${MISSKEY_DOMAIN}', 'aaron@${PIXELFED_DOMAIN}'].each do |uri|
-        ResolveAccountService.new.call(uri)
-        domain = uri.split('@').last
-        target_account = Account.find_by(domain: domain, username: 'aaron')
-        FollowService.new.call(mastodon_account, target_account) if target_account
+        begin
+          target = ResolveAccountService.new.call(uri)
+          FollowService.new.call(mastodon_account, target) if target
+          puts 'Mastodon followed: ' + uri
+        rescue => e
+          puts 'Mastodon follow error for ' + uri + ': ' + e.message
+        end
       end
     \""
     
     # Misskey Follows Mastodon and Pixelfed
     if [ -n "$MISSKEY_TOKEN" ]; then
-        MD_ID=$(docker exec misskey_web curl -s -X POST http://127.0.0.1:3000/api/ap/show -H "Content-Type: application/json" -d "{\"uri\":\"https://${MASTODON_DOMAIN}/users/aaron\"}" | grep -o '"id":"[^"]*"' | head -n1 | cut -d'"' -f4)
+        MD_ID=$(docker exec misskey_web curl -s -X POST http://127.0.0.1:3000/api/ap/show -H "Content-Type: application/json" -d "{\"i\":\"$MISSKEY_TOKEN\", \"uri\":\"https://${MASTODON_DOMAIN}/users/aaron\"}" | grep -o '"id":"[^"]*"' | head -n1 | cut -d'"' -f4)
         if [ -n "$MD_ID" ]; then
             docker exec misskey_web curl -s -X POST http://127.0.0.1:3000/api/following/create -H "Content-Type: application/json" -d "{\"i\":\"$MISSKEY_TOKEN\", \"userId\":\"$MD_ID\"}" > /dev/null
         fi
         
-        PX_ID=$(docker exec misskey_web curl -s -X POST http://127.0.0.1:3000/api/ap/show -H "Content-Type: application/json" -d "{\"uri\":\"https://${PIXELFED_DOMAIN}/users/aaron\"}" | grep -o '"id":"[^"]*"' | head -n1 | cut -d'"' -f4)
+        PX_ID=$(docker exec misskey_web curl -s -X POST http://127.0.0.1:3000/api/ap/show -H "Content-Type: application/json" -d "{\"i\":\"$MISSKEY_TOKEN\", \"uri\":\"https://${PIXELFED_DOMAIN}/users/aaron\"}" | grep -o '"id":"[^"]*"' | head -n1 | cut -d'"' -f4)
         if [ -n "$PX_ID" ]; then
             docker exec misskey_web curl -s -X POST http://127.0.0.1:3000/api/following/create -H "Content-Type: application/json" -d "{\"i\":\"$MISSKEY_TOKEN\", \"userId\":\"$PX_ID\"}" > /dev/null
         fi
     fi
-
+    
     # 5. Create Posts!
     echo ">> Creating Posts..."
     
@@ -210,17 +281,41 @@ EOF
     docker cp data/mastodon_posts.rb mastodon_web:/tmp/mastodon_posts.rb
     docker exec mastodon_web bash -c "RAILS_ENV=production bundle exec rails runner /tmp/mastodon_posts.rb"
     
-    # Pixelfed Posts
-    docker exec pixelfed_web php artisan tinker --execute="
-      \$user = App\\Models\\User::where('username', 'aaron')->first();
-      \$profile = \$user->profile;
-      \$status = new App\\Models\\Status();
-      \$status->profile_id = \$profile->id;
-      \$status->caption = 'Primeira foto no Pixelfed local 📸';
-      \$status->rendered = 'Primeira foto no Pixelfed local 📸';
-      \$status->visibility = 'public';
-      \$status->save();
-    "
+    # Pixelfed Posts (Using Tinker)
+    cat << 'EOF' > data/pixelfed_posts.php
+<?php
+require '/var/www/html/vendor/autoload.php';
+$app = require_once '/var/www/html/bootstrap/app.php';
+$kernel = $app->make(Illuminate\Contracts\Console\Kernel::class);
+$kernel->bootstrap();
+
+$user = App\Models\User::where('username', 'aaron')->first();
+$media = new App\Models\Media();
+$media->profile_id = $user->profile_id;
+$media->user_id = $user->id;
+$media->media_path = 'public/avatars/aaron.png'; // Using the avatar just for test
+$media->original_sha256 = hash_file('sha256', storage_path('app/public/avatars/aaron.png'));
+$media->size = filesize(storage_path('app/public/avatars/aaron.png'));
+$media->mime = 'image/png';
+$media->filter_class = 'slumber';
+$media->save();
+
+$status = new App\Models\Status();
+$status->profile_id = $user->profile_id;
+$status->caption = 'Primeira foto no Pixelfed local 📸';
+$status->rendered = '<p>Primeira foto no Pixelfed local 📸</p>';
+$status->is_nsfw = false;
+$status->visibility = 'public';
+$status->save();
+
+$media->status_id = $status->id;
+$media->save();
+
+App\Services\StatusService::reconcileStatusCounts($status);
+echo "Pixelfed posts created.\n";
+EOF
+    docker cp data/pixelfed_posts.php pixelfed_web:/tmp/pixelfed_posts.php
+    docker exec pixelfed_web php /tmp/pixelfed_posts.php
     
     # Misskey Posts
     if [ -n "$MISSKEY_TOKEN" ]; then

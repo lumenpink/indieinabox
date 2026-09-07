@@ -1,5 +1,4 @@
 {
-    auto_https off
 }
 
 # Configuração Base - Repassa os headers HTTPS se estiver atrás de proxy
@@ -8,25 +7,29 @@
     header_up X-Forwarded-For {http.request.remote}
 }
 
-http://{$MASTODON_DOMAIN} {
+https://{$MASTODON_DOMAIN} {
+    tls internal
     reverse_proxy mastodon-web:3000 {
         import proxy_config
     }
 }
 
-http://{$MISSKEY_DOMAIN} {
+https://{$MISSKEY_DOMAIN} {
+    tls internal
     reverse_proxy misskey-web:3000 {
         import proxy_config
     }
 }
 
-http://{$PIXELFED_DOMAIN} {
+https://{$PIXELFED_DOMAIN} {
+    tls internal
     reverse_proxy pixelfed-web:8080 {
         import proxy_config
     }
 }
 
-http://{$INDIEINABOX_DOMAIN} {
+https://{$INDIEINABOX_DOMAIN} {
+    tls internal
     reverse_proxy indieinabox-app:80 {
         import proxy_config
     }

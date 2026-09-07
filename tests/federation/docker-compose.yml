@@ -18,7 +18,7 @@ services:
     image: lumenpink/indieinabox:latest
     container_name: federation_indieinabox
     environment:
-      - APP_DOMAIN=${INDIEINABOX_DOMAIN}
+      - APP_DOMAIN=http://${INDIEINABOX_DOMAIN}:80
     volumes:
       - ../../data:/app
 
@@ -96,8 +96,11 @@ services:
     depends_on:
       - federation-db
       - federation-redis
+    environment:
+      - MISSKEY_DOMAIN=${MISSKEY_DOMAIN}
+    command: sh -c "mkdir -p /misskey/.config && sed \"s/\\$${MISSKEY_DOMAIN}/$MISSKEY_DOMAIN/g\" /misskey/template.yml > /misskey/.config/default.yml && pnpm run migrate && pnpm run start"
     volumes:
-      - ./misskey/default.yml:/misskey/.config/default.yml
+      - ./misskey/template.yml:/misskey/template.yml
       - misskey_files:/misskey/files
 
   # ==========================================
@@ -112,7 +115,7 @@ services:
     environment:
       - APP_NAME=PixelfedLocal
       - APP_ENV=production
-      - APP_KEY=base64:dummykeyfortestingonly1234567890123456789=
+      - APP_KEY=base64:RRjoo5T0EywRLsGh7LENJQ3MsI0NU7tlkkMn4j/wmiI=
       - APP_DEBUG=false
       - APP_URL=https://${PIXELFED_DOMAIN}
       - DB_CONNECTION=pgsql

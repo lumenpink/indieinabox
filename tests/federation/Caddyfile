@@ -21,7 +21,7 @@ http://{$MISSKEY_DOMAIN} {
 }
 
 http://{$PIXELFED_DOMAIN} {
-    reverse_proxy pixelfed-web:8000 {
+    reverse_proxy pixelfed-web:8080 {
         import proxy_config
     }
 }

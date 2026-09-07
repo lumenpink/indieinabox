@@ -174,7 +174,13 @@ global $urltranslations;
 $urltranslations = \Indieinabox\Database::getUrlTranslations();
 
 if (php_sapi_name() === 'cli') {
-    if (isset($argv[1]) && $argv[1] === 'fetch') {
+    if (isset($argv[1]) && $argv[1] === 'profile') {
+        $cli = new \Indieinabox\CliHandler($site);
+        $cli->handleProfile($argv);
+    } elseif (isset($argv[1]) && $argv[1] === 'post') {
+        $cli = new \Indieinabox\CliHandler($site);
+        $cli->handlePost($argv);
+    } elseif (isset($argv[1]) && $argv[1] === 'fetch') {
         echo "Fetching feeds...\n";
         $fetcher = new \Indieinabox\FeedFetcher();
         $fetcher->fetchAll();

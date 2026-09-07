@@ -116,8 +116,10 @@ class ActivityPubHandler
         $keyRow = $stmt->fetch();
         $pubKey = $keyRow ? $keyRow['public_key'] : '';
 
-        header('Content-Type: application/activity+json; charset=utf-8');
-        echo json_encode([
+        $avatarUrl = Database::getSetting('activitypub_avatar');
+        $backgroundUrl = Database::getSetting('activitypub_background');
+
+        $actor = [
             '@context' => [
                 'https://www.w3.org/ns/activitystreams',
                 'https://w3id.org/security/v1'
@@ -137,7 +139,26 @@ class ActivityPubHandler
                 'owner' => $fqdn . '/actor',
                 'publicKeyPem' => $pubKey
             ]
-        ], JSON_UNESCAPED_SLASHES);
+        ];
+
+        if ($avatarUrl) {
+            $actor['icon'] = [
+                'type' => 'Image',
+                'mediaType' => 'image/png',
+                'url' => $fqdn . $avatarUrl
+            ];
+        }
+
+        if ($backgroundUrl) {
+            $actor['image'] = [
+                'type' => 'Image',
+                'mediaType' => 'image/png',
+                'url' => $fqdn . $backgroundUrl
+            ];
+        }
+
+        header('Content-Type: application/activity+json; charset=utf-8');
+        echo json_encode($actor, JSON_UNESCAPED_SLASHES);
     }
 
     /**

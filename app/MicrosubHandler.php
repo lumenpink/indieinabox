@@ -619,7 +619,7 @@ class MicrosubHandler
                             $processor = new \Indieinabox\Markdown\ContentProcessor();
                             foreach ($files as $file) {
                                 $content = file_get_contents($file);
-                                $fm = $processor->extractYamlFrontMatter($content);
+                                $fm = $processor->extractFrontMatter($content);
                                 if ($fm) {
                                     if (isset($fm['feed_url']) && $fm['feed_url'] === $url) {
                                         @unlink($file);

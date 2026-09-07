@@ -571,7 +571,8 @@ class FeedFetcher
             });
         }
 
-        curl_setopt($ch, CURLOPT_USERAGENT, 'IndieInABox Fetcher Bot');
+        $ua = 'IndieInABox Fetcher Bot';
+        curl_setopt($ch, CURLOPT_USERAGENT, $ua);
 
         $result = curl_exec($ch);
         $error = curl_errno($ch);

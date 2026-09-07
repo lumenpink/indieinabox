@@ -549,9 +549,9 @@ class ActivityPubHandler
                     $content = "---\ndate: " . date('Y-m-d H:i:s') . "\n{$prop}: \"{$uri}\"\n---\n\n";
                     file_put_contents($dir . '/' . $filename, $content);
                     
-                    if (class_exists('\Indieinabox\BackgroundWorker')) {
-                        $worker = new \Indieinabox\BackgroundWorker($this->site);
-                        $worker->runBuild();
+                    if (class_exists('\Indieinabox\SiteBuilder')) {
+                        $builder = new \Indieinabox\SiteBuilder($this->site);
+                        $builder->build();
                     }
                 }
             } elseif ($action === 'Create') {
@@ -586,9 +586,9 @@ class ActivityPubHandler
                     $content = "---\ndate: " . date('Y-m-d H:i:s') . "\nin_reply_to: \"{$uri}\"\n---\n\n" . $replyContent;
                     file_put_contents($dir . '/' . $filename, $content);
                     
-                    if (class_exists('\Indieinabox\BackgroundWorker')) {
-                        $worker = new \Indieinabox\BackgroundWorker($this->site);
-                        $worker->runBuild();
+                    if (class_exists('\Indieinabox\SiteBuilder')) {
+                        $builder = new \Indieinabox\SiteBuilder($this->site);
+                        $builder->build();
                     }
                 }
             }

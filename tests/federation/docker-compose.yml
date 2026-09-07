@@ -91,7 +91,7 @@ services:
   # MISSKEY (Usa Postgres DB 'misskey' e Redis DB 1)
   # ==========================================
   misskey-web:
-    image: misskey/misskey:latest
+    image: misskey/misskey:2026.9.0
     container_name: misskey_web
     depends_on:
       - federation-db

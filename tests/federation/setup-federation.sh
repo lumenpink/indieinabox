@@ -46,6 +46,22 @@ if [ "$COMMAND" == "--wipe" ]; then
     exit 0
 fi
 
+if [ "$COMMAND" == "--fresh-start" ]; then
+    echo "Performing a fresh start: wiping, starting, and seeding..."
+    $0 --wipe
+    
+    echo "Starting containers..."
+    docker compose up -d
+    
+    echo "Waiting 45 seconds for databases and apps to initialize..."
+    sleep 45
+    
+    $0 --seed
+    
+    echo "Fresh start completed successfully!"
+    exit 0
+fi
+
 if [ "$COMMAND" == "--seed" ]; then
     echo "Seeding federation environment with test posts..."
     
@@ -113,4 +129,4 @@ if [ "$COMMAND" == "--seed" ]; then
     exit 0
 fi
 
-echo "Usage: ./setup-federation.sh [--wipe | --seed | --update]"
+echo "Usage: ./setup-federation.sh [--wipe | --seed | --update | --fresh-start]"

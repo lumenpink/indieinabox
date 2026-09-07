@@ -7,6 +7,7 @@ namespace Indieinabox\Theme;
 use Indieinabox\Page;
 use Indieinabox\Helper;
 use Indieinabox\Site;
+use Indieinabox\Database;
 
 /**
  * Class ThemeHelper
@@ -249,6 +250,17 @@ class ThemeHelper
                 $html .= '</div></a></div>';
             }
             $html .= '</div></div>';
+        }
+
+        $isActivityPubEnabled = Database::getSetting('activitypub_enabled');
+        if ($isActivityPubEnabled) {
+            $siteFqdn = rtrim(Database::getSetting('fqdn') ?? 'http://localhost', '/');
+            $postUrl = $siteFqdn . '/' . ltrim($page->slug, '/');
+            $html .= '<div style="margin-top: 1.5em;">';
+            $html .= '<a href="' . $page->relpath . 'interact?uri=' . urlencode($postUrl) . '" style="display: inline-block; padding: 0.4em 0.8em; background: var(--accent, #007bff); color: var(--bg, #fff); text-decoration: none; border-radius: 4px; font-size: 0.85em; font-weight: bold;">';
+            $html .= Helper::translate('Interact via Fediverse');
+            $html .= '</a>';
+            $html .= '</div>';
         }
 
         $html .= '</div>';

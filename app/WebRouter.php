@@ -94,6 +94,12 @@ class WebRouter
         }
 
         if (!empty($this->site->config['activitypub_enabled'])) {
+            if ($requestUriClean === '/interact') {
+                $handler = $this->createActivityPubHandler();
+                $handler->handleInteract();
+                return;
+            }
+
             if ($requestUriClean === '/.well-known/webfinger') {
                 $handler = $this->createActivityPubHandler();
                 $handler->handleWebFinger();

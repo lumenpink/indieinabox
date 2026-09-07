@@ -384,4 +384,76 @@ class ActivityPubHandler
         }
     }
 
+    /**
+     * Handles /interact route.
+     * Displays a form for the user to enter their instance domain or handle,
+     * and redirects them to the authorize_interaction endpoint on their instance.
+     *
+     * @return void
+     */
+    public function handleInteract(): void
+    {
+        $uri = $_GET['uri'] ?? '';
+
+        if (empty($uri)) {
+            http_response_code(400);
+            echo "Missing URI parameter.";
+            return;
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $handleOrDomain = trim($_POST['instance'] ?? '');
+            if (empty($handleOrDomain)) {
+                echo "Please enter a valid domain or handle.";
+                return;
+            }
+
+            // Extract domain
+            $domain = $handleOrDomain;
+            if (strpos($handleOrDomain, '@') !== false) {
+                $parts = explode('@', ltrim($handleOrDomain, '@'));
+                if (count($parts) >= 2) {
+                    $domain = end($parts);
+                } else {
+                    $domain = $parts[0];
+                }
+            }
+            
+            // Remove protocol if present
+            $domain = preg_replace('#^https?://#', '', $domain);
+            $domain = rtrim($domain, '/');
+
+            $redirectUrl = 'https://' . $domain . '/authorize_interaction?uri=' . urlencode($uri);
+            header('Location: ' . $redirectUrl);
+            exit;
+        }
+
+        // Output a simple HTML form
+        header('Content-Type: text/html; charset=utf-8');
+        $html = '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>' . Helper::translate('Interact via Fediverse') . '</title>';
+        $html .= '<style>
+            body { font-family: system-ui, -apple-system, sans-serif; max-width: 600px; margin: 2em auto; padding: 1em; background: #fdfdfd; color: #333; line-height: 1.5; }
+            @media (prefers-color-scheme: dark) {
+                body { background: #121212; color: #fdfdfd; }
+                input[type="text"] { background: #222; color: #fff; border: 1px solid #444; }
+            }
+            h1 { font-size: 1.5em; margin-bottom: 0.5em; }
+            form { margin-top: 1.5em; display: flex; flex-direction: column; gap: 1em; }
+            input[type="text"] { padding: 0.75em; font-size: 1em; border: 1px solid #ccc; border-radius: 4px; }
+            button { padding: 0.75em 1em; font-size: 1em; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
+            button:hover { background: #0056b3; }
+        </style>';
+        $html .= '</head><body>';
+        $html .= '<h1>' . Helper::translate('Interact via Fediverse') . '</h1>';
+        $html .= '<p>' . Helper::translate('Enter your Mastodon or compatible instance domain (e.g. <code>mastodon.social</code>) or your full handle (e.g. <code>@user@mastodon.social</code>) to proceed.') . '</p>';
+        $html .= '<form method="post">';
+        $html .= '<label for="instance">' . Helper::translate('Instance domain or handle:') . '</label>';
+        $html .= '<input type="text" id="instance" name="instance" placeholder="@user@instance.social" required autofocus>';
+        $html .= '<button type="submit">' . Helper::translate('Continue') . '</button>';
+        $html .= '</form>';
+        $html .= '</body></html>';
+
+        echo $html;
+    }
+
 }

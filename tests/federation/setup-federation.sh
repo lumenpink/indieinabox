@@ -233,7 +233,18 @@ EOF
         echo " Ready!"
     fi
 
-    # 4. Cross-Interactions (Follows BEFORE Posts!)
+    # 4. Initialize IndieInABox Profile
+    echo ">> Initializing IndieInABox Profile..."
+    docker exec -w /app federation_indieinabox php indieinabox.php profile edit --username aaron --name "Aaron (IndieInABox)" --bio "Sou um bot de teste no IndieInABox."
+    # We copy the media to the container first
+    docker cp data/media/avatar_iiab.png federation_indieinabox:/tmp/avatar_iiab.png
+    docker cp data/media/header_iiab.png federation_indieinabox:/tmp/header_iiab.png
+    docker cp data/media/dummy.mp3 federation_indieinabox:/tmp/dummy.mp3
+    docker cp data/media/dummy.mp4 federation_indieinabox:/tmp/dummy.mp4
+    docker exec -w /app federation_indieinabox php indieinabox.php profile media --avatar /tmp/avatar_iiab.png --background /tmp/header_iiab.png
+    echo "IndieInABox Profile initialized."
+
+    # 5. Cross-Interactions (Follows BEFORE Posts!)
     echo ">> Performing cross-interactions (Follows)..."
     # Mastodon Follows Pixelfed and Misskey
     docker exec mastodon_web bash -c "RAILS_ENV=production bundle exec rails runner \"
@@ -328,6 +339,16 @@ EOF
         docker run --rm --network federation_default curlimages/curl -s -X POST http://misskey_web:3000/api/notes/create -H "Content-Type: application/json" -d "{\"i\":\"$MISSKEY_TOKEN\", \"text\":\"Um audio no Misskey\", \"fileIds\":[\"$AUD_ID\"]}" > /dev/null
         docker run --rm --network federation_default curlimages/curl -s -X POST http://misskey_web:3000/api/notes/create -H "Content-Type: application/json" -d "{\"i\":\"$MISSKEY_TOKEN\", \"text\":\"Um video no Misskey\", \"fileIds\":[\"$VID_ID\"]}" > /dev/null
     fi
+    
+    # IndieInABox Posts
+    echo ">> Creating IndieInABox Posts..."
+    docker exec -w /app federation_indieinabox php indieinabox.php post create --text "Hello from local IndieInABox! 📦"
+    sleep 1
+    docker exec -w /app federation_indieinabox php indieinabox.php post create --text "Uma foto no IndieInABox" --media /tmp/avatar_iiab.png
+    sleep 1
+    docker exec -w /app federation_indieinabox php indieinabox.php post create --text "Um áudio no IndieInABox" --media /tmp/dummy.mp3
+    sleep 1
+    docker exec -w /app federation_indieinabox php indieinabox.php post create --text "Um vídeo no IndieInABox" --media /tmp/dummy.mp4
     
     echo "Data seeded automatically! The platforms are federating."
     

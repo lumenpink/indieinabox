@@ -100,6 +100,12 @@ class WebRouter
                 return;
             }
 
+            if ($requestUriClean === '/authorize_interaction') {
+                $handler = $this->createActivityPubHandler();
+                $handler->handleAuthorizeInteraction();
+                return;
+            }
+
             if ($requestUriClean === '/.well-known/webfinger') {
                 $handler = $this->createActivityPubHandler();
                 $handler->handleWebFinger();

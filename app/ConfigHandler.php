@@ -211,7 +211,10 @@ class ConfigHandler
         $_SESSION['admin_authenticated'] = true;
         unset($_SESSION['auth_state']);
 
-        header('Location: /admin/microsub');
+        $redirectUrl = $_SESSION['redirect_after_login'] ?? '/admin/microsub';
+        unset($_SESSION['redirect_after_login']);
+
+        header('Location: ' . $redirectUrl);
         return;
     }
 

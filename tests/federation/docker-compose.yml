@@ -133,6 +133,6 @@ services:
       - QUEUE_CONNECTION=redis
       - SESSION_DRIVER=redis
     volumes:
-      - ../../data/pixelfed_app:/var/www/
+      - ../../data/pixelfed_app:/var/www/html/storage
 
 

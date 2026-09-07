@@ -19,8 +19,8 @@ if [ "$COMMAND" == "--update" ]; then
     cd ../../
     # Gera o executável a partir do repositório local
     php compile.php
-    # Garante que temos permissão na pasta data
-    docker run --rm -v "$(pwd)/data:/data" alpine chown -R $(id -u):$(id -g) /data || true
+    # Garante que temos permissão na pasta data (apenas nela, não nos subdiretórios dos bancos)
+    docker run --rm -v "$(pwd)/data:/data" alpine chown $(id -u):$(id -g) /data || true
     # Copia para o diretório de dados montado no container
     cp indieinabox.php data/indieinabox.php
     echo "Local build updated in data/indieinabox.php!"
@@ -29,11 +29,20 @@ fi
 
 if [ "$COMMAND" == "--wipe" ]; then
     echo "Wiping federation environment..."
-    docker compose down
+    # Remove volumes (se existirem) e os bind mounts locais
+    docker compose down -v
     echo "Wiping local bind mount data..."
     cd ../../
-    docker run --rm -v "$(pwd)/data:/data" alpine rm -rf /data/federation_db /data/federation_redis /data/mastodon_public /data/misskey_files /data/pixelfed_app || true
-    echo "Environment wiped."
+    docker run --rm -v "$(pwd)/data:/data" alpine sh -c "\
+        rm -rf /data/federation_db /data/federation_redis /data/mastodon_public /data/misskey_files /data/pixelfed_app && \
+        mkdir -p /data/federation_db /data/federation_redis /data/mastodon_public /data/misskey_files && \
+        mkdir -p /data/pixelfed_app/app/public /data/pixelfed_app/framework/views /data/pixelfed_app/framework/cache /data/pixelfed_app/framework/sessions /data/pixelfed_app/logs && \
+        chown -R 991:991 /data/mastodon_public && \
+        chown -R 1000:1000 /data/misskey_files && \
+        chown -R 33:33 /data/pixelfed_app && \
+        chown -R 70:70 /data/federation_db && \
+        chown -R 999:999 /data/federation_redis" || true
+    echo "Environment wiped and directories recreated with correct permissions."
     exit 0
 fi
 

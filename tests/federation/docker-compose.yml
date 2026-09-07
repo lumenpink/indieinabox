@@ -31,14 +31,14 @@ services:
     environment:
       - POSTGRES_PASSWORD=root_pass
     volumes:
-      - federation_db_data:/var/lib/postgresql/data
+      - ../../data/federation_db:/var/lib/postgresql/data
       - ./init-dbs.sql:/docker-entrypoint-initdb.d/init.sql
 
   federation-redis:
     image: redis:7-alpine
     container_name: federation_redis
     volumes:
-      - federation_redis_data:/data
+      - ../../data/federation_redis:/data
 
   # ==========================================
   # MASTODON (Usa Postgres DB 'mastodon' e Redis DB 0)
@@ -64,7 +64,7 @@ services:
       - VAPID_PUBLIC_KEY=
     command: bash -c "rm -f /mastodon/tmp/pids/server.pid; bundle exec rails db:prepare || true; bundle exec rails s -p 3000"
     volumes:
-      - mastodon_public:/mastodon/public/system
+      - ../../data/mastodon_public:/mastodon/public/system
 
   mastodon-sidekiq:
     image: ghcr.io/mastodon/mastodon:v4.2.8
@@ -85,7 +85,7 @@ services:
       - OTP_SECRET=dummy_otp_secret_for_testing_only
     command: bundle exec sidekiq
     volumes:
-      - mastodon_public:/mastodon/public/system
+      - ../../data/mastodon_public:/mastodon/public/system
 
   # ==========================================
   # MISSKEY (Usa Postgres DB 'misskey' e Redis DB 1)
@@ -101,7 +101,7 @@ services:
     command: sh -c "mkdir -p /misskey/.config && sed \"s/\\$${MISSKEY_DOMAIN}/$MISSKEY_DOMAIN/g\" /misskey/template.yml > /misskey/.config/default.yml && pnpm run migrate && pnpm run start"
     volumes:
       - ./misskey/template.yml:/misskey/template.yml
-      - misskey_files:/misskey/files
+      - ../../data/misskey_files:/misskey/files
 
   # ==========================================
   # PIXELFED (Usa Postgres DB 'pixelfed' e Redis DB 2)
@@ -133,11 +133,6 @@ services:
       - QUEUE_CONNECTION=redis
       - SESSION_DRIVER=redis
     volumes:
-      - pixelfed_app:/var/www/
+      - ../../data/pixelfed_app:/var/www/
 
-volumes:
-  federation_db_data:
-  federation_redis_data:
-  mastodon_public:
-  misskey_files:
-  pixelfed_app:
+

@@ -19,6 +19,8 @@ if [ "$COMMAND" == "--update" ]; then
     cd ../../
     # Gera o executável a partir do repositório local
     php compile.php
+    # Garante que temos permissão na pasta data
+    docker run --rm -v "$(pwd)/data:/data" alpine chown -R $(id -u):$(id -g) /data || true
     # Copia para o diretório de dados montado no container
     cp indieinabox.php data/indieinabox.php
     echo "Local build updated in data/indieinabox.php!"
@@ -27,7 +29,10 @@ fi
 
 if [ "$COMMAND" == "--wipe" ]; then
     echo "Wiping federation environment..."
-    docker compose down -v
+    docker compose down
+    echo "Wiping local bind mount data..."
+    cd ../../
+    docker run --rm -v "$(pwd)/data:/data" alpine rm -rf /data/federation_db /data/federation_redis /data/mastodon_public /data/misskey_files /data/pixelfed_app || true
     echo "Environment wiped."
     exit 0
 fi

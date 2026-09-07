@@ -37,6 +37,7 @@ if [ "$COMMAND" == "--seed" ]; then
     
     # 1. Setup Mastodon
     echo ">> Setting up Mastodon User..."
+    docker exec --user root mastodon_web chown -R mastodon:mastodon /mastodon/public/system || true
     docker exec mastodon_web bash -c "RAILS_ENV=production bundle exec rails db:seed" || true
     docker exec mastodon_web bash -c "RAILS_ENV=production bin/tootctl accounts create aaron --email aaron@hero.com --confirmed --role Admin" || true
     
@@ -73,8 +74,8 @@ if [ "$COMMAND" == "--seed" ]; then
     "
     
     # 3. Setup Misskey
-    # Como o Misskey não tem uma CLI robusta de usuários,
-    # usamos a API nativa dele (o primeiro registro ganha admin)
+    echo ">> Fixing Misskey Permissions..."
+    docker exec --user root misskey_web chown -R misskey:misskey /misskey/files || true
     echo ">> Waiting for Misskey to be ready..."
     sleep 5
     echo ">> Creating Misskey User via API..."

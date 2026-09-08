@@ -76,6 +76,12 @@ if [ "$COMMAND" == "--fresh-start" ]; then
     done
     echo " Ready!"
     
+    echo "Starting databases..."
+    docker compose up -d federation-db federation-redis
+    sleep 5
+    echo "Setting up Mastodon database..."
+    docker compose run --rm mastodon-web bash -c "RAILS_ENV=production bundle exec rails db:migrate"
+    docker compose run --rm mastodon-web bash -c "RAILS_ENV=production bundle exec rails db:seed"
     echo "Starting all other containers..."
     docker compose up -d
     
@@ -149,8 +155,6 @@ if [ "$COMMAND" == "--seed" ]; then
     docker exec --user root mastodon_web chown -R mastodon:mastodon /mastodon/public/system || true
     docker cp data/media mastodon_web:/tmp/media
     docker exec --user root mastodon_web chown -R mastodon:mastodon /tmp/media || true
-    docker exec mastodon_web bash -c "RAILS_ENV=production bundle exec rails db:migrate" || true
-    docker exec mastodon_web bash -c "RAILS_ENV=production bundle exec rails db:seed" || true
     docker exec mastodon_web bash -c "RAILS_ENV=production bin/tootctl accounts create aaron --email aaron@hero.com --confirmed --role Admin" || true
     
     cat << 'EOF' > data/mastodon_init.rb
@@ -253,6 +257,11 @@ EOF
     # 4. Initialize IndieInABox Profile
     echo ">> Initializing IndieInABox Profile..."
     docker exec -w /app federation_indieinabox php indieinabox.php profile edit --username aaron --name "Aaron (IndieInABox)" --bio "Sou um bot de teste no IndieInABox."
+    
+    # Fix database settings since IIAB is behind a reverse proxy that terminates SSL
+    sqlite3 ../../data/indieinabox_app/.indieinabox.sqlite "INSERT INTO settings (key, value) VALUES ('activitypub_enabled', '1') ON CONFLICT(key) DO UPDATE SET value=excluded.value;"
+    sqlite3 ../../data/indieinabox_app/.indieinabox.sqlite "INSERT INTO settings (key, value) VALUES ('fqdn', 'https://${INDIEINABOX_DOMAIN}') ON CONFLICT(key) DO UPDATE SET value=excluded.value;"
+
     # We copy the media to the container first
     docker cp data/media/avatar_iiab.png federation_indieinabox:/tmp/avatar_iiab.png
     docker cp data/media/header_iiab.png federation_indieinabox:/tmp/header_iiab.png
@@ -279,7 +288,7 @@ EOF
     
     # Pixelfed Follows Mastodon, Misskey, IndieInABox
     docker cp data/pixelfed_follow.php pixelfed_web:/tmp/pixelfed_follow.php
-    docker exec pixelfed_web php /tmp/pixelfed_follow.php
+    docker exec pixelfed_web php /tmp/pixelfed_follow.php "$MISSKEY_USER_ID"
 
     # Misskey Follows Mastodon and Pixelfed
     if [ -n "$MISSKEY_TOKEN" ]; then

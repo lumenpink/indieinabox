@@ -154,6 +154,39 @@ services:
       - ../../data/pixelfed_app:/var/www/html/storage
       - caddy_data:/caddy-data
 
+  pixelfed-worker:
+    image: ghcr.io/pixelfed/pixelfed:latest
+    container_name: pixelfed_worker
+    depends_on:
+      - federation-db
+      - federation-redis
+    environment:
+      - APP_NAME=PixelfedLocal
+      - APP_ENV=production
+      - APP_KEY=base64:RRjoo5T0EywRLsGh7LENJQ3MsI0NU7tlkkMn4j/wmiI=
+      - APP_DEBUG=false
+      - APP_URL=https://${PIXELFED_DOMAIN}
+      - APP_DOMAIN=${PIXELFED_DOMAIN}
+      - TRUST_PROXIES=*
+      - ACTIVITY_PUB=true
+      - DB_CONNECTION=pgsql
+      - DB_HOST=federation-db
+      - DB_PORT=5432
+      - DB_DATABASE=pixelfed
+      - DB_USERNAME=pixelfed
+      - DB_PASSWORD=pixelfed_pass
+      - REDIS_HOST=federation-redis
+      - REDIS_DATABASE=2
+      - REDIS_PASSWORD=null
+      - REDIS_PORT=6379
+      - BROADCAST_DRIVER=redis
+      - CACHE_DRIVER=redis
+      - QUEUE_DRIVER=redis
+      - SESSION_DRIVER=redis
+    command: php artisan horizon
+    volumes:
+      - ../../data/pixelfed_app:/var/www/html/storage
+
 volumes:
   caddy_data:
 

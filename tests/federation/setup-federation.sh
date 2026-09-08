@@ -259,8 +259,8 @@ EOF
     docker exec -w /app federation_indieinabox php indieinabox.php profile edit --username aaron --name "Aaron (IndieInABox)" --bio "Sou um bot de teste no IndieInABox."
     
     # Fix database settings since IIAB is behind a reverse proxy that terminates SSL
-    sqlite3 ../../data/indieinabox_app/.indieinabox.sqlite "INSERT INTO settings (key, value) VALUES ('activitypub_enabled', '1') ON CONFLICT(key) DO UPDATE SET value=excluded.value;"
-    sqlite3 ../../data/indieinabox_app/.indieinabox.sqlite "INSERT INTO settings (key, value) VALUES ('fqdn', 'https://${INDIEINABOX_DOMAIN}') ON CONFLICT(key) DO UPDATE SET value=excluded.value;"
+    docker exec -w /app federation_indieinabox php indieinabox.php config set --key activitypub_enabled --value 1
+    docker exec -w /app federation_indieinabox php indieinabox.php config set --key fqdn --value "https://${INDIEINABOX_DOMAIN}"
 
     # We copy the media to the container first
     docker cp data/media/avatar_iiab.png federation_indieinabox:/tmp/avatar_iiab.png
@@ -315,13 +315,13 @@ EOF
     cat << 'EOF' > data/mastodon_posts.rb
 # encoding: utf-8
 account = Account.find_by(username: 'aaron')
-Status.create!(account: account, text: 'Hello from local Mastodon! 🐘', visibility: :public)
+PostStatusService.new.call(account, text: 'Hello from local Mastodon! 🐘', visibility: :public)
 media_img = MediaAttachment.create!(account: account, file: File.open('/tmp/media/avatar_mastodon.png'), type: :image)
-Status.create!(account: account, text: 'Uma foto no Mastodon', visibility: :public, media_attachments: [media_img])
+PostStatusService.new.call(account, text: 'Uma foto no Mastodon', visibility: :public, media_ids: [media_img.id])
 media_aud = MediaAttachment.create!(account: account, file: File.open('/tmp/media/dummy.mp3'), type: :audio)
-Status.create!(account: account, text: 'Um áudio no Mastodon', visibility: :public, media_attachments: [media_aud])
+PostStatusService.new.call(account, text: 'Um áudio no Mastodon', visibility: :public, media_ids: [media_aud.id])
 media_vid = MediaAttachment.create!(account: account, file: File.open('/tmp/media/dummy.mp4'), type: :video)
-Status.create!(account: account, text: 'Um vídeo no Mastodon', visibility: :public, media_attachments: [media_vid])
+PostStatusService.new.call(account, text: 'Um vídeo no Mastodon', visibility: :public, media_ids: [media_vid.id])
 puts 'Mastodon posts created.'
 EOF
     docker cp data/mastodon_posts.rb mastodon_web:/tmp/mastodon_posts.rb
@@ -357,7 +357,7 @@ $status->save();
 $media->status_id = $status->id;
 $media->save();
 
-App\Services\StatusService::reconcileStatusCounts($status);
+App\Jobs\StatusPipeline\NewStatusPipeline::dispatch($status);
 echo "Pixelfed posts created.\n";
 EOF
     docker cp data/pixelfed_posts.php pixelfed_web:/tmp/pixelfed_posts.php

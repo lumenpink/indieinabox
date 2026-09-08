@@ -41,11 +41,7 @@ class CliHandler
                 echo "Name updated to: $name\n";
             }
             if ($bio) {
-                $aboutPath = Database::$dataDir . '/../content/about.md';
-                if (!is_dir(dirname($aboutPath))) {
-                    @mkdir(dirname($aboutPath), 0755, true);
-                }
-                file_put_contents($aboutPath, $bio);
+                Database::saveSetting('activitypub_bio', $bio);
                 echo "Bio updated.\n";
             }
         } elseif ($subcommand === 'media') {

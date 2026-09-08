@@ -128,7 +128,7 @@ class ActivityPubHandler
             'type' => 'Person',
             'preferredUsername' => $handle,
             'name' => $this->site->metadata->title ?? $handle,
-            'summary' => $this->site->metadata->sitename ?? '',
+            'summary' => Database::getSetting('activitypub_bio') ?? '',
             'inbox' => $fqdn . '/inbox',
             'outbox' => $fqdn . '/outbox',
             'followers' => $fqdn . '/followers',

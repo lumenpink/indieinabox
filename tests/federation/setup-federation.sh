@@ -6,6 +6,20 @@ cd "$(dirname "$0")"
 
 COMMAND=$1
 
+function show_usage() {
+    echo "Usage: $0 [COMMAND]"
+    echo "Commands:"
+    echo "  --update       Update the local indieinabox binary into the testing environment"
+    echo "  --wipe         Wipe all containers, volumes, and bind mounts"
+    echo "  --fresh-start  Perform a clean wipe, start all containers, and seed test data"
+    echo "  --seed         Seed the currently running environment with test data"
+    exit 1
+}
+
+if [ "$COMMAND" != "--update" ] && [ "$COMMAND" != "--wipe" ] && [ "$COMMAND" != "--fresh-start" ] && [ "$COMMAND" != "--seed" ]; then
+    show_usage
+fi
+
 if [ ! -f ".env" ]; then
     echo "Erro: Arquivo .env não encontrado!"
     echo "Copie o .env.example para .env e configure os domínios antes de continuar."
@@ -133,6 +147,7 @@ if [ "$COMMAND" == "--seed" ]; then
     docker exec --user root mastodon_web chown -R mastodon:mastodon /mastodon/public/system || true
     docker cp data/media mastodon_web:/tmp/media
     docker exec --user root mastodon_web chown -R mastodon:mastodon /tmp/media || true
+    docker exec mastodon_web bash -c "RAILS_ENV=production bundle exec rails db:migrate" || true
     docker exec mastodon_web bash -c "RAILS_ENV=production bundle exec rails db:seed" || true
     docker exec mastodon_web bash -c "RAILS_ENV=production bin/tootctl accounts create aaron --email aaron@hero.com --confirmed --role Admin" || true
     
@@ -246,10 +261,10 @@ EOF
 
     # 5. Cross-Interactions (Follows BEFORE Posts!)
     echo ">> Performing cross-interactions (Follows)..."
-    # Mastodon Follows Pixelfed and Misskey
+    # Mastodon Follows Pixelfed, Misskey, and IndieInABox
     docker exec mastodon_web bash -c "RAILS_ENV=production bundle exec rails runner \"
       mastodon_account = Account.find_by(username: 'aaron')
-      ['aaron@${MISSKEY_DOMAIN}', 'aaron@${PIXELFED_DOMAIN}'].each do |uri|
+      ['aaron@${MISSKEY_DOMAIN}', 'aaron@${PIXELFED_DOMAIN}', 'aaron@${INDIEINABOX_DOMAIN}'].each do |uri|
         begin
           target = ResolveAccountService.new.call(uri)
           FollowService.new.call(mastodon_account, target) if target
@@ -270,6 +285,11 @@ EOF
         PX_ID=$(docker exec misskey_web curl -s -X POST http://127.0.0.1:3000/api/ap/show -H "Content-Type: application/json" -d "{\"i\":\"$MISSKEY_TOKEN\", \"uri\":\"https://${PIXELFED_DOMAIN}/users/aaron\"}" | grep -o '"id":"[^"]*"' | head -n1 | cut -d'"' -f4)
         if [ -n "$PX_ID" ]; then
             docker exec misskey_web curl -s -X POST http://127.0.0.1:3000/api/following/create -H "Content-Type: application/json" -d "{\"i\":\"$MISSKEY_TOKEN\", \"userId\":\"$PX_ID\"}" > /dev/null
+        fi
+
+        IB_ID=$(docker exec misskey_web curl -s -X POST http://127.0.0.1:3000/api/ap/show -H "Content-Type: application/json" -d "{\"i\":\"$MISSKEY_TOKEN\", \"uri\":\"http://${INDIEINABOX_DOMAIN}/actor\"}" | grep -o '"id":"[^"]*"' | head -n1 | cut -d'"' -f4)
+        if [ -n "$IB_ID" ]; then
+            docker exec misskey_web curl -s -X POST http://127.0.0.1:3000/api/following/create -H "Content-Type: application/json" -d "{\"i\":\"$MISSKEY_TOKEN\", \"userId\":\"$IB_ID\"}" > /dev/null
         fi
     fi
     

@@ -36,6 +36,8 @@ php indieinabox.php [action]
 ```
 
 *   **`build`** (default): Generates the static site.
+*   **`setup`**: Configures the initial instance interactively or via arguments (`--password`, `--name`, `--fqdn`).
+*   **`config set/get`**: Sets or retrieves a configuration variable directly to/from the database (e.g. `config set --key <k> --value <v>`).
 *   **`fetch`**: Forces a manual fetch of all followed RSS/Twtxt feeds.
 *   **`cron`**: Runs pending background tasks (such as retrying failed webmentions).
 

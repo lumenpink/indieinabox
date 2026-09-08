@@ -185,4 +185,67 @@ class CliHandler
         imagecopyresampled($newImage, $image, 0, 0, 0, 0, $newWidth, $newHeight, $width, $height);
         imagepng($newImage, $dest, 9);
     }
+
+    public function handleSetup(array $argv): void
+    {
+        $password = $this->getOption($argv, 'password');
+        $name = $this->getOption($argv, 'name');
+        $fqdn = $this->getOption($argv, 'fqdn');
+
+        if (!$password) {
+            echo "Enter admin password: ";
+            $password = trim(fgets(STDIN));
+        }
+        if (!$name) {
+            echo "Enter site name: ";
+            $name = trim(fgets(STDIN));
+        }
+        if (!$fqdn) {
+            echo "Enter FQDN (e.g. example.com): ";
+            $fqdn = trim(fgets(STDIN));
+        }
+
+        if ($password && $name && $fqdn) {
+            Database::saveSetting('admin_password', password_hash($password, PASSWORD_DEFAULT));
+            Database::saveSetting('sitename', $name);
+            Database::saveSetting('fqdn', $fqdn);
+            // Default author to site name
+            Database::saveSetting('author', $name);
+            
+            echo "Setup complete.\n";
+        } else {
+            echo "Setup failed. All fields are required.\n";
+        }
+    }
+
+    public function handleConfig(array $argv): void
+    {
+        $subcommand = $argv[2] ?? '';
+        if ($subcommand === 'set') {
+            $key = $this->getOption($argv, 'key');
+            $value = $this->getOption($argv, 'value');
+
+            if (!$key || $value === null) {
+                echo "Usage: config set --key <key> --value <value>\n";
+                return;
+            }
+
+            Database::saveSetting($key, $value);
+            echo "Config '$key' updated.\n";
+        } elseif ($subcommand === 'get') {
+            $key = $this->getOption($argv, 'key');
+
+            if (!$key) {
+                echo "Usage: config get --key <key>\n";
+                return;
+            }
+
+            $val = Database::getSetting($key);
+            echo "Config '$key': " . ($val ?? 'null') . "\n";
+        } else {
+            echo "Usage:\n";
+            echo "  config set --key <key> --value <value>\n";
+            echo "  config get --key <key>\n";
+        }
+    }
 }

@@ -180,6 +180,12 @@ if (php_sapi_name() === 'cli') {
     } elseif (isset($argv[1]) && $argv[1] === 'post') {
         $cli = new \Indieinabox\CliHandler($site);
         $cli->handlePost($argv);
+    } elseif (isset($argv[1]) && $argv[1] === 'config') {
+        $cli = new \Indieinabox\CliHandler($site);
+        $cli->handleConfig($argv);
+    } elseif (isset($argv[1]) && $argv[1] === 'setup') {
+        $cli = new \Indieinabox\CliHandler($site);
+        $cli->handleSetup($argv);
     } elseif (isset($argv[1]) && $argv[1] === 'fetch') {
         echo "Fetching feeds...\n";
         $fetcher = new \Indieinabox\FeedFetcher();

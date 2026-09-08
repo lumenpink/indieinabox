@@ -1,0 +1,11 @@
+{
+    frankenphp
+    order php_server before file_server
+}
+
+http://{$INDIEINABOX_DOMAIN}:80 {
+    encode zstd gzip
+    root * /app
+    try_files {path} /indieinabox.php?{query}
+    php_server
+}

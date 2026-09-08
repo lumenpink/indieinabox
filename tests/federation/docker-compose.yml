@@ -29,6 +29,7 @@ services:
       - APP_DOMAIN=https://${INDIEINABOX_DOMAIN}
     volumes:
       - ../../data/indieinabox_app:/app
+      - ./iiab_caddyfile:/etc/caddy/Caddyfile
 
   # ==========================================
   # SHARED DATABASES (Otimização de RAM)

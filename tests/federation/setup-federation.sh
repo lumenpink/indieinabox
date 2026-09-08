@@ -36,7 +36,7 @@ if [ "$COMMAND" == "--update" ]; then
     # Garante que temos permissão na pasta data (apenas nela, não nos subdiretórios dos bancos)
     docker run --rm -v "$(pwd)/data:/data" alpine sh -c "chown $(id -u):$(id -g) /data && mkdir -p /data/indieinabox_app && chown -R $(id -u):$(id -g) /data/indieinabox_app" || true
     # Copia para o diretório de dados montado no container
-    mkdir -p data/indieinabox_app && cp indieinabox.php data/indieinabox_app/indieinabox.php
+    mkdir -p data/indieinabox_app && cp indieinabox.php data/indieinabox_app/indieinabox.php && echo "<?php return [\"data_dir\" => \".\", \"db_path\" => \".indieinabox.sqlite\"];" > data/indieinabox_app/.config.php && sqlite3 data/indieinabox_app/.indieinabox.sqlite < database.sql && echo "<?php return [\"data_dir\" => \".\", \"db_path\" => \".indieinabox.sqlite\"];" > data/indieinabox_app/.config.php
     echo "Local build updated in data/indieinabox_app/indieinabox.php!"
     exit 0
 fi

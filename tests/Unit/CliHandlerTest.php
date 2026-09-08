@@ -4,7 +4,13 @@ use Indieinabox\CliHandler;
 use Indieinabox\Site;
 use Indieinabox\Database;
 
+/**
+ * @property Site $site
+ * @property CliHandler $handler
+ * @property string $tempDir
+ */
 beforeEach(function () {
+    Database::disconnect();
     $this->site = new Site();
     $this->handler = new CliHandler($this->site);
     
@@ -42,11 +48,9 @@ test('handleProfile media resizes and copies avatar and background', function ()
     
     $img = imagecreatetruecolor(800, 800);
     imagepng($img, $avatarSrc);
-    imagedestroy($img);
     
     $img = imagecreatetruecolor(3000, 1000);
     imagepng($img, $bgSrc);
-    imagedestroy($img);
 
     ob_start();
     $this->handler->handleProfile(['indieinabox.php', 'profile', 'media', '--avatar', $avatarSrc, '--background', $bgSrc]);

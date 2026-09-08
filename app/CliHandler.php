@@ -184,8 +184,5 @@ class CliHandler
         
         imagecopyresampled($newImage, $image, 0, 0, 0, 0, $newWidth, $newHeight, $width, $height);
         imagepng($newImage, $dest, 9);
-        
-        imagedestroy($image);
-        imagedestroy($newImage);
     }
 }

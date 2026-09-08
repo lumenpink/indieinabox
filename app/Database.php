@@ -80,6 +80,15 @@ class Database
     }
 
     /**
+     * Closes the active PDO database connection.
+     */
+    public static function disconnect(): void
+    {
+        self::$db = null;
+    }
+
+
+    /**
      * Fetches a single value from the settings table
      *
      * @param string $key

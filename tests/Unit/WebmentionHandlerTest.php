@@ -12,10 +12,7 @@ beforeEach(function () use ($tempDir) {
         mkdir($tempDir, 0777, true);
     }
     
-    $reflection = new \ReflectionClass(\Indieinabox\Database::class);
-    $property = $reflection->getProperty('db');
-    $property->setAccessible(true);
-    $property->setValue(null, null);
+    \Indieinabox\Database::disconnect();
     
     \Indieinabox\Database::$dataDir = $tempDir . '/data';
     \Indieinabox\Database::connect(':memory:');

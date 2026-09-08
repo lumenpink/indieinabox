@@ -5,11 +5,17 @@ use Indieinabox\Site;
 use Indieinabox\Database;
 use Indieinabox\Site\Metadata;
 
+/**
+ * @property Site $site
+ * @property string $tempDir
+ */
+
 beforeEach(function () {
+    Database::disconnect();
     $this->site = new Site();
     $this->site->metadata = new Metadata();
     $this->site->metadata->fqdn = 'http://localhost';
-    $this->site->metadata->title = 'Test Site';
+    $this->site->metadata->defaultTitle = 'Test Site';
     $this->site->metadata->sitename = 'Test Sitename';
     
     $this->tempDir = sys_get_temp_dir() . '/iiab_functional_tests_' . uniqid();
@@ -30,6 +36,7 @@ beforeEach(function () {
 });
 
 afterEach(function () {
+    Database::disconnect();
     exec("rm -rf " . escapeshellarg($this->tempDir));
 });
 

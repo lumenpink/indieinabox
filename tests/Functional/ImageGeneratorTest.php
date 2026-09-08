@@ -18,7 +18,6 @@ it('generates social images with correct dimensions and dithering', function () 
     $bg = imagecolorallocate($img, 200, 200, 200);
     imagefill($img, 0, 0, $bg);
     imagejpeg($img, $sourceJpg);
-    imagedestroy($img);
     
     $destBase = $tempDir . '/media/test';
     

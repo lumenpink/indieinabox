@@ -52,3 +52,11 @@ expect()->extend('toBeOne', function () {
 | global functions to help you to reduce the number of lines of code in your test files.
 |
 */
+
+afterEach(function () {
+    if (class_exists(\Indieinabox\Database::class)) {
+        \Indieinabox\Database::disconnect();
+    }
+});
+
+uses(\Tests\TestCase::class)->in(__DIR__);

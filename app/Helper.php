@@ -1053,7 +1053,6 @@ class Helper
             $larguraOrig,
             $alturaOrig
         );
-        imagedestroy($imgOriginal);
 
         $imgFinal = imagecreate($tamanhoFocal, $tamanhoFocal);
         $allocatedBG = imagecolorallocate($imgFinal, $corBG[0], $corBG[1], $corBG[2]);
@@ -1071,10 +1070,8 @@ class Helper
                 imagesetpixel($imgFinal, $x, $y, $cor);
             }
         }
-        imagedestroy($imgRedimensionada);
 
         $result = imagegif($imgFinal, $caminhoDestino);
-        imagedestroy($imgFinal);
 
         return $result;
     }
@@ -1162,7 +1159,6 @@ class Helper
             $larguraOrig,
             $alturaOrig
         );
-        imagedestroy($imgOriginal);
 
         $brilhoTotal = 0;
         $amostras = 0;
@@ -1199,7 +1195,6 @@ class Helper
                 $matrix[$y][$x] = max(0, min(1, $v)) * 255;
             }
         }
-        imagedestroy($imgRedimensionada);
 
         for ($y = 0; $y < $alturaFocal; $y++) {
             for ($x = 0; $x < $larguraFocal; $x++) {
@@ -1242,7 +1237,6 @@ class Helper
         }
 
         $result = imagegif($imgFinal, $caminhoDestino);
-        imagedestroy($imgFinal);
 
         return $result;
     }
@@ -1335,7 +1329,6 @@ class Helper
             $cropWidth,
             $cropHeight
         );
-        imagedestroy($imgOriginal);
 
         $brilhoTotal = 0;
         $amostras = 0;
@@ -1372,7 +1365,6 @@ class Helper
                 $matrix[$y][$x] = max(0, min(1, $v)) * 255;
             }
         }
-        imagedestroy($imgRedimensionada);
 
         for ($y = 0; $y < $targetHeight; $y++) {
             for ($x = 0; $x < $targetWidth; $x++) {
@@ -1415,7 +1407,6 @@ class Helper
         }
 
         $result = imagepng($imgFinal, $caminhoDestino, 8);
-        imagedestroy($imgFinal);
 
         return $result;
     }

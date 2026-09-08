@@ -10,6 +10,7 @@ use Indieinabox\Database;
  * @property string $tempDir
  */
 beforeEach(function () {
+    /** @var \Tests\TestCase $this */
     Database::disconnect();
     $this->site = new Site();
     $this->handler = new CliHandler($this->site);
@@ -24,10 +25,12 @@ beforeEach(function () {
 });
 
 afterEach(function () {
+    /** @var \Tests\TestCase $this */
     exec("rm -rf " . escapeshellarg($this->tempDir));
 });
 
 test('handleProfile edit saves handle and name', function () {
+    /** @var \Tests\TestCase $this */
     ob_start();
     $this->handler->handleProfile(['indieinabox.php', 'profile', 'edit', '--username', 'test_user', '--name', 'Test Name', '--bio', 'Test bio']);
     $output = ob_get_clean();
@@ -43,6 +46,7 @@ test('handleProfile edit saves handle and name', function () {
 });
 
 test('handleProfile media resizes and copies avatar and background', function () {
+    /** @var \Tests\TestCase $this */
     $avatarSrc = $this->tempDir . '/test_avatar.png';
     $bgSrc = $this->tempDir . '/test_bg.png';
     
@@ -71,6 +75,7 @@ test('handleProfile media resizes and copies avatar and background', function ()
 });
 
 test('handlePost create requires text', function () {
+    /** @var \Tests\TestCase $this */
     ob_start();
     $this->handler->handlePost(['indieinabox.php', 'post', 'create']);
     $output = ob_get_clean();

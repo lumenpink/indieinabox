@@ -34,10 +34,10 @@ if [ "$COMMAND" == "--update" ]; then
     # Gera o executável a partir do repositório local
     php compile.php
     # Garante que temos permissão na pasta data (apenas nela, não nos subdiretórios dos bancos)
-    docker run --rm -v "$(pwd)/data:/data" alpine chown $(id -u):$(id -g) /data || true
+    docker run --rm -v "$(pwd)/data:/data" alpine sh -c "chown $(id -u):$(id -g) /data && mkdir -p /data/indieinabox_app && chown -R $(id -u):$(id -g) /data/indieinabox_app" || true
     # Copia para o diretório de dados montado no container
-    cp indieinabox.php data/indieinabox.php
-    echo "Local build updated in data/indieinabox.php!"
+    mkdir -p data/indieinabox_app && cp indieinabox.php data/indieinabox_app/indieinabox.php
+    echo "Local build updated in data/indieinabox_app/indieinabox.php!"
     exit 0
 fi
 
@@ -48,9 +48,10 @@ if [ "$COMMAND" == "--wipe" ]; then
     echo "Wiping local bind mount data..."
     cd ../../
     docker run --rm -v "$(pwd)/data:/data" alpine sh -c "\
-        rm -rf /data/federation_db /data/federation_redis /data/mastodon_public /data/misskey_files /data/pixelfed_app && \
-        mkdir -p /data/federation_db /data/federation_redis /data/mastodon_public /data/misskey_files && \
+        rm -rf /data/indieinabox_app /data/federation_db /data/federation_redis /data/mastodon_public /data/misskey_files /data/pixelfed_app && \
+        mkdir -p /data/indieinabox_app /data/federation_db /data/federation_redis /data/mastodon_public /data/misskey_files && \
         mkdir -p /data/pixelfed_app/app/public /data/pixelfed_app/framework/views /data/pixelfed_app/framework/cache /data/pixelfed_app/framework/sessions /data/pixelfed_app/logs && \
+        chown -R $(id -u):$(id -g) /data/indieinabox_app && \
         chown -R 991:991 /data/mastodon_public && \
         chown -R 1000:1000 /data/misskey_files && \
         chown -R 33:33 /data/pixelfed_app && \
@@ -63,6 +64,7 @@ fi
 if [ "$COMMAND" == "--fresh-start" ]; then
     echo "Performing a fresh start: wiping, starting, and seeding..."
     $0 --wipe
+    $0 --update
     
     echo "Starting caddy proxy first to generate local SSL..."
     docker compose up -d caddy-proxy
@@ -275,6 +277,10 @@ EOF
       end
     \""
     
+    # Pixelfed Follows Mastodon, Misskey, IndieInABox
+    docker cp data/pixelfed_follow.php pixelfed_web:/tmp/pixelfed_follow.php
+    docker exec pixelfed_web php /tmp/pixelfed_follow.php
+
     # Misskey Follows Mastodon and Pixelfed
     if [ -n "$MISSKEY_TOKEN" ]; then
         MD_ID=$(docker exec misskey_web curl -s -X POST http://127.0.0.1:3000/api/ap/show -H "Content-Type: application/json" -d "{\"i\":\"$MISSKEY_TOKEN\", \"uri\":\"https://${MASTODON_DOMAIN}/users/aaron\"}" | grep -o '"id":"[^"]*"' | head -n1 | cut -d'"' -f4)

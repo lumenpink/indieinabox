@@ -26,9 +26,9 @@ services:
     image: lumenpink/indieinabox:latest
     container_name: federation_indieinabox
     environment:
-      - APP_DOMAIN=http://${INDIEINABOX_DOMAIN}:80
+      - APP_DOMAIN=https://${INDIEINABOX_DOMAIN}
     volumes:
-      - ../../data:/app
+      - ../../data/indieinabox_app:/app
 
   # ==========================================
   # SHARED DATABASES (Otimização de RAM)

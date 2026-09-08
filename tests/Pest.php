@@ -59,4 +59,4 @@ afterEach(function () {
     }
 });
 
-uses(\Tests\TestCase::class)->in(__DIR__);
+

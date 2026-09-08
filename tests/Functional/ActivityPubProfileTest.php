@@ -11,6 +11,7 @@ use Indieinabox\Site\Metadata;
  */
 
 beforeEach(function () {
+    /** @var \Tests\TestCase $this */
     Database::disconnect();
     $this->site = new Site();
     $this->site->metadata = new Metadata();
@@ -36,11 +37,13 @@ beforeEach(function () {
 });
 
 afterEach(function () {
+    /** @var \Tests\TestCase $this */
     Database::disconnect();
     exec("rm -rf " . escapeshellarg($this->tempDir));
 });
 
 test('handleActor outputs correctly formatted ActivityPub JSON-LD with bio and media', function () {
+    /** @var \Tests\TestCase $this */
     $handler = new ActivityPubHandler($this->site);
     
     ob_start();

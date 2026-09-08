@@ -89,7 +89,6 @@ test('pages appear in menu by default unless menu: hide is set', function () {
     
     $reflection = new \ReflectionClass(SiteBuilder::class);
     $method = $reflection->getMethod('getMenuLinks');
-    $method->setAccessible(true);
     
     $pages = iterator_to_array($builder->getPages(), false);
     $dummyPage = $pages[0]; // 'visible'
@@ -112,7 +111,6 @@ test('menu flag directs pages to header, footer or both', function () {
     
     $reflection = new \ReflectionClass(SiteBuilder::class);
     $method = $reflection->getMethod('getMenuLinks');
-    $method->setAccessible(true);
     
     $pages = iterator_to_array($builder->getPages(), false);
     
@@ -142,7 +140,6 @@ test('menu links are ordered by menu_order then alphabetically', function () {
     
     $reflection = new \ReflectionClass(SiteBuilder::class);
     $method = $reflection->getMethod('getMenuLinks');
-    $method->setAccessible(true);
     
     $pages = iterator_to_array($builder->getPages(), false);
     $dummyPage = $pages[0];

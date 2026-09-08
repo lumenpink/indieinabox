@@ -67,10 +67,7 @@ beforeEach(function () use ($funcTempDir) {
     }
     
     // Set up test database
-    $ref = new \ReflectionClass(\Indieinabox\Database::class);
-    $prop = $ref->getProperty('db');
-    $prop->setAccessible(true);
-    $prop->setValue(null, null);
+    \Indieinabox\Database::disconnect();
     
     $testDbPath = $funcTempDir . '/test.sqlite';
     if (file_exists($testDbPath)) {
@@ -100,10 +97,7 @@ beforeEach(function () use ($funcTempDir) {
 });
 
 afterEach(function () use ($funcTempDir) {
-    $ref = new \ReflectionClass(\Indieinabox\Database::class);
-    $prop = $ref->getProperty('db');
-    $prop->setAccessible(true);
-    $prop->setValue(null, null);
+    \Indieinabox\Database::disconnect();
 });
 
 it('processes archive queue and saves to db', function () {

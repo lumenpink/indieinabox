@@ -87,7 +87,6 @@ test('pages in non-default language appear in the localized menu by default', fu
     
     $reflection = new \ReflectionClass(SiteBuilder::class);
     $method = $reflection->getMethod('getMenuLinks');
-    $method->setAccessible(true);
     
     $pages = iterator_to_array($builder->getPages(), false);
     
@@ -122,7 +121,6 @@ test('menu links for non-default language are ordered by menu_order then alphabe
     
     $reflection = new \ReflectionClass(SiteBuilder::class);
     $method = $reflection->getMethod('getMenuLinks');
-    $method->setAccessible(true);
     
     $pages = iterator_to_array($builder->getPages(), false);
     
@@ -154,7 +152,6 @@ test('pages in secondary language are virtualized back to default language', fun
     
     $reflection = new \ReflectionClass(SiteBuilder::class);
     $method = $reflection->getMethod('virtualizeMissingLanguages');
-    $method->setAccessible(true);
     $method->invoke($builder);
     
     $pages = iterator_to_array($builder->getPages(), false);

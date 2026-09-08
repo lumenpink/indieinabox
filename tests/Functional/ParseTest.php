@@ -205,7 +205,6 @@ it('virtualizes missing language translations and updates flags links correctly'
 
     $reflection = new \ReflectionClass(\Indieinabox\SiteBuilder::class);
     $method = $reflection->getMethod('getLanguageLinks');
-    $method->setAccessible(true);
     
     $links = $method->invoke($builder, $ptPage);
     expect($links)->toBe([

@@ -31,10 +31,7 @@ beforeEach(function () {
     $this->appViewsDir = __DIR__ . '/../../resources/views';
     
     // Set up test database
-    $ref = new \ReflectionClass(\Indieinabox\Database::class);
-    $prop = $ref->getProperty('db');
-    $prop->setAccessible(true);
-    $prop->setValue(null, null);
+    \Indieinabox\Database::disconnect();
     
     $testDbPath = $this->tempDir . '/test.sqlite';
     \Indieinabox\Database::$dataDir = $this->tempDir . '/data';

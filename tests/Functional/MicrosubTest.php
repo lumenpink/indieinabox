@@ -19,7 +19,6 @@ class TestMicrosubRouter extends \Indieinabox\WebRouter
                 // Override the internal IndieAuthHandler
                 $ref = new \ReflectionClass(parent::class);
                 $prop = $ref->getProperty('authHandler');
-                $prop->setAccessible(true);
 
                 $mockAuth = new class($site) extends \Indieinabox\IndieAuthHandler {
                     public function validateBearerToken(?string &$tokenOut = null): ?array
@@ -52,10 +51,7 @@ beforeEach(function () use ($funcTempDir) {
     $_SESSION = [];
 
     // Set up test database
-    $ref = new \ReflectionClass(\Indieinabox\Database::class);
-    $prop = $ref->getProperty('db');
-    $prop->setAccessible(true);
-    $prop->setValue(null, null);
+    \Indieinabox\Database::disconnect();
 
     $testDbPath = $funcTempDir . '/test.sqlite';
     if (file_exists($testDbPath)) {

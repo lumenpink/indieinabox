@@ -16,10 +16,7 @@ beforeEach(function () use ($authFuncTempDir) {
     $_POST = [];
     $_SERVER = [];
     
-    $reflection = new \ReflectionClass(\Indieinabox\Database::class);
-    $property = $reflection->getProperty('db');
-    $property->setAccessible(true);
-    $property->setValue(null, null);
+    \Indieinabox\Database::disconnect();
 
     \Indieinabox\Database::connect(':memory:');
     $sql = file_get_contents(dirname(__DIR__, 2) . '/database.sql');

@@ -10,10 +10,19 @@ beforeEach(function () {
     $this->site->metadata = new Metadata();
     $this->site->metadata->fqdn = 'http://localhost';
     
-    $this->handler = new CliHandler($this->site);
-    
     $this->tempDir = sys_get_temp_dir() . '/iiab_integration_tests_' . uniqid();
     mkdir($this->tempDir);
+    mkdir($this->tempDir . '/content');
+    mkdir($this->tempDir . '/public');
+    
+    $this->site->paths->contentDir = $this->tempDir . '/content';
+    $this->site->paths->outputDirHtml = $this->tempDir . '/public';
+    $this->site->paths->outputDirGemini = $this->tempDir . '/public_gemini';
+    $this->site->paths->outputDirGopher = $this->tempDir . '/public_gopher';
+    $this->site->paths->outputDirMedia = $this->tempDir . '/public_media';
+    
+    $this->handler = new CliHandler($this->site);
+    
     Database::$dataDir = $this->tempDir;
     
     $dbPath = $this->tempDir . '/.indieinabox.sqlite';

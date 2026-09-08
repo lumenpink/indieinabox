@@ -33,7 +33,6 @@ it('throws exception when translation_auto is disabled and parity is missing', f
 
     $reflection = new \ReflectionClass(SiteBuilder::class);
     $method = $reflection->getMethod('virtualizeMissingLanguages');
-    $method->setAccessible(true);
     
     // This should throw because 'pt' translation is missing and auto is disabled
     expect(fn() => $method->invoke($builder))->toThrow(\RuntimeException::class);
@@ -58,7 +57,6 @@ it('generates pseudo translations when translation_auto is pseudo', function () 
 
     $reflection = new \ReflectionClass(SiteBuilder::class);
     $method = $reflection->getMethod('virtualizeMissingLanguages');
-    $method->setAccessible(true);
     
     // Should pass without throwing
     $method->invoke($builder);
@@ -97,7 +95,6 @@ it('respects parity rules (from-main-only)', function () {
 
     $reflection = new \ReflectionClass(SiteBuilder::class);
     $method = $reflection->getMethod('virtualizeMissingLanguages');
-    $method->setAccessible(true);
     
     $method->invoke($builder);
     
@@ -123,7 +120,6 @@ it('getLanguageLinks falls back to home when parity is disabled and translation 
 
     $reflection = new \ReflectionClass(SiteBuilder::class);
     $method = $reflection->getMethod('getLanguageLinks');
-    $method->setAccessible(true);
     
     $links = $method->invoke($builder, $page);
     

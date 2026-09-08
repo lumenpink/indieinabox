@@ -53,10 +53,7 @@ beforeEach(function () use ($funcTypesTempDir) {
     $_FILES = [];
     
     // Set up test database
-    $ref = new \ReflectionClass(\Indieinabox\Database::class);
-    $prop = $ref->getProperty('db');
-    $prop->setAccessible(true);
-    $prop->setValue(null, null);
+    \Indieinabox\Database::disconnect();
     
     $testDbPath = $funcTypesTempDir . '/test.sqlite';
     \Indieinabox\Database::$dataDir = $funcTypesTempDir;

@@ -17,10 +17,7 @@ beforeEach(function () use ($funcTempDir) {
     $GLOBALS['test_ap_site'] = $site;
     
     // Clear static Database instance for isolation
-    $ref = new ReflectionClass(\Indieinabox\Database::class);
-    $prop = $ref->getProperty('db');
-    $prop->setAccessible(true);
-    $prop->setValue(null, null);
+    \Indieinabox\Database::disconnect();
     
     $testDbPath = $funcTempDir . '/test.sqlite';
     if (file_exists($testDbPath)) {

@@ -76,10 +76,7 @@ beforeEach(function () use ($funcTempDir) {
     $_SESSION = [];
     
     // Set up test database
-    $ref = new \ReflectionClass(\Indieinabox\Database::class);
-    $prop = $ref->getProperty('db');
-    $prop->setAccessible(true);
-    $prop->setValue(null, null);
+    \Indieinabox\Database::disconnect();
     
     $testDbPath = $funcTempDir . '/test.sqlite';
     \Indieinabox\Database::$dataDir = $funcTempDir;

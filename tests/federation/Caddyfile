@@ -32,3 +32,32 @@ http://{$INDIEINABOX_DOMAIN}, https://{$INDIEINABOX_DOMAIN} {
         import proxy_config
     }
 }
+
+http://{$YARND_DOMAIN}, https://{$YARND_DOMAIN} {
+    tls internal
+    reverse_proxy yarnd-web:8000 {
+        import proxy_config
+    }
+}
+
+http://{$TWTD_DOMAIN}, https://{$TWTD_DOMAIN} {
+    tls internal
+    reverse_proxy twtd-web:8000 {
+        import proxy_config
+    }
+}
+
+http://{$WEBMENTION_BLOG_DOMAIN}, https://{$WEBMENTION_BLOG_DOMAIN} {
+    tls internal
+    
+    handle / {
+        root * /var/www/webmention_blog
+        file_server
+    }
+    
+    handle /* {
+        reverse_proxy webmention-receiver:8080 {
+            import proxy_config
+        }
+    }
+}

@@ -112,9 +112,10 @@ if [ "$COMMAND" == "--fresh-start" ]; then
     docker exec -u root mastodon_sidekiq bash -c "cp /caddy-data/caddy/pki/authorities/local/root.crt /usr/local/share/ca-certificates/caddy-root.crt && update-ca-certificates"
     # Pixelfed (Debian/Alpine base)
     docker exec -u root pixelfed_web bash -c "cp /caddy-data/caddy/pki/authorities/local/root.crt /usr/local/share/ca-certificates/caddy-root.crt && update-ca-certificates"
+    docker exec -u root pixelfed_worker bash -c "cp /caddy-data/caddy/pki/authorities/local/root.crt /usr/local/share/ca-certificates/caddy-root.crt && update-ca-certificates"
     
     echo "Restarting Mastodon and Pixelfed to pick up new CA..."
-    docker compose restart mastodon-web mastodon-sidekiq pixelfed-web
+    docker compose restart mastodon-web mastodon-sidekiq pixelfed-web pixelfed-worker
     
     echo "Waiting for Mastodon and Pixelfed to come back up..."
     wait_for "Mastodon" "https://${MASTODON_DOMAIN}/api/v1/instance"
@@ -128,7 +129,13 @@ fi
 
 if [ "$COMMAND" == "--seed" ]; then
     echo "Seeding federation environment with test posts..."
-    
+
+    # YARND SEEDING
+    echo "========================================="
+    echo "Seeding Yarnd (Twtxt Pod)..."
+    python3 seed_yarnd.py
+    echo "========================================="
+
     echo ">> Generating dummy media..."
     mkdir -p data/media
     chmod 777 data/media
@@ -182,6 +189,9 @@ EOF
     docker exec pixelfed_web php artisan user:create --name "Aaron Pixelfed" --email aaron@hero.com --username aaron --password aaronpass --is_admin || true
     docker exec pixelfed_web php artisan passport:keys --force
     docker exec pixelfed_web php artisan passport:client --personal --no-interaction || true
+    
+    # Wait for the background CreateAvatar job to run and set default.jpg, so we can safely overwrite it
+    sleep 5
     
     cat << 'EOF' > data/pixelfed_init.php
 <?php
@@ -241,8 +251,8 @@ EOF
         
         echo ">> Fixing Misskey Permissions & Federation..."
         docker exec federation_db psql -U misskey -d misskey -c "UPDATE meta SET federation='all';"
-        # Bypass setup wizard in DB
-        docker exec federation_db psql -U misskey -d misskey -c "UPDATE \"user_profile\" SET \"clientData\" = '{\"hasSetupProfile\":true, \"accountSetupWizard\":-1}'::jsonb WHERE \"userId\" = (SELECT id FROM \"user\" WHERE username = 'aaron' AND host IS NULL);"
+        # Bypass setup wizard via DB Registry (using API token scopes it to the token's app, so we must use DB)
+        docker exec federation_db psql -U misskey -d misskey -c "DELETE FROM registry_item WHERE \"userId\" = '$MISSKEY_USER_ID' AND key = 'accountSetupWizard'; INSERT INTO registry_item (id, \"updatedAt\", \"userId\", key, scope, domain, value) VALUES (substring(md5(random()::text) from 1 for 16), NOW(), '$MISSKEY_USER_ID', 'accountSetupWizard', '{\"client\", \"base\"}', NULL, '-1'::jsonb);" > /dev/null
         # Restart Misskey to flush in-memory federation cache
         echo ">> Restarting Misskey to apply federation setting..."
         docker compose restart misskey-web
@@ -272,50 +282,64 @@ EOF
 
     # 5. Cross-Interactions (Follows BEFORE Posts!)
     echo ">> Performing cross-interactions (Follows)..."
-    # Mastodon Follows Pixelfed, Misskey, and IndieInABox
-    docker exec mastodon_web bash -c "RAILS_ENV=production bundle exec rails runner \"
-      mastodon_account = Account.find_by(username: 'aaron')
-      ['aaron@${MISSKEY_DOMAIN}', 'aaron@${PIXELFED_DOMAIN}', 'aaron@${INDIEINABOX_DOMAIN}'].each do |uri|
-        begin
-          target = ResolveAccountService.new.call(uri)
-          FollowService.new.call(mastodon_account, target) if target
-          puts 'Mastodon followed: ' + uri
-        rescue => e
-          puts 'Mastodon follow error for ' + uri + ': ' + e.message
-        end
-      end
-    \""
-    
-    # Pixelfed Follows Mastodon, Misskey, IndieInABox
+    # Pixelfed script is uploaded once
     docker cp data/pixelfed_follow.php pixelfed_web:/tmp/pixelfed_follow.php
-    docker exec pixelfed_web php /tmp/pixelfed_follow.php "$MISSKEY_USER_ID"
 
-    # Misskey Follows Mastodon and Pixelfed
-    if [ -n "$MISSKEY_TOKEN" ]; then
-        MD_ID=$(docker exec misskey_web curl -s -X POST http://127.0.0.1:3000/api/ap/show -H "Content-Type: application/json" -d "{\"i\":\"$MISSKEY_TOKEN\", \"uri\":\"https://${MASTODON_DOMAIN}/users/aaron\"}" | grep -o '"id":"[^"]*"' | head -n1 | cut -d'"' -f4)
-        if [ -n "$MD_ID" ]; then
-            docker exec misskey_web curl -s -X POST http://127.0.0.1:3000/api/following/create -H "Content-Type: application/json" -d "{\"i\":\"$MISSKEY_TOKEN\", \"userId\":\"$MD_ID\"}" > /dev/null
+    echo ">> Waiting for follow activities to propagate in background queues (with retry)..."
+    for i in {1..30}; do
+        # 1. Retry Mastodon Follows
+        docker exec mastodon_web bash -c "RAILS_ENV=production bundle exec rails runner \"
+          mastodon_account = Account.find_by(username: 'aaron')
+          ['aaron@${MISSKEY_DOMAIN}', 'aaron@${PIXELFED_DOMAIN}', 'aaron@${INDIEINABOX_DOMAIN}'].each do |uri|
+            begin
+              Rails.cache.delete('webfinger:' + uri)
+              target = ResolveAccountService.new.call(uri)
+              if target && !mastodon_account.following?(target)
+                FollowService.new.call(mastodon_account, target)
+              end
+            rescue => e
+            end
+          end
+        \""
+        
+        # 2. Retry Pixelfed Follows
+        docker exec pixelfed_web php /tmp/pixelfed_follow.php "$MISSKEY_USER_ID" > /dev/null
+
+        # 3. Retry Misskey Follows
+        if [ -n "$MISSKEY_TOKEN" ]; then
+            MD_ID=$(docker exec misskey_web curl -s -X POST http://127.0.0.1:3000/api/ap/show -H "Content-Type: application/json" -d "{\"i\":\"$MISSKEY_TOKEN\", \"uri\":\"https://${MASTODON_DOMAIN}/users/aaron\"}" | grep -o '"id":"[^"]*"' | head -n1 | cut -d'"' -f4)
+            if [ -n "$MD_ID" ]; then
+                docker exec misskey_web curl -s -X POST http://127.0.0.1:3000/api/following/create -H "Content-Type: application/json" -d "{\"i\":\"$MISSKEY_TOKEN\", \"userId\":\"$MD_ID\"}" > /dev/null
+            fi
+            
+            PX_ID=$(docker exec misskey_web curl -s -X POST http://127.0.0.1:3000/api/ap/show -H "Content-Type: application/json" -d "{\"i\":\"$MISSKEY_TOKEN\", \"uri\":\"https://${PIXELFED_DOMAIN}/users/aaron\"}" | grep -o '"id":"[^"]*"' | head -n1 | cut -d'"' -f4)
+            if [ -n "$PX_ID" ]; then
+                docker exec misskey_web curl -s -X POST http://127.0.0.1:3000/api/following/create -H "Content-Type: application/json" -d "{\"i\":\"$MISSKEY_TOKEN\", \"userId\":\"$PX_ID\"}" > /dev/null
+            fi
         fi
         
-        PX_ID=$(docker exec misskey_web curl -s -X POST http://127.0.0.1:3000/api/ap/show -H "Content-Type: application/json" -d "{\"i\":\"$MISSKEY_TOKEN\", \"uri\":\"https://${PIXELFED_DOMAIN}/users/aaron\"}" | grep -o '"id":"[^"]*"' | head -n1 | cut -d'"' -f4)
-        if [ -n "$PX_ID" ]; then
-            docker exec misskey_web curl -s -X POST http://127.0.0.1:3000/api/following/create -H "Content-Type: application/json" -d "{\"i\":\"$MISSKEY_TOKEN\", \"userId\":\"$PX_ID\"}" > /dev/null
+        MD_FOLLOWING=$(docker exec federation_db psql -U mastodon -d mastodon -t -c "SELECT count(*) FROM follows f JOIN accounts a ON f.account_id = a.id WHERE a.domain IS NULL;" | tr -d ' ')
+        MD_FOLLOWERS=$(docker exec federation_db psql -U mastodon -d mastodon -t -c "SELECT count(*) FROM follows f JOIN accounts a ON f.target_account_id = a.id WHERE a.domain IS NULL;" | tr -d ' ')
+        PX_FOLLOWING=$(docker exec federation_db psql -U pixelfed -d pixelfed -t -c "SELECT count(*) FROM followers WHERE profile_id = (SELECT profile_id FROM users WHERE username = 'aaron');" | tr -d ' ')
+        PX_FOLLOWERS=$(docker exec federation_db psql -U pixelfed -d pixelfed -t -c "SELECT count(*) FROM followers WHERE following_id = (SELECT profile_id FROM users WHERE username = 'aaron');" | tr -d ' ')
+        
+        echo -n "."
+        if [ "$MD_FOLLOWING" -ge 3 ] && [ "$MD_FOLLOWERS" -ge 2 ] && [ "$PX_FOLLOWING" -ge 3 ] && [ "$PX_FOLLOWERS" -ge 2 ]; then
+            echo " Follows propagated!"
+            break
         fi
-
-        IB_ID=$(docker exec misskey_web curl -s -X POST http://127.0.0.1:3000/api/ap/show -H "Content-Type: application/json" -d "{\"i\":\"$MISSKEY_TOKEN\", \"uri\":\"http://${INDIEINABOX_DOMAIN}/actor\"}" | grep -o '"id":"[^"]*"' | head -n1 | cut -d'"' -f4)
-        if [ -n "$IB_ID" ]; then
-            docker exec misskey_web curl -s -X POST http://127.0.0.1:3000/api/following/create -H "Content-Type: application/json" -d "{\"i\":\"$MISSKEY_TOKEN\", \"userId\":\"$IB_ID\"}" > /dev/null
-        fi
-    fi
+        sleep 2
+    done
+    sleep 5 # extra padding
     
-    # 5. Create Posts!
     echo ">> Creating Posts..."
     
     # Mastodon Posts
     cat << 'EOF' > data/mastodon_posts.rb
 # encoding: utf-8
 account = Account.find_by(username: 'aaron')
-PostStatusService.new.call(account, text: 'Hello from local Mastodon! 🐘', visibility: :public)
+status = PostStatusService.new.call(account, text: 'Hello from local Mastodon! 🐘', visibility: :public)
+File.write('/tmp/mastodon_post_url.txt', ActivityPub::TagManager.instance.uri_for(status))
 media_img = MediaAttachment.create!(account: account, file: File.open('/tmp/media/avatar_mastodon.png'), type: :image)
 PostStatusService.new.call(account, text: 'Uma foto no Mastodon', visibility: :public, media_ids: [media_img.id])
 media_aud = MediaAttachment.create!(account: account, file: File.open('/tmp/media/dummy.mp3'), type: :audio)
@@ -369,7 +393,9 @@ EOF
         AUD_ID=$(docker exec misskey_web curl -s -X POST http://127.0.0.1:3000/api/drive/files/create -H "Content-Type: multipart/form-data" -F "i=$MISSKEY_TOKEN" -F "file=@/tmp/media/dummy.mp3" | grep -o '"id":"[^"]*"' | head -n1 | cut -d'"' -f4)
         VID_ID=$(docker exec misskey_web curl -s -X POST http://127.0.0.1:3000/api/drive/files/create -H "Content-Type: multipart/form-data" -F "i=$MISSKEY_TOKEN" -F "file=@/tmp/media/dummy.mp4" | grep -o '"id":"[^"]*"' | head -n1 | cut -d'"' -f4)
         
-        docker run --rm --network federation_default curlimages/curl -s -X POST http://misskey_web:3000/api/notes/create -H "Content-Type: application/json" -d "{\"i\":\"$MISSKEY_TOKEN\", \"text\":\"Hello from Misskey 🦊\"}" > /dev/null
+        NOTE_RESP=$(docker run --rm --network federation_default curlimages/curl -s -X POST http://misskey_web:3000/api/notes/create -H "Content-Type: application/json" -d "{\"i\":\"$MISSKEY_TOKEN\", \"text\":\"Hello from Misskey 🦊\"}")
+        MISSKEY_NOTE_ID=$(echo "$NOTE_RESP" | grep -o '"id":"[^"]*"' | head -n1 | cut -d'"' -f4)
+        MISSKEY_POST_URL="https://${MISSKEY_DOMAIN}/notes/${MISSKEY_NOTE_ID}"
         docker run --rm --network federation_default curlimages/curl -s -X POST http://misskey_web:3000/api/notes/create -H "Content-Type: application/json" -d "{\"i\":\"$MISSKEY_TOKEN\", \"text\":\"Uma foto no Misskey\", \"fileIds\":[\"$IMG_ID\"]}" > /dev/null
         docker run --rm --network federation_default curlimages/curl -s -X POST http://misskey_web:3000/api/notes/create -H "Content-Type: application/json" -d "{\"i\":\"$MISSKEY_TOKEN\", \"text\":\"Um audio no Misskey\", \"fileIds\":[\"$AUD_ID\"]}" > /dev/null
         docker run --rm --network federation_default curlimages/curl -s -X POST http://misskey_web:3000/api/notes/create -H "Content-Type: application/json" -d "{\"i\":\"$MISSKEY_TOKEN\", \"text\":\"Um video no Misskey\", \"fileIds\":[\"$VID_ID\"]}" > /dev/null
@@ -385,7 +411,74 @@ EOF
     sleep 1
     docker exec -w /app federation_indieinabox php indieinabox.php post create --text "Um vídeo no IndieInABox" --media /tmp/dummy.mp4
     
-    echo "Data seeded automatically! The platforms are federating."
+    echo ">> Waiting for posts to propagate..."
+    sleep 15
+    
+    echo ">> Performing cross-interactions (Likes and Replies)..."
+    docker cp mastodon_web:/tmp/mastodon_post_url.txt data/mastodon_post_url.txt
+    MASTODON_POST_URL=$(cat data/mastodon_post_url.txt)
+    
+    # Misskey likes and replies to Mastodon
+    if [ -n "$MISSKEY_TOKEN" ]; then
+        MD_POST_ID=$(docker exec misskey_web curl -s -X POST http://127.0.0.1:3000/api/ap/show -H "Content-Type: application/json" -d "{\"i\":\"$MISSKEY_TOKEN\", \"uri\":\"$MASTODON_POST_URL\"}" | grep -o '"id":"[^"]*"' | head -n1 | cut -d'"' -f4)
+        if [ -n "$MD_POST_ID" ]; then
+            docker run --rm --network federation_default curlimages/curl -s -X POST http://misskey_web:3000/api/notes/create -H "Content-Type: application/json" -d "{\"i\":\"$MISSKEY_TOKEN\", \"text\":\"Belo post do Mastodon! 🦊\", \"replyId\":\"$MD_POST_ID\"}" > /dev/null
+            docker run --rm --network federation_default curlimages/curl -s -X POST http://misskey_web:3000/api/notes/reactions/create -H "Content-Type: application/json" -d "{\"i\":\"$MISSKEY_TOKEN\", \"noteId\":\"$MD_POST_ID\", \"reaction\":\"👍\"}" > /dev/null
+        fi
+    fi
+    
+    # Mastodon likes and replies to Misskey
+    cat << EOF > data/mastodon_interact.rb
+# encoding: utf-8
+account = Account.find_by(username: 'aaron')
+target_status = ResolveURLService.new.call('${MISSKEY_POST_URL}')
+if target_status && target_status.is_a?(Status)
+  FavouriteService.new.call(account, target_status)
+  PostStatusService.new.call(account, text: 'Belo post do Misskey! 🐘', thread: target_status, visibility: :public)
+end
+EOF
+    docker cp data/mastodon_interact.rb mastodon_web:/tmp/mastodon_interact.rb
+    docker exec mastodon_web bash -c "RAILS_ENV=production bundle exec rails runner /tmp/mastodon_interact.rb"
+    
+    # --- HOTFIX: Fix Pixelfed Database ---
+    # 1. Update following/followers counts which FollowPipeline misses for remote actors
+    docker exec pixelfed_web php artisan tinker --execute="\$p = App\Models\Profile::where('username', 'aaron')->first(); \$p->following_count = App\Models\Follower::whereProfileId(\$p->id)->count(); \$p->followers_count = App\Models\Follower::whereFollowingId(\$p->id)->count(); \$p->save(); App\Services\AccountService::del(\$p->id);"
+    # 2. Fix the Mastodon target status URI (Pixelfed bug that stores Web URL instead of ActivityPub URI)
+    docker exec federation_db psql -U pixelfed -d pixelfed -c "UPDATE statuses SET uri = 'https://${MASTODON_DOMAIN}/users/aaron/statuses/' || split_part(url, '/', 5) WHERE url LIKE 'https://${MASTODON_DOMAIN}/@aaron/%';"
+
+    # Pixelfed likes and replies to Mastodon
+    cat << EOF > data/pixelfed_interact.php
+<?php
+require '/var/www/html/vendor/autoload.php';
+\$app = require_once '/var/www/html/bootstrap/app.php';
+\$kernel = \$app->make(Illuminate\Contracts\Console\Kernel::class);
+\$kernel->bootstrap();
+
+\$user = App\Models\User::where('username', 'aaron')->first();
+\$profile = \$user->profile;
+
+\$targetStatus = App\Util\ActivityPub\Helpers::statusFetch('${MASTODON_POST_URL}');
+if (\$targetStatus) {
+    \$like = new App\Models\Like();
+    \$like->profile_id = \$profile->id;
+    \$like->status_id = \$targetStatus->id;
+    \$like->save();
+    App\Jobs\LikePipeline\LikePipeline::dispatch(\$like);
+
+    \$status = new App\Models\Status();
+    \$status->profile_id = \$profile->id;
+    \$status->caption = 'Belo post do Mastodon! 📸';
+    \$status->rendered = '<p>Belo post do Mastodon! 📸</p>';
+    \$status->in_reply_to_id = \$targetStatus->id;
+    \$status->in_reply_to_profile_id = \$targetStatus->profile_id;
+    \$status->is_nsfw = false;
+    \$status->visibility = 'public';
+    \$status->save();
+    App\Jobs\StatusPipeline\NewStatusPipeline::dispatch(\$status);
+}
+EOF
+    docker cp data/pixelfed_interact.php pixelfed_web:/tmp/pixelfed_interact.php
+    docker exec pixelfed_web php /tmp/pixelfed_interact.php
     
     echo "Data seeded automatically! The platforms are federating."
     exit 0

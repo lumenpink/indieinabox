@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Webmention Blog</title>
+    
+    <!-- Endpoint Webmention -->
+    <link rel="webmention" href="https://webmentiontest.2lp.in/webmention">
+    
+    <style>
+        body { font-family: sans-serif; max-width: 800px; margin: 0 auto; padding: 2rem; line-height: 1.6; }
+        .h-entry { border: 1px solid #ccc; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem; }
+        .p-author { font-weight: bold; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>My Indie Web Blog</h1>
+        <p>Testing Webmentions and Federation</p>
+    </header>
+
+    <main>
+        <article class="h-entry">
+            <h2 class="p-name">Test Post: Hello Webmentions!</h2>
+            <div class="p-author h-card">By <span class="p-name">Admin</span></div>
+            <time class="dt-published" datetime="2026-09-08T12:00:00Z">Sep 8, 2026</time>
+            
+            <div class="e-content">
+                <p>This is a test post on our simple static blog. It includes the necessary microformats (h-entry) and a webmention endpoint tag in the head.</p>
+                <p>Feel free to send a webmention to this page by linking to it!</p>
+                <p>URL: <a class="u-url" href="https://webmentiontest.2lp.in/">https://webmentiontest.2lp.in/</a></p>
+            </div>
+        </article>
+    </main>
+</body>
+</html>

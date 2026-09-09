@@ -9,6 +9,7 @@ services:
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile
       - caddy_data:/data
+      - ./webmention_blog:/var/www/webmention_blog
     networks:
       default:
         aliases:
@@ -16,11 +17,17 @@ services:
           - ${MISSKEY_DOMAIN}
           - ${PIXELFED_DOMAIN}
           - ${INDIEINABOX_DOMAIN}
+          - ${YARND_DOMAIN}
+          - ${TWTD_DOMAIN}
+          - ${WEBMENTION_BLOG_DOMAIN}
     environment:
       - MASTODON_DOMAIN=${MASTODON_DOMAIN}
       - MISSKEY_DOMAIN=${MISSKEY_DOMAIN}
       - PIXELFED_DOMAIN=${PIXELFED_DOMAIN}
       - INDIEINABOX_DOMAIN=${INDIEINABOX_DOMAIN}
+      - YARND_DOMAIN=${YARND_DOMAIN}
+      - TWTD_DOMAIN=${TWTD_DOMAIN}
+      - WEBMENTION_BLOG_DOMAIN=${WEBMENTION_BLOG_DOMAIN}
 
   indieinabox-app:
     image: lumenpink/indieinabox:latest
@@ -134,6 +141,9 @@ services:
       - APP_DEBUG=false
       - APP_URL=https://${PIXELFED_DOMAIN}
       - APP_DOMAIN=${PIXELFED_DOMAIN}
+      - MASTODON_DOMAIN=${MASTODON_DOMAIN}
+      - MISSKEY_DOMAIN=${MISSKEY_DOMAIN}
+      - INDIEINABOX_DOMAIN=${INDIEINABOX_DOMAIN}
       - TRUST_PROXIES=*
       - ACTIVITY_PUB=true
       - DB_CONNECTION=pgsql
@@ -167,6 +177,9 @@ services:
       - APP_DEBUG=false
       - APP_URL=https://${PIXELFED_DOMAIN}
       - APP_DOMAIN=${PIXELFED_DOMAIN}
+      - MASTODON_DOMAIN=${MASTODON_DOMAIN}
+      - MISSKEY_DOMAIN=${MISSKEY_DOMAIN}
+      - INDIEINABOX_DOMAIN=${INDIEINABOX_DOMAIN}
       - TRUST_PROXIES=*
       - ACTIVITY_PUB=true
       - DB_CONNECTION=pgsql
@@ -186,6 +199,54 @@ services:
     command: php artisan horizon
     volumes:
       - ../../data/pixelfed_app:/var/www/html/storage
+      - caddy_data:/caddy-data
+
+  # ==========================================
+  # YARNS / TWTXT (Yarn.social)
+  # ==========================================
+  yarnd-web:
+    image: prologic/yarnd
+    container_name: yarnd-web
+    restart: unless-stopped
+    command: yarnd --skip-setup
+    volumes:
+      - ../../data/yarnd_data:/data
+    environment:
+      - DOMAIN=${YARND_DOMAIN}
+    
+  twtd-web:
+    image: prologic/twtd
+    container_name: twtd_web
+    restart: unless-stopped
+    volumes:
+      - ../../data/twtd_data:/data
+    command: -n twtxtsearch -u https://${TWTD_DOMAIN}
+
+  # ==========================================
+  # WEBMENTION BLOG & RECEIVER
+  # ==========================================
+  mailpit:
+    image: axllent/mailpit
+    container_name: webmention_mailpit
+    restart: unless-stopped
+    # Expose if needed for debugging emails:
+    # ports:
+    #   - "8025:8025"
+    #   - "1025:1025"
+
+  webmentiond-receiver:
+    image: zerok/webmentiond:latest
+    container_name: webmention_receiver
+    restart: unless-stopped
+    environment:
+      - MAIL_HOST=mailpit
+      - MAIL_PORT=1025
+      - MAIL_USER=
+      - MAIL_PASSWORD=
+      - MAIL_FROM=admin@${WEBMENTION_BLOG_DOMAIN}
+    volumes:
+      - ../../data/webmentiond_data:/data
+    command: --addr 0.0.0.0:8080 --auth-jwt-secret testingsecret123 --auth-admin-emails admin@${WEBMENTION_BLOG_DOMAIN} --allowed-target-domains ${WEBMENTION_BLOG_DOMAIN}
 
 volumes:
   caddy_data:

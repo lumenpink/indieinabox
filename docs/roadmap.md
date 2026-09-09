@@ -130,10 +130,21 @@ This document tracks completed refactoring phases and future directions.
 
 The following next-generation features are scheduled for development:
 
+### 🧱 Phase 13.5: Universal Post Object Architecture
+- [ ] **Universal Schema Definition**: Design a unified data structure (JSON/DB schema) that encapsulates all core content and network-specific extensions (Polls, CWs, Reels, Galleries).
+- [ ] **Network & Origin Tracking**: Implement properties to rigidly track the origin network protocol (ActivityPub, Twtxt, RSS) and the exact origin server/instance.
+- [ ] **Capability Constraints System**: Develop a matrix or ruleset to restrict interactive actions based on the origin protocol (e.g., preventing a user from attaching a poll when replying to a Twtxt post).
+- [ ] **Normalization Adapters**: Build specific parser classes to read incoming data from any source and normalize it into the Universal Post Object before saving it to the local Microsub storage.
+
 ### 🌐 Phase 14: ActivityPub Federated Protocol (Publishing & Reading)
-- [ ] **Actor Profiles & WebFinger**: Implement WebFinger query routing (`/.well-known/webfinger`) and JSON-LD ActivityPub Actor profiles so the site can be searched and followed on the Fediverse (e.g., Mastodon).
-- [ ] **Inbox & Outbox Handling**: Create an ActivityPub Inbox/Outbox system supporting HTTP Signatures verification.
-- [ ] **Publishing & Reading**: Publish new site posts automatically to followers' inboxes, and utilize the local Microsub endpoint as a centralized hub to fetch, store, and display incoming feed items from the Fediverse.
+- [ ] **Actor Profiles & WebFinger**: Implement WebFinger query routing (`/.well-known/webfinger`) and JSON-LD ActivityPub Actor profiles.
+- [ ] **HTTP Signatures**: Create verification middleware for incoming HTTP Signatures.
+- [ ] **Inbox Handling**: Create ActivityPub Inbox system to receive and parse incoming activities.
+- [ ] **Outbox & Publishing**: Publish new site posts automatically to followers' inboxes.
+- [ ] **Microsub Hub Integration**: Bridge incoming ActivityPub feed items into the local Microsub endpoint.
+- [ ] **Mastodon Compatibility Layer**: Support Mastodon-specific extensions (CWs, Polls, custom emojis, thread contexts).
+- [ ] **Pixelfed Compatibility Layer**: Support Pixelfed-specific extensions (Image collections, gallery metadata, short loops/Reels).
+- [ ] **Misskey Compatibility Layer**: Support Misskey-specific extensions (Quote posts/Renotes, rich reactions).
 - [ ] **Extended Protocols**: Investigate possibilities of supporting forum protocols and BookWyrm alongside ActivityPub.
 
 ### 🧩 Phase 19: Theme Data Abstraction Layer
@@ -173,3 +184,27 @@ The following next-generation features are scheduled for development:
     - [ ] Indigenous (or similar generic Micropub clients)
 - [ ] **Networking & FQDNs**: Set up a reverse proxy (e.g., Traefik/Nginx) or Cloudflare Tunnels to provide valid FQDNs for each local container.
 - [ ] **Automated Setup Scripts**: Create scripts to automatically provision test users, generate necessary tokens, and configure instances upon container startup.
+
+### 📡 Phase 25: Social Features & Custom Client
+- [ ] **Polls - Data Modeling**: Define and implement a centralized data structure for polls (options, votes, duration).
+- [ ] **Polls - Protocols**: Integrate poll conversion and parsing across ActivityPub, Micropub, and Twtxt.
+- [ ] **Polls - UI**: Create a frontend interface for displaying polls and casting votes.
+- [ ] **Content Warnings (CW)**: Add support to the data model for flagging sensitive content and providing summaries.
+- [ ] **Content Warnings (CW) - UI**: Implement image blurring and collapsible text summaries in the frontend.
+- [ ] **Hashtags - Parser**: Implement automatic extraction of hashtags from post content.
+- [ ] **Hashtags - Indexing**: Create an index interface, search functionality, and a tag cloud.
+- [ ] **Discovery Engine**: Build an aggregator endpoint and page for discovering public posts (Global Timeline).
+- [ ] **Custom Client - Core**: Scaffold the routing and foundational architecture for the bespoke Microsub/Micropub client.
+- [ ] **Custom Client - Features**: Integrate rich features (polls, CWs, reactions, galleries) into the custom client while adhering strictly to standards.
+
+### 🧶 Phase 26: Twtxt Yarns Compatibility
+- [ ] **Yarns Meta-tags & Subjects**: Support reading and writing subject lines and metadata following the Yarns spec.
+- [ ] **Yarns Media & Attachments**: Parse embedded media URLs within twtxt feeds.
+- [ ] **Yarns Markdown**: Support the lightweight markdown flavor adopted by Yarns pods.
+- [ ] **Twtxt Moderation**: Implement a mute and block list specifically for local twtxt-based feeds.
+
+### 🛡️ Phase 27: Privacy, Moderation & Notifications
+- [ ] **External Media Proxy/Cache**: Finalize the existing caching mechanism, extending it to proxy external media (Mastodon/Twtxt) granularly to prevent IP leaks and dead links.
+- [ ] **Web Push Notifications**: Implement Push API support in the Microsub client for real-time interaction alerts.
+- [ ] **Microsub Filters & Rules**: Create comprehensive filtering rules in the reader (mute keywords, authors, entire instances/servers, and auto-archive capabilities).
+- [ ] **Portable Export/Import**: Build atomic export and import tools for the database to ensure absolute data ownership and portability.

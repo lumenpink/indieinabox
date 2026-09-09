@@ -59,6 +59,13 @@ class Database
                 status TEXT DEFAULT \'pending\',
                 created_at INTEGER NOT NULL
             )');
+
+            // Ensure webmention discovery cache table exists
+            self::$db->exec('CREATE TABLE IF NOT EXISTS webmention_discovery_cache (
+                domain TEXT PRIMARY KEY,
+                supports_webmention INTEGER NOT NULL DEFAULT 0,
+                last_checked INTEGER NOT NULL
+            )');
         } catch (Exception $e) {
             throw new Exception("Failed to connect to database: " . $e->getMessage());
         }

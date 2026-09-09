@@ -47,6 +47,27 @@ class Helper
     }
 
     /**
+     * Extracts hashtags from a given text string.
+     *
+     * @param string $text The post text
+     * @return array<string> List of unique hashtags without the # symbol
+     */
+    public static function extractHashtags(string $text): array
+    {
+        $hashtags = [];
+        // Match # followed by word characters or unicode letters, preceded by whitespace or string start
+        if (preg_match_all('/(?:^|\s)#([\w\x{00C0}-\x{FFFF}]+)/u', $text, $matches)) {
+            foreach ($matches[1] as $tag) {
+                // Ensure the tag is not purely numeric
+                if (!is_numeric($tag)) {
+                    $hashtags[] = mb_strtolower(trim($tag));
+                }
+            }
+        }
+        return array_unique($hashtags);
+    }
+
+    /**
      * Get the configuration for a specific kind with fallbacks.
      */
     /**

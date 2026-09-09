@@ -65,3 +65,13 @@ To ensure generic Microsub clients do not break and can still present the conten
 2. **Polls**: The adapter appends the poll options as a plain HTML list `<ul>` at the end of the `content.html`.
 
 This ensures that while standard clients cannot natively "vote", they can still read the context of the poll and the content warnings without issue.
+
+## Recent Implementations (v2 Extensions)
+
+As of the latest iteration, the following features have been successfully implemented using this extended architecture:
+
+1. **Universal Post Object (`ExtendedEntry`)**: A normalization layer that converts ActivityPub, Twtxt, and RSS/Atom into the standard JF2 schema, whilst safely tucking native extensions (Polls, CWs) into `_indieinabox`.
+2. **Asynchronous Webmention Discovery**: To comply with the offline-first/non-blocking UI policy, Webmention endpoint discovery is offloaded to the `BackgroundWorker`. The UI reads from a `webmention_discovery_cache` table to instantly render native `like` or `local_like` buttons.
+3. **Native Polls & Content Warnings**: The custom UI intercepts the `_indieinabox` metadata. It injects CSS to hide the standard HTML fallbacks and renders interactive progress bars for polls and CSS-blurred overlays for content warnings.
+4. **ActivityPub Poll Voting**: Clicking a native poll option triggers an asynchronous Microsub `interact` call (`action=poll_vote`), which generates an ActivityPub `Create -> Note` payload mimicking Mastodon's poll vote format.
+5. **Hashtag Parser**: Automatic extraction of `#hashtags` from raw text content (especially useful for Twtxt) directly into the JF2 `category` array.

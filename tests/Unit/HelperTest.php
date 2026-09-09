@@ -50,3 +50,16 @@ it('formats localized dates', function () {
     expect($formatted['long'])->toBe('Thursday, December 31, 2020 at 09:00 PM')
         ->and($formatted['iso'])->toContain('2020-12-31T21:00:00-03:00');
 });
+
+it('extracts hashtags from text', function () {
+    $text = "Hello world! This is a #test of the #Hashtag extraction #system. Also checking #unicodeça, #123 (should be ignored), and end of line #tag";
+    $tags = Indieinabox\Helper::extractHashtags($text);
+
+    expect($tags)->toHaveCount(5)
+        ->and($tags)->toContain('test')
+        ->and($tags)->toContain('hashtag')
+        ->and($tags)->toContain('system')
+        ->and($tags)->toContain('unicodeça')
+        ->and($tags)->toContain('tag')
+        ->and($tags)->not->toContain('123');
+});

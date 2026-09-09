@@ -131,21 +131,35 @@ class MicrosubHandler
                             $lastPub = $pubInt;
                             
                             $fm = $p['fm'];
-                            $item = [
-                                'type' => 'entry',
-                                'url' => $fm['url'] ?? '',
-                                'content' => ['html' => $p['contentHtml']],
-                                'published' => date('c', $pubInt),
-                                '_id' => $fm['id'] ?? basename($file, '.md'),
-                                '_is_read' => (bool)($fm['is_read'] ?? false)
-                            ];
+                            
+                            $entry = new \Indieinabox\Microsub\ExtendedEntry();
+                            $entry->uid = $fm['id'] ?? basename($file, '.md');
+                            $entry->url = $fm['url'] ?? '';
+                            $entry->published = date('c', $pubInt);
+                            $entry->content['html'] = $p['contentHtml'];
+                            $entry->isRead = (bool)($fm['is_read'] ?? false);
+                            
                             if (!empty($fm['author_name'])) {
-                                $item['author'] = [
+                                $entry->author = [
                                     'type' => 'card',
                                     'name' => $fm['author_name'],
                                     'photo' => $fm['author_photo'] ?? ''
                                 ];
                             }
+
+                            if (!empty($fm['_indieinabox']) && is_array($fm['_indieinabox'])) {
+                                $ext = $fm['_indieinabox'];
+                                $entry->network = $ext['network'] ?? 'unknown';
+                                $entry->originServer = $ext['origin_server'] ?? '';
+                                $entry->capabilities = $ext['capabilities'] ?? [];
+                                $entry->contentWarning = $ext['content_warning'] ?? null;
+                                $entry->poll = $ext['poll'] ?? null;
+                                $entry->reels = $ext['reels'] ?? null;
+                            }
+                            
+                            $item = $entry->toJF2Array();
+                            $item['_id'] = $entry->uid; // Maintain backward compat for internal IDs
+                            
                             $items[] = $item;
                         }
                     }
@@ -413,6 +427,18 @@ class MicrosubHandler
                         'content' => $content,
                         'to' => ['https://www.w3.org/ns/activitystreams#Public'],
                         'cc' => [$actorUrl]
+                    ];
+                } elseif ($actionType === 'poll_vote') {
+                    $payload['type'] = 'Create';
+                    $noteId = $fqdn . '/note/' . uniqid();
+                    // AP Poll votes are usually a Note/Question reply with 'name' as the choice
+                    $payload['object'] = [
+                        'id' => $noteId,
+                        'type' => 'Note',
+                        'name' => $content,
+                        'attributedTo' => $myActor,
+                        'inReplyTo' => $targetUrl,
+                        'to' => [$actorUrl]
                     ];
                 } else {
                     http_response_code(400);

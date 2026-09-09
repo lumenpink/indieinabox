@@ -119,7 +119,8 @@ class FeedFetcher
                 $text = $matches[2];
                 $id = md5($feedUrl . $published . $text);
 
-                $this->saveItem($id, $channel, $feedUrl, $text, $published, $authorName, '', $feedUrl);
+                $entry = \Indieinabox\Microsub\NormalizationAdapter::fromTwtxt($id, $feedUrl, $text, $published, $authorName);
+                $this->saveEntry($entry, $channel, $feedUrl);
             }
         }
     }
@@ -146,7 +147,12 @@ class FeedFetcher
                 $itemAuthor = $item['author']['name'] ?? $authorName;
                 $itemAvatar = $item['author']['avatar'] ?? '';
 
-                $this->saveItem((string)$id, $channel, $url, $contentHtml, $published, $itemAuthor, $itemAvatar, $feedUrl);
+                $entry = \Indieinabox\Microsub\NormalizationAdapter::fromFeed((string)$id, $url, $contentHtml, $published, $itemAuthor, $feedUrl);
+                if ($itemAvatar) {
+                    $entry->author['photo'] = $itemAvatar;
+                }
+                
+                $this->saveEntry($entry, $channel, $feedUrl);
             }
         }
     }
@@ -273,9 +279,14 @@ class FeedFetcher
                             }
                         }
 
-                        $published = isset($obj['published']) ? strtotime($obj['published']) : time();
+                        $entry = \Indieinabox\Microsub\NormalizationAdapter::fromActivityPub($obj, $contentHtml);
+                        $entry->author = [
+                            'type' => 'card',
+                            'name' => $authorName,
+                            'photo' => $authorPhoto
+                        ];
                         
-                        $this->saveItem((string)$id, $channel, $url, $contentHtml, $published, $authorName, $authorPhoto, $feedUrl);
+                        $this->saveEntry($entry, $channel, $feedUrl);
                     }
                 }
             }
@@ -323,7 +334,8 @@ class FeedFetcher
                 $content = $this->processHtmlMedia($content);
                 $published = isset($item->pubDate) ? strtotime((string)$item->pubDate) : time();
                 
-                $this->saveItem($id, $channel, $url, $content, $published, $authorName, '', $feedUrl);
+                $entry = \Indieinabox\Microsub\NormalizationAdapter::fromFeed($id, $url, $content, $published, $authorName, $feedUrl);
+                $this->saveEntry($entry, $channel, $feedUrl);
             }
         }
     }
@@ -377,7 +389,11 @@ class FeedFetcher
 
                 $entryAuthor = isset($entry->author->name) ? (string)$entry->author->name : $authorName;
 
-                $this->saveItem($id, $channel, $url, $content, $published, $entryAuthor, $authorPhoto, $feedUrl);
+                $extendedEntry = \Indieinabox\Microsub\NormalizationAdapter::fromFeed($id, $url, $content, $published, $entryAuthor, $feedUrl);
+                if ($authorPhoto) {
+                    $extendedEntry->author['photo'] = $authorPhoto;
+                }
+                $this->saveEntry($extendedEntry, $channel, $feedUrl);
             }
         }
     }
@@ -391,20 +407,15 @@ class FeedFetcher
     }
 
     /**
-     * Saves a parsed feed item to the local file system (Microsub item store).
+     * Saves a parsed feed entry to the local file system (Microsub item store).
      *
-     * @param string $id The unique identifier for the item.
+     * @param \Indieinabox\Microsub\ExtendedEntry $entry The universal post object.
      * @param string $channel The channel ID where the item belongs.
-     * @param string $url The source URL of the item.
-     * @param string $content The HTML or text content.
-     * @param int $published The publication timestamp.
-     * @param string $authorName The author's name.
-     * @param string $authorPhoto The author's avatar URL.
      * @param string $feedUrl The URL of the feed this item belongs to.
      * 
      * @return void
      */
-    private function saveItem(string $id, string $channel, string $url, string $content, int $published, string $authorName, string $authorPhoto, string $feedUrl = ''): void
+    private function saveEntry(\Indieinabox\Microsub\ExtendedEntry $entry, string $channel, string $feedUrl = ''): void
     {
         $dataDir = \Indieinabox\Database::$dataDir ?? (dirname(__DIR__) . '/data');
         
@@ -414,24 +425,32 @@ class FeedFetcher
         }
 
         // Generate a safe filename from the ID
-        $filename = md5($id) . '.md';
+        $filename = md5($entry->uid) . '.md';
         $filepath = $channelDir . DIRECTORY_SEPARATOR . $filename;
 
         if (!file_exists($filepath)) {
             $frontmatter = [
-                'id' => $id,
-                'url' => $url,
+                'id' => $entry->uid,
+                'url' => $entry->url,
                 'feed_url' => $feedUrl,
-                'author_name' => $authorName,
-                'author_photo' => $authorPhoto,
-                'published' => $published,
+                'author_name' => $entry->author['name'] ?? 'Unknown',
+                'author_photo' => $entry->author['photo'] ?? '',
+                'published' => strtotime($entry->published) ?: time(),
                 'is_read' => 0,
-                'type' => 'feed'
+                'type' => 'feed',
+                '_indieinabox' => [
+                    'network' => $entry->network,
+                    'origin_server' => $entry->originServer,
+                    'capabilities' => $entry->capabilities,
+                    'content_warning' => $entry->contentWarning,
+                    'poll' => $entry->poll,
+                    'reels' => $entry->reels
+                ]
             ];
             
             $yaml = new \Indieinabox\Yaml();
             $yamlStr = $yaml->dump($frontmatter);
-            $fileContent = "---\n" . $yamlStr . "---\n\n" . $content;
+            $fileContent = "---\n" . $yamlStr . "---\n\n" . ($entry->content['html'] ?: $entry->content['text']);
             
             file_put_contents($filepath, $fileContent);
         }

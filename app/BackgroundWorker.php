@@ -57,10 +57,63 @@ class BackgroundWorker
             $this->processArchiveQueue();
             $this->processTwtxtFeeds();
             $this->processBackups();
+            $this->processWebmentionDiscovery();
         } finally {
             flock($fp, LOCK_UN);
             fclose($fp);
         }
+    }
+
+    /**
+     * Discovers Webmention support for queued domains.
+     */
+    public function processWebmentionDiscovery(): void
+    {
+        echo "Running Webmention Discovery...\n";
+        
+        $sql = "SELECT domain FROM webmention_discovery_cache WHERE last_checked = 0 OR last_checked < ? ORDER BY last_checked ASC LIMIT 10";
+        // Check unknown, or recheck domains older than 7 days
+        $threshold = time() - (7 * 86400); 
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([$threshold]);
+        $domains = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        if (empty($domains)) {
+            echo "No domains to discover.\n";
+            return;
+        }
+
+        $stmtUpdate = $this->db->prepare("UPDATE webmention_discovery_cache SET supports_webmention = ?, last_checked = ? WHERE domain = ?");
+
+        foreach ($domains as $row) {
+            $domain = $row['domain'];
+            $url = "https://" . $domain . "/";
+            echo "Checking {$url} for webmention support...\n";
+            
+            $supports = 0;
+            $ctx = stream_context_create(['http' => ['timeout' => 5, 'user_agent' => 'Indieinabox Webmention Discovery Bot']]);
+            $html = @file_get_contents($url, false, $ctx);
+            
+            if ($html) {
+                // Check headers first (if we had access to $http_response_header)
+                $headers = $http_response_header ?? [];
+                foreach ($headers as $header) {
+                    if (stripos($header, 'rel="webmention"') !== false || stripos($header, 'rel=webmention') !== false) {
+                        $supports = 1;
+                        break;
+                    }
+                }
+                
+                // If not found in headers, check HTML
+                if ($supports === 0 && preg_match('/<link\s+[^>]*rel=[\'"]?(?:[^>]*\s+)?webmention(?:\s+[^>]*)?[\'"]?[^>]*>/i', $html)) {
+                    $supports = 1;
+                }
+            }
+            
+            $stmtUpdate->execute([$supports, time(), $domain]);
+        }
+        
+        echo "Webmention Discovery done.\n";
     }
 
     /**

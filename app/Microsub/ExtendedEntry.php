@@ -20,6 +20,7 @@ class ExtendedEntry
     public string $published = '';
     public ?array $author = null; // ['type' => 'card', 'name' => '...', 'photo' => '...']
     public array $content = ['html' => '', 'text' => ''];
+    public array $category = [];
 
     // Extended Architecture Properties (_indieinabox)
     public string $network = 'unknown'; // 'activitypub', 'twtxt', 'rss', etc.
@@ -51,6 +52,10 @@ class ExtendedEntry
         if (!empty($this->author)) {
             $payload['author'] = $this->author;
         }
+        
+        if (!empty($this->category)) {
+            $payload['category'] = $this->category;
+        }
 
         // --- Graceful Degradation / Fallback rendering ---
         $htmlOut = $this->content['html'] ?? '';
@@ -58,7 +63,7 @@ class ExtendedEntry
 
         // Fallback for Content Warning (collapsible <details>)
         if (!empty($this->contentWarning)) {
-            $htmlOut = sprintf('<details><summary>CW: %s</summary>%s</details>', 
+            $htmlOut = sprintf('<div class="cw-fallback"><details><summary>CW: %s</summary>%s</details></div>', 
                 htmlspecialchars($this->contentWarning), 
                 $htmlOut
             );
@@ -67,7 +72,7 @@ class ExtendedEntry
 
         // Fallback for Polls (render as list)
         if (!empty($this->poll) && isset($this->poll['options'])) {
-            $htmlOut .= "\n<p><strong>Poll:</strong></p>\n<ul>\n";
+            $htmlOut .= "\n<div class=\"poll-fallback\"><p><strong>Poll:</strong></p>\n<ul>\n";
             $textOut .= "\n\nPoll:\n";
             foreach ($this->poll['options'] as $opt) {
                 $title = htmlspecialchars($opt['title'] ?? 'Option');
@@ -75,7 +80,7 @@ class ExtendedEntry
                 $htmlOut .= sprintf('<li>%s (%d votes)</li>%s', $title, $votes, "\n");
                 $textOut .= sprintf('- %s (%d votes)' . "\n", $title, $votes);
             }
-            $htmlOut .= "</ul>\n";
+            $htmlOut .= "</ul></div>\n";
         }
 
         $payload['content'] = [

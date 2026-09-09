@@ -176,6 +176,12 @@ class MicropubHandler
             $category = [$category];
         }
 
+        // Auto-extract hashtags from content
+        $extractedTags = \Indieinabox\Helper::extractHashtags($content);
+        if (!empty($extractedTags)) {
+            $category = array_unique(array_merge($category, $extractedTags));
+        }
+
         // Photo uploads sent with the post
         $photos = [];
         if (isset($input['photo'])) {

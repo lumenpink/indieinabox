@@ -345,6 +345,34 @@ class MicrosubReaderHandler
             color: #cf8bf3;
         }
 
+        .cw-fallback details {
+            background: rgba(255, 107, 107, 0.1);
+            border: 1px solid rgba(255, 107, 107, 0.3);
+            border-radius: 8px;
+            padding: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        .cw-fallback summary {
+            cursor: pointer;
+            font-weight: 600;
+            color: #ff6b6b;
+            padding: 0.5rem;
+            outline: none;
+            user-select: none;
+        }
+        .cw-fallback details[open] summary {
+            border-bottom: 1px solid rgba(255, 107, 107, 0.3);
+            margin-bottom: 0.5rem;
+        }
+        .cw-fallback img {
+            filter: blur(35px);
+            cursor: pointer;
+            transition: filter 0.4s ease;
+        }
+        .cw-fallback img.revealed {
+            filter: none;
+        }
+
         @media (max-width: 768px) {
             #reader-view {
                 grid-template-columns: 1fr;
@@ -451,6 +479,13 @@ class MicrosubReaderHandler
             loadTimeline();
         };
 
+        // Handle unblurring of Content Warning images
+        document.addEventListener('click', function(e) {
+            if (e.target.tagName === 'IMG' && e.target.closest('.cw-fallback')) {
+                e.target.classList.toggle('revealed');
+            }
+        });
+
         async function loadChannelTitle() {
             try {
                 const data = await api('channels');
@@ -504,17 +539,76 @@ class MicrosubReaderHandler
                         `;
                     }
 
+                    let ext = item._indieinabox || {};
+                    let capabilities = ext.capabilities || ['reply', 'like', 'repost'];
+                    let network = ext.network || 'rss';
+                    let serverName = ext.origin_server || new URL(item.url || 'http://localhost').hostname;
+
+                    let networkBadge = `<span style="font-size: 0.7rem; padding: 2px 6px; background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border); border-radius: 4px; margin-left: auto;">${network.toUpperCase()} • ${serverName}</span>`;
+
+                    let buttonsHtml = `<a href="${item.url}" target="_blank">View Original</a>`;
+
+                    // Generate native AP interaction buttons if supported
+                    if (capabilities.includes('like')) {
+                        buttonsHtml += `<button onclick="interactPostAP('like', '${item.url}')" title="Like">Like</button>`;
+                    } else if (capabilities.includes('local_like')) {
+                        buttonsHtml += `<button onclick="interactPostMicropub('like', '${item.url}')" title="Like on your blog only" style="color: #99ccff;">Like*</button>`;
+                    }
+
+                    if (capabilities.includes('repost')) {
+                        buttonsHtml += `<button onclick="interactPostAP('repost', '${item.url}')" title="Repost">Repost</button>`;
+                    }
+
+                    if (capabilities.includes('reply')) {
+                        buttonsHtml += `<button onclick="interactPostAP('reply', '${item.url}')" title="Reply">Reply</button>`;
+                    }
+
+                    if (capabilities.includes('poll_vote')) {
+                        buttonsHtml += `<button onclick="alert('Poll voting UI coming soon!')" title="Vote in poll" style="color: var(--accent);">Vote</button>`;
+                    }
+
+                    // Always allow local blog shares
+                    buttonsHtml += `
+                        <span style="border-left: 1px solid var(--glass-border); margin: 0 8px; height: 16px; display: inline-block; vertical-align: middle;"></span>
+                        <button onclick="interactPostMicropub('repost', '${item.url}')" title="Create a local post on your blog">Share on Blog</button>
+                    `;
+
+                    // Generate Poll UI
+                    let pollHtml = '';
+                    if (ext.poll && ext.poll.options) {
+                        let totalVotes = ext.poll.options.reduce((sum, opt) => sum + (opt.votes || 0), 0);
+                        pollHtml = '<div class="native-poll" style="margin-top: 1rem; background: rgba(0,0,0,0.2); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--glass-border);">';
+                        ext.poll.options.forEach(opt => {
+                            let pct = totalVotes > 0 ? Math.round(((opt.votes || 0) / totalVotes) * 100) : 0;
+                            // Escape single quotes for JS onClick
+                            let safeTitle = opt.title.replace(/'/g, "\\'");
+                            pollHtml += `
+                                <div style="margin-bottom: 1rem; cursor: pointer; position: relative;" onclick="interactPostAP('poll_vote', '${item.url}', '${safeTitle}')" title="Click to vote for '${opt.title}'">
+                                    <div style="display: flex; justify-content: space-between; font-size: 0.95rem; margin-bottom: 0.4rem; font-weight: 500;">
+                                        <span style="z-index: 2; text-shadow: 1px 1px 2px rgba(0,0,0,0.8);">${opt.title}</span>
+                                        <span style="z-index: 2; color: #ddd;">${pct}%</span>
+                                    </div>
+                                    <div style="width: 100%; background: rgba(255,255,255,0.05); height: 28px; border-radius: 6px; overflow: hidden; position: relative; border: 1px solid rgba(255,255,255,0.1);">
+                                        <div style="width: ${pct}%; background: rgba(236, 203, 0, 0.3); height: 100%; transition: width 0.8s ease-out;"></div>
+                                    </div>
+                                </div>
+                            `;
+                        });
+                        pollHtml += `<div style="font-size: 0.85rem; color: var(--text-muted); text-align: right; margin-top: 0.5rem;">Total votes: ${totalVotes}</div></div>`;
+                        // Inject CSS to hide the fallback for this specific item
+                        pollHtml += '<style>.poll-fallback { display: none !important; }</style>';
+                    }
+
                     div.innerHTML = `
+                        <div style="display: flex; align-items: center; margin-bottom: 0.5rem;">
+                            ${networkBadge}
+                        </div>
                         ${authorHtml}
                         <div class="item-content">${item.content.html || item.content.text || ''}</div>
+                        ${pollHtml}
                         <div class="item-actions">
-                            <a href="${item.url}" target="_blank">View Original</a>
-                            <button onclick="interactPostAP('like', '${item.url}')" title="Native AP Like">Like</button>
-                            <button onclick="interactPostAP('repost', '${item.url}')" title="Native AP Repost">Repost</button>
-                            <button onclick="interactPostAP('reply', '${item.url}')" title="Native AP Reply">Reply</button>
-                            <button onclick="interactPostMicropub('repost', '${item.url}')" title="Create a local post on your blog">Share on Blog</button>
-                            <button onclick="interactPostMicropub('reply', '${item.url}')" title="Reply from your blog">Reply from Blog</button>
-                            ${!item._is_read ? `<button onclick="markRead('${item._id}')">Mark Read</button>` : ''}
+                            ${buttonsHtml}
+                            ${!item._is_read ? `<button onclick="markRead('${item._id}')" style="margin-left: auto;">Mark Read</button>` : ''}
                         </div>
                     `;
                     container.appendChild(div);
@@ -533,9 +627,9 @@ class MicrosubReaderHandler
             }
         }
         
-        async function interactPostAP(action, targetUrl) {
-            let content = '';
-            if (action === 'reply') {
+        async function interactPostAP(action, targetUrl, prefilledContent = null) {
+            let content = prefilledContent || '';
+            if (action === 'reply' && !content) {
                 content = prompt("Enter your native ActivityPub reply:");
                 if (!content) return;
             }

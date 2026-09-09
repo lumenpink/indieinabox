@@ -81,10 +81,11 @@ class NormalizationAdapter
         
         $entry->content['text'] = $text;
         
-        // Simple heuristic for links -> HTML
         $html = htmlspecialchars($text);
         $html = preg_replace('/(https?:\/\/[^\s]+)/', '<a href="$1">$1</a>', $html);
         $entry->content['html'] = $html;
+
+        $entry->category = \Indieinabox\Helper::extractHashtags($text);
 
         $entry->author = [
             'type' => 'card',
@@ -114,17 +115,40 @@ class NormalizationAdapter
         
         $entry->content['html'] = $htmlContent;
         $entry->content['text'] = strip_tags($htmlContent);
+        
+        $entry->category = \Indieinabox\Helper::extractHashtags($entry->content['text']);
 
         $entry->author = [
             'type' => 'card',
             'name' => $authorName
         ];
 
-        // Feeds generally don't support native interactions unless bridging is involved
-        $entry->capabilities = []; 
-
+        // Webmention Discovery Cache Lookup
         $parsedUrl = parse_url($feedUrl);
-        $entry->originServer = $parsedUrl['host'] ?? 'unknown';
+        $domain = $parsedUrl['host'] ?? 'unknown';
+        $entry->originServer = $domain;
+
+        if ($domain !== 'unknown') {
+            $db = \Indieinabox\Database::getDb();
+            $stmt = $db->prepare('SELECT supports_webmention, last_checked FROM webmention_discovery_cache WHERE domain = ?');
+            $stmt->execute([$domain]);
+            $row = $stmt->fetch(\PDO::FETCH_ASSOC);
+
+            if ($row) {
+                if ($row['last_checked'] > 0 && $row['supports_webmention'] == 1) {
+                    $entry->capabilities = ['reply', 'like', 'repost'];
+                } else {
+                    $entry->capabilities = ['local_reply', 'local_like', 'repost'];
+                }
+            } else {
+                // Unknown domain, queue for discovery and default to local interactions for now
+                $stmtInsert = $db->prepare('INSERT INTO webmention_discovery_cache (domain, supports_webmention, last_checked) VALUES (?, 0, 0)');
+                $stmtInsert->execute([$domain]);
+                $entry->capabilities = ['local_reply', 'local_like', 'repost'];
+            }
+        } else {
+            $entry->capabilities = ['local_reply', 'local_like', 'repost'];
+        }
 
         return $entry;
     }

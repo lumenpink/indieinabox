@@ -7,27 +7,29 @@ class LinkChecker
 {
     private Site $site;
     private array $errors = [];
+    private array $results = [];
 
     public function __construct(Site $site)
     {
         $this->site = $site;
     }
 
-    public function run(): void
+    public function run(?string $reportPath = null): void
     {
+        $checkedAt = (new \DateTimeImmutable())->format(\DateTimeInterface::ATOM);
         $base = rtrim($this->site->paths->baseDir, DIRECTORY_SEPARATOR);
         $htmlDir = $base . DIRECTORY_SEPARATOR . $this->site->paths->outputDirHtml;
-        
+
         if (!is_dir($htmlDir)) {
             echo "HTML output directory not found. Please build the site first.\n";
             exit(1);
         }
 
         echo "Scanning HTML files in {$this->site->paths->outputDirHtml}...\n";
-        
+
         $files = $this->getHtmlFiles($htmlDir);
         $links = [];
-        
+
         foreach ($files as $file) {
             $content = file_get_contents($file);
             $extracted = $this->extractLinks($content);
@@ -39,12 +41,12 @@ class LinkChecker
                 $links[$link][] = $relFile;
             }
         }
-        
+
         echo "Found " . count($links) . " unique links to check.\n";
-        
+
         $externalLinks = [];
         $internalLinks = [];
-        
+
         foreach ($links as $link => $sources) {
             if (strpos($link, 'http://') === 0 || strpos($link, 'https://') === 0) {
                 // Ignore localhost links in compiled static check
@@ -64,6 +66,10 @@ class LinkChecker
         echo "Checking " . count($externalLinks) . " external links...\n";
         $this->checkExternalLinks($externalLinks);
 
+        if ($reportPath !== null) {
+            $this->writeReport($reportPath, $checkedAt, count($internalLinks), count($externalLinks));
+        }
+
         if (count($this->errors) > 0) {
             echo "\n❌ Found " . count($this->errors) . " broken links:\n";
             foreach ($this->errors as $err) {
@@ -76,6 +82,39 @@ class LinkChecker
         } else {
             echo "\n✅ All links are valid!\n";
         }
+    }
+
+    private function writeReport(string $path, string $checkedAt, int $internalCount, int $externalCount): void
+    {
+        $errorCount = count($this->errors);
+        $report = [
+            'checked_at' => $checkedAt,
+            'summary' => [
+                'total_links' => count($this->results),
+                'internal'    => $internalCount,
+                'external'    => $externalCount,
+                'errors'      => $errorCount,
+            ],
+            'errors' => array_map(static function (array $err): array {
+                return [
+                    'link'    => $err['link'],
+                    'status'  => $err['status'],
+                    'sources' => array_values(array_unique($err['sources'])),
+                ];
+            }, $this->errors),
+            'checked' => $this->results,
+        ];
+
+        $dir = dirname($path);
+        if (!is_dir($dir)) {
+            mkdir($dir, 0755, true);
+        }
+
+        file_put_contents(
+            $path,
+            json_encode($report, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)
+        );
+        echo "Report written to {$path}\n";
     }
 
     private function getHtmlFiles(string $dir): array
@@ -130,14 +169,14 @@ class LinkChecker
                 $target = $base . DIRECTORY_SEPARATOR . $this->site->paths->outputDirMedia . substr($path, 6);
             } else {
                 $path = urldecode($path);
-                
+
                 // If the link is relative and we have sources, resolve it relative to the first source file
                 if (strpos($path, '/') !== 0 && count($sources) > 0) {
                     $sourceFile = $sources[0];
                     $sourceDir = dirname($sourceFile);
                     if ($sourceDir === '.') $sourceDir = '';
                     $resolvedPath = $sourceDir . '/' . $path;
-                    
+
                     // Resolve ../ and ./
                     $parts = explode('/', $resolvedPath);
                     $absolutes = [];
@@ -153,7 +192,7 @@ class LinkChecker
                 }
 
                 $target = $htmlDir . $path;
-                
+
                 if (is_dir($target)) {
                     $target = rtrim($target, '/') . '/index.html';
                 } elseif (!is_file($target) && is_file($target . '.html')) {
@@ -163,9 +202,22 @@ class LinkChecker
 
             if (!file_exists($target)) {
                 $this->errors[] = [
-                    'link' => $link,
-                    'status' => '404 File Not Found',
-                    'sources' => $sources
+                    'link'    => $link,
+                    'status'  => '404 File Not Found',
+                    'sources' => $sources,
+                ];
+                $this->results[] = [
+                    'link'    => $link,
+                    'type'    => 'internal',
+                    'status'  => '404 File Not Found',
+                    'sources' => array_values(array_unique($sources)),
+                ];
+            } else {
+                $this->results[] = [
+                    'link'    => $link,
+                    'type'    => 'internal',
+                    'status'  => 'ok',
+                    'sources' => array_values(array_unique($sources)),
                 ];
             }
         }
@@ -189,8 +241,7 @@ class LinkChecker
                 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
                 curl_setopt($ch, CURLOPT_TIMEOUT, 10);
                 curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-                $userAgent = 'Indieinabox LinkChecker/1.0';
-                curl_setopt($ch, CURLOPT_USERAGENT, $userAgent);
+                curl_setopt($ch, CURLOPT_USERAGENT, 'Indieinabox LinkChecker/1.0');
                 curl_multi_add_handle($mh, $ch);
                 $curlHandles[$url] = $ch;
             }
@@ -204,32 +255,53 @@ class LinkChecker
             foreach ($batch as $url) {
                 $ch = $curlHandles[$url];
                 $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-                
+
                 if ($code < 200 || $code >= 400) {
-                    // Retry with GET
+                    // Retry with GET + Range header (some servers reject HEAD)
                     $chGet = curl_init($url);
                     curl_setopt($chGet, CURLOPT_RETURNTRANSFER, true);
                     curl_setopt($chGet, CURLOPT_TIMEOUT, 10);
                     curl_setopt($chGet, CURLOPT_FOLLOWLOCATION, true);
-                    $userAgent = 'Indieinabox LinkChecker/1.0';
-                    curl_setopt($chGet, CURLOPT_USERAGENT, $userAgent);
+                    curl_setopt($chGet, CURLOPT_USERAGENT, 'Indieinabox LinkChecker/1.0');
                     curl_setopt($chGet, CURLOPT_HEADER, true);
                     curl_setopt($chGet, CURLOPT_NOBODY, false);
-                    $range = '0-100';
-                    curl_setopt($chGet, CURLOPT_RANGE, $range);
+                    curl_setopt($chGet, CURLOPT_RANGE, '0-100');
                     curl_exec($chGet);
                     $getCode = curl_getinfo($chGet, CURLINFO_HTTP_CODE);
                     curl_close($chGet);
 
                     // Accept 530 (Cloudflare Anti-bot)
                     if (($getCode < 200 || $getCode >= 400) && $getCode !== 530 && $code !== 530) {
+                        $finalStatus = $getCode > 0 ? (string)$getCode : 'Connection Error';
                         $this->errors[] = [
-                            'link' => $url,
-                            'status' => $getCode > 0 ? (string)$getCode : 'Connection Error',
-                            'sources' => $links[$url]
+                            'link'    => $url,
+                            'status'  => $finalStatus,
+                            'sources' => $links[$url],
+                        ];
+                        $this->results[] = [
+                            'link'    => $url,
+                            'type'    => 'external',
+                            'status'  => $finalStatus,
+                            'sources' => array_values(array_unique($links[$url])),
+                        ];
+                    } else {
+                        // Accepted (530 or 2xx on retry)
+                        $this->results[] = [
+                            'link'    => $url,
+                            'type'    => 'external',
+                            'status'  => 'ok',
+                            'sources' => array_values(array_unique($links[$url])),
                         ];
                     }
+                } else {
+                    $this->results[] = [
+                        'link'    => $url,
+                        'type'    => 'external',
+                        'status'  => 'ok',
+                        'sources' => array_values(array_unique($links[$url])),
+                    ];
                 }
+
                 curl_multi_remove_handle($mh, $ch);
                 curl_close($ch);
             }

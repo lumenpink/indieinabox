@@ -195,8 +195,15 @@ if (php_sapi_name() === 'cli') {
         $worker = new \Indieinabox\BackgroundWorker($site);
         $worker->runAll();
     } elseif (isset($argv[1]) && $argv[1] === 'test-links') {
+        $reportPath = null;
+        foreach ($argv as $i => $arg) {
+            if ($arg === '--report' && isset($argv[$i + 1])) {
+                $reportPath = $argv[$i + 1];
+                break;
+            }
+        }
         $checker = new \Indieinabox\LinkChecker($site);
-        $checker->run();
+        $checker->run($reportPath);
     } elseif (isset($argv[1]) && $argv[1] === 'backup') {
         $skipContent = in_array('--no-content', $argv, true);
         $skipMedia = in_array('--no-media', $argv, true);

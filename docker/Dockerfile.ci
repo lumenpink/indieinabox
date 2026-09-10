@@ -1,0 +1,31 @@
+# CI image — PHP 8.4 + Xdebug + Composer for tests, psalm, and link-checker.
+# NOT the production image (see docker/Dockerfile for that — uses FrankenPHP).
+#
+# Build:
+#   docker build -f docker/Dockerfile.ci -t indieinabox-ci:latest .
+#
+# Rebuilt automatically by .forgejo/workflows/docker-ci-image.yml
+# when this file changes on main.
+
+FROM php:8.4-cli
+
+# All required PHP extensions are already in php:8.4-cli:
+# curl, fileinfo, json, mbstring, pdo_sqlite, sqlite3, OPcache
+
+# System tools needed at runtime
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        git \
+        unzip \
+    && rm -rf /var/lib/apt/lists/*
+
+# Xdebug — installed but OFF by default.
+# Enable per-step with: env: XDEBUG_MODE: coverage
+RUN pecl install xdebug \
+    && docker-php-ext-enable xdebug \
+    && echo "xdebug.mode=off" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+    && rm -rf /tmp/pear
+
+# Composer 2 (copied from official image — no installer script needed)
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+
+WORKDIR /workspace

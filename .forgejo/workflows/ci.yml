@@ -12,6 +12,9 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
+env:
+  CI_IMAGE: lumenpink/indieinabox-ci:latest
+
 jobs:
   # ─────────────────────────────────────────────────────────────────────────────
   # JOB 1 — Lint + Unit tests (Matrix PHP 8.2 → 8.4)
@@ -19,8 +22,8 @@ jobs:
   test:
     name: "PHP ${{ matrix.php }} — Tests & Lint"
     runs-on: ubuntu-latest
-    # container:
-    #   image: thecodingmachine/php:8.4-v4-cli
+    container:
+      image: ${{ env.CI_IMAGE }}
     strategy:
       fail-fast: true          # Stop at the first error in any version
       matrix:
@@ -31,14 +34,6 @@ jobs:
         uses: https://github.com/actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         with:
           fetch-depth: 0
-
-      - name: "Setup PHP ${{ matrix.php }}"
-        uses: https://github.com/shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2.37.2
-        with:
-          php-version: ${{ matrix.php }}
-          extensions: mbstring, json, fileinfo, pdo_sqlite, sqlite3
-          coverage: xdebug          # Required to generate clover
-          tools: composer:v2
 
       - name: "Cache vendor & tools"
         id: cache-vendor
@@ -79,6 +74,8 @@ jobs:
 
       # ── PEST Tests ──────────────────────────────────────────────────────────
       - name: "PEST — Standard suite (source) + Clover coverage"
+        env:
+          XDEBUG_MODE: coverage
         run: |
           mkdir -p coverage
           ./vendor/bin/pest \
@@ -107,21 +104,31 @@ jobs:
           retention-days: 7
 
   # ─────────────────────────────────────────────────────────────────────────────
-  # JOB 1.5 — Link Checker (Lychee)
+  # JOB 1.5 — Link Checker (built-in PHP)
   # ─────────────────────────────────────────────────────────────────────────────
   link-checker:
-    name: "Check for 404s (Lychee)"
+    name: "Check for 404s (PHP LinkChecker)"
     runs-on: ubuntu-latest
+    container:
+      image: ${{ env.CI_IMAGE }}
 
     steps:
       - name: "Checkout"
         uses: https://github.com/actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
 
-      - name: "Setup PHP"
-        uses: https://github.com/shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2.37.2
+      - name: "Cache vendor"
+        id: cache-vendor
+        uses: https://github.com/actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
         with:
-          php-version: "8.4"
-          extensions: mbstring, json, fileinfo, pdo_sqlite, sqlite3
+          path: |
+            vendor
+          key: vendor-php8.4-${{ hashFiles('composer.lock') }}
+          restore-keys: |
+            vendor-php8.4-
+
+      - name: "Install Composer dependencies"
+        if: steps.cache-vendor.outputs.cache-hit != 'true'
+        run: composer install --no-interaction --prefer-dist --no-progress --no-dev
 
       - name: "Setup test database"
         run: |
@@ -132,29 +139,18 @@ jobs:
       - name: "Build Site"
         run: php build.php
 
-      - name: "Start Server & Run Lychee"
+      - name: "Check Links"
         run: |
-          # 1. Cria um roteador simples para o PHP lidar com URLs sem extensão (.html)
-          cat << 'EOF' > router.php
-          <?php
-          $path = parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH);
-          $file = $_SERVER["DOCUMENT_ROOT"] . $path;
-          if (is_file($file)) return false;
-          if (is_file($file . '.html')) { header("Content-Type: text/html"); readfile($file . '.html'); return true; }
-          if (is_file(rtrim($file, '/') . '/index.html')) { header("Content-Type: text/html"); readfile(rtrim($file, '/') . '/index.html'); return true; }
-          http_response_code(404); echo "404 Not Found";
-          EOF
-          
-          # 2. Inicia o servidor local na porta 8081 (mesma do FQDN no banco)
-          php -S localhost:8081 -t public_html router.php &
-          sleep 2 # Aguarda o servidor subir
-          
-          # 3. Baixa a versão MUSL do Lychee (que não depende do GLIBC do runner!)
-          wget -q https://github.com/lycheeverse/lychee/releases/download/lychee-v0.24.2/lychee-x86_64-unknown-linux-musl.tar.gz
-          tar -xzf lychee-x86_64-unknown-linux-musl.tar.gz
-          
-          # 4. Roda o Lychee contra o servidor vivo, aceitando 530 (Anti-bot do Cloudflare no lumen.pink)
-          ./lychee-x86_64-unknown-linux-musl/lychee --verbose --no-progress --accept "200..=299, 530" --exclude '/microsub' --exclude '/media/.*' 'http://localhost:8081/'
+          mkdir -p coverage
+          php build.php test-links --report coverage/link-check-report.json
+
+      - name: "Upload Link Check report"
+        if: always()
+        uses: https://github.com/actions/upload-artifact@a8a3f3ad30e3422c9c7b888a15615d19a852ae32 # v3.1.3
+        with:
+          name: link-check-report
+          path: coverage/link-check-report.json
+          retention-days: 30
 
   # ─────────────────────────────────────────────────────────────────────────────
   # JOB 2 — Static security analysis with Psalm
@@ -162,19 +158,14 @@ jobs:
   psalm:
     name: "Psalm — Static Security Analysis"
     runs-on: ubuntu-latest
+    container:
+      image: ${{ env.CI_IMAGE }}
     needs: test           # Only runs if tests pass
 
     steps:
       - uses: https://github.com/actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         with:
           fetch-depth: 0
-
-      - uses: https://github.com/shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2.37.2
-        with:
-          php-version: "8.4"
-          extensions: mbstring, json, fileinfo, pdo_sqlite, sqlite3
-          coverage: none
-          tools: composer:v2
 
       - name: "Cache vendor & tools"
         id: cache-vendor
@@ -222,11 +213,15 @@ jobs:
     steps:
       - uses: https://github.com/actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
 
+      - name: "Get week (NVD cache key)"
+        id: week
+        run: echo "week=$(date +%Y-%W)" >> $GITHUB_OUTPUT
+
       - name: "Cache NVD (speeds up subsequent scans)"
         uses: https://github.com/actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
         with:
           path: ~/.dependency-check/data
-          key: nvd-${{ github.run_id }}
+          key: nvd-${{ steps.week.outputs.week }}
           restore-keys: |
             nvd-
 
@@ -317,6 +312,8 @@ jobs:
   nightly-release:
     name: "Nightly Release"
     runs-on: ubuntu-latest
+    container:
+      image: ${{ env.CI_IMAGE }}
     needs: [test, psalm]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     steps:
@@ -324,13 +321,6 @@ jobs:
         uses: https://github.com/actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         with:
           fetch-depth: 0
-
-      - name: Setup PHP
-        uses: https://github.com/shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2.37.2
-        with:
-          php-version: '8.4'
-          extensions: mbstring, json, fileinfo, pdo_sqlite, sqlite3
-          tools: composer:v2
 
       - name: Install Composer dependencies
         run: composer install --no-interaction --prefer-dist --no-progress --no-dev
@@ -391,6 +381,8 @@ jobs:
   stable-release:
     name: "Stable Release"
     runs-on: ubuntu-latest
+    container:
+      image: ${{ env.CI_IMAGE }}
     needs: [test, psalm]
     if: startsWith(github.ref, 'refs/tags/v')
     steps:
@@ -398,13 +390,6 @@ jobs:
         uses: https://github.com/actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         with:
           fetch-depth: 0
-
-      - name: Setup PHP
-        uses: https://github.com/shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2.37.2
-        with:
-          php-version: '8.4'
-          extensions: mbstring, json, fileinfo, pdo_sqlite, sqlite3
-          tools: composer:v2
 
       - name: Install Composer dependencies
         run: composer install --no-interaction --prefer-dist --no-progress --no-dev

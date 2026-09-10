@@ -1,0 +1,140 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://indieinabox/schemas/extended-entry.json",
+  "title": "ExtendedEntry",
+  "description": "The Indieinabox Universal Post Object. A JF2-compatible entry enriched with federated protocol metadata under the _indieinabox namespace.",
+  "type": "object",
+  "required": ["type", "uid", "url", "published", "content", "_indieinabox"],
+
+  "properties": {
+    "type": {
+      "type": "string",
+      "const": "entry",
+      "description": "JF2 entry type. Always 'entry'."
+    },
+    "uid": {
+      "type": "string",
+      "description": "Unique identifier for the post. May be a canonical URL or a protocol-specific hash ID (e.g. Twtxt)."
+    },
+    "url": {
+      "type": "string",
+      "format": "uri",
+      "description": "Canonical URL to the original post."
+    },
+    "published": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 publication datetime."
+    },
+    "_is_read": {
+      "type": "boolean",
+      "description": "Whether this post has been marked as read locally. Not part of the JF2 spec.",
+      "default": false
+    },
+    "author": {
+      "type": "object",
+      "description": "JF2 Card representing the post author.",
+      "properties": {
+        "type": { "type": "string", "const": "card" },
+        "name": { "type": "string" },
+        "photo": { "type": "string", "format": "uri" },
+        "url": { "type": "string", "format": "uri" }
+      },
+      "required": ["type", "name"]
+    },
+    "content": {
+      "type": "object",
+      "description": "Post body. May contain graceful degradation HTML for CWs and Polls for generic clients.",
+      "properties": {
+        "html": { "type": "string", "description": "HTML representation, including CW/poll fallbacks." },
+        "text": { "type": "string", "description": "Plain text representation." }
+      },
+      "required": ["html", "text"]
+    },
+    "category": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Tags and hashtags extracted from content."
+    },
+    "_indieinabox": {
+      "type": "object",
+      "description": "Indieinabox-specific extension namespace. Contains federated protocol metadata.",
+      "required": ["network", "origin_server", "capabilities"],
+      "properties": {
+        "network": {
+          "type": "string",
+          "enum": ["activitypub", "twtxt", "rss", "unknown"],
+          "description": "The federated protocol this post was received from."
+        },
+        "origin_server": {
+          "type": "string",
+          "description": "Hostname of the server the post originated from, e.g. 'mastodon.social'."
+        },
+        "capabilities": {
+          "type": "array",
+          "description": "Actions available for this post. Depends on origin protocol and Webmention discovery status.",
+          "items": {
+            "type": "string",
+            "enum": ["reply", "like", "repost", "poll_vote", "local_reply", "local_like"]
+          },
+          "examples": [
+            ["reply", "like", "repost"],
+            ["reply", "like", "repost", "poll_vote"],
+            ["reply"],
+            ["local_reply", "local_like", "repost"]
+          ]
+        },
+        "content_warning": {
+          "type": ["string", "null"],
+          "description": "Content warning summary text. Null if no CW is present."
+        },
+        "poll": {
+          "oneOf": [
+            { "type": "null" },
+            {
+              "type": "object",
+              "description": "Poll data (ActivityPub Question type).",
+              "required": ["options"],
+              "properties": {
+                "multiple_choice": {
+                  "type": "boolean",
+                  "description": "true if anyOf (multiple choice), false if oneOf (single choice)."
+                },
+                "end_time": {
+                  "type": ["string", "null"],
+                  "format": "date-time",
+                  "description": "When the poll closes. Null if no expiry."
+                },
+                "options": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": ["title"],
+                    "properties": {
+                      "title": { "type": "string" },
+                      "votes": { "type": "integer", "minimum": 0 }
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "reels": {
+          "oneOf": [
+            { "type": "null" },
+            {
+              "type": "object",
+              "description": "Short-form video metadata (Pixelfed Reels).",
+              "properties": {
+                "url": { "type": "string", "format": "uri" },
+                "duration": { "type": "integer", "description": "Duration in seconds." },
+                "thumbnail": { "type": "string", "format": "uri" }
+              }
+            }
+          ]
+        }
+      }
+    }
+  }
+}

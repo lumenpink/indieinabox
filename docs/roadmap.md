@@ -131,10 +131,10 @@ This document tracks completed refactoring phases and future directions.
 The following next-generation features are scheduled for development:
 
 ### 🧱 Phase 13.5: Universal Post Object Architecture
-- [ ] **Universal Schema Definition**: Design a unified data structure (JSON/DB schema) that encapsulates all core content and network-specific extensions (Polls, CWs, Reels, Galleries).
-- [ ] **Network & Origin Tracking**: Implement properties to rigidly track the origin network protocol (ActivityPub, Twtxt, RSS) and the exact origin server/instance.
-- [ ] **Capability Constraints System**: Develop a matrix or ruleset to restrict interactive actions based on the origin protocol (e.g., preventing a user from attaching a poll when replying to a Twtxt post).
-- [ ] **Normalization Adapters**: Build specific parser classes to read incoming data from any source and normalize it into the Universal Post Object before saving it to the local Microsub storage.
+- [x] **Universal Schema Definition**: Design a unified data structure (JSON/DB schema) that encapsulates all core content and network-specific extensions (Polls, CWs, Reels, Galleries). See `docs/api/extended_entry_schema.json`.
+- [x] **Network & Origin Tracking**: Implement properties to rigidly track the origin network protocol (ActivityPub, Twtxt, RSS) and the exact origin server/instance.
+- [x] **Capability Constraints System**: Develop a matrix or ruleset to restrict interactive actions based on the origin protocol (e.g., preventing a user from attaching a poll when replying to a Twtxt post).
+- [x] **Normalization Adapters**: Build specific parser classes to read incoming data from any source and normalize it into the Universal Post Object before saving it to the local Microsub storage.
 
 ### 🌐 Phase 14: ActivityPub Federated Protocol (Publishing & Reading)
 - [ ] **Actor Profiles & WebFinger**: Implement WebFinger query routing (`/.well-known/webfinger`) and JSON-LD ActivityPub Actor profiles.
@@ -191,10 +191,10 @@ The following next-generation features are scheduled for development:
 - [x] **Polls - UI**: Create a frontend interface for displaying polls and casting votes.
 - [x] **Content Warnings (CW)**: Add support to the data model for flagging sensitive content and providing summaries.
 - [x] **Content Warnings (CW) - UI**: Implement image blurring and collapsible text summaries in the frontend.
-- [ ] **Hashtags - Parser**: Implement automatic extraction of hashtags from post content.
+- [x] **Hashtags - Parser**: Implement automatic extraction of hashtags from post content.
 - [ ] **Hashtags - Indexing**: Create an index interface, search functionality, and a tag cloud.
 - [ ] **Discovery Engine**: Build an aggregator endpoint and page for discovering public posts (Global Timeline).
-- [ ] **Async Webmention Discovery**: Integrate domain capability checks into the RSS cron fetcher. Cache whether domains support Webmentions to dynamically alter the UI buttons (e.g., standard 'like' vs 'local_like'). Note: 'repost' remains universally available as it is primarily a local action.
+- [x] **Async Webmention Discovery**: Integrate domain capability checks into the RSS cron fetcher. Cache whether domains support Webmentions to dynamically alter the UI buttons (e.g., standard 'like' vs 'local_like'). Note: 'repost' remains universally available as it is primarily a local action.
 - [ ] **Custom Client - Core**: Scaffold the routing and foundational architecture for the bespoke Microsub/Micropub client.
 - [ ] **Custom Client - Features**: Integrate rich features (polls, CWs, reactions, galleries) into the custom client while adhering strictly to standards.
 
@@ -209,3 +209,122 @@ The following next-generation features are scheduled for development:
 - [ ] **Web Push Notifications**: Implement Push API support in the Microsub client for real-time interaction alerts.
 - [ ] **Microsub Filters & Rules**: Create comprehensive filtering rules in the reader (mute keywords, authors, entire instances/servers, and auto-archive capabilities).
 - [ ] **Portable Export/Import**: Build atomic export and import tools for the database to ensure absolute data ownership and portability.
+
+### 🏗️ Phase 28: Architectural Refactoring & Best Practices
+
+The current architecture suffers from technical debt due to a flat `app/` directory, reliance on global state (`global $site`), and procedural functions. This phase focuses on modernizing the codebase to a Domain-Driven Design (DDD) standard, guided by the **SOLID** principles.
+
+#### SOLID Principles Applied
+
+| Principle | Full Name | How It Applies Here |
+|---|---|---|
+| **S** | Single Responsibility | Each class has one job: adapters speak a protocol, services hold business logic, controllers handle HTTP, commands handle CLI. |
+| **O** | Open/Closed | Adding Lemmy or Bookwyrm means writing a new adapter — no existing service class needs to be modified. |
+| **L** | Liskov Substitution | Any `FederationAdapter` implementation can be swapped in transparently; the `InboxService` cannot tell (and should not care) whether it's dealing with ActivityPub or Lemmy. |
+| **I** | Interface Segregation | Adapters implement small, focused interfaces (e.g., `FederationAdapter`, `FeedParser`) rather than one massive all-purpose interface. |
+| **D** | Dependency Inversion | Services depend on the `FederationAdapter` interface (abstraction), not on `ActivityPubAdapter` (a concrete class). |
+
+#### Core Architecture Principles
+
+**1. Protocol Adapters vs. Business Logic** *(Single Responsibility + Open/Closed)*
+
+Each federated protocol (ActivityPub, Twtxt, RSS, Webmention) must live in its own Protocol Adapter class. These adapters know how to speak that protocol and nothing else. The Business Logic (e.g., "receive a follow", "deliver a like") lives in separate Service classes that consume the adapters via injected interfaces. This means adding support for Lemmy or Bookwyrm only requires writing a new adapter — the rest of the system stays untouched.
+
+```
+Example (Federation domain):
+   ActivityPubAdapter      → speaks AP (builds payloads, signs requests, parses JSON-LD)
+   LemmyAdapter            → speaks Lemmy (community posts, votes, comments)      [future]
+   BookwyrmAdapter         → speaks Bookwyrm (book reviews, shelves, reads)       [future]
+   ───────────────────────────────────────────────────────────────────────────────────────
+   InboxService            → receives activities from any adapter  (Liskov)
+   OutboxService           → delivers activities via any adapter   (Liskov)
+   FollowService           → manages followers/following           (Dependency Inversion)
+```
+
+**2. Shared Service Layer (HTTP + CLI Duality)** *(Single Responsibility + Dependency Inversion)*
+
+Every meaningful action must be expressible as a pure Service Class call. Both the HTTP Controller and the CLI Command are just thin shells that parse their input (a request or `argv`) and call the same underlying service. This avoids duplication and guarantees that anything you can do in the browser, a cron job or CLI script can also do.
+
+```
+Example:
+   FetchFeedsService::run()  ← called by MicrosubController (HTTP POST /microsub?action=fetch)
+                             ← called by FetchFeedsCommand  (CLI: php indieinabox microsub:fetch)
+                             ← called by BackgroundWorker   (cron)
+```
+
+**3. Interface-Driven Design** *(Liskov Substitution + Interface Segregation + Dependency Inversion)*
+
+Protocol adapters must implement shared interfaces so the services are agnostic to the actual protocol being used. This enables easy swapping, mocking in tests, and future extensions.
+
+```php
+interface FederationAdapter {
+    public function buildLikeActivity(string $targetUrl): array;
+    public function buildReplyActivity(string $targetUrl, string $content): array;
+    public function deliverActivity(array $activity, string $inboxUrl): bool;
+}
+```
+
+#### Proposed Directory Structure
+
+```text
+app/
+├── Core/
+│   ├── Database.php          # Connection only, no business logic
+│   ├── Container.php         # Dependency Injection Container
+│   └── WebRouter.php         # HTTP routing only
+│
+├── Console/                  # CLI Commands (thin shells calling Services)
+│   ├── BuildCommand.php      # php indieinabox build
+│   ├── FetchFeedsCommand.php # php indieinabox microsub:fetch
+│   └── RunCronCommand.php    # php indieinabox cron:run
+│
+├── Http/                     # HTTP Controllers (thin shells calling Services)
+│   ├── MicropubController.php
+│   ├── MicrosubController.php
+│   ├── ActivityPubController.php
+│   └── AdminController.php
+│
+├── Services/                 # The real business logic (protocol-agnostic)
+│   ├── InboxService.php
+│   ├── OutboxService.php
+│   ├── FetchFeedsService.php
+│   ├── PublishPostService.php
+│   ├── FollowService.php
+│   └── WebmentionService.php
+│
+├── Federation/               # Protocol Adapters (implement FederationAdapter interface)
+│   ├── Contracts/
+│   │   └── FederationAdapter.php   # Interface
+│   ├── ActivityPubAdapter.php
+│   ├── LemmyAdapter.php            # Future
+│   └── BookwyrmAdapter.php         # Future
+│
+├── Microsub/                 # Feed normalization (already started)
+│   ├── NormalizationAdapter.php
+│   └── ExtendedEntry.php
+│
+├── Generation/               # Static Site Generator
+│   ├── SiteBuilder.php
+│   └── TemplateCompiler.php
+│
+├── Entities/                 # Pure data models, no DB or logic
+│   ├── Post.php
+│   ├── Page.php
+│   └── ExtendedEntry.php
+│
+└── Support/                  # Utility service classes
+    ├── TextParser.php        # extractHashtags(), slugify(), etc.
+    ├── DateFormatter.php     # timeAgo(), localizeddate(), etc.
+    └── HtmlUtils.php         # sanitize(), truncate(), etc.
+```
+
+#### Key Implementation Goals
+- [ ] **Domain-Driven Restructuring**: Implement the directory structure outlined above.
+- [ ] **Protocol Adapter Pattern**: Create a `FederationAdapter` interface and port ActivityPub into `ActivityPubAdapter`, making it ready for Lemmy and Bookwyrm adapters.
+- [ ] **Service Layer Extraction**: Extract business logic out of all current `*Handler.php` files into `Services/` classes.
+- [ ] **HTTP/CLI Duality**: Ensure every service is callable identically from both the HTTP stack and CLI commands, with no duplication.
+- [ ] **CLI vs Web Separation**: Isolate CLI commands into `app/Console/` to clearly separate terminal actions from HTTP web requests.
+- [ ] **Eradicate Procedural Code**: Convert autonomous functions (currently in `app/functions/` and the god-class `Helper.php`) into focused, single-responsibility Service Classes.
+- [ ] **Dependency Injection**: Remove the reliance on `global $site` and singleton patterns (`Database::getDb()`). Inject dependencies via constructors to make testing and state management predictable.
+- [ ] **Interface-Driven Federation**: All adapters implement a shared contract so services never depend on a specific platform implementation.
+

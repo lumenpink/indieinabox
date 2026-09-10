@@ -1,0 +1,26 @@
+{
+  "_comment": "Canonical example: RSS/Atom post from a blog with NO Webmention support. Like and Reply are local-only.",
+  "type": "entry",
+  "uid": "https://old-blog.example.com/post-123",
+  "url": "https://old-blog.example.com/post-123",
+  "published": "2026-09-09T10:00:00Z",
+  "_is_read": true,
+  "author": {
+    "type": "card",
+    "name": "Dave",
+    "url": "https://old-blog.example.com"
+  },
+  "content": {
+    "html": "<p>An old blog post without webmention support.</p>",
+    "text": "An old blog post without webmention support."
+  },
+  "category": [],
+  "_indieinabox": {
+    "network": "rss",
+    "origin_server": "old-blog.example.com",
+    "capabilities": ["local_reply", "local_like", "repost"],
+    "content_warning": null,
+    "poll": null,
+    "reels": null
+  }
+}

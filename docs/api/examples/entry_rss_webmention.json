@@ -1,0 +1,26 @@
+{
+  "_comment": "Canonical example: RSS/Atom post from a blog that supports Webmentions (full native capabilities).",
+  "type": "entry",
+  "uid": "https://carol.blog/2026/09/09/my-post",
+  "url": "https://carol.blog/2026/09/09/my-post",
+  "published": "2026-09-09T14:00:00Z",
+  "_is_read": false,
+  "author": {
+    "type": "card",
+    "name": "Carol",
+    "url": "https://carol.blog"
+  },
+  "content": {
+    "html": "<h1>My Post</h1><p>This is a blog post about the <a href=\"https://indieweb.org\">#indieweb</a>.</p>",
+    "text": "My Post This is a blog post about the #indieweb."
+  },
+  "category": ["indieweb"],
+  "_indieinabox": {
+    "network": "rss",
+    "origin_server": "carol.blog",
+    "capabilities": ["reply", "like", "repost"],
+    "content_warning": null,
+    "poll": null,
+    "reels": null
+  }
+}

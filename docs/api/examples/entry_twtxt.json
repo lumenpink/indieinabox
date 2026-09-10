@@ -1,0 +1,26 @@
+{
+  "_comment": "Canonical example: Twtxt post with hashtag. Reply-only (no likes/reposts in standard Twtxt spec).",
+  "type": "entry",
+  "uid": "twtxt-a1b2c3d4e5f6",
+  "url": "https://bob.example.com/twtxt.txt",
+  "published": "2026-09-09T18:30:00Z",
+  "_is_read": false,
+  "author": {
+    "type": "card",
+    "name": "Bob",
+    "url": "https://bob.example.com"
+  },
+  "content": {
+    "html": "Hello twtxt world! Check this out: <a href=\"https://example.com/cool\">https://example.com/cool</a> #twtxt #indieweb",
+    "text": "Hello twtxt world! Check this out: https://example.com/cool #twtxt #indieweb"
+  },
+  "category": ["twtxt", "indieweb"],
+  "_indieinabox": {
+    "network": "twtxt",
+    "origin_server": "bob.example.com",
+    "capabilities": ["reply"],
+    "content_warning": null,
+    "poll": null,
+    "reels": null
+  }
+}

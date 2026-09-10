@@ -1,0 +1,34 @@
+{
+  "_comment": "Canonical example: ActivityPub post from Mastodon with a Content Warning and a Poll.",
+  "type": "entry",
+  "uid": "https://mastodon.social/@alice/109876543210",
+  "url": "https://mastodon.social/@alice/109876543210",
+  "published": "2026-09-09T21:00:00Z",
+  "_is_read": false,
+  "author": {
+    "type": "card",
+    "name": "Alice",
+    "photo": "https://mastodon.social/accounts/avatars/alice.png",
+    "url": "https://mastodon.social/@alice"
+  },
+  "content": {
+    "html": "<div class=\"cw-fallback\"><details><summary>CW: poll about cats</summary><p>Do you prefer cats or dogs?</p><div class=\"poll-fallback\"><ul><li>Cats (42 votes)</li><li>Dogs (17 votes)</li></ul></div></details></div>",
+    "text": "CW: poll about cats. Do you prefer cats or dogs? Poll: - Cats (42 votes) - Dogs (17 votes)"
+  },
+  "category": ["cats", "dogs", "poll"],
+  "_indieinabox": {
+    "network": "activitypub",
+    "origin_server": "mastodon.social",
+    "capabilities": ["reply", "like", "repost", "poll_vote"],
+    "content_warning": "poll about cats",
+    "poll": {
+      "multiple_choice": false,
+      "end_time": "2026-09-10T21:00:00Z",
+      "options": [
+        { "title": "Cats", "votes": 42 },
+        { "title": "Dogs", "votes": 17 }
+      ]
+    },
+    "reels": null
+  }
+}

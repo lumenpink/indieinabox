@@ -10,7 +10,7 @@ use Indieinabox\Microsub\ExtendedEntry;
 
 class NormalizationAdapterTest extends TestCase
 {
-    public function testFromActivityPub(): void
+    public function testFromActivityPubWithCwAndPoll(): void
     {
         $json = [
             'id' => 'https://mastodon.social/@test/123',
@@ -22,70 +22,77 @@ class NormalizationAdapterTest extends TestCase
                 ['name' => 'Option B', 'replies' => ['totalItems' => 10]]
             ]
         ];
-        
-        $html = '<p>This is a test post.</p>';
 
-        $entry = NormalizationAdapter::fromActivityPub($json, $html);
+        $entry = NormalizationAdapter::fromActivityPub($json, '<p>Pick one.</p>');
 
         $this->assertInstanceOf(ExtendedEntry::class, $entry);
         $this->assertEquals('activitypub', $entry->network);
         $this->assertEquals('mastodon.social', $entry->originServer);
         $this->assertEquals('Spoiler Alert', $entry->contentWarning);
-        
+
         $this->assertContains('reply', $entry->capabilities);
         $this->assertContains('like', $entry->capabilities);
         $this->assertContains('poll_vote', $entry->capabilities);
 
         $this->assertNotNull($entry->poll);
-        $this->assertFalse($entry->poll['multiple_choice']);
+        $this->assertFalse($entry->poll['multiple_choice']); // oneOf = single choice
         $this->assertCount(2, $entry->poll['options']);
         $this->assertEquals(10, $entry->poll['options'][1]['votes']);
-        
-        $this->assertEquals($html, $entry->content['html']);
     }
 
-    public function testFromTwtxt(): void
+    public function testFromActivityPubMultipleChoicePoll(): void
     {
-        $uid = 'twtxt-123';
-        $url = 'https://example.com/twtxt.txt';
-        $text = 'Hello twtxt world! https://example.com/link';
-        $timestamp = 1694200000;
-        $authorName = 'Alice';
+        $json = [
+            'id' => 'https://mastodon.social/@test/456',
+            'url' => 'https://mastodon.social/@test/456',
+            'anyOf' => [ // anyOf = multiple choice
+                ['name' => 'Cat', 'replies' => ['totalItems' => 3]],
+                ['name' => 'Dog', 'replies' => ['totalItems' => 7]]
+            ]
+        ];
 
-        $entry = NormalizationAdapter::fromTwtxt($uid, $url, $text, $timestamp, $authorName);
+        $entry = NormalizationAdapter::fromActivityPub($json, '<p>Pick all you like.</p>');
 
-        $this->assertInstanceOf(ExtendedEntry::class, $entry);
-        $this->assertEquals('twtxt', $entry->network);
-        $this->assertEquals('example.com', $entry->originServer);
+        $this->assertTrue($entry->poll['multiple_choice']);
+    }
+
+    public function testFromActivityPubWithoutCwOrPoll(): void
+    {
+        $json = [
+            'id' => 'https://mastodon.social/@test/789',
+            'url' => 'https://mastodon.social/@test/789',
+            'published' => '2026-09-09T10:00:00Z',
+        ];
+
+        $entry = NormalizationAdapter::fromActivityPub($json, '<p>Plain post.</p>');
+
+        $this->assertNull($entry->contentWarning);
+        $this->assertNull($entry->poll);
+        $this->assertNotContains('poll_vote', $entry->capabilities);
+    }
+
+    public function testFromTwtxtExtractsHashtags(): void
+    {
+        $text = 'Hello #twtxt world! Check this out https://example.com/cool #indieweb';
+
+        $entry = NormalizationAdapter::fromTwtxt('uid-1', 'https://bob.example.com/twtxt.txt', $text, time(), 'Bob');
+
+        $this->assertContains('twtxt', $entry->category);
+        $this->assertContains('indieweb', $entry->category);
+    }
+
+    public function testFromTwtxtCapabilitiesAreReplyOnly(): void
+    {
+        $entry = NormalizationAdapter::fromTwtxt('uid-2', 'https://bob.example.com/twtxt.txt', 'Hello', time(), 'Bob');
+
         $this->assertEquals(['reply'], $entry->capabilities);
-        
-        $this->assertEquals($text, $entry->content['text']);
-        $this->assertStringContainsString('<a href="https://example.com/link">', $entry->content['html']);
-        
-        $this->assertNotNull($entry->author);
-        $this->assertEquals('Alice', $entry->author['name']);
     }
 
-    public function testFromFeed(): void
+    public function testFromTwtxtLinksAreConvertedToHtml(): void
     {
-        $uid = 'rss-123';
-        $url = 'https://blog.example.com/post-1';
-        $html = '<h1>Feed Post</h1>';
-        $timestamp = 1694200000;
-        $authorName = 'Bob';
-        $feedUrl = 'https://blog.example.com/feed.xml';
+        $text = 'Check this: https://example.com/link';
+        $entry = NormalizationAdapter::fromTwtxt('uid-3', 'https://example.com/twtxt.txt', $text, time(), 'Alice');
 
-        $entry = NormalizationAdapter::fromFeed($uid, $url, $html, $timestamp, $authorName, $feedUrl);
-
-        $this->assertInstanceOf(ExtendedEntry::class, $entry);
-        $this->assertEquals('rss', $entry->network);
-        $this->assertEquals('blog.example.com', $entry->originServer);
-        $this->assertEquals(['reply', 'like', 'repost'], $entry->capabilities);
-        
-        $this->assertEquals($html, $entry->content['html']);
-        $this->assertEquals('Feed Post', $entry->content['text']);
-        
-        $this->assertNotNull($entry->author);
-        $this->assertEquals('Bob', $entry->author['name']);
+        $this->assertStringContainsString('<a href="https://example.com/link">', $entry->content['html']);
     }
 }

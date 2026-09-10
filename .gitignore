@@ -31,3 +31,4 @@ data/microsub/
 data/archived_pdfs/
 .env
 data
+.phpunit*

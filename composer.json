@@ -20,7 +20,8 @@
         "phpstan/phpstan": "^2",
         "pestphp/pest": "^5",
         "mikey179/vfsstream": "^2.0@dev",
-        "vimeo/psalm": "^6"
+        "vimeo/psalm": "^6",
+        "opis/json-schema": "^2.6"
     },
     "autoload": {
         "psr-4": {

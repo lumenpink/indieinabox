@@ -80,7 +80,7 @@ class IndieAuthHandler
             'code_challenge_methods_supported' => ['S256', 'plain']
         ];
 
-        header('HTTP/1.1 200 OK');
+        http_response_code(200);
         header('Content-Type: application/json; charset=utf-8');
         echo json_encode($metadata, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
     }
@@ -135,7 +135,7 @@ class IndieAuthHandler
 
         $fqdn = rtrim($this->site->metadata->fqdn ?? '', '/');
 
-        header('HTTP/1.1 200 OK');
+        http_response_code(200);
         header('Content-Type: text/html; charset=utf-8');
         ?>
         <!DOCTYPE html>
@@ -451,7 +451,7 @@ class IndieAuthHandler
         $joinChar = (strpos($redirectUri, '?') === false) ? '?' : '&';
         $location = $redirectUri . $joinChar . 'code=' . urlencode($code) . '&state=' . urlencode($state);
 
-        header('HTTP/1.1 302 Found');
+        http_response_code(302);
         header('Location: ' . $location);
     }
 
@@ -520,7 +520,7 @@ class IndieAuthHandler
             }
         }
 
-        header('HTTP/1.1 200 OK');
+        http_response_code(200);
         header('Content-Type: application/json; charset=utf-8');
         echo json_encode([
             'me' => $codeData['me'],
@@ -629,7 +629,7 @@ class IndieAuthHandler
         $insStmt->bindValue(':created', time(), \PDO::PARAM_INT);
         $insStmt->execute();
 
-        header('HTTP/1.1 200 OK');
+        http_response_code(200);
         header('Content-Type: application/json; charset=utf-8');
         echo json_encode([
             'access_token' => $token,
@@ -700,7 +700,7 @@ class IndieAuthHandler
             return;
         }
 
-        header('HTTP/1.1 200 OK');
+        http_response_code(200);
         header('Content-Type: application/json; charset=utf-8');
         echo json_encode([
             'me' => $tokenData['me'],
@@ -718,7 +718,7 @@ class IndieAuthHandler
      */
     private function sendResponse(int $code, string $message): void
     {
-        header('HTTP/1.1 ' . $code);
+        http_response_code($code);
         header('Content-Type: application/json; charset=utf-8');
         echo json_encode([
             'status' => $code,

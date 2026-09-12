@@ -91,8 +91,7 @@ class BackgroundWorker
             echo "Checking {$url} for webmention support...\n";
             
             $supports = 0;
-            $ctx = stream_context_create(['http' => ['timeout' => 5, 'user_agent' => 'Indieinabox Webmention Discovery Bot']]);
-            $html = @file_get_contents($url, false, $ctx);
+            $html = $this->fetchUrl($url);
             
             if ($html) {
                 // Check headers first (if we had access to $http_response_header)

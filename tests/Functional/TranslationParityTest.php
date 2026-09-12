@@ -15,6 +15,7 @@ beforeEach(function () {
     $this->site->localization->defaultLang = 'en';
     $this->site->options->translation_parity = 'full';
     $this->site->options->translation_auto = 'pseudo';
+    $GLOBALS['site'] = $this->site;
 });
 
 it('throws exception when translation_auto is disabled and parity is missing', function () {

@@ -368,7 +368,7 @@ class MicrosubHandler
                 }
 
                 $ctx = stream_context_create(['http' => ['header' => "Accept: application/activity+json\r\nUser-Agent: Indieinabox/1.0\r\n"]]);
-                $postData = @file_get_contents($targetUrl, false, $ctx);
+                $postData = $this->fetchUrl($targetUrl, $ctx);
                 if (!$postData) {
                     http_response_code(400);
                     echo json_encode(['error' => 'invalid_target', 'error_description' => 'Could not fetch target post']);
@@ -483,7 +483,7 @@ class MicrosubHandler
                     }
 
                     $ctx = stream_context_create(['http' => ['header' => "Accept: application/activity+json, application/json, application/rss+xml, application/atom+xml, text/html\r\nUser-Agent: Indieinabox/1.0\r\n"]]);
-                    $content = @file_get_contents($finalUrl, false, $ctx);
+                    $content = $this->fetchUrl($finalUrl, $ctx);
                     
                     $inboxUrl = '';
                     if ($content) {
@@ -678,5 +678,17 @@ class MicrosubHandler
                 echo json_encode(['error' => 'invalid_request', 'error_description' => 'Unknown action']);
                 break;
         }
+    }
+
+    /**
+     * Helper to fetch remote URL contents. Overridable in tests to avoid real network access.
+     *
+     * @param string $url
+     * @param resource|null $context
+     * @return string|false
+     */
+    protected function fetchUrl(string $url, $context = null)
+    {
+        return @file_get_contents($url, false, $context);
     }
 }

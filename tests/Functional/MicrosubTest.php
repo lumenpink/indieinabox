@@ -31,6 +31,15 @@ class TestMicrosubRouter extends \Indieinabox\WebRouter
                 };
                 $prop->setValue($this, $mockAuth);
             }
+
+            protected function fetchUrl(string $url, $context = null)
+            {
+                // Return dummy feed content for follow action or false for invalid targets without network I/O
+                if (str_contains($url, 'feed.xml')) {
+                    return '<?xml version="1.0"?><rss version="2.0"><channel><title>Test Feed</title></channel></rss>';
+                }
+                return false;
+            }
         };
 
         return $handler;

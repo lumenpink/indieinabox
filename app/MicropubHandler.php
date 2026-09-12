@@ -398,7 +398,7 @@ class MicropubHandler
      */
     protected function sendSuccessResponse(int $code, array $headers = [], $body = null): void
     {
-        header('HTTP/1.1 ' . $code);
+        http_response_code($code);
         foreach ($headers as $key => $value) {
             header($key . ': ' . $value);
         }
@@ -417,7 +417,7 @@ class MicropubHandler
      */
     protected function sendResponse(int $code, string $error, string $description): void
     {
-        header('HTTP/1.1 ' . $code);
+        http_response_code($code);
         header('Content-Type: application/json; charset=utf-8');
         echo json_encode([
             'error' => $error,

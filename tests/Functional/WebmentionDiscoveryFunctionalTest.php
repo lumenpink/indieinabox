@@ -16,6 +16,7 @@ class WebmentionDiscoveryFunctionalTest extends TestCase
     protected function setUp(): void
     {
         $this->dbPath = __DIR__ . '/test_worker_discovery.sqlite';
+        Database::disconnect();
         if (file_exists($this->dbPath)) {
             unlink($this->dbPath);
         }
@@ -42,7 +43,12 @@ class WebmentionDiscoveryFunctionalTest extends TestCase
         // Create a minimal Site mock (if needed by BackgroundWorker)
         $site = new Site();
 
-        $worker = new BackgroundWorker($site);
+        $worker = new class($site) extends BackgroundWorker {
+            protected function fetchUrl(string $url)
+            {
+                return false;
+            }
+        };
         
         // Capture output to prevent clutter
         ob_start();

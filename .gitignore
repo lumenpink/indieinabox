@@ -32,3 +32,5 @@ data/archived_pdfs/
 .env
 data
 .phpunit*
+public_reports/
+

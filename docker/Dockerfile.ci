@@ -1,5 +1,9 @@
-# CI image — PHP 8.4 + Xdebug + Composer for tests, psalm, and link-checker.
+# CI image — PHP 8.4 + Node.js 22 LTS + Xdebug + Composer
 # NOT the production image (see docker/Dockerfile for that — uses FrankenPHP).
+#
+# Node.js 22 LTS is required by the Forgejo runner (act) to execute
+# JavaScript-based actions (checkout, cache, upload-artifact, etc.)
+# when a container: is specified in the workflow job.
 #
 # Build:
 #   docker build -f docker/Dockerfile.ci -t indieinabox-ci:latest .
@@ -12,10 +16,14 @@ FROM php:8.4-cli
 # All required PHP extensions are already in php:8.4-cli:
 # curl, fileinfo, json, mbstring, pdo_sqlite, sqlite3, OPcache
 
-# System tools needed at runtime
+# System tools + Node.js 22 LTS
 RUN apt-get update && apt-get install -y --no-install-recommends \
         git \
         unzip \
+        curl \
+        ca-certificates \
+    && curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
+    && apt-get install -y --no-install-recommends nodejs \
     && rm -rf /var/lib/apt/lists/*
 
 # Xdebug — installed but OFF by default.

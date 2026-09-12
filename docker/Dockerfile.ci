@@ -16,6 +16,9 @@ FROM php:8.4-cli
 # All required PHP extensions are already in php:8.4-cli:
 # curl, fileinfo, json, mbstring, pdo_sqlite, sqlite3, OPcache
 
+# Install mlocati/docker-php-extension-installer helper for reliable extension builds
+COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/local/bin/
+
 # System tools + Node.js 22 LTS
 RUN apt-get update && apt-get install -y --no-install-recommends \
         git \
@@ -25,6 +28,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
     && apt-get install -y --no-install-recommends nodejs \
     && rm -rf /var/lib/apt/lists/*
+
+# Install required PHP extensions for image generation & testing: GD, zip, exif
+RUN install-php-extensions gd zip exif
 
 # Xdebug — installed but OFF by default.
 # Enable per-step with: env: XDEBUG_MODE: coverage

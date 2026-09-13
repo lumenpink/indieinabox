@@ -277,7 +277,7 @@ jobs:
           mkdir -p coverage
           git fetch origin pages:pages 2>/dev/null || true
           git show pages:coverage/clover.xml > coverage/clover.xml 2>/dev/null || true
-          git show pages:psalm.json > coverage/psalm.json 2>/dev/null || true
+          [ -s coverage/clover.xml ] || rm -f coverage/clover.xml
 
       # ── Option A: SonarCloud (Free SaaS for open source) ─────────────────
       - name: "SonarCloud Scan"
@@ -290,7 +290,6 @@ jobs:
             -Dsonar.projectKey=${{ vars.SONAR_PROJECT_KEY || 'indieinabox_indieinabox' }}
             -Dsonar.organization=${{ vars.SONAR_ORG || 'indieinabox' }}
             -Dsonar.php.coverage.reportPaths=coverage/clover.xml
-            -Dsonar.externalIssuesReportPaths=coverage/psalm.json
 
       # ── Option B: SonarQube ubuntu-latest (uncomment if preferred) ──────────────
       # - name: "SonarQube Scan (ubuntu-latest)"

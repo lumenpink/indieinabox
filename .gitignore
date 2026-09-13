@@ -34,3 +34,5 @@ data
 .phpunit*
 public_reports/
 .phpcs-cache
+.phpcscache
+.phpcs*

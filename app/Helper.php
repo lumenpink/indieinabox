@@ -76,16 +76,17 @@ class Helper
     public static function getKindConfig(string $kind): array
     {
         global $site;
-        if (!$site) {
-            echo "ERROR: global \$site is null!\n";
-        }
         $kind = strtolower($kind);
         
-        if (empty($site->config['kinds'])) {
-            $site->config['kinds'] = \Indieinabox\Database::getKinds();
+        if ($site && !empty($site->config['kinds'])) {
+            $config = $site->config['kinds'][$kind] ?? [];
+        } else {
+            $kinds = \Indieinabox\Database::getKinds();
+            if ($site) {
+                $site->config['kinds'] = $kinds;
+            }
+            $config = $kinds[$kind] ?? [];
         }
-        
-        $config = $site->config['kinds'][$kind] ?? [];
 
         if (empty($config['content_dir'])) {
             global $kindspath;

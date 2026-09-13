@@ -372,4 +372,75 @@ class Page
             $this->date = clone $this->date;
         }
     }
+
+    /**
+     * Converts this Page instance to a canonical Entry entity.
+     *
+     * @return \Indieinabox\Entry\Entry
+     */
+    public function toEntry(): \Indieinabox\Entry\Entry
+    {
+        $publishedAt = null;
+        if ($this->date instanceof DateTime) {
+            $publishedAt = \DateTimeImmutable::createFromMutable($this->date);
+        }
+
+        $author = [];
+        if (!empty($this->metadata->author)) {
+            $author['name'] = (string) $this->metadata->author;
+        }
+        if (!empty($this->metadata->nick)) {
+            $author['handle'] = (string) $this->metadata->nick;
+        }
+
+        $lang = 'en';
+        if (is_array($this->localization->lang)) {
+            $lang = $this->localization->lang[0] ?? 'en';
+        } elseif (is_string($this->localization->lang) && $this->localization->lang !== '') {
+            $lang = $this->localization->lang;
+        }
+
+        $translations = [];
+        $otherLangs = (array) ($this->localization->otherlang ?? []);
+        $otherPaths = (array) ($this->localization->otherlangpath ?? []);
+        foreach ($otherLangs as $idx => $code) {
+            if (isset($otherPaths[$idx])) {
+                $translations[(string) $code] = (string) $otherPaths[$idx];
+            }
+        }
+
+        $attachments = [];
+        foreach ((array) ($this->content->images ?? []) as $img) {
+            if (is_string($img) && $img !== '') {
+                $attachments[] = ['type' => 'image', 'url' => $img];
+            }
+        }
+
+        $isDraft = in_array('draft', (array) ($this->metadata->tags ?? []), true);
+
+        return new \Indieinabox\Entry\Entry([
+            'id' => $this->slug,
+            'slug' => $this->slug,
+            'title' => $this->metadata->title ?? null,
+            'content' => (string) ($this->content->content ?? ''),
+            'rawContent' => (string) ($this->content->rawBody ?? ''),
+            'publishedAt' => $publishedAt ?? new \DateTimeImmutable(),
+            'sourceNetwork' => 'local',
+            'sourceUrl' => 'local',
+            'author' => $author,
+            'syndicationTargets' => ['rss', 'atom', 'twtxt'],
+            'lang' => $lang,
+            'translations' => $translations,
+            'kind' => (string) ($this->metadata->kind ?? 'note'),
+            'tags' => (array) ($this->metadata->tags ?? []),
+            'inReplyTo' => $this->metadata->in_reply_to ?? null,
+            'attachments' => $attachments,
+            'isDraft' => $isDraft,
+            'metadata' => [
+                'layout' => $this->metadata->layout ?? null,
+                'hide_on_rss' => $this->metadata->hide_on_rss ?? false,
+                'noauthor' => $this->metadata->noauthor ?? false,
+            ],
+        ]);
+    }
 }

@@ -418,4 +418,12 @@ class Entry
 
         return new self(array_merge($data, $changes));
     }
+
+    /**
+     * Converts a Page instance to an Entry.
+     */
+    public static function fromPage(\Indieinabox\Page $page): self
+    {
+        return $page->toEntry();
+    }
 }

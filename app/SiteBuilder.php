@@ -12,6 +12,7 @@ use Indieinabox\Markdown\ASTParser;
 use Indieinabox\Markdown\GemtextRenderer;
 use Indieinabox\Markdown\GophermapRenderer;
 use Indieinabox\SiteBuilder\AssetPublisher;
+use Indieinabox\SiteBuilder\FeedPublisher;
 
 /**
  * Class SiteBuilder
@@ -38,6 +39,10 @@ class SiteBuilder
      * @var \Indieinabox\SiteBuilder\AssetPublisher
      */
     private AssetPublisher $assetPublisher;
+    /**
+     * @var \Indieinabox\SiteBuilder\FeedPublisher
+     */
+    private FeedPublisher $feedPublisher;
 
     /**
      * SiteBuilder constructor.
@@ -46,16 +51,19 @@ class SiteBuilder
      * @param \Indieinabox\Pages|null $pages An optional collection of parsed pages.
      * @param \Indieinabox\ParserInterface|null $parser An optional markdown parser implementation.
      * @param \Indieinabox\SiteBuilder\AssetPublisher|null $assetPublisher An optional asset publisher.
+     * @param \Indieinabox\SiteBuilder\FeedPublisher|null $feedPublisher An optional feed publisher.
      */
     public function __construct(
         Site $site,
         ?Pages $pages = null,
         ?ParserInterface $parser = null,
-        ?AssetPublisher $assetPublisher = null
+        ?AssetPublisher $assetPublisher = null,
+        ?FeedPublisher $feedPublisher = null
     ) {
         $this->site = $site;
         $this->pages = $pages ?? new Pages();
         $this->assetPublisher = $assetPublisher ?? new AssetPublisher($this->site);
+        $this->feedPublisher = $feedPublisher ?? new FeedPublisher($this->site);
 
         if ($parser !== null) {
             $this->parser = $parser;
@@ -95,6 +103,16 @@ class SiteBuilder
     public function getAssetPublisher(): AssetPublisher
     {
         return $this->assetPublisher;
+    }
+
+    /**
+     * Retrieves the feed publisher instance.
+     *
+     * @return \Indieinabox\SiteBuilder\FeedPublisher
+     */
+    public function getFeedPublisher(): FeedPublisher
+    {
+        return $this->feedPublisher;
     }
 
     /**
@@ -159,10 +177,10 @@ class SiteBuilder
         $s3 = microtime(true);
         $timings['Generate HTML/GMI/Gopher'] = ($s3 - $s2) * 1000;
         
-        // Twtxt update is now handled by cron/BackgroundWorker to avoid online dependencies during build,
-        // but we still generate local feeds and static timeline from the cache.
-        $this->generateTwtxt();
-        $this->generateFeed();
+        // Generate Feeds
+        $this->feedPublisher->publishFeeds($this->pages);
+        $this->compileTimelineStaticPage();
+        $this->loadThemeFeedView();
         $s4 = microtime(true);
         $timings['Generate Feeds'] = ($s4 - $s3) * 1000;
 
@@ -771,12 +789,9 @@ class SiteBuilder
     }
 
     /**
-     * Renders standard RSS and Atom feeds for the site.
-     * Uses the configured theme's feed view file if available.
-     *
-     * @return void
+     * Loads the theme feed view file if provided by the active theme.
      */
-    public function generateFeed(): void
+    private function loadThemeFeedView(): void
     {
         $base = $this->site->paths->baseDir;
         $site = $this->site;
@@ -970,101 +985,14 @@ class SiteBuilder
     }
 
     /**
-     * Generates Twtxt (Microblogging) feed files for the site and each language.
-     * Extracts content specific to the Twtxt format (max 140 chars or full content).
+     * Compiles the static timeline page from subscribed feeds and hubs.
      *
      * @return void
      */
-    public function generateTwtxt(): void
+    private function compileTimelineStaticPage(): void
     {
         $base = $this->site->paths->baseDir;
-        $outDirHtml = $base . DIRECTORY_SEPARATOR . $this->site->paths->outputDirHtml;
-        $outDirGemini = $base . DIRECTORY_SEPARATOR . $this->site->paths->outputDirGemini;
-        $outDirGopher = $base . DIRECTORY_SEPARATOR . $this->site->paths->outputDirGopher;
-        if (!is_dir($outDirHtml)) {
-            mkdir($outDirHtml, 0777, true);
-        }
-        if (!is_dir($outDirGemini)) {
-            mkdir($outDirGemini, 0777, true);
-        }
-        if (!is_dir($outDirGopher)) {
-            mkdir($outDirGopher, 0777, true);
-        }
-
-        // 1. Generate local feeds: public/twtxt.txt, rss.xml, atom.xml (and for each language)
         $twtxtManager = new \Indieinabox\Twtxt\TwtxtManager();
-        $feedManager = new \Indieinabox\Feeds\FeedManager();
-        $defaultLang = $this->site->localization->defaultLang ?? 'en';
-
-        $pagesByLang = [];
-        foreach ($this->pages as $page) {
-            $lang = $page->lang ?? $defaultLang;
-            if (!isset($pagesByLang[$lang])) {
-                $pagesByLang[$lang] = [];
-            }
-            $pagesByLang[$lang][] = $page;
-        }
-
-        echo "Generating twtxt.txt feeds...\n";
-        foreach ($pagesByLang as $lang => $langPages) {
-            $langDirHtml = $outDirHtml;
-            $langDirGemini = $outDirGemini;
-            $langDirGopher = $outDirGopher;
-            if ($lang !== $defaultLang) {
-                $langDirHtml .= DIRECTORY_SEPARATOR . $lang;
-                $langDirGemini .= DIRECTORY_SEPARATOR . $lang;
-                $langDirGopher .= DIRECTORY_SEPARATOR . $lang;
-                if (!is_dir($langDirHtml)) mkdir($langDirHtml, 0777, true);
-                if (!is_dir($langDirGemini)) mkdir($langDirGemini, 0777, true);
-                if (!is_dir($langDirGopher)) mkdir($langDirGopher, 0777, true);
-            }
-
-            $feedFile = $langDirHtml . DIRECTORY_SEPARATOR . 'twtxt.txt';
-            $twtxtManager->generateFeed(
-                $langPages,
-                $feedFile,
-                $this->site->metadata->fqdn,
-                $this->site->twtxt
-            );
-            
-            // Copy to other formats
-            $geminiTwtxt = $langDirGemini . DIRECTORY_SEPARATOR . 'twtxt.txt';
-            $gopherTwtxt = $langDirGopher . DIRECTORY_SEPARATOR . 'twtxt.txt';
-            copy($feedFile, $geminiTwtxt);
-            copy($feedFile, $gopherTwtxt);
-            
-            \Indieinabox\SiteBuilder::addManifest($feedFile);
-            \Indieinabox\SiteBuilder::addManifest($geminiTwtxt);
-            \Indieinabox\SiteBuilder::addManifest($gopherTwtxt);
-
-            // Generate RSS and Atom
-            $rssFile = $langDirHtml . DIRECTORY_SEPARATOR . 'rss.xml';
-            $atomFile = $langDirHtml . DIRECTORY_SEPARATOR . 'atom.xml';
-            
-            $feedLimit = $this->site->options->feed_limit ?? 20;
-            
-            $feedManager->generateRss(
-                $langPages,
-                $rssFile,
-                $this->site->metadata->fqdn,
-                $this->site->metadata,
-                $feedLimit
-            );
-            
-            $feedManager->generateAtom(
-                $langPages,
-                $atomFile,
-                $this->site->metadata->fqdn,
-                $this->site->metadata,
-                $feedLimit
-            );
-            
-            \Indieinabox\SiteBuilder::addManifest($rssFile);
-            \Indieinabox\SiteBuilder::addManifest($atomFile);
-        }
-
-        // 2. Fetch aggregated timeline & mentions if subscriptions/hubs are configured
-        echo "Fetching twtxt timeline and mentions...\n";
         $cacheDir = $base . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'twtxt_cache';
 
         $timelineEntries = [];
@@ -1077,7 +1005,6 @@ class SiteBuilder
             $mentionEntries = $twtxtManager->fetchHubMentions($this->site->twtxt->hubs, $this->site->metadata->fqdn, $cacheDir, false);
         }
 
-        // 3. Compile the static timeline page: public/timeline/index.html
         echo "Compiling timeline static page...\n";
         $timelinePage = Page::fromArray([
             'title' => 'Timeline',
@@ -1088,7 +1015,6 @@ class SiteBuilder
             'originalcontent' => ''
         ]);
 
-        // Expose timeline & mentions globally for timeline.php view template
         global $timeline, $mentions;
         $timeline = $timelineEntries;
         $mentions = $mentionEntries;

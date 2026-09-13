@@ -33,5 +33,4 @@ data/archived_pdfs/
 data
 .phpunit*
 public_reports/
-
 .phpcs-cache

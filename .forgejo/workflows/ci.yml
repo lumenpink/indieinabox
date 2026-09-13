@@ -335,7 +335,7 @@ jobs:
 
           # Delete the existing nightly release via API
           REL_ID=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
-            "$API_URL/repos/$REPO/releases/tags/nightly" | jq -r '.id // empty')
+            "$API_URL/repos/$REPO/releases/tags/nightly" | php -r '$d = json_decode(file_get_contents("php://stdin"), true); echo $d["id"] ?? "";')
           if [ -n "$REL_ID" ] && [ "$REL_ID" != "null" ]; then
             echo "Deleting nightly release ID: $REL_ID"
             if curl -sf -X DELETE -H "Authorization: token $GITHUB_TOKEN" \

@@ -73,11 +73,16 @@ class ThemeHelper
 
         $html .= '</div>';
 
+        global $site;
+        $defaultLang = $site->localization->defaultLang ?? 'en';
+        $pageLang = $page->lang ?? $defaultLang;
+        $langPrefix = ($pageLang === $defaultLang) ? '' : $pageLang . '/';
+
         // Line 3: Tags
         if (!empty($page->tags)) {
             $html .= '<div class="meta-line-3" style="margin-left: 0.6em;">';
             foreach ($page->tags as $tag) {
-                $html .= '<a href="' . $page->relpath . 'tag/' . Helper::slugize($tag) . '/" class="p-category">#' . htmlspecialchars($tag) . '</a>&#32;';
+                $html .= '<a href="' . $page->relpath . $langPrefix . 'tag/' . Helper::slugize($tag) . '/" class="p-category">#' . htmlspecialchars($tag) . '</a>&#32;';
             }
             $html .= '</div>';
         }
@@ -102,7 +107,7 @@ class ThemeHelper
             
             $flowerbedLinks = [];
             foreach ($flowerbed as $fb) {
-                $flowerbedLinks[] = '<a href="' . $page->relpath . 'flowerbed/' . Helper::slugize($fb) . '/">' . htmlspecialchars(Helper::translate($fb)) . '</a>';
+                $flowerbedLinks[] = '<a href="' . $page->relpath . $langPrefix . 'flowerbed/' . Helper::slugize($fb) . '/">' . htmlspecialchars(Helper::translate($fb)) . '</a>';
             }
             $html .= '<div class="meta-garden-fields" style="margin-left: 0.6em;">';
             $html .= ' • ' . Helper::translate('Flowerbed') . ': ' . implode(', ', $flowerbedLinks) . '<br>';

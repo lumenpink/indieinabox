@@ -14,7 +14,7 @@ class LinkChecker
         $this->site = $site;
     }
 
-    public function run(?string $reportPath = null): void
+    public function run(?string $reportPath = null, bool $skipExternal = false): void
     {
         $checkedAt = (new \DateTimeImmutable())->format(\DateTimeInterface::ATOM);
         $base = rtrim($this->site->paths->baseDir, DIRECTORY_SEPARATOR);
@@ -49,8 +49,9 @@ class LinkChecker
 
         foreach ($links as $link => $sources) {
             if (strpos($link, 'http://') === 0 || strpos($link, 'https://') === 0) {
-                // Ignore localhost links in compiled static check
-                if (strpos($link, 'http://localhost') !== 0) {
+                // Ignore localhost and RFC documentation domains (example.com, example.org, example.net)
+                $host = parse_url($link, PHP_URL_HOST);
+                if ($host && !preg_match('/(^|\.)(example\.(com|org|net)|localhost)$/i', $host)) {
                     $externalLinks[$link] = $sources;
                 }
             } elseif (strpos($link, 'mailto:') === 0 || strpos($link, 'tel:') === 0 || strpos($link, '#') === 0 || strpos($link, 'data:') === 0) {
@@ -63,8 +64,12 @@ class LinkChecker
         echo "Checking " . count($internalLinks) . " internal links...\n";
         $this->checkInternalLinks($internalLinks, $base, $htmlDir);
 
-        echo "Checking " . count($externalLinks) . " external links...\n";
-        $this->checkExternalLinks($externalLinks);
+        if (!$skipExternal) {
+            echo "Checking " . count($externalLinks) . " external links...\n";
+            $this->checkExternalLinks($externalLinks);
+        } else {
+            echo "Skipping external links check (--skip-external).\n";
+        }
 
         if ($reportPath !== null) {
             $this->writeReport($reportPath, $checkedAt, count($internalLinks), count($externalLinks));
@@ -167,58 +172,109 @@ class LinkChecker
 
             if (strpos($path, '/media/') === 0) {
                 $target = $base . DIRECTORY_SEPARATOR . $this->site->paths->outputDirMedia . substr($path, 6);
+                if (!file_exists($target)) {
+                    $this->errors[] = [
+                        'link'    => $link,
+                        'status'  => '404 File Not Found',
+                        'sources' => $sources,
+                    ];
+                    $this->results[] = [
+                        'link'    => $link,
+                        'type'    => 'internal',
+                        'status'  => '404 File Not Found',
+                        'sources' => array_values(array_unique($sources)),
+                    ];
+                } else {
+                    $this->results[] = [
+                        'link'    => $link,
+                        'type'    => 'internal',
+                        'status'  => 'ok',
+                        'sources' => array_values(array_unique($sources)),
+                    ];
+                }
             } else {
                 $path = urldecode($path);
 
-                // If the link is relative and we have sources, resolve it relative to the first source file
-                if (strpos($path, '/') !== 0 && count($sources) > 0) {
-                    $sourceFile = $sources[0];
-                    $sourceDir = dirname($sourceFile);
-                    if ($sourceDir === '.') $sourceDir = '';
-                    $resolvedPath = $sourceDir . '/' . $path;
+                if (strpos($path, '/') !== 0) {
+                    $failedSources = [];
+                    foreach ($sources as $sourceFile) {
+                        $sourceDir = dirname($sourceFile);
+                        if ($sourceDir === '.' || $sourceDir === DIRECTORY_SEPARATOR) $sourceDir = '';
+                        $resolvedPath = $sourceDir . '/' . $path;
 
-                    // Resolve ../ and ./
-                    $parts = explode('/', $resolvedPath);
-                    $absolutes = [];
-                    foreach ($parts as $part) {
-                        if ('' === $part || '.' === $part) continue;
-                        if ('..' === $part) {
-                            array_pop($absolutes);
-                        } else {
-                            $absolutes[] = $part;
+                        $parts = explode('/', $resolvedPath);
+                        $absolutes = [];
+                        foreach ($parts as $part) {
+                            if ('' === $part || '.' === $part) continue;
+                            if ('..' === $part) {
+                                array_pop($absolutes);
+                            } else {
+                                $absolutes[] = $part;
+                            }
+                        }
+                        $resPath = '/' . implode('/', $absolutes);
+                        $target = $htmlDir . $resPath;
+
+                        if (is_dir($target)) {
+                            $target = rtrim($target, '/') . '/index.html';
+                        } elseif (!is_file($target) && is_file($target . '.html')) {
+                            $target = $target . '.html';
+                        }
+
+                        if (!file_exists($target)) {
+                            $failedSources[] = $sourceFile;
                         }
                     }
-                    $path = '/' . implode('/', $absolutes);
+
+                    if (count($failedSources) > 0) {
+                        $this->errors[] = [
+                            'link'    => $link,
+                            'status'  => '404 File Not Found',
+                            'sources' => $failedSources,
+                        ];
+                        $this->results[] = [
+                            'link'    => $link,
+                            'type'    => 'internal',
+                            'status'  => '404 File Not Found',
+                            'sources' => array_values(array_unique($failedSources)),
+                        ];
+                    } else {
+                        $this->results[] = [
+                            'link'    => $link,
+                            'type'    => 'internal',
+                            'status'  => 'ok',
+                            'sources' => array_values(array_unique($sources)),
+                        ];
+                    }
+                } else {
+                    $target = $htmlDir . $path;
+                    if (is_dir($target)) {
+                        $target = rtrim($target, '/') . '/index.html';
+                    } elseif (!is_file($target) && is_file($target . '.html')) {
+                        $target = $target . '.html';
+                    }
+
+                    if (!file_exists($target)) {
+                        $this->errors[] = [
+                            'link'    => $link,
+                            'status'  => '404 File Not Found',
+                            'sources' => $sources,
+                        ];
+                        $this->results[] = [
+                            'link'    => $link,
+                            'type'    => 'internal',
+                            'status'  => '404 File Not Found',
+                            'sources' => array_values(array_unique($sources)),
+                        ];
+                    } else {
+                        $this->results[] = [
+                            'link'    => $link,
+                            'type'    => 'internal',
+                            'status'  => 'ok',
+                            'sources' => array_values(array_unique($sources)),
+                        ];
+                    }
                 }
-
-                $target = $htmlDir . $path;
-
-                if (is_dir($target)) {
-                    $target = rtrim($target, '/') . '/index.html';
-                } elseif (!is_file($target) && is_file($target . '.html')) {
-                    $target = $target . '.html';
-                }
-            }
-
-            if (!file_exists($target)) {
-                $this->errors[] = [
-                    'link'    => $link,
-                    'status'  => '404 File Not Found',
-                    'sources' => $sources,
-                ];
-                $this->results[] = [
-                    'link'    => $link,
-                    'type'    => 'internal',
-                    'status'  => '404 File Not Found',
-                    'sources' => array_values(array_unique($sources)),
-                ];
-            } else {
-                $this->results[] = [
-                    'link'    => $link,
-                    'type'    => 'internal',
-                    'status'  => 'ok',
-                    'sources' => array_values(array_unique($sources)),
-                ];
             }
         }
     }

@@ -196,6 +196,7 @@ if (php_sapi_name() === 'cli') {
         $worker->runAll();
     } elseif (isset($argv[1]) && $argv[1] === 'test-links') {
         $reportPath = null;
+        $skipExternal = in_array('--skip-external', $argv, true) || in_array('--internal-only', $argv, true);
         foreach ($argv as $i => $arg) {
             if ($arg === '--report' && isset($argv[$i + 1])) {
                 $reportPath = $argv[$i + 1];
@@ -203,7 +204,7 @@ if (php_sapi_name() === 'cli') {
             }
         }
         $checker = new \Indieinabox\LinkChecker($site);
-        $checker->run($reportPath);
+        $checker->run($reportPath, $skipExternal);
     } elseif (isset($argv[1]) && $argv[1] === 'backup') {
         $skipContent = in_array('--no-content', $argv, true);
         $skipMedia = in_array('--no-media', $argv, true);

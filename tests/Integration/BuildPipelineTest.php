@@ -184,7 +184,6 @@ PHP
     // 5. Setup symlinks to app, bootstrap, data, vendor
     setupSandboxRunner($sandbox);
 
-    // 6. Run the build pipeline
     $cmd = 'php ' . escapeshellarg($sandbox . '/build.php');
     $output = shell_exec($cmd);
 

@@ -803,6 +803,18 @@ class Helper
                     }
                     break;
                 }
+                foreach ($langs as $lCode => $lVal) {
+                    if ($lVal !== '' && strcasecmp($lVal, $text) === 0) {
+                        $found = $original;
+                        if ($lang === ($site->localization->defaultLang ?? 'en')) {
+                            return $original;
+                        }
+                        if (isset($langs[$lang]) && $langs[$lang] !== '') {
+                            return $langs[$lang];
+                        }
+                        break 2;
+                    }
+                }
             }
         }
 

@@ -487,20 +487,29 @@ class SiteBuilder
                         $this->pages->add($page);
                     }
                 } elseif (is_dir($path)) {
+                    $baseDir = rtrim($this->site->paths->baseDir ?? '', DIRECTORY_SEPARATOR);
                     $themeDir = $this->site->paths->themeDir ?? 'theme';
-                    if (
-                        strpos($path, DIRECTORY_SEPARATOR . "app") === false
-                        && strpos($path, DIRECTORY_SEPARATOR . "bootstrap") === false
-                        && strpos($path, DIRECTORY_SEPARATOR . "vendor") === false
-                        && strpos($path, DIRECTORY_SEPARATOR . "resources") === false
-                        && strpos($path, DIRECTORY_SEPARATOR . $themeDir) === false
-                        && strpos($path, DIRECTORY_SEPARATOR . "theme") === false
-                        && strpos($path, DIRECTORY_SEPARATOR . "data") === false
-                        && strpos($path, DIRECTORY_SEPARATOR . $this->site->paths->outputDirHtml) === false
-                        && strpos($path, DIRECTORY_SEPARATOR . $this->site->paths->outputDirGemini) === false
-                        && strpos($path, DIRECTORY_SEPARATOR . $this->site->paths->outputDirGopher) === false
-                        && strpos($path, DIRECTORY_SEPARATOR . $this->site->paths->outputDirMedia) === false
-                    ) {
+                    $ignoredDirs = [
+                        $baseDir . DIRECTORY_SEPARATOR . "app",
+                        $baseDir . DIRECTORY_SEPARATOR . "bootstrap",
+                        $baseDir . DIRECTORY_SEPARATOR . "vendor",
+                        $baseDir . DIRECTORY_SEPARATOR . "resources",
+                        $baseDir . DIRECTORY_SEPARATOR . "theme",
+                        $baseDir . DIRECTORY_SEPARATOR . "data",
+                        $baseDir . DIRECTORY_SEPARATOR . $themeDir,
+                        $baseDir . DIRECTORY_SEPARATOR . $this->site->paths->outputDirHtml,
+                        $baseDir . DIRECTORY_SEPARATOR . $this->site->paths->outputDirGemini,
+                        $baseDir . DIRECTORY_SEPARATOR . $this->site->paths->outputDirGopher,
+                        $baseDir . DIRECTORY_SEPARATOR . $this->site->paths->outputDirMedia,
+                    ];
+                    $skip = false;
+                    foreach ($ignoredDirs as $ignored) {
+                        if ($path === $ignored || strpos($path, $ignored . DIRECTORY_SEPARATOR) === 0) {
+                            $skip = true;
+                            break;
+                        }
+                    }
+                    if (!$skip) {
                         $this->scan($path);
                     }
                 }
@@ -1201,6 +1210,23 @@ class SiteBuilder
             array_shift($parts);
         }
 
+        if (isset($parts[0]) && in_array($parts[0], ['tag', 'flowerbed'], true)) {
+            $taxLinks = [];
+            $taxName = $parts[0];
+            $taxTerm = $parts[1] ?? null;
+            foreach ($langs as $l) {
+                if ($taxTerm !== null) {
+                    $translatedTerm = \Indieinabox\Helper::slugize(\Indieinabox\Helper::translate($taxTerm, $l));
+                    $taxSubpath = $taxName . '/' . $translatedTerm . '/';
+                } else {
+                    $taxSubpath = $taxName . '/';
+                }
+                $taxLinks[$l] = ($l === $defaultLang ? '/' : '/' . $l . '/') . $taxSubpath;
+            }
+            return $taxLinks;
+        }
+
+
         // Get localized folder names of all kinds in all active languages
         $kindFolders = [];
         if (!empty($this->site->config['kinds'])) {
@@ -1385,7 +1411,7 @@ class SiteBuilder
                 if ($prettylinks) {
                     $url = $page->relpath . $langPrefix . $folder . '/';
                 } else {
-                    $url = $page->relpath . $langPrefix . $folder . '/index.html';
+                    $url = $page->relpath . $langPrefix . $folder . '.html';
                 }
                 $label = \Indieinabox\Helper::kindLabel($k, $lang);
                 $footerLinks[] = ['url' => $url, 'label' => $label, 'order' => PHP_INT_MAX];

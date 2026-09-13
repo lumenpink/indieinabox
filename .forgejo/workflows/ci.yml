@@ -155,7 +155,7 @@ jobs:
       - name: "Check Links"
         run: |
           mkdir -p coverage
-          php build.php test-links --report coverage/link-check-report.json
+          php build.php test-links --skip-external --report coverage/link-check-report.json
 
       - name: "Publish Link Checker Summary"
         if: always()

@@ -75,6 +75,18 @@ INSERT OR REPLACE INTO kinds (kind_key, config_json) VALUES ('rsvp',
     '{"content_dir":"rsvps","title":{"en":"RSVPs"},"palette":{"bg":"#FBE9E7","fg":"#BF360C"},' ||
     '"has_title":false,"show_on_home":true,"display_mode":"default"}'
 );
+INSERT OR REPLACE INTO kinds (kind_key, config_json) VALUES ('listen', 
+    '{"content_dir":"listens","title":{"en":"Listens"},"palette":{"bg":"#EDE7F6","fg":"#4527A0"},' ||
+    '"has_title":true,"show_on_home":true,"display_mode":"default"}'
+);
+INSERT OR REPLACE INTO kinds (kind_key, config_json) VALUES ('watch', 
+    '{"content_dir":"watches","title":{"en":"Watches"},"palette":{"bg":"#E8EAF6","fg":"#1A237E"},' ||
+    '"has_title":true,"show_on_home":true,"display_mode":"default"}'
+);
+INSERT OR REPLACE INTO kinds (kind_key, config_json) VALUES ('read', 
+    '{"content_dir":"reads","title":{"en":"Reads"},"palette":{"bg":"#EFEBE9","fg":"#3E2723"},' ||
+    '"has_title":true,"show_on_home":true,"display_mode":"default"}'
+);
 INSERT INTO translations (lang, phrase_key, phrase_value) VALUES ('en', 'Notes', 'Notes');
 INSERT INTO translations (lang, phrase_key, phrase_value) VALUES ('en', 'Digital Garden', 'Digital Garden');
 INSERT INTO translations (lang, phrase_key, phrase_value) VALUES ('en', 'Replies', 'Replies');
@@ -85,6 +97,9 @@ INSERT INTO translations (lang, phrase_key, phrase_value) VALUES ('en', 'Photos'
 INSERT INTO translations (lang, phrase_key, phrase_value) VALUES ('en', 'Videos', 'Videos');
 INSERT INTO translations (lang, phrase_key, phrase_value) VALUES ('en', 'Checkins', 'Checkins');
 INSERT INTO translations (lang, phrase_key, phrase_value) VALUES ('en', 'RSVPs', 'RSVPs');
+INSERT INTO translations (lang, phrase_key, phrase_value) VALUES ('en', 'Listens', 'Listens');
+INSERT INTO translations (lang, phrase_key, phrase_value) VALUES ('en', 'Watches', 'Watches');
+INSERT INTO translations (lang, phrase_key, phrase_value) VALUES ('en', 'Reads', 'Reads');
 INSERT INTO translations (lang, phrase_key, phrase_value) VALUES ('en', 'Home', 'Home');
 INSERT INTO translations (lang, phrase_key, phrase_value) VALUES ('en', 'Index', 'Index');
 INSERT INTO translations (lang, phrase_key, phrase_value) VALUES ('en', 'Now', 'Now');
@@ -115,7 +130,7 @@ INSERT INTO settings (key, value) VALUES ('originalmonths',
     '"September","October","November","December"]'
 );
 
-INSERT INTO settings (key, value) VALUES ('kindspath', '{"article":["articles"], "note":["notes"], "garden":["garden"], "reply":["replies"], "like":["likes"], "repost":["reposts"], "bookmark":["bookmarks"], "photo":["photos"], "video":["videos"], "checkin":["checkins"], "rsvp":["rsvps"]}');
+INSERT INTO settings (key, value) VALUES ('kindspath', '{"article":["articles"], "note":["notes"], "garden":["garden","gardens"], "reply":["replies"], "like":["likes"], "repost":["reposts"], "bookmark":["bookmarks"], "photo":["photos"], "video":["videos"], "checkin":["checkins"], "rsvp":["rsvps"], "listen":["listens"], "watch":["watches"], "read":["reads"]}');
 
 CREATE TABLE IF NOT EXISTS indieauth_codes (
     code_hash TEXT PRIMARY KEY,

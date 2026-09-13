@@ -85,21 +85,16 @@ class Helper
             $site->config['kinds'] = \Indieinabox\Database::getKinds();
         }
         
-        $config = $site->config['kinds'][$kind] ?? null;
+        $config = $site->config['kinds'][$kind] ?? [];
 
-        if (!$config) {
-            static $warned = [];
-            if (!isset($warned[$kind]) && !in_array($kind, ['generic', 'page', 'home'])) {
-                if (php_sapi_name() === 'cli' && !defined('PEST_TESTING')) {
-                    echo "[WARNING] Missing config for kind '{$kind}'. config is:\n";
-                    var_dump($site->config['kinds'][$kind] ?? 'null');
-                    echo "Keys in kinds are:\n";
-                    var_dump(array_keys($site->config['kinds'] ?? []));
-                    echo "Using defaults.\n";
-                }
-                $warned[$kind] = true;
+        if (empty($config['content_dir'])) {
+            global $kindspath;
+            if ($kindspath === null) {
+                $kindspath = \Indieinabox\Database::getSetting('kindspath', []);
             }
-            $config = [];
+            if (!empty($kindspath[$kind])) {
+                $config['content_dir'] = is_array($kindspath[$kind]) ? reset($kindspath[$kind]) : $kindspath[$kind];
+            }
         }
 
         return array_merge([

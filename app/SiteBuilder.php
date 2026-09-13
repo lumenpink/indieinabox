@@ -536,15 +536,20 @@ class SiteBuilder
         // Generate Sitemap
         $this->compileSitemap();
 
-        $kinds = $this->site->config['kinds'] ?? [];
-        foreach ($kinds as $kind => $config) {
-            if (in_array($kind, ['generic', 'page'])) {
+        $allKinds = array_unique(array_merge(
+            array_keys($this->site->config['kinds'] ?? []),
+            array_keys($pagesByKind)
+        ));
+
+        foreach ($allKinds as $kind) {
+            if (in_array($kind, ['generic', 'page', 'home'])) {
                 continue;
             }
             $pagesForKind = $pagesByKind[$kind] ?? [];
             if (empty($pagesForKind)) {
                 continue;
             }
+            $config = $this->site->config['kinds'][$kind] ?? Helper::getKindConfig($kind);
             if (isset($config['show_in_menu']) && !$config['show_in_menu']) {
                 continue;
             }

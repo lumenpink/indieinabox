@@ -271,19 +271,13 @@ jobs:
         with:
           fetch-depth: 0   # Required for blame and history in Sonar
 
-      - name: "Download Clover report"
+      - name: "Restore reports from Pages branch (if available)"
         if: env.SONAR_TOKEN != ''
-        uses: https://github.com/actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a # v3.0.2
-        with:
-          name: coverage-clover
-          path: coverage
-
-      - name: "Download Psalm report"
-        if: env.SONAR_TOKEN != ''
-        uses: https://github.com/actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a # v3.0.2
-        with:
-          name: psalm-report
-          path: coverage
+        run: |
+          mkdir -p coverage
+          git fetch origin pages:pages 2>/dev/null || true
+          git show pages:coverage/clover.xml > coverage/clover.xml 2>/dev/null || true
+          git show pages:psalm.json > coverage/psalm.json 2>/dev/null || true
 
       # ── Option A: SonarCloud (Free SaaS for open source) ─────────────────
       - name: "SonarCloud Scan"

@@ -136,6 +136,10 @@ if ($isPages) {
     if (is_dir($coverageDir . '/html')) {
         copyDir($coverageDir . '/html', $outDir . '/coverage');
     }
+    if (file_exists($coverageDir . '/clover.xml')) {
+        @mkdir($outDir . '/coverage', 0755, true);
+        copy($coverageDir . '/clover.xml', $outDir . '/coverage/clover.xml');
+    }
     // Copy OWASP report if exists
     if (is_dir($coverageDir . '/dependency-check')) {
         copyDir($coverageDir . '/dependency-check', $outDir . '/dependency-check');

@@ -200,7 +200,6 @@ it('triggers die handler when config has neither data_dir nor db_path', function
 it('connects database successfully', function () {
     $ref = new \ReflectionClass(Database::class);
     $prop = $ref->getProperty('db');
-    $prop->setAccessible(true);
     $originalDb = $prop->getValue();
 
     try {
@@ -241,7 +240,6 @@ it('connects database successfully', function () {
 it('handles database connection failure gracefully', function () {
     $ref = new \ReflectionClass(Database::class);
     $prop = $ref->getProperty('db');
-    $prop->setAccessible(true);
     $originalDb = $prop->getValue();
 
     try {

@@ -11,6 +11,7 @@ use Indieinabox\Translations\UrlTranslations;
 use Indieinabox\Markdown\ASTParser;
 use Indieinabox\Markdown\GemtextRenderer;
 use Indieinabox\Markdown\GophermapRenderer;
+use Indieinabox\SiteBuilder\AssetPublisher;
 
 /**
  * Class SiteBuilder
@@ -33,6 +34,10 @@ class SiteBuilder
      * @var \Indieinabox\ParserInterface
      */
     private ParserInterface $parser;
+    /**
+     * @var \Indieinabox\SiteBuilder\AssetPublisher
+     */
+    private AssetPublisher $assetPublisher;
 
     /**
      * SiteBuilder constructor.
@@ -40,11 +45,17 @@ class SiteBuilder
      * @param \Indieinabox\Site $site The site configuration and environment settings.
      * @param \Indieinabox\Pages|null $pages An optional collection of parsed pages.
      * @param \Indieinabox\ParserInterface|null $parser An optional markdown parser implementation.
+     * @param \Indieinabox\SiteBuilder\AssetPublisher|null $assetPublisher An optional asset publisher.
      */
-    public function __construct(Site $site, ?Pages $pages = null, ?ParserInterface $parser = null)
-    {
+    public function __construct(
+        Site $site,
+        ?Pages $pages = null,
+        ?ParserInterface $parser = null,
+        ?AssetPublisher $assetPublisher = null
+    ) {
         $this->site = $site;
         $this->pages = $pages ?? new Pages();
+        $this->assetPublisher = $assetPublisher ?? new AssetPublisher($this->site);
 
         if ($parser !== null) {
             $this->parser = $parser;
@@ -74,6 +85,16 @@ class SiteBuilder
     public function getPages(): Pages
     {
         return $this->pages;
+    }
+
+    /**
+     * Retrieves the asset publisher instance.
+     *
+     * @return \Indieinabox\SiteBuilder\AssetPublisher
+     */
+    public function getAssetPublisher(): AssetPublisher
+    {
+        return $this->assetPublisher;
     }
 
     /**
@@ -146,7 +167,7 @@ class SiteBuilder
         $timings['Generate Feeds'] = ($s4 - $s3) * 1000;
 
         // Copy assets
-        $this->copyAssets($base . DIRECTORY_SEPARATOR . $themeDir . DIRECTORY_SEPARATOR . "views");
+        $this->assetPublisher->publishViewAssets($base . DIRECTORY_SEPARATOR . $themeDir . DIRECTORY_SEPARATOR . "views");
         $s5 = microtime(true);
         $timings['Copy Assets'] = ($s5 - $s4) * 1000;
 
@@ -154,7 +175,7 @@ class SiteBuilder
         if (isset($this->site->options->skipMedia) && $this->site->options->skipMedia) {
             echo "Skipping media files\n";
         } else {
-            $this->copyMedia();
+            $this->assetPublisher->publishMedia();
         }
         $s6 = microtime(true);
         $timings['Copy Media'] = ($s6 - $s5) * 1000;
@@ -163,12 +184,12 @@ class SiteBuilder
         if ($this->site->options->skipStatic) {
             echo "Skipping static files\n";
         } else {
-            $this->copyStatic($base . DIRECTORY_SEPARATOR . $themeDir . DIRECTORY_SEPARATOR . "static");
+            $this->assetPublisher->publishStaticFiles($base . DIRECTORY_SEPARATOR . $themeDir . DIRECTORY_SEPARATOR . "static");
         }
         $s7 = microtime(true);
         $timings['Copy Static Files'] = ($s7 - $s6) * 1000;
 
-        $this->garbageCollect();
+        $this->assetPublisher->garbageCollect(self::$manifest);
         $s8 = microtime(true);
         $timings['Garbage Collect'] = ($s8 - $s7) * 1000;
 
@@ -184,79 +205,6 @@ class SiteBuilder
         echo "+----------------------------------+-----------------+\n";
         printf("| %-32s | %15.2f |\n", 'TOTAL BUILD TIME', $totalTime);
         echo "+----------------------------------+-----------------+\n";
-    }
-
-    /**
-     * Scans output directories and removes files not registered in the manifest.
-     * Removes empty directories as well.
-     */
-    private function garbageCollect(): void
-    {
-        echo "Running Garbage Collector...\n";
-        $base = $this->site->paths->baseDir;
-        $dirs = [
-            $base . DIRECTORY_SEPARATOR . $this->site->paths->outputDirHtml,
-            $base . DIRECTORY_SEPARATOR . $this->site->paths->outputDirGemini,
-            $base . DIRECTORY_SEPARATOR . $this->site->paths->outputDirGopher,
-            $base . DIRECTORY_SEPARATOR . $this->site->paths->outputDirMedia,
-        ];
-
-        foreach ($dirs as $dir) {
-            if (is_dir($dir)) {
-                $this->cleanOrphanedFiles($dir);
-            }
-        }
-    }
-
-    /**
-     * Recursively deletes orphaned files and empty directories.
-     */
-    private function cleanOrphanedFiles(string $dir): void
-    {
-        $items = scandir($dir);
-        if ($items === false) return;
-
-        foreach ($items as $item) {
-            if ($item === '.' || $item === '..') continue;
-            
-            $path = $dir . DIRECTORY_SEPARATOR . $item;
-            if (is_dir($path)) {
-                $this->cleanOrphanedFiles($path);
-                // After cleaning contents, check if directory is empty
-                $contents = scandir($path);
-                if ($contents !== false && count($contents) <= 2) {
-                    rmdir($path);
-                }
-            } elseif (is_file($path)) {
-                // Remove if not in manifest
-                if (!isset(self::$manifest[$path])) {
-                    unlink($path);
-                }
-            }
-        }
-    }
-
-    /**
-     * Copies static media files from the content directory to the public media output directory.
-     * Preserves directory structures and handles file deduplication.
-     * 
-     * @return void
-     */
-    public function copyMedia(): void
-    {
-        $base = $this->site->paths->baseDir;
-        $contentMediaDir = rtrim($this->site->paths->getContentPath(), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . 'media';
-        $destMedia = $this->site->paths->outputDirMedia;
-        if (is_dir($contentMediaDir)) {
-            echo "Copying media files\n";
-            ThemeManager::copyStaticFiles($contentMediaDir, $base, $destMedia);
-        }
-
-        $microsubMediaDir = $base . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'microsub' . DIRECTORY_SEPARATOR . 'media';
-        if (is_dir($microsubMediaDir)) {
-            echo "Copying microsub media files\n";
-            ThemeManager::copyStaticFiles($microsubMediaDir, $base, $destMedia . DIRECTORY_SEPARATOR . 'microsub');
-        }
     }
     /**
      * Generates pseudo-translated pages for missing languages to maintain parity.
@@ -842,46 +790,6 @@ class SiteBuilder
         if (file_exists($file) && is_readable($file)) {
             ThemeManager::loadView($file, get_defined_vars());
         }
-    }
-
-    /**
-     * Copies theme assets (e.g., CSS, JS, fonts) from the theme directory to the public output.
-     *
-     * @param string $dir The source directory containing theme assets.
-     * @return void
-     */
-    public function copyAssets(string $dir): void
-    {
-        $base = $this->site->paths->baseDir;
-
-        if (!is_dir($dir) && !class_exists('\\DefaultTheme')) {
-            return;
-        }
-
-        ThemeManager::copyViewAssets($dir, $base, $this->site->paths->outputDirHtml);
-    }
-
-    /**
-     * Copies general static files from the given directory to the output HTML directory.
-     * Also triggers the injection of live.js for hot-reloading if dev mode is enabled.
-     *
-     * @param string $dir The source directory containing static files.
-     * @return bool True if copy was successful or no theme exists, false otherwise.
-     */
-    public function copyStatic(string $dir): bool
-    {
-        $base = $this->site->paths->baseDir;
-
-        if (!is_dir($dir) && !class_exists('\\DefaultTheme')) {
-            return false;
-        }
-
-        echo "Copying static files\n";
-        ThemeManager::copyStaticFiles($dir, $base, $this->site->paths->outputDirHtml);
-
-
-
-        return true;
     }
 
 

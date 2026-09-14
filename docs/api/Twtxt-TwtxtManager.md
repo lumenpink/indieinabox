@@ -13,26 +13,6 @@ Cleans a message by stripping Markdown formatting and collapsing it to a single 
 @param string $text
 @return string
 
-### formatPageToTwtxtMessage()
-`public static function formatPageToTwtxtMessage(Indieinabox\Page $page, string $fqdn): string`
-
-Formats a Page object content into a twtxt message based on its kind.
-
-@param Page $page
-@param string $fqdn
-@return string
-
-### generateFeed()
-`public function generateFeed(array $pages, string $outputFile, string $fqdn, Indieinabox\Site\Twtxt $config): void`
-
-Generates a twtxt.txt feed and writes it to the output file.
-
-@param Page[] $pages
-@param string $outputFile
-@param string $fqdn
-@param TwtxtConfig $config
-@return void
-
 ### formatMessageToHtml()
 `public static function formatMessageToHtml(string $message): string`
 
@@ -42,31 +22,35 @@ Converts raw message text into HTML with mentions, hashtags, and links formatted
 @return string
 
 ### parseFeedContent()
-`public static function parseFeedContent(string $content, string $defaultNick): array`
+`public static function parseFeedContent(string $content, string $defaultNick, ?string $sourceUrl = null): array`
 
-Parses a twtxt feed string into structured TwtxtEntry objects.
+Parses a twtxt feed string into universal Entry objects.
 
 @param string $content
 @param string $defaultNick
-@return TwtxtEntry[]
+@param string|null $sourceUrl
+@return Entry[]
 
 ### fetchTimeline()
-`public function fetchTimeline(array $following, string $cacheDir): array`
+`public function fetchTimeline(array $following, string $cacheDir, bool $fetchOnline = false): array`
 
 Fetches timeline updates from remote feeds.
 
 @param array<int, array<string, string>> $following
 @param string $cacheDir
-@return TwtxtEntry[]
+@param bool $fetchOnline If false, only reads from local cache.
+@return Entry[]
 
 ### fetchHubMentions()
-`public function fetchHubMentions(array $hubs, string $fqdn): array`
+`public function fetchHubMentions(array $hubs, string $fqdn, string $cacheDir, bool $fetchOnline = false): array`
 
 Queries all configured hubs to fetch replies/mentions.
 
 @param array<int, string> $hubs
 @param string $fqdn
-@return TwtxtEntry[]
+@param string $cacheDir
+@param bool $fetchOnline If false, only reads from local cache.
+@return Entry[]
 
 ### fetchUrl()
 `private static function fetchUrl(string $url): string|false`

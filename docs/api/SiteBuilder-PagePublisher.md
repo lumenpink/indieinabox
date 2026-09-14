@@ -1,58 +1,68 @@
 # PagePublisher
 **Namespace:** `Indieinabox\SiteBuilder`
 
-Class PagePublisher
+Handles rendering, compilation, and file publication of Page objects
+across HTML, Gemini, and Gopher protocols.
 
-Responsible for publishing individual `Page` entities across multiple protocols and formats:
-HTML, Gemini gemtext (`.gmi`), Gopher (`gophermap`), and ActivityPub JSON.
+## Properties
+
+### `private Indieinabox\Site $site`
+
+### `private Indieinabox\Pages $pages`
 
 ## Methods
 
 ### __construct()
-```php
-public function __construct(Site $site, Pages $pages)
-```
-Initializes the publisher with site settings and page collection.
+`public function __construct(Indieinabox\Site $site, Indieinabox\Pages $pages)`
 
 ### publish()
-```php
-public function publish(Page $page): void
-```
-Publishes a single page into all enabled formats (skips draft pages).
+`public function publish(Indieinabox\Page $page): void`
+
+Publishes a page across all supported output formats (HTML, Gemini, Gopher).
+
+@param Page $page
+@return void
 
 ### publishAll()
-```php
-public function publishAll(): void
-```
-Iterates through all pages in the collection and calls `publish()` on each.
+`public function publishAll(iterable $pages): void`
+
+Publishes multiple pages across all supported formats.
+
+@param iterable<Page> $pages
+@return void
 
 ### publishHtml()
-```php
-public function publishHtml(Page $page): void
-```
-Renders HTML page representation using `ThemeManager`, calculates menu links and language switchers,
-minifies or beautifies HTML, writes `index.html`, and writes ActivityPub JSON companion file.
+`public function publishHtml(Indieinabox\Page $page): void`
+
+Renders a single Page object into an HTML file using the configured theme.
+Handles slug resolution, metadata extraction, ActivityPub JSON, interactions, and shortlink generation.
+
+@param Page $page The page to render.
+@return void
 
 ### publishGemini()
-```php
-public function publishGemini(Page $page): void
-```
-Renders gemtext using `GemtextRenderer` and writes `index.gmi`.
+`public function publishGemini(Indieinabox\Page $page): void`
+
+Renders a page into Gemini Gemtext (.gmi) and writes it to the Gemini output directory.
+
+@param Page $page The page to render.
+@return void
 
 ### publishGopher()
-```php
-public function publishGopher(Page $page): void
-```
-Renders gophermap text using `GophermapRenderer` and writes `gophermap`.
+`public function publishGopher(Indieinabox\Page $page): void`
+
+Renders a page into Gopher format (gophermap) and writes it to the gopher output directory.
+Formats links and metadata according to RFC 1436.
+
+@param Page $page The page to render.
+@return void
 
 ### getLanguageLinks()
-```php
-public function getLanguageLinks(Page $page): array
-```
-Computes relative URLs linking to translated variants of the given page.
+`public function getLanguageLinks(Indieinabox\Page $page): array`
+
+@return array<string, string>
 
 ### getMenuLinks()
-```php
-public function getMenuLinks(string $currentLang): array
-```
-Computes navigation links divided into `header` and `footer` categories based on page metadata.
+`public function getMenuLinks(Indieinabox\Page $page): array`
+
+@return array<string, array<int, array<string, mixed>>>

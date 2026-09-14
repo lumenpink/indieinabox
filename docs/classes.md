@@ -154,3 +154,35 @@ Handles incoming webmention reception, validation, and storage.
 
 ## 🔑 IndieAuth Handler (`Indieinabox\IndieAuthHandler`)
 Provides IndieAuth / OAuth 2.0 PKCE authentication server endpoints.
+
+---
+
+## 🌐 ActivityPub Subsystem (`Indieinabox\ActivityPub`)
+
+The ActivityPub federation architecture is decoupled into focused services:
+
+### 1. `ActivityPubHandler` (`Indieinabox\ActivityPubHandler`)
+The primary HTTP orchestrator for Fediverse endpoints:
+- `handleWebFinger()`: Responds to `/.well-known/webfinger` queries with JRD JSON.
+- `handleActor()`: Serves `/actor` profile JSON-LD.
+- `handleInbox()`: Ingests incoming activities into `inbox_queue` (HTTP 202 Accepted).
+- `handleOutbox()`: Serves `/outbox` ordered collection.
+- `queueCreateActivity()` & `queueAcceptFollow()`: Outbox queuing and broadcasting to followers.
+- `handleInteract()` & `handleAuthorizeInteraction()`: Delegated to `InteractionHandler`.
+
+### 2. `ActivityPub\ActivityBuilder` (`Indieinabox\ActivityPub\ActivityBuilder`)
+Constructs valid ActivityStreams 2.0 objects and activities:
+- `buildObjectForPageArray()`: Maps local notes/articles to ActivityStreams representations, including attachments, local emoji shortcodes, BookWyrm ratings/reviews, and syndication actors.
+- `buildCreateActivity()`, `buildAcceptActivity()`, `buildInteractionActivity()`: Activity envelope builders.
+
+### 3. `ActivityPub\KeyManager` (`Indieinabox\ActivityPub\KeyManager`)
+Manages cryptographic keys for Fediverse HTTP signatures:
+- `ensureKeys()`: Generates 2048-bit RSA key pairs when missing.
+- `getPublicKey()`, `getPrivateKey()`: Retrieves PEM strings from the database.
+
+### 4. `ActivityPub\InteractionHandler` (`Indieinabox\ActivityPub\InteractionHandler`)
+Client-side Fediverse interactions:
+- Renders interaction interfaces for `/interact` and `/authorize_interaction`.
+- Dispatches Likes, Reposts (Announce), and Replies to remote actors.
+- Optionally creates local markdown posts for public syndication.
+

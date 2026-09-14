@@ -220,18 +220,18 @@ Method loadWithSource
 ### loadFromFile()
 `private function loadFromFile(string $file): array`
 
-Method loadFromFile
-@param string $file
+Parses a YAML file into a PHP array.
 
-@return array
+@param string $file The path to the YAML file.
+@return array|false The parsed PHP array, or false on failure.
 
 ### loadFromString()
 `private function loadFromString(string $input): array`
 
-Method loadFromString
-@param string $input
+Parses a YAML string into a PHP array.
 
-@return array
+@param string $input The YAML string.
+@return array Array containing the parsed data and source tracking.
 
 ### parseLine()
 `private function parseLine(string $line): array`
@@ -262,58 +262,63 @@ Used in inlines to check for more inlines or quoted strings
 ### literalBlockContinues()
 `private function literalBlockContinues(string $line, int $lineIndent): bool`
 
-Method literalBlockContinues
-@param string $line
-@param int $lineIndent
+Checks if the current line continues a literal scalar block.
 
-@return bool
+@param string|array $line The current line being parsed.
+@param int $lineIndent The indentation level of the current line.
+@return bool True if it's a continuation, false otherwise.
 
 ### referenceContentsByAlias()
 `private function referenceContentsByAlias(string $alias)`
 
-Method referenceContentsByAlias
-@param string $alias
+Resolves YAML aliases (e.g., `*alias`) to their referenced anchor contents.
+
+@param string $alias The alias identifier.
+@return mixed The referenced content, or false if not found.
 
 ### addArrayInline()
 `private function addArrayInline(array $array, int $indent): bool`
 
-Method addArrayInline
-@param array $array
-@param int $indent
+Recursively parses an inline array/hash (e.g., `[a, b, c]` or `{a: b}`).
 
-@return bool
+@param array $array The inline array structure.
+@param int $indent The current indentation level.
+@return bool The parsed inline array structure.
 
 ### addArray()
 `private function addArray(array $incoming_data, int $incoming_indent): void`
 
-Method addArray
-@param array $incoming_data
-@param int $incoming_indent
+Adds an element to a PHP array, handling multidimensional paths based on YAML indentation.
 
+@param array $incoming_data The array holding the parsed structure.
+@param int $incoming_indent The indentation level of the current line.
 @return void
 
 ### startsLiteralBlock()
 `private static function startsLiteralBlock(string $line)`
 
-Method startsLiteralBlock
-@param string $line
+Checks if the current line starts a literal block (e.g., `|` or `>`).
+
+@param string|array $line The line being parsed.
+@return string|bool The literal block style string, or false otherwise.
 
 ### greedilyNeedNextLine()
 `private static function greedilyNeedNextLine(string $line): bool`
 
-Method greedilyNeedNextLine
-@param string $line
+Determines if the parser greedily needs the next line for a folding block (e.g., `>`).
 
-@return bool
+@param string|array $line The current line being parsed.
+@return bool True if the next line is needed to complete the block, false otherwise.
 
 ### addLiteralLine()
 `private function addLiteralLine(string $literalBlock, string $line, string $literalBlockStyle, int $indent = -1): string`
 
-Method addLiteralLine
-@param string $literalBlock
-@param string $line
-@param string $literalBlockStyle
-@param int $indent
+Appends a parsed line to a literal block.
+
+@param string $literalBlock The existing literal block content.
+@param string $line The line content to append.
+@param string $literalBlockStyle The style of the literal block (`|` or `>`).
+@param int $indent The indentation level of the literal block.
 
 @return string
 

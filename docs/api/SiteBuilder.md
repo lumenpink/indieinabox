@@ -3,132 +3,163 @@
 
 Class SiteBuilder
 
-Orchestrates the static site generation process. It coordinates content scanning,
-translation virtualization, markdown body rendering, page publishing across multiple protocols
-(HTML, Gemini, Gopher, ActivityPub), feed generation (RSS, Atom, Twtxt), taxonomy index publishing,
-and static asset deployment.
-
-## Architecture
-
-`SiteBuilder` follows the Single Responsibility Principle as a high-level pipeline orchestrator.
-Individual responsibilities are delegated to dedicated services injected via the constructor:
-
-- **`ContentScanner`**: Scans markdown source files, handles fallback homepages, and renders raw bodies.
-- **`TranslationVirtualizer`**: Ensures multilingual parity and virtualizes missing pages with pseudo-translations.
-- **`PagePublisher`**: Publishes individual page documents (HTML, Gemini, Gopher, ActivityPub JSON).
-- **`IndexPublisher`**: Compiles kind timelines, sitemaps, category/flowerbed taxonomies, and theme feed views.
-- **`FeedPublisher`**: Generates RSS, Atom, and Twtxt syndicated feeds using pluggable feed generators.
-- **`AssetPublisher`**: Manages static files, theme view assets, media copying, and garbage collection.
+Orchestrates the static site generation process. It coordinates scanning,
+translation virtualization, content rendering, feed generation, and asset publishing.
 
 ## Properties
 
 ### `private Indieinabox\Site $site`
-Site configuration and environment settings.
+
+@var \Indieinabox\Site
 
 ### `private Indieinabox\Pages $pages`
-Collection of processed pages.
+
+@var \Indieinabox\Pages
 
 ### `private Indieinabox\ParserInterface $parser`
-Markdown parser implementation.
+
+@var \Indieinabox\ParserInterface
 
 ### `private Indieinabox\SiteBuilder\ContentScanner $contentScanner`
-Service for scanning content and rendering raw bodies.
+
+@var \Indieinabox\SiteBuilder\ContentScanner
 
 ### `private Indieinabox\SiteBuilder\AssetPublisher $assetPublisher`
-Service for static files, theme assets, and media publishing.
+
+@var \Indieinabox\SiteBuilder\AssetPublisher
 
 ### `private Indieinabox\SiteBuilder\FeedPublisher $feedPublisher`
-Service for feed generation.
+
+@var \Indieinabox\SiteBuilder\FeedPublisher
 
 ### `private Indieinabox\SiteBuilder\PagePublisher $pagePublisher`
-Service for rendering page documents.
+
+@var \Indieinabox\SiteBuilder\PagePublisher
 
 ### `private Indieinabox\SiteBuilder\TranslationVirtualizer $translationVirtualizer`
-Service for translation virtualization and parity.
+
+@var \Indieinabox\SiteBuilder\TranslationVirtualizer
 
 ### `private Indieinabox\SiteBuilder\IndexPublisher $indexPublisher`
-Service for sitemaps, section indexes, and taxonomies.
+
+@var \Indieinabox\SiteBuilder\IndexPublisher
 
 ### `public static array $manifest`
-Registry of absolute file paths generated during the build, used for Garbage Collection.
+
+Stores absolute paths of all generated files during the build process
+for Garbage Collection.
+@var string[]
 
 ## Methods
 
 ### __construct()
-```php
-public function __construct(
-    Site $site,
-    ?Pages $pages = null,
-    ?ParserInterface $parser = null,
-    ?AssetPublisher $assetPublisher = null,
-    ?FeedPublisher $feedPublisher = null,
-    ?PagePublisher $pagePublisher = null,
-    ?TranslationVirtualizer $translationVirtualizer = null,
-    ?IndexPublisher $indexPublisher = null,
-    ?ContentScanner $contentScanner = null
-)
-```
-Initializes the SiteBuilder orchestrator with optional custom service implementations.
+`public function __construct(Indieinabox\Site $site, ?Indieinabox\Pages $pages = null, ?Indieinabox\ParserInterface $parser = null, ?Indieinabox\SiteBuilder\AssetPublisher $assetPublisher = null, ?Indieinabox\SiteBuilder\FeedPublisher $feedPublisher = null, ?Indieinabox\SiteBuilder\PagePublisher $pagePublisher = null, ?Indieinabox\SiteBuilder\TranslationVirtualizer $translationVirtualizer = null, ?Indieinabox\SiteBuilder\IndexPublisher $indexPublisher = null, ?Indieinabox\SiteBuilder\ContentScanner $contentScanner = null)`
 
-### build()
-```php
-public function build(): void
-```
-Executes the complete build pipeline:
-1. Scans content directory via `ContentScanner`.
-2. Ensures mandatory homepage fallback via `ContentScanner`.
-3. Enforces translation parity and virtualizes missing languages via `TranslationVirtualizer`.
-4. Renders raw markdown bodies into HTML via `ContentScanner`.
-5. Publishes pages across formats (HTML, Gemini, Gopher, ActivityPub) via `PagePublisher`.
-6. Publishes feeds (RSS, Atom, Twtxt) via `FeedPublisher`.
-7. Publishes section indexes, taxonomy pages, and sitemaps via `IndexPublisher`.
-8. Copies static files and theme assets via `AssetPublisher`.
-9. Executes garbage collection via `AssetPublisher`.
+SiteBuilder constructor.
+
+@param \Indieinabox\Site $site The site configuration and environment settings.
+@param \Indieinabox\Pages|null $pages An optional collection of parsed pages.
+@param \Indieinabox\ParserInterface|null $parser An optional markdown parser implementation.
+@param \Indieinabox\SiteBuilder\AssetPublisher|null $assetPublisher An optional asset publisher.
+@param \Indieinabox\SiteBuilder\FeedPublisher|null $feedPublisher An optional feed publisher.
+@param \Indieinabox\SiteBuilder\PagePublisher|null $pagePublisher An optional page publisher.
+@param \Indieinabox\SiteBuilder\TranslationVirtualizer|null $translationVirtualizer An optional translation virtualizer.
+@param \Indieinabox\SiteBuilder\IndexPublisher|null $indexPublisher An optional index publisher.
+@param \Indieinabox\SiteBuilder\ContentScanner|null $contentScanner An optional content scanner.
 
 ### getPages()
-```php
-public function getPages(): Indieinabox\Pages
-```
-Returns the processed collection of pages.
+`public function getPages(): Indieinabox\Pages`
+
+Retrieves the collection of processed pages.
+
+@return \Indieinabox\Pages The pages collection.
 
 ### getParser()
-```php
-public function getParser(): Indieinabox\ParserInterface
-```
-Returns the parser instance.
+`public function getParser(): Indieinabox\ParserInterface`
+
+Retrieves the markdown parser implementation.
+
+@return \Indieinabox\ParserInterface
 
 ### getContentScanner()
-```php
-public function getContentScanner(): Indieinabox\SiteBuilder\ContentScanner
-```
+`public function getContentScanner(): Indieinabox\SiteBuilder\ContentScanner`
+
+Retrieves the content scanner instance.
+
+@return \Indieinabox\SiteBuilder\ContentScanner
 
 ### getAssetPublisher()
-```php
-public function getAssetPublisher(): Indieinabox\SiteBuilder\AssetPublisher
-```
+`public function getAssetPublisher(): Indieinabox\SiteBuilder\AssetPublisher`
+
+Retrieves the asset publisher instance.
+
+@return \Indieinabox\SiteBuilder\AssetPublisher
 
 ### getFeedPublisher()
-```php
-public function getFeedPublisher(): Indieinabox\SiteBuilder\FeedPublisher
-```
+`public function getFeedPublisher(): Indieinabox\SiteBuilder\FeedPublisher`
+
+Retrieves the feed publisher instance.
+
+@return \Indieinabox\SiteBuilder\FeedPublisher
 
 ### getPagePublisher()
-```php
-public function getPagePublisher(): Indieinabox\SiteBuilder\PagePublisher
-```
+`public function getPagePublisher(): Indieinabox\SiteBuilder\PagePublisher`
+
+Retrieves the page publisher instance.
+
+@return \Indieinabox\SiteBuilder\PagePublisher
 
 ### getTranslationVirtualizer()
-```php
-public function getTranslationVirtualizer(): Indieinabox\SiteBuilder\TranslationVirtualizer
-```
+`public function getTranslationVirtualizer(): Indieinabox\SiteBuilder\TranslationVirtualizer`
+
+Retrieves the translation virtualizer instance.
+
+@return \Indieinabox\SiteBuilder\TranslationVirtualizer
 
 ### getIndexPublisher()
-```php
-public function getIndexPublisher(): Indieinabox\SiteBuilder\IndexPublisher
-```
+`public function getIndexPublisher(): Indieinabox\SiteBuilder\IndexPublisher`
+
+Retrieves the index publisher instance.
+
+@return \Indieinabox\SiteBuilder\IndexPublisher
 
 ### addManifest()
-```php
-public static function addManifest(string $path): void
-```
-Registers an absolute path into `$manifest` to prevent it from being removed during garbage collection.
+`public static function addManifest(string $path): void`
+
+Adds a file path to the manifest array.
+
+@param string $path
+@return void
+
+### build()
+`public function build(): void`
+
+Executes the main build pipeline.
+
+Cleans the output directory, scans content files, handles translation virtualization,
+and triggers generation of HTML, feeds, and static assets.
+
+### scan()
+`public function scan(string $dir): void`
+
+Recursively scans a directory for markdown content files.
+Delegates to ContentScanner.
+
+@param string $dir The directory path to scan.
+@return void
+
+### generateHTMLFiles()
+`public function generateHTMLFiles(): void`
+
+Iterates over all parsed pages and triggers the generation of HTML,
+Gemini, and Gopher files for each. Also generates sitemaps and indexes.
+
+@return void
+
+### ensureMandatoryHomepage()
+`public function ensureMandatoryHomepage(): void`
+
+Ensures a mandatory homepage (index.html) exists in the output.
+Delegates to ContentScanner.
+
+@return void

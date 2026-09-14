@@ -1,33 +1,33 @@
 # TranslationVirtualizer
 **Namespace:** `Indieinabox\SiteBuilder`
 
-Class TranslationVirtualizer
+Handles translation parity and virtualization of missing pages across languages.
 
-Handles multilingual parity checks and virtualizes missing page translations
-by generating pseudo-translated pages to maintain consistent site navigation across languages.
+## Properties
+
+### `private Indieinabox\Site $site`
 
 ## Methods
 
 ### __construct()
-```php
-public function __construct(Site $site)
-```
-Initializes the virtualizer with site configuration.
+`public function __construct(Indieinabox\Site $site)`
 
 ### virtualize()
-```php
-public function virtualize(Pages $pages): void
-```
-Evaluates all pages across all configured active languages.
-- If `translation_auto` is disabled and parity is required, throws `RuntimeException`.
-- If `translation_auto` is `pseudo`, creates virtual clones with `[LANG]` prefixes for missing translations.
-- Honors `translation_parity_rule` (`from-main-only` vs bidirectional).
+`public function virtualize(Indieinabox\Pages $pages): void`
+
+Generates pseudo-translated pages for missing languages to maintain parity.
+Uses configured rules (e.g., full parity, from-main-only) and translates
+missing slugs according to URL translation mappings.
+
+@param Pages $pages
+@return void
 
 ### pseudoTranslate()
-```php
-public function pseudoTranslate(Page $page, string $targetLang): void
-```
-Applies pseudo-translation formatting to a page:
-- Prefixes title with `[LANG]` (or body if kind has no title, such as notes).
-- Updates language codes and URL slugs.
-- Marks page with `translated_by_ia = true`.
+`public function pseudoTranslate(Indieinabox\Page $page, string $targetLang): void`
+
+Applies a pseudo-translation prefix to a page's title or content.
+Used visually to flag that a page was automatically virtualized.
+
+@param Page $page The page to translate in place.
+@param string $targetLang The target language code used as the prefix.
+@return void

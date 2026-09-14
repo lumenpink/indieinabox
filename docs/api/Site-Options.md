@@ -7,11 +7,11 @@ Holds boolean flags and options for the site.
 
 ## Properties
 
-### `public bool $buildAll`
+### `public bool $dev`
 
 @var bool
 
-### `public bool $dev`
+### `public bool $buildAll`
 
 @var bool
 
@@ -20,6 +20,18 @@ Holds boolean flags and options for the site.
 @var bool
 
 ### `public bool $forceStaticOverride`
+
+@var bool
+
+### `public bool $forceRebuild`
+
+@var bool
+
+### `public bool $skipMedia`
+
+@var bool
+
+### `public bool $skipPages`
 
 @var bool
 
@@ -46,12 +58,11 @@ Holds boolean flags and options for the site.
 ## Methods
 
 ### __construct()
-`public function __construct(bool $buildAll = true, bool $dev = false, bool $skipStatic = false, bool $forceStaticOverride = false, ?string $htmlpostprocessing = null, bool $prettylinks = true, int $feed_limit = 20, string $translation_parity = 'full', string $translation_auto = 'pseudo')`
+`public function __construct(bool $buildAll = true, bool $skipStatic = false, bool $forceStaticOverride = false, bool $forceRebuild = false, bool $skipMedia = false, bool $skipPages = false, ?string $htmlpostprocessing = null, bool $prettylinks = true, int $feed_limit = 20, string $translation_parity = 'full', string $translation_auto = 'pseudo')`
 
 SiteOptions constructor.
 
 @param bool $buildAll
-@param bool $dev
 @param bool $skipStatic
 @param bool $forceStaticOverride
 @param string|null $htmlpostprocessing

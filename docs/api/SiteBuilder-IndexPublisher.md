@@ -1,53 +1,85 @@
 # IndexPublisher
 **Namespace:** `Indieinabox\SiteBuilder`
 
-Class IndexPublisher
+Publishes index pages: section indexes, timeline indexes, taxonomies, and sitemaps.
 
-Compiles sitemaps, kind section indexes, timeline archive indexes, taxonomy listings
-(tags and flowerbeds), timeline static pages, and theme feed views.
+## Properties
+
+### `private Indieinabox\Site $site`
+
+### `private Indieinabox\SiteBuilder\PagePublisher $pagePublisher`
 
 ## Methods
 
 ### __construct()
-```php
-public function __construct(Site $site, PagePublisher $pagePublisher)
-```
-Initializes the index publisher with site configuration and page publisher.
+`public function __construct(Indieinabox\Site $site, Indieinabox\SiteBuilder\PagePublisher $pagePublisher)`
 
 ### publishAll()
-```php
-public function publishAll(Pages $pages): void
-```
-Convenience method that triggers sitemaps, section/timeline indexes, and taxonomy indexes.
+`public function publishAll(Indieinabox\Pages $pages): void`
+
+Publishes all aggregators, taxonomy indexes, sitemaps, and timeline pages.
+
+@param Pages $pages
+@return void
 
 ### publishSitemaps()
-```php
-public function publishSitemaps(): void
-```
-Generates root sitemaps (`/index/` and `{lang}/index/`) listing all site content per active language.
+`public function publishSitemaps(): void`
 
-### publishSectionAndTimelineIndexes()
-```php
-public function publishSectionAndTimelineIndexes(Pages $pages): void
-```
-Generates indexes for each configured kind (e.g. `notes`, `articles`).
-For kinds configured with `full_content`, compiles monthly archives (`notes/YYYY-MM/`)
-and reverse chronological timeline indexes.
+Generates a sitemap.xml / index page for all active languages.
 
-### publishTaxonomyIndexes()
-```php
-public function publishTaxonomyIndexes(Pages $pages): void
-```
-Compiles index pages for all tags (`/tag/{slug}/`) and digital garden flowerbeds (`/flowerbed/{slug}/`).
+@return void
+
+### publishKindIndexes()
+`public function publishKindIndexes(Indieinabox\Pages $pages): void`
+
+Publishes section and timeline indexes for all configured post kinds.
+
+@param Pages $pages
+@return void
+
+### publishTaxonomies()
+`public function publishTaxonomies(Indieinabox\Pages $pages): void`
+
+Publishes index pages for standard taxonomies (tags and flowerbeds).
+
+@param Pages $pages
+@return void
 
 ### publishTimelineStaticPage()
-```php
-public function publishTimelineStaticPage(): void
-```
-If the theme includes `views/timeline.php`, compiles `timeline/index.html` static view.
+`public function publishTimelineStaticPage(): void`
+
+Compiles the static timeline page from subscribed feeds and hubs.
+
+@return void
 
 ### loadThemeFeedView()
-```php
-public function loadThemeFeedView(Pages $pages): void
-```
-Loads custom feed views provided by themes (e.g. `views/feed.php`).
+`public function loadThemeFeedView(Indieinabox\Pages $pages): void`
+
+Loads the theme feed view file if provided by the active theme.
+
+@param Pages $pages
+@return void
+
+### compileTimelineIndexes()
+`public function compileTimelineIndexes(string $targetKind, array $pages): void`
+
+@param string $targetKind
+@param Page[] $pages
+@return void
+
+### compileSectionIndexes()
+`public function compileSectionIndexes(string $targetKind, array $pages): void`
+
+@param string $targetKind
+@param array<int, Page> $pages
+@return void
+
+### compileTaxonomyIndexes()
+`public function compileTaxonomyIndexes(string $taxonomyName, string $taxonomyKey, iterable $pages): void`
+
+Compiles index pages for a taxonomy (e.g. tags or flowerbeds).
+
+@param string $taxonomyName The internal slug (e.g. 'tag', 'flowerbed')
+@param string $taxonomyKey The metadata key (e.g. 'tags', 'flowerbed')
+@param iterable<Page> $pages
+@return void

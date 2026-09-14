@@ -14,11 +14,14 @@ Class MicrosubReaderHandler
 ### __construct()
 `public function __construct(Indieinabox\Site $site)`
 
-Method __construct
-@param \Indieinabox\Site $site
+Initializes the MicrosubReaderHandler.
 
-### handleRequest()
-`public function handleRequest(): void`
+@param \Indieinabox\Site $site Global site configuration and environment.
 
-Method handleRequest
+### handle()
+`public function handle(): void`
+
+Handles requests for the Microsub reader interface.
+Enforces authentication and routes to specific reader actions or views.
+
 @return void

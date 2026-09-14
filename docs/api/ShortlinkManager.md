@@ -17,7 +17,7 @@ Class ShortlinkManager
 @param string|null $cacheDir
 
 ### getShortlink()
-`public function getShortlink(Indieinabox\Page $page, string $fqdn, array $config): ?string`
+`public function getShortlink(Indieinabox\Page $page, string $fqdn, array $config, bool $isDev = false): ?string`
 
 Gets a shortlink for a page, from cache or by requesting the server.
 

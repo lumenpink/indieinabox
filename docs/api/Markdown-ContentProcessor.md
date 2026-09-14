@@ -18,7 +18,9 @@ Class ContentProcessor
 ### __construct()
 `public function __construct()`
 
-Method __construct
+Initializes the ContentProcessor.
+Sets up the CommonMark environment with appropriate extensions
+(e.g., frontmatter, headings, autolinks) to parse the markdown body.
 
 ### extractFrontMatter()
 `public function extractFrontMatter(string $content): array`

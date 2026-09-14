@@ -7,10 +7,6 @@ Holds metadata related to the site.
 
 ## Properties
 
-### `public string $title`
-
-@var string
-
 ### `public string $sitename`
 
 @var string
@@ -38,11 +34,9 @@ Holds metadata related to the site.
 ## Methods
 
 ### __construct()
-`public function __construct(string $title = 'My Site', string $sitename = 'My Site', string $author = 'Me', string $defaultTitle = 'Untitled', string $fqdn = 'http://localhost:8080', string $description = 'My Site Description')`
+`public function __construct(string $sitename = 'My Site', string $author = 'Me', string $defaultTitle = 'Untitled', string $fqdn = 'http://localhost:8080', string $description = 'My Site Description')`
 
 SiteMetadata constructor.
-
-@param string $title
 @param string $sitename
 @param string $author
 @param string $defaultTitle

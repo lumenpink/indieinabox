@@ -27,6 +27,14 @@ Helper function to get time ago string
 @param int $timestamp
 @return string
 
+### extractHashtags()
+`public static function extractHashtags(string $text): array`
+
+Extracts hashtags from a given text string.
+
+@param string $text The post text
+@return array<string> List of unique hashtags without the # symbol
+
 ### getKindConfig()
 `public static function getKindConfig(string $kind): array`
 
@@ -189,6 +197,17 @@ Translation lookup
 @param  string|null $lang
 @return string
 
+### translatePlural()
+`public static function translatePlural(string $singular, string $plural, int $count, ?string $lang = null): string`
+
+Translation lookup with pluralization support
+
+@param  string $singular
+@param  string $plural
+@param  int $count
+@param  string|null $lang
+@return string
+
 ### translateLowercase()
 `public static function translateLowercase(string $text): string`
 
@@ -251,6 +270,7 @@ Atkinson adaptive dithering using GD to index 8-bit GIF
 
 Atkinson adaptive dithering with cropping to exact dimensions, saved as PNG
 
+@codeCoverageIgnore
 @param string $caminhoOriginal
 @param string $caminhoDestino
 @param int $targetWidth
@@ -262,6 +282,8 @@ Atkinson adaptive dithering with cropping to exact dimensions, saved as PNG
 
 ### generateSocialImages()
 `public static function generateSocialImages(string $caminhoOriginal, string $caminhoDestinoBase, array $corBG, array $corFG): array`
+
+@codeCoverageIgnore
 
 Generate social media images (OG, JSON-LD sizes)
 

@@ -14,16 +14,18 @@ Class Whostyles
 ### getAlphabetMap()
 `private static function getAlphabetMap(): array`
 
-Method getAlphabetMap
-@return array
+Retrieves the custom base-64 alphabet map used for encoding and decoding
+whostyle color payloads in URLs.
+
+@return array The alphabet map array.
 
 ### decodeBase64()
 `public static function decodeBase64(string $str): int`
 
-Method decodeBase64
-@param string $str
+Decodes a custom base-64 encoded string back into an integer value.
 
-@return int
+@param string $str The encoded string to decode.
+@return int The decoded integer value.
 
 ### encodeBase64()
 `public static function encodeBase64(int $value, int $length): string`
@@ -37,26 +39,26 @@ Method encodeBase64
 ### decodeColor()
 `public static function decodeColor(string $str): string`
 
-Method decodeColor
-@param string $str
+Decodes a 3-character custom base-64 string into a hex color string.
 
-@return string
+@param string $str The 3-character encoded color string.
+@return string The decoded hex color string.
 
 ### encodeColor()
 `public static function encodeColor(string $hex): string`
 
-Method encodeColor
-@param string $hex
+Encodes a hex color string into a 3-character custom base-64 string.
 
-@return string
+@param string $hex The hex color string to encode.
+@return string The encoded string.
 
 ### decode()
 `public static function decode(string $hash): ?array`
 
-Method decode
-@param string $hash
+Decodes a full Whostyles encoded string into a palette of RGB colors.
 
-@return ?array
+@param string $hash The full Whostyles encoded string.
+@return array|null Array of RGB color arrays (e.g., background, text, link, etc.), or null on failure.
 
 ### encode()
 `public static function encode(array $config, array $colors): string`
@@ -70,40 +72,42 @@ Method encode
 ### extract()
 `public static function extract(string $html): ?string`
 
-Method extract
-@param string $html
+Extracts a Whostyles payload from an HTML document or a specific URL.
+Searches for a meta tag or specific patterns containing the payload.
 
-@return ?string
+@param string $html The HTML content to search.
+@return string|null The extracted Whostyles string, or null if not found.
 
 ### clean()
 `public static function clean(string $html): string`
 
-Method clean
-@param string $html
+Cleans HTML string to ensure extracted colors fall within acceptable luminance/contrast bounds
+and guarantees a minimum level of legibility (e.g., text against background).
 
-@return string
+@param string $html The input HTML string containing whostyles.
+@return string The cleaned and adjusted HTML string.
 
 ### getLuminance()
 `private static function getLuminance(string $hex): float`
 
-Method getLuminance
-@param string $hex
+Calculates the relative luminance of a hex color.
 
-@return float
+@param string $hex The hex color string.
+@return float The relative luminance (0.0 to 1.0).
 
 ### getContrast()
 `private static function getContrast(string $hex1, string $hex2): float`
 
-Method getContrast
-@param string $hex1
-@param string $hex2
+Calculates the contrast ratio between two hex colors.
 
-@return float
+@param string $hex1 The first hex color.
+@param string $hex2 The second hex color.
+@return float The contrast ratio (1.0 to 21.0).
 
 ### generateAttributes()
 `public static function generateAttributes(string $hash): string`
 
-Method generateAttributes
-@param string $hash
+Generates a string of HTML data attributes corresponding to a decoded palette.
 
-@return string
+@param string $hash The encoded Whostyles payload.
+@return string A string of HTML data attributes (e.g., `data-bg="#..." data-text="#..."`).

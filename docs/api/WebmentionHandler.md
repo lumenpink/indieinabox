@@ -14,13 +14,17 @@ Class WebmentionHandler
 ### __construct()
 `public function __construct(Indieinabox\Site $site)`
 
-Method __construct
-@param \Indieinabox\Site $site
+Initializes the WebmentionHandler.
+
+@param \Indieinabox\Site $site Global site configuration and environment.
 
 ### handle()
 `public function handle(): void`
 
-Method handle
+Processes incoming webmentions via POST requests.
+Validates source/target URIs, downloads the source content,
+discovers microformats (h-entry), and stores it for moderation.
+
 @return void
 
 ### verifySourceLink()
@@ -57,14 +61,15 @@ Compare target and link href to check if they match (including relative links)
 ### sendResponse()
 `private function sendResponse(int $code, string $message): void`
 
-Method sendResponse
-@param int $code
-@param string $message
+Sends a plain-text HTTP response with a specific status code.
 
+@param int $code HTTP status code.
+@param string $message Response message.
 @return void
 
 ### sendHelpPage()
 `private function sendHelpPage(): void`
 
-Method sendHelpPage
+Renders a basic HTML help page for the webmention endpoint (used on GET requests).
+
 @return void

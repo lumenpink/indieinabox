@@ -3,72 +3,101 @@
 
 Class MarkdownParser
 
-Coordinates parsing a Markdown content file into a typed `Page` entity.
-Validates supported file extensions, extracts YAML frontmatter, detects locale prefixes,
-constructs canonical slugs and relative links, resolves layouts, and maps localized metadata.
+Coordinates parsing a markdown file into a typed Page object:
+validates extensions, extracts YAML frontmatter, detects languages,
+builds canonical slugs, determines layouts, and maps metadata.
 
 ## Properties
 
 ### `private Indieinabox\Markdown\FileProcessor $fileProcessor`
-Validates file extensions and layout mappings.
+
+@var FileProcessor
 
 ### `private Indieinabox\Markdown\ContentProcessor $contentProcessor`
-Extracts frontmatter and sanitizes inline tags.
+
+@var ContentProcessor
 
 ### `private Indieinabox\Markdown\LanguageProcessor $languageProcessor`
-Processes translations and language paths.
+
+@var LanguageProcessor
 
 ### `private Indieinabox\Site $site`
-Site configuration instance.
+
+@var Site
 
 ## Methods
 
 ### __construct()
-```php
-public function __construct(
-    FileProcessor $fileProcessor,
-    ContentProcessor $contentProcessor,
-    LanguageProcessor $languageProcessor,
-    Site $site
-)
-```
-Initializes the parser with all required processor dependencies and site settings.
+`public function __construct(Indieinabox\Markdown\FileProcessor $fileProcessor, Indieinabox\Markdown\ContentProcessor $contentProcessor, Indieinabox\Markdown\LanguageProcessor $languageProcessor, Indieinabox\Site $site)`
+
+@param FileProcessor $fileProcessor
+@param ContentProcessor $contentProcessor
+@param LanguageProcessor $languageProcessor
+@param Site $site
+
+### getFileProcessor()
+`public function getFileProcessor(): Indieinabox\Markdown\FileProcessor`
+
+@return FileProcessor
+
+### getContentProcessor()
+`public function getContentProcessor(): Indieinabox\Markdown\ContentProcessor`
+
+@return ContentProcessor
+
+### getLanguageProcessor()
+`public function getLanguageProcessor(): Indieinabox\Markdown\LanguageProcessor`
+
+@return LanguageProcessor
+
+### getSite()
+`public function getSite(): Indieinabox\Site`
+
+@return Site
 
 ### parse()
-```php
-public function parse(string $file): ?Indieinabox\Page
-```
-Parses a markdown source file into a populated `Page` object.
-Returns `null` if the file is not supported, if `publish: false`, or if `!buildAll` and missing frontmatter.
+`public function parse(string $file): ?Indieinabox\Page`
+
+Parses a markdown file from disk into a populated Page object.
+
+@param string $file The path to the markdown file.
+@return Page|null The parsed page or null if invalid or skipped.
 
 ### detectLanguage()
-```php
-public function detectLanguage(string $relPath, array $langs, string $defaultLang): array
-```
-Extracts the language code from the top-level directory segment if it matches an active language,
-returning `[detectedLang, cleanRelPath, isRoot]`.
+`public function detectLanguage(string $relPath, array $langs, string $defaultLang): array`
+
+Detects page language from the top-level directory segment.
+
+@param string $relPath
+@param string[] $langs
+@param string $defaultLang
+@return array{0: string, 1: string, 2: bool} [detectedLang, cleanRelPath, isRoot]
 
 ### buildSlug()
-```php
-public function buildSlug(
-    string $cleanRelPath,
-    array $fileInfo,
-    array $page,
-    string $detectedLang,
-    string $defaultLang
-): string
-```
-Builds the canonical slug (with language prefix for non-default languages, slugified path parts,
-and trailing slash or `.html` according to the `prettylinks` setting).
+`public function buildSlug(string $cleanRelPath, array $fileInfo, array $page, string $detectedLang, string $defaultLang): string`
+
+Builds the canonical slug for a page based on its relative path and settings.
+
+@param string $cleanRelPath
+@param array<string, mixed> $fileInfo
+@param array<string, mixed> $page
+@param string $detectedLang
+@param string $defaultLang
+@return string
 
 ### calculateRelativePath()
-```php
-public function calculateRelativePath(string $slug): string
-```
-Calculates directory traversal steps (`./`, `../`, `../../`) based on the slug's depth.
+`public function calculateRelativePath(string $slug): string`
 
-### Getters
-- `getFileProcessor(): FileProcessor`
-- `getContentProcessor(): ContentProcessor`
-- `getLanguageProcessor(): LanguageProcessor`
-- `getSite(): Site`
+Calculates the relative traversal path (e.g., './' or '../../') based on slug depth.
+
+@param string $slug
+@return string
+
+### setMetadata()
+`private function setMetadata(Indieinabox\Page $page, array $rawPage): Indieinabox\Page`
+
+Applies metadata, localized kind mappings, and localized date formatting to the Page object.
+
+@param Page $page
+@param array<string, mixed> $rawPage
+@return Page

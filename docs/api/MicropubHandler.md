@@ -18,25 +18,31 @@ Class MicropubHandler
 ### __construct()
 `public function __construct(Indieinabox\Site $site)`
 
-Method __construct
-@param \Indieinabox\Site $site
+Initializes the MicropubHandler.
+
+@param \Indieinabox\Site $site Global site configuration and environment.
 
 ### handle()
 `public function handle(): void`
 
-Method handle
+Main entry point for handling Micropub API requests.
+Validates authentication and delegates to GET or POST specific handlers.
+
 @return void
 
 ### getRawInput()
 `protected function getRawInput(): string`
 
-Method getRawInput
-@return string
+Reads the raw input stream. Used for parsing JSON payloads.
+
+@return string The raw request body.
 
 ### handleGetRequest()
 `private function handleGetRequest(): void`
 
-Method handleGetRequest
+Handles Micropub GET queries (e.g., config, source, syndicate-to).
+Returns JSON configurations or existing post data.
+
 @return void
 
 ### handlePostRequest()
@@ -57,36 +63,38 @@ Method handleGetRequest
 ### sendSuccessResponse()
 `protected function sendSuccessResponse(int $code, array $headers = [], mixed $body = null): void`
 
-Method sendSuccessResponse
-@param int $code
-@param array $headers
-@param mixed $body
+Sends a successful HTTP response, typically indicating creation (201 or 202).
+Includes a Location header for newly created resources.
+
+@param int $code HTTP status code.
+@param array $headers Headers to include in the response.
+@param mixed $body Optional body content.
 
 @return void
 
 ### sendResponse()
 `protected function sendResponse(int $code, string $error, string $description): void`
 
-Method sendResponse
-@param int $code
-@param string $error
-@param string $description
+Sends a standard JSON-formatted HTTP error response.
 
+@param int $code HTTP status code.
+@param string $error Short error identifier (e.g., 'invalid_request').
+@param string $description Detailed error message.
 @return void
 
 ### moveUploadedFile()
 `protected function moveUploadedFile(string $tmpName, string $destPath): bool`
 
-Method moveUploadedFile
-@param string $tmpName
-@param string $destPath
+Helper to move uploaded files to their destination.
 
-@return bool
+@param string $tmpName Path of the uploaded temporary file.
+@param string $destPath Final destination path.
+@return bool True on success, false on failure.
 
 ### slugify()
 `private function slugify(string $text): string`
 
-Method slugify
-@param string $text
+Converts a string into a URL-friendly slug.
 
-@return string
+@param string $text The text to slugify.
+@return string The resulting slug.

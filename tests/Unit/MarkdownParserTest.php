@@ -33,9 +33,20 @@ beforeEach(function () {
         $languageProcessor,
         $this->site
     );
+
+    global $site;
+    $site = $this->site;
+    $this->site->config['kinds'] = [
+        'article' => [
+            'content_dir' => 'articles',
+            'folder' => ['en' => 'articles', 'pt' => 'artigos', 'es' => 'articulos']
+        ]
+    ];
 });
 
 afterEach(function () {
+    global $site;
+    $site = null;
     Helper::recursiveRmdir($this->tempDir);
 });
 

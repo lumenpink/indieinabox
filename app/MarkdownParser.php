@@ -278,7 +278,7 @@ class MarkdownParser implements ParserInterface
             $page->category = ["General"];
         }
 
-        $kindResult = Helper::kind($rawPage);
+        $kindResult = Helper::kind($rawPage, $this->site);
         $page->localizedkind = $kindResult["localized"];
         $page->kind = $kindResult["kind"];
 

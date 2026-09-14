@@ -39,7 +39,6 @@ This class handles metadata related to the page.
 
 @var string|null
 
-
 ### `public mixed $flowerbed`
 
 @var array<string>|null
@@ -84,6 +83,10 @@ This class handles metadata related to the page.
 
 @var string|null
 
+### `public mixed $syndication`
+
+@var array<string>|string|null
+
 ## Methods
 
 ### __construct()
@@ -99,6 +102,5 @@ PageMetadata constructor.
 @param string $kind
 @param string $layout
 @param string|null $maturity
-
 @param bool|null $menu
 @param int|null $menu_order

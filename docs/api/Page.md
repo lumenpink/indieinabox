@@ -98,7 +98,7 @@ Magic isset check for shortcut properties.
 @return bool
 
 ### fromArray()
-`public static function fromArray(array $data): self`
+`public static function fromArray(array $data): Indieinabox\Page`
 
 Create a Page object from a raw array structure.
 
@@ -108,4 +108,12 @@ Create a Page object from a raw array structure.
 ### __clone()
 `public function __clone()`
 
-Method __clone
+Deep clones the Page object to ensure nested Metadata, Content,
+and Localization objects are also duplicated.
+
+### toEntry()
+`public function toEntry(): Indieinabox\Entry\Entry`
+
+Converts this Page instance to a canonical Entry entity.
+
+@return \Indieinabox\Entry\Entry

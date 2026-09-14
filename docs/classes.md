@@ -4,6 +4,58 @@ This document describes the primary object-oriented classes under the `Indieinab
 
 ---
 
+## 🌟 Universal Entry (`Indieinabox\Entry\Entry`)
+
+The `Entry` class is the central domain entity unifying content representation across the entire system. It acts as the common lingua franca for:
+- Internal site pages.
+- Syndicated feeds (RSS, Atom, Twtxt).
+- Federated social feeds and notifications (ActivityPub, Microsub).
+
+### Properties & Features:
+- Standardized fields: `$id`, `$url`, `$title`, `$content`, `$published`, `$updated`, `$authorName`, `$authorUrl`, `$authorAvatar`, `$summary`, `$tags`, `$media`, `$extra`.
+- Federation extensions: `$contentWarning` and `$poll`.
+- Factory methods: `fromPage(Page $page, Site $site)` and `fromTwtxt(string $date, string $text, ...)`.
+- Magic getters (`__get`, `__isset`) for backwards compatibility.
+
+---
+
+## 🏗️ SiteBuilder Orchestration Suite (`Indieinabox\SiteBuilder`)
+
+The site build pipeline is composed of focused single-responsibility services coordinated by `SiteBuilder`:
+
+### 1. `SiteBuilder` (Orchestrator)
+Coordinates the execution flow of the build pipeline via high-level Dependency Injection:
+- Scanning ➔ Virtualization ➔ Body Rendering ➔ Publishing (Pages, Indexes, Feeds) ➔ Asset Copying & Garbage Collection.
+
+### 2. `SiteBuilder\ContentScanner`
+- Recursively scans content directories for Markdown files.
+- Initializes Markdown parsing processors.
+- Ensures mandatory homepage fallback (`/`).
+- Renders raw Markdown bodies into final HTML (`renderRawBodies`).
+
+### 3. `SiteBuilder\TranslationVirtualizer`
+- Enforces multilingual parity rules (`translation_parity_rule`).
+- Clones and pseudo-translates missing pages (`pseudoTranslate`).
+
+### 4. `SiteBuilder\PagePublisher`
+- Publishes individual pages to multiple protocols: HTML, Gemini (`.gmi`), Gopher (`gophermap`), and ActivityPub JSON.
+- Computes language switchers and menu links.
+
+### 5. `SiteBuilder\IndexPublisher`
+- Compiles XML/HTML sitemaps per active language.
+- Generates section and reverse-chronological monthly timeline archives.
+- Compiles taxonomy index pages for tags (`/tag/`) and flowerbeds (`/flowerbed/`).
+- Compiles static timeline pages from themes (`timeline/index.html`).
+
+### 6. `SiteBuilder\FeedPublisher`
+- Publishes RSS 2.0, Atom 1.0, and Twtxt syndicated feeds using pluggable generators consuming `Entry` domain entities.
+
+### 7. `SiteBuilder\AssetPublisher`
+- Copies theme static assets, CSS/JS views assets, and media directories.
+- Manages the build manifest (`SiteBuilder::$manifest`) and executes garbage collection to remove obsolete files.
+
+---
+
 ## 📄 Page (`Indieinabox\Page`)
 
 The `Page` class represents a parsed input source file (Markdown, text). It is a composite object that bundles page parameters into smaller typed sub-components:
@@ -30,12 +82,6 @@ The `Page` class represents a parsed input source file (Markdown, text). It is a
    - `$localizeddate` (string)
    - `$localizedkind` (string)
 
-### OOP Shortcut Properties:
-To keep templates clean, the `Page` class implements magic shortcuts for properties. Instead of writing `$page->localization->lang`, templates can write `$page->lang`.
-* **Magic Getter/Setter (`__get`, `__set`)**: Forwards flat property requests directly to the composed `localization`, `metadata`, or `content` child objects.
-* **Dynamic `isodate`**: Returns the formatted ISO-8601 representation of the page's `$date` property on the fly.
-* **`Content::__toString()`**: The `Page\Content` object implements `__toString()` returning its `$content` body. This makes rendering simple in templates (e.g., `<?= $page->content ?>`) while keeping the object references clean elsewhere.
-
 ---
 
 ## 🌐 Site (`Indieinabox\Site`)
@@ -43,92 +89,65 @@ To keep templates clean, the `Page` class implements magic shortcuts for propert
 The `Site` class serves as the root configuration settings block loaded from `config.yml`. It aggregates config namespaces:
 
 * **`Site\Metadata`**: High-level details (`$title`, `$sitename`, `$author`, `$defaultTitle`, `$fqdn`).
-* **`Site\Paths`**: Workspace directories (`$baseDir`, `$outputDir`, `$contentDir`).  
-  > ⚠️ **SECURITY WARNING:** Do NOT use `$site->paths->baseDir` inside HTML template views (`resources/views/`). It exposes the absolute server filesystem path, which is a major security flaw. For web URLs, use `$site->metadata->fqdn` or `$baseUrl` instead.
+* **`Site\Paths`**: Workspace directories (`$baseDir`, `$outputDirHtml`, `$contentDir`, `$themeDir`).  
 * **`Site\Options`**: Generation options (`$buildAll`, `$dev`, `$skipStatic`, `$forceStaticOverride`, `$htmlpostprocessing`).
 * **`Site\Localization`**: Locales settings (`$lang` array, `$defaultLang`).
 * **`Site\Support`**: Valid extensions list (`$support` array, `$defaultCategory`).
-
-### Magic Getter (`__get`):
-Forwards requests for common configurations (e.g. `$site->dev`, `$site->defaultlang`, `$site->outputdir`) directly to the respective child option, paths, or localization objects.
 
 ---
 
 ## 📚 Pages Collection (`Indieinabox\Pages`)
 
 Extends `ArrayObject` to hold lists of `Page` objects.
-* **`add(Page|array $page, ?string $id)`**: Appends a page to the collection using its slug as the key. Supports both raw arrays and Page objects for legacy compatibility.
-* **`all()`**: Returns the raw array map of slug -> Page objects (used during lists filtering or custom sorting).
+* **`add(Page|array $page, ?string $id)`**: Appends a page to the collection using its slug as the key.
+* **`all()`**: Returns the raw array map of slug -> Page objects.
 * **`get(string $id)`**: Retrieves a Page object by its slug key.
+
+---
+
+## 🎨 Theme Manager (`Indieinabox\ThemeManager`)
+
+Manages view template inclusion, partial resolution, and template rendering:
+- **`loadView(string $path, array $data)`**: Loads and evaluates a view from disk or embedded `DefaultTheme`.
+- **`renderView(string $path, array $data)`**: Captures buffered output of a view as string.
+- **`includeView(string $relPath, array $data)`**: Resolves partial views (e.g. `includes/head.php`).
+- **`hasView(string $path)`**: Checks whether a view exists on disk or in `DefaultTheme`.
+
+---
+
+## 📡 Pluggable Feeds (`Indieinabox\Feeds`)
+
+- **`FeedGeneratorInterface`**: Standard contract for feed generation.
+- **`Generators\RssFeedGenerator`**: RSS 2.0 XML feeds.
+- **`Generators\AtomFeedGenerator`**: Atom 1.0 RFC 4287 feeds.
+- **`Generators\TwtxtFeedGenerator`**: Twtxt microblog feeds.
+
+---
+
+## 🚀 Bootstrap (`Indieinabox\Bootstrap`)
+
+Bootstraps runtime dependencies, configuration tables, global helpers, and environmental constants.
 
 ---
 
 ## 🔍 Parser & Processors
 
 ### `Indieinabox\MarkdownParser`
-The main parser class that orchestrates scanning and splitting source files. It delegates parsing steps to:
-* **`Markdown\FileProcessor`**: Validates extensions using `$site->support->support` and resolves template layout files.
-* **`Markdown\ContentProcessor`**: Extracts frontmatter using `Yaml`, sanitizes inline tags (`#tag`), and converts markdown using `Parsedown`.
-* **`Markdown\LanguageProcessor`**: Determines the active page language and translated paths.
-
-### `Indieinabox\Parsedown`
-Extends and modularizes markdown parsing into specific classes:
-* **`Parsedown\BlocksParser`**: Handles block structures (tables, lists, headers, code blocks).
-* **`Parsedown\InlinesParser`**: Handles inline styles (bold, links, images).
-* **`Parsedown\ElementsHandler`**: Handles markup escaping.
+The main parser class that orchestrates scanning and splitting source files. Delegates to:
+* **`Markdown\FileProcessor`**: Validates extensions and resolves layout templates.
+* **`Markdown\ContentProcessor`**: Extracts frontmatter and converts markdown.
+* **`Markdown\LanguageProcessor`**: Determines active page language and translated paths.
 
 ### `Indieinabox\Markdown\ASTParser` & `Indieinabox\Markdown\HtmlRenderer`
-A lightweight, clean-room custom Markdown parser designed specifically for Indieinabox. It implements a two-pass parser architecture that constructs a structured Abstract Syntax Tree (AST):
-* **`ASTParser::parse(string $markdown)`**: Parses Markdown block and inline formatting into a typed tree structure starting with `RootNode`.
-* **`HtmlRenderer::render(Node $node)`**: Walks the AST and renders semantic HTML.
-* **AST Nodes (`Indieinabox\Markdown\Node` subclasses)**:
-  - **`RootNode`**: The root container of the AST.
-  - **`HeadingNode`**: Represents header lines, storing a `$level` (1-6).
-  - **`ParagraphNode`**: Groups inline content into a block paragraph.
-  - **`ListNode`**: Represents lists.
-  - **`ListItemNode`**: Represents individual items in a list.
-  - **`TextNode`**: Standard plain text node, storing a `$text` string.
-  - **`StrongNode`**: Represents **bold** formatting wrapper.
-  - **`EmphasisNode`**: Represents *italic* / _emphasis_ formatting wrapper.
-  - **`CodeInlineNode`**: Represents `inline code` formatting, storing a `$code` string.
-  - **`WikilinkNode`**: Represents Obsidian-style double bracket internal links (`[[Target|Label]]`), storing `$target` and `$label` strings.
-
-### Utility Classes:
-* **`Indieinabox\Yaml`**: Reads/writes configuration and frontmatter YAML files.
-* **`Indieinabox\Helper`**: General utilities (slug conversion, localized date maps).
-* **`Indieinabox\Translations\UrlTranslations`**: Resolves translated paths and nicks for multilang pages.
+Lightweight custom Markdown AST parser and semantic HTML renderer.
 
 ---
 
 ## 🔀 Web Router (`Indieinabox\WebRouter`)
-
-The `WebRouter` orchestrates requests when the application runs under a Web SAPI (e.g. `cli-server`, `fpm-fcgi`).
-*   **Routing**: Detects requests to beauty URLs (like `/webmention` or `/webmentions`) and parameter requests (like `?webmention`). These are passed to `WebmentionHandler`.
-*   **Static Asset Server**: Serves static pages and assets (HTML, CSS, JS, images, SVG, XML, JSON) directly from the output directory (`public/`) to function as a live dev/production server.
-
----
+Orchestrates requests under Web SAPIs, serving webmentions, auth endpoints, and static files.
 
 ## 📩 Webmention Handler (`Indieinabox\WebmentionHandler`)
-
-The `WebmentionHandler` manages the reception, validation, and storage of incoming webmentions.
-*   **GET Requests**: Serves an aesthetically premium instruction and form page allowing users to manually submit webmentions.
-*   **POST Requests**:
-    1.  Validates formats of `source` and `target` URLs.
-    2.  Verifies the `target` URL points to the configured FQDN domain of this site.
-    3.  Confirms the `target` page exists as a generated file in the output directory.
-    4.  Fetches the `source` page and parses its HTML to verify it contains a valid absolute or relative link to the `target`.
-    5.  Stores successfully verified webmention data in JSON format under `data/webmentions/<md5_slug>.json`, aggregating mentions without duplicating sources.
-
----
+Handles incoming webmention reception, validation, and storage.
 
 ## 🔑 IndieAuth Handler (`Indieinabox\IndieAuthHandler`)
-
-The `IndieAuthHandler` handles dynamic metadata serving, user login presentation, authorization code verification with PKCE, and token issuing.
-*   **Metadata Discovery**: Responds to `/.well-known/oauth-authorization-server` requests with compliant endpoints mapping JSON.
-*   **GET `/auth`**: Serves a highly aesthetic login form showing requesting client credentials and requesting scopes.
-*   **POST `/auth`**:
-    - Generates and stores 10-minute temporary auth code credentials under `data/indieauth/codes/<md5>.json` upon successful password / bcrypt verification.
-    - Verifies generated authorization codes using client ID matching and PKCE checks (supporting S256/plain methods).
-*   **POST `/token`**: Exchanges validated codes for secure access tokens stored under `data/indieauth/tokens/<md5>.json`.
-*   **GET `/token`**: Validates bearer tokens (sent in headers) and returns client/scopes metadata for external services integration.
-
+Provides IndieAuth / OAuth 2.0 PKCE authentication server endpoints.

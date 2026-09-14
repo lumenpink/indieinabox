@@ -1,60 +1,63 @@
 # Project Architecture
 
-This document describes the high-level architecture and folder structure of the Indieinabox static site generator.
+This document describes the high-level architecture, pipeline flow, and directory structure of the Indieinabox static site generator.
 
 ## Build Pipeline Flow
 
-Indieinabox is a lightweight static site generator. The build pipeline is executed via CLI by running `build.php`. Below is a visualization of the pipeline flow:
+The static site generator build pipeline is executed via CLI by running `build.php`. `SiteBuilder` serves as the high-level orchestrator, coordinating dedicated domain services:
 
 ```mermaid
 graph TD
-    A[Start Build] --> B[Load config.yml Settings]
-    B --> C[Instantiate Site & Configure Paths/Options]
-    C --> D[Clean public/ Directory]
-    D --> E[Scan content/ Folder]
-    E --> F[Process MD Files: YAML Frontmatter + Markdown]
-    F --> G[Render PHP Templates in resources/views/]
-    G --> H[Apply Post-processing: Minify/Beautify]
-    H --> I[Generate HTML Files in public_html/]
-    I --> I2[Generate Gemini Files in public_gemini/]
-    I2 --> I3[Generate Gopher Files in public_gopher/]
-    I3 --> J[Generate RSS/Atom Feed if applicable]
-    J --> K[Copy js/css Assets from resources/views]
-    K --> L[Copy Static Files from resources/static]
-    L --> M[Build Complete]
+    A[Start Build: build.php] --> B[Bootstrap Application & Load Config]
+    B --> C[Instantiate Site & SiteBuilder]
+    C --> D[ContentScanner: Scan content/ & Ensure Mandatory Homepage]
+    D --> E[TranslationVirtualizer: Enforce Parity & Virtualize Missing Languages]
+    E --> F[ContentScanner: Render Raw Bodies to HTML]
+    F --> G[PagePublisher: Generate HTML, Gemini, Gopher, ActivityPub JSON]
+    G --> H[IndexPublisher: Publish Sitemaps, Section Indexes, Timeline & Taxonomies]
+    H --> I[FeedPublisher: Publish RSS, Atom, Twtxt Feeds via Entry Domain Model]
+    I --> J[AssetPublisher: Copy Static Files, View Assets & Media]
+    J --> K[AssetPublisher: Run Garbage Collector via Build Manifest]
+    K --> L[Build Complete]
 ```
+
+## Modular Service Architecture
+
+The core generation pipeline is decoupled into single-responsibility services:
+
+- **`ContentScanner`**: Traverses the content filesystem, initializes parser pipelines, ensures root homepages, and renders raw Markdown page bodies into HTML.
+- **`TranslationVirtualizer`**: Audits language completeness and automatically generates pseudo-translated page stubs for missing translations.
+- **`PagePublisher`**: Publishes individual page documents simultaneously across modern and retro protocols (HTML, Gemini `.gmi`, Gopher `gophermap`, ActivityPub JSON).
+- **`IndexPublisher`**: Generates sitemaps, monthly chronological section archives, tag and digital garden taxonomy index pages, and custom timeline pages.
+- **`FeedPublisher`**: Transforms universal `Entry` entities into syndicated feeds (RSS, Atom, Twtxt) via pluggable `FeedGeneratorInterface` implementations.
+- **`AssetPublisher`**: Copies static files, extracts theme view assets, synchronizes media libraries, and prunes orphaned files using the build manifest.
+- **`ThemeManager`**: Resolves, compiles, and renders layout templates and partials from disk or compiled `DefaultTheme` fallbacks.
 
 ## Directory Structure
 
 Here is a breakdown of the workspace layout and its main contents:
 
-- **`app/`**: Object-oriented, namespaced code representing generator components (Page, Site, etc.) mapped to the `Indieinabox\` namespace under PSR-4.
-  - **`functions/`**: Procedural code containing fallback utility functions and file writers.
+- **`app/`**: Object-oriented, namespaced code under PSR-4 (`Indieinabox\`).
+  - **`Entry/`**: Universal `Entry` domain model for feed items, posts, and federation.
+  - **`SiteBuilder/`**: Core site generation services (`ContentScanner`, `TranslationVirtualizer`, `PagePublisher`, `IndexPublisher`, `FeedPublisher`, `AssetPublisher`).
+  - **`Feeds/`**: Feed generator interfaces and format implementations (`Rss`, `Atom`, `Twtxt`).
+  - **`Markdown/`**: Custom AST parser, processors, validators, and protocol renderers (HTML, Gemtext, Gophermap).
+  - **`Theme/`**: Theme metadata, SEO helpers, and microformats components.
+  - **`functions/`**: Procedural helpers and utility functions.
 - **`bootstrap/`**: Application bootstrapper.
-  - **`app.php`**: Registers the autoloader and procedural helpers/data files.
-- **`content/`**: Contains the input Markdown and plain text source files representing your content. They are parsed and structured hierarchically.
-- **`data/`**: PHP arrays acting as dynamic configuration/translation tables (e.g., Unicode character mappings, translation tables, international localized strings).
+- **`content/`**: Markdown and plain text source files.
+- **`data/`**: SQLite database, cached mentions, and application state.
 - **`build.php`**: Entry point orchestrating static site generation.
-- **`resources/`**: Frontend design assets and templates.
-  - **`views/`**: Contains layout layouts, headers, and footer inclusions (PHP/HTML templates) used to format the visual style of pages.
-  - **`static/`**: Contains static assets that are copied directly to the output directory.
-- **`_theme/`**: Front-end build tools (PostCSS, Webpack) and source assets.
-- **`public_html/`**: Generated static HTML pages and compiled assets written here at the end of the build pipeline.
-- **`public_gopher/`**: Generated static Gophermap pages written here.
-- **`public_gemini/`**: Generated static Gemini (`.gmi`) pages written here.
-- **`docs/`**: Documentation files describing the codebase structure and roadmap.
-- **`tests/`**: Unit and integration test suites using Pest PHP.
+- **`resources/`**: Theme templates (`views/`) and static assets (`static/`).
+- **`public_html/`**: Static HTML output and assets.
+- **`public_gopher/`**: Static Gophermap output.
+- **`public_gemini/`**: Static Gemini (`.gmi`) output.
+- **`docs/`**: Technical documentation and API specifications.
+- **`tests/`**: Unit, integration, and functional test suites using Pest PHP.
 
-## New Feature Notes
+## Feature Notes
 
-* **Image Dithering:** All images (like photos) copied from `content/` will be processed and dithered into a global palette GIF and a small thumbnail.
-* **Interactions:** The SiteBuilder tracks Webmentions/Interactions (like, repost, reply). Interaction counts are always shown, even when 0.
-* **Dynamic Indexing:** Category indexes and timelines are compiled natively, creating fully populated indexes for every configured site `kind` in all active languages.
-
-## UI Network Policy
-
-To guarantee maximum resilience and speed, the admin panel (UI) operates strictly on an **"offline-first"** policy.
-- The user interface must **never** make synchronous outbound network requests to third-party APIs (e.g., checking for updates, resolving domains, or polling external services) during page load or rendering.
-- All interactions with the outside world (such as federation, webmentions, or fetching available app updates) must be handled asynchronously via background tasks (`cron.php` or `BackgroundWorker`).
-- Background tasks save their results locally to the database or cache files. The UI must only read from these local sources, ensuring that a degraded external network or API rate limits will never block or slow down the admin interface.
-- **Exception:** Direct user-triggered actions that are guaranteed to be small and fast (like downloading an update under 1MB after manually clicking the "Update" button) are permitted to run synchronously.
+* **Universal Entry Entity:** All feeds, timelines, and federated items share the same domain entity model (`Indieinabox\Entry\Entry`).
+* **Offline-first Admin UI:** The admin panel never makes blocking external network requests during page load. All federation, webmentions, and updates run asynchronously.
+* **Image Dithering:** Embedded photos are automatically processed and dithered into bandwidth-efficient global palette GIFs and thumbnails.
+* **Multi-protocol Publishing:** Every content piece is natively published for the Web (HTML + microformats2 + ActivityPub), Gemini, and Gopher.

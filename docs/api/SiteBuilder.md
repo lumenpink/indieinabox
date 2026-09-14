@@ -3,174 +3,132 @@
 
 Class SiteBuilder
 
-Orchestrates the static site generation process. It scans the content directory,
-virtualizes missing translations, processes markdown into HTML/Gemtext/Gophermap,
-and compiles feeds and assets into the output directory.
+Orchestrates the static site generation process. It coordinates content scanning,
+translation virtualization, markdown body rendering, page publishing across multiple protocols
+(HTML, Gemini, Gopher, ActivityPub), feed generation (RSS, Atom, Twtxt), taxonomy index publishing,
+and static asset deployment.
+
+## Architecture
+
+`SiteBuilder` follows the Single Responsibility Principle as a high-level pipeline orchestrator.
+Individual responsibilities are delegated to dedicated services injected via the constructor:
+
+- **`ContentScanner`**: Scans markdown source files, handles fallback homepages, and renders raw bodies.
+- **`TranslationVirtualizer`**: Ensures multilingual parity and virtualizes missing pages with pseudo-translations.
+- **`PagePublisher`**: Publishes individual page documents (HTML, Gemini, Gopher, ActivityPub JSON).
+- **`IndexPublisher`**: Compiles kind timelines, sitemaps, category/flowerbed taxonomies, and theme feed views.
+- **`FeedPublisher`**: Generates RSS, Atom, and Twtxt syndicated feeds using pluggable feed generators.
+- **`AssetPublisher`**: Manages static files, theme view assets, media copying, and garbage collection.
 
 ## Properties
 
 ### `private Indieinabox\Site $site`
-
-@var \Indieinabox\Site
+Site configuration and environment settings.
 
 ### `private Indieinabox\Pages $pages`
-
-@var \Indieinabox\Pages
+Collection of processed pages.
 
 ### `private Indieinabox\ParserInterface $parser`
+Markdown parser implementation.
 
-@var \Indieinabox\ParserInterface
+### `private Indieinabox\SiteBuilder\ContentScanner $contentScanner`
+Service for scanning content and rendering raw bodies.
+
+### `private Indieinabox\SiteBuilder\AssetPublisher $assetPublisher`
+Service for static files, theme assets, and media publishing.
+
+### `private Indieinabox\SiteBuilder\FeedPublisher $feedPublisher`
+Service for feed generation.
+
+### `private Indieinabox\SiteBuilder\PagePublisher $pagePublisher`
+Service for rendering page documents.
+
+### `private Indieinabox\SiteBuilder\TranslationVirtualizer $translationVirtualizer`
+Service for translation virtualization and parity.
+
+### `private Indieinabox\SiteBuilder\IndexPublisher $indexPublisher`
+Service for sitemaps, section indexes, and taxonomies.
+
+### `public static array $manifest`
+Registry of absolute file paths generated during the build, used for Garbage Collection.
 
 ## Methods
 
 ### __construct()
-`public function __construct(Indieinabox\Site $site, ?Indieinabox\Pages $pages = null, ?Indieinabox\ParserInterface $parser = null)`
-
-Method __construct
-@param \Indieinabox\Site $site
-@param ?\Indieinabox\Pages $pages
-@param ?\Indieinabox\ParserInterface $parser
-
-### getPages()
-`public function getPages(): Indieinabox\Pages`
-
-Method getPages
-@return \Indieinabox\Pages
+```php
+public function __construct(
+    Site $site,
+    ?Pages $pages = null,
+    ?ParserInterface $parser = null,
+    ?AssetPublisher $assetPublisher = null,
+    ?FeedPublisher $feedPublisher = null,
+    ?PagePublisher $pagePublisher = null,
+    ?TranslationVirtualizer $translationVirtualizer = null,
+    ?IndexPublisher $indexPublisher = null,
+    ?ContentScanner $contentScanner = null
+)
+```
+Initializes the SiteBuilder orchestrator with optional custom service implementations.
 
 ### build()
-`public function build(): void`
+```php
+public function build(): void
+```
+Executes the complete build pipeline:
+1. Scans content directory via `ContentScanner`.
+2. Ensures mandatory homepage fallback via `ContentScanner`.
+3. Enforces translation parity and virtualizes missing languages via `TranslationVirtualizer`.
+4. Renders raw markdown bodies into HTML via `ContentScanner`.
+5. Publishes pages across formats (HTML, Gemini, Gopher, ActivityPub) via `PagePublisher`.
+6. Publishes feeds (RSS, Atom, Twtxt) via `FeedPublisher`.
+7. Publishes section indexes, taxonomy pages, and sitemaps via `IndexPublisher`.
+8. Copies static files and theme assets via `AssetPublisher`.
+9. Executes garbage collection via `AssetPublisher`.
 
-Executes the main build pipeline.
+### getPages()
+```php
+public function getPages(): Indieinabox\Pages
+```
+Returns the processed collection of pages.
 
-Cleans the output directory, scans content files, handles translation virtualization,
-and triggers generation of HTML, feeds, and static assets.
+### getParser()
+```php
+public function getParser(): Indieinabox\ParserInterface
+```
+Returns the parser instance.
 
-### copyMedia()
-`public function copyMedia(): void`
+### getContentScanner()
+```php
+public function getContentScanner(): Indieinabox\SiteBuilder\ContentScanner
+```
 
-Method copyMedia
-@return void
+### getAssetPublisher()
+```php
+public function getAssetPublisher(): Indieinabox\SiteBuilder\AssetPublisher
+```
 
-### virtualizeMissingLanguages()
-`private function virtualizeMissingLanguages(): void`
+### getFeedPublisher()
+```php
+public function getFeedPublisher(): Indieinabox\SiteBuilder\FeedPublisher
+```
 
-Method virtualizeMissingLanguages
-@return void
+### getPagePublisher()
+```php
+public function getPagePublisher(): Indieinabox\SiteBuilder\PagePublisher
+```
 
-### pseudoTranslate()
-`public function pseudoTranslate(Indieinabox\Page $page, string $targetLang): void`
+### getTranslationVirtualizer()
+```php
+public function getTranslationVirtualizer(): Indieinabox\SiteBuilder\TranslationVirtualizer
+```
 
-Method pseudoTranslate
-@param \Indieinabox\Page $page
-@param string $targetLang
+### getIndexPublisher()
+```php
+public function getIndexPublisher(): Indieinabox\SiteBuilder\IndexPublisher
+```
 
-@return void
-
-### scan()
-`public function scan(string $dir): void`
-
-Method scan
-@param string $dir
-
-@return void
-
-### generateHTMLFiles()
-`public function generateHTMLFiles(): void`
-
-Method generateHTMLFiles
-@return void
-
-### createHTMLFile()
-`private function createHTMLFile(Indieinabox\Page $page): void`
-
-Method createHTMLFile
-@param \Indieinabox\Page $page
-
-@return void
-
-### generateFeed()
-`public function generateFeed(): void`
-
-Method generateFeed
-@return void
-
-### copyAssets()
-`public function copyAssets(string $dir): void`
-
-Method copyAssets
-@param string $dir
-
-@return void
-
-### copyStatic()
-`public function copyStatic(string $dir): bool`
-
-Method copyStatic
-@param string $dir
-
-@return bool
-
-
-### createGeminiFile()
-`private function createGeminiFile(Indieinabox\Page $page): void`
-
-Method createGeminiFile
-@param \Indieinabox\Page $page
-
-@return void
-
-### createGopherFile()
-`private function createGopherFile(Indieinabox\Page $page): void`
-
-Method createGopherFile
-@param \Indieinabox\Page $page
-
-@return void
-
-### generateTwtxt()
-`public function generateTwtxt(): void`
-
-Method generateTwtxt
-@return void
-
-### getLanguageLinks()
-`private function getLanguageLinks(Indieinabox\Page $page): array`
-
-@return array<string, string>
-
-### getMenuLinks()
-`private function getMenuLinks(Indieinabox\Page $page): array`
-
-@return array<string, array<int, array<string, string>>>
-
-### getKindFolder()
-`private function getKindFolder(string $kind, string $lang): string`
-
-Method getKindFolder
-@param string $kind
-@param string $lang
-
-@return string
-
-### compileTimelineIndexes()
-`private function compileTimelineIndexes(string $targetKind, array $pages): void`
-
-@param \Indieinabox\Page[] $pages
-
-### compileSitemap()
-`private function compileSitemap(): void`
-
-Method compileSitemap
-@return void
-
-### compileSectionIndexes()
-`private function compileSectionIndexes(string $targetKind, array $pages): void`
-
-@param string $targetKind
-@param array<int, Page> $pages
-
-### ensureMandatoryHomepage()
-`private function ensureMandatoryHomepage(): void`
-
-Method ensureMandatoryHomepage
-@return void
+### addManifest()
+```php
+public static function addManifest(string $path): void
+```
+Registers an absolute path into `$manifest` to prevent it from being removed during garbage collection.

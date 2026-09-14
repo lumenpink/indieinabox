@@ -188,9 +188,33 @@ Parses incoming HTML payloads using Microformats 2:
 - Classifies interaction types (`like`, `repost`, `reply`, `bookmark`, `rsvp`, or general `webmention`).
 - Extracts published dates and Whostyles V2 metadata.
 
-## 🔑 IndieAuth Handler (`Indieinabox\IndieAuthHandler`)
-Provides IndieAuth / OAuth 2.0 PKCE authentication server endpoints.
+## 🔑 IndieAuth Subsystem (`Indieinabox\IndieAuth`)
 
+Provides IndieAuth and OAuth 2.0 authorization server capabilities, refactored into focused modular services:
+
+### 1. `IndieAuthHandler` (`Indieinabox\IndieAuthHandler`)
+The primary HTTP orchestrator for IndieAuth endpoints:
+- `sendMetadata()`: Serves `/.well-known/oauth-authorization-server` metadata.
+- `handleAuthRequest()`: Handles GET (login consent UI) and POST (code creation and verification).
+- `handleTokenRequest()`: Handles token exchange and token verification.
+- `validateBearerToken()`: Validates incoming Bearer tokens across headers and request payloads.
+
+### 2. `IndieAuth\PkceValidator` (`Indieinabox\IndieAuth\PkceValidator`)
+Implements Proof Key for Code Exchange (RFC 7636):
+- Supports `S256` SHA-256 base64url challenge calculation and verification.
+- Supports `plain` fallback method.
+
+### 3. `IndieAuth\TokenManager` (`Indieinabox\IndieAuth\TokenManager`)
+Manages the lifecycle of authorization codes and Bearer tokens:
+- `createAuthorizationCode()`: Generates one-time authorization codes with expiration and PKCE challenges.
+- `verifyAuthorizationCode()`: Validates and consumes codes for profile authentication.
+- `exchangeCodeForToken()`: Exchanges authorization codes for long-lived Bearer access tokens.
+- `validateBearerToken()`: Validates Bearer tokens against the SQLite storage.
+
+### 4. `IndieAuth\ConsentView` (`Indieinabox\IndieAuth\ConsentView`)
+Encapsulates UI presentation for authorization requests:
+- `renderLoginForm()`: Renders the glassmorphic consent form with client ID, requested scopes, and identity preview.
+- `renderError()`: Renders structured JSON error responses.
 
 ---
 

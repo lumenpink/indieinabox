@@ -41,6 +41,9 @@
 <li><a href="/docs/api/html/Feeds-Generators-TwtxtFeedGenerator.html">Feeds-Generators-TwtxtFeedGenerator</a></li>
 <li><a href="/docs/api/html/Helper.html">Helper</a></li>
 <li><a href="/docs/api/html/HttpSignature.html">HttpSignature</a></li>
+<li><a href="/docs/api/html/IndieAuth-ConsentView.html">IndieAuth-ConsentView</a></li>
+<li><a href="/docs/api/html/IndieAuth-PkceValidator.html">IndieAuth-PkceValidator</a></li>
+<li><a href="/docs/api/html/IndieAuth-TokenManager.html">IndieAuth-TokenManager</a></li>
 <li><a href="/docs/api/html/IndieAuthHandler.html">IndieAuthHandler</a></li>
 <li><a href="/docs/api/html/LinkChecker.html">LinkChecker</a></li>
 <li><a href="/docs/api/html/Markdown-ASTParser.html">Markdown-ASTParser</a></li>
@@ -101,80 +104,59 @@
         <h1 class="p-name">IndieAuthHandler</h1>
 <p><strong>Namespace:</strong> <code>Indieinabox</code></p>
 <p>Class IndieAuthHandler</p>
+<p>Orchestrates IndieAuth and OAuth 2.0 endpoints (Metadata discovery, Authorization, Token exchange)<br />
+delegating cryptographic PKCE verification to PkceValidator, lifecycle storage to TokenManager,<br />
+and presentation templates to ConsentView.</p>
 <h2>Properties</h2>
 <h3><code>private Indieinabox\Site $site</code></h3>
-<p>@var \Indieinabox\Site</p>
+<p>@var Site Global site configuration and environment.</p>
+<h3><code>private Indieinabox\IndieAuth\TokenManager $tokenManager</code></h3>
+<p>@var TokenManager Token and code management service.</p>
 <h2>Methods</h2>
 <h3><em></em>construct()</h3>
-<p><code>public function __construct(Indieinabox\Site $site)</code></p>
-<p>Initializes the IndieAuthHandler.</p>
-<p>@param \Indieinabox\Site $site Global site configuration and environment.</p>
+<p><code>public function __construct(Indieinabox\Site $site, ?Indieinabox\IndieAuth\TokenManager $tokenManager = null)</code></p>
+<p>Initializes the IndieAuthHandler and binds dependencies.</p>
+<p>@param Site $site Global site configuration.<br />
+@param ?TokenManager $tokenManager Optional token manager service.</p>
 <h3>handle()</h3>
 <p><code>public function handle(): void</code></p>
 <p>Main entry point for IndieAuth requests.<br />
-Routes the request to metadata, token exchange, or authorization endpoints<br />
-based on the URL path.</p>
+Routes the request to metadata, token exchange, or authorization endpoints.</p>
 <p>@return void</p>
 <h3>sendMetadata()</h3>
 <p><code>private function sendMetadata(): void</code></p>
-<p>Sends the OAuth 2.0 Authorization Server Metadata (JSON).<br />
-Used by clients to discover the endpoints and supported features of this IndieAuth provider.</p>
+<p>Sends the OAuth 2.0 Authorization Server Metadata (JSON).</p>
 <p>@return void</p>
 <h3>handleAuthRequest()</h3>
 <p><code>private function handleAuthRequest(): void</code></p>
-<p>Handles the authorization endpoint (<code>/auth</code>).<br />
-Renders the login form for GET requests, and processes login submissions<br />
-or authorization code verifications for POST requests.</p>
+<p>Handles the authorization endpoint (<code>/auth</code>).</p>
 <p>@return void</p>
-<h3>renderLoginForm()</h3>
-<p><code>private function renderLoginForm(?string $error = null): void</code></p>
-<p>Renders the HTML login form for the authorization flow.<br />
-Displays details about the requesting client application (clientRenders the HTML login form for the authorization flow.<br />
-Displays details about the requesting client application (client_id, scope).</p>
-<p>@param string|null $error Optional error message to display on the form.<br />
-@return void</p>
 <h3>processLogin()</h3>
 <p><code>private function processLogin(): void</code></p>
-<p>Processes the submission of the login form.<br />
-Validates the password, generates a temporary authorization code,<br />
-and redirects the user back to the client application&apos;s redirect URI.</p>
+<p>Processes submission of the user login form and issues an authorization code.</p>
 <p>@return void</p>
 <h3>verifyAuthCode()</h3>
 <p><code>private function verifyAuthCode(): void</code></p>
-<p>Verifies the authorization code exchanged by the client application.<br />
-Validates the code, redirect URI, client ID, and PKCE challenge (if present),<br />
-returning the authenticated user profile in JSON format upon success.</p>
+<p>Verifies an authorization code submitted by the client application.</p>
 <p>@return void</p>
 <h3>handleTokenRequest()</h3>
 <p><code>private function handleTokenRequest(): void</code></p>
-<p>Handles requests to the token endpoint (<code>/token</code>).<br />
-Supports POST requests to exchange an authorization code for an access token,<br />
-or GET requests to verify a token.</p>
+<p>Handles requests to the token endpoint (<code>/token</code>).</p>
 <p>@return void</p>
 <h3>exchangeCodeForToken()</h3>
 <p><code>private function exchangeCodeForToken(): void</code></p>
-<p>Exchanges an authorization code for a Bearer access token.<br />
-Validates the code and PKCE parameters, then generates a long-lived access token<br />
-and stores it for the authenticated user/client.</p>
+<p>Exchanges an authorization code for a Bearer access token.</p>
 <p>@return void</p>
 <h3>validateBearerToken()</h3>
 <p><code>public function validateBearerToken(?string $tokenOut = null): ?array</code></p>
 <p>Validates a provided Bearer token against stored valid tokens.</p>
 <p>@param ?string $tokenOut Reference to the token string if found.<br />
-@return ?array Array containing token details (me, client@param ?string $tokenOut Reference to the token string if found.<br />
-@return ?array Array containing token details (me, client_id, scope) or null if invalid.</p>
+@return array{me: string, client@param ?string $tokenOut Reference to the token string if found.<br />
+@return array{me: string, client_id: string, scope: string}|null</p>
 <h3>verifyToken()</h3>
 <p><code>private function verifyToken(): void</code></p>
-<p>Verifies the provided token (e.g., via a GET request to the token endpoint).<br />
-Returns the token details (me, clientVerifies the provided token (e.g., via a GET request to the token endpoint).<br />
-Returns the token details (me, client_id, scope) if valid.</p>
+<p>Verifies the provided token via a GET request to the token endpoint.</p>
 <p>@return void</p>
-<h3>sendResponse()</h3>
-<p><code>private function sendResponse(int $code, string $message): void</code></p>
-<p>Sends a JSON-formatted HTTP response with a specific status code.</p>
-<p>@param int $code HTTP status code.<br />
-@param string $message Response message.<br />
-@return void</p>
 
     </div>
 </body>

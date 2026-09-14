@@ -21,6 +21,26 @@ class HtmlRenderer implements RendererInterface
     private ?\Indieinabox\Page $page = null;
 
     /**
+     * @var \Indieinabox\Site|null
+     */
+    private ?\Indieinabox\Site $site = null;
+
+    public function __construct(?\Indieinabox\Page $page = null, ?\Indieinabox\Site $site = null)
+    {
+        $this->page = $page;
+        $this->site = $site;
+    }
+
+    private function getSite(): ?\Indieinabox\Site
+    {
+        if ($this->site !== null) {
+            return $this->site;
+        }
+        $container = \Indieinabox\Core\Container::getInstance();
+        return $container->has(\Indieinabox\Site::class) ? $container->get(\Indieinabox\Site::class) : ($GLOBALS['site'] ?? null);
+    }
+
+    /**
      * Set active page context.
      *
      * @param \Indieinabox\Page $page
@@ -282,7 +302,7 @@ class HtmlRenderer implements RendererInterface
         if ($node instanceof LinkNode) {
             $target = $node->target;
             if (preg_match('#^https?://#i', $target)) {
-                global $site;
+                $site = $this->getSite();
                 $fqdn = $site?->metadata?->fqdn ?? '';
                 if ($fqdn === '' || strpos($target, $fqdn) !== 0) {
                     $ts = $this->page && is_array($this->page->frontmatter) && isset($this->page->frontmatter['published']) 
@@ -309,7 +329,7 @@ class HtmlRenderer implements RendererInterface
                 $markdownFileDir = dirname($this->page->filepath);
                 
                 if (str_starts_with($target, '/')) {
-                    global $site;
+                    $site = $this->getSite();
                     $base = $site?->paths?->baseDir ?? dirname(dirname(__DIR__));
                     $contentDir = $site?->paths?->contentDir ?? 'content';
                     $caminhoOriginal = $base . DIRECTORY_SEPARATOR . $contentDir . DIRECTORY_SEPARATOR . ltrim($target, '/');
@@ -318,7 +338,7 @@ class HtmlRenderer implements RendererInterface
                 }
 
                 if (file_exists($caminhoOriginal)) {
-                    global $site;
+                    $site = $this->getSite();
                     $base = $site?->paths?->baseDir ?? dirname(dirname(__DIR__));
                     $outputDirHtml = $site?->paths?->outputDirHtml ?? 'public_html';
 

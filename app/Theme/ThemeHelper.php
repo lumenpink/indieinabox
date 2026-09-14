@@ -75,7 +75,8 @@ class ThemeHelper
 
         $html .= '</div>';
 
-        global $site;
+        $container = \Indieinabox\Core\Container::getInstance();
+        $site = $container->has(\Indieinabox\Site::class) ? $container->get(\Indieinabox\Site::class) : ($GLOBALS['site'] ?? null);
         $defaultLang = $site->localization->defaultLang ?? 'en';
         $pageLang = $page->lang ?? $defaultLang;
         $langPrefix = ($pageLang === $defaultLang) ? '' : $pageLang . '/';

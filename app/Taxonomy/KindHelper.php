@@ -20,6 +20,12 @@ use Indieinabox\Yaml;
  */
 class KindHelper
 {
+    private static function getSite(): ?Site
+    {
+        $container = \Indieinabox\Core\Container::getInstance();
+        return $container->has(Site::class) ? $container->get(Site::class) : ($GLOBALS['site'] ?? null);
+    }
+
     /**
      * Retrieves kind configuration with sensible defaults.
      *
@@ -28,7 +34,7 @@ class KindHelper
      */
     public static function getKindConfig(string $kind): array
     {
-        global $site;
+        $site = self::getSite();
         $kind = strtolower($kind);
 
         if ($site && !empty($site->config['kinds'])) {
@@ -70,8 +76,7 @@ class KindHelper
      */
     public static function kind(mixed $page, ?Site $siteInstance = null): array
     {
-        global $site;
-        $site = $siteInstance ?? $site;
+        $site = $siteInstance ?? self::getSite();
         $isObject = $page instanceof Page;
         $pageKind = $isObject ? $page->kind : ($page["kind"] ?? null);
         $pageSlug = $isObject ? $page->slug : ($page["slug"] ?? "");
@@ -207,7 +212,7 @@ class KindHelper
      */
     public static function kindLabel(string $kind, ?string $lang = null): string
     {
-        global $site;
+        $site = self::getSite();
         $config = self::getKindConfig($kind);
         $targetLang = $lang ?? $site->localization->defaultLang ?? 'en';
 
@@ -233,7 +238,7 @@ class KindHelper
      */
     public static function kindLink(Page $page, string $kind): string
     {
-        global $site;
+        $site = self::getSite();
         $lang = $page->lang ?? $site->localization->defaultLang ?? 'en';
         $defaultLang = $site->localization->defaultLang ?? 'en';
         $prettylinks = $site->options->prettylinks ?? true;
@@ -391,14 +396,14 @@ class KindHelper
 
         // Default hardcoded image if still empty
         if (empty($image)) {
-            global $site;
+            $site = self::getSite();
             $baseUrl = rtrim($site->metadata->fqdn ?? '', '/');
             $image = $baseUrl . '/media/default.png';
             $imageAlt = $site->metadata->sitename ?? 'Default site image';
         } else {
             // Ensure image URL is absolute
             if (!preg_match('/^https?:\/\//i', $image)) {
-                global $site;
+                $site = self::getSite();
                 $baseUrl = rtrim($site->metadata->fqdn ?? '', '/');
                 if (str_starts_with($image, '/')) {
                     $image = $baseUrl . $image;

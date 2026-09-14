@@ -8,6 +8,9 @@ post listing, SEO metadata resolution, and incoming interactions.
 
 ## Methods
 
+### getSite()
+`private static function getSite(): ?Indieinabox\Site`
+
 ### getKindConfig()
 `public static function getKindConfig(string $kind): array`
 

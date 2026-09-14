@@ -38,6 +38,7 @@ The core generation pipeline is decoupled into single-responsibility services:
 Here is a breakdown of the workspace layout and its main contents:
 
 - **`app/`**: Object-oriented, namespaced code under PSR-4 (`Indieinabox\`).
+  - **`Core/`**: Core infrastructure including PSR-11 Dependency Injection `Container` with autowiring, and exception contracts.
   - **`Console/`**: Command-line interface kernel, command contract, and dedicated single-responsibility commands (`BuildCommand`, `CronCommand`, `FetchCommand`, `PostCommand`, `ProfileCommand`, `ConfigCommand`, `SetupCommand`, `LinkCheckCommand`, `BackupCommand`, `TestWebmentionCommand`, `VersionCommand`, `UpdateCommand`).
   - **`Entry/`**: Universal `Entry` domain model for feed items, posts, and federation.
   - **`SiteBuilder/`**: Core site generation services (`ContentScanner`, `TranslationVirtualizer`, `PagePublisher`, `IndexPublisher`, `FeedPublisher`, `AssetPublisher`).

@@ -9,7 +9,17 @@ Class HtmlRenderer
 
 @var \Indieinabox\Page|null
 
+### `private ?Indieinabox\Site $site`
+
+@var \Indieinabox\Site|null
+
 ## Methods
+
+### __construct()
+`public function __construct(?Indieinabox\Page $page = null, ?Indieinabox\Site $site = null)`
+
+### getSite()
+`private function getSite(): ?Indieinabox\Site`
 
 ### setPage()
 `public function setPage(Indieinabox\Page $page): void`

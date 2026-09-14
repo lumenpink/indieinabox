@@ -78,7 +78,8 @@ class ThemeManager
      */
     public static function resolveViewPath(string $relativePath): string
     {
-        global $site;
+        $container = \Indieinabox\Core\Container::getInstance();
+        $site = $container->has(Site::class) ? $container->get(Site::class) : ($GLOBALS['site'] ?? null);
         $themeDir = isset($site) && isset($site->paths->themeDir) ? $site->paths->themeDir : 'resources';
         return rtrim($themeDir, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR . ltrim($relativePath, '/');
     }
@@ -132,7 +133,8 @@ class ThemeManager
      */
     private static function resolveEmbeddedKey(string $viewPath): string
     {
-        global $site;
+        $container = \Indieinabox\Core\Container::getInstance();
+        $site = $container->has(Site::class) ? $container->get(Site::class) : ($GLOBALS['site'] ?? null);
         $themeDir = isset($site) && isset($site->paths->themeDir) ? $site->paths->themeDir : 'resources';
 
         $searchStr = trim($themeDir, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;

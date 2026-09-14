@@ -266,7 +266,7 @@ class IndexPublisher
 
                     if (file_exists($summaryFile)) {
                         ob_start();
-                        global $site;
+                        \Indieinabox\Core\Container::getInstance()->instance(\Indieinabox\Site::class, $this->site);
                         $site = $this->site;
                         $page = clone $p;
                         $page->relpath = $monthPage->relpath;
@@ -309,7 +309,7 @@ class IndexPublisher
 
                 if (file_exists($summaryFile)) {
                     ob_start();
-                    global $site;
+                    \Indieinabox\Core\Container::getInstance()->instance(\Indieinabox\Site::class, $this->site);
                     $site = $this->site;
                     $page = clone $p;
                     $page->relpath = $indexPage->relpath;

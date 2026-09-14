@@ -342,6 +342,10 @@ app/
   - `Indieinabox\Taxonomy\KindHelper`: `getKindConfig`, `kind`, `getKindFolder`, `kindLabel`, `kindLink`, `getOriginalContent`, `listposts`, `removeGeneric`, `getSeoMetadata`, `getInteractions`.
   - `Indieinabox\Localization\Translator`: `translate`, `translatePlural`, `translateLowercase`, `translateSlugize`, `updateTranslations`.
   - Fully deleted `Helper.php` and migrated all callers across the codebase, updating unit/functional/integration tests across all 3 levels.
-- [ ] **Dependency Injection**: Remove the reliance on `global $site` and singleton patterns (`Database::getDb()`). Inject dependencies via constructors to make testing and state management predictable.
+- [x] **Dependency Injection**: Implemented PSR-11 compliant Dependency Injection container (`Indieinabox\Core\Container`) and eliminated reliance on `global $site`:
+  - `Indieinabox\Core\Container` supporting singleton instances, factory bindings, autowired constructor resolution via reflection, and PSR-11 exceptions (`NotFoundException`, `ContainerException`).
+  - Completely purged `global $site` across all core classes (`ThemeManager`, `ThemeHelper`, `HtmlRenderer`, `KindHelper`, `IndexPublisher`).
+  - Bundled PSR-11 interfaces into the single-file compilation pipeline with topological sorting.
+  - Added test coverage across Unit, Functional, and Integration levels (`tests/Unit/Core/ContainerTest.php`, `tests/Functional/ContainerResolutionFunctionalTest.php`, `tests/Integration/ContainerIntegrationTest.php`).
 - [ ] **Interface-Driven Federation**: All adapters implement a shared contract so services never depend on a specific platform implementation.
 

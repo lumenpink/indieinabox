@@ -50,6 +50,9 @@
 <li><a href="/docs/api/html/Console-Commands-VersionCommand.html">Console-Commands-VersionCommand</a></li>
 <li><a href="/docs/api/html/Console-ConsoleKernel.html">Console-ConsoleKernel</a></li>
 <li><a href="/docs/api/html/Console-Contracts-CommandInterface.html">Console-Contracts-CommandInterface</a></li>
+<li><a href="/docs/api/html/Core-Container.html">Core-Container</a></li>
+<li><a href="/docs/api/html/Core-Exceptions-ContainerException.html">Core-Exceptions-ContainerException</a></li>
+<li><a href="/docs/api/html/Core-Exceptions-NotFoundException.html">Core-Exceptions-NotFoundException</a></li>
 <li><a href="/docs/api/html/Database.html">Database</a></li>
 <li><a href="/docs/api/html/Entry-Entry.html">Entry-Entry</a></li>
 <li><a href="/docs/api/html/FeedFetcher.html">FeedFetcher</a></li>
@@ -136,7 +139,13 @@
 <h2>Properties</h2>
 <h3><code>private ?Indieinabox\Page $page</code></h3>
 <p>@var \Indieinabox\Page|null</p>
+<h3><code>private ?Indieinabox\Site $site</code></h3>
+<p>@var \Indieinabox\Site|null</p>
 <h2>Methods</h2>
+<h3><em></em>construct()</h3>
+<p><code>public function __construct(?Indieinabox\Page $page = null, ?Indieinabox\Site $site = null)</code></p>
+<h3>getSite()</h3>
+<p><code>private function getSite(): ?Indieinabox\Site</code></p>
 <h3>setPage()</h3>
 <p><code>public function setPage(Indieinabox\Page $page): void</code></p>
 <p>Set active page context.</p>

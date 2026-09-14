@@ -100,6 +100,8 @@ if (php_sapi_name() === 'cli') {
 }
 
 $site = new Site();
+\Indieinabox\Core\Container::getInstance()->instance(\Indieinabox\Site::class, $site);
+\Indieinabox\Core\Container::getInstance()->instance('site', $site);
 $site->paths->baseDir = $base;
 $site->config = $config;
 if (isset($config['sitename'])) {

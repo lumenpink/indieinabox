@@ -21,6 +21,11 @@ $mf2Parser = $base . '/vendor/mf2/mf2/Mf2/Parser.php';
 if (file_exists($mf2Parser)) {
     $appFiles[] = $mf2Parser;
 }
+foreach ((array) glob($base . '/vendor/psr/container/src/*.php') as $psrFile) {
+    if (is_file((string) $psrFile)) {
+        $appFiles[] = (string) $psrFile;
+    }
+}
 
 usort($appFiles, function (string $a, string $b): int {
     $aContent = (string) file_get_contents($a);

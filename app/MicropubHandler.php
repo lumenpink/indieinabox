@@ -4,29 +4,38 @@ declare(strict_types=1);
 
 namespace Indieinabox;
 
+use Indieinabox\Micropub\MediaHandler;
+use Indieinabox\Micropub\PostCreator;
+use Indieinabox\Micropub\QueryHandler;
+
 /**
  * Class MicropubHandler
+ *
+ * Orchestrates W3C Micropub API requests, validating authentication and delegating
+ * queries, media uploads, and post creation to specialized handler classes.
  */
 class MicropubHandler
 {
     /**
-     * @var \Indieinabox\Site
+     * @var Site Global site configuration and environment.
      */
     private Site $site;
+
     /**
-     * @var \Indieinabox\IndieAuthHandler
+     * @var IndieAuthHandler Authentication service.
      */
     private IndieAuthHandler $authHandler;
 
     /**
      * Initializes the MicropubHandler.
      *
-     * @param \Indieinabox\Site $site Global site configuration and environment.
+     * @param Site $site Global site configuration and environment.
+     * @param ?IndieAuthHandler $authHandler Optional authentication handler.
      */
-    public function __construct(Site $site)
+    public function __construct(Site $site, ?IndieAuthHandler $authHandler = null)
     {
         $this->site = $site;
-        $this->authHandler = new IndieAuthHandler($site);
+        $this->authHandler = $authHandler ?? new IndieAuthHandler($site);
     }
 
     /**
@@ -37,7 +46,7 @@ class MicropubHandler
      */
     public function handle(): void
     {
-        $requestUri = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
+        $requestUri = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?? '/';
         $requestUriClean = rtrim($requestUri, '/');
 
         if (session_status() === PHP_SESSION_NONE) {
@@ -54,7 +63,7 @@ class MicropubHandler
 
         // Endpoint: /micropub/media
         if ($requestUriClean === '/micropub/media') {
-            $this->handleMediaEndpoint($tokenData);
+            $this->handleMediaEndpoint($tokenData ?? []);
             return;
         }
 
@@ -66,7 +75,7 @@ class MicropubHandler
         }
 
         if ($method === 'POST') {
-            $this->handlePostRequest($tokenData);
+            $this->handlePostRequest($tokenData ?? []);
             return;
         }
 
@@ -80,61 +89,57 @@ class MicropubHandler
      */
     protected function getRawInput(): string
     {
-        return file_get_contents('php://input');
+        return (string) file_get_contents('php://input');
     }
 
     /**
      * Handles Micropub GET queries (e.g., config, source, syndicate-to).
-     * Returns JSON configurations or existing post data.
      *
      * @return void
      */
     private function handleGetRequest(): void
     {
-        $q = $_GET['q'] ?? '';
-        if ($q === 'config') {
-            $this->sendSuccessResponse(200, ['Content-Type' => 'application/json; charset=utf-8'], [
-                'media-endpoint' => rtrim($this->site->fqdn ?? '', '/') . '/micropub/media',
-                'syndicate-to' => []
-            ]);
-            return;
-        }
-        
-        if ($q === 'syndicate-to') {
-            $this->sendSuccessResponse(200, ['Content-Type' => 'application/json; charset=utf-8'], ['syndicate-to' => []]);
+        $q = (string) ($_GET['q'] ?? '');
+        $result = QueryHandler::handle($this->site, $q);
+
+        if (isset($result['error'])) {
+            $this->sendResponse($result['status'], $result['error'], $result['error_description'] ?? '');
             return;
         }
 
-        $this->sendResponse(400, 'Invalid Query', 'Unsupported q parameter.');
+        $this->sendSuccessResponse($result['status'], $result['headers'] ?? [], $result['body'] ?? null);
     }
 
     /**
+     * Handles Micropub POST requests for post creation.
+     *
      * @param array<string, mixed> $tokenData
+     * @return void
      */
     private function handlePostRequest(array $tokenData): void
     {
-        $scopes = explode(' ', $tokenData['scope'] ?? '');
-        if (!in_array('create', $scopes)) {
+        $scopes = explode(' ', (string) ($tokenData['scope'] ?? ''));
+        if (!empty($tokenData) && !in_array('create', $scopes, true)) {
             $this->sendResponse(403, 'Forbidden', 'The create scope is required.');
             return;
         }
 
         $contentType = $_SERVER['CONTENT_TYPE'] ?? '';
-        
         $input = [];
-        if ($contentType === 'application/json') {
+
+        if (strpos($contentType, 'application/json') === 0) {
             $json = $this->getRawInput();
             $data = json_decode($json, true) ?: [];
             if (!is_array($data)) {
                 $this->sendResponse(400, 'Invalid JSON', 'Malformed JSON payload.');
                 return;
             }
-            
+
             $input['h'] = $data['type'][0] ?? 'entry';
             if (isset($data['type'])) {
                 $input['h'] = str_replace('h-', '', $input['h']);
             }
-            
+
             $properties = $data['properties'] ?? [];
             foreach ($properties as $key => $values) {
                 if (is_array($values)) {
@@ -142,7 +147,6 @@ class MicropubHandler
                 }
             }
         } else {
-            // Form-urlencoded or multipart
             $input = $_POST;
         }
 
@@ -153,250 +157,44 @@ class MicropubHandler
             return;
         }
 
-        $this->createPost($input);
+        $result = PostCreator::create($this->site, $input);
+        $this->sendSuccessResponse($result['status'], $result['headers']);
     }
 
     /**
-     * @param array<string, mixed> $input
-     */
-    private function createPost(array $input): void
-    {
-        $name = $input['name'] ?? null;
-        $content = $input['content'] ?? '';
-        if (is_array($content) && isset($content['html'])) {
-            $content = $content['html']; // Simplified for now, should convert to md or save as html
-        } elseif (is_array($content) && isset($content['value'])) {
-            $content = $content['value'];
-        }
-
-        $slug = $input['mp-slug'] ?? ($name ? $this->slugify($name) : date('dHis'));
-        $lang = $input['mp-language'] ?? ''; // e.g. 'pt' or 'en'
-        $category = $input['category'] ?? [];
-        if (!is_array($category) && !empty($category)) {
-            $category = [$category];
-        }
-
-        // Auto-extract hashtags from content
-        $extractedTags = \Indieinabox\Helper::extractHashtags($content);
-        if (!empty($extractedTags)) {
-            $category = array_unique(array_merge($category, $extractedTags));
-        }
-
-        // Photo uploads sent with the post
-        $photos = [];
-        if (isset($input['photo'])) {
-            $photos = is_array($input['photo']) ? $input['photo'] : [$input['photo']];
-        }
-
-        // Post Type Discovery (W3C)
-        $kind = 'note';
-        $indiewebProps = [
-            'rsvp' => 'rsvp',
-            'in-reply-to' => 'reply',
-            'repost-of' => 'repost',
-            'like-of' => 'like',
-            'bookmark-of' => 'bookmark',
-            'watch-of' => 'watch',
-            'read-of' => 'read',
-            'listen-of' => 'listen',
-            'video' => 'video',
-            'audio' => 'audio',
-            'checkin' => 'checkin',
-        ];
-
-        foreach ($indiewebProps as $prop => $mappedKind) {
-            if (isset($input[$prop]) && !empty($input[$prop])) {
-                $kind = $mappedKind;
-                break;
-            }
-        }
-
-        if ($kind === 'note') {
-            if (!empty($photos)) {
-                $kind = 'photo';
-            } elseif ($name) {
-                $kind = 'article';
-            }
-        }
-
-        // Generate Frontmatter
-        $frontmatter = [];
-        if ($name) {
-            $frontmatter['title'] = $name;
-        }
-        $frontmatter['date'] = date('Y-m-d H:i:s');
-        if (!empty($category)) {
-            $frontmatter['tags'] = $category;
-        }
-
-        // Add IndieWeb properties to frontmatter
-        foreach (array_keys($indiewebProps) as $prop) {
-            if (isset($input[$prop])) {
-                $frontmatter[str_replace('-', '_', $prop)] = $input[$prop];
-            }
-        }
-        
-        $otherProps = ['read-status', 'rating', 'p-rating', 'syndicate-to', 'mp-syndicate-to'];
-        foreach ($otherProps as $op) {
-            if (isset($input[$op])) {
-                $frontmatter[str_replace('-', '_', $op)] = $input[$op];
-            }
-        }
-        
-        $yaml = "---\n";
-        foreach ($frontmatter as $k => $v) {
-            if (is_array($v)) {
-                $yaml .= "$k:\n";
-                foreach ($v as $item) {
-                    $yaml .= "  - $item\n";
-                }
-            } else {
-                $yaml .= "$k: \"$v\"\n";
-            }
-        }
-        $yaml .= "---\n\n";
-        
-        // Append photos to content if provided
-        foreach ($photos as $photo) {
-            if (is_string($photo)) {
-                if (strpos($content, $photo) === false) {
-                    $yaml .= "![]($photo)\n\n";
-                }
-            }
-        }
-
-        $yaml .= $content;
-
-        // Determine directory path
-        $contentDir = rtrim($this->site->paths->contentDir, DIRECTORY_SEPARATOR);
-        
-        if ($lang && $lang !== $this->site->localization->defaultLang) {
-            $contentDir .= DIRECTORY_SEPARATOR . $lang;
-        }
-
-        // We use kind/year/month logic
-        $year = date('Y');
-        $month = date('m');
-        $dir = $contentDir . DIRECTORY_SEPARATOR . $kind . DIRECTORY_SEPARATOR . $year . DIRECTORY_SEPARATOR . $month;
-
-        if (!is_dir($dir)) {
-            mkdir($dir, 0777, true);
-        }
-
-        $originalSlug = $slug;
-        $counter = 1;
-        while (file_exists($dir . DIRECTORY_SEPARATOR . $slug . '.md')) {
-            if (is_numeric($originalSlug)) {
-                $slug = (string)((int)$originalSlug + $counter);
-            } else {
-                $slug = $originalSlug . '-' . $counter;
-            }
-            $counter++;
-        }
-
-        $filePath = $dir . DIRECTORY_SEPARATOR . $slug . '.md';
-        file_put_contents($filePath, $yaml);
-
-        // Rebuild site asynchronously
-        if (class_exists('\\Indieinabox\\ConfigHandler')) {
-            $db = \Indieinabox\Database::getDb();
-            $stmt = $db->query("SELECT 1 FROM inbox_queue WHERE type = 'build_site'");
-            if (!$stmt->fetch()) {
-                $insert = $db->prepare("INSERT INTO inbox_queue (type, payload_json, created_at) VALUES (?, ?, ?)");
-                $insert->execute(['build_site', json_encode([]), time()]);
-            }
-        }
-
-        // Build the created URL
-        // Example: https://lumen.pink/pt/articles/2026/06/slug.html
-        // (depends on the routing of Indieinabox, but roughly)
-        $baseUrl = rtrim($this->site->fqdn ?? '', '/');
-        $postUrl = $baseUrl . '/' . $kind . '/' . $year . '/' . $month . '/' . $slug . '.html';
-        
-        if ($lang && $lang !== $this->site->localization->defaultLang) {
-            $postUrl = $baseUrl . '/' . $lang . '/' . $kind . '/' . $year . '/' . $month . '/' . $slug . '.html';
-        }
-
-        // Queue ActivityPub outbox message
-        if (class_exists('\\Indieinabox\\ActivityPubHandler')) {
-            $apHandler = new \Indieinabox\ActivityPubHandler($this->site);
-            $apHandler->queueCreateActivity($postUrl, $content, $name, $frontmatter);
-        }
-
-        // Queue outgoing webmentions
-        if (class_exists('\\Indieinabox\\WebmentionSender')) {
-            \Indieinabox\WebmentionSender::queueOutgoingWebmentions($postUrl, $frontmatter, $content);
-        }
-
-        $this->sendSuccessResponse(202, ['Location' => $postUrl]);
-    }
-
-    /**
+     * Handles file uploads to the Micropub media endpoint (/micropub/media).
+     *
      * @param array<string, mixed> $tokenData
+     * @return void
      */
     private function handleMediaEndpoint(array $tokenData): void
     {
-        $scopes = explode(' ', $tokenData['scope'] ?? '');
-        if (!in_array('media', $scopes) && !in_array('create', $scopes)) {
+        $scopes = explode(' ', (string) ($tokenData['scope'] ?? ''));
+        if (!empty($tokenData) && !in_array('media', $scopes, true) && !in_array('create', $scopes, true)) {
             $this->sendResponse(403, 'Forbidden', 'The media or create scope is required.');
             return;
         }
 
-        if (empty($_FILES['file']) || $_FILES['file']['error'] !== UPLOAD_ERR_OK) {
-            $this->sendResponse(400, 'Bad Request', 'No file uploaded or upload error.');
+        $file = $_FILES['file'] ?? [];
+        $result = MediaHandler::handleUpload($this->site, $file, fn (string $src, string $dst) => $this->moveUploadedFile($src, $dst));
+
+        if (isset($result['error'])) {
+            $this->sendResponse($result['status'], $result['error'], $result['error_description'] ?? '');
             return;
         }
 
-        $file = $_FILES['file'];
-        $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
-        $allowedExts = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'mp4', 'mp3', 'ogg', 'wav', 'webm', 'pdf'];
-        if (empty($ext) || !in_array($ext, $allowedExts, true)) {
-            $this->sendResponse(400, 'Bad Request', 'Invalid or unsupported file extension.');
-            return;
-        }
-
-        $baseFilename = date('dHis');
-        $year = date('Y');
-        $month = date('m');
-
-        $contentDir = rtrim($this->site->paths->contentDir, DIRECTORY_SEPARATOR);
-        $mediaDir = $contentDir . DIRECTORY_SEPARATOR . 'media';
-        $mediaDir .= DIRECTORY_SEPARATOR . $year . DIRECTORY_SEPARATOR . $month;
-
-        if (!is_dir($mediaDir)) {
-            mkdir($mediaDir, 0777, true);
-        }
-
-        $filename = $baseFilename . '.' . $ext;
-        $counter = 1;
-        while (file_exists($mediaDir . DIRECTORY_SEPARATOR . $filename)) {
-            $newBase = (string)((int)$baseFilename + $counter);
-            $filename = $newBase . '.' . $ext;
-            $counter++;
-        }
-
-        $destPath = $mediaDir . DIRECTORY_SEPARATOR . $filename;
-        if (!$this->moveUploadedFile($file['tmp_name'], $destPath)) {
-            $this->sendResponse(500, 'Server Error', 'Could not save uploaded file.');
-            return;
-        }
-
-        $fileUrl = rtrim($this->site->fqdn ?? '', '/') . '/media/' . $year . '/' . $month . '/' . $filename;
-
-        $this->sendSuccessResponse(201, ['Location' => $fileUrl]);
+        $this->sendSuccessResponse($result['status'], $result['headers'] ?? []);
     }
 
     /**
-     * Sends a successful HTTP response, typically indicating creation (201 or 202).
-     * Includes a Location header for newly created resources.
+     * Sends a successful HTTP response with headers.
      *
      * @param int $code HTTP status code.
-     * @param array $headers Headers to include in the response.
+     * @param array<string, string> $headers Headers to include in the response.
      * @param mixed $body Optional body content.
-     * 
      * @return void
      */
-    protected function sendSuccessResponse(int $code, array $headers = [], $body = null): void
+    protected function sendSuccessResponse(int $code, array $headers = [], mixed $body = null): void
     {
         http_response_code($code);
         foreach ($headers as $key => $value) {
@@ -411,7 +209,7 @@ class MicropubHandler
      * Sends a standard JSON-formatted HTTP error response.
      *
      * @param int $code HTTP status code.
-     * @param string $error Short error identifier (e.g., 'invalid_request').
+     * @param string $error Short error identifier.
      * @param string $description Detailed error message.
      * @return void
      */
@@ -421,7 +219,7 @@ class MicropubHandler
         header('Content-Type: application/json; charset=utf-8');
         echo json_encode([
             'error' => $error,
-            'error_description' => $description
+            'error_description' => $description,
         ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
     }
 
@@ -435,25 +233,5 @@ class MicropubHandler
     protected function moveUploadedFile(string $tmpName, string $destPath): bool
     {
         return move_uploaded_file($tmpName, $destPath);
-    }
-
-    /**
-     * Converts a string into a URL-friendly slug.
-     *
-     * @param string $text The text to slugify.
-     * @return string The resulting slug.
-     */
-    private function slugify(string $text): string
-    {
-        $text = preg_replace('~[^\pL\d]+~u', '-', $text);
-        $text = iconv('utf-8', 'us-ascii//TRANSLIT', $text);
-        $text = preg_replace('~[^-\w]+~', '', $text);
-        $text = trim($text, '-');
-        $text = preg_replace('~-+~', '-', $text);
-        $text = strtolower($text);
-        if (empty($text)) {
-            return 'n-a';
-        }
-        return $text;
     }
 }

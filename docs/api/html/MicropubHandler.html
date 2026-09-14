@@ -56,6 +56,9 @@
 <li><a href="/docs/api/html/Markdown-MarkdownValidator.html">Markdown-MarkdownValidator</a></li>
 <li><a href="/docs/api/html/Markdown-RendererInterface.html">Markdown-RendererInterface</a></li>
 <li><a href="/docs/api/html/MarkdownParser.html">MarkdownParser</a></li>
+<li><a href="/docs/api/html/Micropub-MediaHandler.html">Micropub-MediaHandler</a></li>
+<li><a href="/docs/api/html/Micropub-PostCreator.html">Micropub-PostCreator</a></li>
+<li><a href="/docs/api/html/Micropub-QueryHandler.html">Micropub-QueryHandler</a></li>
 <li><a href="/docs/api/html/MicropubClientHandler.html">MicropubClientHandler</a></li>
 <li><a href="/docs/api/html/MicropubHandler.html">MicropubHandler</a></li>
 <li><a href="/docs/api/html/Microsub-ExtendedEntry.html">Microsub-ExtendedEntry</a></li>
@@ -104,16 +107,19 @@
         <h1 class="p-name">MicropubHandler</h1>
 <p><strong>Namespace:</strong> <code>Indieinabox</code></p>
 <p>Class MicropubHandler</p>
+<p>Orchestrates W3C Micropub API requests, validating authentication and delegating<br />
+queries, media uploads, and post creation to specialized handler classes.</p>
 <h2>Properties</h2>
 <h3><code>private Indieinabox\Site $site</code></h3>
-<p>@var \Indieinabox\Site</p>
+<p>@var Site Global site configuration and environment.</p>
 <h3><code>private Indieinabox\IndieAuthHandler $authHandler</code></h3>
-<p>@var \Indieinabox\IndieAuthHandler</p>
+<p>@var IndieAuthHandler Authentication service.</p>
 <h2>Methods</h2>
 <h3><em></em>construct()</h3>
-<p><code>public function __construct(Indieinabox\Site $site)</code></p>
+<p><code>public function __construct(Indieinabox\Site $site, ?Indieinabox\IndieAuthHandler $authHandler = null)</code></p>
 <p>Initializes the MicropubHandler.</p>
-<p>@param \Indieinabox\Site $site Global site configuration and environment.</p>
+<p>@param Site $site Global site configuration and environment.<br />
+@param ?IndieAuthHandler $authHandler Optional authentication handler.</p>
 <h3>handle()</h3>
 <p><code>public function handle(): void</code></p>
 <p>Main entry point for handling Micropub API requests.<br />
@@ -125,32 +131,30 @@ Validates authentication and delegates to GET or POST specific handlers.</p>
 <p>@return string The raw request body.</p>
 <h3>handleGetRequest()</h3>
 <p><code>private function handleGetRequest(): void</code></p>
-<p>Handles Micropub GET queries (e.g., config, source, syndicate-to).<br />
-Returns JSON configurations or existing post data.</p>
+<p>Handles Micropub GET queries (e.g., config, source, syndicate-to).</p>
 <p>@return void</p>
 <h3>handlePostRequest()</h3>
 <p><code>private function handlePostRequest(array $tokenData): void</code></p>
-<p>@param array<string, mixed> $tokenData</p>
-<h3>createPost()</h3>
-<p><code>private function createPost(array $input): void</code></p>
-<p>@param array<string, mixed> $input</p>
+<p>Handles Micropub POST requests for post creation.</p>
+<p>@param array<string, mixed> $tokenData<br />
+@return void</p>
 <h3>handleMediaEndpoint()</h3>
 <p><code>private function handleMediaEndpoint(array $tokenData): void</code></p>
-<p>@param array<string, mixed> $tokenData</p>
+<p>Handles file uploads to the Micropub media endpoint (/micropub/media).</p>
+<p>@param array<string, mixed> $tokenData<br />
+@return void</p>
 <h3>sendSuccessResponse()</h3>
-<p><code>protected function sendSuccessResponse(int $code, array $headers = [], mixed $body = null): void</code></p>
-<p>Sends a successful HTTP response, typically indicating creation (201 or 202).<br />
-Includes a Location header for newly created resources.</p>
+<p><code>protected function sendSuccessResponse(int $code, array $headers = [], ?mixed $body = null): void</code></p>
+<p>Sends a successful HTTP response with headers.</p>
 <p>@param int $code HTTP status code.<br />
-@param array $headers Headers to include in the response.<br />
-@param mixed $body Optional body content.</p>
-<p>@return void</p>
+@param array<string, string> $headers Headers to include in the response.<br />
+@param mixed $body Optional body content.<br />
+@return void</p>
 <h3>sendResponse()</h3>
 <p><code>protected function sendResponse(int $code, string $error, string $description): void</code></p>
 <p>Sends a standard JSON-formatted HTTP error response.</p>
 <p>@param int $code HTTP status code.<br />
-@param string $error Short error identifier (e.g., &apos;invalid@param int $code HTTP status code.<br />
-@param string $error Short error identifier (e.g., &apos;invalid_request&apos;).<br />
+@param string $error Short error identifier.<br />
 @param string $description Detailed error message.<br />
 @return void</p>
 <h3>moveUploadedFile()</h3>
@@ -159,11 +163,6 @@ Includes a Location header for newly created resources.</p>
 <p>@param string $tmpName Path of the uploaded temporary file.<br />
 @param string $destPath Final destination path.<br />
 @return bool True on success, false on failure.</p>
-<h3>slugify()</h3>
-<p><code>private function slugify(string $text): string</code></p>
-<p>Converts a string into a URL-friendly slug.</p>
-<p>@param string $text The text to slugify.<br />
-@return string The resulting slug.</p>
 
     </div>
 </body>

@@ -3,24 +3,28 @@
 
 Class MicropubHandler
 
+Orchestrates W3C Micropub API requests, validating authentication and delegating
+queries, media uploads, and post creation to specialized handler classes.
+
 ## Properties
 
 ### `private Indieinabox\Site $site`
 
-@var \Indieinabox\Site
+@var Site Global site configuration and environment.
 
 ### `private Indieinabox\IndieAuthHandler $authHandler`
 
-@var \Indieinabox\IndieAuthHandler
+@var IndieAuthHandler Authentication service.
 
 ## Methods
 
 ### __construct()
-`public function __construct(Indieinabox\Site $site)`
+`public function __construct(Indieinabox\Site $site, ?Indieinabox\IndieAuthHandler $authHandler = null)`
 
 Initializes the MicropubHandler.
 
-@param \Indieinabox\Site $site Global site configuration and environment.
+@param Site $site Global site configuration and environment.
+@param ?IndieAuthHandler $authHandler Optional authentication handler.
 
 ### handle()
 `public function handle(): void`
@@ -41,35 +45,33 @@ Reads the raw input stream. Used for parsing JSON payloads.
 `private function handleGetRequest(): void`
 
 Handles Micropub GET queries (e.g., config, source, syndicate-to).
-Returns JSON configurations or existing post data.
 
 @return void
 
 ### handlePostRequest()
 `private function handlePostRequest(array $tokenData): void`
 
+Handles Micropub POST requests for post creation.
+
 @param array<string, mixed> $tokenData
-
-### createPost()
-`private function createPost(array $input): void`
-
-@param array<string, mixed> $input
+@return void
 
 ### handleMediaEndpoint()
 `private function handleMediaEndpoint(array $tokenData): void`
 
+Handles file uploads to the Micropub media endpoint (/micropub/media).
+
 @param array<string, mixed> $tokenData
+@return void
 
 ### sendSuccessResponse()
-`protected function sendSuccessResponse(int $code, array $headers = [], mixed $body = null): void`
+`protected function sendSuccessResponse(int $code, array $headers = [], ?mixed $body = null): void`
 
-Sends a successful HTTP response, typically indicating creation (201 or 202).
-Includes a Location header for newly created resources.
+Sends a successful HTTP response with headers.
 
 @param int $code HTTP status code.
-@param array $headers Headers to include in the response.
+@param array<string, string> $headers Headers to include in the response.
 @param mixed $body Optional body content.
-
 @return void
 
 ### sendResponse()
@@ -78,7 +80,7 @@ Includes a Location header for newly created resources.
 Sends a standard JSON-formatted HTTP error response.
 
 @param int $code HTTP status code.
-@param string $error Short error identifier (e.g., 'invalid_request').
+@param string $error Short error identifier.
 @param string $description Detailed error message.
 @return void
 
@@ -90,11 +92,3 @@ Helper to move uploaded files to their destination.
 @param string $tmpName Path of the uploaded temporary file.
 @param string $destPath Final destination path.
 @return bool True on success, false on failure.
-
-### slugify()
-`private function slugify(string $text): string`
-
-Converts a string into a URL-friendly slug.
-
-@param string $text The text to slugify.
-@return string The resulting slug.

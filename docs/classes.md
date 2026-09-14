@@ -149,6 +149,32 @@ Orchestrates HTTP requests under Web SAPIs, mapping URIs to dedicated handlers a
 ## 🗄️ Archive Handler (`Indieinabox\ArchiveHandler`)
 Serves local link snapshots, external archive fallbacks, and processes force snapshot requests.
 
+## ✍️ Micropub Subsystem (`Indieinabox\Micropub`)
+
+Provides W3C Micropub API server capabilities and media handling:
+
+### 1. `MicropubHandler` (`Indieinabox\MicropubHandler`)
+The primary HTTP orchestrator for `/micropub` and `/micropub/media`:
+- Validates IndieAuth Bearer tokens and admin sessions.
+- Routes queries to `QueryHandler`, media uploads to `MediaHandler`, and posts to `PostCreator`.
+
+### 2. `Micropub\QueryHandler` (`Indieinabox\Micropub\QueryHandler`)
+Handles Micropub GET queries:
+- `q=config`: Exposes the media endpoint URL and syndicate-to targets.
+- `q=syndicate-to`: Exposes supported syndication providers.
+
+### 3. `Micropub\MediaHandler` (`Indieinabox\Micropub\MediaHandler`)
+Processes uploads to `/micropub/media`:
+- Validates allowed file extensions (images, video, audio, PDF).
+- Avoids filename collisions in `content/media/YYYY/MM`.
+- Returns the public Location URL with HTTP 201 Created.
+
+### 4. `Micropub\PostCreator` (`Indieinabox\Micropub\PostCreator`)
+Creates new posts from form or JSON inputs:
+- Discovers IndieWeb post kinds (`rsvp`, `reply`, `repost`, `like`, `bookmark`, `watch`, `read`, `listen`, `video`, `audio`, `checkin`, `photo`, `article`, `note`).
+- Generates clean YAML frontmatter, extracts hashtags, and avoids slug collisions.
+- Automatically triggers site rebuilds, ActivityPub outbox notifications, and outgoing webmentions.
+
 ## 📩 Webmention Subsystem (`Indieinabox\Webmention`)
 
 The Webmention subsystem handles incoming notifications and dispatches outgoing webmentions for linked external resources:

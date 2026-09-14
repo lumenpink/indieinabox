@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Indieinabox;
 
-use Indieinabox\Markdown\ContentProcessor;
 use Indieinabox\SiteBuilder\AssetPublisher;
 use Indieinabox\SiteBuilder\ContentScanner;
 use Indieinabox\SiteBuilder\FeedPublisher;
@@ -203,25 +202,12 @@ class SiteBuilder
         $timings = [];
         $t_start = microtime(true);
 
-        // Scan content
+        // Scan content & render
         $s1 = microtime(true);
         $this->scan($this->site->paths->getContentPath());
         $this->ensureMandatoryHomepage();
         $this->translationVirtualizer->virtualize($this->pages);
-
-        // Pass 2: Render Markdown to HTML now that all pages are scanned
-        global $pages, $site;
-        $pages = $this->pages;
-        $site = $this->site;
-
-        $contentProcessor = new ContentProcessor();
-        foreach ($this->pages as $page) {
-            if (isset($page->rawBody) && $page->rawBody !== '') {
-                $renderedContent = $contentProcessor->processContent($page->rawBody, $page);
-                $page->content->content = trim($renderedContent, " \n\r\t");
-            }
-        }
-
+        $this->contentScanner->renderRawBodies($this->pages);
         $s2 = microtime(true);
         $timings['Scan + Virtualize'] = ($s2 - $s1) * 1000;
 
@@ -280,30 +266,6 @@ class SiteBuilder
         echo "+----------------------------------+-----------------+\n";
         printf("| %-32s | %15.2f |\n", 'TOTAL BUILD TIME', $totalTime);
         echo "+----------------------------------+-----------------+\n";
-    }
-
-    /**
-     * Generates pseudo-translated pages for missing languages to maintain parity.
-     * Delegates to TranslationVirtualizer.
-     *
-     * @return void
-     */
-    public function virtualizeMissingLanguages(): void
-    {
-        $this->translationVirtualizer->virtualize($this->pages);
-    }
-
-    /**
-     * Applies a pseudo-translation prefix to a page's title or content.
-     * Delegates to TranslationVirtualizer.
-     *
-     * @param \Indieinabox\Page $page
-     * @param string $targetLang
-     * @return void
-     */
-    public function pseudoTranslate(\Indieinabox\Page $page, string $targetLang): void
-    {
-        $this->translationVirtualizer->pseudoTranslate($page, $targetLang);
     }
 
     /**

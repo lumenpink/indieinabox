@@ -155,4 +155,26 @@ class ContentScanner
             }
         }
     }
+
+    /**
+     * Renders raw markdown bodies into final HTML content for all pages in the collection.
+     * Sets global variables $pages and $site for template and processor compatibility.
+     *
+     * @param Pages $pageCollection The collection of pages to render.
+     * @return void
+     */
+    public function renderRawBodies(Pages $pageCollection): void
+    {
+        global $pages, $site;
+        $pages = $pageCollection;
+        $site = $this->site;
+
+        $contentProcessor = new ContentProcessor();
+        foreach ($pageCollection as $page) {
+            if (isset($page->rawBody) && $page->rawBody !== '') {
+                $renderedContent = $contentProcessor->processContent($page->rawBody, $page);
+                $page->content->content = trim($renderedContent, " \n\r\t");
+            }
+        }
+    }
 }

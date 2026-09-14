@@ -30,13 +30,18 @@ beforeEach(function () {
             'note' => [
                 'display_mode' => 'full_content',
                 'show_in_menu' => true,
+                'content_dir' => 'notes',
             ],
             'article' => [
                 'display_mode' => 'default',
                 'show_in_menu' => true,
+                'content_dir' => 'articles',
             ],
         ],
     ];
+
+    global $site;
+    $site = $this->site;
 
     $this->pages = new Pages();
     $this->pagePublisher = new PagePublisher($this->site, $this->pages);

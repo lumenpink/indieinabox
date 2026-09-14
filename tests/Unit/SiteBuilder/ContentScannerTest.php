@@ -98,3 +98,20 @@ it('forces layout to home when homepage already exists', function () {
     expect($this->pages)->toHaveCount(1);
     expect($existingHome->layout)->toBe('home');
 });
+
+it('renders raw markdown bodies into final html content for pages', function () {
+    $page = Page::fromArray([
+        'slug' => 'test-post/',
+        'title' => 'Test Post',
+        'kind' => 'article',
+    ]);
+    $page->content = new \Indieinabox\Page\Content();
+    $page->content->rawBody = "## Hello World\n\nThis is a **bold** paragraph.";
+    $this->pages->add($page);
+
+    $scanner = new ContentScanner($this->site);
+    $scanner->renderRawBodies($this->pages);
+
+    expect($page->content->content)->toContain('<h2>Hello World</h2>');
+    expect($page->content->content)->toContain('<strong>bold</strong>');
+});

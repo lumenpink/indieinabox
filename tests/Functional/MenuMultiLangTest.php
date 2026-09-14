@@ -144,9 +144,7 @@ test('pages in secondary language are virtualized back to default language', fun
     $builder = new SiteBuilder($this->site);
     $builder->scan($this->tempDir . '/content');
     
-    $reflection = new \ReflectionClass(SiteBuilder::class);
-    $method = $reflection->getMethod('virtualizeMissingLanguages');
-    $method->invoke($builder);
+    $builder->getTranslationVirtualizer()->virtualize($builder->getPages());
     
     $pages = iterator_to_array($builder->getPages(), false);
     
@@ -179,7 +177,7 @@ test('pseudoTranslate mocks the translation format correctly', function () {
     $page->content = new \Indieinabox\Page\Content('Original content');
     $page->content->rawBody = 'Original content';
     
-    $builder->pseudoTranslate($page, 'es');
+    $builder->getTranslationVirtualizer()->pseudoTranslate($page, 'es');
     
     expect($page->title)->toBe('[ES] Original Title');
     expect($page->content->content)->toBe('Original content'); // Did not change body because it has a title
@@ -191,7 +189,7 @@ test('pseudoTranslate mocks the translation format correctly', function () {
     $pageNote->content = new \Indieinabox\Page\Content('Original body');
     $pageNote->content->rawBody = 'Original body';
     
-    $builder->pseudoTranslate($pageNote, 'pt');
+    $builder->getTranslationVirtualizer()->pseudoTranslate($pageNote, 'pt');
     
     expect($pageNote->title)->toBe('Untitled');
     expect($pageNote->content->content)->toBe('[PT] Original body');

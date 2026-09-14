@@ -87,13 +87,10 @@ test('pages appear in menu by default unless menu: hide is set', function () {
     $builder = new SiteBuilder($this->site);
     $builder->scan($this->tempDir . '/content');
     
-    $reflection = new \ReflectionClass(SiteBuilder::class);
-    $method = $reflection->getMethod('getMenuLinks');
-    
     $pages = iterator_to_array($builder->getPages(), false);
     $dummyPage = $pages[0]; // 'visible'
     
-    $links = $method->invoke($builder, $dummyPage)['header'];
+    $links = $builder->getPagePublisher()->getMenuLinks($dummyPage)['header'];
     
     expect(count($links))->toBe(1);
     expect($links[0]['label'])->toBe('Visible');
@@ -109,12 +106,9 @@ test('menu flag directs pages to header, footer or both', function () {
     $builder = new SiteBuilder($this->site);
     $builder->scan($this->tempDir . '/content');
     
-    $reflection = new \ReflectionClass(SiteBuilder::class);
-    $method = $reflection->getMethod('getMenuLinks');
-    
     $pages = iterator_to_array($builder->getPages(), false);
     
-    $links = $method->invoke($builder, $pages[0]);
+    $links = $builder->getPagePublisher()->getMenuLinks($pages[0]);
     $headerLinks = $links['header'];
     $footerLinks = $links['footer'];
     
@@ -138,13 +132,10 @@ test('menu links are ordered by menu_order then alphabetically', function () {
     $builder = new SiteBuilder($this->site);
     $builder->scan($this->tempDir . '/content');
     
-    $reflection = new \ReflectionClass(SiteBuilder::class);
-    $method = $reflection->getMethod('getMenuLinks');
-    
     $pages = iterator_to_array($builder->getPages(), false);
     $dummyPage = $pages[0];
     
-    $links = $method->invoke($builder, $dummyPage)['header'];
+    $links = $builder->getPagePublisher()->getMenuLinks($dummyPage)['header'];
     
     expect(count($links))->toBe(4);
     

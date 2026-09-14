@@ -119,10 +119,7 @@ it('getLanguageLinks falls back to home when parity is disabled and translation 
     
     // We don't call virtualizeMissingLanguages because it does nothing when disabled
 
-    $reflection = new \ReflectionClass(SiteBuilder::class);
-    $method = $reflection->getMethod('getLanguageLinks');
-    
-    $links = $method->invoke($builder, $page);
+    $links = $builder->getPagePublisher()->getLanguageLinks($page);
     
     // En exists, should link to it
     expect($links['en'])->toBe('/about/');

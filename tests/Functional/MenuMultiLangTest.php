@@ -85,9 +85,6 @@ test('pages in non-default language appear in the localized menu by default', fu
     $builder = new SiteBuilder($this->site);
     $builder->scan($this->tempDir . '/content');
     
-    $reflection = new \ReflectionClass(SiteBuilder::class);
-    $method = $reflection->getMethod('getMenuLinks');
-    
     $pages = iterator_to_array($builder->getPages(), false);
     
     // Find the Portuguese page to generate its footer links
@@ -101,7 +98,7 @@ test('pages in non-default language appear in the localized menu by default', fu
     
     expect($ptPage)->not->toBeNull();
     
-    $links = $method->invoke($builder, $ptPage)['header'];
+    $links = $builder->getPagePublisher()->getMenuLinks($ptPage)['header'];
     
     expect(count($links))->toBe(1);
     expect($links[0]['label'])->toBe('Visivel');
@@ -119,9 +116,6 @@ test('menu links for non-default language are ordered by menu_order then alphabe
     $builder = new SiteBuilder($this->site);
     $builder->scan($this->tempDir . '/content');
     
-    $reflection = new \ReflectionClass(SiteBuilder::class);
-    $method = $reflection->getMethod('getMenuLinks');
-    
     $pages = iterator_to_array($builder->getPages(), false);
     
     $ptPage = null;
@@ -132,7 +126,7 @@ test('menu links for non-default language are ordered by menu_order then alphabe
         }
     }
     
-    $links = $method->invoke($builder, $ptPage)['header'];
+    $links = $builder->getPagePublisher()->getMenuLinks($ptPage)['header'];
     
     expect(count($links))->toBe(4);
     

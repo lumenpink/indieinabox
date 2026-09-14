@@ -203,10 +203,7 @@ it('virtualizes missing language translations and updates flags links correctly'
     expect($ptPage->slug)->toBe('pt/artigos/my-post/');
     expect($esPage->slug)->toBe('es/articulos/my-post/');
 
-    $reflection = new \ReflectionClass(\Indieinabox\SiteBuilder::class);
-    $method = $reflection->getMethod('getLanguageLinks');
-    
-    $links = $method->invoke($builder, $ptPage);
+    $links = $builder->getPagePublisher()->getLanguageLinks($ptPage);
     expect($links)->toBe([
         'en' => '/articles/my-post/',
         'pt' => '/pt/artigos/my-post/',

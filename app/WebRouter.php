@@ -8,20 +8,20 @@ namespace Indieinabox;
  * Class WebRouter
  * 
  * Handles incoming HTTP requests by mapping the request URI to the appropriate
- * handler class (e.g., Micropub, Microsub, Admin panel, ActivityPub, Webmention).
- * If no specific handler matches, it attempts to serve static HTML files.
+ * handler class (e.g., Micropub, Microsub, Admin panel, ActivityPub, Webmention, Archive).
+ * If no specific handler matches, it serves static files or emits 404.
  */
 class WebRouter
 {
     /**
-     * @var \Indieinabox\Site
+     * @var Site
      */
     protected Site $site;
 
     /**
      * Initializes the WebRouter with the global site configuration.
      *
-     * @param \Indieinabox\Site $site The site configuration object.
+     * @param Site $site The site configuration object.
      */
     public function __construct(Site $site)
     {
@@ -37,10 +37,10 @@ class WebRouter
      */
     public function handleRequest(): void
     {
-        $requestUri = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
+        $requestUri = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?? '/';
         $requestUriClean = rtrim($requestUri, '/');
 
-        // Route matching
+        // Route: Webmentions
         $isWebmentionParam = isset($_GET['webmention']);
         $isWebmentionPath = (preg_match('#^/webmentions?$#i', $requestUriClean) === 1);
 
@@ -50,6 +50,7 @@ class WebRouter
             return;
         }
 
+        // Route: IndieAuth & OAuth Discovery
         $isAuthParam = isset($_GET['auth']);
         $isAuthPath = (preg_match('#^/auth$#i', $requestUriClean) === 1);
         $isTokenParam = isset($_GET['token']);
@@ -62,37 +63,42 @@ class WebRouter
             return;
         }
 
-        // Route: Micropub
+        // Route: Micropub Discovery Redirect
         if ($requestUriClean === '/.well-known/micropub') {
             header('HTTP/1.1 302 Found');
             header('Location: /micropub');
             return;
         }
 
+        // Route: Micropub Client (Admin Publishing)
         if (strpos($requestUriClean, '/micropub/client') === 0) {
             $handler = $this->createMicropubClientHandler();
             $handler->handle();
             return;
         }
 
+        // Route: Micropub Endpoint
         if (strpos($requestUriClean, '/micropub') === 0) {
             $handler = $this->createMicropubHandler();
             $handler->handle();
             return;
         }
 
+        // Route: Microsub Reader (Admin)
         if (strpos($requestUriClean, '/microsub/reader') === 0) {
             $handler = $this->createMicrosubReaderHandler();
             $handler->handle();
             return;
         }
 
+        // Route: Microsub Endpoint
         if (strpos($requestUriClean, '/microsub') === 0) {
             $handler = $this->createMicrosubHandler();
             $handler->handle();
             return;
         }
 
+        // Route: ActivityPub (if enabled)
         if (!empty($this->site->config['activitypub_enabled'])) {
             if ($requestUriClean === '/interact') {
                 $handler = $this->createActivityPubHandler();
@@ -131,29 +137,48 @@ class WebRouter
             }
         }
 
+        // Route: Cron Background Worker
         if ($requestUriClean === '/cron') {
-            require_once __DIR__ . '/BackgroundWorker.php';
-            $worker = new \Indieinabox\BackgroundWorker($this->site);
+            $worker = new BackgroundWorker($this->site);
             $worker->runAll();
             echo "OK";
             return;
         }
 
+        // Route: Archive Viewer and Force Snapshot
+        if ($requestUriClean === '/archive') {
+            $handler = $this->createArchiveHandler();
+            $handler->handle();
+            return;
+        }
+
+        if ($requestUriClean === '/archive/force' && ($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
+            $handler = $this->createArchiveHandler();
+            $handler->handleForce();
+            return;
+        }
+
         // Admin Routes
-        $isAdminPath = (strpos($requestUriClean, '/admin') === 0);
-        if ($isAdminPath) {
+        if (strpos($requestUriClean, '/admin') === 0) {
             if ($requestUriClean === '/admin') {
                 header('Location: /admin/microsub');
                 exit;
             }
             if (strpos($requestUriClean, '/admin/config') === 0) {
-                $handler = $this->createConfigHandler();
-            } elseif (strpos($requestUriClean, '/admin/micropub') === 0) {
-                $handler = $this->createMicropubClientHandler();
-            } elseif (strpos($requestUriClean, '/admin/microsub') === 0) {
-                $handler = $this->createMicrosubReaderHandler();
-            } elseif (strpos($requestUriClean, '/admin/moderation') === 0) {
-                $handler = $this->createModerationHandler();
+                $this->createConfigHandler()->handle();
+                return;
+            }
+            if (strpos($requestUriClean, '/admin/micropub') === 0) {
+                $this->createMicropubClientHandler()->handle();
+                return;
+            }
+            if (strpos($requestUriClean, '/admin/microsub') === 0) {
+                $this->createMicrosubReaderHandler()->handle();
+                return;
+            }
+            if (strpos($requestUriClean, '/admin/moderation') === 0) {
+                $this->createModerationHandler()->handle();
+                return;
             }
         }
 
@@ -164,10 +189,6 @@ class WebRouter
             header('Location: /admin/config');
             exit;
         }
-        if (isset($handler)) {
-            $handler->handle();
-            return;
-        }
 
         $this->serveStatic();
     }
@@ -175,7 +196,7 @@ class WebRouter
     /**
      * Factory method to create a WebmentionHandler instance.
      *
-     * @return \Indieinabox\WebmentionHandler
+     * @return WebmentionHandler
      */
     protected function createWebmentionHandler(): WebmentionHandler
     {
@@ -185,7 +206,7 @@ class WebRouter
     /**
      * Factory method to create an IndieAuthHandler instance.
      *
-     * @return \Indieinabox\IndieAuthHandler
+     * @return IndieAuthHandler
      */
     protected function createIndieAuthHandler(): IndieAuthHandler
     {
@@ -195,7 +216,7 @@ class WebRouter
     /**
      * Factory method to create a ConfigHandler instance (Admin panel configuration).
      *
-     * @return \Indieinabox\ConfigHandler
+     * @return ConfigHandler
      */
     protected function createConfigHandler(): ConfigHandler
     {
@@ -205,7 +226,7 @@ class WebRouter
     /**
      * Factory method to create a MicropubHandler instance (Micropub Server).
      *
-     * @return \Indieinabox\MicropubHandler
+     * @return MicropubHandler
      */
     protected function createMicropubHandler(): MicropubHandler
     {
@@ -215,7 +236,7 @@ class WebRouter
     /**
      * Factory method to create a MicropubClientHandler instance (Admin panel publishing).
      *
-     * @return \Indieinabox\MicropubClientHandler
+     * @return MicropubClientHandler
      */
     protected function createMicropubClientHandler(): MicropubClientHandler
     {
@@ -225,7 +246,7 @@ class WebRouter
     /**
      * Factory method to create a MicrosubHandler instance (Microsub Server).
      *
-     * @return \Indieinabox\MicrosubHandler
+     * @return MicrosubHandler
      */
     protected function createMicrosubHandler(): MicrosubHandler
     {
@@ -235,7 +256,7 @@ class WebRouter
     /**
      * Factory method to create a MicrosubReaderHandler instance (Admin panel reader).
      *
-     * @return \Indieinabox\MicrosubReaderHandler
+     * @return MicrosubReaderHandler
      */
     protected function createMicrosubReaderHandler(): MicrosubReaderHandler
     {
@@ -245,7 +266,7 @@ class WebRouter
     /**
      * Factory method to create a ModerationHandler instance (Admin panel moderation).
      *
-     * @return \Indieinabox\ModerationHandler
+     * @return ModerationHandler
      */
     protected function createModerationHandler(): ModerationHandler
     {
@@ -255,7 +276,7 @@ class WebRouter
     /**
      * Factory method to create an ActivityPubHandler instance (Fediverse integration).
      *
-     * @return \Indieinabox\ActivityPubHandler
+     * @return ActivityPubHandler
      */
     protected function createActivityPubHandler(): ActivityPubHandler
     {
@@ -263,17 +284,25 @@ class WebRouter
     }
 
     /**
+     * Factory method to create an ArchiveHandler instance.
+     *
+     * @return ArchiveHandler
+     */
+    protected function createArchiveHandler(): ArchiveHandler
+    {
+        return new ArchiveHandler($this->site);
+    }
+
+    /**
      * Attempts to serve static files from the output directory based on the request URI.
-     * Determines MIME types and outputs appropriate caching headers. If the file is 
-     * not found, delegates to archive checking.
+     * Determines MIME types and outputs appropriate headers.
+     * Supports content negotiation for ActivityPub requests.
      *
      * @return void
      */
-    private function serveStatic(): void
+    protected function serveStatic(): void
     {
-        $requestUri = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
-        $requestUriClean = rtrim($requestUri, '/');
-
+        $requestUri = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?? '/';
         $outputDir = $this->site->paths->outputDirHtml;
         $path = str_replace(['..', '//'], ['', '/'], urldecode($requestUri));
 
@@ -282,7 +311,6 @@ class WebRouter
         }
 
         $base = rtrim($this->site->paths->baseDir, DIRECTORY_SEPARATOR);
-
         $filePath = $base . DIRECTORY_SEPARATOR . $outputDir . $path;
 
         if (strpos($path, '/media/') === 0) {
@@ -303,7 +331,7 @@ class WebRouter
         );
 
         if ($acceptsAP) {
-            $jsonPath = preg_replace('/\.html$/', '.json', $filePath);
+            $jsonPath = (string) preg_replace('/\.html$/', '.json', $filePath);
             if (file_exists($jsonPath) && is_file($jsonPath)) {
                 header('Content-Type: application/activity+json; charset=utf-8');
                 readfile($jsonPath);
@@ -313,31 +341,9 @@ class WebRouter
 
         if (file_exists($filePath) && is_file($filePath)) {
             $ext = pathinfo($filePath, PATHINFO_EXTENSION);
-            $mimeTypes = [
-                'html' => 'text/html; charset=utf-8',
-                'css' => 'text/css; charset=utf-8',
-                'js' => 'application/javascript; charset=utf-8',
-                'png' => 'image/png',
-                'jpg' => 'image/jpeg',
-                'jpeg' => 'image/jpeg',
-                'gif' => 'image/gif',
-                'svg' => 'image/svg+xml',
-                'xml' => 'application/xml; charset=utf-8',
-                'json' => 'application/json; charset=utf-8',
-            ];
-            $contentType = $mimeTypes[$ext] ?? 'application/octet-stream';
+            $contentType = $this->getMimeType($ext);
             header('Content-Type: ' . $contentType);
             readfile($filePath);
-            return;
-        }
-
-        if ($requestUriClean === '/archive') {
-            $this->handleArchive();
-            return;
-        }
-
-        if ($requestUriClean === '/archive/force' && $_SERVER['REQUEST_METHOD'] === 'POST') {
-            $this->handleArchiveForce();
             return;
         }
 
@@ -347,133 +353,28 @@ class WebRouter
     }
 
     /**
-     * Method handleArchive
-     * @return void
-     */
-    private function handleArchive(): void
-    {
-        $url = $_GET['url'] ?? '';
-        $ts = (int)($_GET['ts'] ?? time());
-        
-        if (!$url) {
-            header('HTTP/1.1 400 Bad Request');
-            echo "URL is required";
-            return;
-        }
-
-        $db = \Indieinabox\Database::getDb();
-        
-        // Follow alias if exists
-        $stmt = $db->prepare("SELECT target_url FROM archive_aliases WHERE alias_url = ?");
-        $stmt->execute([$url]);
-        if ($row = $stmt->fetch()) {
-            $url = $row['target_url'];
-        }
-
-        $normUrl = rtrim(strtolower($url), '/');
-
-        // Find closest snapshot by timestamp difference
-        $stmt = $db->prepare("SELECT * FROM archived_links WHERE url = ? ORDER BY ABS(timestamp - ?) ASC LIMIT 1");
-        $stmt->execute([$normUrl, $ts]);
-        $snapshot = $stmt->fetch(\PDO::FETCH_ASSOC);
-
-        $html = '<!DOCTYPE html><html><head><title>Archive View</title>';
-        $html .= '<style>
-            body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; font-family: system-ui, sans-serif; }
-            .archive-bar { background: #1a1a1a; color: #f0f0f0; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #333; font-size: 14px; }
-            .archive-bar .meta { display: flex; align-items: center; gap: 15px; }
-            .archive-bar .actions { display: flex; align-items: center; gap: 15px; }
-            .archive-bar a { color: #66b3ff; text-decoration: none; font-weight: 500; }
-            .archive-bar a:hover { text-decoration: underline; color: #99ccff; }
-            .archive-bar form { margin: 0; padding: 0; }
-            .archive-bar button { background: #333; color: white; border: 1px solid #555; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; }
-            .archive-bar button:hover { background: #444; }
-            .archive-frame { width: 100%; height: calc(100% - 46px); border: none; background: #fff; }
-        </style>';
-        $html .= '</head><body>';
-        
-        $html .= '<div class="archive-bar">';
-        if ($snapshot) {
-            $tsSnapshot = (int)$snapshot['timestamp'];
-            $date = date('Y-m-d H:i', $tsSnapshot);
-            $diffStr = \Indieinabox\Helper::timeAgo($tsSnapshot);
-            
-            $html .= "<div class=\"meta\">";
-            $html .= "<strong>Local Snapshot</strong> <span>{$date} ({$diffStr})</span>";
-            $html .= "</div>";
-
-            $html .= '<div class="actions">';
-            if ($snapshot['local_pdf_path']) {
-                $html .= '<a href="' . htmlspecialchars($snapshot['local_pdf_path']) . '" target="_blank">View PDF</a>';
-            }
-            if ($snapshot['archive_org_url']) {
-                $html .= '<a href="' . htmlspecialchars($snapshot['archive_org_url']) . '" target="_blank">Archive.org</a>';
-            }
-            $html .= '<a href="' . htmlspecialchars($url) . '" target="_blank" style="color: #ff9999;">Original Site</a>';
-            $html .= '<form method="POST" action="/archive/force">';
-            $html .= '<input type="hidden" name="url" value="' . htmlspecialchars($url) . '">';
-            $html .= '<button type="submit" title="Request a fresh snapshot">Force Update</button>';
-            $html .= '</form>';
-            $html .= '</div>';
-        } else {
-            $html .= "<div class=\"meta\">Snapshot processing or not available locally.</div>";
-            $html .= '<div class="actions">';
-            $html .= '<a href="' . htmlspecialchars($url) . '" target="_blank" style="color: #ff9999;">Original Site</a>';
-            $html .= '<form method="POST" action="/archive/force">';
-            $html .= '<input type="hidden" name="url" value="' . htmlspecialchars($url) . '">';
-            $html .= '<button type="submit" title="Request a fresh snapshot">Force Update</button>';
-            $html .= '</form>';
-            $html .= '</div>';
-        }
-        $html .= '</div>';
-
-        if ($snapshot && $snapshot['local_pdf_path']) {
-            $pdfUrl = htmlspecialchars($snapshot['local_pdf_path']);
-            $html .= "<iframe class=\"archive-frame\" src=\"{$pdfUrl}\"></iframe>";
-        } elseif ($snapshot && $snapshot['archive_org_url']) {
-            $archiveUrl = htmlspecialchars($snapshot['archive_org_url']);
-            $html .= "<iframe class=\"archive-frame\" src=\"{$archiveUrl}\"></iframe>";
-        } else {
-            $html .= "<div style='padding: 20px;'>No local snapshot available yet. The background worker may still be processing it.</div>";
-        }
-
-        $html .= '</body></html>';
-        echo $html;
-    }
-
-    /**
-     * Handles routing for Internet Archive / Wayback Machine fallback requests.
-     * Searches for archived versions of requested files.
+     * Resolves the MIME content-type for a file extension.
      *
-     * @return void
+     * @param string $extension
+     * @return string
      */
-    private function handleArchiveForce(): void
+    public function getMimeType(string $extension): string
     {
-        $url = $_POST['url'] ?? '';
-        if (!$url) {
-            header('HTTP/1.1 400 Bad Request');
-            echo "URL is required";
-            return;
-        }
+        $mimeTypes = [
+            'html' => 'text/html; charset=utf-8',
+            'css'  => 'text/css; charset=utf-8',
+            'js'   => 'application/javascript; charset=utf-8',
+            'png'  => 'image/png',
+            'jpg'  => 'image/jpeg',
+            'jpeg' => 'image/jpeg',
+            'gif'  => 'image/gif',
+            'svg'  => 'image/svg+xml',
+            'xml'  => 'application/xml; charset=utf-8',
+            'json' => 'application/json; charset=utf-8',
+            'txt'  => 'text/plain; charset=utf-8',
+            'gmi'  => 'text/gemini; charset=utf-8',
+        ];
 
-        $db = \Indieinabox\Database::getDb();
-        
-        // Follow alias if exists
-        $stmt = $db->prepare("SELECT target_url FROM archive_aliases WHERE alias_url = ?");
-        $stmt->execute([$url]);
-        if ($row = $stmt->fetch()) {
-            $url = $row['target_url'];
-        }
-
-        $normUrl = rtrim(strtolower($url), '/');
-
-        // Insert directly into archive_queue
-        $stmt = $db->prepare("INSERT INTO archive_queue (url, force_archive) VALUES (?, 1)");
-        $stmt->execute([$normUrl]);
-
-        // Redirect back to archive view
-        $redirectUrl = '/archive?url=' . urlencode($url) . '&ts=' . time();
-        header('Location: ' . $redirectUrl);
-        exit;
+        return $mimeTypes[strtolower($extension)] ?? 'application/octet-stream';
     }
 }

@@ -88,6 +88,9 @@
 <li><a href="/docs/api/html/Twtxt-TwtxtManager.html">Twtxt-TwtxtManager</a></li>
 <li><a href="/docs/api/html/Updater.html">Updater</a></li>
 <li><a href="/docs/api/html/WebRouter.html">WebRouter</a></li>
+<li><a href="/docs/api/html/Webmention-HelpPageView.html">Webmention-HelpPageView</a></li>
+<li><a href="/docs/api/html/Webmention-LinkExtractor.html">Webmention-LinkExtractor</a></li>
+<li><a href="/docs/api/html/Webmention-SourceVerifier.html">Webmention-SourceVerifier</a></li>
 <li><a href="/docs/api/html/WebmentionHandler.html">WebmentionHandler</a></li>
 <li><a href="/docs/api/html/WebmentionSender.html">WebmentionSender</a></li>
 <li><a href="/docs/api/html/Whostyles.html">Whostyles</a></li>
@@ -96,13 +99,17 @@
     <div class="content">
         <h1 class="p-name">WebmentionSender</h1>
 <p><strong>Namespace:</strong> <code>Indieinabox</code></p>
+<p>Class WebmentionSender</p>
+<p>Scans newly published or modified content for outbound mentions and queues them for delivery.</p>
 <h2>Methods</h2>
 <h3>queueOutgoingWebmentions()</h3>
-<p><code>public static function queueOutgoingWebmentions(string $sourceUrl, array $frontmatter, string $content): void</code></p>
+<p><code>public static function queueOutgoingWebmentions(string $sourceUrl, array $frontmatter, string $content, ?PDO $db = null): void</code></p>
 <p>Extracts outgoing links and queues them for webmention sending.</p>
 <p>@param string $sourceUrl The URL of the post we just created.<br />
 @param array<string, mixed> $frontmatter The frontmatter of the post.<br />
-@param string $content The Markdown or HTML content of the post.</p>
+@param string $content The Markdown or HTML content of the post.<br />
+@param ?PDO $db Optional database connection.<br />
+@return void</p>
 
     </div>
 </body>

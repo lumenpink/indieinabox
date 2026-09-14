@@ -149,11 +149,41 @@ Orchestrates HTTP requests under Web SAPIs, mapping URIs to dedicated handlers a
 ## 🗄️ Archive Handler (`Indieinabox\ArchiveHandler`)
 Serves local link snapshots, external archive fallbacks, and processes force snapshot requests.
 
-## 📩 Webmention Handler (`Indieinabox\WebmentionHandler`)
-Handles incoming webmention reception, validation, and storage.
+## 📩 Webmention Subsystem (`Indieinabox\Webmention`)
+
+The Webmention subsystem handles incoming notifications and dispatches outgoing webmentions for linked external resources:
+
+### 1. `WebmentionHandler` (`Indieinabox\WebmentionHandler`)
+The HTTP endpoint orchestrator for `/webmention`:
+- Validates source and target URLs.
+- Ensures the target URL belongs to the local site and points to an existing published resource.
+- Enqueues valid webmentions into `inbox_queue` (HTTP 202 Accepted).
+- Serves the endpoint test/help interface on GET requests.
+
+### 2. `WebmentionSender` (`Indieinabox\WebmentionSender`)
+Dispatches outgoing webmentions:
+- Scans newly published or updated content and frontmatter for outbound external links.
+- Uses `LinkExtractor` to extract, deduplicate, and filter self-pings.
+- Enqueues targets into `outgoing_webmentions` table.
+
+### 3. `Webmention\SourceVerifier` (`Indieinabox\Webmention\SourceVerifier`)
+Verifies reciprocal backlinks and extracts remote metadata:
+- Resolves relative URLs (`/path`, `../path`, `dir/path`) against the source page origin.
+- Normalizes URLs (protocol, case-insensitivity, trailing slashes).
+- Extracts author info, `<title>`, `e-content` microformats, and Whostyles V2 hashes.
+
+### 4. `Webmention\LinkExtractor` (`Indieinabox\Webmention\LinkExtractor`)
+Parses and filters target URLs:
+- Extracts URLs from interaction frontmatter properties (`in-reply-to`, `like-of`, `repost-of`, `bookmark-of`).
+- Extracts URLs from Markdown links `[text](url)`, HTML `<a href="...">` tags, and bare URLs.
+- Automatically filters out self-pings matching the source origin.
+
+### 5. `Webmention\HelpPageView` (`Indieinabox\Webmention\HelpPageView`)
+Renders the standalone, responsive HTML help and test-form interface for GET requests.
 
 ## 🔑 IndieAuth Handler (`Indieinabox\IndieAuthHandler`)
 Provides IndieAuth / OAuth 2.0 PKCE authentication server endpoints.
+
 
 ---
 

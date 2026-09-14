@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Indieinabox\SiteBuilder;
 
-use Indieinabox\Helper;
 use Indieinabox\Site;
 use Indieinabox\SiteBuilder;
+use Indieinabox\Support\FileUtils;
 
 /**
  * Handles publishing and lifecycle of static files, theme assets, and media.
@@ -121,7 +121,7 @@ class AssetPublisher
      */
     private function copyFromDisk(string $dir, string $base, string $outputDir): void
     {
-        $entries = Helper::getDirContents($dir);
+        $entries = FileUtils::getDirContents($dir);
 
         foreach ($entries as $entry) {
             if ($entry === "." || $entry === "..") {

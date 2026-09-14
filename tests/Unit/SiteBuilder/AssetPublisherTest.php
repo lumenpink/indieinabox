@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Indieinabox\Helper;
+use Indieinabox\Support\FileUtils;
 use Indieinabox\Site;
 use Indieinabox\Site\Paths;
 use Indieinabox\SiteBuilder\AssetPublisher;
@@ -25,7 +25,7 @@ beforeEach(function () {
 });
 
 afterEach(function () {
-    Helper::recursiveRmdir($this->tempDir);
+    FileUtils::recursiveRmdir($this->tempDir);
 });
 
 it('returns false when publishing static files from non-existent directory without DefaultTheme', function () {

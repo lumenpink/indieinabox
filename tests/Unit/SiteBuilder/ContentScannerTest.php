@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Indieinabox\Helper;
+use Indieinabox\Support\FileUtils;
 use Indieinabox\Page;
 use Indieinabox\Pages;
 use Indieinabox\ParserInterface;
@@ -20,7 +20,7 @@ beforeEach(function () {
 });
 
 afterEach(function () {
-    Helper::recursiveRmdir($this->tempDir);
+    FileUtils::recursiveRmdir($this->tempDir);
 });
 
 it('initializes with default parser and returns it', function () {

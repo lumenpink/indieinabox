@@ -12,7 +12,7 @@
     
     <main>
         <article class="h-entry">
-            <?php if (\Indieinabox\Helper::getKindConfig($page->kind)['has_title'] && ($page->metadata->hide_title ?? false) !== true): ?>
+            <?php if (\Indieinabox\Taxonomy\KindHelper::getKindConfig($page->kind)['has_title'] && ($page->metadata->hide_title ?? false) !== true): ?>
                 <h1 class="p-name"><?= htmlspecialchars($page->title) ?></h1>
             <?php endif; ?>
             

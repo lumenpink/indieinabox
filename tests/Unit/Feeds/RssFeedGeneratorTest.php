@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 use Indieinabox\Entry\Entry;
 use Indieinabox\Feeds\Generators\RssFeedGenerator;
-use Indieinabox\Helper;
+use Indieinabox\Support\FileUtils;
 use Indieinabox\Site;
 use Indieinabox\Site\Paths;
 
@@ -21,7 +21,7 @@ beforeEach(function () {
 });
 
 afterEach(function () {
-    Helper::recursiveRmdir($this->tempDir);
+    FileUtils::recursiveRmdir($this->tempDir);
 });
 
 it('returns correct filename', function () {

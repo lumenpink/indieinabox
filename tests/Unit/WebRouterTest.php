@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 use Indieinabox\ActivityPubHandler;
 use Indieinabox\ArchiveHandler;
-use Indieinabox\Helper;
+use Indieinabox\Support\FileUtils;
 use Indieinabox\IndieAuthHandler;
 use Indieinabox\MicropubClientHandler;
 use Indieinabox\MicropubHandler;
@@ -32,7 +32,7 @@ beforeEach(function () {
 });
 
 afterEach(function () {
-    Helper::recursiveRmdir($this->tempDir);
+    FileUtils::recursiveRmdir($this->tempDir);
 });
 
 it('resolves correct MIME types for common web extensions', function () {

@@ -2,41 +2,46 @@
 
 declare(strict_types=1);
 
-use Indieinabox\Helper;
+use Indieinabox\Localization\Translator;
+use Indieinabox\Support\DateFormatter;
+use Indieinabox\Support\FileUtils;
+use Indieinabox\Support\HtmlUtils;
+use Indieinabox\Support\TextParser;
+use Indieinabox\Taxonomy\KindHelper;
 
 function t(string $text, ?string $lang = null): string
 {
-    return Helper::translate($text, $lang);
+    return Translator::translate($text, $lang);
 }
 
 function ts(string $text): string
 {
-    return Helper::translateSlugize($text);
+    return Translator::translateSlugize($text);
 }
 
 function tl(string $text): string
 {
-    return Helper::translateLowercase($text);
+    return Translator::translateLowercase($text);
 }
 
 function translate(string $text, ?string $lang = null): string
 {
-    return Helper::translate($text, $lang);
+    return Translator::translate($text, $lang);
 }
 
 function translateLowercase(string $text): string
 {
-    return Helper::translateLowercase($text);
+    return Translator::translateLowercase($text);
 }
 
 function translateSlugize(string $text): string
 {
-    return Helper::translateSlugize($text);
+    return Translator::translateSlugize($text);
 }
 
 function updateTranslations(): void
 {
-    Helper::updateTranslations();
+    Translator::updateTranslations();
 }
 
 /**
@@ -45,12 +50,12 @@ function updateTranslations(): void
  */
 function localizeddate($page): array
 {
-    return Helper::localizeddate($page);
+    return DateFormatter::localizeddate($page);
 }
 
 function listposts(): string
 {
-    return Helper::listposts();
+    return KindHelper::listposts();
 }
 
 /**
@@ -59,7 +64,7 @@ function listposts(): string
  */
 function removegeneric($var): bool
 {
-    return Helper::removegeneric($var);
+    return KindHelper::removeGeneric($var);
 }
 
 /**
@@ -68,27 +73,27 @@ function removegeneric($var): bool
  */
 function kind($page): array
 {
-    return Helper::kind($page);
+    return KindHelper::kind($page);
 }
 
 function slugize(string $str): string
 {
-    return Helper::slugize($str);
+    return TextParser::slugize($str);
 }
 
 function unaccent(string $string): string
 {
-    return Helper::unaccent($string);
+    return TextParser::unaccent($string);
 }
 
 function beautifyhtml(string $html): string
 {
-    return Helper::beautifyhtml($html);
+    return HtmlUtils::beautify($html);
 }
 
 function minifyhtml(string $html): string
 {
-    return Helper::minifyhtml($html);
+    return HtmlUtils::minify($html);
 }
 
 /**
@@ -98,7 +103,7 @@ function minifyhtml(string $html): string
  */
 function recursiveRmdir(string $dir, bool $keepRootDir = false): bool
 {
-    return Helper::recursiveRmdir($dir, $keepRootDir);
+    return FileUtils::recursiveRmdir($dir, $keepRootDir);
 }
 
 /**
@@ -108,7 +113,7 @@ function recursiveRmdir(string $dir, bool $keepRootDir = false): bool
  */
 function getDirContents(string $dir, array &$results = []): array
 {
-    return Helper::getDirContents($dir, $results);
+    return FileUtils::getDirContents($dir, $results);
 }
 
 /**
@@ -117,7 +122,7 @@ function getDirContents(string $dir, array &$results = []): array
  */
 function sortByDate(array $pages): array
 {
-    return Helper::sortByDate($pages);
+    return DateFormatter::sortByDate($pages);
 }
 
 /**
@@ -126,10 +131,10 @@ function sortByDate(array $pages): array
  */
 function recursiveKsort(array &$array): void
 {
-    Helper::recursiveKsort($array);
+    FileUtils::recursiveKsort($array);
 }
 
 function getoriginalcontent(string $slug, string $lang): string
 {
-    return Helper::getoriginalcontent($slug, $lang);
+    return KindHelper::getOriginalContent($slug, $lang);
 }

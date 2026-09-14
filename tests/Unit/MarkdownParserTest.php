@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Indieinabox\Helper;
+use Indieinabox\Support\FileUtils;
 use Indieinabox\Markdown\ContentProcessor;
 use Indieinabox\Markdown\FileProcessor;
 use Indieinabox\Markdown\LanguageProcessor;
@@ -47,7 +47,7 @@ beforeEach(function () {
 afterEach(function () {
     global $site;
     $site = null;
-    Helper::recursiveRmdir($this->tempDir);
+    FileUtils::recursiveRmdir($this->tempDir);
 });
 
 it('initializes dependencies and exposes getters', function () {

@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace Indieinabox\Theme;
 
-use Indieinabox\Page;
-use Indieinabox\Helper;
-use Indieinabox\Site;
 use Indieinabox\Database;
+use Indieinabox\Localization\Translator;
+use Indieinabox\Page;
+use Indieinabox\Site;
+use Indieinabox\Support\TextParser;
+use Indieinabox\Taxonomy\KindHelper;
 
 /**
  * Class ThemeHelper
@@ -35,7 +37,7 @@ class ThemeHelper
         
         // Line 1: [TIPO] - Data
         $html .= '<div class="meta-line-1">';
-        $html .= Helper::kindLink($page, $page->kind);
+        $html .= KindHelper::kindLink($page, $page->kind);
         $formattedDate = $page->kind === 'photo' ? date('Y-m-d', strtotime($page->isodate)) : $page->localizeddate;
         $html .= ' - <a href="' . $page->relpath . ltrim($page->slug, '/') . '" class="u-url"><time class="dt-published" datetime="' . $page->isodate . '">' . $formattedDate . '</time></a>';
         $html .= '</div>';
@@ -47,28 +49,28 @@ class ThemeHelper
             $html .= '<a href="' . htmlspecialchars($page->shortlink) . '" style="color: inherit; text-decoration: none; opacity: 0.8;">🔗</a> - ';
         }
 
-        $likes = Helper::getInteractions($page, 'like');
-        $reposts = Helper::getInteractions($page, 'repost');
-        $replies = Helper::getInteractions($page, 'reply');
+        $likes = KindHelper::getInteractions($page, 'like');
+        $reposts = KindHelper::getInteractions($page, 'repost');
+        $replies = KindHelper::getInteractions($page, 'reply');
 
         if (count($likes) > 0) {
-            $html .= '<a href="' . $page->relpath . ltrim($page->slug, '/') . '/interactions#likes" style="color: inherit; text-decoration: none;">' . count($likes) . ' ' . Helper::translatePlural('Like', 'Likes', count($likes)) . '</a>';
+            $html .= '<a href="' . $page->relpath . ltrim($page->slug, '/') . '/interactions#likes" style="color: inherit; text-decoration: none;">' . count($likes) . ' ' . Translator::translatePlural('Like', 'Likes', count($likes)) . '</a>';
         } else {
-            $html .= '<span style="opacity: 0.8; font-size: 0.9em;">0 ' . Helper::translatePlural('Like', 'Likes', 0) . '</span>';
+            $html .= '<span style="opacity: 0.8; font-size: 0.9em;">0 ' . Translator::translatePlural('Like', 'Likes', 0) . '</span>';
         }
         $html .= ' / ';
 
         if (count($reposts) > 0) {
-            $html .= '<a href="' . $page->relpath . ltrim($page->slug, '/') . '/interactions#reposts" style="color: inherit; text-decoration: none;">' . count($reposts) . ' ' . Helper::translatePlural('Repost', 'Reposts', count($reposts)) . '</a>';
+            $html .= '<a href="' . $page->relpath . ltrim($page->slug, '/') . '/interactions#reposts" style="color: inherit; text-decoration: none;">' . count($reposts) . ' ' . Translator::translatePlural('Repost', 'Reposts', count($reposts)) . '</a>';
         } else {
-            $html .= '<span style="opacity: 0.8; font-size: 0.9em;">0 ' . Helper::translatePlural('Repost', 'Reposts', 0) . '</span>';
+            $html .= '<span style="opacity: 0.8; font-size: 0.9em;">0 ' . Translator::translatePlural('Repost', 'Reposts', 0) . '</span>';
         }
         $html .= ' / ';
 
         if (count($replies) > 0) {
-            $html .= '<a href="' . $page->relpath . ltrim($page->slug, '/') . '#interactions" style="color: inherit; text-decoration: none;">' . count($replies) . ' ' . Helper::translatePlural('Reply', 'Replies', count($replies)) . '</a>';
+            $html .= '<a href="' . $page->relpath . ltrim($page->slug, '/') . '#interactions" style="color: inherit; text-decoration: none;">' . count($replies) . ' ' . Translator::translatePlural('Reply', 'Replies', count($replies)) . '</a>';
         } else {
-            $html .= '<span style="opacity: 0.8; font-size: 0.9em;">0 ' . Helper::translatePlural('Reply', 'Replies', 0) . '</span>';
+            $html .= '<span style="opacity: 0.8; font-size: 0.9em;">0 ' . Translator::translatePlural('Reply', 'Replies', 0) . '</span>';
         }
 
         $html .= '</div>';
@@ -82,14 +84,14 @@ class ThemeHelper
         if (!empty($page->tags)) {
             $html .= '<div class="meta-line-3" style="margin-left: 0.6em;">';
             foreach ($page->tags as $tag) {
-                $html .= '<a href="' . $page->relpath . $langPrefix . 'tag/' . Helper::slugize($tag) . '/" class="p-category">#' . htmlspecialchars($tag) . '</a>&#32;';
+                $html .= '<a href="' . $page->relpath . $langPrefix . 'tag/' . TextParser::slugize($tag) . '/" class="p-category">#' . htmlspecialchars($tag) . '</a>&#32;';
             }
             $html .= '</div>';
         }
 
         // Custom Garden Fields (if any, append to line 2 or create new block)
         if ($page->kind === 'garden' || $page->kind === 'jardim') {
-            $flowerbed = isset($page->metadata->flowerbed) && is_array($page->metadata->flowerbed) ? $page->metadata->flowerbed : [Helper::translate('general', $page->lang ?? null)];
+            $flowerbed = isset($page->metadata->flowerbed) && is_array($page->metadata->flowerbed) ? $page->metadata->flowerbed : [Translator::translate('general', $page->lang ?? null)];
             $confidence = $page->metadata->confidence ?? 'possible';
             if (!in_array($confidence, ['certain', 'likely', 'possible', 'unlikely', 'impossible'])) {
                 $confidence = 'unknown';
@@ -107,13 +109,13 @@ class ThemeHelper
             
             $flowerbedLinks = [];
             foreach ($flowerbed as $fb) {
-                $flowerbedLinks[] = '<a href="' . $page->relpath . $langPrefix . 'flowerbed/' . Helper::slugize($fb) . '/">' . htmlspecialchars(Helper::translate($fb)) . '</a>';
+                $flowerbedLinks[] = '<a href="' . $page->relpath . $langPrefix . 'flowerbed/' . TextParser::slugize($fb) . '/">' . htmlspecialchars(Translator::translate($fb)) . '</a>';
             }
             $html .= '<div class="meta-garden-fields" style="margin-left: 0.6em;">';
-            $html .= ' • ' . Helper::translate('Flowerbed') . ': ' . implode(', ', $flowerbedLinks) . '<br>';
-            $html .= ' • ' . Helper::translate('Confidence') . ': ' . htmlspecialchars(Helper::translate($confidence)) . '<br>';
-            $html .= ' • ' . Helper::translate('Maturity') . ': ' . htmlspecialchars(Helper::translate($maturity)) . '<br>';
-            $html .= ' • ' . Helper::translate('Importance') . ': ' . htmlspecialchars(Helper::translate($importance));
+            $html .= ' • ' . Translator::translate('Flowerbed') . ': ' . implode(', ', $flowerbedLinks) . '<br>';
+            $html .= ' • ' . Translator::translate('Confidence') . ': ' . htmlspecialchars(Translator::translate($confidence)) . '<br>';
+            $html .= ' • ' . Translator::translate('Maturity') . ': ' . htmlspecialchars(Translator::translate($maturity)) . '<br>';
+            $html .= ' • ' . Translator::translate('Importance') . ': ' . htmlspecialchars(Translator::translate($importance));
             $html .= '</div>';
         }
 
@@ -144,7 +146,7 @@ class ThemeHelper
             if (!empty($page->metadata->$prop)) {
                 $hasProps = true;
                 $html .= '<div class="context-item">';
-                $html .= '<span class="context-label">' . Helper::translate($data['label']) . ':</span> ';
+                $html .= '<span class="context-label">' . Translator::translate($data['label']) . ':</span> ';
                 $html .= '<a href="' . htmlspecialchars($page->metadata->$prop) . '" class="' . $data['class'] . '">' . htmlspecialchars($page->metadata->$prop) . '</a>';
                 $html .= '</div>';
             }
@@ -171,9 +173,9 @@ class ThemeHelper
         if (isset($page->metadata->translated_by_ia) && $page->metadata->translated_by_ia !== false) {
             $html = '<div class="ai-translation-notice" style="background: rgba(0,0,0,0.05); padding: 1em; border-left: 4px solid var(--accent); margin-bottom: 2em; font-size: 0.9em; font-style: italic;">';
             if ($page->metadata->translated_by_ia === 'revised') {
-                $html .= '✓ ' . Helper::translate('This page was automatically translated by AI and revised by a human.');
+                $html .= '✓ ' . Translator::translate('This page was automatically translated by AI and revised by a human.');
             } else {
-                $html .= '⚠ ' . Helper::translate('This page was automatically translated by AI.');
+                $html .= '⚠ ' . Translator::translate('This page was automatically translated by AI.');
             }
             $html .= '</div>';
             return $html;
@@ -192,7 +194,7 @@ class ThemeHelper
         }
 
         $html = '<div class="syndication-links" style="margin-top: 1.5em; font-size: 0.9em; opacity: 0.8;">';
-        $html .= Helper::translate('Also on') . ':';
+        $html .= Translator::translate('Also on') . ':';
 
         $syndications = is_array($page->metadata->syndication) ? $page->metadata->syndication : [$page->metadata->syndication];
         foreach ($syndications as $synd) {
@@ -209,9 +211,9 @@ class ThemeHelper
      */
     public static function getInteractionsHtml(Page $page): string
     {
-        $likes = Helper::getInteractions($page, 'like');
-        $reposts = Helper::getInteractions($page, 'repost');
-        $replies = Helper::getInteractions($page, 'reply');
+        $likes = KindHelper::getInteractions($page, 'like');
+        $reposts = KindHelper::getInteractions($page, 'repost');
+        $replies = KindHelper::getInteractions($page, 'reply');
 
         if (count($likes) === 0 && count($reposts) === 0 && count($replies) === 0) {
             return '';
@@ -223,12 +225,12 @@ class ThemeHelper
             $html .= '<div style="margin-bottom: 1em; font-size: 1.1em;">';
             if (count($likes) > 0) {
                 $html .= '<a href="' . $page->relpath . ltrim($page->slug, '/') . '/interactions#likes" style="color: inherit; text-decoration: none; margin-right: 1em;">';
-                $html .= '<strong>' . count($likes) . '</strong> ' . Helper::translatePlural('Like', 'Likes', count($likes));
+                $html .= '<strong>' . count($likes) . '</strong> ' . Translator::translatePlural('Like', 'Likes', count($likes));
                 $html .= '</a>';
             }
             if (count($reposts) > 0) {
                 $html .= '<a href="' . $page->relpath . ltrim($page->slug, '/') . '/interactions#reposts" style="color: inherit; text-decoration: none;">';
-                $html .= '<strong>' . count($reposts) . '</strong> ' . Helper::translatePlural('Repost', 'Reposts', count($reposts));
+                $html .= '<strong>' . count($reposts) . '</strong> ' . Translator::translatePlural('Repost', 'Reposts', count($reposts));
                 $html .= '</a>';
             }
             $html .= '</div>';
@@ -236,7 +238,7 @@ class ThemeHelper
 
         if (count($replies) > 0) {
             $html .= '<div style="margin-top: 1.5em; width: 100%;">';
-            $html .= '<h3 style="margin-bottom: 1em; font-size: 1.1em;">' . count($replies) . ' ' . Helper::translatePlural('Reply', 'Replies', count($replies)) . '</h3>';
+            $html .= '<h3 style="margin-bottom: 1em; font-size: 1.1em;">' . count($replies) . ' ' . Translator::translatePlural('Reply', 'Replies', count($replies)) . '</h3>';
             $html .= '<div style="margin-left: 0.5em;">';
             foreach ($replies as $reply) {
                 $html .= '<div class="p-comment h-cite" id="reply-' . md5($reply['url']) . '" style="margin-bottom: 1.5em; padding-left: 10px; border-left: 2px solid var(--accent);">';
@@ -247,7 +249,7 @@ class ThemeHelper
                 if ($baseDir === '.' || $baseDir === '\\') $baseDir = '';
                 $replyUrl = $page->relpath . ltrim($baseDir ? $baseDir . '/' : '', '/') . 'reply/' . md5($reply['url']) . '/';
                 
-                $html .= ' <a href="' . $replyUrl . '" style="margin-left: 10px; font-size: 0.85em; opacity: 0.7;">' . Helper::translate('Permalink') . '</a>';
+                $html .= ' <a href="' . $replyUrl . '" style="margin-left: 10px; font-size: 0.85em; opacity: 0.7;">' . Translator::translate('Permalink') . '</a>';
                 $html .= '</div>';
                 $html .= '<a href="' . $replyUrl . '" style="color: inherit; text-decoration: none; display: block;">';
                 $html .= '<div class="p-content" style="font-size: 0.95em; line-height: 1.4; opacity: 0.95;">';
@@ -263,7 +265,7 @@ class ThemeHelper
             $postUrl = $siteFqdn . '/' . ltrim($page->slug, '/');
             $html .= '<div style="margin-top: 1.5em;">';
             $html .= '<a href="' . $page->relpath . 'interact?uri=' . urlencode($postUrl) . '" style="display: inline-block; padding: 0.4em 0.8em; background: var(--accent, #007bff); color: var(--bg, #fff); text-decoration: none; border-radius: 4px; font-size: 0.85em; font-weight: bold;">';
-            $html .= Helper::translate('Interact via Fediverse');
+            $html .= Translator::translate('Interact via Fediverse');
             $html .= '</a>';
             $html .= '</div>';
         }
@@ -281,7 +283,7 @@ class ThemeHelper
      */
     public static function renderPostSnippet(Page $contextPage, Page $post): string
     {
-        $displayMode = Helper::getKindConfig($post->kind)['display_mode'] ?? 'default';
+        $displayMode = KindHelper::getKindConfig($post->kind)['display_mode'] ?? 'default';
         $html = '';
 
         if ($displayMode === 'full_content') {
@@ -325,7 +327,7 @@ class ThemeHelper
             $html .= '</a>';
             $html .= '</div>';
         } else {
-            $hasTitle = Helper::getKindConfig($post->kind)['has_title'] ?? true;
+            $hasTitle = KindHelper::getKindConfig($post->kind)['has_title'] ?? true;
             $formattedDate = $post->kind === 'photo' ? date('Y-m-d', strtotime($post->isodate)) : $post->localizeddate;
             $html .= '<span style="font-size:0.85em; opacity:0.75; margin-right: 0.5em;">' . $formattedDate . '</span> ';
             

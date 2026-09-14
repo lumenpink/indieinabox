@@ -15,7 +15,7 @@
         <h1><?= htmlspecialchars($page->title) ?></h1>
         
         <div class="sitemap-gopher">
-            <p><?= \Indieinabox\Helper::translate('Browse the sections of the site in Gopher style:') ?></p>
+            <p><?= \Indieinabox\Localization\Translator::translate('Browse the sections of the site in Gopher style:') ?></p>
             <ul style="list-style-type: none; padding-left: 0;">
                 <?php
                 // Get all non-draft pages
@@ -59,7 +59,7 @@
                 foreach ($grouped as $kind => $list):
                 ?>
                     <li style="margin-bottom: 1.5em;">
-                        <strong><?= \Indieinabox\Helper::kindLink($page, $kind) ?></strong>
+                        <strong><?= \Indieinabox\Taxonomy\KindHelper::kindLink($page, $kind) ?></strong>
                         <ul style="list-style-type: none; padding-left: 20px; margin-top: 0.5em;">
                             <?php foreach ($list as $p): ?>
                                 <li style="margin-bottom: 0.5em;">

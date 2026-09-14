@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace Indieinabox\SiteBuilder;
 
 use DateTime;
-use Indieinabox\Helper;
+use Indieinabox\Localization\Translator;
 use Indieinabox\Page;
 use Indieinabox\Pages;
 use Indieinabox\Site;
+use Indieinabox\Support\TextParser;
+use Indieinabox\Taxonomy\KindHelper;
 use Indieinabox\Theme\ThemeHelper;
 use Indieinabox\ThemeManager;
 use Indieinabox\Twtxt\TwtxtManager;
@@ -99,7 +101,7 @@ class IndexPublisher
             if (empty($pagesForKind)) {
                 continue;
             }
-            $config = $this->site->config['kinds'][$kind] ?? Helper::getKindConfig($kind);
+            $config = $this->site->config['kinds'][$kind] ?? KindHelper::getKindConfig($kind);
             if (isset($config['show_in_menu']) && !$config['show_in_menu']) {
                 continue;
             }
@@ -238,11 +240,11 @@ class IndexPublisher
         foreach ($grouped as $lang => $months) {
             /** @var Page[] $allPagesForLang */
             $allPagesForLang = [];
-            $titleBase = Helper::kindLabel($targetKind, $lang);
+            $titleBase = KindHelper::kindLabel($targetKind, $lang);
 
             foreach ($months as $yearMonth => $monthPages) {
                 $monthSlug = ($lang === $this->site->localization->defaultLang ? '' : $lang . '/')
-                    . Helper::getKindFolder($targetKind, $lang) . '/' . $yearMonth . '/';
+                    . KindHelper::getKindFolder($targetKind, $lang) . '/' . $yearMonth . '/';
                 $monthPage = Page::fromArray([
                     'title' => $titleBase . ' - ' . $yearMonth,
                     'layout' => 'index_page',
@@ -285,7 +287,7 @@ class IndexPublisher
             }
 
             $indexSlug = ($lang === $this->site->localization->defaultLang ? '' : $lang . '/')
-                . Helper::getKindFolder($targetKind, $lang) . '/';
+                . KindHelper::getKindFolder($targetKind, $lang) . '/';
             $indexPage = Page::fromArray([
                 'title' => $titleBase,
                 'layout' => 'index_page',
@@ -355,9 +357,9 @@ class IndexPublisher
                 return $timeB <=> $timeA;
             });
 
-            $title = Helper::kindLabel($targetKind, $lang);
+            $title = KindHelper::kindLabel($targetKind, $lang);
 
-            $kindFolder = Helper::getKindFolder($targetKind, $lang);
+            $kindFolder = KindHelper::getKindFolder($targetKind, $lang);
             $kindSlug = ($lang === $defaultLang ? '' : $lang . '/') . $kindFolder . '/';
             if (!$prettylinks) {
                 $kindSlug = ($lang === $defaultLang ? '' : $lang . '/') . $kindFolder . '.html';
@@ -433,14 +435,14 @@ class IndexPublisher
                 });
 
                 $termSlug = ($lang === $this->site->localization->defaultLang ? '' : $lang . '/')
-                    . $taxonomyName . '/' . Helper::slugize($term) . '/';
+                    . $taxonomyName . '/' . TextParser::slugize($term) . '/';
 
                 $count = count($termPages);
                 $globalContent .= '<li><a href="/' . $termSlug . '">' . htmlspecialchars($term) . '</a> ('
                     . $count . ')</li>' . "\n";
                 $globalRaw .= "=> /" . $termSlug . ' ' . $term . ' (' . $count . ")\n";
 
-                $termTitleBase = Helper::translate(ucfirst($taxonomyName)) . ': ' . $term;
+                $termTitleBase = Translator::translate(ucfirst($taxonomyName)) . ': ' . $term;
 
                 $termPage = Page::fromArray([
                     'title' => $termTitleBase,
@@ -475,7 +477,7 @@ class IndexPublisher
 
             $globalContent .= "</ul>\n";
 
-            $globalTitleBase = Helper::translate(ucfirst($taxonomyName) . 's');
+            $globalTitleBase = Translator::translate(ucfirst($taxonomyName) . 's');
             $globalSlug = ($lang === $this->site->localization->defaultLang ? '' : $lang . '/')
                 . $taxonomyName . '/';
             $globalPage = Page::fromArray([

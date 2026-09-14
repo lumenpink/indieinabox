@@ -24,7 +24,7 @@ beforeEach(function () {
 
 afterEach(function () {
     /** @var \Tests\TestCase|mixed $this */
-    \Indieinabox\Helper::recursiveRmdir($this->tempDir);
+    \Indieinabox\Support\FileUtils::recursiveRmdir($this->tempDir);
 });
 
 it('renders syndication links in post and summary', function () {

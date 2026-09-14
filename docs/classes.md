@@ -338,4 +338,32 @@ Asynchronous endpoint discovery (`webmention_discovery_cache`):
 - Checks remote domains for Webmention support via HTTP response headers (`rel="webmention"`) or HTML `<link rel="webmention">` tags.
 - Enables non-blocking UI rendering for like/repost actions.
 
+---
+
+## 🛠️ Domain Services & Support Subsystem
+
+Replacing the legacy god-class `Helper`, the codebase utilizes single-responsibility domain services:
+
+### 1. `Support\TextParser` (`Indieinabox\Support\TextParser`)
+- Provides UTF-8 normalization, ASCII transliteration, unaccenting, array key retrieval, URL slug generation, and hashtag extraction (`extractHashtags`).
+
+### 2. `Support\DateFormatter` (`Indieinabox\Support\DateFormatter`)
+- Handles relative human-readable times (`timeAgo`), intl-compliant localized date formatting (`localizeddate`), and chronological page sorting (`sortByDate`).
+
+### 3. `Support\HtmlUtils` (`Indieinabox\Support\HtmlUtils`)
+- Provides clean HTML formatting/indentation (`beautify`) and compact minification (`minify`).
+
+### 4. `Support\FileUtils` (`Indieinabox\Support\FileUtils`)
+- File system traversal (`getDirContents`), safe recursive directory pruning (`recursiveRmdir`), and recursive key sorting (`recursiveKsort`).
+
+### 5. `Media\ImageProcessor` (`Indieinabox\Media\ImageProcessor`)
+- Handles image manipulation via GD: Atkinson adaptive dithering (`ditherImageToGif`, `ditherAndCropImageToPng`), thumbnail generation (`createThumbnail`), and social image generation (`generateSocialImages`).
+
+### 6. `Taxonomy\KindHelper` (`Indieinabox\Taxonomy\KindHelper`)
+- Manages post kinds, localized taxonomy routing (`kind`, `getKindConfig`, `getKindFolder`, `kindLabel`, `kindLink`), post listings (`listposts`), interaction aggregation (`getInteractions`), and SEO metadata extraction (`getSeoMetadata`).
+
+### 7. `Localization\Translator` (`Indieinabox\Localization\Translator`)
+- Internationalization engine: translation dictionary lookup (`translate`), pluralization (`translatePlural`), slugized translations (`translateSlugize`), and SQLite/runtime config synchronizer (`updateTranslations`).
+
+
 

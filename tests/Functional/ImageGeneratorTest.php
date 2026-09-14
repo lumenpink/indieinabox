@@ -2,9 +2,11 @@
 
 declare(strict_types=1);
 
-use Indieinabox\Helper;
+use Indieinabox\Media\ImageProcessor;
 use Indieinabox\Page;
 use Indieinabox\Page\Metadata;
+use Indieinabox\Support\FileUtils;
+use Indieinabox\Taxonomy\KindHelper;
 
 it('generates social images with correct dimensions and dithering', function () {
     $tempDir = __DIR__ . '/tmp_images';
@@ -21,7 +23,7 @@ it('generates social images with correct dimensions and dithering', function () 
     
     $destBase = $tempDir . '/media/test';
     
-    $results = Helper::generateSocialImages($sourceJpg, $destBase, [255, 255, 255], [0, 0, 0]);
+    $results = ImageProcessor::generateSocialImages($sourceJpg, $destBase, [255, 255, 255], [0, 0, 0]);
     
     expect($results)->toHaveCount(4);
     expect($results)->toHaveKey('1200x630');
@@ -38,7 +40,7 @@ it('generates social images with correct dimensions and dithering', function () 
     }
     
     // Cleanup
-    Helper::recursiveRmdir($tempDir);
+    FileUtils::recursiveRmdir($tempDir);
 });
 
 it('truncates SEO description and maps schema correctly', function () {
@@ -49,7 +51,7 @@ it('truncates SEO description and maps schema correctly', function () {
     $page->metadata = new Metadata();
     $page->metadata->description = $longText;
     
-    $seo = Helper::getSeoMetadata($page);
+    $seo = KindHelper::getSeoMetadata($page);
     
     // Check truncation
     expect(mb_strlen($seo['description']))->toBeLessThanOrEqual(150);

@@ -7,7 +7,7 @@ namespace Indieinabox\Feeds\Generators;
 use DateTimeZone;
 use Indieinabox\Entry\Entry;
 use Indieinabox\Feeds\FeedGeneratorInterface;
-use Indieinabox\Helper;
+use Indieinabox\Taxonomy\KindHelper;
 use Indieinabox\Site;
 use Indieinabox\Twtxt\TwtxtManager;
 
@@ -99,7 +99,7 @@ class TwtxtFeedGenerator implements FeedGeneratorInterface
     {
         $postUrl = $this->resolveEntryUrl($entry, $fqdn);
         $kind = $entry->getKind();
-        $displayMode = $site->config['kinds'][$kind]['display_mode'] ?? (Helper::getKindConfig($kind)['display_mode'] ?? 'default');
+        $displayMode = $site->config['kinds'][$kind]['display_mode'] ?? (KindHelper::getKindConfig($kind)['display_mode'] ?? 'default');
 
         if ($displayMode === 'full_content' || $entry->isNote()) {
             $text = TwtxtManager::cleanMessage($entry->getRawContent() ?: strip_tags($entry->getContent()));

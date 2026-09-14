@@ -7,7 +7,7 @@ namespace Indieinabox\ActivityPub;
 use PDO;
 use Indieinabox\Site;
 use Indieinabox\Database;
-use Indieinabox\Helper;
+use Indieinabox\Localization\Translator;
 
 /**
  * Class InteractionHandler
@@ -101,7 +101,7 @@ class InteractionHandler
      */
     public function renderInteractHtml(string $uri): string
     {
-        $title = Helper::translate('Interact via Fediverse');
+        $title = Translator::translate('Interact via Fediverse');
         $html = '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>' . htmlspecialchars($title) . '</title>';
         $html .= '<style>
             body { font-family: system-ui, -apple-system, sans-serif; max-width: 600px; margin: 2em auto; padding: 1em; background: #fdfdfd; color: #333; line-height: 1.5; }
@@ -117,11 +117,11 @@ class InteractionHandler
         </style>';
         $html .= '</head><body>';
         $html .= '<h1>' . htmlspecialchars($title) . '</h1>';
-        $html .= '<p>' . Helper::translate('Enter your Mastodon or compatible instance domain (e.g. <code>mastodon.social</code>) or your full handle (e.g. <code>@user@mastodon.social</code>) to proceed.') . '</p>';
+        $html .= '<p>' . Translator::translate('Enter your Mastodon or compatible instance domain (e.g. <code>mastodon.social</code>) or your full handle (e.g. <code>@user@mastodon.social</code>) to proceed.') . '</p>';
         $html .= '<form method="post">';
-        $html .= '<label for="instance">' . Helper::translate('Instance domain or handle:') . '</label>';
+        $html .= '<label for="instance">' . Translator::translate('Instance domain or handle:') . '</label>';
         $html .= '<input type="text" id="instance" name="instance" placeholder="@user@instance.social" required autofocus>';
-        $html .= '<button type="submit">' . Helper::translate('Continue') . '</button>';
+        $html .= '<button type="submit">' . Translator::translate('Continue') . '</button>';
         $html .= '</form>';
         $html .= '</body></html>';
 
@@ -319,7 +319,7 @@ class InteractionHandler
      */
     public function renderAuthorizeHtml(string $uri): string
     {
-        $title = Helper::translate('Authorize Interaction');
+        $title = Translator::translate('Authorize Interaction');
         $html = '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>' . htmlspecialchars($title) . '</title>';
         $html .= '<style>
             body { font-family: system-ui, -apple-system, sans-serif; max-width: 600px; margin: 2em auto; padding: 1em; background: #fdfdfd; color: #333; line-height: 1.5; }
@@ -339,23 +339,23 @@ class InteractionHandler
         </script>';
         $html .= '</head><body>';
         $html .= '<h1>' . htmlspecialchars($title) . '</h1>';
-        $html .= '<p>' . Helper::translate('You are about to interact with:') . '<br><a href="' . htmlspecialchars($uri) . '" target="_blank">' . htmlspecialchars($uri) . '</a></p>';
+        $html .= '<p>' . Translator::translate('You are about to interact with:') . '<br><a href="' . htmlspecialchars($uri) . '" target="_blank">' . htmlspecialchars($uri) . '</a></p>';
         $html .= '<form method="post">';
-        $html .= '<label for="action">' . Helper::translate('Action:') . '</label>';
+        $html .= '<label for="action">' . Translator::translate('Action:') . '</label>';
         $html .= '<select id="action" name="action" onchange="toggleReply()" style="padding: 0.5em; font-size: 1em;">
-            <option value="Like">' . Helper::translate('Like') . '</option>
-            <option value="Announce">' . Helper::translate('Repost') . '</option>
-            <option value="Create">' . Helper::translate('Reply') . '</option>
+            <option value="Like">' . Translator::translate('Like') . '</option>
+            <option value="Announce">' . Translator::translate('Repost') . '</option>
+            <option value="Create">' . Translator::translate('Reply') . '</option>
         </select>';
         $html .= '<div id="reply-container" style="display:none; flex-direction: column; gap: 0.5em;">';
-        $html .= '<label for="reply_content">' . Helper::translate('Your Reply:') . '</label>';
+        $html .= '<label for="reply_content">' . Translator::translate('Your Reply:') . '</label>';
         $html .= '<textarea id="reply_content" name="reply_content" placeholder="..."></textarea>';
         $html .= '</div>';
         $html .= '<div class="checkbox-group">';
         $html .= '<input type="checkbox" id="create_local" name="create_local" checked>';
-        $html .= '<label for="create_local">' . Helper::translate('Save this interaction publicly on my site') . '</label>';
+        $html .= '<label for="create_local">' . Translator::translate('Save this interaction publicly on my site') . '</label>';
         $html .= '</div>';
-        $html .= '<button type="submit">' . Helper::translate('Send Interaction') . '</button>';
+        $html .= '<button type="submit">' . Translator::translate('Send Interaction') . '</button>';
         $html .= '</form>';
         $html .= '</body></html>';
 

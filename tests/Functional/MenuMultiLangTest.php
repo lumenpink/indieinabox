@@ -43,7 +43,7 @@ beforeEach(function () {
 
 afterEach(function () {
     /** @var \Tests\TestCase $this */
-    \Indieinabox\Helper::recursiveRmdir($this->tempDir);
+    \Indieinabox\Support\FileUtils::recursiveRmdir($this->tempDir);
 });
 
 test('root md file in non-default language directory becomes page and uses slugified name', function () {

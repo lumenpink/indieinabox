@@ -4,6 +4,12 @@ declare(strict_types=1);
 
 namespace Indieinabox\Markdown;
 
+use Indieinabox\Localization\Translator;
+use Indieinabox\Media\ImageProcessor;
+use Indieinabox\Page;
+use Indieinabox\Support\TextParser;
+use Indieinabox\Taxonomy\KindHelper;
+
 /**
  * Class HtmlRenderer
  */
@@ -33,7 +39,7 @@ class HtmlRenderer implements RendererInterface
     private function getColors(): array
     {
         $kind = strtolower($this->page ? $this->page->kind : 'generic');
-        $kindConfig = \Indieinabox\Helper::getKindConfig($kind);
+        $kindConfig = KindHelper::getKindConfig($kind);
 
         if (!empty($kindConfig['palette'])) {
             $bgHex = $kindConfig['palette']['bg'] ?? '#F4F1EA';
@@ -170,7 +176,7 @@ class HtmlRenderer implements RendererInterface
             // Check if it is explicitly marked as a metapage link using '%'
             if (str_starts_with($target, '%')) {
                 $isMeta = true;
-                $metaKey = \Indieinabox\Helper::slugize(substr($target, 1)); // e.g. 'garden' or 'index'
+                $metaKey = TextParser::slugize(substr($target, 1)); // e.g. 'garden' or 'index'
                 
                 if ($metaKey === 'index' || $metaKey === 'home') {
                     $url = $relpath . $langPrefix;
@@ -178,14 +184,14 @@ class HtmlRenderer implements RendererInterface
                     $matchedKind = null;
                     if (!empty($site->config['kinds'])) {
                         foreach ($site->config['kinds'] as $k => $kindData) {
-                            if ($metaKey === \Indieinabox\Helper::slugize($k)) {
+                            if ($metaKey === TextParser::slugize($k)) {
                                 $matchedKind = $k;
                                 break;
                             }
                         }
                     }
                     if ($matchedKind) {
-                        $folder = \Indieinabox\Helper::getKindFolder($matchedKind, $currentPageLang);
+                        $folder = KindHelper::getKindFolder($matchedKind, $currentPageLang);
                         $url = $relpath . $langPrefix . ltrim($folder . '/', '/');
                     } else {
                         // Invalid metapage key
@@ -195,7 +201,7 @@ class HtmlRenderer implements RendererInterface
                 }
             } else {
                 // Normal page link
-                $slugTargetParts = array_map([\Indieinabox\Helper::class, 'slugize'], explode('/', $target));
+                $slugTargetParts = array_map([TextParser::class, 'slugize'], explode('/', $target));
                 $slugTarget = end($slugTargetParts);
                 $slugTargetFull = implode('/', $slugTargetParts);
                 
@@ -206,9 +212,9 @@ class HtmlRenderer implements RendererInterface
                         $pLang = $p->lang ?? 'en';
                         if ($pLang !== $currentPageLang) continue;
                         
-                        $pTitle = \Indieinabox\Helper::slugize($p->title ?? '');
-                        $pSlug = \Indieinabox\Helper::slugize(basename($p->slug ?? ''));
-                        $pNick = \Indieinabox\Helper::slugize($p->nick ?? '');
+                        $pTitle = TextParser::slugize($p->title ?? '');
+                        $pSlug = TextParser::slugize(basename($p->slug ?? ''));
+                        $pNick = TextParser::slugize($p->nick ?? '');
                         
                         if ($slugTarget === $pTitle || $slugTarget === $pSlug || $slugTarget === $pNick) {
                             $matches[] = $p;
@@ -218,9 +224,9 @@ class HtmlRenderer implements RendererInterface
                     // If not found, try any language
                     if (empty($matches)) {
                         foreach ($pages as $p) {
-                            $pTitle = \Indieinabox\Helper::slugize($p->title ?? '');
-                            $pSlug = \Indieinabox\Helper::slugize(basename($p->slug ?? ''));
-                            $pNick = \Indieinabox\Helper::slugize($p->nick ?? '');
+                            $pTitle = TextParser::slugize($p->title ?? '');
+                            $pSlug = TextParser::slugize(basename($p->slug ?? ''));
+                            $pNick = TextParser::slugize($p->nick ?? '');
                             
                             if ($slugTarget === $pTitle || $slugTarget === $pSlug || $slugTarget === $pNick) {
                                 $matches[] = $p;
@@ -233,7 +239,7 @@ class HtmlRenderer implements RendererInterface
                         if (str_contains($target, '/')) {
                             foreach ($matches as $m) {
                                 $mSlugClean = preg_replace('/\.html$/', '', $m->slug ?? '');
-                                $mSlugParts = array_map([\Indieinabox\Helper::class, 'slugize'], explode('/', $mSlugClean));
+                                $mSlugParts = array_map([TextParser::class, 'slugize'], explode('/', $mSlugClean));
                                 $mSlugFull = implode('/', $mSlugParts);
                                 if ($mSlugFull === $slugTargetFull || str_ends_with($mSlugFull, '/' . $slugTargetFull)) {
                                     $foundPage = $m;
@@ -344,7 +350,7 @@ class HtmlRenderer implements RendererInterface
                     $gifNameGlobal = $pathInfo['filename'] . '_global.gif';
                     $caminhoDestinoGlobal = $outputHtmlDir . DIRECTORY_SEPARATOR . $gifNameGlobal;
 
-                    \Indieinabox\Helper::ditherImageToGif(
+                    ImageProcessor::ditherImageToGif(
                         $caminhoOriginal,
                         $caminhoDestinoGlobal,
                         512,
@@ -357,7 +363,7 @@ class HtmlRenderer implements RendererInterface
                     $gifNameThumb = $pathInfo['filename'] . '_thumb.gif';
                     $caminhoDestinoThumb = $outputHtmlDir . DIRECTORY_SEPARATOR . $gifNameThumb;
 
-                    \Indieinabox\Helper::createThumbnail(
+                    ImageProcessor::createThumbnail(
                         $caminhoOriginal,
                         $caminhoDestinoThumb,
                         96,
@@ -366,7 +372,7 @@ class HtmlRenderer implements RendererInterface
                     );
                     \Indieinabox\SiteBuilder::addManifest($caminhoDestinoThumb);
 
-                    $success = \Indieinabox\Helper::ditherImageToGif(
+                    $success = ImageProcessor::ditherImageToGif(
                         $caminhoOriginal,
                         $caminhoDestino,
                         512,
@@ -406,7 +412,7 @@ class HtmlRenderer implements RendererInterface
             
             if (isset($originalTarget)) {
                 $origEsc = htmlspecialchars($originalTarget, ENT_QUOTES | ENT_HTML5);
-                $linkText = \Indieinabox\Helper::translate('Original image');
+                $linkText = Translator::translate('Original image');
                 return "{$imgTag}<br><a href=\"{$origEsc}\" class=\"dithered-image-link\" style=\"font-size: 0.85em; opacity: 0.8;\">[ {$linkText} ]</a>\n";
             }
             return $imgTag . "\n";

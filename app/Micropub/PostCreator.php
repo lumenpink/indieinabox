@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Indieinabox\Micropub;
 
 use Indieinabox\Site;
-use Indieinabox\Helper;
+use Indieinabox\Support\TextParser;
 use Indieinabox\Database;
 
 /**
@@ -58,7 +58,7 @@ class PostCreator
         }
 
         // Auto-extract hashtags from content
-        $extractedTags = Helper::extractHashtags($content);
+        $extractedTags = TextParser::extractHashtags($content);
         if (!empty($extractedTags)) {
             $category = array_unique(array_merge($category, $extractedTags));
         }

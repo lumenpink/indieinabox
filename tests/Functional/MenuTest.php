@@ -38,7 +38,7 @@ beforeEach(function () {
 
 afterEach(function () {
     /** @var \Tests\TestCase|mixed $this */
-    \Indieinabox\Helper::recursiveRmdir($this->tempDir);
+    \Indieinabox\Support\FileUtils::recursiveRmdir($this->tempDir);
 });
 
 test('root md file without publish tag becomes page and uses slugified name', function () {

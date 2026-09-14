@@ -42,7 +42,7 @@ beforeEach(function () {
 
 afterEach(function () {
     /** @var \Tests\TestCase|mixed $this */
-    \Indieinabox\Helper::recursiveRmdir($this->tempDir);
+    \Indieinabox\Support\FileUtils::recursiveRmdir($this->tempDir);
 });
 
 it('displays distinct interaction links on index and post pages', function () {

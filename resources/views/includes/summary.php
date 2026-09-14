@@ -1,27 +1,27 @@
 <?php
 /** @var \Indieinabox\Page $page */
 /** @var \Indieinabox\Site $site */
-$_kindLabel = \Indieinabox\Helper::kindLabel($page->kind);
+$_kindLabel = \Indieinabox\Taxonomy\KindHelper::kindLabel($page->kind);
 ?>
 <article class="h-entry the-summary" style="margin-bottom: 2em;">
     <header>
-        <?php if (\Indieinabox\Helper::getKindConfig($page->kind)['has_title']): ?>
+        <?php if (\Indieinabox\Taxonomy\KindHelper::getKindConfig($page->kind)['has_title']): ?>
             <h3 style="margin: 0 0 0.5em 0;" class="p-name">
                 <a href="<?= $page->relpath ?><?= $page->slug ?>" class="u-url" style="color: inherit; text-decoration: none;"><?= htmlspecialchars($page->title) ?></a>
             </h3>
         <?php endif; ?>
         <div class="post-metadata" style="font-size: 0.85em; opacity: 0.8; margin-bottom: 1em;">
             <div class="meta-line-1">
-                <?= \Indieinabox\Helper::kindLink($page, $page->kind) ?>
+                <?= \Indieinabox\Taxonomy\KindHelper::kindLink($page, $page->kind) ?>
                 <?php if (isset($page->date)): ?>
                     - <a href="<?= $page->relpath ?><?= $page->slug ?>" class="u-url"><time class="dt-published" datetime="<?= $page->isodate ?>"><?= $page->localizeddate ?></time></a>
                 <?php endif; ?>
             </div>
             
             <?php
-            $likes = \Indieinabox\Helper::getInteractions($page, 'like');
-            $reposts = \Indieinabox\Helper::getInteractions($page, 'repost');
-            $replies = \Indieinabox\Helper::getInteractions($page, 'reply');
+            $likes = \Indieinabox\Taxonomy\KindHelper::getInteractions($page, 'like');
+            $reposts = \Indieinabox\Taxonomy\KindHelper::getInteractions($page, 'repost');
+            $replies = \Indieinabox\Taxonomy\KindHelper::getInteractions($page, 'reply');
             ?>
             <div class="meta-line-2" style="margin-left: 0.6em;">
                 <?php if (!empty($page->shortlink)): ?>
@@ -30,26 +30,26 @@ $_kindLabel = \Indieinabox\Helper::kindLabel($page->kind);
                 
                 <?php if (count($likes) > 0): ?>
                     <a href="<?= $page->relpath ?><?= $page->slug ?>/interactions#likes" style="color: inherit; text-decoration: none;">
-                        <?= count($likes) ?> <?= \Indieinabox\Helper::translatePlural('Like', 'Likes', count($likes)) ?>
+                        <?= count($likes) ?> <?= \Indieinabox\Localization\Translator::translatePlural('Like', 'Likes', count($likes)) ?>
                     </a>
                 <?php else: ?>
-                    <span style="opacity: 0.8; font-size: 0.9em;">0 <?= \Indieinabox\Helper::translatePlural('Like', 'Likes', 0) ?></span>
+                    <span style="opacity: 0.8; font-size: 0.9em;">0 <?= \Indieinabox\Localization\Translator::translatePlural('Like', 'Likes', 0) ?></span>
                 <?php endif; ?>
                 /
                 <?php if (count($reposts) > 0): ?>
                     <a href="<?= $page->relpath ?><?= $page->slug ?>/interactions#reposts" style="color: inherit; text-decoration: none;">
-                        <?= count($reposts) ?> <?= \Indieinabox\Helper::translatePlural('Repost', 'Reposts', count($reposts)) ?>
+                        <?= count($reposts) ?> <?= \Indieinabox\Localization\Translator::translatePlural('Repost', 'Reposts', count($reposts)) ?>
                     </a>
                 <?php else: ?>
-                    <span style="opacity: 0.8; font-size: 0.9em;">0 <?= \Indieinabox\Helper::translatePlural('Repost', 'Reposts', 0) ?></span>
+                    <span style="opacity: 0.8; font-size: 0.9em;">0 <?= \Indieinabox\Localization\Translator::translatePlural('Repost', 'Reposts', 0) ?></span>
                 <?php endif; ?>
                 /
                 <?php if (count($replies) > 0): ?>
                     <a href="<?= $page->relpath ?><?= $page->slug ?>#interactions" style="color: inherit; text-decoration: none;">
-                        <?= count($replies) ?> <?= \Indieinabox\Helper::translatePlural('Reply', 'Replies', count($replies)) ?>
+                        <?= count($replies) ?> <?= \Indieinabox\Localization\Translator::translatePlural('Reply', 'Replies', count($replies)) ?>
                     </a>
                 <?php else: ?>
-                    <span style="opacity: 0.8; font-size: 0.9em;">0 <?= \Indieinabox\Helper::translatePlural('Reply', 'Replies', 0) ?></span>
+                    <span style="opacity: 0.8; font-size: 0.9em;">0 <?= \Indieinabox\Localization\Translator::translatePlural('Reply', 'Replies', 0) ?></span>
                 <?php endif; ?>
             </div>
 
@@ -67,13 +67,13 @@ $_kindLabel = \Indieinabox\Helper::kindLabel($page->kind);
         $content = $page->content;
         $content = preg_replace('/src="([^"]+)\.gif"/', 'src="$1_global.gif"', (string)$content);
         
-        $kindConf = \Indieinabox\Helper::getKindConfig($page->kind);
+        $kindConf = \Indieinabox\Taxonomy\KindHelper::getKindConfig($page->kind);
         $hasTitle = $kindConf['has_title'] ?? true;
         
         $hasExcerpt = !empty($page->metadata->excerpt);
         $dontExcerpt = !empty($page->metadata->dont_excerpt);
         
-        $readMoreLink = ' <a href="' . $page->relpath . ltrim($page->slug, '/') . '" class="u-url">' . \Indieinabox\Helper::translate('Read more') . '</a>';
+        $readMoreLink = ' <a href="' . $page->relpath . ltrim($page->slug, '/') . '" class="u-url">' . \Indieinabox\Localization\Translator::translate('Read more') . '</a>';
         
         if ($dontExcerpt) {
             echo $content;
@@ -112,7 +112,7 @@ $_kindLabel = \Indieinabox\Helper::kindLabel($page->kind);
 
     <?php if (!empty($page->metadata->syndication)): ?>
         <div class="syndication-links" style="margin-top: 1em; margin-left: 2em; font-size: 0.85em; opacity: 0.8;">
-            <?= \Indieinabox\Helper::translate('Also on') ?>:
+            <?= \Indieinabox\Localization\Translator::translate('Also on') ?>:
             <?php 
             $syndications = is_array($page->metadata->syndication) ? $page->metadata->syndication : [$page->metadata->syndication];
             foreach ($syndications as $synd):

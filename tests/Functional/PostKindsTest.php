@@ -41,7 +41,7 @@ beforeEach(function () {
 
 afterEach(function () {
     /** @var \Tests\TestCase $this */
-    \Indieinabox\Helper::recursiveRmdir($this->tempDir);
+    \Indieinabox\Support\FileUtils::recursiveRmdir($this->tempDir);
 });
 
 test('note kind does not render p-name title from frontmatter', function () {
@@ -110,7 +110,7 @@ test('kind link is present in rendered page', function () {
     
     $html = file_get_contents($this->tempDir . '/public_html/articles/test/index.html');
     
-    // The summary.php uses Helper::kindLink() which renders a link to the kind archive
+    // The summary.php uses KindHelper::kindLink() which renders a link to the kind archive
     expect($html)->toContain('articles');
     expect($html)->toContain('h-entry');
 });

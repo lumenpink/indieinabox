@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Indieinabox\Microsub;
 
+use Indieinabox\Support\TextParser;
+
 /**
  * Normalization Adapter
  * 
@@ -85,7 +87,7 @@ class NormalizationAdapter
         $html = preg_replace('/(https?:\/\/[^\s]+)/', '<a href="$1">$1</a>', $html);
         $entry->content['html'] = $html;
 
-        $entry->category = \Indieinabox\Helper::extractHashtags($text);
+        $entry->category = TextParser::extractHashtags($text);
 
         $entry->author = [
             'type' => 'card',
@@ -116,7 +118,7 @@ class NormalizationAdapter
         $entry->content['html'] = $htmlContent;
         $entry->content['text'] = strip_tags($htmlContent);
         
-        $entry->category = \Indieinabox\Helper::extractHashtags($entry->content['text']);
+        $entry->category = TextParser::extractHashtags($entry->content['text']);
 
         $entry->author = [
             'type' => 'card',

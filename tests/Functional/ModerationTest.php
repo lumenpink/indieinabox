@@ -32,7 +32,7 @@ beforeEach(function () {
 
 afterEach(function () {
     /** @var \Tests\TestCase|mixed $this */
-    \Indieinabox\Helper::recursiveRmdir($this->tempDir);
+    \Indieinabox\Support\FileUtils::recursiveRmdir($this->tempDir);
 });
 
 it('redirects to config if not authenticated', function () {

@@ -7,6 +7,9 @@ namespace Indieinabox;
 use Indieinabox\Markdown\ContentProcessor;
 use Indieinabox\Markdown\FileProcessor;
 use Indieinabox\Markdown\LanguageProcessor;
+use Indieinabox\Support\DateFormatter;
+use Indieinabox\Support\TextParser;
+use Indieinabox\Taxonomy\KindHelper;
 
 /**
  * Class MarkdownParser
@@ -226,7 +229,7 @@ class MarkdownParser implements ParserInterface
 
         $slugBase = trim($slugBase, '/');
         $slugBaseParts = explode('/', $slugBase);
-        $slugBaseParts = array_map([Helper::class, 'slugize'], $slugBaseParts);
+        $slugBaseParts = array_map([TextParser::class, 'slugize'], $slugBaseParts);
         $slugBase = implode('/', $slugBaseParts);
 
         // Build final slug with language prefix if non-default
@@ -278,7 +281,7 @@ class MarkdownParser implements ParserInterface
             $page->category = ["General"];
         }
 
-        $kindResult = Helper::kind($rawPage, $this->site);
+        $kindResult = KindHelper::kind($rawPage, $this->site);
         $page->localizedkind = $kindResult["localized"];
         $page->kind = $kindResult["kind"];
 
@@ -322,7 +325,7 @@ class MarkdownParser implements ParserInterface
                 }
 
                 if ($matchedKind === $page->kind) {
-                    $parts[$folderIndex] = Helper::slugize($page->localizedkind);
+                    $parts[$folderIndex] = TextParser::slugize($page->localizedkind);
                     $page->slug = implode('/', $parts);
 
                     // Re-calculate the relative path based on the updated slug
@@ -331,7 +334,7 @@ class MarkdownParser implements ParserInterface
             }
         }
 
-        Helper::localizeddate($page);
+        DateFormatter::localizeddate($page);
         $page->localizeddate = $page->date->format('Y-m-d');
 
         return $page;

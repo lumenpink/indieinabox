@@ -6,7 +6,7 @@ use Indieinabox\BackgroundWorker;
 use Indieinabox\BackgroundWorker\ArchiveProcessor;
 use Indieinabox\BackgroundWorker\InboxProcessor;
 use Indieinabox\Database;
-use Indieinabox\Helper;
+use Indieinabox\Support\FileUtils;
 use Indieinabox\Site;
 
 $funcTempDir = __DIR__ . '/tmp_functional_bgworker';
@@ -31,7 +31,7 @@ beforeEach(function () use ($funcTempDir) {
     // Clear inbox
     $inboxDir = $funcTempDir . '/microsub/inbox/inbox';
     if (is_dir($inboxDir)) {
-        Helper::recursiveRmdir($inboxDir);
+        FileUtils::recursiveRmdir($inboxDir);
     }
     mkdir($inboxDir, 0777, true);
     
@@ -228,7 +228,7 @@ it('unwraps Lemmy Announce activities in inbox', function () use ($funcTempDir) 
     // Clear queue from previous tests
     $db->exec("DELETE FROM inbox_queue");
     // Clear inbox files from previous tests
-    Helper::recursiveRmdir($funcTempDir . '/microsub/inbox/inbox');
+    FileUtils::recursiveRmdir($funcTempDir . '/microsub/inbox/inbox');
     mkdir($funcTempDir . '/microsub/inbox/inbox', 0777, true);
 
     $activity = [
@@ -303,7 +303,7 @@ it('extracts BookWyrm properties from ActivityPub Create', function () use ($fun
     // Clear queue from previous tests
     $db->exec("DELETE FROM inbox_queue");
     // Clear inbox files from previous tests
-    Helper::recursiveRmdir($funcTempDir . '/microsub/inbox/inbox');
+    FileUtils::recursiveRmdir($funcTempDir . '/microsub/inbox/inbox');
     mkdir($funcTempDir . '/microsub/inbox/inbox', 0777, true);
 
     $db->exec("INSERT INTO inbox_queue (type, payload_json, created_at) VALUES ('activitypub', '" . json_encode($payload) . "', " . time() . ")");

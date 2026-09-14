@@ -8,6 +8,7 @@ use DateTime;
 use Indieinabox\Page\Metadata;
 use Indieinabox\Page\Content;
 use Indieinabox\Page\Localization;
+use Indieinabox\Localization\Translator;
 
 /**
  * Class Page
@@ -131,9 +132,9 @@ class Page
                 $kind = $this->kind ?? 'note';
                 $indiewebActionKinds = ['reply', 'like', 'repost', 'bookmark', 'rsvp', 'listen', 'watch', 'read'];
                 if (in_array($kind, $indiewebActionKinds)) {
-                    return \Indieinabox\Helper::translate($kind . '_a_post');
+                    return Translator::translate($kind . '_a_post');
                 }
-                return \Indieinabox\Helper::translate('Untitled');
+                return Translator::translate('Untitled');
             case 'tags':
                 return $this->metadata->tags;
             case 'category':
@@ -253,7 +254,7 @@ class Page
     {
         if (isset($data['kind']) && in_array($data['kind'], ['garden', 'jardim'], true)) {
             $lang = $data['lang'] ?? null;
-            $data['flowerbed'] = isset($data['flowerbed']) ? (array) $data['flowerbed'] : [\Indieinabox\Helper::translate('general', $lang)];
+            $data['flowerbed'] = isset($data['flowerbed']) ? (array) $data['flowerbed'] : [Translator::translate('general', $lang)];
             $data['confidence'] = $data['confidence'] ?? 'possible';
             $data['maturity'] = $data['maturity'] ?? 'sprout';
             $data['importance'] = $data['importance'] ?? 'trivial';

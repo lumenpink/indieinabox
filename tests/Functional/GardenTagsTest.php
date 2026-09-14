@@ -33,7 +33,7 @@ beforeEach(function () {
 
 afterEach(function () {
     /** @var \Tests\TestCase|mixed $this */
-    \Indieinabox\Helper::recursiveRmdir($this->tempDir);
+    \Indieinabox\Support\FileUtils::recursiveRmdir($this->tempDir);
 });
 
 test('garden tags are rendered and translatable in the HTML output', function () {

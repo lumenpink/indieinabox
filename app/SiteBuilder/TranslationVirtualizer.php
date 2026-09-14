@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Indieinabox\SiteBuilder;
 
-use Indieinabox\Helper;
 use Indieinabox\Markdown\LanguageProcessor;
+use Indieinabox\Taxonomy\KindHelper;
 use Indieinabox\Page;
 use Indieinabox\Pages;
 use Indieinabox\Site;
@@ -134,8 +134,8 @@ class TranslationVirtualizer
 
                     $this->pseudoTranslate($cloned, $targetLang);
 
-                    $kindFolder = Helper::getKindFolder($cloned->kind, $targetLang);
-                    $sourceKindFolder = Helper::getKindFolder($page->kind, $sourceLang);
+                    $kindFolder = KindHelper::getKindFolder($cloned->kind, $targetLang);
+                    $sourceKindFolder = KindHelper::getKindFolder($page->kind, $sourceLang);
 
                     if (in_array($sourceKindFolder, ['page', 'generic', 'home'], true)) {
                         $sourceKindFolder = '';
@@ -216,7 +216,7 @@ class TranslationVirtualizer
             && $page->title !== 'Untitled'
             && $page->title !== 'untitled';
 
-        $kindConfig = Helper::getKindConfig($page->kind);
+        $kindConfig = KindHelper::getKindConfig($page->kind);
         if (isset($kindConfig['has_title']) && !$kindConfig['has_title']) {
             $hasTitle = false;
         }

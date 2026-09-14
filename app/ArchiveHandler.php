@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Indieinabox;
 
 use PDO;
+use Indieinabox\Support\DateFormatter;
 
 /**
  * Class ArchiveHandler
@@ -125,7 +126,7 @@ class ArchiveHandler
         if ($snapshot) {
             $tsSnapshot = (int) $snapshot['timestamp'];
             $date = date('Y-m-d H:i', $tsSnapshot);
-            $diffStr = Helper::timeAgo($tsSnapshot);
+            $diffStr = DateFormatter::timeAgo($tsSnapshot);
 
             $html .= "<div class=\"meta\">";
             $html .= "<strong>Local Snapshot</strong> <span>{$date} ({$diffStr})</span>";

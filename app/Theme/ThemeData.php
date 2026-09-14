@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace Indieinabox\Theme;
 
+use Indieinabox\Database;
+use Indieinabox\Localization\Translator;
 use Indieinabox\Page;
 use Indieinabox\Site;
-use Indieinabox\Helper;
-use Indieinabox\Database;
+use Indieinabox\Taxonomy\KindHelper;
 
 /**
  * Class ThemeData
@@ -45,7 +46,7 @@ class ThemeData
         $bg = '#F4F1EA';
         $fg = '#2C2E2F';
 
-        $kindConfig = Helper::getKindConfig($kind);
+        $kindConfig = KindHelper::getKindConfig($kind);
         if (!empty($kindConfig['palette'])) {
             $bg = $kindConfig['palette']['bg'] ?? $bg;
             $fg = $kindConfig['palette']['fg'] ?? $fg;
@@ -63,7 +64,7 @@ class ThemeData
      */
     public static function getMetaTags(Page $page, Site $site): string
     {
-        $seo = Helper::getSeoMetadata($page);
+        $seo = KindHelper::getSeoMetadata($page);
         $baseUrl = rtrim($site->metadata->fqdn ?? '', '/');
         $pageUrl = $baseUrl . '/' . ltrim($page->relpath ?? '', '/');
 
@@ -86,7 +87,7 @@ class ThemeData
      */
     public static function getOpenGraphTags(Page $page, Site $site): string
     {
-        $seo = Helper::getSeoMetadata($page);
+        $seo = KindHelper::getSeoMetadata($page);
         $baseUrl = rtrim($site->metadata->fqdn ?? '', '/');
         $pageUrl = $baseUrl . '/' . ltrim($page->relpath ?? '', '/');
         
@@ -120,7 +121,7 @@ class ThemeData
      */
     public static function getTwitterCardTags(Page $page, Site $site): string
     {
-        $seo = Helper::getSeoMetadata($page);
+        $seo = KindHelper::getSeoMetadata($page);
         $imageInfo = pathinfo($seo['image']);
         $ogImage = $imageInfo['dirname'] . '/' . $imageInfo['filename'] . '_1200x630.png';
 
@@ -143,7 +144,7 @@ class ThemeData
     public static function getJsonLd(Page $page, Site $site): string
     {
         $baseUrl = rtrim($site->metadata->fqdn ?? '', '/');
-        $seo = Helper::getSeoMetadata($page);
+        $seo = KindHelper::getSeoMetadata($page);
         $pageUrl = $baseUrl . '/' . ltrim($page->relpath ?? '', '/');
 
         $imageInfo = pathinfo($seo['image']);
@@ -263,8 +264,8 @@ class ThemeData
         }
 
         $navItems = [];
-        $navItems[] = '<a href="' . htmlspecialchars($homeLink) . '">' . Helper::translate('Home') . '</a>';
-        $navItems[] = '<a href="' . htmlspecialchars($indexLink) . '">' . Helper::translate('Index') . '</a>';
+        $navItems[] = '<a href="' . htmlspecialchars($homeLink) . '">' . Translator::translate('Home') . '</a>';
+        $navItems[] = '<a href="' . htmlspecialchars($indexLink) . '">' . Translator::translate('Index') . '</a>';
         
         foreach ($headerLinks as $item) {
             $navItems[] = '<a href="' . htmlspecialchars($item['url']) . '">' . htmlspecialchars($item['label']) . '</a>';

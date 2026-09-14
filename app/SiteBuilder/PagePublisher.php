@@ -5,8 +5,11 @@ declare(strict_types=1);
 namespace Indieinabox\SiteBuilder;
 
 use Indieinabox\ActivityPubHandler;
-use Indieinabox\Helper;
+use Indieinabox\Localization\Translator;
 use Indieinabox\Markdown\ASTParser;
+use Indieinabox\Support\HtmlUtils;
+use Indieinabox\Support\TextParser;
+use Indieinabox\Taxonomy\KindHelper;
 use Indieinabox\Markdown\GemtextRenderer;
 use Indieinabox\Markdown\GophermapRenderer;
 use Indieinabox\Page;
@@ -143,9 +146,9 @@ class PagePublisher
         }
 
         // Build interactions pages if there are any interactions
-        $likes = Helper::getInteractions($page, 'like');
-        $reposts = Helper::getInteractions($page, 'repost');
-        $replies = Helper::getInteractions($page, 'reply');
+        $likes = KindHelper::getInteractions($page, 'like');
+        $reposts = KindHelper::getInteractions($page, 'repost');
+        $replies = KindHelper::getInteractions($page, 'reply');
 
         if (!$skipGeneration) {
             if (str_ends_with($destinationFile, '.html')) {
@@ -163,10 +166,10 @@ class PagePublisher
 
             if (isset($this->site->options->htmlpostprocessing)) {
                 if ($this->site->options->htmlpostprocessing == 'beautify' || $this->site->options->dev) {
-                    $fileContent = Helper::beautifyhtml($fileContent);
+                    $fileContent = HtmlUtils::beautify($fileContent);
                 }
                 if ($this->site->options->htmlpostprocessing == 'minify' && !$this->site->options->dev) {
-                    $fileContent = Helper::minifyhtml($fileContent);
+                    $fileContent = HtmlUtils::minify($fileContent);
                 }
             }
 
@@ -209,10 +212,10 @@ class PagePublisher
 
                 if (isset($this->site->options->htmlpostprocessing)) {
                     if ($this->site->options->htmlpostprocessing == 'beautify' || $this->site->options->dev) {
-                        $interactionsContent = Helper::beautifyhtml($interactionsContent);
+                        $interactionsContent = HtmlUtils::beautify($interactionsContent);
                     }
                     if ($this->site->options->htmlpostprocessing == 'minify' && !$this->site->options->dev) {
-                        $interactionsContent = Helper::minifyhtml($interactionsContent);
+                        $interactionsContent = HtmlUtils::minify($interactionsContent);
                     }
                 }
                 file_put_contents($interactionsFile, $interactionsContent);
@@ -291,10 +294,10 @@ class PagePublisher
 
             if (isset($this->site->options->htmlpostprocessing)) {
                 if ($this->site->options->htmlpostprocessing == 'beautify' || $this->site->options->dev) {
-                    $replyContent = Helper::beautifyhtml($replyContent);
+                    $replyContent = HtmlUtils::beautify($replyContent);
                 }
                 if ($this->site->options->htmlpostprocessing == 'minify' && !$this->site->options->dev) {
-                    $replyContent = Helper::minifyhtml($replyContent);
+                    $replyContent = HtmlUtils::minify($replyContent);
                 }
             }
             file_put_contents($replyFile, $replyContent);
@@ -501,7 +504,7 @@ class PagePublisher
             $taxTerm = $parts[1] ?? null;
             foreach ($langs as $l) {
                 if ($taxTerm !== null) {
-                    $translatedTerm = Helper::slugize(Helper::translate($taxTerm, $l));
+                    $translatedTerm = TextParser::slugize(Translator::translate($taxTerm, $l));
                     $taxSubpath = $taxName . '/' . $translatedTerm . '/';
                 } else {
                     $taxSubpath = $taxName . '/';
@@ -516,7 +519,7 @@ class PagePublisher
         if (!empty($this->site->config['kinds'])) {
             foreach ($this->site->config['kinds'] as $k => $conf) {
                 foreach ($langs as $l) {
-                    $kindFolders[] = Helper::getKindFolder($k, $l);
+                    $kindFolders[] = KindHelper::getKindFolder($k, $l);
                 }
             }
         }
@@ -582,7 +585,7 @@ class PagePublisher
         foreach ($langs as $l) {
             $folder = '';
             if ($kind !== 'generic' && $kind !== 'page' && $kind !== 'home') {
-                $folder = Helper::getKindFolder($kind, $l);
+                $folder = KindHelper::getKindFolder($kind, $l);
             }
 
             // Get the translated slug part, fallback to baseKey (which is the english/default nick)
@@ -689,13 +692,13 @@ class PagePublisher
                     continue;
                 }
 
-                $folder = Helper::getKindFolder($k, $lang);
+                $folder = KindHelper::getKindFolder($k, $lang);
                 if ($prettylinks) {
                     $url = $page->relpath . $langPrefix . $folder . '/';
                 } else {
                     $url = $page->relpath . $langPrefix . $folder . '.html';
                 }
-                $label = Helper::kindLabel($k, $lang);
+                $label = KindHelper::kindLabel($k, $lang);
                 $footerLinks[] = ['url' => $url, 'label' => $label, 'order' => PHP_INT_MAX];
             }
         }

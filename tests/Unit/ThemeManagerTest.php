@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Indieinabox\Helper;
+use Indieinabox\Support\FileUtils;
 use Indieinabox\Site;
 use Indieinabox\Site\Paths;
 use Indieinabox\ThemeManager;
@@ -20,7 +20,7 @@ beforeEach(function () {
 });
 
 afterEach(function () {
-    Helper::recursiveRmdir($this->tempDir);
+    FileUtils::recursiveRmdir($this->tempDir);
 });
 
 it('resolves view path using configured themeDir', function () {

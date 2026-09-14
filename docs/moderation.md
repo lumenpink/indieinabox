@@ -7,7 +7,7 @@ The Moderation feature in Indieinabox allows site administrators to review, appr
 When an external interaction is received (via Webmention or ActivityPub), it is processed by the `BackgroundWorker`.
 By default, all incoming interactions are marked with the `status: pending` property in their frontmatter. They are stored in the `data/microsub/inbox/notifications/` directory as markdown files.
 
-Interactions with a `status: pending` are filtered out of public views by `Helper::getInteractions()`, meaning they are not rendered on your static site pages.
+Interactions with a `status: pending` are filtered out of public views by `KindHelper::getInteractions()` (`Indieinabox\Taxonomy\KindHelper`), meaning they are not rendered on your static site pages.
 
 ## Admin Moderation Panel
 

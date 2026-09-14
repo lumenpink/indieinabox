@@ -31,9 +31,9 @@
 
         <?= \Indieinabox\Theme\ThemeData::getHCard($site) ?>
 
-        <h2><?= \Indieinabox\Helper::translate('Recent posts') ?></h2>
+        <h2><?= \Indieinabox\Localization\Translator::translate('Recent posts') ?></h2>
         <div class="catalogue h-feed">
-            <?= \Indieinabox\Helper::listposts() ?>
+            <?= \Indieinabox\Taxonomy\KindHelper::listposts() ?>
         </div>
     </main>
     

@@ -44,7 +44,7 @@ beforeEach(function () {
 
 afterEach(function () {
     // Cleanup temporary directory
-    \Indieinabox\Helper::recursiveRmdir($this->tempDir);
+    \Indieinabox\Support\FileUtils::recursiveRmdir($this->tempDir);
 });
 
 test('SiteBuilder generates output for html, gemini, gopher, and copies media', function () {

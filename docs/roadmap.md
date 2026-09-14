@@ -328,7 +328,15 @@ app/
   - `BackgroundWorker` modularized into `app/BackgroundWorker/` (`InboxProcessor`, `OutboxDispatcher`, `OutgoingWebmentionDispatcher`, `ArchiveProcessor`, `WebmentionDiscovery`).
 - [x] **HTTP/CLI Duality**: Ensure every service is callable identically from both the HTTP stack and CLI commands, with no duplication.
 - [ ] **CLI vs Web Separation**: Isolate CLI commands into `app/Console/` to clearly separate terminal actions from HTTP web requests.
-- [ ] **Eradicate Procedural Code**: Convert autonomous functions (currently in `app/functions/` and the god-class `Helper.php`) into focused, single-responsibility Service Classes.
+- [x] **Eradicate Procedural Code**: Deconstructed the legacy god-class `Helper.php` (1,636 lines) into focused, single-responsibility Domain Services with 0 backward-compatibility shims:
+  - `Indieinabox\Support\TextParser`: `arrayGet`, `extractHashtags`, `unaccent`, `utf8ToAscii`, `slugize`.
+  - `Indieinabox\Support\DateFormatter`: `timeAgo`, `localizeddate`, `sortByDate`.
+  - `Indieinabox\Support\HtmlUtils`: `beautify`, `minify`.
+  - `Indieinabox\Support\FileUtils`: `recursiveKsort`, `getDirContents`, `recursiveRmdir`.
+  - `Indieinabox\Media\ImageProcessor`: `createThumbnail`, `ditherImageToGif`, `ditherAndCropImageToPng`, `generateSocialImages`.
+  - `Indieinabox\Taxonomy\KindHelper`: `getKindConfig`, `kind`, `getKindFolder`, `kindLabel`, `kindLink`, `getOriginalContent`, `listposts`, `removeGeneric`, `getSeoMetadata`, `getInteractions`.
+  - `Indieinabox\Localization\Translator`: `translate`, `translatePlural`, `translateLowercase`, `translateSlugize`, `updateTranslations`.
+  - Fully deleted `Helper.php` and migrated all callers across the codebase, updating unit/functional/integration tests across all 3 levels.
 - [ ] **Dependency Injection**: Remove the reliance on `global $site` and singleton patterns (`Database::getDb()`). Inject dependencies via constructors to make testing and state management predictable.
 - [ ] **Interface-Driven Federation**: All adapters implement a shared contract so services never depend on a specific platform implementation.
 

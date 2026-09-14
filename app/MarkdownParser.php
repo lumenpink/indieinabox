@@ -4,46 +4,50 @@ declare(strict_types=1);
 
 namespace Indieinabox;
 
-use Indieinabox\Markdown\FileProcessor;
 use Indieinabox\Markdown\ContentProcessor;
+use Indieinabox\Markdown\FileProcessor;
 use Indieinabox\Markdown\LanguageProcessor;
 
 /**
  * Class MarkdownParser
+ *
+ * Coordinates parsing a markdown file into a typed Page object:
+ * validates extensions, extracts YAML frontmatter, detects languages,
+ * builds canonical slugs, determines layouts, and maps metadata.
  */
 class MarkdownParser implements ParserInterface
 {
     /**
      * @var FileProcessor
      */
-    private $fileProcessor;
+    private FileProcessor $fileProcessor;
 
     /**
      * @var ContentProcessor
      */
-    private $contentProcessor;
+    private ContentProcessor $contentProcessor;
 
     /**
      * @var LanguageProcessor
      */
-    private $languageProcessor;
+    private LanguageProcessor $languageProcessor;
 
     /**
-     * @var \Indieinabox\Site
+     * @var Site
      */
-    private $site;
+    private Site $site;
 
     /**
-     * @param FileProcessor     $fileProcessor
-     * @param ContentProcessor  $contentProcessor
+     * @param FileProcessor $fileProcessor
+     * @param ContentProcessor $contentProcessor
      * @param LanguageProcessor $languageProcessor
-     * @param \Indieinabox\Site $site
+     * @param Site $site
      */
     public function __construct(
         FileProcessor $fileProcessor,
         ContentProcessor $contentProcessor,
         LanguageProcessor $languageProcessor,
-        \Indieinabox\Site $site
+        Site $site
     ) {
         $this->fileProcessor = $fileProcessor;
         $this->contentProcessor = $contentProcessor;
@@ -52,19 +56,53 @@ class MarkdownParser implements ParserInterface
     }
 
     /**
-     * @param  string $file
-     * @return Page|false|null
+     * @return FileProcessor
      */
-    public function parse(string $file)
+    public function getFileProcessor(): FileProcessor
+    {
+        return $this->fileProcessor;
+    }
+
+    /**
+     * @return ContentProcessor
+     */
+    public function getContentProcessor(): ContentProcessor
+    {
+        return $this->contentProcessor;
+    }
+
+    /**
+     * @return LanguageProcessor
+     */
+    public function getLanguageProcessor(): LanguageProcessor
+    {
+        return $this->languageProcessor;
+    }
+
+    /**
+     * @return Site
+     */
+    public function getSite(): Site
+    {
+        return $this->site;
+    }
+
+    /**
+     * Parses a markdown file from disk into a populated Page object.
+     *
+     * @param string $file The path to the markdown file.
+     * @return Page|null The parsed page or null if invalid or skipped.
+     */
+    public function parse(string $file): ?Page
     {
         if (!$this->fileProcessor->isValidFile($file)) {
-            return false;
+            return null;
         }
 
         $fileInfo = $this->fileProcessor->getFileInfo($file);
         $content = file_get_contents($file);
         if ($content === false) {
-            return false;
+            return null;
         }
 
         $page = $this->contentProcessor->extractFrontMatter($content);
@@ -87,11 +125,8 @@ class MarkdownParser implements ParserInterface
         }
 
         // Active languages mapping
-        $langs = $this->site->localization->lang;
-        if (!is_array($langs)) {
-            $langs = [$langs];
-        }
-        $defaultLang = $this->site->localization->defaultLang ?? 'en';
+        $langs = (array) ($this->site->localization->lang ?? ['en']);
+        $defaultLang = (string) ($this->site->localization->defaultLang ?? 'en');
 
         // Calculate path relative to the content directory
         $contentDir = $this->site->paths->contentDir;
@@ -101,70 +136,19 @@ class MarkdownParser implements ParserInterface
         $relPath = str_replace(DIRECTORY_SEPARATOR, "/", $relPath);
 
         // Detect language only from path top-level subdirectory
-        $segments = explode('/', $relPath);
-        $detectedLang = $defaultLang;
-        $cleanRelPath = $relPath;
-        if (isset($segments[0]) && in_array($segments[0], $langs, true)) {
-            $detectedLang = $segments[0];
-            array_shift($segments);
-            $cleanRelPath = implode('/', $segments);
-        }
+        [$detectedLang, $cleanRelPath, $isRoot] = $this->detectLanguage($relPath, $langs, $defaultLang);
 
-        $isRoot = count($segments) === 1;
         $hasPublishTrue = isset($page['publish']) && $page['publish'] === true;
         if ($isRoot && !$hasPublishTrue) {
             $page['kind'] = 'page';
         }
 
-        // Process base slug from clean relative path
-        $cleanFilename = $fileInfo['filename'];
-        $slugBase = $cleanRelPath;
-        if (str_ends_with($slugBase, '.' . $fileInfo['ext'])) {
-            $slugBase = substr($slugBase, 0, -(strlen($fileInfo['ext']) + 1));
-        }
-
-        if ($cleanFilename === "index") {
-            if (str_ends_with($slugBase, 'index')) {
-                $slugBase = substr($slugBase, 0, -5);
-            }
-        }
-
-        if (isset($page["slug"])) {
-            $slugBase = str_replace($cleanFilename, $page["slug"], $slugBase);
-        }
-
-        $slugBase = trim($slugBase, '/');
-        $slugBaseParts = explode('/', $slugBase);
-        $slugBaseParts = array_map([\Indieinabox\Helper::class, 'slugize'], $slugBaseParts);
-        $slugBase = implode('/', $slugBaseParts);
-
-        // Build final slug with language prefix if non-default
-        $finalSlug = $slugBase;
-        if ($detectedLang !== $defaultLang) {
-            $finalSlug = $detectedLang . ($finalSlug !== '' ? '/' . $slugBase : '');
-        }
-
-        $isIndex = ($fileInfo['filename'] === "index" || (isset($page["slug"]) && str_starts_with($page["slug"], "index")));
-        $prettylinks = $this->site->options->prettylinks ?? true;
-        if ($prettylinks) {
-            $finalSlug = $finalSlug !== '' ? rtrim($finalSlug, "/") . "/" : "/";
-        } else {
-            if ($isIndex) {
-                $finalSlug = $finalSlug !== '' ? rtrim($finalSlug, "/") . "/" : "/";
-            } else {
-                $finalSlug = $finalSlug !== '' ? rtrim($finalSlug, "/") . ".html" : "index.html";
-            }
-        }
+        // Process base slug and build final slug
+        $finalSlug = $this->buildSlug($cleanRelPath, $fileInfo, $page, $detectedLang, $defaultLang);
         $page["slug"] = $finalSlug;
 
-        // Calculate relative path
-        $cleanSlug = ltrim($finalSlug, '/');
-        if ($cleanSlug === '' || $cleanSlug === 'index.html') {
-            $page["relpath"] = './';
-        } else {
-            $slashCount = substr_count($cleanSlug, '/');
-            $page["relpath"] = $slashCount > 0 ? str_repeat('../', $slashCount) : './';
-        }
+        // Calculate relative path for web links
+        $page["relpath"] = $this->calculateRelativePath($finalSlug);
 
         // Determine layout
         $layout = $this->fileProcessor->determineLayout($page);
@@ -177,13 +161,115 @@ class MarkdownParser implements ParserInterface
         $pageObj = $this->languageProcessor->processLanguage($pageObj);
         $pageObj = $this->setMetadata($pageObj, $page);
 
-
         return $pageObj;
     }
 
     /**
-     * @param  Page $page
-     * @param  array $rawPage
+     * Detects page language from the top-level directory segment.
+     *
+     * @param string $relPath
+     * @param string[] $langs
+     * @param string $defaultLang
+     * @return array{0: string, 1: string, 2: bool} [detectedLang, cleanRelPath, isRoot]
+     */
+    public function detectLanguage(string $relPath, array $langs, string $defaultLang): array
+    {
+        $segments = explode('/', $relPath);
+        $detectedLang = $defaultLang;
+        $cleanRelPath = $relPath;
+
+        if (isset($segments[0]) && in_array($segments[0], $langs, true)) {
+            $detectedLang = $segments[0];
+            array_shift($segments);
+            $cleanRelPath = implode('/', $segments);
+        }
+
+        $isRoot = count($segments) === 1;
+
+        return [$detectedLang, $cleanRelPath, $isRoot];
+    }
+
+    /**
+     * Builds the canonical slug for a page based on its relative path and settings.
+     *
+     * @param string $cleanRelPath
+     * @param array<string, mixed> $fileInfo
+     * @param array<string, mixed> $page
+     * @param string $detectedLang
+     * @param string $defaultLang
+     * @return string
+     */
+    public function buildSlug(
+        string $cleanRelPath,
+        array $fileInfo,
+        array $page,
+        string $detectedLang,
+        string $defaultLang
+    ): string {
+        $cleanFilename = (string) $fileInfo['filename'];
+        $ext = (string) $fileInfo['ext'];
+        $slugBase = $cleanRelPath;
+
+        if (str_ends_with($slugBase, '.' . $ext)) {
+            $slugBase = substr($slugBase, 0, -(strlen($ext) + 1));
+        }
+
+        if ($cleanFilename === "index") {
+            if (str_ends_with($slugBase, 'index')) {
+                $slugBase = substr($slugBase, 0, -5);
+            }
+        }
+
+        if (isset($page["slug"])) {
+            $slugBase = str_replace($cleanFilename, (string) $page["slug"], $slugBase);
+        }
+
+        $slugBase = trim($slugBase, '/');
+        $slugBaseParts = explode('/', $slugBase);
+        $slugBaseParts = array_map([Helper::class, 'slugize'], $slugBaseParts);
+        $slugBase = implode('/', $slugBaseParts);
+
+        // Build final slug with language prefix if non-default
+        $finalSlug = $slugBase;
+        if ($detectedLang !== $defaultLang) {
+            $finalSlug = $detectedLang . ($finalSlug !== '' ? '/' . $slugBase : '');
+        }
+
+        $isIndex = ($cleanFilename === "index" || (isset($page["slug"]) && str_starts_with((string) $page["slug"], "index")));
+        $prettylinks = $this->site->options->prettylinks ?? true;
+        if ($prettylinks) {
+            return $finalSlug !== '' ? rtrim($finalSlug, "/") . "/" : "/";
+        }
+
+        if ($isIndex) {
+            return $finalSlug !== '' ? rtrim($finalSlug, "/") . "/" : "/";
+        }
+
+        return $finalSlug !== '' ? rtrim($finalSlug, "/") . ".html" : "index.html";
+    }
+
+    /**
+     * Calculates the relative traversal path (e.g., './' or '../../') based on slug depth.
+     *
+     * @param string $slug
+     * @return string
+     */
+    public function calculateRelativePath(string $slug): string
+    {
+        $cleanSlug = ltrim($slug, '/');
+        if ($cleanSlug === '' || $cleanSlug === 'index.html') {
+            return './';
+        }
+
+        $slashCount = substr_count($cleanSlug, '/');
+        return $slashCount > 0 ? str_repeat('../', $slashCount) : './';
+    }
+
+    /**
+     * Applies metadata, localized kind mappings, and localized date formatting to the Page object.
+     *
+     * @param Page $page
+     * @param array<string, mixed> $rawPage
      * @return Page
      */
     private function setMetadata(Page $page, array $rawPage): Page
@@ -220,15 +306,15 @@ class MarkdownParser implements ParserInterface
                         }
                     }
                 }
-                
+
                 if ($kindspath === null) {
-                    $kindspath = \Indieinabox\Database::getSetting('kindspath', []);
+                    $kindspath = Database::getSetting('kindspath', []);
                 }
-                
+
                 // Fallback to legacy folder names
                 if ($matchedKind === null && !empty($kindspath)) {
                     foreach ($kindspath as $key => $value) {
-                        if (in_array($oldFolder, $value)) {
+                        if (in_array($oldFolder, $value, true)) {
                             $matchedKind = $key;
                             break;
                         }
@@ -236,22 +322,16 @@ class MarkdownParser implements ParserInterface
                 }
 
                 if ($matchedKind === $page->kind) {
-                    $parts[$folderIndex] = \Indieinabox\Helper::slugize($page->localizedkind);
+                    $parts[$folderIndex] = Helper::slugize($page->localizedkind);
                     $page->slug = implode('/', $parts);
 
                     // Re-calculate the relative path based on the updated slug
-                    $cleanSlug = ltrim($page->slug, '/');
-                    if ($cleanSlug === '' || $cleanSlug === 'index.html') {
-                        $page->relpath = './';
-                    } else {
-                        $slashCount = substr_count($cleanSlug, '/');
-                        $page->relpath = $slashCount > 0 ? str_repeat('../', $slashCount) : './';
-                    }
+                    $page->relpath = $this->calculateRelativePath($page->slug);
                 }
             }
         }
 
-        $dateResult = Helper::localizeddate($page);
+        Helper::localizeddate($page);
         $page->localizeddate = $page->date->format('Y-m-d');
 
         return $page;

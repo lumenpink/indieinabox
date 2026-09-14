@@ -7,22 +7,23 @@ namespace Indieinabox;
 /**
  * Class ThemeManager
  * 
- * Manages the inclusion of theme view files and the copying of static theme assets.
+ * Manages the resolution, inclusion, and rendering of theme view templates.
  * Provides fallback mechanisms to load embedded theme contents if disk files are missing.
  */
 class ThemeManager
 {
     /**
      * Includes a view file. If the file exists on disk, it uses standard include.
-     * Otherwise, it tries to load it from the embedded DefaultTheme fallback.
+     * Otherwise, it attempts to load and evaluate it from the embedded DefaultTheme fallback.
      *
-     * @param string $__tm_view_path
-     * @param array<string, mixed> $data
+     * @param string $__tm_view_path The path to the view template file.
+     * @param array<string, mixed> $data Variables to extract into the template scope.
+     * @return void
      */
     public static function loadView(string $__tm_view_path, array $data = []): void
     {
         extract($data, EXTR_SKIP);
-        error_log("ThemeManager loading: " . $__tm_view_path);
+
         if (file_exists($__tm_view_path)) {
             include $__tm_view_path;
             return;
@@ -30,26 +31,7 @@ class ThemeManager
 
         // Try to load from embedded theme if compiled
         if (class_exists('\\DefaultTheme')) {
-            global $site;
-            $themeDir = isset($site) && isset($site->paths->themeDir) ? $site->paths->themeDir : 'resources';
-
-            // Extract relative path inside the theme folder
-            // e.g. /var/www/resources/views/page.php -> views/page.php
-            $searchStr = trim($themeDir, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
-            $pos = strpos($__tm_view_path, DIRECTORY_SEPARATOR . $searchStr);
-            if ($pos !== false) {
-                $dirLen = strlen(DIRECTORY_SEPARATOR . $searchStr);
-                $relativePath = substr($__tm_view_path, $pos + $dirLen);
-            } elseif (strpos($__tm_view_path, $searchStr) === 0) {
-                $dirLen = strlen($searchStr);
-                $relativePath = substr($__tm_view_path, $dirLen);
-            } else {
-                $relativePath = basename($__tm_view_path);
-            }
-
-            // Standardize path separator to forward slash for the embedded keys
-            $relativePath = str_replace('\\', '/', $relativePath);
-
+            $relativePath = self::resolveEmbeddedKey($__tm_view_path);
             $__tm_content = \DefaultTheme::getView($relativePath);
             if ($__tm_content !== null) {
                 eval('?>' . $__tm_content);
@@ -57,157 +39,114 @@ class ThemeManager
             }
         }
 
-        // If neither exists, print a helpful error instead of crashing silently
+        // If neither exists, output a helpful error instead of crashing silently
         echo "<!-- Theme file not found: " . htmlspecialchars($__tm_view_path) . " -->\n";
     }
 
     /**
-     * Helper to include view partials (like includes/head.php) properly resolving the theme path.
+     * Renders a view template and captures its output into a string.
+     *
+     * @param string $viewPath The path to the view template file.
+     * @param array<string, mixed> $data Variables to extract into the template scope.
+     * @return string The rendered template HTML.
+     */
+    public static function renderView(string $viewPath, array $data = []): string
+    {
+        ob_start();
+        self::loadView($viewPath, $data);
+        return (string) ob_get_clean();
+    }
+
+    /**
+     * Helper to include view partials (like 'includes/head.php') properly resolving the theme path.
+     *
+     * @param string $relativePath The partial path relative to the theme's views directory.
+     * @param array<string, mixed> $data Variables to extract into the template scope.
+     * @return void
      */
     public static function includeView(string $relativePath, array $data = []): void
     {
-        global $site;
-        $themeDir = isset($site) && isset($site->paths->themeDir) ? $site->paths->themeDir : 'resources';
-        $fullPath = rtrim($themeDir, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR . ltrim($relativePath, '/');
+        $fullPath = self::resolveViewPath($relativePath);
         self::loadView($fullPath, $data);
     }
 
     /**
-     * Copies static files. If the directory exists on disk, it uses file system copy.
-     * Otherwise, it writes the embedded static files to the destination.
+     * Resolves the full filesystem path for a relative theme view.
+     *
+     * @param string $relativePath The view file relative to the views directory.
+     * @return string The resolved path.
      */
-    public static function copyStaticFiles(string $dir, string $base, string $outputDir): void
+    public static function resolveViewPath(string $relativePath): string
     {
-        if (is_dir($dir)) {
-            // Read from filesystem using file iteration
-            self::copyFromDisk($dir, $base, $outputDir);
+        global $site;
+        $themeDir = isset($site) && isset($site->paths->themeDir) ? $site->paths->themeDir : 'resources';
+        return rtrim($themeDir, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR . ltrim($relativePath, '/');
+    }
+
+    /**
+     * Checks if a view exists either on disk or in the embedded DefaultTheme.
+     *
+     * @param string $viewPath
+     * @return bool
+     */
+    public static function hasView(string $viewPath): bool
+    {
+        if (file_exists($viewPath)) {
+            return true;
+        }
+
+        if (class_exists('\\DefaultTheme')) {
+            $relativePath = self::resolveEmbeddedKey($viewPath);
+            return \DefaultTheme::getView($relativePath) !== null;
+        }
+
+        return false;
+    }
+
+    /**
+     * Retrieves the raw template content from disk or embedded DefaultTheme.
+     *
+     * @param string $viewPath
+     * @return string|null
+     */
+    public static function getViewContent(string $viewPath): ?string
+    {
+        if (file_exists($viewPath)) {
+            $content = file_get_contents($viewPath);
+            return $content !== false ? $content : null;
+        }
+
+        if (class_exists('\\DefaultTheme')) {
+            $relativePath = self::resolveEmbeddedKey($viewPath);
+            return \DefaultTheme::getView($relativePath);
+        }
+
+        return null;
+    }
+
+    /**
+     * Resolves the normalized embedded key for DefaultTheme lookups.
+     *
+     * @param string $viewPath
+     * @return string
+     */
+    private static function resolveEmbeddedKey(string $viewPath): string
+    {
+        global $site;
+        $themeDir = isset($site) && isset($site->paths->themeDir) ? $site->paths->themeDir : 'resources';
+
+        $searchStr = trim($themeDir, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+        $pos = strpos($viewPath, DIRECTORY_SEPARATOR . $searchStr);
+        if ($pos !== false) {
+            $dirLen = strlen(DIRECTORY_SEPARATOR . $searchStr);
+            $relativePath = substr($viewPath, $pos + $dirLen);
+        } elseif (strpos($viewPath, $searchStr) === 0) {
+            $dirLen = strlen($searchStr);
+            $relativePath = substr($viewPath, $dirLen);
         } else {
-            // Read from embedded theme
-            if (class_exists('\\DefaultTheme')) {
-                $staticFiles = \DefaultTheme::getStaticFiles();
-                foreach ($staticFiles as $relativePath => $content) {
-                    // Extract just the part after static/
-                    // e.g. static/dist/app.css -> dist/app.css
-                    if (strpos($relativePath, 'static/') === 0) {
-                        $destPath = substr($relativePath, 7);
-                    } else {
-                        $destPath = $relativePath;
-                    }
-
-                    $destination = $base . DIRECTORY_SEPARATOR . $outputDir . DIRECTORY_SEPARATOR . 
-                                   ltrim($destPath, '/');
-                    $destDir = dirname($destination);
-                    if (!is_dir($destDir)) {
-                        mkdir($destDir, 0777, true);
-                    }
-                    file_put_contents($destination, $content);
-                }
-            }
-        }
-    }
-
-    /**
-     * Copies a file from disk to the public output directory if it has been modified.
-     * Keeps track of timestamps to avoid unnecessary I/O.
-     *
-     * @param string $dir The source directory.
-     * @param string $base The base path of the file.
-     * @param string $outputDir The destination output directory.
-     * @return void
-     */
-    private static function copyFromDisk(string $dir, string $base, string $outputDir): void
-    {
-        $entries = Helper::getDirContents($dir);
-
-        foreach ($entries as $entry) {
-            if ($entry === "." || $entry === "..") {
-                continue;
-            }
-
-            $path = str_replace($dir . DIRECTORY_SEPARATOR, "", $entry);
-            $destination = $base . DIRECTORY_SEPARATOR . $outputDir . DIRECTORY_SEPARATOR . ltrim($path, '/');
-
-            if (is_file($entry)) {
-                $destDir = dirname($destination);
-                if (!is_dir($destDir)) {
-                    mkdir($destDir, 0777, true);
-                }
-                copy($entry, $destination);
-                \Indieinabox\SiteBuilder::addManifest($destination);
-            }
-        }
-    }
-
-    /**
-     * Copies global assets from the `views/assets` directory to the public root.
-     * Scans for files and delegates to `copyFromDisk`.
-     *
-     * @return void
-     */
-    public static function copyViewAssets(string $dir, string $base, string $outputDir): void
-    {
-        if (is_dir($dir)) {
-            self::copyAssetsFromDisk($dir, $base, $outputDir);
-        } else {
-            if (class_exists('\\DefaultTheme')) {
-                $views = \DefaultTheme::getViews();
-                foreach ($views as $relativePath => $content) {
-                    $ext = pathinfo($relativePath, PATHINFO_EXTENSION);
-                    if ($ext === "js" || $ext === "css") {
-                        $filename = pathinfo($relativePath, PATHINFO_FILENAME);
-                        $assetsDir = $base . DIRECTORY_SEPARATOR . $outputDir . DIRECTORY_SEPARATOR . "assets";
-
-                        if (!is_dir($assetsDir)) {
-                            mkdir($assetsDir, 0777, true);
-                        }
-                        $destPath = $assetsDir . DIRECTORY_SEPARATOR . $filename . "." . $ext;
-                        file_put_contents($destPath, $content);
-                        \Indieinabox\SiteBuilder::addManifest($destPath);
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * Recursively copies assets from a theme's directory to the public output.
-     * Maintains directory structure and only copies updated files.
-     *
-     * @param string $dir The source directory.
-     * @param string $base The base path.
-     * @param string $outputDir The destination output directory.
-     * @return void
-     */
-    private static function copyAssetsFromDisk(string $dir, string $base, string $outputDir): void
-    {
-        if (!is_dir($dir)) {
-            return;
-        }
-        $entries = scandir($dir);
-        if ($entries === false) {
-            return;
+            $relativePath = basename($viewPath);
         }
 
-        foreach ($entries as $entry) {
-            if ($entry !== "." && $entry !== "..") {
-                $path = $dir . DIRECTORY_SEPARATOR . $entry;
-                if (is_file($path)) {
-                    $ext = pathinfo($path, PATHINFO_EXTENSION);
-                    if ($ext === "js" || $ext === "css") {
-                        $filename = pathinfo($path, PATHINFO_FILENAME);
-                        $assetsDir = $base . DIRECTORY_SEPARATOR . $outputDir . DIRECTORY_SEPARATOR . "assets";
-
-                        if (!is_dir($assetsDir)) {
-                            mkdir($assetsDir, 0777, true);
-                        }
-                        $destPath = $assetsDir . DIRECTORY_SEPARATOR . $filename . "." . $ext;
-                        copy($path, $destPath);
-                        \Indieinabox\SiteBuilder::addManifest($destPath);
-                    }
-                } elseif (is_dir($path)) {
-                    self::copyAssetsFromDisk($path, $base, $outputDir);
-                }
-            }
-        }
+        return str_replace('\\', '/', $relativePath);
     }
 }

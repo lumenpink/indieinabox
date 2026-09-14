@@ -4,11 +4,9 @@ declare(strict_types=1);
 
 namespace Indieinabox;
 
-use Indieinabox\Markdown\FileProcessor;
 use Indieinabox\Markdown\ContentProcessor;
-use Indieinabox\Markdown\LanguageProcessor;
-use Indieinabox\Translations\UrlTranslations;
 use Indieinabox\SiteBuilder\AssetPublisher;
+use Indieinabox\SiteBuilder\ContentScanner;
 use Indieinabox\SiteBuilder\FeedPublisher;
 use Indieinabox\SiteBuilder\IndexPublisher;
 use Indieinabox\SiteBuilder\PagePublisher;
@@ -17,9 +15,8 @@ use Indieinabox\SiteBuilder\TranslationVirtualizer;
 /**
  * Class SiteBuilder
  * 
- * Orchestrates the static site generation process. It scans the content directory,
- * virtualizes missing translations, processes markdown into HTML/Gemtext/Gophermap,
- * and compiles feeds and assets into the output directory.
+ * Orchestrates the static site generation process. It coordinates scanning,
+ * translation virtualization, content rendering, feed generation, and asset publishing.
  */
 class SiteBuilder
 {
@@ -35,6 +32,10 @@ class SiteBuilder
      * @var \Indieinabox\ParserInterface
      */
     private ParserInterface $parser;
+    /**
+     * @var \Indieinabox\SiteBuilder\ContentScanner
+     */
+    private ContentScanner $contentScanner;
     /**
      * @var \Indieinabox\SiteBuilder\AssetPublisher
      */
@@ -67,6 +68,7 @@ class SiteBuilder
      * @param \Indieinabox\SiteBuilder\PagePublisher|null $pagePublisher An optional page publisher.
      * @param \Indieinabox\SiteBuilder\TranslationVirtualizer|null $translationVirtualizer An optional translation virtualizer.
      * @param \Indieinabox\SiteBuilder\IndexPublisher|null $indexPublisher An optional index publisher.
+     * @param \Indieinabox\SiteBuilder\ContentScanner|null $contentScanner An optional content scanner.
      */
     public function __construct(
         Site $site,
@@ -76,34 +78,18 @@ class SiteBuilder
         ?FeedPublisher $feedPublisher = null,
         ?PagePublisher $pagePublisher = null,
         ?TranslationVirtualizer $translationVirtualizer = null,
-        ?IndexPublisher $indexPublisher = null
+        ?IndexPublisher $indexPublisher = null,
+        ?ContentScanner $contentScanner = null
     ) {
         $this->site = $site;
         $this->pages = $pages ?? new Pages();
+        $this->contentScanner = $contentScanner ?? new ContentScanner($this->site, $parser);
+        $this->parser = $this->contentScanner->getParser();
         $this->assetPublisher = $assetPublisher ?? new AssetPublisher($this->site);
         $this->feedPublisher = $feedPublisher ?? new FeedPublisher($this->site);
         $this->pagePublisher = $pagePublisher ?? new PagePublisher($this->site, $this->pages);
         $this->translationVirtualizer = $translationVirtualizer ?? new TranslationVirtualizer($this->site);
         $this->indexPublisher = $indexPublisher ?? new IndexPublisher($this->site, $this->pagePublisher);
-
-        if ($parser !== null) {
-            $this->parser = $parser;
-        } else {
-            $base = $this->site->paths->baseDir;
-            global $urltranslations;
-
-            $fileProcessor     = new FileProcessor($this->site, $base);
-            $contentProcessor  = new ContentProcessor();
-            $urlTranslationsObj   = new UrlTranslations($urltranslations ?? []);
-            $languageProcessor = new LanguageProcessor($this->site, $urlTranslationsObj);
-
-            $this->parser = new MarkdownParser(
-                $fileProcessor,
-                $contentProcessor,
-                $languageProcessor,
-                $this->site
-            );
-        }
     }
 
     /**
@@ -114,6 +100,26 @@ class SiteBuilder
     public function getPages(): Pages
     {
         return $this->pages;
+    }
+
+    /**
+     * Retrieves the markdown parser implementation.
+     *
+     * @return \Indieinabox\ParserInterface
+     */
+    public function getParser(): ParserInterface
+    {
+        return $this->parser;
+    }
+
+    /**
+     * Retrieves the content scanner instance.
+     *
+     * @return \Indieinabox\SiteBuilder\ContentScanner
+     */
+    public function getContentScanner(): ContentScanner
+    {
+        return $this->contentScanner;
     }
 
     /**
@@ -302,67 +308,14 @@ class SiteBuilder
 
     /**
      * Recursively scans a directory for markdown content files.
-     * Parses valid markdown files into Page objects and adds them to the collection.
-     * Skips system directories (e.g., app, vendor, output dirs).
+     * Delegates to ContentScanner.
      *
      * @param string $dir The directory path to scan.
      * @return void
      */
     public function scan(string $dir): void
     {
-        if (!is_dir($dir)) {
-            return;
-        }
-        $entries = scandir($dir);
-        if ($entries === false) {
-            return;
-        }
-
-        foreach ($entries as $entry) {
-            if (
-                $entry !== "."
-                && $entry !== ".."
-                && substr($entry, 0, 1) !== "_"
-                && substr($entry, 0, 1) !== "."
-            ) {
-                $path = $dir . DIRECTORY_SEPARATOR . $entry;
-                if (is_file($path)) {
-                    if ($entry === 'intro.md') {
-                        continue;
-                    }
-                    $page = $this->parser->parse($path);
-                    if ($page) {
-                        $this->pages->add($page);
-                    }
-                } elseif (is_dir($path)) {
-                    $baseDir = rtrim($this->site->paths->baseDir ?? '', DIRECTORY_SEPARATOR);
-                    $themeDir = $this->site->paths->themeDir ?? 'theme';
-                    $ignoredDirs = [
-                        $baseDir . DIRECTORY_SEPARATOR . "app",
-                        $baseDir . DIRECTORY_SEPARATOR . "bootstrap",
-                        $baseDir . DIRECTORY_SEPARATOR . "vendor",
-                        $baseDir . DIRECTORY_SEPARATOR . "resources",
-                        $baseDir . DIRECTORY_SEPARATOR . "theme",
-                        $baseDir . DIRECTORY_SEPARATOR . "data",
-                        $baseDir . DIRECTORY_SEPARATOR . $themeDir,
-                        $baseDir . DIRECTORY_SEPARATOR . $this->site->paths->outputDirHtml,
-                        $baseDir . DIRECTORY_SEPARATOR . $this->site->paths->outputDirGemini,
-                        $baseDir . DIRECTORY_SEPARATOR . $this->site->paths->outputDirGopher,
-                        $baseDir . DIRECTORY_SEPARATOR . $this->site->paths->outputDirMedia,
-                    ];
-                    $skip = false;
-                    foreach ($ignoredDirs as $ignored) {
-                        if ($path === $ignored || strpos($path, $ignored . DIRECTORY_SEPARATOR) === 0) {
-                            $skip = true;
-                            break;
-                        }
-                    }
-                    if (!$skip) {
-                        $this->scan($path);
-                    }
-                }
-            }
-        }
+        $this->contentScanner->scan($dir, $this->pages);
     }
 
     /**
@@ -382,39 +335,12 @@ class SiteBuilder
     
     /**
      * Ensures a mandatory homepage (index.html) exists in the output.
-     * If one was not provided in the content directory, it creates a generic fallback.
+     * Delegates to ContentScanner.
      *
      * @return void
      */
-    private function ensureMandatoryHomepage(): void
+    public function ensureMandatoryHomepage(): void
     {
-        $langs = $this->site->localization->lang ?? ['en'];
-        $defaultLang = $this->site->localization->defaultLang ?? 'en';
-        
-        foreach ($langs as $lang) {
-            $expectedSlug = ($lang === $defaultLang) ? '/' : $lang . '/';
-            $found = false;
-            foreach ($this->pages as $p) {
-                if ($p->slug === $expectedSlug || rtrim($p->slug, '/') === rtrim($expectedSlug, '/')) {
-                    $found = true;
-                    // Force the layout to home just in case
-                    $p->layout = 'home';
-                    break;
-                }
-            }
-            if (!$found) {
-                $page = Page::fromArray([
-                    'slug' => $expectedSlug,
-                    'nick' => 'index',
-                    'kind' => 'generic',
-                    'title' => $this->site->metadata->title ?? 'Home',
-                    'lang' => $lang,
-                    'layout' => 'home',
-                    'content' => '',
-                    'relpath' => ($lang === $defaultLang) ? '' : '../'
-                ]);
-                $this->pages->add($page);
-            }
-        }
+        $this->contentScanner->ensureMandatoryHomepage($this->pages);
     }
 }

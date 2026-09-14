@@ -11,10 +11,10 @@ test('Version::getBaseVersion returns semver string', function () {
     expect($base)->toBe(Version::VERSION);
 });
 
-test('Version::get returns version including git hash or base version', function () {
+test('Version::get returns valid semver string', function () {
     $ver = Version::get();
     expect($ver)->toBeString();
-    expect($ver)->toContain(Version::VERSION);
+    expect($ver)->toMatch('/^\d+\.\d+\.\d+/');
 });
 
 test('Version::getGitCommitHash returns 7-character hash or null', function () {

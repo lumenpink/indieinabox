@@ -11,6 +11,7 @@ use Indieinabox\Translations\UrlTranslations;
 use Indieinabox\SiteBuilder\AssetPublisher;
 use Indieinabox\SiteBuilder\FeedPublisher;
 use Indieinabox\SiteBuilder\PagePublisher;
+use Indieinabox\SiteBuilder\TranslationVirtualizer;
 
 /**
  * Class SiteBuilder
@@ -45,6 +46,10 @@ class SiteBuilder
      * @var \Indieinabox\SiteBuilder\PagePublisher
      */
     private PagePublisher $pagePublisher;
+    /**
+     * @var \Indieinabox\SiteBuilder\TranslationVirtualizer
+     */
+    private TranslationVirtualizer $translationVirtualizer;
 
     /**
      * SiteBuilder constructor.
@@ -55,6 +60,7 @@ class SiteBuilder
      * @param \Indieinabox\SiteBuilder\AssetPublisher|null $assetPublisher An optional asset publisher.
      * @param \Indieinabox\SiteBuilder\FeedPublisher|null $feedPublisher An optional feed publisher.
      * @param \Indieinabox\SiteBuilder\PagePublisher|null $pagePublisher An optional page publisher.
+     * @param \Indieinabox\SiteBuilder\TranslationVirtualizer|null $translationVirtualizer An optional translation virtualizer.
      */
     public function __construct(
         Site $site,
@@ -62,13 +68,15 @@ class SiteBuilder
         ?ParserInterface $parser = null,
         ?AssetPublisher $assetPublisher = null,
         ?FeedPublisher $feedPublisher = null,
-        ?PagePublisher $pagePublisher = null
+        ?PagePublisher $pagePublisher = null,
+        ?TranslationVirtualizer $translationVirtualizer = null
     ) {
         $this->site = $site;
         $this->pages = $pages ?? new Pages();
         $this->assetPublisher = $assetPublisher ?? new AssetPublisher($this->site);
         $this->feedPublisher = $feedPublisher ?? new FeedPublisher($this->site);
         $this->pagePublisher = $pagePublisher ?? new PagePublisher($this->site, $this->pages);
+        $this->translationVirtualizer = $translationVirtualizer ?? new TranslationVirtualizer($this->site);
 
         if ($parser !== null) {
             $this->parser = $parser;
@@ -131,6 +139,16 @@ class SiteBuilder
     }
 
     /**
+     * Retrieves the translation virtualizer instance.
+     *
+     * @return \Indieinabox\SiteBuilder\TranslationVirtualizer
+     */
+    public function getTranslationVirtualizer(): TranslationVirtualizer
+    {
+        return $this->translationVirtualizer;
+    }
+
+    /**
      * Stores absolute paths of all generated files during the build process
      * for Garbage Collection.
      * @var string[]
@@ -165,7 +183,7 @@ class SiteBuilder
         $s1 = microtime(true);
         $this->scan($this->site->paths->getContentPath());
         $this->ensureMandatoryHomepage();
-        $this->virtualizeMissingLanguages();
+        $this->translationVirtualizer->virtualize($this->pages);
 
         // Pass 2: Render Markdown to HTML now that all pages are scanned
         global $pages, $site;
@@ -239,198 +257,29 @@ class SiteBuilder
         printf("| %-32s | %15.2f |\n", 'TOTAL BUILD TIME', $totalTime);
         echo "+----------------------------------+-----------------+\n";
     }
+
     /**
      * Generates pseudo-translated pages for missing languages to maintain parity.
-     * Uses configured rules (e.g., full parity, from-main-only) and translates 
-     * missing slugs according to URL translation mappings.
+     * Delegates to TranslationVirtualizer.
      *
      * @return void
      */
-    private function virtualizeMissingLanguages(): void
+    public function virtualizeMissingLanguages(): void
     {
-        $langs = $this->site->localization->lang;
-        if (count($langs) <= 1) {
-            return;
-        }
-
-        $defaultLang = $this->site->localization->defaultLang ?? 'en';
-        $prettylinks = $this->site->options->prettylinks ?? true;
-        
-        $parity = $this->site->options->translation_parity ?? 'full';
-        if ($parity === 'disabled') {
-            return;
-        }
-        $autoVirtualize = $this->site->options->translation_auto ?? 'pseudo';
-
-        global $urltranslations;
-        $urlTranslationsArr = $urltranslations ?? [];
-        $reverseTranslations = [];
-        foreach ($urlTranslationsArr as $defaultNick => $translations) {
-            foreach ($translations as $l => $translatedNick) {
-                $reverseTranslations[$l][$translatedNick] = $defaultNick;
-            }
-        }
-
-        $existing = [];
-        $pagesToProcess = [];
-        foreach ($this->pages as $page) {
-            $lang = $page->lang ?? $defaultLang;
-            $nick = $page->nick ?? '';
-            $kind = $page->kind ?? '';
-
-            $existing["{$kind}:{$nick}:{$lang}"] = $page;
-            $pagesToProcess[] = $page;
-        }
-
-        foreach ($pagesToProcess as $page) {
-            if (in_array($page->kind, ['generic'], true)) {
-                if ($page->slug !== '' && $page->slug !== 'index.html' && $page->slug !== '/') {
-                    continue;
-                }
-            }
-
-            $sourceLang = $page->lang ?? $defaultLang;
-            
-            // Find base nick
-            $baseNick = $page->nick;
-            if ($sourceLang !== $defaultLang) {
-                if (isset($reverseTranslations[$sourceLang][$page->nick])) {
-                    $baseNick = $reverseTranslations[$sourceLang][$page->nick];
-                }
-            }
-
-            $sourceIsMain = ($sourceLang === $defaultLang);
-
-            foreach ($langs as $targetLang) {
-                if ($targetLang === $sourceLang) {
-                    continue;
-                }
-                
-                $targetIsMain = ($targetLang === $defaultLang);
-                
-                if ($parity === 'from-main-only' && !$sourceIsMain) {
-                    continue;
-                }
-                if ($parity === 'from-sublang-only' && $sourceIsMain) {
-                    continue;
-                }
-                if ($parity === 'inter-sublang-only' && ($sourceIsMain || $targetIsMain)) {
-                    continue;
-                }
-
-                $targetNick = $baseNick;
-                if ($targetLang !== $defaultLang) {
-                    if (isset($urlTranslationsArr[$baseNick][$targetLang])) {
-                        $targetNick = $urlTranslationsArr[$baseNick][$targetLang];
-                    }
-                }
-
-                $key = "{$page->kind}:{$targetNick}:{$targetLang}";
-                if (!isset($existing[$key])) {
-                    if ($autoVirtualize === 'disabled') {
-                        throw new \RuntimeException(
-                            "Translation Parity rule '{$parity}' violated. " .
-                            "Missing translation for '{$page->slug}' in '{$targetLang}'."
-                        );
-                    }
-                    
-                    $existing[$key] = true; // Mark as handled
-
-                    if (php_sapi_name() === 'cli') {
-                        echo "[WARNING] Missing translation for page '{$page->slug}'"
-                            . " in language '{$targetLang}'. Virtualizing...\n";
-                    }
-
-                    $cloned = clone $page;
-                    $cloned->lang = $targetLang;
-                    $cloned->nick = $targetNick;
-
-                    $this->pseudoTranslate($cloned, $targetLang);
-
-                    $kindFolder = Helper::getKindFolder($cloned->kind, $targetLang);
-                    $sourceKindFolder = Helper::getKindFolder($page->kind, $sourceLang);
-                    
-                    if (in_array($sourceKindFolder, ['page', 'generic', 'home'], true)) $sourceKindFolder = '';
-                    if (in_array($kindFolder, ['page', 'generic', 'home'], true)) $kindFolder = '';
-                    
-                    $cleanSlug = trim($page->slug, '/');
-                    $sourceLangPrefix = $sourceLang !== $defaultLang ? $sourceLang . '/' : '';
-                    $sourcePrefix = $sourceLangPrefix . $sourceKindFolder;
-                    $sourcePrefix = trim($sourcePrefix, '/');
-                    
-                    if ($sourcePrefix !== '' && str_starts_with($cleanSlug, $sourcePrefix . '/')) {
-                        $cleanSlug = substr($cleanSlug, strlen($sourcePrefix . '/'));
-                    } elseif ($sourcePrefix !== '' && $cleanSlug === $sourcePrefix) {
-                        $cleanSlug = '';
-                    }
-
-                    if ($cleanSlug === '' || $cleanSlug === 'index.html') {
-                        $cloned->slug = $targetLang !== $defaultLang ? $targetLang . '/index.html' : 'index.html';
-                    } else {
-                        $targetPrefix = $targetLang !== $defaultLang ? $targetLang . '/' : '';
-                        if ($kindFolder !== '') {
-                            $targetPrefix .= $kindFolder . '/';
-                        }
-                        
-                        if ($prettylinks) {
-                            $cloned->slug = $targetPrefix . $cleanSlug . '/';
-                        } else {
-                            if (str_ends_with($cleanSlug, '.html')) {
-                                $cleanSlug = substr($cleanSlug, 0, -5);
-                            }
-                            $cloned->slug = $targetPrefix . $cleanSlug . '.html';
-                        }
-                    }
-
-                    $cloned->slug = trim(str_replace('//', '/', $cloned->slug), '/');
-                    if ($prettylinks && !str_ends_with($cloned->slug, '.html') && $cloned->slug !== '' && $cloned->slug !== 'index.html') {
-                        $cloned->slug .= '/';
-                    }
-
-                    $cleanSlugPath = ltrim($cloned->slug, '/');
-                    if ($cleanSlugPath === '' || $cleanSlugPath === 'index.html') {
-                        $cloned->relpath = './';
-                    } else {
-                        $slashCount = substr_count($cleanSlugPath, '/');
-                        $cloned->relpath = $slashCount > 0 ? str_repeat('../', $slashCount) : './';
-                    }
-
-                    $urlTranslationsObj = new UrlTranslations($urlTranslationsArr);
-                    $languageProcessor = new LanguageProcessor($this->site, $urlTranslationsObj);
-                    $cloned = $languageProcessor->processLanguage($cloned);
-
-                    $this->pages->add($cloned);
-                }
-            }
-        }
+        $this->translationVirtualizer->virtualize($this->pages);
     }
 
     /**
      * Applies a pseudo-translation prefix to a page's title or content.
-     * Used visually to flag that a page was automatically virtualized.
+     * Delegates to TranslationVirtualizer.
      *
-     * @param \Indieinabox\Page $page The page to translate in place.
-     * @param string $targetLang The target language code used as the prefix.
+     * @param \Indieinabox\Page $page
+     * @param string $targetLang
      * @return void
      */
     public function pseudoTranslate(\Indieinabox\Page $page, string $targetLang): void
     {
-        $prefix = '[' . strtoupper($targetLang) . '] ';
-        $hasTitle = !empty($page->title)
-            && $page->title !== 'Untitled'
-            && $page->title !== 'untitled';
-
-        $kindConfig = \Indieinabox\Helper::getKindConfig($page->kind);
-        if (isset($kindConfig['has_title']) && !$kindConfig['has_title']) {
-            $hasTitle = false;
-        }
-
-        if ($hasTitle) {
-            $page->title = $prefix . $page->title;
-        } else {
-            $page->content->content = $prefix . $page->content->content;
-            $page->content->rawBody = $prefix . $page->content->rawBody;
-        }
+        $this->translationVirtualizer->pseudoTranslate($page, $targetLang);
     }
 
     /**

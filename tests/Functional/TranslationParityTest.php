@@ -32,11 +32,8 @@ it('throws exception when translation_auto is disabled and parity is missing', f
     $pages->add($page);
     $builder = new SiteBuilder($this->site, $pages);
 
-    $reflection = new \ReflectionClass(SiteBuilder::class);
-    $method = $reflection->getMethod('virtualizeMissingLanguages');
-    
     // This should throw because 'pt' translation is missing and auto is disabled
-    expect(fn() => $method->invoke($builder))->toThrow(\RuntimeException::class);
+    expect(fn() => $builder->getTranslationVirtualizer()->virtualize($pages))->toThrow(\RuntimeException::class);
 });
 
 it('generates pseudo translations when translation_auto is pseudo', function () {
@@ -56,11 +53,7 @@ it('generates pseudo translations when translation_auto is pseudo', function () 
     $pages->add($page);
     $builder = new SiteBuilder($this->site, $pages);
 
-    $reflection = new \ReflectionClass(SiteBuilder::class);
-    $method = $reflection->getMethod('virtualizeMissingLanguages');
-    
-    // Should pass without throwing
-    $method->invoke($builder);
+    $builder->getTranslationVirtualizer()->virtualize($pages);
     
     // Should have 2 pages (the original EN and the virtual PT)
     expect($pages)->toHaveCount(2);
@@ -94,10 +87,7 @@ it('respects parity rules (from-main-only)', function () {
     $pages->add($pagePt);
     $builder = new SiteBuilder($this->site, $pages);
 
-    $reflection = new \ReflectionClass(SiteBuilder::class);
-    $method = $reflection->getMethod('virtualizeMissingLanguages');
-    
-    $method->invoke($builder);
+    $builder->getTranslationVirtualizer()->virtualize($pages);
     
     expect($pages)->toHaveCount(1); // No EN page generated
 });

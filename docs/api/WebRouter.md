@@ -3,88 +3,64 @@
 
 Class WebRouter
 
+Handles incoming HTTP requests by mapping the request URI to the appropriate handler class:
+Webmentions, IndieAuth/OAuth, Micropub, Microsub, ActivityPub, BackgroundWorker (cron), and Archive snapshots.
+Falls back to serving static files from the public HTML directory or returns 404.
+
 ## Properties
 
 ### `protected Indieinabox\Site $site`
-
-@var \Indieinabox\Site
+The site configuration instance.
 
 ## Methods
 
 ### __construct()
-`public function __construct(Indieinabox\Site $site)`
-
-Method __construct
-@param \Indieinabox\Site $site
+```php
+public function __construct(Site $site)
+```
+Initializes the router with the site configuration.
 
 ### handleRequest()
-`public function handleRequest(): void`
-
-Method handleRequest
-@return void
-
-### createWebmentionHandler()
-`protected function createWebmentionHandler(): Indieinabox\WebmentionHandler`
-
-Method createWebmentionHandler
-@return \Indieinabox\WebmentionHandler
-
-### createIndieAuthHandler()
-`protected function createIndieAuthHandler(): Indieinabox\IndieAuthHandler`
-
-Method createIndieAuthHandler
-@return \Indieinabox\IndieAuthHandler
-
-### createConfigHandler()
-`protected function createConfigHandler(): Indieinabox\ConfigHandler`
-
-Method createConfigHandler
-@return \Indieinabox\ConfigHandler
-
-### createMicropubHandler()
-`protected function createMicropubHandler(): Indieinabox\MicropubHandler`
-
-Method createMicropubHandler
-@return \Indieinabox\MicropubHandler
-
-### createMicropubClientHandler()
-`protected function createMicropubClientHandler(): Indieinabox\MicropubClientHandler`
-
-Method createMicropubClientHandler
-@return \Indieinabox\MicropubClientHandler
-
-### createMicrosubHandler()
-`protected function createMicrosubHandler(): Indieinabox\MicrosubHandler`
-
-Method createMicrosubHandler
-@return \Indieinabox\MicrosubHandler
-
-### createMicrosubReaderHandler()
-`protected function createMicrosubReaderHandler(): Indieinabox\MicrosubReaderHandler`
-
-Method createMicrosubReaderHandler
-@return \Indieinabox\MicrosubReaderHandler
-
-### createActivityPubHandler()
-`protected function createActivityPubHandler(): Indieinabox\ActivityPubHandler`
-
-Method createActivityPubHandler
-@return \Indieinabox\ActivityPubHandler
+```php
+public function handleRequest(): void
+```
+Main routing dispatcher. Inspects `REQUEST_URI` and HTTP parameters, and executes the matched handler:
+- `/webmention`, `/webmentions`, `?webmention` ➔ `createWebmentionHandler()->handle()`
+- `/auth`, `/token`, `/.well-known/oauth-authorization-server` ➔ `createIndieAuthHandler()->handle()`
+- `/.well-known/micropub` ➔ Redirects to `/micropub`
+- `/micropub/client` ➔ `createMicropubClientHandler()->handle()`
+- `/micropub` ➔ `createMicropubHandler()->handle()`
+- `/microsub/reader` ➔ `createMicrosubReaderHandler()->handle()`
+- `/microsub` ➔ `createMicrosubHandler()->handle()`
+- ActivityPub routes (`/interact`, `/authorize_interaction`, `/.well-known/webfinger`, `/actor`, `/inbox`, `/outbox`) ➔ `createActivityPubHandler()`
+- `/cron` ➔ Runs `BackgroundWorker::runAll()`
+- `/archive` ➔ `createArchiveHandler()->handle()`
+- `/archive/force` (POST) ➔ `createArchiveHandler()->handleForce()`
+- Admin routes (`/admin/config`, `/admin/micropub`, `/admin/microsub`, `/admin/moderation`)
+- Static fallback ➔ `serveStatic()`
 
 ### serveStatic()
-`private function serveStatic(): void`
+```php
+protected function serveStatic(): void
+```
+Serves static files (HTML, CSS, JS, images, XML, JSON, Gemini). Supports Content Negotiation:
+when `HTTP_ACCEPT` requests `application/activity+json` or `application/ld+json`, serves companion `.json` ActivityPub files if available.
 
-Method serveStatic
-@return void
+### getMimeType()
+```php
+public function getMimeType(string $extension): string
+```
+Resolves the MIME content-type string for a given file extension.
 
-### handleArchive()
-`private function handleArchive(): void`
-
-Method handleArchive
-@return void
-
-### handleArchiveForce()
-`private function handleArchiveForce(): void`
-
-Method handleArchiveForce
-@return void
+### Factory Methods
+Overridable factory methods allowing customized or mock handler injection in tests:
+- `createWebmentionHandler(): WebmentionHandler`
+- `createIndieAuthHandler(): IndieAuthHandler`
+- `createConfigHandler(): ConfigHandler`
+- `createMicropubHandler(): MicropubHandler`
+- `createMicropubClientHandler(): MicropubClientHandler`
+- `createMicrosubHandler(): MicrosubHandler`
+- `createMicrosubReaderHandler(): MicrosubReaderHandler`
+- `createModerationHandler(): ModerationHandler`
+- `createActivityPubHandler(): ActivityPubHandler`
+- `createArchiveHandler(): ArchiveHandler`

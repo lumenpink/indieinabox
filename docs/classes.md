@@ -144,7 +144,10 @@ Lightweight custom Markdown AST parser and semantic HTML renderer.
 ---
 
 ## 🔀 Web Router (`Indieinabox\WebRouter`)
-Orchestrates requests under Web SAPIs, serving webmentions, auth endpoints, and static files.
+Orchestrates HTTP requests under Web SAPIs, mapping URIs to dedicated handlers and serving static assets.
+
+## 🗄️ Archive Handler (`Indieinabox\ArchiveHandler`)
+Serves local link snapshots, external archive fallbacks, and processes force snapshot requests.
 
 ## 📩 Webmention Handler (`Indieinabox\WebmentionHandler`)
 Handles incoming webmention reception, validation, and storage.

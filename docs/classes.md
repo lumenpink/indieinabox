@@ -298,4 +298,44 @@ Universal version resolver:
 - `isCompiled()`: Detects whether application is running from a compiled single file.
 - `getBuildDate()`: Returns build ISO 8601 timestamp if running from a compiled binary.
 
+---
+
+## ⚙️ Background Worker Subsystem (`Indieinabox\BackgroundWorker`)
+
+Provides modular asynchronous task processing, queue handling, federation dispatching, and background maintenance.
+
+### 1. `BackgroundWorker` (`Indieinabox\BackgroundWorker`)
+High-level task runner and orchestrator:
+- `runAll()`: Acquires non-blocking file lock (`cron.lock`) and runs all background processors in sequence (Inbox, Outbox, Outgoing Webmentions, Archives, Twtxt feeds, Backups, Webmention Discovery, Updates).
+- Provides backward-compatible hook methods (`fetchUrl`, `fetchJsonUrl`, `resolveFinalUrl`, `sendToArchiveOrg`, `fetchPdfFromMicrolink`, `verifySignature`) delegating callbacks to modular worker services.
+
+### 2. `InboxProcessor` (`Indieinabox\BackgroundWorker\InboxProcessor`)
+Processes inbound queue tasks (`inbox_queue`):
+- Webmentions: Verifies source links via `SourceVerifier`, checks spam with Akismet, extracts microformats, saves markdown interaction files, and queues links to archive.
+- ActivityPub: Verifies HTTP signatures, resolves actor public keys, processes `Follow` requests (records follower and enqueues `Accept`), unwraps Lemmy/FEP-1b12 `Announce` activities, downloads avatars locally, renders custom emojis, and saves `Create` activities.
+- Site rebuilds: Triggers full static site rebuilds (`build_site`).
+
+### 3. `OutboxDispatcher` (`Indieinabox\BackgroundWorker\OutboxDispatcher`)
+Processes outgoing Fediverse activities (`activitypub_outbox`):
+- Signs HTTP POST requests with instance RSA keys using HTTP Signatures.
+- Delivers payloads to remote followers and inboxes with exponential backoff / retry.
+- Prunes sent/failed outbox records older than 7 days and remote actor keys older than 30 days.
+
+### 4. `OutgoingWebmentionDispatcher` (`Indieinabox\BackgroundWorker\OutgoingWebmentionDispatcher`)
+Processes outgoing Webmentions (`outgoing_webmentions`):
+- Discovers target endpoints for external URLs and dispatches standard Webmention POST requests.
+- Cleans up processed records older than 7 days.
+
+### 5. `ArchiveProcessor` (`Indieinabox\BackgroundWorker\ArchiveProcessor`)
+Archives external links (`archive_queue`):
+- Follows HTTP redirects to establish canonical destination URLs and updates `archive_aliases`.
+- Saves external snapshots to the Internet Archive Wayback Machine (`web.archive.org/save`).
+- Fetches PDF rendered snapshots via the Microlink API and saves locally to `data/archives`.
+- Records snapshots in `archived_links` and deduplicates requests within a 24-hour window unless `force_archive` is set.
+
+### 6. `WebmentionDiscovery` (`Indieinabox\BackgroundWorker\WebmentionDiscovery`)
+Asynchronous endpoint discovery (`webmention_discovery_cache`):
+- Checks remote domains for Webmention support via HTTP response headers (`rel="webmention"`) or HTML `<link rel="webmention">` tags.
+- Enables non-blocking UI rendering for like/repost actions.
+
 

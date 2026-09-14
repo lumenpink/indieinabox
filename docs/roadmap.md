@@ -321,8 +321,12 @@ app/
 #### Key Implementation Goals
 - [ ] **Domain-Driven Restructuring**: Implement the directory structure outlined above.
 - [ ] **Protocol Adapter Pattern**: Create a `FederationAdapter` interface and port ActivityPub into `ActivityPubAdapter`, making it ready for Lemmy and Bookwyrm adapters.
-- [ ] **Service Layer Extraction**: Extract business logic out of all current `*Handler.php` files into `Services/` classes.
-- [ ] **HTTP/CLI Duality**: Ensure every service is callable identically from both the HTTP stack and CLI commands, with no duplication.
+- [x] **Service Layer Extraction**: Extract business logic out of current monoliths into focused single-responsibility services:
+  - `IndieAuthHandler` decoupled into `PkceValidator`, `TokenManager`, and `ConsentView`.
+  - `MicropubHandler` decoupled into `QueryHandler`, `MediaHandler`, and `PostCreator`.
+  - `Updater` unified across Web, CLI, and CRON with strict 2-backup rotation and auto-versioning.
+  - `BackgroundWorker` modularized into `app/BackgroundWorker/` (`InboxProcessor`, `OutboxDispatcher`, `OutgoingWebmentionDispatcher`, `ArchiveProcessor`, `WebmentionDiscovery`).
+- [x] **HTTP/CLI Duality**: Ensure every service is callable identically from both the HTTP stack and CLI commands, with no duplication.
 - [ ] **CLI vs Web Separation**: Isolate CLI commands into `app/Console/` to clearly separate terminal actions from HTTP web requests.
 - [ ] **Eradicate Procedural Code**: Convert autonomous functions (currently in `app/functions/` and the god-class `Helper.php`) into focused, single-responsibility Service Classes.
 - [ ] **Dependency Injection**: Remove the reliance on `global $site` and singleton patterns (`Database::getDb()`). Inject dependencies via constructors to make testing and state management predictable.

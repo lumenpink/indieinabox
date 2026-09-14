@@ -26,6 +26,11 @@
 <li><a href="/docs/api/html/ActivityPub-KeyManager.html">ActivityPub-KeyManager</a></li>
 <li><a href="/docs/api/html/ActivityPubHandler.html">ActivityPubHandler</a></li>
 <li><a href="/docs/api/html/ArchiveHandler.html">ArchiveHandler</a></li>
+<li><a href="/docs/api/html/BackgroundWorker-ArchiveProcessor.html">BackgroundWorker-ArchiveProcessor</a></li>
+<li><a href="/docs/api/html/BackgroundWorker-InboxProcessor.html">BackgroundWorker-InboxProcessor</a></li>
+<li><a href="/docs/api/html/BackgroundWorker-OutboxDispatcher.html">BackgroundWorker-OutboxDispatcher</a></li>
+<li><a href="/docs/api/html/BackgroundWorker-OutgoingWebmentionDispatcher.html">BackgroundWorker-OutgoingWebmentionDispatcher</a></li>
+<li><a href="/docs/api/html/BackgroundWorker-WebmentionDiscovery.html">BackgroundWorker-WebmentionDiscovery</a></li>
 <li><a href="/docs/api/html/BackgroundWorker.html">BackgroundWorker</a></li>
 <li><a href="/docs/api/html/BackupManager.html">BackupManager</a></li>
 <li><a href="/docs/api/html/Bootstrap.html">Bootstrap</a></li>
@@ -108,150 +113,99 @@
         <h1 class="p-name">BackgroundWorker</h1>
 <p><strong>Namespace:</strong> <code>Indieinabox</code></p>
 <p>Class BackgroundWorker</p>
+<p>Coordinates and dispatches background tasks: inbox queue, outbox delivery,<br />
+outgoing webmentions, archive snapshotting, backups, and updates.</p>
 <h2>Properties</h2>
 <h3><code>private PDO $db</code></h3>
 <p>@var PDO</p>
 <h3><code>private Indieinabox\Site $site</code></h3>
-<p>@var \Indieinabox\Site</p>
+<p>@var Site</p>
 <h2>Methods</h2>
 <h3><em></em>construct()</h3>
 <p><code>public function __construct(Indieinabox\Site $site)</code></p>
 <p>Initializes the BackgroundWorker.</p>
-<p>@param \Indieinabox\Site $site Global site configuration and environment.</p>
+<p>@param Site $site Global site configuration and environment.</p>
 <h3>runAll()</h3>
 <p><code>public function runAll(): void</code></p>
-<p>Executes all background tasks (inbox, outbox, archives).<br />
+<p>Executes all background tasks (inbox, outbox, archives, feeds, updates).<br />
 Normally called periodically via cron or CLI.</p>
 <p>@return void</p>
 <h3>processWebmentionDiscovery()</h3>
 <p><code>public function processWebmentionDiscovery(): void</code></p>
 <p>Discovers Webmention support for queued domains.</p>
+<p>@return void</p>
 <h3>processBackups()</h3>
 <p><code>public function processBackups(): void</code></p>
 <p>Executes the daily backup if cron is enabled.</p>
+<p>@return void</p>
 <h3>processUpdates()</h3>
 <p><code>public function processUpdates(): void</code></p>
 <p>Checks for application updates and performs auto-upgrade if enabled.</p>
+<p>@return void</p>
 <h3>processTwtxtFeeds()</h3>
 <p><code>public function processTwtxtFeeds(): void</code></p>
 <p>Fetches remote Twtxt timeline and hub mentions asynchronously.<br />
 Rebuilds the site to update the static timeline page if new entries are found.</p>
+<p>@return void</p>
 <h3>processInboxQueue()</h3>
 <p><code>public function processInboxQueue(): void</code></p>
-<p>Processes the incoming queue (Webmentions, ActivityPub activities).</p>
+<p>Processes the incoming queue (Webmentions, ActivityPub activities, site rebuilds).</p>
 <p>@return void</p>
-<h3>handleBuildSite()</h3>
-<p><code>private function handleBuildSite(): void</code></p>
-<p>Triggers a site rebuild.<br />
-Instantiates the SiteBuilder and recompiles static assets/pages.</p>
-<p>@return void</p>
-<h3>handleWebmention()</h3>
-<p><code>private function handleWebmention(array $payload): void</code></p>
-<p>Parses and handles a received Webmention.<br />
-Retrieves the source page, extracts microformats, checks for spam, and saves as a comment/like/repost.</p>
-<p>@param array $payload The Webmention data (source, target).<br />
-@return void</p>
-<h3>handleActivityPub()</h3>
-<p><code>private function handleActivityPub(array $payload): void</code></p>
-<p>Processes a received ActivityPub activity.<br />
-Validates the HTTP signature and handles Follow, Undo, Create, or Like actions.</p>
-<p>@param array $payload The parsed ActivityPub JSON-LD data.<br />
-@return void</p>
-<h3>verifySignature()</h3>
-<p><code>protected function verifySignature(array $headers, string $method, string $path, string $pubKey): bool</code></p>
-<p>Method verifySignature<br />
-@param array $headers<br />
-@param string $method<br />
-@param string $path<br />
-@param string $pubKey</p>
-<p>@return bool</p>
-<h3>saveActivityPubCreate()</h3>
-<p><code>private function saveActivityPubCreate(array $activity): void</code></p>
-<p>Saves a &apos;Create&apos; Activity (e.g. a remote post or reply) to the local inbox/comments.<br />
-Converts HTML content to Markdown, downloads avatars, and saves as a pending interaction.</p>
-<p>@param array $activity The ActivityPub Create activity object.<br />
-@return void</p>
-<h3>downloadAvatarLocally()</h3>
-<p><code>private function downloadAvatarLocally(string $actorUrl, string $photoUrl): string</code></p>
-<p>Downloads an actor&apos;s avatar to the local cache.<br />
-Re-uses the cached version if already downloaded.</p>
-<p>@param string $actorUrl The URL of the actor profile.<br />
-@param string $photoUrl The remote URL of the avatar image.<br />
-@return string The local path to the downloaded avatar.</p>
 <h3>processOutgoingWebmentions()</h3>
-<p><code>private function processOutgoingWebmentions(): void</code></p>
+<p><code>public function processOutgoingWebmentions(): void</code></p>
 <p>Processes outgoing webmentions.</p>
-<h3>discoverWebmentionEndpoint()</h3>
-<p><code>private function discoverWebmentionEndpoint(string $url): ?string</code></p>
-<p>Discovers a webmention endpoint from a target URL.</p>
-<p>@param string $url The target URL.<br />
-@return string|null The endpoint URL or null if not found.</p>
-<h3>resolveUrl()</h3>
-<p><code>private function resolveUrl(string $base, string $rel): string</code></p>
-<p>Resolves a relative URL against a base URL.</p>
-<h3>extractLinksToArchiveQueue()</h3>
-<p><code>private function extractLinksToArchiveQueue(string $htmlContent): void</code></p>
-<p>Scans markdown content for external links and queues them for archiving.<br />
-Used to automatically snapshot outgoing links to the Wayback Machine.</p>
-<p>@param string $htmlContent The content text to scan for links.<br />
-@return void</p>
-<h3>getPublicKey()</h3>
-<p><code>private function getPublicKey(string $keyId): ?string</code></p>
-<p>Retrieves the public key of an ActivityPub actor.<br />
-Caches the fetched key locally to speed up future signature verifications.</p>
-<p>@param string $keyId The URL of the actor to fetch the key for.<br />
-@return string|null The PEM encoded public key, or null if not found.</p>
-<h3>fetchJsonUrl()</h3>
-<p><code>protected function fetchJsonUrl(string $url): ?array</code></p>
-<p>Fetches a URL and decodes the JSON response.<br />
-Assumes an ActivityPub/JSON-LD friendly Accept header.</p>
-<p>@param string $url The URL to fetch.<br />
-@return array|null The decoded JSON array, or null on failure.</p>
-<h3>fetchUrl()</h3>
-<p><code>protected function fetchUrl(string $url)</code></p>
-<p>Method fetchUrl<br />
-@param string $url</p>
-<h3>queueAcceptFollow()</h3>
-<p><code>private function queueAcceptFollow(array $followActivity, string $targetInbox): void</code></p>
-<p>Queues an &apos;Accept&apos; response to a &apos;Follow&apos; activity.<br />
-Places the payload into the outbox for background delivery.</p>
-<p>@param array $followActivity The received Follow activity data.<br />
-@param string $targetInbox The inbox URL to deliver the Accept activity to.</p>
 <p>@return void</p>
 <h3>processOutbox()</h3>
 <p><code>public function processOutbox(): void</code></p>
 <p>Processes the outgoing queue (Outbox).<br />
-Delivers queued activities (e.g., Creates, Accepts) to followers&apos; inboxes using HTTP Signatures.</p>
+Delivers queued activities to followers&apos; inboxes using HTTP Signatures.</p>
 <p>@return void</p>
 <h3>processArchiveQueue()</h3>
 <p><code>public function processArchiveQueue(): void</code></p>
 <p>Processes the archive queue.<br />
-Submits external links to the Wayback Machine and optionally generates PDFs via Microlink.</p>
+Saves external links to Archive.org and downloads local PDF snapshots via Microlink.</p>
 <p>@return void</p>
+<h3>getInboxCallbacks()</h3>
+<p><code>protected function getInboxCallbacks(): array</code></p>
+<p>@return array<string, callable></p>
+<h3>getArchiveCallbacks()</h3>
+<p><code>protected function getArchiveCallbacks(): array</code></p>
+<p>@return array<string, callable></p>
+<h3>verifySignature()</h3>
+<p><code>protected function verifySignature(array $headers, string $method, string $path, string $pubKey): bool</code></p>
+<p>Verifies HTTP signature.</p>
+<p>@param array $headers<br />
+@param string $method<br />
+@param string $path<br />
+@param string $pubKey<br />
+@return bool</p>
+<h3>fetchJsonUrl()</h3>
+<p><code>protected function fetchJsonUrl(string $url): ?array</code></p>
+<p>Fetches a URL and decodes the JSON response.</p>
+<p>@param string $url The URL to fetch.<br />
+@return array|null The decoded JSON array, or null on failure.</p>
+<h3>fetchUrl()</h3>
+<p><code>protected function fetchUrl(string $url)</code></p>
+<p>Fetches remote content over HTTP.</p>
+<p>@param string $url<br />
+@return string|false</p>
 <h3>resolveFinalUrl()</h3>
 <p><code>protected function resolveFinalUrl(string $url): string</code></p>
-<p>Follows HTTP redirects to resolve the final destination URL.<br />
-Prevents archiving tracking links or URL shorteners directly.</p>
-<p>@param string $url The original URL to resolve.<br />
-@return string The final resolved URL.</p>
+<p>Follows redirects to determine the canonical destination URL.</p>
+<p>@param string $url<br />
+@return string</p>
 <h3>sendToArchiveOrg()</h3>
 <p><code>protected function sendToArchiveOrg(string $url): void</code></p>
-<p>Submits a URL to the Internet Archive&apos;s Wayback Machine.</p>
-<p>@param string $url The URL to archive.<br />
+<p>Submits a URL to the Wayback Machine save endpoint.</p>
+<p>@param string $url<br />
 @return void</p>
 <h3>fetchPdfFromMicrolink()</h3>
 <p><code>protected function fetchPdfFromMicrolink(string $url, string $normUrl, string $pdfDir): ?string</code></p>
-<p>Generates and downloads a PDF snapshot of a URL using the Microlink API.<br />
-Saves the PDF to the local archive directory.</p>
-<p>@param string $url The URL to snapshot.<br />
-@param string $normUrl The normalized URL.<br />
-@param string $pdfDir The local directory to save the PDF.<br />
-@return string|null The relative path to the PDF, or null on failure.</p>
-<h3>checkAkismet()</h3>
-<p><code>private function checkAkismet(array $commentData): bool</code></p>
-<p>Checks if a submitted comment or webmention is spam using the Akismet API.</p>
-<p>@param array $commentData The comment data containing &apos;author<em>name&apos;, &apos;author</em>url&apos;, and &apos;content&apos;.<br />
-@return bool True if the content is classified as spam, false otherwise.</p>
+<p>Fetches a PDF snapshot from the Microlink API.</p>
+<p>@param string $url<br />
+@param string $normUrl<br />
+@param string $pdfDir<br />
+@return string|null</p>
 
     </div>
 </body>

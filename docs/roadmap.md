@@ -327,7 +327,12 @@ app/
   - `Updater` unified across Web, CLI, and CRON with strict 2-backup rotation and auto-versioning.
   - `BackgroundWorker` modularized into `app/BackgroundWorker/` (`InboxProcessor`, `OutboxDispatcher`, `OutgoingWebmentionDispatcher`, `ArchiveProcessor`, `WebmentionDiscovery`).
 - [x] **HTTP/CLI Duality**: Ensure every service is callable identically from both the HTTP stack and CLI commands, with no duplication.
-- [ ] **CLI vs Web Separation**: Isolate CLI commands into `app/Console/` to clearly separate terminal actions from HTTP web requests.
+- [x] **CLI vs Web Separation**: Isolated CLI commands into `app/Console/` to clearly separate terminal actions from HTTP web requests:
+  - `Indieinabox\Console\Contracts\CommandInterface` & `Indieinabox\Console\Commands\AbstractCommand`.
+  - Dedicated commands: `BuildCommand`, `CronCommand`, `FetchCommand`, `PostCommand`, `ProfileCommand`, `ConfigCommand`, `SetupCommand`, `LinkCheckCommand`, `BackupCommand`, `TestWebmentionCommand`, `VersionCommand`, `UpdateCommand`.
+  - `Indieinabox\Console\ConsoleKernel` managing command resolution, aliases, and standardized `--help` output.
+  - Eliminated legacy `CliHandler.php` and simplified `build.php` CLI dispatch to 3 lines.
+  - Updated tests across Unit, Functional, and Integration levels (`tests/Unit/Console/`, `tests/Functional/ConsoleWorkflowTest.php`, `tests/Integration/CliIntegrationTest.php`).
 - [x] **Eradicate Procedural Code**: Deconstructed the legacy god-class `Helper.php` (1,636 lines) into focused, single-responsibility Domain Services with 0 backward-compatibility shims:
   - `Indieinabox\Support\TextParser`: `arrayGet`, `extractHashtags`, `unaccent`, `utf8ToAscii`, `slugize`.
   - `Indieinabox\Support\DateFormatter`: `timeAgo`, `localizeddate`, `sortByDate`.

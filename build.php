@@ -176,56 +176,9 @@ global $urltranslations;
 $urltranslations = \Indieinabox\Database::getUrlTranslations();
 
 if (php_sapi_name() === 'cli') {
-    if (isset($argv[1]) && $argv[1] === 'profile') {
-        $cli = new \Indieinabox\CliHandler($site);
-        $cli->handleProfile($argv);
-    } elseif (isset($argv[1]) && $argv[1] === 'post') {
-        $cli = new \Indieinabox\CliHandler($site);
-        $cli->handlePost($argv);
-    } elseif (isset($argv[1]) && $argv[1] === 'config') {
-        $cli = new \Indieinabox\CliHandler($site);
-        $cli->handleConfig($argv);
-    } elseif (isset($argv[1]) && $argv[1] === 'setup') {
-        $cli = new \Indieinabox\CliHandler($site);
-        $cli->handleSetup($argv);
-    } elseif (isset($argv[1]) && $argv[1] === 'fetch') {
-        echo "Fetching feeds...\n";
-        $fetcher = new \Indieinabox\FeedFetcher();
-        $fetcher->fetchAll();
-        echo "Feeds fetched successfully.\n";
-    } elseif (isset($argv[1]) && $argv[1] === 'cron') {
-        $worker = new \Indieinabox\BackgroundWorker($site);
-        $worker->runAll();
-    } elseif (isset($argv[1]) && $argv[1] === 'test-links') {
-        $reportPath = null;
-        $skipExternal = in_array('--skip-external', $argv, true) || in_array('--internal-only', $argv, true);
-        foreach ($argv as $i => $arg) {
-            if ($arg === '--report' && isset($argv[$i + 1])) {
-                $reportPath = $argv[$i + 1];
-                break;
-            }
-        }
-        $checker = new \Indieinabox\LinkChecker($site);
-        $checker->run($reportPath, $skipExternal);
-    } elseif (isset($argv[1]) && $argv[1] === 'backup') {
-        $skipContent = in_array('--no-content', $argv, true);
-        $skipMedia = in_array('--no-media', $argv, true);
-        $backupManager = new \Indieinabox\BackupManager($site);
-        $backupManager->run($skipContent, $skipMedia);
-    } elseif (isset($argv[1]) && $argv[1] === 'test-webmention') {
-        $cli = new \Indieinabox\CliHandler($site);
-        $cli->handleTestWebmention($argv);
-    } elseif (isset($argv[1]) && in_array($argv[1], ['version', '-v', '--version'], true)) {
-        $cli = new \Indieinabox\CliHandler($site);
-        $cli->handleVersion($argv);
-    } elseif (isset($argv[1]) && $argv[1] === 'update') {
-        $cli = new \Indieinabox\CliHandler($site);
-        $cli->handleUpdate($argv);
-    } else {
-        $builder = new \Indieinabox\SiteBuilder($site);
-        $builder->build();
-        echo "Build complete\n";
-    }
+    $kernel = new \Indieinabox\Console\ConsoleKernel($site);
+    $exitCode = $kernel->handle($argv);
+    exit($exitCode);
 } else {
     $router = new \Indieinabox\WebRouter($site);
     $router->handleRequest();

@@ -38,11 +38,16 @@ The core generation pipeline is decoupled into single-responsibility services:
 Here is a breakdown of the workspace layout and its main contents:
 
 - **`app/`**: Object-oriented, namespaced code under PSR-4 (`Indieinabox\`).
+  - **`Console/`**: Command-line interface kernel, command contract, and dedicated single-responsibility commands (`BuildCommand`, `CronCommand`, `FetchCommand`, `PostCommand`, `ProfileCommand`, `ConfigCommand`, `SetupCommand`, `LinkCheckCommand`, `BackupCommand`, `TestWebmentionCommand`, `VersionCommand`, `UpdateCommand`).
   - **`Entry/`**: Universal `Entry` domain model for feed items, posts, and federation.
   - **`SiteBuilder/`**: Core site generation services (`ContentScanner`, `TranslationVirtualizer`, `PagePublisher`, `IndexPublisher`, `FeedPublisher`, `AssetPublisher`).
   - **`Feeds/`**: Feed generator interfaces and format implementations (`Rss`, `Atom`, `Twtxt`).
   - **`Markdown/`**: Custom AST parser, processors, validators, and protocol renderers (HTML, Gemtext, Gophermap).
   - **`Theme/`**: Theme metadata, SEO helpers, and microformats components.
+  - **`Support/`**: Domain utilities (`TextParser`, `DateFormatter`, `HtmlUtils`, `FileUtils`).
+  - **`Taxonomy/`**: Kind helpers and post categorization services (`KindHelper`).
+  - **`Localization/`**: Translation services (`Translator`).
+  - **`Media/`**: Dithering and image generation services (`ImageProcessor`).
   - **`functions/`**: Procedural helpers and utility functions.
 - **`bootstrap/`**: Application bootstrapper.
 - **`content/`**: Markdown and plain text source files.

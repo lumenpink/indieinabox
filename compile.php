@@ -22,6 +22,35 @@ if (file_exists($mf2Parser)) {
     $appFiles[] = $mf2Parser;
 }
 
+usort($appFiles, function (string $a, string $b): int {
+    $aContent = (string) file_get_contents($a);
+    $bContent = (string) file_get_contents($b);
+
+    $aRank = 3;
+    if (preg_match('/^\s*interface\s+/m', $aContent)) {
+        $aRank = 0;
+    } elseif (preg_match('/^\s*trait\s+/m', $aContent)) {
+        $aRank = 1;
+    } elseif (preg_match('/^\s*abstract\s+class\s+/m', $aContent)) {
+        $aRank = 2;
+    }
+
+    $bRank = 3;
+    if (preg_match('/^\s*interface\s+/m', $bContent)) {
+        $bRank = 0;
+    } elseif (preg_match('/^\s*trait\s+/m', $bContent)) {
+        $bRank = 1;
+    } elseif (preg_match('/^\s*abstract\s+class\s+/m', $bContent)) {
+        $bRank = 2;
+    }
+
+    if ($aRank !== $bRank) {
+        return $aRank <=> $bRank;
+    }
+
+    return strcmp($a, $b);
+});
+
 require_once $base . '/app/Version.php';
 
 // Prepare the compiled code

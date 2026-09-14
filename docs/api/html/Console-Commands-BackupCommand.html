@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CliHandler - Indieinabox API</title>
+    <title>Console-Commands-BackupCommand - Indieinabox API</title>
     <style>
         :root { --bg: #F4F1EA; --fg: #2C2E2F; --accent: #2C2E2F; }
         body { font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; margin: 0; display: flex; background: var(--bg); color: var(--fg); line-height: 1.6; }
@@ -34,8 +34,22 @@
 <li><a href="/docs/api/html/BackgroundWorker.html">BackgroundWorker</a></li>
 <li><a href="/docs/api/html/BackupManager.html">BackupManager</a></li>
 <li><a href="/docs/api/html/Bootstrap.html">Bootstrap</a></li>
-<li><a href="/docs/api/html/CliHandler.html">CliHandler</a></li>
 <li><a href="/docs/api/html/ConfigHandler.html">ConfigHandler</a></li>
+<li><a href="/docs/api/html/Console-Commands-AbstractCommand.html">Console-Commands-AbstractCommand</a></li>
+<li><a href="/docs/api/html/Console-Commands-BackupCommand.html">Console-Commands-BackupCommand</a></li>
+<li><a href="/docs/api/html/Console-Commands-BuildCommand.html">Console-Commands-BuildCommand</a></li>
+<li><a href="/docs/api/html/Console-Commands-ConfigCommand.html">Console-Commands-ConfigCommand</a></li>
+<li><a href="/docs/api/html/Console-Commands-CronCommand.html">Console-Commands-CronCommand</a></li>
+<li><a href="/docs/api/html/Console-Commands-FetchCommand.html">Console-Commands-FetchCommand</a></li>
+<li><a href="/docs/api/html/Console-Commands-LinkCheckCommand.html">Console-Commands-LinkCheckCommand</a></li>
+<li><a href="/docs/api/html/Console-Commands-PostCommand.html">Console-Commands-PostCommand</a></li>
+<li><a href="/docs/api/html/Console-Commands-ProfileCommand.html">Console-Commands-ProfileCommand</a></li>
+<li><a href="/docs/api/html/Console-Commands-SetupCommand.html">Console-Commands-SetupCommand</a></li>
+<li><a href="/docs/api/html/Console-Commands-TestWebmentionCommand.html">Console-Commands-TestWebmentionCommand</a></li>
+<li><a href="/docs/api/html/Console-Commands-UpdateCommand.html">Console-Commands-UpdateCommand</a></li>
+<li><a href="/docs/api/html/Console-Commands-VersionCommand.html">Console-Commands-VersionCommand</a></li>
+<li><a href="/docs/api/html/Console-ConsoleKernel.html">Console-ConsoleKernel</a></li>
+<li><a href="/docs/api/html/Console-Contracts-CommandInterface.html">Console-Contracts-CommandInterface</a></li>
 <li><a href="/docs/api/html/Database.html">Database</a></li>
 <li><a href="/docs/api/html/Entry-Entry.html">Entry-Entry</a></li>
 <li><a href="/docs/api/html/FeedFetcher.html">FeedFetcher</a></li>
@@ -116,42 +130,32 @@
 <li><a href="/docs/api/html/Yaml.html">Yaml</a></li></ul>
     </div>
     <div class="content">
-        <h1 class="p-name">CliHandler</h1>
-<p><strong>Namespace:</strong> <code>Indieinabox</code></p>
+        <h1 class="p-name">BackupCommand</h1>
+<p><strong>Namespace:</strong> <code>Indieinabox\Console\Commands</code></p>
+<p>Command to archive database, content, and media directories into a timestamped zip archive.</p>
 <h2>Properties</h2>
-<h3><code>private Indieinabox\Site $site</code></h3>
+<h3><code>protected Indieinabox\Site $site</code></h3>
 <h2>Methods</h2>
+<h3>getName()</h3>
+<p><code>public function getName(): string</code></p>
+<h3>getDescription()</h3>
+<p><code>public function getDescription(): string</code></p>
+<h3>getUsage()</h3>
+<p><code>public function getUsage(): string</code></p>
+<h3>execute()</h3>
+<p><code>public function execute(array $argv): int</code></p>
 <h3><em></em>construct()</h3>
 <p><code>public function __construct(Indieinabox\Site $site)</code></p>
+<h3>getAliases()</h3>
+<p><code>public function getAliases(): array</code></p>
+<p>@return array<int, string></p>
 <h3>getOption()</h3>
-<p><code>private function getOption(array $argv, string $longOpt): ?string</code></p>
-<h3>handleProfile()</h3>
-<p><code>public function handleProfile(array $argv): void</code></p>
-<h3>handlePost()</h3>
-<p><code>public function handlePost(array $argv): void</code></p>
-<h3>resizeImage()</h3>
-<p><code>private function resizeImage(string $src, string $dest, int $maxWidth, int $maxHeight): void</code></p>
-<h3>handleSetup()</h3>
-<p><code>public function handleSetup(array $argv): void</code></p>
-<h3>handleConfig()</h3>
-<p><code>public function handleConfig(array $argv): void</code></p>
-<h3>handleTestWebmention()</h3>
-<p><code>public function handleTestWebmention(array $argv): void</code></p>
-<p>Handles the &apos;test-webmention&apos; CLI command to test endpoint discovery and ping delivery.</p>
-<p>@param array<int, string> $argv<br />
-@return void</p>
-<h3>handleValidateHcard()</h3>
-<p><code>private function handleValidateHcard(array $argv): void</code></p>
-<p>Validates the presence and completeness of an h-card for IndieWebify.me Level 1.</p>
-<p>@param array<int, string> $argv<br />
-@return void</p>
-<h3>handleVersion()</h3>
-<p><code>public function handleVersion(array $argv): void</code></p>
-<p>Handles the &apos;version&apos; CLI command.</p>
+<p><code>protected function getOption(array $argv, string $longOpt): ?string</code></p>
+<p>Extracts an option value following --<longOpt>.</p>
 <p>@param array<int, string> $argv</p>
-<h3>handleUpdate()</h3>
-<p><code>public function handleUpdate(array $argv): void</code></p>
-<p>Handles the &apos;update&apos; CLI command.</p>
+<h3>hasFlag()</h3>
+<p><code>protected function hasFlag(array $argv, string $flag): bool</code></p>
+<p>Checks if a flag is present in argv.</p>
 <p>@param array<int, string> $argv</p>
 
     </div>

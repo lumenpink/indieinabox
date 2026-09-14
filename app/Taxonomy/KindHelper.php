@@ -57,6 +57,8 @@ class KindHelper
             }
         }
 
+        $config = is_array($config) ? $config : [];
+
         return array_merge([
             'content_dir' => $kind,
             'title' => [],

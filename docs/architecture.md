@@ -40,6 +40,15 @@ Here is a breakdown of the workspace layout and its main contents:
 - **`app/`**: Object-oriented, namespaced code under PSR-4 (`Indieinabox\`).
   - **`Core/`**: Core infrastructure including PSR-11 Dependency Injection `Container` with autowiring, and exception contracts.
   - **`Console/`**: Command-line interface kernel, command contract, and dedicated single-responsibility commands (`BuildCommand`, `CronCommand`, `FetchCommand`, `PostCommand`, `ProfileCommand`, `ConfigCommand`, `SetupCommand`, `LinkCheckCommand`, `BackupCommand`, `TestWebmentionCommand`, `VersionCommand`, `UpdateCommand`).
+  - **`Federation/`**: Multi-protocol federation subsystem and adapters implementing `FederationAdapter`:
+    - `Contracts/FederationAdapter.php`: Universal protocol adapter contract (`getProtocol`, `supports`, `buildLikeActivity`, `buildReplyActivity`, `buildFollowActivity`, `deliverActivity`, `parseActivity`).
+    - `ActivityPubAdapter.php`: W3C ActivityPub / ActivityStreams 2.0 implementation with HTTP Signatures and custom transport support.
+    - `FederationManager.php`: Protocol registry, resolver, and adapter orchestrator.
+  - **`Services/`**: Protocol-agnostic domain business services:
+    - `FollowService.php`: Remote follower management, status checks, and distinct fan-out inbox resolution.
+    - `OutboxService.php`: Outgoing delivery queueing, follower broadcast fan-out, and adapter-based delivery dispatch.
+    - `InboxService.php`: Incoming activity queueing, follow/accept orchestration, and undo-follow processing.
+    - `PublishPostService.php`: Note/article creation, markdown persistence, static site compilation, and federation broadcasting.
   - **`Entry/`**: Universal `Entry` domain model for feed items, posts, and federation.
   - **`SiteBuilder/`**: Core site generation services (`ContentScanner`, `TranslationVirtualizer`, `PagePublisher`, `IndexPublisher`, `FeedPublisher`, `AssetPublisher`).
   - **`Feeds/`**: Feed generator interfaces and format implementations (`Rss`, `Atom`, `Twtxt`).

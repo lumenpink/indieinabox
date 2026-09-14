@@ -82,6 +82,10 @@ class HttpSignature
             $resultHeaders['Digest'] = $headers['digest'];
         }
 
+        foreach ($additionalHeaders as $k => $v) {
+            $resultHeaders[$k] = $v;
+        }
+
         return $resultHeaders;
     }
 

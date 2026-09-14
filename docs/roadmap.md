@@ -320,7 +320,19 @@ app/
 
 #### Key Implementation Goals
 - [ ] **Domain-Driven Restructuring**: Implement the directory structure outlined above.
-- [ ] **Protocol Adapter Pattern**: Create a `FederationAdapter` interface and port ActivityPub into `ActivityPubAdapter`, making it ready for Lemmy and Bookwyrm adapters.
+- [x] **Protocol Adapter Pattern & Domain Services**: Created `FederationAdapter` interface and implemented protocol adapters with domain services:
+  - `Indieinabox\Federation\Contracts\FederationAdapter`: Uniform contract for all federated protocols (`getProtocol`, `supports`, `buildLikeActivity`, `buildReplyActivity`, `buildFollowActivity`, `deliverActivity`, `parseActivity`).
+  - `Indieinabox\Federation\ActivityPubAdapter`: W3C ActivityPub implementation with HTTP Signature signing and configurable transport injection.
+  - `Indieinabox\Federation\FederationManager`: Pluggable adapter registry supporting dynamic addition of new protocols (Lemmy, Bookwyrm, Twtxt).
+  - Dedicated Domain Services in `app/Services/`:
+    - `FollowService`: Follower persistence, relationship checks, and deduplicated distinct inbox resolution.
+    - `OutboxService`: Delivery enqueueing, fan-out broadcast to followers, and queue dispatching.
+    - `InboxService`: Incoming queueing, Follow/Accept activity handling, and Undo Follow processing.
+    - `PublishPostService`: Markdown note/article creation, static build trigger, and outbox broadcasting.
+  - Comprehensive 3-tier test coverage:
+    - Unit: `ActivityPubAdapterTest`, `FederationManagerTest`, `FollowServiceTest`, `InboxServiceTest`, `OutboxServiceTest`, `PublishPostServiceTest`.
+    - Functional: `FederationWorkflowTest` covering end-to-end follow -> accept -> post -> broadcast -> unfollow.
+    - Integration: `FederationIntegrationTest` covering container autowiring, SQLite outbox status transitions, and RSA HTTP Signature verification.
 - [x] **Service Layer Extraction**: Extract business logic out of current monoliths into focused single-responsibility services:
   - `IndieAuthHandler` decoupled into `PkceValidator`, `TokenManager`, and `ConsentView`.
   - `MicropubHandler` decoupled into `QueryHandler`, `MediaHandler`, and `PostCreator`.
@@ -347,5 +359,5 @@ app/
   - Completely purged `global $site` across all core classes (`ThemeManager`, `ThemeHelper`, `HtmlRenderer`, `KindHelper`, `IndexPublisher`).
   - Bundled PSR-11 interfaces into the single-file compilation pipeline with topological sorting.
   - Added test coverage across Unit, Functional, and Integration levels (`tests/Unit/Core/ContainerTest.php`, `tests/Functional/ContainerResolutionFunctionalTest.php`, `tests/Integration/ContainerIntegrationTest.php`).
-- [ ] **Interface-Driven Federation**: All adapters implement a shared contract so services never depend on a specific platform implementation.
+- [x] **Interface-Driven Federation**: All adapters implement a shared contract (`FederationAdapter`) so services never depend on a specific platform implementation.
 

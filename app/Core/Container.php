@@ -163,6 +163,22 @@ class Container implements ContainerInterface
                         $dependencies[] = $this->get($typeName);
                         continue;
                     }
+                    if (class_exists($typeName)) {
+                        try {
+                            $dependencies[] = $this->make($typeName);
+                            continue;
+                        } catch (ContainerException $e) {
+                            if ($param->isDefaultValueAvailable()) {
+                                $dependencies[] = $param->getDefaultValue();
+                                continue;
+                            }
+                            if ($param->allowsNull()) {
+                                $dependencies[] = null;
+                                continue;
+                            }
+                            throw $e;
+                        }
+                    }
                 }
 
                 if ($param->isDefaultValueAvailable()) {

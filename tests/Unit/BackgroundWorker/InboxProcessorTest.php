@@ -57,18 +57,16 @@ test('InboxProcessor processes Follow ActivityPub activity and enqueues Accept',
     $this->db->prepare("INSERT INTO inbox_queue (type, payload_json, created_at) VALUES ('activitypub', ?, ?)")
         ->execute([json_encode($followPayload), time()]);
 
-    $callbacks = [
-        'fetchJsonUrl' => function (string $url) {
-            return [
-                'publicKey' => [
-                    'id' => 'https://remote.social/actor#main-key',
-                    'publicKeyPem' => 'dummy-pem'
-                ]
-            ];
-        }
-    ];
+    $jsonFetcher = function (string $url) {
+        return [
+            'publicKey' => [
+                'id' => 'https://remote.social/actor#main-key',
+                'publicKeyPem' => 'dummy-pem'
+            ]
+        ];
+    };
 
-    $processor = new InboxProcessor($this->site, $this->db, $callbacks);
+    $processor = new InboxProcessor($this->site, $this->db, null, $jsonFetcher);
     ob_start();
     $processor->process();
     ob_get_clean();

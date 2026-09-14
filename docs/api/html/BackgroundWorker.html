@@ -165,47 +165,6 @@ Delivers queued activities to followers&apos; inboxes using HTTP Signatures.</p>
 <p>Processes the archive queue.<br />
 Saves external links to Archive.org and downloads local PDF snapshots via Microlink.</p>
 <p>@return void</p>
-<h3>getInboxCallbacks()</h3>
-<p><code>protected function getInboxCallbacks(): array</code></p>
-<p>@return array<string, callable></p>
-<h3>getArchiveCallbacks()</h3>
-<p><code>protected function getArchiveCallbacks(): array</code></p>
-<p>@return array<string, callable></p>
-<h3>verifySignature()</h3>
-<p><code>protected function verifySignature(array $headers, string $method, string $path, string $pubKey): bool</code></p>
-<p>Verifies HTTP signature.</p>
-<p>@param array $headers<br />
-@param string $method<br />
-@param string $path<br />
-@param string $pubKey<br />
-@return bool</p>
-<h3>fetchJsonUrl()</h3>
-<p><code>protected function fetchJsonUrl(string $url): ?array</code></p>
-<p>Fetches a URL and decodes the JSON response.</p>
-<p>@param string $url The URL to fetch.<br />
-@return array|null The decoded JSON array, or null on failure.</p>
-<h3>fetchUrl()</h3>
-<p><code>protected function fetchUrl(string $url)</code></p>
-<p>Fetches remote content over HTTP.</p>
-<p>@param string $url<br />
-@return string|false</p>
-<h3>resolveFinalUrl()</h3>
-<p><code>protected function resolveFinalUrl(string $url): string</code></p>
-<p>Follows redirects to determine the canonical destination URL.</p>
-<p>@param string $url<br />
-@return string</p>
-<h3>sendToArchiveOrg()</h3>
-<p><code>protected function sendToArchiveOrg(string $url): void</code></p>
-<p>Submits a URL to the Wayback Machine save endpoint.</p>
-<p>@param string $url<br />
-@return void</p>
-<h3>fetchPdfFromMicrolink()</h3>
-<p><code>protected function fetchPdfFromMicrolink(string $url, string $normUrl, string $pdfDir): ?string</code></p>
-<p>Fetches a PDF snapshot from the Microlink API.</p>
-<p>@param string $url<br />
-@param string $normUrl<br />
-@param string $pdfDir<br />
-@return string|null</p>
 
     </div>
 </body>

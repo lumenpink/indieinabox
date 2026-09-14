@@ -2,86 +2,36 @@
 
 declare(strict_types=1);
 
+use Indieinabox\BackgroundWorker;
+use Indieinabox\BackgroundWorker\ArchiveProcessor;
+use Indieinabox\BackgroundWorker\InboxProcessor;
+use Indieinabox\Database;
+use Indieinabox\Helper;
 use Indieinabox\Site;
-
-/**
- * @property Site $site
- * @property MockBackgroundWorkerBgTest $worker
- */
-class MockBackgroundWorkerBgTest extends \Indieinabox\BackgroundWorker
-{
-    public array $calledArchiveOrg = [];
-    public array $calledMicrolink = [];
-    public array $calledFetchUrl = [];
-    
-    public ?string $mockFinalUrl = null;
-    public ?string $mockPdfPath = null;
-    public ?array $mockActorData = null;
-    
-    protected function fetchJsonUrl(string $url): ?array
-    {
-        if ($this->mockActorData !== null && (strpos($url, 'remote.example.com') !== false || strpos($url, 'lemmy.eco.br') !== false || strpos($url, 'bookwyrm.social') !== false)) {
-            return $this->mockActorData;
-        }
-        return parent::fetchJsonUrl($url);
-    }
-    
-    protected function resolveFinalUrl(string $url): string
-    {
-        return $this->mockFinalUrl ?? $url;
-    }
-
-    protected function sendToArchiveOrg(string $url): void
-    {
-        $this->calledArchiveOrg[] = $url;
-    }
-
-    protected function fetchPdfFromMicrolink(string $url, string $normUrl, string $pdfDir): ?string
-    {
-        $this->calledMicrolink[] = $url;
-        if ($this->mockPdfPath) {
-            $filename = md5($normUrl . time()) . '.pdf';
-            $filepath = $pdfDir . DIRECTORY_SEPARATOR . $filename;
-            file_put_contents($filepath, 'dummy pdf data');
-            return $this->mockPdfPath;
-        }
-        return null;
-    }
-    
-    protected function fetchUrl(string $url): string|bool
-    {
-        $this->calledFetchUrl[] = $url;
-        if (strpos($url, 'avatar') !== false) {
-            return 'dummy image data';
-        }
-        return false;
-    }
-}
 
 $funcTempDir = __DIR__ . '/tmp_functional_bgworker';
 
 beforeEach(function () use ($funcTempDir) {
-    /** @var \PHPUnit\Framework\TestCase|mixed $this */
     if (!is_dir($funcTempDir)) {
         mkdir($funcTempDir, 0777, true);
     }
     
     // Set up test database
-    \Indieinabox\Database::disconnect();
+    Database::disconnect();
     
     $testDbPath = $funcTempDir . '/test.sqlite';
     if (file_exists($testDbPath)) {
         unlink($testDbPath);
     }
     
-    \Indieinabox\Database::$dataDir = $funcTempDir;
-    \Indieinabox\Database::connect($testDbPath);
-    $db = \Indieinabox\Database::getDb();
+    Database::$dataDir = $funcTempDir;
+    Database::connect($testDbPath);
+    $db = Database::getDb();
     
     // Clear inbox
     $inboxDir = $funcTempDir . '/microsub/inbox/inbox';
     if (is_dir($inboxDir)) {
-        \Indieinabox\Helper::recursiveRmdir($inboxDir);
+        Helper::recursiveRmdir($inboxDir);
     }
     mkdir($inboxDir, 0777, true);
     
@@ -89,29 +39,48 @@ beforeEach(function () use ($funcTempDir) {
     $schema = file_get_contents(__DIR__ . '/../../database.sql');
     $db->exec($schema);
     
-    $paths = new \Indieinabox\Site\Paths($funcTempDir, $funcTempDir . '/public_html', $funcTempDir . '/public_gemini', $funcTempDir . '/public_gopher', $funcTempDir . '/public_media', $funcTempDir . '/content', $funcTempDir . '/resources');
+    $paths = new \Indieinabox\Site\Paths(
+        $funcTempDir,
+        $funcTempDir . '/public_html',
+        $funcTempDir . '/public_gemini',
+        $funcTempDir . '/public_gopher',
+        $funcTempDir . '/public_media',
+        $funcTempDir . '/content',
+        $funcTempDir . '/resources'
+    );
     $this->site = new Site(null, $paths);
     $GLOBALS['site'] = $this->site;
-    
-    $this->worker = new MockBackgroundWorkerBgTest($this->site);
 });
 
-afterEach(function () use ($funcTempDir) {
-    \Indieinabox\Database::disconnect();
+afterEach(function () {
+    Database::disconnect();
 });
 
 it('processes archive queue and saves to db', function () {
-    $db = \Indieinabox\Database::getDb();
-    
+    $db = Database::getDb();
     $url = 'https://example.com/post/1';
     $db->exec("INSERT INTO archive_queue (url, requested_at, force_archive, status) VALUES ('$url', " . time() . ", 0, 'pending')");
     
-    $this->worker->mockPdfPath = '/data/archives/dummy.pdf';
+    $calledArchiveOrg = [];
+    $calledMicrolink = [];
+
+    $archiveOrgSender = function (string $u) use (&$calledArchiveOrg) {
+        $calledArchiveOrg[] = $u;
+    };
+    $pdfFetcher = function (string $u, string $normUrl, string $pdfDir) use (&$calledMicrolink) {
+        $calledMicrolink[] = $u;
+        $filename = md5($normUrl . time()) . '.pdf';
+        $filepath = $pdfDir . DIRECTORY_SEPARATOR . $filename;
+        file_put_contents($filepath, 'dummy pdf data');
+        return '/data/archives/dummy.pdf';
+    };
+
+    $urlResolver = fn(string $u) => $u;
+    $processor = new ArchiveProcessor($this->site, $db, $urlResolver, $archiveOrgSender, $pdfFetcher);
+    $processor->process();
     
-    $this->worker->processArchiveQueue();
-    
-    expect($this->worker->calledArchiveOrg)->toContain($url);
-    expect($this->worker->calledMicrolink)->toContain($url);
+    expect($calledArchiveOrg)->toContain($url);
+    expect($calledMicrolink)->toContain($url);
     
     // Check queue is empty
     $stmt = $db->query("SELECT * FROM archive_queue");
@@ -126,24 +95,27 @@ it('processes archive queue and saves to db', function () {
 });
 
 it('skips archiving if already archived within 24h unless force_archive is set', function () {
-    $db = \Indieinabox\Database::getDb();
-    
+    $db = Database::getDb();
     $url = 'https://example.com/post/2';
     $db->exec("INSERT INTO archived_links (url, timestamp, local_pdf_path, archive_org_url) VALUES ('$url', " . time() . ", null, null)");
     
+    $calledArchiveOrg = [];
+    $archiveOrgSender = function (string $u) use (&$calledArchiveOrg) {
+        $calledArchiveOrg[] = $u;
+    };
+    $urlResolver = fn(string $u) => $u;
+
+    $processor = new ArchiveProcessor($this->site, $db, $urlResolver, $archiveOrgSender);
+
     // Regular request (should skip)
     $db->exec("INSERT INTO archive_queue (url, requested_at, force_archive, status) VALUES ('$url', " . time() . ", 0, 'pending')");
-    
-    $this->worker->processArchiveQueue();
-    
-    expect($this->worker->calledArchiveOrg)->toBeEmpty();
+    $processor->process();
+    expect($calledArchiveOrg)->toBeEmpty();
     
     // Force request (should process)
     $db->exec("INSERT INTO archive_queue (url, requested_at, force_archive, status) VALUES ('$url', " . time() . ", 1, 'pending')");
-    
-    $this->worker->processArchiveQueue();
-    
-    expect($this->worker->calledArchiveOrg)->toContain($url);
+    $processor->process();
+    expect($calledArchiveOrg)->toContain($url);
 });
 
 it('cannot run concurrently due to flock', function () use ($funcTempDir) {
@@ -152,8 +124,9 @@ it('cannot run concurrently due to flock', function () use ($funcTempDir) {
     $fp = fopen($lockFile, 'w+');
     flock($fp, LOCK_EX | LOCK_NB);
     
+    $worker = new BackgroundWorker($this->site);
     ob_start();
-    $this->worker->runAll();
+    $worker->runAll();
     $output = ob_get_clean();
     
     expect($output)->toContain('Cron is already running.');
@@ -163,7 +136,7 @@ it('cannot run concurrently due to flock', function () use ($funcTempDir) {
 });
 
 it('downloads avatar locally for activitypub create', function () use ($funcTempDir) {
-    $db = \Indieinabox\Database::getDb();
+    $db = Database::getDb();
     
     $activity = [
         'type' => 'Create',
@@ -186,7 +159,7 @@ it('downloads avatar locally for activitypub create', function () use ($funcTemp
     
     $db->exec("INSERT INTO inbox_queue (type, payload_json, created_at) VALUES ('activitypub', '" . json_encode($payload) . "', " . time() . ")");
     
-    $this->worker->mockActorData = [
+    $mockActorData = [
         'name' => 'Remote User',
         'icon' => ['url' => 'https://remote.example.com/avatar.jpg'],
         'publicKey' => [
@@ -194,8 +167,17 @@ it('downloads avatar locally for activitypub create', function () use ($funcTemp
             'publicKeyPem' => 'dummy-pem'
         ]
     ];
-    
-    $this->worker->processInboxQueue();
+
+    $fetcher = function (string $url) {
+        if (str_contains($url, 'avatar')) {
+            return 'dummy image data';
+        }
+        return false;
+    };
+    $jsonFetcher = fn(string $url) => $mockActorData;
+
+    $processor = new InboxProcessor($this->site, $db, $fetcher, $jsonFetcher);
+    $processor->process();
     
     // Check if avatar was downloaded
     $avatarsDir = $funcTempDir . '/avatars/remote.example.com';
@@ -214,37 +196,39 @@ it('downloads avatar locally for activitypub create', function () use ($funcTemp
 });
 
 it('processes build_site queue correctly', function () use ($funcTempDir) {
-    $db = \Indieinabox\Database::getDb();
+    $db = Database::getDb();
     
     // Clear the html dir so we can verify if it creates a file
     $htmlDir = $funcTempDir . '/public_html';
-    if (!is_dir($htmlDir)) mkdir($htmlDir, 0777, true);
+    if (!is_dir($htmlDir)) {
+        mkdir($htmlDir, 0777, true);
+    }
     
     // Create a dummy content file to trigger an index build
     $contentDir = $funcTempDir . '/content/article/2026/06';
-    if (!is_dir($contentDir)) mkdir($contentDir, 0777, true);
+    if (!is_dir($contentDir)) {
+        mkdir($contentDir, 0777, true);
+    }
     file_put_contents($contentDir . '/test-build-bg.md', "---\ntitle: Test\n---\nHello");
     
     $db->exec("INSERT INTO inbox_queue (type, payload_json, created_at) VALUES ('build_site', '{}', " . time() . ")");
     
-    // We mock output capture because SiteBuilder produces output
+    $processor = new InboxProcessor($this->site, $db);
     ob_start();
-    $this->worker->processInboxQueue();
+    $processor->process();
     $output = ob_get_clean();
     
-    expect($output)->toContain('Rebuilding static site...');
-    expect($output)->toContain('Site rebuild completed.');
     expect($output)->toContain('Rebuilding static site...');
     expect($output)->toContain('Site rebuild completed.');
 });
 
 it('unwraps Lemmy Announce activities in inbox', function () use ($funcTempDir) {
-    $db = \Indieinabox\Database::getDb();
+    $db = Database::getDb();
     
     // Clear queue from previous tests
     $db->exec("DELETE FROM inbox_queue");
     // Clear inbox files from previous tests
-    \Indieinabox\Helper::recursiveRmdir($funcTempDir . '/microsub/inbox/inbox');
+    Helper::recursiveRmdir($funcTempDir . '/microsub/inbox/inbox');
     mkdir($funcTempDir . '/microsub/inbox/inbox', 0777, true);
 
     $activity = [
@@ -269,7 +253,7 @@ it('unwraps Lemmy Announce activities in inbox', function () use ($funcTempDir) 
     
     $db->exec("INSERT INTO inbox_queue (type, payload_json, created_at) VALUES ('activitypub', '" . json_encode($payload) . "', " . time() . ")");
     
-    $this->worker->mockActorData = [
+    $mockActorData = [
         'name' => 'Lumen Lemmy',
         'icon' => ['url' => 'https://lemmy.eco.br/avatar.jpg'],
         'publicKey' => [
@@ -277,8 +261,9 @@ it('unwraps Lemmy Announce activities in inbox', function () use ($funcTempDir) 
             'publicKeyPem' => 'dummy-pem'
         ]
     ];
-    
-    $this->worker->processInboxQueue();
+
+    $processor = new InboxProcessor($this->site, $db, null, fn($url) => $mockActorData);
+    $processor->process();
     
     // Check microsub inbox file
     $inboxDir = $funcTempDir . '/microsub/inbox/inbox';
@@ -291,7 +276,7 @@ it('unwraps Lemmy Announce activities in inbox', function () use ($funcTempDir) 
 });
 
 it('extracts BookWyrm properties from ActivityPub Create', function () use ($funcTempDir) {
-    $db = \Indieinabox\Database::getDb();
+    $db = Database::getDb();
     
     $activity = [
         'type' => 'Create',
@@ -318,12 +303,12 @@ it('extracts BookWyrm properties from ActivityPub Create', function () use ($fun
     // Clear queue from previous tests
     $db->exec("DELETE FROM inbox_queue");
     // Clear inbox files from previous tests
-    \Indieinabox\Helper::recursiveRmdir($funcTempDir . '/microsub/inbox/inbox');
+    Helper::recursiveRmdir($funcTempDir . '/microsub/inbox/inbox');
     mkdir($funcTempDir . '/microsub/inbox/inbox', 0777, true);
 
     $db->exec("INSERT INTO inbox_queue (type, payload_json, created_at) VALUES ('activitypub', '" . json_encode($payload) . "', " . time() . ")");
     
-    $this->worker->mockActorData = [
+    $mockActorData = [
         'name' => 'Reader',
         'icon' => ['url' => 'https://bookwyrm.social/avatar.jpg'],
         'publicKey' => [
@@ -331,8 +316,9 @@ it('extracts BookWyrm properties from ActivityPub Create', function () use ($fun
             'publicKeyPem' => 'dummy-pem'
         ]
     ];
-    
-    $this->worker->processInboxQueue();
+
+    $processor = new InboxProcessor($this->site, $db, null, fn($url) => $mockActorData);
+    $processor->process();
     
     $inboxDir = $funcTempDir . '/microsub/inbox/inbox';
     $inboxFiles = glob($inboxDir . '/*.md');

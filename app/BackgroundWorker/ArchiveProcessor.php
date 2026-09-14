@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Indieinabox\BackgroundWorker;
 
-use Indieinabox\Site;
 use Indieinabox\Database;
+use Indieinabox\Site;
 use PDO;
 
 /**
@@ -19,20 +19,44 @@ class ArchiveProcessor
     private Site $site;
     private PDO $db;
     /**
-     * @var array<string, callable>
+     * @var callable|null
      */
-    private array $callbacks;
+    private $urlResolver;
+    /**
+     * @var callable|null
+     */
+    private $archiveOrgSender;
+    /**
+     * @var callable|null
+     */
+    private $pdfFetcher;
+    /**
+     * @var callable|null
+     */
+    private $fetcher;
 
     /**
      * @param Site $site
      * @param PDO $db
-     * @param array<string, callable> $callbacks
+     * @param callable|null $urlResolver Optional hook fn(string $url): string
+     * @param callable|null $archiveOrgSender Optional hook fn(string $url): void
+     * @param callable|null $pdfFetcher Optional hook fn(string $url, string $normUrl, string $pdfDir): ?string
+     * @param callable|null $fetcher Optional hook fn(string $url): string|false
      */
-    public function __construct(Site $site, PDO $db, array $callbacks = [])
-    {
+    public function __construct(
+        Site $site,
+        PDO $db,
+        ?callable $urlResolver = null,
+        ?callable $archiveOrgSender = null,
+        ?callable $pdfFetcher = null,
+        ?callable $fetcher = null
+    ) {
         $this->site = $site;
         $this->db = $db;
-        $this->callbacks = $callbacks;
+        $this->urlResolver = $urlResolver;
+        $this->archiveOrgSender = $archiveOrgSender;
+        $this->pdfFetcher = $pdfFetcher;
+        $this->fetcher = $fetcher;
     }
 
     /**
@@ -126,8 +150,8 @@ class ArchiveProcessor
      */
     public function resolveFinalUrl(string $url): string
     {
-        if (isset($this->callbacks['resolveFinalUrl'])) {
-            return ($this->callbacks['resolveFinalUrl'])($url);
+        if ($this->urlResolver !== null) {
+            return ($this->urlResolver)($url);
         }
 
         $ch = curl_init($url);
@@ -139,36 +163,40 @@ class ArchiveProcessor
         curl_setopt($ch, CURLOPT_TIMEOUT, 5);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+        curl_setopt($ch, CURLOPT_USERAGENT, 'Indieinabox ArchiveBot/1.0 (+https://indieinabox.org)');
         curl_exec($ch);
         $finalUrl = curl_getinfo($ch, CURLINFO_EFFECTIVE_URL);
         curl_close($ch);
-        return is_string($finalUrl) && $finalUrl !== '' ? $finalUrl : $url;
+
+        return $finalUrl ?: $url;
     }
 
     /**
-     * Submits a URL to the Wayback Machine.
+     * Submits a URL to the Wayback Machine save endpoint.
      *
      * @param string $url
      * @return void
      */
     public function sendToArchiveOrg(string $url): void
     {
-        if (isset($this->callbacks['sendToArchiveOrg'])) {
-            ($this->callbacks['sendToArchiveOrg'])($url);
+        if ($this->archiveOrgSender !== null) {
+            ($this->archiveOrgSender)($url);
             return;
         }
 
-        $archiveOrgUrl = "https://web.archive.org/save/" . $url;
-        $ch = curl_init($archiveOrgUrl);
+        $saveEndpoint = 'https://web.archive.org/save/' . $url;
+        $ch = curl_init($saveEndpoint);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 5);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, ['User-Agent: Indieinabox WebArchiver']);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 15);
+        curl_setopt($ch, CURLOPT_USERAGENT, 'Indieinabox ArchiveBot/1.0 (+https://indieinabox.org)');
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
         curl_exec($ch);
         curl_close($ch);
     }
 
     /**
-     * Generates and downloads a PDF snapshot of a URL via Microlink API.
+     * Fetches a PDF snapshot from the Microlink API.
      *
      * @param string $url
      * @param string $normUrl
@@ -177,64 +205,56 @@ class ArchiveProcessor
      */
     public function fetchPdfFromMicrolink(string $url, string $normUrl, string $pdfDir): ?string
     {
-        if (isset($this->callbacks['fetchPdfFromMicrolink'])) {
-            return ($this->callbacks['fetchPdfFromMicrolink'])($url, $normUrl, $pdfDir);
+        if ($this->pdfFetcher !== null) {
+            return ($this->pdfFetcher)($url, $normUrl, $pdfDir);
         }
 
-        $pdfApiUrl = "https://api.microlink.io/?url=" . urlencode($url) . "&pdf=true&meta=false";
-        $pdfData = $this->fetchJsonUrl($pdfApiUrl);
+        $apiUrl = 'https://api.microlink.io?url=' . urlencode($url) . '&pdf=true';
+        $ch = curl_init($apiUrl);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+        $res = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
 
-        if ($pdfData && isset($pdfData['data']['pdf']['url'])) {
-            $pdfDownloadUrl = (string) $pdfData['data']['pdf']['url'];
-            $pdfBytes = $this->fetchUrl($pdfDownloadUrl);
-            if ($pdfBytes !== false && !empty($pdfBytes)) {
-                $filename = md5($normUrl . time()) . '.pdf';
-                $filepath = $pdfDir . DIRECTORY_SEPARATOR . $filename;
-                file_put_contents($filepath, $pdfBytes);
-                return '/data/archives/' . $filename;
+        if ($httpCode >= 200 && $httpCode < 300 && $res) {
+            $data = json_decode($res, true);
+            $pdfRemoteUrl = $data['data']['pdf']['url'] ?? null;
+            if ($pdfRemoteUrl) {
+                $pdfData = $this->fetchUrl($pdfRemoteUrl);
+                if ($pdfData) {
+                    $filename = md5($normUrl . time()) . '.pdf';
+                    $filepath = $pdfDir . DIRECTORY_SEPARATOR . $filename;
+                    if (file_put_contents($filepath, $pdfData) !== false) {
+                        return '/data/archives/' . $filename;
+                    }
+                }
             }
         }
         return null;
     }
 
     /**
-     * Fetches JSON array from URL.
-     *
-     * @param string $url
-     * @return array<string, mixed>|null
-     */
-    protected function fetchJsonUrl(string $url): ?array
-    {
-        if (isset($this->callbacks['fetchJsonUrl'])) {
-            return ($this->callbacks['fetchJsonUrl'])($url);
-        }
-
-        $body = $this->fetchUrl($url);
-        if ($body !== false && !empty($body)) {
-            $decoded = json_decode((string) $body, true);
-            return is_array($decoded) ? $decoded : null;
-        }
-        return null;
-    }
-
-    /**
-     * Fetches raw URL content.
+     * Fetches remote content over HTTP.
      *
      * @param string $url
      * @return string|false
      */
-    protected function fetchUrl(string $url): string|false
+    public function fetchUrl(string $url)
     {
-        if (isset($this->callbacks['fetchUrl'])) {
-            return ($this->callbacks['fetchUrl'])($url);
+        if ($this->fetcher !== null) {
+            return ($this->fetcher)($url);
         }
 
-        $ctx = stream_context_create([
-            'http' => [
-                'timeout' => 10,
-                'header' => "User-Agent: Indieinabox WebArchiver\r\n"
-            ]
-        ]);
-        return @file_get_contents($url, false, $ctx);
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+        $res = curl_exec($ch);
+        curl_close($ch);
+        return $res;
     }
 }

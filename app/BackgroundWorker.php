@@ -78,9 +78,7 @@ class BackgroundWorker
      */
     public function processWebmentionDiscovery(): void
     {
-        $discovery = new WebmentionDiscovery($this->site, $this->db, [
-            'fetchUrl' => fn(string $url) => $this->fetchUrl($url),
-        ]);
+        $discovery = new WebmentionDiscovery($this->site, $this->db);
         $discovery->process();
     }
 
@@ -171,7 +169,7 @@ class BackgroundWorker
      */
     public function processInboxQueue(): void
     {
-        $processor = new InboxProcessor($this->site, $this->db, $this->getInboxCallbacks());
+        $processor = new InboxProcessor($this->site, $this->db);
         $processor->process();
     }
 
@@ -206,172 +204,7 @@ class BackgroundWorker
      */
     public function processArchiveQueue(): void
     {
-        $processor = new ArchiveProcessor($this->site, $this->db, $this->getArchiveCallbacks());
+        $processor = new ArchiveProcessor($this->site, $this->db);
         $processor->process();
-    }
-
-    /**
-     * @return array<string, callable>
-     */
-    protected function getInboxCallbacks(): array
-    {
-        return [
-            'fetchUrl' => fn(string $url) => $this->fetchUrl($url),
-            'fetchJsonUrl' => fn(string $url): ?array => $this->fetchJsonUrl($url),
-            'verifySignature' => fn(array $headers, string $method, string $path, string $pubKey): bool => $this->verifySignature($headers, $method, $path, $pubKey),
-        ];
-    }
-
-    /**
-     * @return array<string, callable>
-     */
-    protected function getArchiveCallbacks(): array
-    {
-        return [
-            'resolveFinalUrl' => fn(string $url): string => $this->resolveFinalUrl($url),
-            'sendToArchiveOrg' => fn(string $url) => $this->sendToArchiveOrg($url),
-            'fetchPdfFromMicrolink' => fn(string $url, string $normUrl, string $pdfDir): ?string => $this->fetchPdfFromMicrolink($url, $normUrl, $pdfDir),
-            'fetchUrl' => fn(string $url) => $this->fetchUrl($url),
-        ];
-    }
-
-    /**
-     * Verifies HTTP signature.
-     *
-     * @param array $headers
-     * @param string $method
-     * @param string $path
-     * @param string $pubKey
-     * @return bool
-     */
-    protected function verifySignature(array $headers, string $method, string $path, string $pubKey): bool
-    {
-        // We skip verification for now if the library throws. In real env it would be:
-        if (class_exists('HttpSignature')) {
-            return HttpSignature::verify($headers, $method, $path, $pubKey);
-        }
-        return true;
-    }
-
-    /**
-     * Fetches a URL and decodes the JSON response.
-     *
-     * @param string $url The URL to fetch.
-     * @return array|null The decoded JSON array, or null on failure.
-     */
-    protected function fetchJsonUrl(string $url): ?array
-    {
-        $ch = curl_init($url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, ['Accept: application/activity+json, application/json']);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 10);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-        $res = curl_exec($ch);
-        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        curl_close($ch);
-
-        if ($httpCode >= 200 && $httpCode < 300 && $res) {
-            return json_decode($res, true);
-        }
-        return null;
-    }
-
-    /**
-     * Fetches remote content over HTTP.
-     *
-     * @param string $url
-     * @return string|false
-     */
-    protected function fetchUrl(string $url)
-    {
-        $ch = curl_init($url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, ['User-Agent: Indieinabox BackgroundWorker']);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 10);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-        $res = curl_exec($ch);
-        curl_close($ch);
-        return $res;
-    }
-
-    /**
-     * Follows redirects to determine the canonical destination URL.
-     *
-     * @param string $url
-     * @return string
-     */
-    protected function resolveFinalUrl(string $url): string
-    {
-        $ch = curl_init($url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-        curl_setopt($ch, CURLOPT_NOBODY, true);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 10);
-        curl_setopt($ch, CURLOPT_USERAGENT, 'Indieinabox ArchiveBot/1.0 (+https://indieinabox.org)');
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-        curl_exec($ch);
-        $finalUrl = curl_getinfo($ch, CURLINFO_EFFECTIVE_URL);
-        curl_close($ch);
-
-        return $finalUrl ?: $url;
-    }
-
-    /**
-     * Submits a URL to the Wayback Machine save endpoint.
-     *
-     * @param string $url
-     * @return void
-     */
-    protected function sendToArchiveOrg(string $url): void
-    {
-        $saveEndpoint = 'https://web.archive.org/save/' . $url;
-        $ch = curl_init($saveEndpoint);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 15);
-        curl_setopt($ch, CURLOPT_USERAGENT, 'Indieinabox ArchiveBot/1.0 (+https://indieinabox.org)');
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-        curl_exec($ch);
-        curl_close($ch);
-    }
-
-    /**
-     * Fetches a PDF snapshot from the Microlink API.
-     *
-     * @param string $url
-     * @param string $normUrl
-     * @param string $pdfDir
-     * @return string|null
-     */
-    protected function fetchPdfFromMicrolink(string $url, string $normUrl, string $pdfDir): ?string
-    {
-        $apiUrl = 'https://api.microlink.io?url=' . urlencode($url) . '&pdf=true';
-        $ch = curl_init($apiUrl);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 30);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-        $res = curl_exec($ch);
-        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        curl_close($ch);
-
-        if ($httpCode >= 200 && $httpCode < 300 && $res) {
-            $data = json_decode($res, true);
-            $pdfRemoteUrl = $data['data']['pdf']['url'] ?? null;
-            if ($pdfRemoteUrl) {
-                $pdfData = $this->fetchUrl($pdfRemoteUrl);
-                if ($pdfData) {
-                    $filename = md5($normUrl . time()) . '.pdf';
-                    $filepath = $pdfDir . DIRECTORY_SEPARATOR . $filename;
-                    if (file_put_contents($filepath, $pdfData) !== false) {
-                        return '/data/archives/' . $filename;
-                    }
-                }
-            }
-        }
-        return null;
     }
 }

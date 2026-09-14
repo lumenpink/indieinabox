@@ -38,24 +38,19 @@ test('ArchiveProcessor exits cleanly on empty queue', function () {
 });
 
 test('ArchiveProcessor processes pending item and triggers callbacks', function () {
-    $calledArchiveOrg = [];
-    $calledMicrolink = [];
-
-    $callbacks = [
-        'resolveFinalUrl' => fn(string $url): string => $url . '/canonical',
-        'sendToArchiveOrg' => function (string $url) use (&$calledArchiveOrg) {
-            $calledArchiveOrg[] = $url;
-        },
-        'fetchPdfFromMicrolink' => function (string $url, string $normUrl, string $pdfDir) use (&$calledMicrolink): ?string {
-            $calledMicrolink[] = $url;
-            return '/data/archives/test.pdf';
-        },
-    ];
+    $urlResolver = fn(string $url): string => $url . '/canonical';
+    $archiveOrgSender = function (string $url) use (&$calledArchiveOrg) {
+        $calledArchiveOrg[] = $url;
+    };
+    $pdfFetcher = function (string $url, string $normUrl, string $pdfDir) use (&$calledMicrolink): ?string {
+        $calledMicrolink[] = $url;
+        return '/data/archives/test.pdf';
+    };
 
     $this->db->prepare("INSERT INTO archive_queue (url, requested_at, force_archive, status) VALUES (?, ?, 0, 'pending')")
         ->execute(['https://example.org/article', time()]);
 
-    $processor = new ArchiveProcessor($this->site, $this->db, $callbacks);
+    $processor = new ArchiveProcessor($this->site, $this->db, $urlResolver, $archiveOrgSender, $pdfFetcher);
     ob_start();
     $processor->process();
     $output = ob_get_clean();
@@ -77,11 +72,9 @@ test('ArchiveProcessor processes pending item and triggers callbacks', function 
 
 test('ArchiveProcessor skips archiving if archived within 24h without force flag', function () {
     $calledArchiveOrg = [];
-    $callbacks = [
-        'sendToArchiveOrg' => function (string $url) use (&$calledArchiveOrg) {
-            $calledArchiveOrg[] = $url;
-        },
-    ];
+    $archiveOrgSender = function (string $url) use (&$calledArchiveOrg) {
+        $calledArchiveOrg[] = $url;
+    };
 
     // Seed archived_links
     $this->db->prepare("INSERT INTO archived_links (url, timestamp, local_pdf_path, archive_org_url) VALUES (?, ?, null, null)")
@@ -91,7 +84,7 @@ test('ArchiveProcessor skips archiving if archived within 24h without force flag
     $this->db->prepare("INSERT INTO archive_queue (url, requested_at, force_archive, status) VALUES (?, ?, 0, 'pending')")
         ->execute(['https://example.org/cached', time()]);
 
-    $processor = new ArchiveProcessor($this->site, $this->db, $callbacks);
+    $processor = new ArchiveProcessor($this->site, $this->db, null, $archiveOrgSender);
     ob_start();
     $processor->process();
     $output = ob_get_clean();

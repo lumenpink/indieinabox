@@ -12,18 +12,18 @@ if they support receiving Webmentions.
 
 ### `private PDO $db`
 
-### `private array $callbacks`
+### `private mixed $fetcher`
 
-@var array<string, callable>
+@var callable|null
 
 ## Methods
 
 ### __construct()
-`public function __construct(Indieinabox\Site $site, PDO $db, array $callbacks = [])`
+`public function __construct(Indieinabox\Site $site, PDO $db, ?callable $fetcher = null)`
 
 @param Site $site
 @param PDO $db
-@param array<string, callable> $callbacks Optional HTTP fetcher hooks
+@param callable|null $fetcher Optional HTTP fetcher hook fn(string $url): string|false
 
 ### process()
 `public function process(): void`
@@ -33,9 +33,9 @@ Discovers Webmention support for queued domains.
 @return void
 
 ### fetchUrl()
-`protected function fetchUrl(string $url): string|false`
+`public function fetchUrl(string $url)`
 
-Fetches URL content using callback or standard stream context.
+Fetches remote content over HTTP.
 
 @param string $url
 @return string|false

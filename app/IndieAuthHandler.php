@@ -57,17 +57,13 @@ class IndieAuthHandler
         }
 
         // Route: Token Endpoint
-        $isTokenParam = isset($_GET['token']);
-        $isTokenPath = (preg_match('#/token$#i', $requestUriClean) === 1);
-        if ($isTokenParam || $isTokenPath) {
+        if (preg_match('#/token$#i', $requestUriClean) === 1) {
             $this->handleTokenRequest();
             return;
         }
 
         // Route: Authorization Endpoint
-        $isAuthParam = isset($_GET['auth']);
-        $isAuthPath = (preg_match('#/auth$#i', $requestUriClean) === 1);
-        if ($isAuthParam || $isAuthPath) {
+        if (preg_match('#/auth$#i', $requestUriClean) === 1) {
             $this->handleAuthRequest();
             return;
         }

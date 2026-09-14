@@ -181,15 +181,7 @@ class WebRouter
                 return;
             }
         }
-
-        // Backward compatibility for old config route
-        $isConfigParam = isset($_GET['config']);
-        $isConfigPath = (preg_match('#^/config$#i', $requestUriClean) === 1);
-        if ($isConfigParam || $isConfigPath) {
-            header('Location: /admin/config');
-            exit;
-        }
-
+ 
         $this->serveStatic();
     }
 

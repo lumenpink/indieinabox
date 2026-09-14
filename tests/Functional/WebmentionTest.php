@@ -15,14 +15,6 @@ class MockWebmentionHandler extends \Indieinabox\WebmentionHandler
     }
 }
 
-class MockBackgroundWorker extends \Indieinabox\BackgroundWorker
-{
-    protected function fetchUrl(string $url)
-    {
-        return MockWebmentionHandler::$mockResponses[$url] ?? parent::fetchUrl($url);
-    }
-}
-
 class TestWebRouter extends \Indieinabox\WebRouter
 {
     protected function createWebmentionHandler(): \Indieinabox\WebmentionHandler
@@ -268,9 +260,9 @@ HTML;
     expect($json['status'])->toBe(202)
         ->and($json['message'])->toContain('Webmention accepted and queued for processing');
 
-    // Run BackgroundWorker to process the queued payload
-    $worker = new MockBackgroundWorker($site);
-    $worker->processInboxQueue();
+    // Run InboxProcessor to process the queued payload
+    $processor = new \Indieinabox\BackgroundWorker\InboxProcessor($site, \Indieinabox\Database::getDb(), fn($url) => MockWebmentionHandler::$mockResponses[$url] ?? false);
+    $processor->process();
 
     // Assert webmention was saved to markdown file
     $expectedHash = md5('about');
@@ -317,8 +309,8 @@ function setupWebmentionTest(string $funcTempDir, string $sourceHtml): array
     $router->handleRequest();
     ob_get_clean();
 
-    $worker = new MockBackgroundWorker($site);
-    $worker->processInboxQueue();
+    $processor = new \Indieinabox\BackgroundWorker\InboxProcessor($site, \Indieinabox\Database::getDb(), fn($url) => MockWebmentionHandler::$mockResponses[$url] ?? false);
+    $processor->process();
 
     $expectedHash = md5('about');
     $mdFile = $funcTempDir . '/data/microsub/inbox/notifications/' . $expectedHash . '_' . md5($_POST['source']) . '.md';

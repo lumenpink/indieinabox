@@ -12,18 +12,33 @@ and generating local PDF snapshots via the Microlink API.
 
 ### `private PDO $db`
 
-### `private array $callbacks`
+### `private mixed $urlResolver`
 
-@var array<string, callable>
+@var callable|null
+
+### `private mixed $archiveOrgSender`
+
+@var callable|null
+
+### `private mixed $pdfFetcher`
+
+@var callable|null
+
+### `private mixed $fetcher`
+
+@var callable|null
 
 ## Methods
 
 ### __construct()
-`public function __construct(Indieinabox\Site $site, PDO $db, array $callbacks = [])`
+`public function __construct(Indieinabox\Site $site, PDO $db, ?callable $urlResolver = null, ?callable $archiveOrgSender = null, ?callable $pdfFetcher = null, ?callable $fetcher = null)`
 
 @param Site $site
 @param PDO $db
-@param array<string, callable> $callbacks
+@param callable|null $urlResolver Optional hook fn(string $url): string
+@param callable|null $archiveOrgSender Optional hook fn(string $url): void
+@param callable|null $pdfFetcher Optional hook fn(string $url, string $normUrl, string $pdfDir): ?string
+@param callable|null $fetcher Optional hook fn(string $url): string|false
 
 ### process()
 `public function process(): void`
@@ -43,7 +58,7 @@ Resolves final destination URL following HTTP redirects.
 ### sendToArchiveOrg()
 `public function sendToArchiveOrg(string $url): void`
 
-Submits a URL to the Wayback Machine.
+Submits a URL to the Wayback Machine save endpoint.
 
 @param string $url
 @return void
@@ -51,25 +66,17 @@ Submits a URL to the Wayback Machine.
 ### fetchPdfFromMicrolink()
 `public function fetchPdfFromMicrolink(string $url, string $normUrl, string $pdfDir): ?string`
 
-Generates and downloads a PDF snapshot of a URL via Microlink API.
+Fetches a PDF snapshot from the Microlink API.
 
 @param string $url
 @param string $normUrl
 @param string $pdfDir
 @return string|null
 
-### fetchJsonUrl()
-`protected function fetchJsonUrl(string $url): ?array`
-
-Fetches JSON array from URL.
-
-@param string $url
-@return array<string, mixed>|null
-
 ### fetchUrl()
-`protected function fetchUrl(string $url): string|false`
+`public function fetchUrl(string $url)`
 
-Fetches raw URL content.
+Fetches remote content over HTTP.
 
 @param string $url
 @return string|false

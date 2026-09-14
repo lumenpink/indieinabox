@@ -18,20 +18,20 @@ class WebmentionDiscovery
     private Site $site;
     private PDO $db;
     /**
-     * @var array<string, callable>
+     * @var callable|null
      */
-    private array $callbacks;
+    private $fetcher;
 
     /**
      * @param Site $site
      * @param PDO $db
-     * @param array<string, callable> $callbacks Optional HTTP fetcher hooks
+     * @param callable|null $fetcher Optional HTTP fetcher hook fn(string $url): string|false
      */
-    public function __construct(Site $site, PDO $db, array $callbacks = [])
+    public function __construct(Site $site, PDO $db, ?callable $fetcher = null)
     {
         $this->site = $site;
         $this->db = $db;
-        $this->callbacks = $callbacks;
+        $this->fetcher = $fetcher;
     }
 
     /**
@@ -67,9 +67,9 @@ class WebmentionDiscovery
             $supports = 0;
             $html = $this->fetchUrl($url);
 
-            if ($html !== false && !empty($html)) {
-                // Check headers first (if available in global $http_response_header)
-                $headers = $GLOBALS['http_response_header'] ?? [];
+            if ($html) {
+                // Check headers first (if we had access to $http_response_header)
+                $headers = $http_response_header ?? [];
                 foreach ($headers as $header) {
                     if (stripos($header, 'rel="webmention"') !== false || stripos($header, 'rel=webmention') !== false) {
                         $supports = 1;
@@ -90,23 +90,28 @@ class WebmentionDiscovery
     }
 
     /**
-     * Fetches URL content using callback or standard stream context.
+     * Fetches remote content over HTTP.
      *
      * @param string $url
      * @return string|false
      */
-    protected function fetchUrl(string $url): string|false
+    public function fetchUrl(string $url)
     {
-        if (isset($this->callbacks['fetchUrl'])) {
-            return ($this->callbacks['fetchUrl'])($url);
+        if ($this->fetcher !== null) {
+            return ($this->fetcher)($url);
         }
 
-        $ctx = stream_context_create([
-            'http' => [
-                'timeout' => 5,
-                'header' => "User-Agent: Indieinabox Webmention Discovery\r\n"
-            ]
-        ]);
-        return @file_get_contents($url, false, $ctx);
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HEADER, true);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        curl_setopt($ch, CURLOPT_MAXREDIRS, 3);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+        curl_setopt($ch, CURLOPT_USERAGENT, 'Indieinabox WebmentionDiscovery/1.0');
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+        $res = curl_exec($ch);
+        curl_close($ch);
+        return $res;
     }
 }

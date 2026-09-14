@@ -40,19 +40,14 @@ class WebmentionDiscoveryFunctionalTest extends TestCase
         $stmt = $db->prepare("INSERT INTO webmention_discovery_cache (domain, supports_webmention, last_checked) VALUES ('localhost', 0, 0)");
         $stmt->execute();
 
-        // Create a minimal Site mock (if needed by BackgroundWorker)
+        // Create a minimal Site mock
         $site = new Site();
 
-        $worker = new class($site) extends BackgroundWorker {
-            protected function fetchUrl(string $url)
-            {
-                return false;
-            }
-        };
+        $discovery = new \Indieinabox\BackgroundWorker\WebmentionDiscovery($site, $db, fn(string $url) => false);
         
         // Capture output to prevent clutter
         ob_start();
-        $worker->processWebmentionDiscovery();
+        $discovery->process();
         $output = ob_get_clean();
 
         $this->assertStringContainsString('Checking https://localhost/', $output);

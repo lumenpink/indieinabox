@@ -43,7 +43,7 @@ test('WebmentionDiscovery updates cache with discovery result via link tag', fun
         return '<html><head><link rel="webmention" href="https://blog.example.com/endpoint"></head><body>Hello</body></html>';
     };
 
-    $discovery = new WebmentionDiscovery($this->site, $this->db, ['fetchUrl' => $fetchMock]);
+    $discovery = new WebmentionDiscovery($this->site, $this->db, $fetchMock);
     ob_start();
     $discovery->process();
     $output = ob_get_clean();
@@ -66,7 +66,7 @@ test('WebmentionDiscovery marks domain as 0 when webmention link not found', fun
         return '<html><head></head><body>No endpoint here</body></html>';
     };
 
-    $discovery = new WebmentionDiscovery($this->site, $this->db, ['fetchUrl' => $fetchMock]);
+    $discovery = new WebmentionDiscovery($this->site, $this->db, $fetchMock);
     ob_start();
     $discovery->process();
     $output = ob_get_clean();

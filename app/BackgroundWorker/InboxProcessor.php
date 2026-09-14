@@ -23,20 +23,37 @@ class InboxProcessor
     private Site $site;
     private PDO $db;
     /**
-     * @var array<string, callable>
+     * @var callable|null
      */
-    private array $callbacks;
+    private $fetcher;
+    /**
+     * @var callable|null
+     */
+    private $jsonFetcher;
+    /**
+     * @var callable|null
+     */
+    private $signatureVerifier;
 
     /**
      * @param Site $site
      * @param PDO $db
-     * @param array<string, callable> $callbacks Optional HTTP fetcher hooks
+     * @param callable|null $fetcher Optional HTTP fetcher hook fn(string $url): string|false
+     * @param callable|null $jsonFetcher Optional JSON fetcher hook fn(string $url): ?array
+     * @param callable|null $signatureVerifier Optional HTTP signature verifier hook
      */
-    public function __construct(Site $site, PDO $db, array $callbacks = [])
-    {
+    public function __construct(
+        Site $site,
+        PDO $db,
+        ?callable $fetcher = null,
+        ?callable $jsonFetcher = null,
+        ?callable $signatureVerifier = null
+    ) {
         $this->site = $site;
         $this->db = $db;
-        $this->callbacks = $callbacks;
+        $this->fetcher = $fetcher;
+        $this->jsonFetcher = $jsonFetcher;
+        $this->signatureVerifier = $signatureVerifier;
     }
 
     /**
@@ -550,8 +567,8 @@ class InboxProcessor
      */
     public function verifySignature(array $headers, string $method, string $path, string $pubKey): bool
     {
-        if (isset($this->callbacks['verifySignature']) && is_callable($this->callbacks['verifySignature'])) {
-            return (bool) ($this->callbacks['verifySignature'])($headers, $method, $path, $pubKey);
+        if ($this->signatureVerifier !== null) {
+            return (bool) ($this->signatureVerifier)($headers, $method, $path, $pubKey);
         }
 
         // We skip verification for now if the library throws. In real env it would be:
@@ -611,8 +628,8 @@ class InboxProcessor
      */
     public function fetchJsonUrl(string $url): ?array
     {
-        if (isset($this->callbacks['fetchJsonUrl']) && is_callable($this->callbacks['fetchJsonUrl'])) {
-            return ($this->callbacks['fetchJsonUrl'])($url);
+        if ($this->jsonFetcher !== null) {
+            return ($this->jsonFetcher)($url);
         }
 
         $ch = curl_init($url);
@@ -639,8 +656,8 @@ class InboxProcessor
      */
     public function fetchUrl(string $url)
     {
-        if (isset($this->callbacks['fetchUrl']) && is_callable($this->callbacks['fetchUrl'])) {
-            return ($this->callbacks['fetchUrl'])($url);
+        if ($this->fetcher !== null) {
+            return ($this->fetcher)($url);
         }
 
         $ch = curl_init($url);

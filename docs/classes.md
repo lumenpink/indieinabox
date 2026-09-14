@@ -307,7 +307,7 @@ Provides modular asynchronous task processing, queue handling, federation dispat
 ### 1. `BackgroundWorker` (`Indieinabox\BackgroundWorker`)
 High-level task runner and orchestrator:
 - `runAll()`: Acquires non-blocking file lock (`cron.lock`) and runs all background processors in sequence (Inbox, Outbox, Outgoing Webmentions, Archives, Twtxt feeds, Backups, Webmention Discovery, Updates).
-- Provides backward-compatible hook methods (`fetchUrl`, `fetchJsonUrl`, `resolveFinalUrl`, `sendToArchiveOrg`, `fetchPdfFromMicrolink`, `verifySignature`) delegating callbacks to modular worker services.
+- Pure orchestrator delegating directly to modular service classes (`InboxProcessor`, `OutboxDispatcher`, `OutgoingWebmentionDispatcher`, `ArchiveProcessor`, `WebmentionDiscovery`).
 
 ### 2. `InboxProcessor` (`Indieinabox\BackgroundWorker\InboxProcessor`)
 Processes inbound queue tasks (`inbox_queue`):

@@ -118,14 +118,23 @@ and generating local PDF snapshots via the Microlink API.</p>
 <h2>Properties</h2>
 <h3><code>private Indieinabox\Site $site</code></h3>
 <h3><code>private PDO $db</code></h3>
-<h3><code>private array $callbacks</code></h3>
-<p>@var array<string, callable></p>
+<h3><code>private mixed $urlResolver</code></h3>
+<p>@var callable|null</p>
+<h3><code>private mixed $archiveOrgSender</code></h3>
+<p>@var callable|null</p>
+<h3><code>private mixed $pdfFetcher</code></h3>
+<p>@var callable|null</p>
+<h3><code>private mixed $fetcher</code></h3>
+<p>@var callable|null</p>
 <h2>Methods</h2>
 <h3><em></em>construct()</h3>
-<p><code>public function __construct(Indieinabox\Site $site, PDO $db, array $callbacks = [])</code></p>
+<p><code>public function __construct(Indieinabox\Site $site, PDO $db, ?callable $urlResolver = null, ?callable $archiveOrgSender = null, ?callable $pdfFetcher = null, ?callable $fetcher = null)</code></p>
 <p>@param Site $site<br />
 @param PDO $db<br />
-@param array<string, callable> $callbacks</p>
+@param callable|null $urlResolver Optional hook fn(string $url): string<br />
+@param callable|null $archiveOrgSender Optional hook fn(string $url): void<br />
+@param callable|null $pdfFetcher Optional hook fn(string $url, string $normUrl, string $pdfDir): ?string<br />
+@param callable|null $fetcher Optional hook fn(string $url): string|false</p>
 <h3>process()</h3>
 <p><code>public function process(): void</code></p>
 <p>Processes the archive queue.</p>
@@ -137,24 +146,19 @@ and generating local PDF snapshots via the Microlink API.</p>
 @return string</p>
 <h3>sendToArchiveOrg()</h3>
 <p><code>public function sendToArchiveOrg(string $url): void</code></p>
-<p>Submits a URL to the Wayback Machine.</p>
+<p>Submits a URL to the Wayback Machine save endpoint.</p>
 <p>@param string $url<br />
 @return void</p>
 <h3>fetchPdfFromMicrolink()</h3>
 <p><code>public function fetchPdfFromMicrolink(string $url, string $normUrl, string $pdfDir): ?string</code></p>
-<p>Generates and downloads a PDF snapshot of a URL via Microlink API.</p>
+<p>Fetches a PDF snapshot from the Microlink API.</p>
 <p>@param string $url<br />
 @param string $normUrl<br />
 @param string $pdfDir<br />
 @return string|null</p>
-<h3>fetchJsonUrl()</h3>
-<p><code>protected function fetchJsonUrl(string $url): ?array</code></p>
-<p>Fetches JSON array from URL.</p>
-<p>@param string $url<br />
-@return array<string, mixed>|null</p>
 <h3>fetchUrl()</h3>
-<p><code>protected function fetchUrl(string $url): string|false</code></p>
-<p>Fetches raw URL content.</p>
+<p><code>public function fetchUrl(string $url)</code></p>
+<p>Fetches remote content over HTTP.</p>
 <p>@param string $url<br />
 @return string|false</p>
 

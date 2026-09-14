@@ -12,18 +12,28 @@ and site build events.
 
 ### `private PDO $db`
 
-### `private array $callbacks`
+### `private mixed $fetcher`
 
-@var array<string, callable>
+@var callable|null
+
+### `private mixed $jsonFetcher`
+
+@var callable|null
+
+### `private mixed $signatureVerifier`
+
+@var callable|null
 
 ## Methods
 
 ### __construct()
-`public function __construct(Indieinabox\Site $site, PDO $db, array $callbacks = [])`
+`public function __construct(Indieinabox\Site $site, PDO $db, ?callable $fetcher = null, ?callable $jsonFetcher = null, ?callable $signatureVerifier = null)`
 
 @param Site $site
 @param PDO $db
-@param array<string, callable> $callbacks Optional HTTP fetcher hooks
+@param callable|null $fetcher Optional HTTP fetcher hook fn(string $url): string|false
+@param callable|null $jsonFetcher Optional JSON fetcher hook fn(string $url): ?array
+@param callable|null $signatureVerifier Optional HTTP signature verifier hook
 
 ### process()
 `public function process(): void`

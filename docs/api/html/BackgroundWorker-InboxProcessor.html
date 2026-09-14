@@ -118,14 +118,20 @@ and site build events.</p>
 <h2>Properties</h2>
 <h3><code>private Indieinabox\Site $site</code></h3>
 <h3><code>private PDO $db</code></h3>
-<h3><code>private array $callbacks</code></h3>
-<p>@var array<string, callable></p>
+<h3><code>private mixed $fetcher</code></h3>
+<p>@var callable|null</p>
+<h3><code>private mixed $jsonFetcher</code></h3>
+<p>@var callable|null</p>
+<h3><code>private mixed $signatureVerifier</code></h3>
+<p>@var callable|null</p>
 <h2>Methods</h2>
 <h3><em></em>construct()</h3>
-<p><code>public function __construct(Indieinabox\Site $site, PDO $db, array $callbacks = [])</code></p>
+<p><code>public function __construct(Indieinabox\Site $site, PDO $db, ?callable $fetcher = null, ?callable $jsonFetcher = null, ?callable $signatureVerifier = null)</code></p>
 <p>@param Site $site<br />
 @param PDO $db<br />
-@param array<string, callable> $callbacks Optional HTTP fetcher hooks</p>
+@param callable|null $fetcher Optional HTTP fetcher hook fn(string $url): string|false<br />
+@param callable|null $jsonFetcher Optional JSON fetcher hook fn(string $url): ?array<br />
+@param callable|null $signatureVerifier Optional HTTP signature verifier hook</p>
 <h3>process()</h3>
 <p><code>public function process(): void</code></p>
 <p>Processes pending items in the inbox queue.</p>

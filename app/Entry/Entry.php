@@ -426,4 +426,98 @@ class Entry
     {
         return $page->toEntry();
     }
+
+    /**
+     * Creates an Entry from Twtxt message data.
+     *
+     * @param array<string, mixed> $data
+     */
+    public static function fromTwtxt(array $data): self
+    {
+        $message = (string) ($data['message'] ?? '');
+        $publishedAt = isset($data['timestamp'])
+            ? ($data['timestamp'] instanceof DateTimeImmutable
+                ? $data['timestamp']
+                : new DateTimeImmutable(is_numeric($data['timestamp']) ? '@' . $data['timestamp'] : (string) $data['timestamp']))
+            : new DateTimeImmutable();
+
+        $nick = (string) ($data['nick'] ?? 'anonymous');
+        $url = isset($data['url']) && $data['url'] !== '' ? (string) $data['url'] : null;
+
+        // Extract hashtags: #tag
+        preg_match_all('/(?<!\w)#(\w+)/u', $message, $matches);
+        $tags = $matches[1] ?? [];
+
+        // Check if message contains a mention: @<nick url> or @&lt;nick url&gt;
+        $inReplyTo = null;
+        if (preg_match('/@(?:<|&lt;|&amp;lt;)([^\s>&;]+)\s+([^\s>&;]+)(?:>|&gt;|&amp;gt;)/i', $message, $mentionMatches)) {
+            $inReplyTo = htmlspecialchars_decode($mentionMatches[2]);
+        }
+
+        $html = isset($data['html']) && $data['html'] !== ''
+            ? (string) $data['html']
+            : \Indieinabox\Twtxt\TwtxtManager::formatMessageToHtml($message);
+
+        return new self([
+            'id' => (string) ($data['id'] ?? ('twtxt_' . $publishedAt->getTimestamp() . '_' . substr(md5($message), 0, 8))),
+            'title' => null,
+            'content' => $html,
+            'rawContent' => $message,
+            'publishedAt' => $publishedAt,
+            'sourceNetwork' => 'twtxt',
+            'sourceUrl' => $url ?? 'twtxt',
+            'author' => [
+                'name' => $nick,
+                'handle' => $nick,
+                'url' => $url ?? '',
+            ],
+            'kind' => $inReplyTo !== null ? 'reply' : 'note',
+            'inReplyTo' => $inReplyTo,
+            'tags' => $tags,
+            'syndicationTargets' => [],
+            'metadata' => [
+                'nick' => $nick,
+            ],
+        ]);
+    }
+
+    /**
+     * Dynamic property getter for theme template and retrocompatibility.
+     */
+    public function __get(string $name): mixed
+    {
+        return match ($name) {
+            'nick' => $this->author['name'] ?? $this->author['handle'] ?? '',
+            'timestamp' => $this->publishedAt,
+            'html' => $this->content,
+            'message' => $this->rawContent,
+            'title' => $this->title,
+            'slug' => $this->slug,
+            'id' => $this->id,
+            'kind' => $this->kind,
+            'tags' => $this->tags,
+            'content' => $this->content,
+            default => $this->metadata[$name] ?? null,
+        };
+    }
+
+    /**
+     * Dynamic property isset check.
+     */
+    public function __isset(string $name): bool
+    {
+        return match ($name) {
+            'nick' => !empty($this->author['name'] ?? $this->author['handle'] ?? null),
+            'timestamp' => true,
+            'html', 'content' => $this->content !== '',
+            'message' => $this->rawContent !== '',
+            'title' => $this->title !== null,
+            'slug' => $this->slug !== '',
+            'id' => $this->id !== '',
+            'kind' => $this->kind !== '',
+            'tags' => !empty($this->tags),
+            default => isset($this->metadata[$name]),
+        };
+    }
 }
+

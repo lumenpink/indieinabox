@@ -213,3 +213,32 @@ it('supports polls and poll status checks', function () {
     ]);
     expect($expiredPollEntry->isPollClosed())->toBeTrue();
 });
+
+it('creates Entry from twtxt data with hashtags, mentions, and dynamic properties', function () {
+    $now = new \DateTimeImmutable('2026-09-13 15:30:00');
+    $entry = Entry::fromTwtxt([
+        'timestamp' => $now,
+        'nick' => 'alice',
+        'url' => 'https://alice.com/twtxt.txt',
+        'message' => 'Hello @<bob https://bob.com/twtxt.txt> check #php and #indieweb',
+    ]);
+
+    expect($entry->isFederated())->toBeTrue();
+    expect($entry->getSourceNetwork())->toBe('twtxt');
+    expect($entry->getAuthor()['name'])->toBe('alice');
+    expect($entry->getAuthor()['url'])->toBe('https://alice.com/twtxt.txt');
+    expect($entry->getPublishedAt())->toBe($now);
+    expect($entry->getTags())->toBe(['php', 'indieweb']);
+    expect($entry->isReply())->toBeTrue();
+
+    // Test dynamic property access (__get and __isset)
+    expect($entry->nick)->toBe('alice');
+    expect($entry->timestamp)->toBe($now);
+    expect($entry->message)->toBe('Hello @<bob https://bob.com/twtxt.txt> check #php and #indieweb');
+    expect($entry->html)->toContain('<a href="https://bob.com/twtxt.txt" class="mention">@bob</a>');
+    expect($entry->kind)->toBe('reply');
+    expect(isset($entry->nick))->toBeTrue();
+    expect(isset($entry->timestamp))->toBeTrue();
+    expect(isset($entry->non_existent))->toBeFalse();
+});
+

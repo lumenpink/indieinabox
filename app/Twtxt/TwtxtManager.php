@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace Indieinabox\Twtxt;
 
-use DateTime;
-use DateTimeZone;
-use Indieinabox\Page;
-use Indieinabox\Site\Twtxt as TwtxtConfig;
+use DateTimeImmutable;
+use Indieinabox\Entry\Entry;
 
 /**
  * Class TwtxtManager
@@ -62,130 +60,6 @@ class TwtxtManager
     }
 
     /**
-     * Formats a Page object content into a twtxt message based on its kind.
-     *
-     * @param Page $page
-     * @param string $fqdn
-     * @return string
-     */
-    public static function formatPageToTwtxtMessage(Page $page, string $fqdn): string
-    {
-        $postUrl = rtrim($fqdn, '/') . '/' . ltrim($page->slug, '/');
-        
-        $displayMode = \Indieinabox\Helper::getKindConfig($page->kind)['display_mode'] ?? 'default';
-
-        if ($displayMode === 'full_content') {
-            $content = self::cleanMessage($page->rawBody ?? '');
-            return preg_replace('/^\[[A-Z]{2,}\]\s+/', '', $content) ?? '';
-        }
-
-        if ($displayMode === 'thumbnail_snippet') {
-            $caption = self::cleanMessage($page->rawBody ?? '');
-            if ($caption === '') {
-                $caption = $page->title;
-            }
-            
-            // Remove virtual translation prefix (e.g. "[PT] ")
-            $caption = preg_replace('/^\[[A-Z]{2,}\]\s+/', '', $caption);
-            
-            if (strlen($caption) > 140) {
-                $caption = mb_substr($caption, 0, 137) . '...';
-            }
-
-            $imageUrl = '';
-            if (!empty($page->images)) {
-                $img = $page->images[0];
-                if (preg_match('/^https?:\/\//i', $img)) {
-                    $imageUrl = $img;
-                } else {
-                    $imageUrl = rtrim($fqdn, '/') . '/' . ltrim($img, '/');
-                }
-            }
-
-            if ($imageUrl !== '') {
-                return "{$caption} {$imageUrl} - {$postUrl}";
-            }
-            return "{$caption} - {$postUrl}";
-        }
-
-        // Articles / Generic Pages
-        $title = $page->title;
-        $rawBody = $page->rawBody ?? '';
-        
-        // Remove virtual translation prefix (e.g. "[PT] ") for cleaner language-specific feeds
-        $title = preg_replace('/^\[[A-Z]{2,}\]\s+/', '', $title);
-        
-        $snippet = self::cleanMessage($rawBody);
-        $snippet = preg_replace('/^\[[A-Z]{2,}\]\s+/', '', $snippet);
-        
-        if (strlen($snippet) > 100) {
-            $snippet = mb_substr($snippet, 0, 97) . '...';
-        }
-
-        if ($snippet !== '') {
-            return "{$title}: {$snippet} - {$postUrl}";
-        }
-        return "{$title} - {$postUrl}";
-    }
-
-    /**
-     * Generates a twtxt.txt feed and writes it to the output file.
-     *
-     * @param Page[] $pages
-     * @param string $outputFile
-     * @param string $fqdn
-     * @param TwtxtConfig $config
-     * @return void
-     */
-    public function generateFeed(array $pages, string $outputFile, string $fqdn, TwtxtConfig $config): void
-    {
-        $feedContent = '';
-
-        // Add standard metadata comments
-        if ($config->nick !== '') {
-            $feedContent .= "# nick = {$config->nick}\n";
-        }
-        if ($config->description !== '') {
-            $feedContent .= "# description = {$config->description}\n";
-        }
-        if ($config->avatar !== '') {
-            $feedContent .= "# avatar = {$config->avatar}\n";
-        }
-        foreach ($config->following as $follow) {
-            $feedContent .= "# follow = {$follow['nick']} {$follow['url']}\n";
-        }
-        if ($feedContent !== '') {
-            $feedContent .= "\n";
-        }
-
-        // Filter: only include kinds configured to show on home (or remove generic)
-        $filteredPages = array_filter($pages, function (Page $page) {
-            if (in_array("draft", $page->metadata->tags)) {
-                return false;
-            }
-            return \Indieinabox\Helper::removegeneric($page);
-        });
-
-        // Sort chronologically (oldest first)
-        usort($filteredPages, function (Page $a, Page $b) {
-            return $a->date <=> $b->date;
-        });
-
-        foreach ($filteredPages as $page) {
-            $date = clone $page->date;
-            $date->setTimezone(new DateTimeZone('UTC'));
-            $timestamp = $date->format('Y-m-d\TH:i:s\Z');
-            $message = self::formatPageToTwtxtMessage($page, $fqdn);
-
-            if ($message !== '') {
-                $feedContent .= "{$timestamp}\t{$message}\n";
-            }
-        }
-
-        file_put_contents($outputFile, $feedContent);
-    }
-
-    /**
      * Converts raw message text into HTML with mentions, hashtags, and links formatted.
      *
      * @param string $message
@@ -198,7 +72,7 @@ class TwtxtManager
 
         // 1. Parse twtxt mentions: @<nick url> or escaped equivalents
         $html = preg_replace_callback(
-            '/@(?:&amp;)?lt;([^\s&]+)\s+([^\s&]+)(?:&amp;)?gt;/',
+            '/@(?:&amp;|&)?lt;([^\s&]+)\s+([^\s&]+)(?:&amp;|&)?gt;/',
             function ($matches) {
                 $nick = $matches[1];
                 $url = htmlspecialchars_decode($matches[2]);
@@ -225,13 +99,14 @@ class TwtxtManager
     }
 
     /**
-     * Parses a twtxt feed string into structured TwtxtEntry objects.
+     * Parses a twtxt feed string into universal Entry objects.
      *
      * @param string $content
      * @param string $defaultNick
-     * @return TwtxtEntry[]
+     * @param string|null $sourceUrl
+     * @return Entry[]
      */
-    public static function parseFeedContent(string $content, string $defaultNick): array
+    public static function parseFeedContent(string $content, string $defaultNick, ?string $sourceUrl = null): array
     {
         $entries = [];
         $lines = explode("\n", $content);
@@ -251,20 +126,28 @@ class TwtxtManager
             $message = trim($parts[1]);
 
             try {
-                $timestamp = new DateTime($timestampStr);
+                $timestamp = new DateTimeImmutable($timestampStr);
             } catch (\Exception $e) {
                 continue;
             }
 
             // Detect hub mentions sender info prefix e.g. "alice https://url: message"
             $nick = $defaultNick;
+            $url = $sourceUrl;
             if (preg_match('/^([^\s:]+)\s+(https?:\/\/[^\s:]+):\s*(.*)$/i', $message, $matches)) {
                 $nick = $matches[1];
+                $url = $matches[2];
                 $message = $matches[3];
             }
 
             $html = self::formatMessageToHtml($message);
-            $entries[] = new TwtxtEntry($timestamp, $nick, $message, $html);
+            $entries[] = Entry::fromTwtxt([
+                'timestamp' => $timestamp,
+                'nick' => $nick,
+                'url' => $url,
+                'message' => $message,
+                'html' => $html,
+            ]);
         }
 
         return $entries;
@@ -276,7 +159,7 @@ class TwtxtManager
      * @param array<int, array<string, string>> $following
      * @param string $cacheDir
      * @param bool $fetchOnline If false, only reads from local cache.
-     * @return TwtxtEntry[]
+     * @return Entry[]
      */
     public function fetchTimeline(array $following, string $cacheDir, bool $fetchOnline = false): array
     {
@@ -309,14 +192,14 @@ class TwtxtManager
             }
 
             if ($feedContent) {
-                $entries = self::parseFeedContent($feedContent, $nick);
+                $entries = self::parseFeedContent($feedContent, $nick, $url);
                 $allEntries = array_merge($allEntries, $entries);
             }
         }
 
         // Sort reverse-chronologically (newest first)
-        usort($allEntries, function (TwtxtEntry $a, TwtxtEntry $b) {
-            return $b->timestamp <=> $a->timestamp;
+        usort($allEntries, function (Entry $a, Entry $b) {
+            return $b->getPublishedAt() <=> $a->getPublishedAt();
         });
 
         return $allEntries;
@@ -329,11 +212,11 @@ class TwtxtManager
      * @param string $fqdn
      * @param string $cacheDir
      * @param bool $fetchOnline If false, only reads from local cache.
-     * @return TwtxtEntry[]
+     * @return Entry[]
      */
     public function fetchHubMentions(array $hubs, string $fqdn, string $cacheDir, bool $fetchOnline = false): array
     {
-        /** @var TwtxtEntry[] $allMentions */
+        /** @var Entry[] $allMentions */
         $allMentions = [];
         $feedUrl = rtrim($fqdn, '/') . '/twtxt.txt';
 
@@ -369,7 +252,7 @@ class TwtxtManager
         $deduped = [];
         $seen = [];
         foreach ($allMentions as $entry) {
-            $key = $entry->timestamp->getTimestamp() . '_' . md5($entry->message);
+            $key = $entry->getPublishedAt()->getTimestamp() . '_' . md5($entry->getRawContent());
             if (!isset($seen[$key])) {
                 $seen[$key] = true;
                 $deduped[] = $entry;
@@ -377,8 +260,8 @@ class TwtxtManager
         }
 
         // Sort reverse-chronologically (newest first)
-        usort($deduped, function (TwtxtEntry $a, TwtxtEntry $b) {
-            return $b->timestamp <=> $a->timestamp;
+        usort($deduped, function (Entry $a, Entry $b) {
+            return $b->getPublishedAt() <=> $a->getPublishedAt();
         });
 
         return $deduped;

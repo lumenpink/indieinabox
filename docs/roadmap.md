@@ -165,8 +165,8 @@ The following next-generation features are scheduled for development:
 - [ ] **Automated Demo Instance**: (Optional) Set up an automated pipeline to deploy the `main` branch with all dummy content to a public demo instance.
 
 ### 🔄 Phase 23: Simplified Self-hosting Updates (Dogfooding)
-- [ ] **CLI Update Command**: Create a simple CLI mechanism (e.g., a curl script or internal PHP command like `php indieinabox.php update`) that fetches the latest compiled version from the `main` branch and safely overwrites the current instance (preferably with a `.bak` backup).
-- [ ] **UI Update Button**: Add an update trigger in the Settings/Config UI that initiates the same update process, allowing for fast, friction-less dogfooding.
+- [x] **CLI Update Command**: Unified `Updater` service callable via CLI (`php indieinabox.php update --check|--apply|--rollback|--backups` and `php indieinabox.php version`) and CRON, with atomic replacement, version/timestamp backup naming, and automatic 2-backup rotation (`MAX_BACKUPS = 2`).
+- [x] **UI Update Button**: Settings/Config UI (`/settings`) enables checks, one-click upgrades from Codeberg releases, and rollback to previous version backups.
 
 ### 🌐 Phase 24: Full Integration Testing Ecosystem (Docker)
 - [ ] **Isolated E2E Project**: Create a separate repository or dedicated directory outside the main tree for end-to-end integration testing, preventing clutter in the main codebase.

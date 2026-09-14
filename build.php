@@ -93,8 +93,10 @@ if (!isset($config["lang"])) {
 define("ASSETS", $config["base"] . "/assets");
 
 if (php_sapi_name() === 'cli') {
-    echo "Building at " . $config["base"] . "\n";
-    echo "Assets are at " . ASSETS . "\n";
+    if (!isset($argv[1]) || str_starts_with($argv[1], '-')) {
+        echo "Building at " . $config["base"] . "\n";
+        echo "Assets are at " . ASSETS . "\n";
+    }
 }
 
 $site = new Site();
@@ -213,6 +215,12 @@ if (php_sapi_name() === 'cli') {
     } elseif (isset($argv[1]) && $argv[1] === 'test-webmention') {
         $cli = new \Indieinabox\CliHandler($site);
         $cli->handleTestWebmention($argv);
+    } elseif (isset($argv[1]) && in_array($argv[1], ['version', '-v', '--version'], true)) {
+        $cli = new \Indieinabox\CliHandler($site);
+        $cli->handleVersion($argv);
+    } elseif (isset($argv[1]) && $argv[1] === 'update') {
+        $cli = new \Indieinabox\CliHandler($site);
+        $cli->handleUpdate($argv);
     } else {
         $builder = new \Indieinabox\SiteBuilder($site);
         $builder->build();

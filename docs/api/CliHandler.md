@@ -43,3 +43,17 @@ Validates the presence and completeness of an h-card for IndieWebify.me Level 1.
 
 @param array<int, string> $argv
 @return void
+
+### handleVersion()
+`public function handleVersion(array $argv): void`
+
+Handles the 'version' CLI command.
+
+@param array<int, string> $argv
+
+### handleUpdate()
+`public function handleUpdate(array $argv): void`
+
+Handles the 'update' CLI command.
+
+@param array<int, string> $argv

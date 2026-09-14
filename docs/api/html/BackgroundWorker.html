@@ -93,6 +93,7 @@
 <li><a href="/docs/api/html/Translations-UrlTranslations.html">Translations-UrlTranslations</a></li>
 <li><a href="/docs/api/html/Twtxt-TwtxtManager.html">Twtxt-TwtxtManager</a></li>
 <li><a href="/docs/api/html/Updater.html">Updater</a></li>
+<li><a href="/docs/api/html/Version.html">Version</a></li>
 <li><a href="/docs/api/html/WebRouter.html">WebRouter</a></li>
 <li><a href="/docs/api/html/Webmention-HelpPageView.html">Webmention-HelpPageView</a></li>
 <li><a href="/docs/api/html/Webmention-LinkExtractor.html">Webmention-LinkExtractor</a></li>
@@ -128,6 +129,9 @@ Normally called periodically via cron or CLI.</p>
 <h3>processBackups()</h3>
 <p><code>public function processBackups(): void</code></p>
 <p>Executes the daily backup if cron is enabled.</p>
+<h3>processUpdates()</h3>
+<p><code>public function processUpdates(): void</code></p>
+<p>Checks for application updates and performs auto-upgrade if enabled.</p>
 <h3>processTwtxtFeeds()</h3>
 <p><code>public function processTwtxtFeeds(): void</code></p>
 <p>Fetches remote Twtxt timeline and hub mentions asynchronously.<br />

@@ -58,6 +58,7 @@ class BackgroundWorker
             $this->processTwtxtFeeds();
             $this->processBackups();
             $this->processWebmentionDiscovery();
+            $this->processUpdates();
         } finally {
             flock($fp, LOCK_UN);
             fclose($fp);
@@ -143,6 +144,16 @@ class BackgroundWorker
         $stmt->execute([$today]);
         
         echo "Daily backup complete.\n";
+    }
+
+    /**
+     * Checks for application updates and performs auto-upgrade if enabled.
+     */
+    public function processUpdates(): void
+    {
+        echo "Checking for application updates...\n";
+        $result = Updater::processScheduledUpdate();
+        echo $result['message'] . "\n";
     }
 
     /**

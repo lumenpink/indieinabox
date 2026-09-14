@@ -109,3 +109,30 @@ test('handleTestWebmention validates h-card from HTML file', function () {
         ->toContain("Result: PASS");
 });
 
+test('handleVersion outputs version information', function () {
+    /** @var \Tests\TestCase $this */
+    ob_start();
+    $this->handler->handleVersion(['indieinabox.php', 'version']);
+    $output = ob_get_clean();
+
+    expect($output)->toContain('Indieinabox version: ')
+        ->toContain('Runtime Mode: ')
+        ->toContain('PHP Version: ');
+});
+
+test('handleUpdate backups outputs local backup list', function () {
+    /** @var \Tests\TestCase $this */
+    $versionsDir = $this->tempDir . '/versions';
+    \Indieinabox\Updater::$customVersionsDir = $versionsDir;
+
+    ob_start();
+    $this->handler->handleUpdate(['indieinabox.php', 'update', '--backups']);
+    $output = ob_get_clean();
+
+    expect($output)->toContain('Local version backups (retaining up to 2):')
+        ->toContain('No backups found.');
+
+    \Indieinabox\Updater::$customVersionsDir = null;
+});
+
+

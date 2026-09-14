@@ -40,6 +40,11 @@ Discovers Webmention support for queued domains.
 
 Executes the daily backup if cron is enabled.
 
+### processUpdates()
+`public function processUpdates(): void`
+
+Checks for application updates and performs auto-upgrade if enabled.
+
 ### processTwtxtFeeds()
 `public function processTwtxtFeeds(): void`
 

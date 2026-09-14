@@ -22,6 +22,8 @@ if (file_exists($mf2Parser)) {
     $appFiles[] = $mf2Parser;
 }
 
+require_once $base . '/app/Version.php';
+
 // Prepare the compiled code
 $compiled = "<?php\n\ndeclare(strict_types=1);\n\n";
 
@@ -56,6 +58,12 @@ $compiled .= "</body>\n";
 $compiled .= "</html>\";\n";
 $compiled .= "            exit(1);\n";
 $compiled .= "        }\n";
+$compiled .= "    }\n";
+$compiled .= "    if (!defined('INDIEINABOX_COMPILED_VERSION')) {\n";
+$compiled .= "        define('INDIEINABOX_COMPILED_VERSION', '" . addslashes(\Indieinabox\Version::get()) . "');\n";
+$compiled .= "    }\n";
+$compiled .= "    if (!defined('INDIEINABOX_BUILD_DATE')) {\n";
+$compiled .= "        define('INDIEINABOX_BUILD_DATE', '" . addslashes(date('c')) . "');\n";
 $compiled .= "    }\n";
 $compiled .= "}\n\n";
 

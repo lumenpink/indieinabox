@@ -273,3 +273,29 @@ Client-side Fediverse interactions:
 - Dispatches Likes, Reposts (Announce), and Replies to remote actors.
 - Optionally creates local markdown posts for public syndication.
 
+---
+
+## 🔄 Self-Update & Versioning Subsystem (`Indieinabox\Updater` & `Indieinabox\Version`)
+
+Provides unified self-update, backup rotation, release checking, and semantic/git versioning across Web, CLI, and CRON.
+
+### 1. `Updater` (`Indieinabox\Updater`)
+Unified self-updater service:
+- `checkAvailableVersions()`: Queries Codeberg API for published releases and caches results in the database.
+- `getAvailableUpdates()`: Retrieves cached updates.
+- `getLatestRelease()`: Returns latest stable or nightly release metadata.
+- `downloadAndInstall()`: Downloads release binary, validates PHP script structure, creates a version-named backup, and atomically overwrites the current executable.
+- `backupCurrentVersion()`: Creates a timestamped, version-tagged backup (`indieinabox_backup_v{version}_{datetime}.php`) and enforces strict 2-backup rotation (`MAX_BACKUPS = 2`), discarding older backups.
+- `rollback()`: Restores executable to a selected or latest backup file from `data/versions`.
+- `getLocalBackups()`: Returns sorted list of existing backups with parsed version, date, and file size.
+- `processScheduledUpdate()`: Automated update and auto-upgrade checking for CRON or background worker runs.
+
+### 2. `Version` (`Indieinabox\Version`)
+Universal version resolver:
+- `get()`: Returns full version string (`{base}+git.{hash}` in development or compiled version in standalone binary).
+- `getBaseVersion()`: Returns base semantic version (`VERSION` constant).
+- `getGitCommitHash()`: Resolves short commit hash from `.git/HEAD` or packed refs.
+- `isCompiled()`: Detects whether application is running from a compiled single file.
+- `getBuildDate()`: Returns build ISO 8601 timestamp if running from a compiled binary.
+
+

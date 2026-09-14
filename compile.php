@@ -17,6 +17,10 @@ function getPhpFiles(string $dir): array {
 }
 
 $appFiles = getPhpFiles($base . '/app');
+$mf2Parser = $base . '/vendor/mf2/mf2/Mf2/Parser.php';
+if (file_exists($mf2Parser)) {
+    $appFiles[] = $mf2Parser;
+}
 
 // Prepare the compiled code
 $compiled = "<?php\n\ndeclare(strict_types=1);\n\n";
@@ -77,6 +81,19 @@ foreach ($appFiles as $file) {
     
     $cleaned = trim($content);
     $relativeName = str_replace($base . '/', '', $file);
+
+    if (str_contains($file, 'vendor/mf2/mf2')) {
+        $useLines = [];
+        $otherLines = [];
+        foreach (explode("\n", $cleaned) as $line) {
+            if (preg_match('/^\s*use\s+[^;]+;/', $line)) {
+                $useLines[] = $line;
+            } else {
+                $otherLines[] = $line;
+            }
+        }
+        $cleaned = implode("\n", $useLines) . "\n\nif (!class_exists('Mf2\\Parser', false)) {\n" . implode("\n", $otherLines) . "\n}";
+    }
     
     if ($namespace !== '') {
         $compiled .= "namespace {$namespace} {\n";

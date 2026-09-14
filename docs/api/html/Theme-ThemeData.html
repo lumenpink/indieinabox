@@ -90,6 +90,7 @@
 <li><a href="/docs/api/html/WebRouter.html">WebRouter</a></li>
 <li><a href="/docs/api/html/Webmention-HelpPageView.html">Webmention-HelpPageView</a></li>
 <li><a href="/docs/api/html/Webmention-LinkExtractor.html">Webmention-LinkExtractor</a></li>
+<li><a href="/docs/api/html/Webmention-PayloadParser.html">Webmention-PayloadParser</a></li>
 <li><a href="/docs/api/html/Webmention-SourceVerifier.html">Webmention-SourceVerifier</a></li>
 <li><a href="/docs/api/html/WebmentionHandler.html">WebmentionHandler</a></li>
 <li><a href="/docs/api/html/WebmentionSender.html">WebmentionSender</a></li>
@@ -158,6 +159,11 @@ decoupling low-level logic from presentation views.</p>
 <p>@param Page $page<br />
 @param array<int, array<string, string>&gt; $footerLinks<br />
 @return string HTML nav block.</p>
+<h3>getHCard()</h3>
+<p><code>public static function getHCard(Indieinabox\Site $site): string</code></p>
+<p>Generates a semantic h-card markup for the site author (IndieWebify.me Level 1).</p>
+<p>@param Site $site<br />
+@return string HTML h-card block.</p>
 
     </div>
 </body>

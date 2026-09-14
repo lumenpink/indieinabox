@@ -90,6 +90,7 @@
 <li><a href="/docs/api/html/WebRouter.html">WebRouter</a></li>
 <li><a href="/docs/api/html/Webmention-HelpPageView.html">Webmention-HelpPageView</a></li>
 <li><a href="/docs/api/html/Webmention-LinkExtractor.html">Webmention-LinkExtractor</a></li>
+<li><a href="/docs/api/html/Webmention-PayloadParser.html">Webmention-PayloadParser</a></li>
 <li><a href="/docs/api/html/Webmention-SourceVerifier.html">Webmention-SourceVerifier</a></li>
 <li><a href="/docs/api/html/WebmentionHandler.html">WebmentionHandler</a></li>
 <li><a href="/docs/api/html/WebmentionSender.html">WebmentionSender</a></li>
@@ -116,6 +117,16 @@
 <p><code>public function handleSetup(array $argv): void</code></p>
 <h3>handleConfig()</h3>
 <p><code>public function handleConfig(array $argv): void</code></p>
+<h3>handleTestWebmention()</h3>
+<p><code>public function handleTestWebmention(array $argv): void</code></p>
+<p>Handles the &apos;test-webmention&apos; CLI command to test endpoint discovery and ping delivery.</p>
+<p>@param array<int, string> $argv<br />
+@return void</p>
+<h3>handleValidateHcard()</h3>
+<p><code>private function handleValidateHcard(array $argv): void</code></p>
+<p>Validates the presence and completeness of an h-card for IndieWebify.me Level 1.</p>
+<p>@param array<int, string> $argv<br />
+@return void</p>
 
     </div>
 </body>

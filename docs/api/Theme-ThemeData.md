@@ -89,3 +89,11 @@ Generates the footer links HTML markup including RSS and ATOM.
 @param Page $page
 @param array<int, array<string, string>> $footerLinks
 @return string HTML nav block.
+
+### getHCard()
+`public static function getHCard(Indieinabox\Site $site): string`
+
+Generates a semantic h-card markup for the site author (IndieWebify.me Level 1).
+
+@param Site $site
+@return string HTML h-card block.

@@ -96,3 +96,22 @@ composer sniffer
 # Run native local link checker against the compiled site
 php indieinabox.php test-links
 ```
+
+---
+
+## 🌐 IndieWeb Standards & Compliance
+
+Indieinabox follows W3C and IndieWeb recommendations with verified interoperability against official test vectors:
+- **Webmention ([W3C Recommendation](https://www.w3.org/TR/webmention/))**: Strict discovery precedence (HTTP `Link` > HTML `<link>` > `<a>`), receiver verification, relative link resolution, and sender delivery tested against [webmention.rocks](https://webmention.rocks/) and [IndieWebify.me](https://indiewebify.me/).
+- **Microformats 2 ([microformats.org](https://microformats.org/wiki/microformats2))**: Rich parsing of `h-entry`, `h-card` (author photo, name, profile URL), `u-like-of`, `u-repost-of`, `u-in-reply-to`, and `p-rsvp`.
+- **IndieAuth & Micropub**: Interoperable with IndieWeb clients (Indigenous, Quill, Micro.blog).
+- **Testing & Verification Guide**: See [`docs/webmention_testing.md`](docs/webmention_testing.md) for step-by-step instructions on running manual and automated tests with `webmention.rocks`, `IndieWebify.me`, and the built-in `test-webmention` CLI command.
+
+---
+
+## 💖 Acknowledgments & Credits
+
+Indieinabox stands on the shoulders of giants in the open web and IndieWeb communities:
+- **Microformats 2 Parser (`mf2/mf2`)**: Immense thanks to the maintainer trio **Barnaby Walters** ([@waterpigs](https://github.com/barnabywalters)), **Tantek Çelik** ([@tantek](https://github.com/tantek)), and **Aaron Parecki** ([@aaronpk](https://github.com/aaronpk)) for creating and stewarding `php-mf2`, enabling lightweight, standard-compliant structured data parsing across the PHP IndieWeb.
+- **IndieWeb Community**: For continuous inspiration, standards design, and testbeds like [webmention.rocks](https://webmention.rocks/).
+

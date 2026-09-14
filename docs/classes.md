@@ -181,6 +181,13 @@ Parses and filters target URLs:
 ### 5. `Webmention\HelpPageView` (`Indieinabox\Webmention\HelpPageView`)
 Renders the standalone, responsive HTML help and test-form interface for GET requests.
 
+### 6. `Webmention\PayloadParser` (`Indieinabox\Webmention\PayloadParser`)
+Parses incoming HTML payloads using Microformats 2:
+- Extracts author details (`h-card`, photo, name, profile URL).
+- Extracts clean text and HTML representation of `e-content` / `p-summary`.
+- Classifies interaction types (`like`, `repost`, `reply`, `bookmark`, `rsvp`, or general `webmention`).
+- Extracts published dates and Whostyles V2 metadata.
+
 ## 🔑 IndieAuth Handler (`Indieinabox\IndieAuthHandler`)
 Provides IndieAuth / OAuth 2.0 PKCE authentication server endpoints.
 

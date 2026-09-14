@@ -12,7 +12,8 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "require": {
-        "php": ">=8.2"
+        "php": ">=8.2",
+        "mf2/mf2": "^0.5.0"
     },
     "require-dev": {
         "phpcompatibility/php-compatibility": "^10.0@dev",

@@ -210,6 +210,9 @@ if (php_sapi_name() === 'cli') {
         $skipMedia = in_array('--no-media', $argv, true);
         $backupManager = new \Indieinabox\BackupManager($site);
         $backupManager->run($skipContent, $skipMedia);
+    } elseif (isset($argv[1]) && $argv[1] === 'test-webmention') {
+        $cli = new \Indieinabox\CliHandler($site);
+        $cli->handleTestWebmention($argv);
     } else {
         $builder = new \Indieinabox\SiteBuilder($site);
         $builder->build();

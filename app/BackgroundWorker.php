@@ -255,62 +255,19 @@ class BackgroundWorker
         $source = $payload['source'];
         $target = $payload['target'];
         
-        // Fetch and verify source link
-        $html = $this->fetchUrl($source);
-        if ($html === false) {
-            echo "Failed to fetch webmention source: $source\n";
+        // Fetch and verify source link using SourceVerifier and Microformats 2
+        $verifier = new \Indieinabox\Webmention\SourceVerifier(fn(string $url) => $this->fetchUrl($url));
+        $verification = $verifier->verifySourceLink($source, $target);
+
+        if (!$verification['success']) {
+            echo ($verification['message'] ?? 'Webmention verification failed') . ": $source\n";
             return;
         }
 
-        $dom = new DOMDocument();
-        @$dom->loadHTML($html);
-        $xpath = new DOMXPath($dom);
-
-        $found = false;
-        $interactionType = 'webmention';
-        foreach ($xpath->query('//a[@href]') as $link) {
-            if ($link instanceof DOMElement) {
-                $href = $link->getAttribute('href');
-                $classes = explode(' ', $link->getAttribute('class'));
-                // Basic matching for now (can be improved)
-                if (strpos($href, parse_url($target, PHP_URL_PATH)) !== false || strpos($href, $target) !== false) {
-                    $found = true;
-                    if (in_array('u-like-of', $classes)) $interactionType = 'like';
-                    elseif (in_array('u-repost-of', $classes)) $interactionType = 'repost';
-                    elseif (in_array('u-in-reply-to', $classes)) $interactionType = 'reply';
-                    elseif (in_array('u-bookmark-of', $classes)) $interactionType = 'bookmark';
-                    break;
-                }
-            }
-        }
-
-        if (!$found) {
-            echo "No link to target found in webmention source: $source\n";
-            return;
-        }
-
-        $titleNode = $xpath->query('//title')->item(0);
-        $title = $titleNode ? trim($titleNode->nodeValue) : '';
-
-        $content = '';
-        $entryContent = $xpath->query('//*[contains(@class, "e-content")]')->item(0);
-        if ($entryContent) {
-            $content = trim($entryContent->nodeValue);
-        } else {
-            $pNode = $xpath->query('//p')->item(0);
-            if ($pNode) {
-                $content = trim($pNode->nodeValue);
-            }
-        }
-        if (strlen($content) > 300) {
-            $content = substr($content, 0, 297) . '...';
-        }
-
-        $whostyleData = null;
-        $hashData = \Indieinabox\Whostyles::extract($html);
-        if ($hashData) {
-            $whostyleData = \Indieinabox\Whostyles::decode($hashData);
-        }
+        $parsed = $verification['content'];
+        $content = $parsed['text'] ?? '';
+        $whostyleData = $parsed['whostyle'] ?? null;
+        $interactionType = $parsed['interaction_type'] ?? 'webmention';
 
         $targetPath = parse_url($target, PHP_URL_PATH) ?? '/';
         $sitePath = parse_url($this->site->metadata->fqdn ?? '', PHP_URL_PATH);
@@ -325,19 +282,21 @@ class BackgroundWorker
 
         $dataDir = \Indieinabox\Database::$dataDir ?? (dirname(__DIR__) . '/data');
         $notificationsDir = $dataDir . DIRECTORY_SEPARATOR . 'microsub' . DIRECTORY_SEPARATOR . 'inbox' . DIRECTORY_SEPARATOR . 'notifications';
-        
+
         if (!is_dir($notificationsDir)) {
             @mkdir($notificationsDir, 0755, true);
         }
+
+        $authorName = $parsed['author_name'] ?: ($parsed['title'] ?: 'Webmention from ' . (parse_url($source, PHP_URL_HOST) ?? 'external link'));
 
         $newMention = [
             'id' => $hash . '_' . md5($source),
             'target_hash' => $hash,
             'source' => $source,
             'target' => $target,
-            'author_name' => $title ?: 'Webmention from ' . (parse_url($source, PHP_URL_HOST) ?? 'external link'),
-            'author_photo' => '',
-            'url' => $source,
+            'author_name' => $authorName,
+            'author_photo' => $parsed['author_photo'] ?? '',
+            'url' => $parsed['author_url'] ?: $source,
             'published' => time(),
             'is_read' => 0,
             'type' => 'webmention',
@@ -672,7 +631,7 @@ class BackgroundWorker
 
             echo "Sending webmention from $source to $target...\n";
 
-            $endpoint = $this->discoverWebmentionEndpoint($target);
+            $endpoint = WebmentionSender::discoverEndpoint($target);
             if (!$endpoint) {
                 echo "No webmention endpoint found for $target\n";
                 $this->db->prepare("UPDATE outgoing_webmentions SET status = 'failed' WHERE id = ?")->execute([$id]);
@@ -681,17 +640,10 @@ class BackgroundWorker
 
             echo "Found endpoint: $endpoint\n";
 
-            $ch = curl_init($endpoint);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($ch, CURLOPT_POST, true);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query(['source' => $source, 'target' => $target]));
-            curl_setopt($ch, CURLOPT_TIMEOUT, 10);
-            curl_setopt($ch, CURLOPT_HTTPHEADER, ['User-Agent: Indieinabox Webmention Sender/1.0']);
-            $response = curl_exec($ch);
-            $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-            curl_close($ch);
+            $result = WebmentionSender::sendWebmention($endpoint, $source, $target);
+            $code = $result['http_code'];
 
-            if ($code >= 200 && $code < 300) {
+            if ($result['success']) {
                 echo "Webmention sent successfully.\n";
                 $this->db->prepare("UPDATE outgoing_webmentions SET status = 'sent' WHERE id = ?")->execute([$id]);
             } else {
@@ -711,36 +663,7 @@ class BackgroundWorker
      */
     private function discoverWebmentionEndpoint(string $url): ?string
     {
-        $ch = curl_init($url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_HEADER, true);
-        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-        curl_setopt($ch, CURLOPT_MAXREDIRS, 3);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 10);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, ['User-Agent: Indieinabox Endpoint Discoverer/1.0']);
-        $response = curl_exec($ch);
-        
-        if ($response === false) {
-            return null;
-        }
-
-        $headerSize = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
-        $headers = substr($response, 0, $headerSize);
-        $body = substr($response, $headerSize);
-        curl_close($ch);
-
-        // 1. Check Link headers
-        if (preg_match('/Link:\s*<([^>]+)>;\s*rel=[\'"]?(?:[^>]*\s+)?webmention(?:\s+[^>]+)?[\'"]?/i', $headers, $matches)) {
-            return $this->resolveUrl($url, $matches[1]);
-        }
-
-        // 2. Check HTML body for <link rel="webmention">
-        if (preg_match('/<link\s+[^>]*rel=[\'"]?(?:[^>]*\s+)?webmention(?:\s+[^>]+)?[\'"]?[^>]*href=[\'"]([^>"\']+)[\'"]/i', $body, $matches) || 
-            preg_match('/<link\s+[^>]*href=[\'"]([^>"\']+)[\'"][^>]*rel=[\'"]?(?:[^>]*\s+)?webmention(?:\s+[^>]+)?[\'"]?/i', $body, $matches)) {
-            return $this->resolveUrl($url, $matches[1]);
-        }
-
-        return null;
+        return WebmentionSender::discoverEndpoint($url);
     }
 
     /**
@@ -748,19 +671,7 @@ class BackgroundWorker
      */
     private function resolveUrl(string $base, string $rel): string
     {
-        if (parse_url($rel, PHP_URL_SCHEME) != '') return $rel;
-        if ($rel[0] == '#' || $rel[0] == '?') return $base . $rel;
-        extract(parse_url($base));
-        /** @var string $scheme */
-        /** @var string $host */
-        /** @var string $path */
-        if (!isset($path)) $path = '/';
-        $path = preg_replace('#/[^/]*$#', '', $path);
-        if ($rel[0] == '/') $path = '';
-        $abs = "$host$path/$rel";
-        $re = ['#(/\.?/)#', '#/(?!\.\.)[^/]+/\.\./#'];
-        for ($n = 1; $n > 0; $abs = preg_replace($re, '/', $abs, -1, $n)) {}
-        return $scheme . '://' . $abs;
+        return WebmentionSender::resolveUrl($base, $rel);
     }
 
     /**

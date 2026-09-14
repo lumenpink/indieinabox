@@ -73,37 +73,25 @@ class SourceVerifier
             ];
         }
 
-        $titleNode = $xpath->query('//title')->item(0);
-        $title = $titleNode ? trim($titleNode->nodeValue) : '';
+        $parsed = PayloadParser::parse($html, $source, $target);
 
-        $content = '';
-        $entryContent = $xpath->query('//*[contains(@class, "e-content")]')->item(0);
-        if ($entryContent) {
-            $content = trim($entryContent->nodeValue);
-        } else {
-            $pNode = $xpath->query('//p')->item(0);
-            if ($pNode) {
-                $content = trim($pNode->nodeValue);
-            }
-        }
-
-        if (strlen($content) > 300) {
-            $content = substr($content, 0, 297) . '...';
-        }
-
-        // Extract Whostyles V2 Hash
-        $whostyleData = null;
-        $hash = Whostyles::extract($html);
-        if ($hash) {
-            $whostyleData = Whostyles::decode($hash);
+        $text = $parsed['text'];
+        if (strlen($text) > 300) {
+            $text = substr($text, 0, 297) . '...';
         }
 
         return [
             'success' => true,
             'content' => [
-                'title' => $title,
-                'text' => $content,
-                'whostyle' => $whostyleData
+                'title' => $parsed['title'],
+                'text' => $text,
+                'html' => $parsed['html'],
+                'author_name' => $parsed['author_name'],
+                'author_photo' => $parsed['author_photo'],
+                'author_url' => $parsed['author_url'],
+                'interaction_type' => $parsed['interaction_type'],
+                'rsvp' => $parsed['rsvp'],
+                'whostyle' => $parsed['whostyle']
             ]
         ];
     }

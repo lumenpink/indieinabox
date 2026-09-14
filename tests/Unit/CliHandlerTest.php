@@ -82,3 +82,30 @@ test('handlePost create requires text', function () {
 
     expect($output)->toContain('Error: --text is required.');
 });
+
+test('handleTestWebmention prints usage without target', function () {
+    /** @var \Tests\TestCase $this */
+    ob_start();
+    $this->handler->handleTestWebmention(['indieinabox.php', 'test-webmention']);
+    $output = ob_get_clean();
+
+    expect($output)->toContain('Usage:')
+        ->toContain('php indieinabox.php test-webmention <target-url>');
+});
+
+test('handleTestWebmention validates h-card from HTML file', function () {
+    /** @var \Tests\TestCase $this */
+    $htmlFile = $this->tempDir . '/test_hcard.html';
+    file_put_contents($htmlFile, '<div class="h-card"><a class="p-name u-url" href="https://user.example">User</a></div>');
+
+    ob_start();
+    $this->handler->handleTestWebmention(['indieinabox.php', 'test-webmention', '--validate-hcard', $htmlFile]);
+    $output = ob_get_clean();
+
+    expect($output)->toContain("Validating IndieWebify.me Level 1 (h-card)")
+        ->toContain("[OK] Found 'h-card' microformat.")
+        ->toContain("[OK] Name (p-name): User")
+        ->toContain("[OK] URL (u-url): https://user.example")
+        ->toContain("Result: PASS");
+});
+

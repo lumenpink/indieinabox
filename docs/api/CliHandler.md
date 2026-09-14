@@ -27,3 +27,19 @@
 
 ### handleConfig()
 `public function handleConfig(array $argv): void`
+
+### handleTestWebmention()
+`public function handleTestWebmention(array $argv): void`
+
+Handles the 'test-webmention' CLI command to test endpoint discovery and ping delivery.
+
+@param array<int, string> $argv
+@return void
+
+### handleValidateHcard()
+`private function handleValidateHcard(array $argv): void`
+
+Validates the presence and completeness of an h-card for IndieWebify.me Level 1.
+
+@param array<int, string> $argv
+@return void

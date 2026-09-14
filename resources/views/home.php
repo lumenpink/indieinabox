@@ -29,6 +29,8 @@
         ?>
         
 
+        <?= \Indieinabox\Theme\ThemeData::getHCard($site) ?>
+
         <h2><?= \Indieinabox\Helper::translate('Recent posts') ?></h2>
         <div class="catalogue h-feed">
             <?= \Indieinabox\Helper::listposts() ?>

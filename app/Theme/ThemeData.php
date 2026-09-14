@@ -7,6 +7,7 @@ namespace Indieinabox\Theme;
 use Indieinabox\Page;
 use Indieinabox\Site;
 use Indieinabox\Helper;
+use Indieinabox\Database;
 
 /**
  * Class ThemeData
@@ -294,4 +295,34 @@ class ThemeData
                '    ' . implode(' | ', $linksHTML) . "\n" .
                '</nav>' . "\n";
     }
+
+    /**
+     * Generates a semantic h-card markup for the site author (IndieWebify.me Level 1).
+     *
+     * @param Site $site
+     * @return string HTML h-card block.
+     */
+    public static function getHCard(Site $site): string
+    {
+        $baseUrl = rtrim($site->metadata->fqdn ?? '', '/');
+        $author = $site->metadata->author ?? ($site->metadata->sitename ?? 'Author');
+        $bio = Database::getSetting('activitypub_bio') ?? ($site->metadata->description ?? '');
+        $avatar = Database::getSetting('activitypub_avatar');
+
+        $html = '<div class="h-card author-card" style="margin-bottom: 1.5em; display: flex; gap: 1em; align-items: center;">' . "\n";
+        if (!empty($avatar)) {
+            $avatarUrl = (strpos($avatar, 'http') === 0) ? $avatar : $baseUrl . '/' . ltrim($avatar, '/');
+            $html .= '    <img class="u-photo" src="' . htmlspecialchars($avatarUrl) . '" alt="' . htmlspecialchars($author) . '" style="width: 48px; height: 48px; border-radius: 50%; object-fit: cover; margin: 0;">' . "\n";
+        }
+        $html .= '    <div>' . "\n";
+        $html .= '        <a class="p-name u-url u-uid" rel="me" href="' . htmlspecialchars($baseUrl) . '/">' . htmlspecialchars($author) . '</a>' . "\n";
+        if (!empty($bio)) {
+            $html .= '        <p class="p-note" style="margin: 0.2em 0; font-size: 0.9em; opacity: 0.85;">' . htmlspecialchars($bio) . '</p>' . "\n";
+        }
+        $html .= '    </div>' . "\n";
+        $html .= '</div>' . "\n";
+
+        return $html;
+    }
 }
+

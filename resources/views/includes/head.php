@@ -13,6 +13,7 @@ $colors = ThemeData::getThemeColors($page);
 <?= ThemeData::getOpenGraphTags($page, $site) ?>
 <?= ThemeData::getTwitterCardTags($page, $site) ?>
 <meta name="author" content="<?= htmlspecialchars($site->metadata->author ?? '') ?>">
+<link rel="webmention" href="<?= rtrim($site->metadata->fqdn ?? '', '/') ?>/webmention">
 <link rel="microsub" href="<?= rtrim($site->metadata->fqdn ?? '', '/') ?>/microsub">
 <link rel="alternate" type="application/rss+xml" title="RSS Feed" href="<?= $page->relpath ?>rss.xml">
 <link rel="alternate" type="application/atom+xml" title="Atom Feed" href="<?= $page->relpath ?>atom.xml">

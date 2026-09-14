@@ -90,6 +90,7 @@
 <li><a href="/docs/api/html/WebRouter.html">WebRouter</a></li>
 <li><a href="/docs/api/html/Webmention-HelpPageView.html">Webmention-HelpPageView</a></li>
 <li><a href="/docs/api/html/Webmention-LinkExtractor.html">Webmention-LinkExtractor</a></li>
+<li><a href="/docs/api/html/Webmention-PayloadParser.html">Webmention-PayloadParser</a></li>
 <li><a href="/docs/api/html/Webmention-SourceVerifier.html">Webmention-SourceVerifier</a></li>
 <li><a href="/docs/api/html/WebmentionHandler.html">WebmentionHandler</a></li>
 <li><a href="/docs/api/html/WebmentionSender.html">WebmentionSender</a></li>
@@ -110,6 +111,44 @@
 @param string $content The Markdown or HTML content of the post.<br />
 @param ?PDO $db Optional database connection.<br />
 @return void</p>
+<h3>discoverEndpoint()</h3>
+<p><code>public static function discoverEndpoint(string $targetUrl): ?string</code></p>
+<p>Discovers a Webmention endpoint for a target URL according to W3C specification.</p>
+<p>@param string $targetUrl The target URL to discover an endpoint for.<br />
+@return string|null The discovered endpoint URL, or null if not found.</p>
+<h3>discoverEndpointDetails()</h3>
+<p><code>public static function discoverEndpointDetails(string $targetUrl): array</code></p>
+<p>Discovers Webmention endpoint details including discovery method and response code.</p>
+<p>@param string $targetUrl<br />
+@return array{target: string, effective<em>url: string, http</em>code: int, endpoint: ?string, method: ?string}</p>
+<h3>parseHeaderEndpoint()</h3>
+<p><code>public static function parseHeaderEndpoint(string $headers, string $effectiveUrl): ?string</code></p>
+<p>Parses HTTP Link headers looking for rel=&quot;webmention&quot;.</p>
+<p>@param string $headers Raw HTTP response headers.<br />
+@param string $effectiveUrl Base URL for resolving relative links.<br />
+@return string|null Resolved endpoint URL, or null if not found.</p>
+<h3>parseHtmlEndpoint()</h3>
+<p><code>public static function parseHtmlEndpoint(string $html, string $effectiveUrl): ?array</code></p>
+<p>Parses HTML body for <link> or <a> tags with rel=&quot;webmention&quot; in document order.</p>
+<p>@param string $html<br />
+@param string $effectiveUrl Base URL for resolving relative links.<br />
+@return array{endpoint: string, tag: string}|null</p>
+<h3>sendWebmention()</h3>
+<p><code>public static function sendWebmention(string $endpoint, string $source, string $target): array</code></p>
+<p>Sends a Webmention ping to the discovered endpoint.</p>
+<p>@param string $endpoint The Webmention endpoint URL.<br />
+@param string $source The source URL of the mentioning post.<br />
+@param string $target The target URL being mentioned.<br />
+@return array{http@param string $endpoint The Webmention endpoint URL.<br />
+@param string $source The source URL of the mentioning post.<br />
+@param string $target The target URL being mentioned.<br />
+@return array{http_code: int, success: bool, response: string, error: ?string}</p>
+<h3>resolveUrl()</h3>
+<p><code>public static function resolveUrl(string $base, string $rel): string</code></p>
+<p>Resolves a relative URL against a base URL according to RFC 3986.</p>
+<p>@param string $base Base URL.<br />
+@param string $rel Relative or absolute target URL.<br />
+@return string Fully-qualified resolved URL.</p>
 
     </div>
 </body>

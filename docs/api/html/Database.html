@@ -112,6 +112,10 @@
 <li><a href="/docs/api/html/Page.html">Page</a></li>
 <li><a href="/docs/api/html/Pages.html">Pages</a></li>
 <li><a href="/docs/api/html/ParserInterface.html">ParserInterface</a></li>
+<li><a href="/docs/api/html/Repositories-Contracts-InteractionRepositoryInterface.html">Repositories-Contracts-InteractionRepositoryInterface</a></li>
+<li><a href="/docs/api/html/Repositories-Contracts-SettingsRepositoryInterface.html">Repositories-Contracts-SettingsRepositoryInterface</a></li>
+<li><a href="/docs/api/html/Repositories-FileInteractionRepository.html">Repositories-FileInteractionRepository</a></li>
+<li><a href="/docs/api/html/Repositories-SqliteSettingsRepository.html">Repositories-SqliteSettingsRepository</a></li>
 <li><a href="/docs/api/html/Services-ConfigurationService.html">Services-ConfigurationService</a></li>
 <li><a href="/docs/api/html/Services-FetchFeedsService.html">Services-FetchFeedsService</a></li>
 <li><a href="/docs/api/html/Services-FollowService.html">Services-FollowService</a></li>
@@ -167,6 +171,7 @@ methods for fetching settings, translations, and content configurations.</p>
 <h2>Properties</h2>
 <h3><code>private static ?PDO $db</code></h3>
 <h3><code>public static ?string $dataDir</code></h3>
+<h3><code>private static ?Indieinabox\Repositories\Contracts\SettingsRepositoryInterface $settingsRepo</code></h3>
 <h2>Methods</h2>
 <h3>connect()</h3>
 <p><code>public static function connect(string $path): void</code></p>
@@ -183,9 +188,15 @@ Throws an exception if the connection has not been established yet.</p>
 <h3>disconnect()</h3>
 <p><code>public static function disconnect(): void</code></p>
 <p>Closes the active PDO database connection.</p>
+<h3>getSettingsRepository()</h3>
+<p><code>public static function getSettingsRepository(): Indieinabox\Repositories\Contracts\SettingsRepositoryInterface</code></p>
+<p>Resolves the active settings repository.</p>
+<h3>setSettingsRepository()</h3>
+<p><code>public static function setSettingsRepository(?Indieinabox\Repositories\Contracts\SettingsRepositoryInterface $repo): void</code></p>
+<p>Overrides the active settings repository (useful for testing and dependency injection).</p>
 <h3>getSetting()</h3>
 <p><code>public static function getSetting(string $key, ?mixed $default = null): ?mixed</code></p>
-<p>Fetches a single value from the settings table</p>
+<p>Fetches a single value from the settings table.</p>
 <p>@param string $key<br />
 @param mixed $default<br />
 @return mixed</p>

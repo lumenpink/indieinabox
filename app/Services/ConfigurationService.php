@@ -4,22 +4,45 @@ declare(strict_types=1);
 
 namespace Indieinabox\Services;
 
-use Indieinabox\Database;
+use Indieinabox\Core\Container;
+use Indieinabox\Repositories\Contracts\SettingsRepositoryInterface;
+use Indieinabox\Repositories\SqliteSettingsRepository;
 use Indieinabox\Site;
 use Indieinabox\SiteBuilder;
 use PDO;
 use ZipArchive;
+use InvalidArgumentException;
+use RuntimeException;
 
 /**
  * Domain service managing site configuration, kind taxonomies, translations, and theme installations.
  */
 class ConfigurationService
 {
-    private PDO $db;
+    private SettingsRepositoryInterface $settings;
+    private ?PDO $db;
 
-    public function __construct(?PDO $db = null)
+    public function __construct(
+        SettingsRepositoryInterface|PDO|null $settings = null,
+        ?PDO $db = null
+    ) {
+        if ($settings instanceof PDO) {
+            $this->db = $settings;
+            $this->settings = new SqliteSettingsRepository($settings);
+        } elseif ($settings instanceof SettingsRepositoryInterface) {
+            $this->settings = $settings;
+            $this->db = $db;
+        } else {
+            $this->db = $db;
+            $this->settings = class_exists(Container::class)
+                ? Container::getInstance()->make(SettingsRepositoryInterface::class)
+                : new SqliteSettingsRepository($db);
+        }
+    }
+
+    public function getSettingsRepository(): SettingsRepositoryInterface
     {
-        $this->db = $db ?? Database::getDb();
+        return $this->settings;
     }
 
     /**
@@ -28,7 +51,7 @@ class ConfigurationService
     public function bootstrap(string $password, string $sitename = 'My Site Name', string $fqdn = ''): void
     {
         if (empty($password)) {
-            throw new \InvalidArgumentException('Password cannot be empty.');
+            throw new InvalidArgumentException('Password cannot be empty.');
         }
 
         if (empty($fqdn)) {
@@ -65,7 +88,7 @@ class ConfigurationService
      */
     public function getSettings(): array
     {
-        return Database::getAllSettings();
+        return $this->settings->all();
     }
 
     /**
@@ -73,7 +96,7 @@ class ConfigurationService
      */
     public function saveSetting(string $key, mixed $value): bool
     {
-        return Database::saveSetting($key, $value);
+        return $this->settings->set($key, $value);
     }
 
     /**
@@ -83,7 +106,7 @@ class ConfigurationService
      */
     public function getKinds(): array
     {
-        return Database::getKinds();
+        return $this->settings->getKinds();
     }
 
     /**
@@ -93,12 +116,7 @@ class ConfigurationService
      */
     public function saveKinds(array $kinds): bool
     {
-        $stmt = $this->db->prepare('INSERT OR REPLACE INTO kinds (kind_key, config_json) VALUES (?, ?)');
-        foreach ($kinds as $key => $conf) {
-            $json = is_array($conf) ? json_encode($conf, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) : (string) $conf;
-            $stmt->execute([(string) $key, $json]);
-        }
-        return true;
+        return $this->settings->saveKinds($kinds);
     }
 
     /**
@@ -108,7 +126,7 @@ class ConfigurationService
      */
     public function getTranslations(): array
     {
-        return Database::getTranslations();
+        return $this->settings->getTranslations();
     }
 
     /**
@@ -118,15 +136,7 @@ class ConfigurationService
      */
     public function saveTranslations(array $translations): bool
     {
-        $stmt = $this->db->prepare('INSERT OR REPLACE INTO translations (lang, phrase_key, phrase_value) VALUES (?, ?, ?)');
-        foreach ($translations as $lang => $phrases) {
-            if (is_array($phrases)) {
-                foreach ($phrases as $k => $v) {
-                    $stmt->execute([(string) $lang, (string) $k, (string) $v]);
-                }
-            }
-        }
-        return true;
+        return $this->settings->saveTranslations($translations);
     }
 
     /**
@@ -136,29 +146,21 @@ class ConfigurationService
      */
     public function getUrlTranslations(): array
     {
-        return Database::getUrlTranslations();
+        return $this->settings->getUrlTranslations();
     }
 
     /**
-     * Saves URL slug translations.
+     * Saves URL slug translations table.
      *
      * @param array<string, mixed> $urlTranslations
      */
     public function saveUrlTranslations(array $urlTranslations): bool
     {
-        $stmt = $this->db->prepare('INSERT OR REPLACE INTO url_translations (lang, slug_key, slug_value) VALUES (?, ?, ?)');
-        foreach ($urlTranslations as $lang => $slugs) {
-            if (is_array($slugs)) {
-                foreach ($slugs as $k => $v) {
-                    $stmt->execute([(string) $lang, (string) $k, (string) $v]);
-                }
-            }
-        }
-        return true;
+        return $this->settings->saveUrlTranslations($urlTranslations);
     }
 
     /**
-     * Detects whether pretty links (clean URLs) are supported by the server environment.
+     * Checks whether the web server environment supports clean pretty links.
      */
     public function detectPrettyLinksSupport(): bool
     {
@@ -183,82 +185,70 @@ class ConfigurationService
     }
 
     /**
-     * Triggers static site generation.
+     * Validates and installs an uploaded theme zip file.
+     *
+     * @param array<string, mixed> $file Uploaded $_FILES entry.
+     * @param string $themesDir Target destination directory.
+     * @return string Installed theme folder name.
      */
-    public function rebuildSite(Site $site): void
+    public function installTheme(array $file, string $themesDir): string
     {
-        $builder = new SiteBuilder($site);
-        $builder->build();
-    }
-
-    /**
-     * Installs a theme from a remote ZIP archive.
-     */
-    public function installThemeFromUrl(string $url): bool
-    {
-        if (!filter_var($url, FILTER_VALIDATE_URL)) {
-            return false;
+        if (empty($file['tmp_name']) || !file_exists($file['tmp_name'])) {
+            throw new InvalidArgumentException('No valid theme archive uploaded.');
         }
 
-        $tempZip = tempnam(sys_get_temp_dir(), 'theme_dl_');
-        if ($tempZip === false) {
-            return false;
-        }
-
-        $content = @file_get_contents($url);
-        if ($content === false) {
-            @unlink($tempZip);
-            return false;
-        }
-
-        file_put_contents($tempZip, $content);
-        $result = $this->installThemeFromZip($tempZip);
-        @unlink($tempZip);
-
-        return $result;
-    }
-
-    /**
-     * Extracts a theme ZIP archive into the themes directory.
-     */
-    public function installThemeFromZip(string $zipPath): bool
-    {
-        if (!class_exists('ZipArchive') || !file_exists($zipPath)) {
-            return false;
+        if (!class_exists('ZipArchive')) {
+            throw new RuntimeException('PHP ZipArchive extension is required for theme installation.');
         }
 
         $zip = new ZipArchive();
-        if ($zip->open($zipPath) !== true) {
-            return false;
+        if ($zip->open($file['tmp_name']) !== true) {
+            throw new RuntimeException('Failed to open uploaded ZIP file.');
         }
 
-        $themeName = null;
+        $themeName = '';
         for ($i = 0; $i < $zip->numFiles; $i++) {
             $filename = $zip->getNameIndex($i);
-            if ($filename !== false && str_contains($filename, 'theme.json')) {
+            if ($filename !== false) {
                 $parts = explode('/', trim($filename, '/'));
-                if (count($parts) >= 2) {
+                if (!empty($parts[0])) {
                     $themeName = $parts[0];
                     break;
                 }
             }
         }
 
-        if ($themeName === null) {
+        if (empty($themeName)) {
             $zip->close();
-            return false;
+            throw new RuntimeException('Could not determine theme name from archive structure.');
         }
 
-        $dataDir = Database::$dataDir !== '' ? Database::$dataDir : dirname(__DIR__, 2) . '/data';
-        $themesDir = $dataDir . '/../resources/themes';
         if (!is_dir($themesDir)) {
             @mkdir($themesDir, 0755, true);
         }
 
-        $extractPath = $themesDir . '/' . $themeName;
-        $success = $zip->extractTo($themesDir);
+        $extracted = $zip->extractTo($themesDir);
         $zip->close();
 
-        return $success && is_dir($extractPath);
+        if (!$extracted) {
+            throw new RuntimeException('Failed to extract theme archive to themes directory.');
+        }
+
+        return $themeName;
+    }
+
+    /**
+     * Triggers a complete static site generation rebuild.
+     */
+    public function triggerRebuild(?Site $site = null): void
+    {
+        if ($site === null && class_exists(Site::class)) {
+            $site = new Site();
+        }
+
+        if ($site !== null && class_exists(SiteBuilder::class)) {
+            $builder = new SiteBuilder($site);
+            $builder->build();
+        }
     }
 }

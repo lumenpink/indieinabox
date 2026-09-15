@@ -112,6 +112,10 @@
 <li><a href="/docs/api/html/Page.html">Page</a></li>
 <li><a href="/docs/api/html/Pages.html">Pages</a></li>
 <li><a href="/docs/api/html/ParserInterface.html">ParserInterface</a></li>
+<li><a href="/docs/api/html/Repositories-Contracts-InteractionRepositoryInterface.html">Repositories-Contracts-InteractionRepositoryInterface</a></li>
+<li><a href="/docs/api/html/Repositories-Contracts-SettingsRepositoryInterface.html">Repositories-Contracts-SettingsRepositoryInterface</a></li>
+<li><a href="/docs/api/html/Repositories-FileInteractionRepository.html">Repositories-FileInteractionRepository</a></li>
+<li><a href="/docs/api/html/Repositories-SqliteSettingsRepository.html">Repositories-SqliteSettingsRepository</a></li>
 <li><a href="/docs/api/html/Services-ConfigurationService.html">Services-ConfigurationService</a></li>
 <li><a href="/docs/api/html/Services-FetchFeedsService.html">Services-FetchFeedsService</a></li>
 <li><a href="/docs/api/html/Services-FollowService.html">Services-FollowService</a></li>
@@ -163,10 +167,13 @@
 <p><strong>Namespace:</strong> <code>Indieinabox\Services</code></p>
 <p>Domain service managing site configuration, kind taxonomies, translations, and theme installations.</p>
 <h2>Properties</h2>
-<h3><code>private PDO $db</code></h3>
+<h3><code>private Indieinabox\Repositories\Contracts\SettingsRepositoryInterface $settings</code></h3>
+<h3><code>private ?PDO $db</code></h3>
 <h2>Methods</h2>
 <h3><em></em>construct()</h3>
-<p><code>public function __construct(?PDO $db = null)</code></p>
+<p><code>public function __construct(Indieinabox\Repositories\Contracts\SettingsRepositoryInterface|PDO|null $settings = null, ?PDO $db = null)</code></p>
+<h3>getSettingsRepository()</h3>
+<p><code>public function getSettingsRepository(): Indieinabox\Repositories\Contracts\SettingsRepositoryInterface</code></p>
 <h3>bootstrap()</h3>
 <p><code>public function bootstrap(string $password, string $sitename = &apos;My Site Name&apos;, string $fqdn = &apos;&apos;): void</code></p>
 <p>Initializes a fresh site installation with default configuration and admin credentials.</p>
@@ -199,20 +206,20 @@
 <p>@return array<string, mixed></p>
 <h3>saveUrlTranslations()</h3>
 <p><code>public function saveUrlTranslations(array $urlTranslations): bool</code></p>
-<p>Saves URL slug translations.</p>
+<p>Saves URL slug translations table.</p>
 <p>@param array<string, mixed> $urlTranslations</p>
 <h3>detectPrettyLinksSupport()</h3>
 <p><code>public function detectPrettyLinksSupport(): bool</code></p>
-<p>Detects whether pretty links (clean URLs) are supported by the server environment.</p>
-<h3>rebuildSite()</h3>
-<p><code>public function rebuildSite(Indieinabox\Site $site): void</code></p>
-<p>Triggers static site generation.</p>
-<h3>installThemeFromUrl()</h3>
-<p><code>public function installThemeFromUrl(string $url): bool</code></p>
-<p>Installs a theme from a remote ZIP archive.</p>
-<h3>installThemeFromZip()</h3>
-<p><code>public function installThemeFromZip(string $zipPath): bool</code></p>
-<p>Extracts a theme ZIP archive into the themes directory.</p>
+<p>Checks whether the web server environment supports clean pretty links.</p>
+<h3>installTheme()</h3>
+<p><code>public function installTheme(array $file, string $themesDir): string</code></p>
+<p>Validates and installs an uploaded theme zip file.</p>
+<p>@param array<string, mixed> $file Uploaded $ $file Uploaded $_FILES entry.<br />
+@param string $themesDir Target destination directory.<br />
+@return string Installed theme folder name.</p>
+<h3>triggerRebuild()</h3>
+<p><code>public function triggerRebuild(?Indieinabox\Site $site = null): void</code></p>
+<p>Triggers a complete static site generation rebuild.</p>
 
     </div>
 </body>

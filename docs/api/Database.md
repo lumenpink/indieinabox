@@ -12,6 +12,8 @@ methods for fetching settings, translations, and content configurations.
 
 ### `public static ?string $dataDir`
 
+### `private static ?Indieinabox\Repositories\Contracts\SettingsRepositoryInterface $settingsRepo`
+
 ## Methods
 
 ### connect()
@@ -37,10 +39,20 @@ Throws an exception if the connection has not been established yet.
 
 Closes the active PDO database connection.
 
+### getSettingsRepository()
+`public static function getSettingsRepository(): Indieinabox\Repositories\Contracts\SettingsRepositoryInterface`
+
+Resolves the active settings repository.
+
+### setSettingsRepository()
+`public static function setSettingsRepository(?Indieinabox\Repositories\Contracts\SettingsRepositoryInterface $repo): void`
+
+Overrides the active settings repository (useful for testing and dependency injection).
+
 ### getSetting()
 `public static function getSetting(string $key, ?mixed $default = null): ?mixed`
 
-Fetches a single value from the settings table
+Fetches a single value from the settings table.
 
 @param string $key
 @param mixed $default

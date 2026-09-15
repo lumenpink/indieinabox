@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Indieinabox\Services;
 
-use Indieinabox\Database;
+use Indieinabox\Core\Container;
+use Indieinabox\Repositories\Contracts\InteractionRepositoryInterface;
+use Indieinabox\Repositories\FileInteractionRepository;
 use Indieinabox\Yaml;
 
 /**
@@ -12,13 +14,27 @@ use Indieinabox\Yaml;
  */
 class ModerationService
 {
-    private string $dataDir;
-    private Yaml $yaml;
+    private InteractionRepositoryInterface $interactions;
 
-    public function __construct(?string $dataDir = null, ?Yaml $yaml = null)
+    public function __construct(
+        ?string $dataDir = null,
+        ?Yaml $yaml = null,
+        ?InteractionRepositoryInterface $interactions = null
+    ) {
+        if ($interactions !== null) {
+            $this->interactions = $interactions;
+        } elseif ($dataDir !== null || $yaml !== null) {
+            $this->interactions = new FileInteractionRepository($dataDir, $yaml);
+        } elseif (class_exists(Container::class)) {
+            $this->interactions = Container::getInstance()->make(InteractionRepositoryInterface::class);
+        } else {
+            $this->interactions = new FileInteractionRepository();
+        }
+    }
+
+    public function getRepository(): InteractionRepositoryInterface
     {
-        $this->dataDir = $dataDir ?? (Database::$dataDir !== '' ? Database::$dataDir : dirname(__DIR__, 2) . '/data');
-        $this->yaml = $yaml ?? new Yaml();
+        return $this->interactions;
     }
 
     /**
@@ -26,67 +42,23 @@ class ModerationService
      */
     public function approveInteraction(string $id, string $type = 'pending'): bool
     {
-        $notificationsDir = $this->dataDir . DIRECTORY_SEPARATOR . 'microsub' . DIRECTORY_SEPARATOR . 'inbox' . DIRECTORY_SEPARATOR . 'notifications';
-        $spamDir = $this->dataDir . DIRECTORY_SEPARATOR . 'microsub' . DIRECTORY_SEPARATOR . 'inbox' . DIRECTORY_SEPARATOR . 'spam';
-        $sourceDir = $type === 'spam' ? $spamDir : $notificationsDir;
-        $filePath = $sourceDir . DIRECTORY_SEPARATOR . $id . '.md';
-
-        if (!file_exists($filePath)) {
-            return false;
-        }
-
-        $content = (string) file_get_contents($filePath);
-        if ($content === '') {
-            return false;
-        }
-
-        if (preg_match('/^---\s*\n(.*?)\n---\s*\n(.*)$/s', $content, $matches)) {
-            $parsed = $this->yaml->loadString($matches[1]);
-            $body = trim($matches[2]);
-            $meta = $parsed['metadata'] ?? $parsed;
-            $meta['status'] = 'approved';
-
-            $newYaml = isset($parsed['metadata']) ? ['metadata' => $meta, 'content' => $parsed['content'] ?? ''] : $meta;
-            $yamlStr = $this->yaml->dump($newYaml);
-            $newContent = "---\n" . trim($yamlStr) . "\n---\n\n" . $body;
-        } else {
-            $parsed = $this->yaml->loadString($content);
-            $meta = $parsed['metadata'] ?? $parsed;
-            $meta['status'] = 'approved';
-
-            $newYaml = isset($parsed['metadata']) ? ['metadata' => $meta, 'content' => $parsed['content'] ?? ''] : $meta;
-            $yamlStr = $this->yaml->dump($newYaml);
-            $newContent = "---\n" . trim($yamlStr) . "\n---";
-        }
-
-        $targetPath = $type === 'spam' ? $notificationsDir . DIRECTORY_SEPARATOR . $id . '.md' : $filePath;
-        if ($type === 'spam' && !is_dir($notificationsDir)) {
-            @mkdir($notificationsDir, 0755, true);
-        }
-
-        file_put_contents($targetPath, $newContent);
-        if ($type === 'spam' && $targetPath !== $filePath && file_exists($filePath)) {
-            unlink($filePath);
-        }
-
-        return true;
+        return $this->interactions->updateStatus($id, 'approved', $type);
     }
 
     /**
-     * Deletes an interaction file permanently.
+     * Rejects an interaction by relocating it to the spam directory and updating status to spam.
+     */
+    public function rejectInteraction(string $id, string $type = 'pending'): bool
+    {
+        return $this->interactions->updateStatus($id, 'spam', $type);
+    }
+
+    /**
+     * Deletes an interaction permanently.
      */
     public function deleteInteraction(string $id, string $type = 'pending'): bool
     {
-        $notificationsDir = $this->dataDir . DIRECTORY_SEPARATOR . 'microsub' . DIRECTORY_SEPARATOR . 'inbox' . DIRECTORY_SEPARATOR . 'notifications';
-        $spamDir = $this->dataDir . DIRECTORY_SEPARATOR . 'microsub' . DIRECTORY_SEPARATOR . 'inbox' . DIRECTORY_SEPARATOR . 'spam';
-        $sourceDir = $type === 'spam' ? $spamDir : $notificationsDir;
-        $filePath = $sourceDir . DIRECTORY_SEPARATOR . $id . '.md';
-
-        if (file_exists($filePath)) {
-            return unlink($filePath);
-        }
-
-        return false;
+        return $this->interactions->delete($id, $type);
     }
 
     /**
@@ -96,47 +68,6 @@ class ModerationService
      */
     public function listInteractions(string $type = 'pending'): array
     {
-        $notificationsDir = $this->dataDir . DIRECTORY_SEPARATOR . 'microsub' . DIRECTORY_SEPARATOR . 'inbox' . DIRECTORY_SEPARATOR . 'notifications';
-        $spamDir = $this->dataDir . DIRECTORY_SEPARATOR . 'microsub' . DIRECTORY_SEPARATOR . 'inbox' . DIRECTORY_SEPARATOR . 'spam';
-        $dir = $type === 'spam' ? $spamDir : $notificationsDir;
-
-        if (!is_dir($dir)) {
-            return [];
-        }
-
-        $items = [];
-        $files = scandir($dir) ?: [];
-        foreach ($files as $f) {
-            if ($f === '.' || $f === '..' || !str_ends_with($f, '.md')) {
-                continue;
-            }
-            $id = substr($f, 0, -3);
-            $content = (string) file_get_contents($dir . DIRECTORY_SEPARATOR . $f);
-
-            $meta = [];
-            $body = '';
-            if (preg_match('/^---\s*\n(.*?)\n---\s*\n(.*)$/s', $content, $matches)) {
-                $meta = $this->yaml->loadString($matches[1]);
-                $body = trim($matches[2]);
-            }
-
-            $status = $meta['status'] ?? 'pending';
-            if ($type === 'approved' && $status !== 'approved') {
-                continue;
-            }
-            if ($type === 'pending' && $status === 'approved') {
-                continue;
-            }
-
-            $items[] = [
-                'id' => $id,
-                'status' => $status,
-                'meta' => $meta,
-                'body' => $body,
-                'file' => $dir . DIRECTORY_SEPARATOR . $f,
-            ];
-        }
-
-        return $items;
+        return $this->interactions->listByStatus($type);
     }
 }

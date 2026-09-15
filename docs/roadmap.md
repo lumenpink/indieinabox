@@ -379,3 +379,14 @@ app/
     - Unit: `tests/Unit/Feeds/FeedParsersTest.php`, `tests/Unit/Services/FetchFeedsServiceTest.php`, `tests/Unit/Services/MicrosubServiceTest.php`.
     - Functional: `tests/Functional/FeedsIngestionWorkflowTest.php` testing multi-format ingestion, read status tracking, and pruning.
     - Integration: `tests/Integration/FeedsIntegrationTest.php` testing DI container autowiring, controller integration, and timeline queries.
+- [x] **Repository Pattern for Storage & Persistence**: Decoupled static `Database::*` methods into interface contracts and repository implementations:
+  - `Indieinabox\Repositories\Contracts\SettingsRepositoryInterface`: Storage contract for site configuration, kinds, and multi-lingual translations.
+  - `Indieinabox\Repositories\SqliteSettingsRepository`: SQLite repository managing JSON encoding/decoding and upserts.
+  - `Indieinabox\Repositories\Contracts\InteractionRepositoryInterface`: Contract for querying and moderating social interactions across pages.
+  - `Indieinabox\Repositories\FileInteractionRepository`: Storage repository managing channel markdown files, metadata extraction, and spam transitions.
+  - Bound `SettingsRepositoryInterface` and `InteractionRepositoryInterface` as singletons in `Container`.
+  - Refactored `Database` static facade, `ConfigurationService`, `ModerationService`, and `KindHelper` to delegate directly to repositories.
+  - Comprehensive 3-tier test coverage:
+    - Unit: `tests/Unit/Repositories/SqliteSettingsRepositoryTest.php`, `tests/Unit/Repositories/FileInteractionRepositoryTest.php`.
+    - Functional: `tests/Functional/RepositoriesWorkflowTest.php` testing config bootstrapping, translation saving, interaction moderation, and page query.
+    - Integration: `tests/Integration/RepositoriesIntegrationTest.php` testing DI container singleton autowiring and database static facade routing.

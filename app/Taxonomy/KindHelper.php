@@ -467,52 +467,16 @@ class KindHelper
      */
     public static function getInteractions(Page $page, ?string $type = null): array
     {
-        $hash = md5($page->slug);
-        $dataDir = Database::$dataDir ?? (dirname(__DIR__, 2) . '/data');
-        $notificationsDir = $dataDir . DIRECTORY_SEPARATOR
-            . 'microsub' . DIRECTORY_SEPARATOR
-            . 'inbox' . DIRECTORY_SEPARATOR
-            . 'notifications';
-
-        $interactions = [];
-        if (is_dir($notificationsDir)) {
-            $iter = new \DirectoryIterator($notificationsDir);
-            foreach ($iter as $file) {
-                if ($file->isFile() && $file->getExtension() === 'md') {
-                    if (str_starts_with($file->getFilename(), $hash . '_')) {
-                        $content = file_get_contents($file->getPathname());
-                        if ($content) {
-                            $yaml = new Yaml();
-                            if (preg_match('/^---\s*\n(.*?)\n---\s*\n(.*)$/s', $content, $matches)) {
-                                $parsed = $yaml->loadString($matches[1]);
-                                $body = trim($matches[2]);
-                            } else {
-                                $parsed = $yaml->loadString($content);
-                                $body = '';
-                            }
-
-                            if (isset($parsed['metadata'])) {
-                                $meta = $parsed['metadata'];
-                                $meta['interaction_content'] = $parsed['content'] ?? $body;
-                            } else {
-                                $meta = $parsed;
-                                $meta['interaction_content'] = $meta['content'] ?? $body;
-                            }
-
-                            $status = $meta['status'] ?? 'approved';
-                            if ($status !== 'approved') {
-                                continue;
-                            }
-
-                            $interactionType = $meta['interaction_type'] ?? 'webmention';
-                            if ($type === null || $interactionType === $type) {
-                                $interactions[] = $meta;
-                            }
-                        }
-                    }
-                }
+        if (class_exists(\Indieinabox\Core\Container::class)) {
+            try {
+                $repo = \Indieinabox\Core\Container::getInstance()->make(\Indieinabox\Repositories\Contracts\InteractionRepositoryInterface::class);
+                return $repo->findByPageSlug($page->slug, $type);
+            } catch (\Throwable) {
+                // Fallback
             }
         }
-        return $interactions;
+
+        $repo = new \Indieinabox\Repositories\FileInteractionRepository();
+        return $repo->findByPageSlug($page->slug, $type);
     }
 }

@@ -22,6 +22,14 @@ factory resolution, and constructor autowiring.
 
 ## Methods
 
+### __construct()
+`public function __construct()`
+
+### registerDefaultBindings()
+`public function registerDefaultBindings(): void`
+
+Registers default framework contracts and implementations.
+
 ### getInstance()
 `public static function getInstance(): Indieinabox\Core\Container`
 
@@ -78,4 +86,4 @@ Resolves a class with constructor dependency autowiring.
 ### flush()
 `public function flush(): void`
 
-Flushes all stored instances and bindings.
+Clears all registered instances, bindings, and resets defaults.

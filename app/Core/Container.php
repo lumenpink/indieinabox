@@ -7,6 +7,10 @@ namespace Indieinabox\Core;
 use Closure;
 use Indieinabox\Core\Exceptions\ContainerException;
 use Indieinabox\Core\Exceptions\NotFoundException;
+use Indieinabox\Repositories\Contracts\SettingsRepositoryInterface;
+use Indieinabox\Repositories\SqliteSettingsRepository;
+use Indieinabox\Repositories\Contracts\InteractionRepositoryInterface;
+use Indieinabox\Repositories\FileInteractionRepository;
 use Psr\Container\ContainerInterface;
 use ReflectionClass;
 use ReflectionNamedType;
@@ -34,6 +38,20 @@ class Container implements ContainerInterface
      * @var array<string, bool>
      */
     private array $singletons = [];
+
+    public function __construct()
+    {
+        $this->registerDefaultBindings();
+    }
+
+    /**
+     * Registers default framework contracts and implementations.
+     */
+    public function registerDefaultBindings(): void
+    {
+        $this->singleton(SettingsRepositoryInterface::class, SqliteSettingsRepository::class);
+        $this->singleton(InteractionRepositoryInterface::class, FileInteractionRepository::class);
+    }
 
     /**
      * Returns the singleton instance of the container.
@@ -131,6 +149,11 @@ class Container implements ContainerInterface
      */
     public function make(string $abstract, array $parameters = []): object
     {
+        if (isset($this->bindings[$abstract])) {
+            /** @var T */
+            return $this->get($abstract);
+        }
+
         if (!class_exists($abstract)) {
             throw new ContainerException("Target class [{$abstract}] does not exist.");
         }
@@ -200,12 +223,13 @@ class Container implements ContainerInterface
     }
 
     /**
-     * Flushes all stored instances and bindings.
+     * Clears all registered instances, bindings, and resets defaults.
      */
     public function flush(): void
     {
         $this->instances = [];
         $this->bindings = [];
         $this->singletons = [];
+        $this->registerDefaultBindings();
     }
 }

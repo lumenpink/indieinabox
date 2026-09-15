@@ -61,7 +61,7 @@ This class represents a page and composes metadata, content, and localization.
 ## Methods
 
 ### __construct()
-`public function __construct(?Indieinabox\Page\Metadata $metadata, ?Indieinabox\Page\Content $content, ?Indieinabox\Page\Localization $localization, ?DateTime $date = null, string $relpath = '', string $slug = 'untitled')`
+`public function __construct(?Indieinabox\Page\Metadata $metadata = null, ?Indieinabox\Page\Content $content = null, ?Indieinabox\Page\Localization $localization = null, ?DateTime $date = null, string $relpath = '', string $slug = 'untitled')`
 
 Page constructor.
 

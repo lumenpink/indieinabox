@@ -112,6 +112,10 @@
 <li><a href="/docs/api/html/Page.html">Page</a></li>
 <li><a href="/docs/api/html/Pages.html">Pages</a></li>
 <li><a href="/docs/api/html/ParserInterface.html">ParserInterface</a></li>
+<li><a href="/docs/api/html/Repositories-Contracts-InteractionRepositoryInterface.html">Repositories-Contracts-InteractionRepositoryInterface</a></li>
+<li><a href="/docs/api/html/Repositories-Contracts-SettingsRepositoryInterface.html">Repositories-Contracts-SettingsRepositoryInterface</a></li>
+<li><a href="/docs/api/html/Repositories-FileInteractionRepository.html">Repositories-FileInteractionRepository</a></li>
+<li><a href="/docs/api/html/Repositories-SqliteSettingsRepository.html">Repositories-SqliteSettingsRepository</a></li>
 <li><a href="/docs/api/html/Services-ConfigurationService.html">Services-ConfigurationService</a></li>
 <li><a href="/docs/api/html/Services-FetchFeedsService.html">Services-FetchFeedsService</a></li>
 <li><a href="/docs/api/html/Services-FollowService.html">Services-FollowService</a></li>
@@ -172,6 +176,11 @@ factory resolution, and constructor autowiring.</p>
 <h3><code>private array $singletons</code></h3>
 <p>@var array<string, bool></p>
 <h2>Methods</h2>
+<h3><em></em>construct()</h3>
+<p><code>public function __construct()</code></p>
+<h3>registerDefaultBindings()</h3>
+<p><code>public function registerDefaultBindings(): void</code></p>
+<p>Registers default framework contracts and implementations.</p>
 <h3>getInstance()</h3>
 <p><code>public static function getInstance(): Indieinabox\Core\Container</code></p>
 <p>Returns the singleton instance of the container.</p>
@@ -208,7 +217,7 @@ factory resolution, and constructor autowiring.</p>
 @throws ContainerException</p>
 <h3>flush()</h3>
 <p><code>public function flush(): void</code></p>
-<p>Flushes all stored instances and bindings.</p>
+<p>Clears all registered instances, bindings, and resets defaults.</p>
 
     </div>
 </body>

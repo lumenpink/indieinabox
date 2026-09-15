@@ -5,12 +5,17 @@ Domain service managing site configuration, kind taxonomies, translations, and t
 
 ## Properties
 
-### `private PDO $db`
+### `private Indieinabox\Repositories\Contracts\SettingsRepositoryInterface $settings`
+
+### `private ?PDO $db`
 
 ## Methods
 
 ### __construct()
-`public function __construct(?PDO $db = null)`
+`public function __construct(Indieinabox\Repositories\Contracts\SettingsRepositoryInterface|PDO|null $settings = null, ?PDO $db = null)`
+
+### getSettingsRepository()
+`public function getSettingsRepository(): Indieinabox\Repositories\Contracts\SettingsRepositoryInterface`
 
 ### bootstrap()
 `public function bootstrap(string $password, string $sitename = 'My Site Name', string $fqdn = ''): void`
@@ -67,26 +72,25 @@ Retrieves URL translations.
 ### saveUrlTranslations()
 `public function saveUrlTranslations(array $urlTranslations): bool`
 
-Saves URL slug translations.
+Saves URL slug translations table.
 
 @param array<string, mixed> $urlTranslations
 
 ### detectPrettyLinksSupport()
 `public function detectPrettyLinksSupport(): bool`
 
-Detects whether pretty links (clean URLs) are supported by the server environment.
+Checks whether the web server environment supports clean pretty links.
 
-### rebuildSite()
-`public function rebuildSite(Indieinabox\Site $site): void`
+### installTheme()
+`public function installTheme(array $file, string $themesDir): string`
 
-Triggers static site generation.
+Validates and installs an uploaded theme zip file.
 
-### installThemeFromUrl()
-`public function installThemeFromUrl(string $url): bool`
+@param array<string, mixed> $file Uploaded $_FILES entry.
+@param string $themesDir Target destination directory.
+@return string Installed theme folder name.
 
-Installs a theme from a remote ZIP archive.
+### triggerRebuild()
+`public function triggerRebuild(?Indieinabox\Site $site = null): void`
 
-### installThemeFromZip()
-`public function installThemeFromZip(string $zipPath): bool`
-
-Extracts a theme ZIP archive into the themes directory.
+Triggers a complete static site generation rebuild.

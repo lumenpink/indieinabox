@@ -62,6 +62,11 @@ The project follows Domain-Driven Design (DDD) and SOLID principles, structured 
     - `ConfigurationService.php`: Site setup bootstrap, settings persistence, kind taxonomies, translations, and theme installations.
     - `FetchFeedsService.php`: Syndication feed fetching, strategy-based parsing, media caching, and storage.
     - `MicrosubService.php`: Microsub channels, subscriptions, timeline retrieval, read tracking, and social interactions.
+  - **`Repositories/`**: Repository Pattern persistence abstractions and contracts:
+    - `Contracts/SettingsRepositoryInterface.php`: Storage contract for application settings, kind taxonomies, and translations.
+    - `SqliteSettingsRepository.php`: SQLite implementation of settings repository with JSON decoding.
+    - `Contracts/InteractionRepositoryInterface.php`: Contract for incoming social interactions querying and moderation.
+    - `FileInteractionRepository.php`: Channel file-backed repository for social interactions and moderation.
   - **`Feeds/`**: Feed generation and consumption:
     - `Contracts/FeedParserInterface.php`: Strategy pattern contract for feed parser implementations.
     - `Parsers/TwtxtParser.php`: Strategy parser for Twtxt flat-text feeds.

@@ -87,9 +87,9 @@ class Page
      * @param string $slug
      */
     public function __construct(
-        ?Metadata $metadata,
-        ?Content $content,
-        ?Localization $localization,
+        ?Metadata $metadata = null,
+        ?Content $content = null,
+        ?Localization $localization = null,
         ?DateTime $date = null,
         string $relpath = "",
         string $slug = "untitled"

@@ -6,7 +6,9 @@ namespace Indieinabox;
 
 use Exception;
 use PDO;
-use PDOResult;
+use Indieinabox\Core\Container;
+use Indieinabox\Repositories\Contracts\SettingsRepositoryInterface;
+use Indieinabox\Repositories\SqliteSettingsRepository;
 
 /**
  * Class Database
@@ -18,6 +20,7 @@ class Database
 {
     private static ?PDO $db = null;
     public static ?string $dataDir = null;
+    private static ?SettingsRepositoryInterface $settingsRepo = null;
 
     /**
      * Connects to the SQLite database and initializes connection attributes.
@@ -92,11 +95,39 @@ class Database
     public static function disconnect(): void
     {
         self::$db = null;
+        self::$settingsRepo = null;
     }
 
+    /**
+     * Resolves the active settings repository.
+     */
+    public static function getSettingsRepository(): SettingsRepositoryInterface
+    {
+        if (self::$settingsRepo !== null) {
+            return self::$settingsRepo;
+        }
+
+        if (class_exists(Container::class)) {
+            try {
+                return Container::getInstance()->get(SettingsRepositoryInterface::class);
+            } catch (\Throwable) {
+                // Fallback to direct resolution
+            }
+        }
+
+        return new SqliteSettingsRepository(self::$db);
+    }
 
     /**
-     * Fetches a single value from the settings table
+     * Overrides the active settings repository (useful for testing and dependency injection).
+     */
+    public static function setSettingsRepository(?SettingsRepositoryInterface $repo): void
+    {
+        self::$settingsRepo = $repo;
+    }
+
+    /**
+     * Fetches a single value from the settings table.
      *
      * @param string $key
      * @param mixed $default
@@ -104,33 +135,7 @@ class Database
      */
     public static function getSetting(string $key, mixed $default = null): mixed
     {
-        try {
-            $stmt = self::getDb()->prepare('SELECT value FROM settings WHERE key = :key');
-            if (!$stmt) {
-                return $default;
-            }
-            $stmt->bindValue(':key', $key, PDO::PARAM_STR);
-            $stmt->execute();
-            $row = $stmt->fetch(PDO::FETCH_ASSOC);
-            if ($row) {
-                if ($row && isset($row['value'])) {
-                    $value = $row['value'];
-                    
-                    // Try to decode JSON
-                    $decoded = json_decode($value, true);
-                    if (json_last_error() === JSON_ERROR_NONE) {
-                        return $decoded;
-                    }
-                    
-                    return $value;
-                }
-            }
-            return $default;
-        } catch (Exception $e) {
-            // Robust exception handling: log or return default so we don't crash the app
-            error_log("Database error in getSetting: " . $e->getMessage());
-            return $default;
-        }
+        return self::getSettingsRepository()->get($key, $default);
     }
 
     /**
@@ -143,22 +148,7 @@ class Database
      */
     public static function saveSetting(string $key, mixed $value): bool
     {
-        try {
-            $db = self::getDb();
-            $stmt = $db->prepare('INSERT INTO settings (key, value) VALUES (:key, :value) ON CONFLICT(key) DO UPDATE SET value = excluded.value');
-            if (!$stmt) {
-                return false;
-            }
-            
-            $encodedValue = (is_array($value) || is_object($value)) ? json_encode($value, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) : (string)$value;
-            $stmt->bindValue(':key', $key, PDO::PARAM_STR);
-            $stmt->bindValue(':value', $encodedValue, PDO::PARAM_STR);
-            
-            return $stmt->execute();
-        } catch (Exception $e) {
-            error_log("Database error in saveSetting: " . $e->getMessage());
-            return false;
-        }
+        return self::getSettingsRepository()->set($key, $value);
     }
 
     /**
@@ -169,41 +159,7 @@ class Database
      */
     public static function getAllSettings(): array
     {
-        $settings = [];
-        try {
-            $result = self::getDb()->query('SELECT key, value FROM settings');
-            if ($result) {
-                while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
-                    $value = $row['value'];
-                    $decoded = json_decode($value, true);
-                    if (json_last_error() === JSON_ERROR_NONE) {
-                        $value = $decoded;
-                    }
-                    $settings[$row['key']] = $value;
-                }
-            }
-
-            // Load .env overrides
-            $envPath = __DIR__ . '/../.env';
-            if (file_exists($envPath)) {
-                $lines = file($envPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-                foreach ($lines as $line) {
-                    $line = trim($line);
-                    if (strpos($line, '#') === 0 || empty($line)) continue;
-                    $parts = explode('=', $line, 2);
-                    if (count($parts) === 2) {
-                        $envKey = trim($parts[0]);
-                        $envVal = trim(trim($parts[1]), '"\'');
-                        if (in_array($envKey, ['APP_URL', 'FQDN'])) {
-                            $settings['fqdn'] = $envVal;
-                        }
-                    }
-                }
-            }
-        } catch (Exception $e) {
-            error_log("Database error in getAllSettings: " . $e->getMessage());
-        }
-        return $settings;
+        return self::getSettingsRepository()->all();
     }
 
     /**
@@ -214,25 +170,7 @@ class Database
      */
     public static function getTranslations(): array
     {
-        $translations = [];
-        try {
-            $result = self::getDb()->query('SELECT lang, phrase_key, phrase_value FROM translations');
-            if ($result) {
-                while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
-                    $lang = $row['lang'];
-                    $key = $row['phrase_key'];
-                    $val = $row['phrase_value'];
-                    if (!isset($translations[$key])) $translations[$key] = [];
-                    // Only overwrite if the new value is not empty, or if we don't have a value yet
-                    if (!isset($translations[$key][$lang]) || ($translations[$key][$lang] === '' && $val !== '')) {
-                        $translations[$key][$lang] = $val;
-                    }
-                }
-            }
-        } catch (Exception $e) {
-            error_log("Database error in getTranslations: " . $e->getMessage());
-        }
-        return $translations;
+        return self::getSettingsRepository()->getTranslations();
     }
 
     /**
@@ -243,25 +181,7 @@ class Database
      */
     public static function getUrlTranslations(): array
     {
-        $urlTranslations = [];
-        try {
-            $result = self::getDb()->query('SELECT lang, slug_key, slug_value FROM url_translations');
-            if ($result) {
-                while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
-                    $lang = $row['lang'];
-                    $key = $row['slug_key'];
-                    $val = $row['slug_value'];
-                    
-                    if (!isset($urlTranslations[$key])) {
-                        $urlTranslations[$key] = [];
-                    }
-                    $urlTranslations[$key][$lang] = $val;
-                }
-            }
-        } catch (Exception $e) {
-            error_log("Database error in getUrlTranslations: " . $e->getMessage());
-        }
-        return $urlTranslations;
+        return self::getSettingsRepository()->getUrlTranslations();
     }
 
     /**
@@ -272,21 +192,6 @@ class Database
      */
     public static function getKinds(): array
     {
-        $kinds = [];
-        try {
-            $result = self::getDb()->query('SELECT kind_key, config_json FROM kinds');
-            if ($result) {
-                while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
-                    $key = $row['kind_key'];
-                    $json = $row['config_json'];
-                    $decoded = json_decode($json, true);
-                    $kinds[$key] = (json_last_error() === JSON_ERROR_NONE) ? $decoded : $json;
-                }
-            }
-        } catch (Exception $e) {
-            error_log("Database error in getKinds: " . $e->getMessage());
-        }
-        return $kinds;
+        return self::getSettingsRepository()->getKinds();
     }
-
 }

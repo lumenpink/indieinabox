@@ -112,6 +112,10 @@
 <li><a href="/docs/api/html/Page.html">Page</a></li>
 <li><a href="/docs/api/html/Pages.html">Pages</a></li>
 <li><a href="/docs/api/html/ParserInterface.html">ParserInterface</a></li>
+<li><a href="/docs/api/html/Repositories-Contracts-InteractionRepositoryInterface.html">Repositories-Contracts-InteractionRepositoryInterface</a></li>
+<li><a href="/docs/api/html/Repositories-Contracts-SettingsRepositoryInterface.html">Repositories-Contracts-SettingsRepositoryInterface</a></li>
+<li><a href="/docs/api/html/Repositories-FileInteractionRepository.html">Repositories-FileInteractionRepository</a></li>
+<li><a href="/docs/api/html/Repositories-SqliteSettingsRepository.html">Repositories-SqliteSettingsRepository</a></li>
 <li><a href="/docs/api/html/Services-ConfigurationService.html">Services-ConfigurationService</a></li>
 <li><a href="/docs/api/html/Services-FetchFeedsService.html">Services-FetchFeedsService</a></li>
 <li><a href="/docs/api/html/Services-FollowService.html">Services-FollowService</a></li>
@@ -163,17 +167,21 @@
 <p><strong>Namespace:</strong> <code>Indieinabox\Services</code></p>
 <p>Service managing moderation workflows for incoming notifications, comments, and interactions.</p>
 <h2>Properties</h2>
-<h3><code>private string $dataDir</code></h3>
-<h3><code>private Indieinabox\Yaml $yaml</code></h3>
+<h3><code>private Indieinabox\Repositories\Contracts\InteractionRepositoryInterface $interactions</code></h3>
 <h2>Methods</h2>
 <h3><em></em>construct()</h3>
-<p><code>public function __construct(?string $dataDir = null, ?Indieinabox\Yaml $yaml = null)</code></p>
+<p><code>public function __construct(?string $dataDir = null, ?Indieinabox\Yaml $yaml = null, ?Indieinabox\Repositories\Contracts\InteractionRepositoryInterface $interactions = null)</code></p>
+<h3>getRepository()</h3>
+<p><code>public function getRepository(): Indieinabox\Repositories\Contracts\InteractionRepositoryInterface</code></p>
 <h3>approveInteraction()</h3>
 <p><code>public function approveInteraction(string $id, string $type = &apos;pending&apos;): bool</code></p>
 <p>Approves a pending or spam notification by setting status to approved and relocating to notifications dir.</p>
+<h3>rejectInteraction()</h3>
+<p><code>public function rejectInteraction(string $id, string $type = &apos;pending&apos;): bool</code></p>
+<p>Rejects an interaction by relocating it to the spam directory and updating status to spam.</p>
 <h3>deleteInteraction()</h3>
 <p><code>public function deleteInteraction(string $id, string $type = &apos;pending&apos;): bool</code></p>
-<p>Deletes an interaction file permanently.</p>
+<p>Deletes an interaction permanently.</p>
 <h3>listInteractions()</h3>
 <p><code>public function listInteractions(string $type = &apos;pending&apos;): array</code></p>
 <p>Lists interactions by type (&apos;pending&apos;, &apos;approved&apos;, or &apos;spam&apos;).</p>

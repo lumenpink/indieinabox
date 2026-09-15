@@ -55,6 +55,7 @@ The project follows Domain-Driven Design (DDD) and SOLID principles, structured 
       - `ArchiveController.php`: Web archive explorer and snapshot capture (`/archive`, `/archive/force`).
       - `ConfigController.php`: Administrative site and engine configuration.
   - **`Services/`**: Protocol-agnostic domain business services:
+    - `ArchiveService.php`: Snapshot retrieval, timeline alias resolution, and forced archiving queues.
     - `FollowService.php`: Remote follower management, status checks, and distinct fan-out inbox resolution.
     - `OutboxService.php`: Outgoing delivery queueing, follower broadcast fan-out, and adapter-based delivery dispatch.
     - `InboxService.php`: Incoming activity queueing, follow/accept orchestration, and undo-follow processing.
@@ -64,6 +65,10 @@ The project follows Domain-Driven Design (DDD) and SOLID principles, structured 
     - `ConfigurationService.php`: Site setup bootstrap, settings persistence, kind taxonomies, translations, and theme installations.
     - `FetchFeedsService.php`: Syndication feed fetching, strategy-based parsing, media caching, and storage.
     - `MicrosubService.php`: Microsub channels, subscriptions, timeline retrieval, read tracking, and social interactions.
+  - **`Views/`**: Presentation components cleanly decoupled from transport handlers:
+    - `ArchiveView.php`: Snapshot explorer toolbar and iframe view presenter.
+    - `Webmention/HelpPageView.php`: Interactive webmention endpoint test and documentation page.
+    - `IndieAuth/ConsentView.php`: IndieAuth authorization consent prompt view.
   - **`Repositories/`**: Repository Pattern persistence abstractions and contracts:
     - `Contracts/SettingsRepositoryInterface.php`: Storage contract for application settings, kind taxonomies, and translations.
     - `SqliteSettingsRepository.php`: SQLite implementation of settings repository with JSON decoding.

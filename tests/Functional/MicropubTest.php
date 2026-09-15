@@ -9,8 +9,8 @@ use Indieinabox\Site;
  * @property TestMicropubRouter $router
  */
 
-// Subclass the handler to avoid calling headers and exit
-class MockMicropubHandler extends \Indieinabox\MicropubHandler
+// Subclass the controller to avoid calling headers and exit
+class MockMicropubHandler extends \Indieinabox\Http\Controllers\MicropubController
 {
     public array $lastResponse = [];
     public ?string $mockJsonInput = null;
@@ -20,29 +20,30 @@ class MockMicropubHandler extends \Indieinabox\MicropubHandler
         return $this->mockJsonInput ?? parent::getRawInput();
     }
 
-    protected function sendResponse(int $code, string $error, string $description): void
+    protected function moveUploadedFile(string $tmpName, string $destPath): bool
+    {
+        return copy($tmpName, $destPath);
+    }
+
+    protected function sendErrorResponse(int $code, string $error, string $description): void
     {
         $this->lastResponse = [
             'status' => $code,
             'body' => [
                 'error' => $error,
-                'error_description' => $description
+                'error_description' => $description,
             ],
-            'headers' => []
+            'headers' => [],
         ];
     }
+
     protected function sendSuccessResponse(int $code, array $headers = [], $body = null): void
     {
         $this->lastResponse = [
             'status' => $code,
             'headers' => $headers,
-            'body' => $body
+            'body' => $body,
         ];
-    }
-
-    protected function moveUploadedFile(string $tmpName, string $destPath): bool
-    {
-        return copy($tmpName, $destPath);
     }
 }
 
@@ -56,7 +57,7 @@ class TestMicropubRouter extends \Indieinabox\WebRouter
         $this->micropubMock = new MockMicropubHandler($site);
     }
 
-    protected function createMicropubHandler(): \Indieinabox\MicropubHandler
+    public function getMicropubController(): \Indieinabox\Http\Controllers\MicropubController
     {
         return $this->micropubMock;
     }
@@ -282,7 +283,7 @@ it('accepts media uploads and returns 201 with Location header', function () {
     file_put_contents($tmpName, 'dummy image content');
 
     ob_start();
-    $mockHandler = new class($this->site) extends \Indieinabox\MicropubHandler {
+    $mockHandler = new class($this->site) extends \Indieinabox\Http\Controllers\MicropubController {
         public $capturedHeaders = [];
         protected function moveUploadedFile(string $tmpName, string $dest): bool {
             if (!copy($tmpName, $dest)) {

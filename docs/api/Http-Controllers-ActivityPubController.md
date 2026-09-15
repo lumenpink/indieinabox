@@ -5,32 +5,54 @@ Controller managing HTTP endpoints for ActivityPub federation, actor discovery, 
 
 ## Properties
 
-### `private Indieinabox\ActivityPubHandler $handler`
+### `private PDO $db`
+
+### `private Indieinabox\ActivityPub\KeyManager $keyManager`
+
+### `private Indieinabox\ActivityPub\InteractionHandler $interactionHandler`
 
 ### `protected Indieinabox\Site $site`
 
 ## Methods
 
 ### __construct()
-`public function __construct(Indieinabox\Site $site, ?Indieinabox\ActivityPubHandler $handler = null)`
+`public function __construct(Indieinabox\Site $site, ?PDO $db = null, ?Indieinabox\ActivityPub\KeyManager $keyManager = null, ?Indieinabox\ActivityPub\InteractionHandler $interactionHandler = null)`
+
+### getKeyManager()
+`public function getKeyManager(): Indieinabox\ActivityPub\KeyManager`
+
+### getInteractionHandler()
+`public function getInteractionHandler(): Indieinabox\ActivityPub\InteractionHandler`
 
 ### interact()
 `public function interact(): void`
 
+Handles /interact route.
+
 ### authorizeInteraction()
 `public function authorizeInteraction(): void`
+
+Handles /authorize_interaction route.
 
 ### webfinger()
 `public function webfinger(): void`
 
+Handles WebFinger (.well-known/webfinger) requests for actor discovery.
+
 ### actor()
 `public function actor(): void`
+
+Outputs the ActivityPub Actor profile (Person) in JSON-LD format.
 
 ### inbox()
 `public function inbox(): void`
 
+Handles incoming activities (POST to /inbox).
+
 ### outbox()
 `public function outbox(): void`
+
+Handles GET requests to the outbox (/outbox).
 
 ### getSite()
 `public function getSite(): Indieinabox\Site`
@@ -62,3 +84,16 @@ Emits a redirect header.
 `protected function status(int $status): void`
 
 Sets HTTP status code.
+
+### jsonResponse()
+`protected function jsonResponse(?mixed $data, int $status = 200, array $headers = []): void`
+
+@param array<string, string> $headers
+
+### htmlResponse()
+`protected function htmlResponse(string $html, int $status = 200, array $headers = []): void`
+
+@param array<string, string> $headers
+
+### redirectResponse()
+`protected function redirectResponse(string $url, int $status = 302): void`

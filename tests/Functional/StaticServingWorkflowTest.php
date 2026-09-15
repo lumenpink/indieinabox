@@ -17,6 +17,14 @@ beforeEach(function () {
     mkdir($this->tempDir . '/public_html/assets', 0777, true);
     mkdir($this->tempDir . '/content/media', 0777, true);
 
+    \Indieinabox\Database::disconnect();
+    \Indieinabox\Database::$dataDir = $this->tempDir . '/data';
+    \Indieinabox\Database::connect(':memory:');
+    $sql = (string) file_get_contents(dirname(__DIR__, 2) . '/database.sql');
+    if ($sql !== '') {
+        \Indieinabox\Database::getDb()->exec($sql);
+    }
+
     $paths = new Paths($this->tempDir);
     $paths->outputDirHtml = 'public_html';
     $this->site = new Site(null, $paths);
@@ -28,6 +36,7 @@ beforeEach(function () {
 });
 
 afterEach(function () {
+    \Indieinabox\Database::disconnect();
     FileUtils::recursiveRmdir($this->tempDir);
 });
 

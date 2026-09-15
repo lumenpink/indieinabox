@@ -20,9 +20,13 @@ class FederationManager
      */
     private array $adapters = [];
 
-    public function __construct(Site $site)
+    public function __construct(?Site $site = null)
     {
-        $this->site = $site;
+        $this->site = $site ?? (
+            \Indieinabox\Core\Container::getInstance()->has(Site::class)
+                ? \Indieinabox\Core\Container::getInstance()->get(Site::class)
+                : ($GLOBALS['site'] ?? new Site())
+        );
         $this->registerDefaultAdapters();
     }
 

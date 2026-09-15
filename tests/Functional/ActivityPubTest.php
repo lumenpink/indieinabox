@@ -94,10 +94,14 @@ it('returns actor ActivityStreams JSON', function () {
 });
 
 it('processes an incoming follow and queues an accept', function () {
-    $handler = new \Indieinabox\ActivityPubHandler($GLOBALS['test_ap_site']);
+    $outboxService = new \Indieinabox\Services\OutboxService($GLOBALS['test_ap_db']);
     
-    // Test the queueCreateActivity which is public and used by Micropub
-    $handler->queueCreateActivity('https://localhost/note/1', 'Hello world', null);
+    $create1 = \Indieinabox\ActivityPub\ActivityBuilder::buildCreateActivity(
+        'https://localhost/note/1#activity',
+        'http://localhost:8080/actor',
+        ['type' => 'Note', 'content' => 'Hello world']
+    );
+    $outboxService->broadcastActivity($create1);
 
     $stmt = $GLOBALS['test_ap_db']->query("SELECT * FROM activitypub_outbox");
     $outbox = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -110,7 +114,12 @@ it('processes an incoming follow and queues an accept', function () {
            "VALUES ('https://mastodon.social/users/someone', 'https://mastodon.social/users/someone/inbox')";
     $GLOBALS['test_ap_db']->exec($sql);
     
-    $handler->queueCreateActivity('https://localhost/note/2', 'Hello Fediverse', null);
+    $create2 = \Indieinabox\ActivityPub\ActivityBuilder::buildCreateActivity(
+        'https://localhost/note/2#activity',
+        'http://localhost:8080/actor',
+        ['type' => 'Note', 'content' => 'Hello Fediverse']
+    );
+    $outboxService->broadcastActivity($create2);
 
     $stmt = $GLOBALS['test_ap_db']->query("SELECT * FROM activitypub_outbox");
     $outbox = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -134,7 +143,7 @@ it('injects bookwyrm reading properties when processing micropub', function () {
             'syndicate-to' => ['https://lemmy.eco.br/c/linux']
         ]
     ];
-    $handler = new \Indieinabox\MicropubHandler($GLOBALS['test_ap_site']);
+    $controller = new \Indieinabox\Http\Controllers\MicropubController($GLOBALS['test_ap_site']);
     
     // Test logic continues...
     expect(true)->toBeTrue();

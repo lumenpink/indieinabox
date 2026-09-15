@@ -39,35 +39,15 @@ and delegates to the respective handler. Falls back to serveStatic().
 
 @return void
 
-### createWebmentionHandler()
-`protected function createWebmentionHandler(): Indieinabox\WebmentionHandler`
-
-Factory method to create a WebmentionHandler instance.
-
-### createIndieAuthHandler()
-`protected function createIndieAuthHandler(): Indieinabox\IndieAuthHandler`
-
-Factory method to create an IndieAuthHandler instance.
-
 ### createConfigHandler()
 `protected function createConfigHandler(): Indieinabox\ConfigHandler`
 
 Factory method to create a ConfigHandler instance (Admin panel configuration).
 
-### createMicropubHandler()
-`protected function createMicropubHandler(): Indieinabox\MicropubHandler`
-
-Factory method to create a MicropubHandler instance (Micropub Server).
-
 ### createMicropubClientHandler()
 `protected function createMicropubClientHandler(): Indieinabox\MicropubClientHandler`
 
 Factory method to create a MicropubClientHandler instance (Admin panel publishing).
-
-### createMicrosubHandler()
-`protected function createMicrosubHandler(): Indieinabox\MicrosubHandler`
-
-Factory method to create a MicrosubHandler instance (Microsub Server).
 
 ### createMicrosubReaderHandler()
 `protected function createMicrosubReaderHandler(): Indieinabox\MicrosubReaderHandler`
@@ -79,16 +59,6 @@ Factory method to create a MicrosubReaderHandler instance (Admin panel reader).
 
 Factory method to create a ModerationHandler instance (Admin panel moderation).
 
-### createActivityPubHandler()
-`protected function createActivityPubHandler(): Indieinabox\ActivityPubHandler`
-
-Factory method to create an ActivityPubHandler instance (Fediverse integration).
-
-### createArchiveHandler()
-`protected function createArchiveHandler(): Indieinabox\ArchiveHandler`
-
-Factory method to create an ArchiveHandler instance.
-
 ### getWebmentionController()
 `public function getWebmentionController(): Indieinabox\Http\Controllers\WebmentionController`
 
@@ -97,6 +67,11 @@ Factory method to create an ArchiveHandler instance.
 
 ### getMicropubController()
 `public function getMicropubController(): Indieinabox\Http\Controllers\MicropubController`
+
+### createMicrosubHandler()
+`protected function createMicrosubHandler(): Indieinabox\MicrosubHandler`
+
+Factory method to create a MicrosubHandler instance (Microsub Server).
 
 ### getMicrosubController()
 `public function getMicrosubController(): Indieinabox\Http\Controllers\MicrosubController`

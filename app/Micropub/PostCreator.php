@@ -156,10 +156,24 @@ class PostCreator
             $postUrl = $baseUrl . '/' . $lang . '/' . $kind . '/' . $year . '/' . $month . '/' . $slug . '.html';
         }
 
-        // Queue ActivityPub outbox message
-        if (class_exists('\\Indieinabox\\ActivityPubHandler')) {
-            $apHandler = new \Indieinabox\ActivityPubHandler($site);
-            $apHandler->queueCreateActivity($postUrl, $content, $name, $frontmatter);
+        // Queue ActivityPub outbox message via OutboxService
+        if (class_exists('\\Indieinabox\\Services\\OutboxService')) {
+            $actorId = $baseUrl . '/actor';
+            $object = \Indieinabox\ActivityPub\ActivityBuilder::buildObjectForPageArray(
+                $postUrl,
+                $actorId,
+                $baseUrl,
+                $content,
+                $name,
+                $frontmatter
+            );
+            $createActivity = \Indieinabox\ActivityPub\ActivityBuilder::buildCreateActivity(
+                $postUrl . '#activity',
+                $actorId,
+                $object
+            );
+            $outboxService = new \Indieinabox\Services\OutboxService();
+            $outboxService->broadcastActivity($createActivity);
         }
 
         // Queue outgoing webmentions

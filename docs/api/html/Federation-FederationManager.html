@@ -24,8 +24,6 @@
         <ul><li><a href="/docs/api/html/ActivityPub-ActivityBuilder.html">ActivityPub-ActivityBuilder</a></li>
 <li><a href="/docs/api/html/ActivityPub-InteractionHandler.html">ActivityPub-InteractionHandler</a></li>
 <li><a href="/docs/api/html/ActivityPub-KeyManager.html">ActivityPub-KeyManager</a></li>
-<li><a href="/docs/api/html/ActivityPubHandler.html">ActivityPubHandler</a></li>
-<li><a href="/docs/api/html/ArchiveHandler.html">ArchiveHandler</a></li>
 <li><a href="/docs/api/html/BackgroundWorker-ArchiveProcessor.html">BackgroundWorker-ArchiveProcessor</a></li>
 <li><a href="/docs/api/html/BackgroundWorker-InboxProcessor.html">BackgroundWorker-InboxProcessor</a></li>
 <li><a href="/docs/api/html/BackgroundWorker-OutboxDispatcher.html">BackgroundWorker-OutboxDispatcher</a></li>
@@ -83,7 +81,6 @@
 <li><a href="/docs/api/html/IndieAuth-ConsentView.html">IndieAuth-ConsentView</a></li>
 <li><a href="/docs/api/html/IndieAuth-PkceValidator.html">IndieAuth-PkceValidator</a></li>
 <li><a href="/docs/api/html/IndieAuth-TokenManager.html">IndieAuth-TokenManager</a></li>
-<li><a href="/docs/api/html/IndieAuthHandler.html">IndieAuthHandler</a></li>
 <li><a href="/docs/api/html/LinkChecker.html">LinkChecker</a></li>
 <li><a href="/docs/api/html/Localization-Translator.html">Localization-Translator</a></li>
 <li><a href="/docs/api/html/Markdown-ASTParser.html">Markdown-ASTParser</a></li>
@@ -101,7 +98,6 @@
 <li><a href="/docs/api/html/Micropub-PostCreator.html">Micropub-PostCreator</a></li>
 <li><a href="/docs/api/html/Micropub-QueryHandler.html">Micropub-QueryHandler</a></li>
 <li><a href="/docs/api/html/MicropubClientHandler.html">MicropubClientHandler</a></li>
-<li><a href="/docs/api/html/MicropubHandler.html">MicropubHandler</a></li>
 <li><a href="/docs/api/html/Microsub-ExtendedEntry.html">Microsub-ExtendedEntry</a></li>
 <li><a href="/docs/api/html/Microsub-NormalizationAdapter.html">Microsub-NormalizationAdapter</a></li>
 <li><a href="/docs/api/html/MicrosubHandler.html">MicrosubHandler</a></li>
@@ -117,6 +113,7 @@
 <li><a href="/docs/api/html/Repositories-Contracts-SettingsRepositoryInterface.html">Repositories-Contracts-SettingsRepositoryInterface</a></li>
 <li><a href="/docs/api/html/Repositories-FileInteractionRepository.html">Repositories-FileInteractionRepository</a></li>
 <li><a href="/docs/api/html/Repositories-SqliteSettingsRepository.html">Repositories-SqliteSettingsRepository</a></li>
+<li><a href="/docs/api/html/Services-ArchiveService.html">Services-ArchiveService</a></li>
 <li><a href="/docs/api/html/Services-ConfigurationService.html">Services-ConfigurationService</a></li>
 <li><a href="/docs/api/html/Services-FetchFeedsService.html">Services-FetchFeedsService</a></li>
 <li><a href="/docs/api/html/Services-FollowService.html">Services-FollowService</a></li>
@@ -153,12 +150,12 @@
 <li><a href="/docs/api/html/Twtxt-TwtxtManager.html">Twtxt-TwtxtManager</a></li>
 <li><a href="/docs/api/html/Updater.html">Updater</a></li>
 <li><a href="/docs/api/html/Version.html">Version</a></li>
+<li><a href="/docs/api/html/Views-ArchiveView.html">Views-ArchiveView</a></li>
 <li><a href="/docs/api/html/WebRouter.html">WebRouter</a></li>
 <li><a href="/docs/api/html/Webmention-HelpPageView.html">Webmention-HelpPageView</a></li>
 <li><a href="/docs/api/html/Webmention-LinkExtractor.html">Webmention-LinkExtractor</a></li>
 <li><a href="/docs/api/html/Webmention-PayloadParser.html">Webmention-PayloadParser</a></li>
 <li><a href="/docs/api/html/Webmention-SourceVerifier.html">Webmention-SourceVerifier</a></li>
-<li><a href="/docs/api/html/WebmentionHandler.html">WebmentionHandler</a></li>
 <li><a href="/docs/api/html/WebmentionSender.html">WebmentionSender</a></li>
 <li><a href="/docs/api/html/Whostyles.html">Whostyles</a></li>
 <li><a href="/docs/api/html/Yaml.html">Yaml</a></li></ul>
@@ -173,7 +170,7 @@
 <p>@var array<string, FederationAdapter></p>
 <h2>Methods</h2>
 <h3><em></em>construct()</h3>
-<p><code>public function __construct(Indieinabox\Site $site)</code></p>
+<p><code>public function __construct(?Indieinabox\Site $site = null)</code></p>
 <h3>registerDefaultAdapters()</h3>
 <p><code>private function registerDefaultAdapters(): void</code></p>
 <h3>register()</h3>

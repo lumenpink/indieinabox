@@ -397,3 +397,10 @@ app/
     - Unit: `tests/Unit/Http/StaticFileServerTest.php` verifying MIME resolution, 404 responses, directory indexes, media fallback, and ActivityPub content negotiation.
     - Functional: `tests/Functional/StaticServingWorkflowTest.php` testing static asset delivery, ActivityPub JSON negotiation, media paths, and API route precedence over static files.
     - Integration: `tests/Integration/StaticFileServerIntegrationTest.php` testing DI container autowiring, custom server injection, and end-to-end dispatch against real site output directories.
+- [x] **Core Transport Controllers & Legacy Handlers Elimination (Phase 1)**:
+  - Eliminated 5 legacy monolithic transport handlers: `ActivityPubHandler.php`, `ArchiveHandler.php`, `IndieAuthHandler.php`, `MicropubHandler.php`, and `WebmentionHandler.php`.
+  - Extracted `Indieinabox\Services\ArchiveService` for snapshot lookup, alias resolution, and forced archiving queues.
+  - Created dedicated presentation views in `app/Views/` (`ArchiveView.php`, `Webmention/HelpPageView.php`, `IndieAuth/ConsentView.php`) to keep HTML and UI presentation completely separate from transport and business logic.
+  - Purified HTTP transport controllers (`ArchiveController`, `WebmentionController`, `IndieAuthController`, `ActivityPubController`, `MicropubController`) to directly coordinate HTTP requests, domain services, and presentation views.
+  - Decoupled all internal callers (`PagePublisher`, `PostCreator`, `MicrosubHandler`, and `WebRouter`).
+  - Maintained 100% single-file compilation compatibility (`indieinabox.php`), zero CodeSniffer warnings/errors, and complete 3-tier test coverage (Unit, Functional, Integration).

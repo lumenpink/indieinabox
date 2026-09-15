@@ -19,13 +19,18 @@ class OutboxService
     private PDO $db;
 
     public function __construct(
-        FederationManager $federationManager,
-        FollowService $followService,
+        FederationManager|PDO|null $federationManager = null,
+        ?FollowService $followService = null,
         ?PDO $db = null
     ) {
-        $this->federationManager = $federationManager;
-        $this->followService = $followService;
+        if ($federationManager instanceof PDO) {
+            $db = $federationManager;
+            $federationManager = null;
+        }
+
         $this->db = $db ?? Database::getDb();
+        $this->federationManager = $federationManager ?? new FederationManager();
+        $this->followService = $followService ?? new FollowService($this->db);
     }
 
     /**

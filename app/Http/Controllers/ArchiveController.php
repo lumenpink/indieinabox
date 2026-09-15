@@ -4,20 +4,21 @@ declare(strict_types=1);
 
 namespace Indieinabox\Http\Controllers;
 
-use Indieinabox\ArchiveHandler;
+use Indieinabox\Services\ArchiveService;
 use Indieinabox\Site;
+use Indieinabox\Views\ArchiveView;
 
 /**
  * Controller handling the web archive viewer and forced snapshot captures.
  */
 class ArchiveController extends AbstractController
 {
-    private ArchiveHandler $handler;
+    private ArchiveService $service;
 
-    public function __construct(Site $site, ?ArchiveHandler $handler = null)
+    public function __construct(Site $site, ?ArchiveService $service = null)
     {
         parent::__construct($site);
-        $this->handler = $handler ?? new ArchiveHandler($site);
+        $this->service = $service ?? new ArchiveService();
     }
 
     /**
@@ -25,7 +26,16 @@ class ArchiveController extends AbstractController
      */
     public function handle(): void
     {
-        $this->handler->handle();
+        $url = $_GET['url'] ?? '';
+        $ts = isset($_GET['ts']) ? (int) $_GET['ts'] : time();
+
+        if ($url === '') {
+            $this->htmlResponse('URL is required', 400);
+            return;
+        }
+
+        $snapshot = $this->service->findSnapshot($url, $ts);
+        $this->htmlResponse(ArchiveView::render($url, $snapshot));
     }
 
     /**
@@ -33,6 +43,13 @@ class ArchiveController extends AbstractController
      */
     public function force(): void
     {
-        $this->handler->handleForce();
+        $url = $_POST['url'] ?? '';
+        if ($url === '') {
+            $this->htmlResponse('URL is required', 400);
+            return;
+        }
+
+        $this->service->queueForceArchive($url);
+        $this->redirectResponse('/archive?url=' . urlencode($url) . '&ts=' . time());
     }
 }

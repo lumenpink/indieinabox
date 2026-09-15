@@ -2,111 +2,28 @@
 
 declare(strict_types=1);
 
-namespace Indieinabox;
+namespace Indieinabox\Views;
 
-use PDO;
 use Indieinabox\Support\DateFormatter;
 
 /**
- * Class ArchiveHandler
+ * Class ArchiveView
  *
- * Handles viewing of local archived link snapshots (HTML/PDF/Wayback)
- * and queuing forced snapshot updates.
+ * Renders the HTML toolbar and viewer markup for archived snapshots.
  */
-class ArchiveHandler
+class ArchiveView
 {
-    /**
-     * @var Site
-     */
-    private Site $site;
-
-    /**
-     * @param Site $site
-     */
-    public function __construct(Site $site)
-    {
-        $this->site = $site;
-    }
-
-    /**
-     * Handles /archive requests to display local link snapshots or external archive fallbacks.
-     *
-     * @return void
-     */
-    public function handle(): void
-    {
-        $url = $_GET['url'] ?? '';
-        $ts = (int) ($_GET['ts'] ?? time());
-
-        if (!$url) {
-            header('HTTP/1.1 400 Bad Request');
-            echo "URL is required";
-            return;
-        }
-
-        $db = Database::getDb();
-
-        // Follow alias if exists
-        $stmt = $db->prepare("SELECT target_url FROM archive_aliases WHERE alias_url = ?");
-        $stmt->execute([$url]);
-        if ($row = $stmt->fetch()) {
-            $url = $row['target_url'];
-        }
-
-        $normUrl = rtrim(strtolower($url), '/');
-
-        // Find closest snapshot by timestamp difference
-        $stmt = $db->prepare("SELECT * FROM archived_links WHERE url = ? ORDER BY ABS(timestamp - ?) ASC LIMIT 1");
-        $stmt->execute([$normUrl, $ts]);
-        $snapshot = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        echo $this->renderArchiveView($url, $snapshot);
-    }
-
-    /**
-     * Handles /archive/force POST requests to queue a fresh snapshot.
-     *
-     * @return void
-     */
-    public function handleForce(): void
-    {
-        $url = $_POST['url'] ?? '';
-        if (!$url) {
-            header('HTTP/1.1 400 Bad Request');
-            echo "URL is required";
-            return;
-        }
-
-        $db = Database::getDb();
-
-        // Follow alias if exists
-        $stmt = $db->prepare("SELECT target_url FROM archive_aliases WHERE alias_url = ?");
-        $stmt->execute([$url]);
-        if ($row = $stmt->fetch()) {
-            $url = $row['target_url'];
-        }
-
-        $normUrl = rtrim(strtolower($url), '/');
-
-        // Insert directly into archive_queue
-        $stmt = $db->prepare("INSERT INTO archive_queue (url, force_archive) VALUES (?, 1)");
-        $stmt->execute([$normUrl]);
-
-        // Redirect back to archive view
-        $redirectUrl = '/archive?url=' . urlencode($url) . '&ts=' . time();
-        header('Location: ' . $redirectUrl);
-        exit;
-    }
-
     /**
      * Renders the archive iframe toolbar and viewer HTML markup.
      *
-     * @param string $url
-     * @param array<string, mixed>|false $snapshot
+     * @param string $url Target URL.
+     * @param array<string, mixed>|null $snapshot Snapshot row if found.
      * @return string
      */
-    public function renderArchiveView(string $url, $snapshot): string
+    public static function render(string $url, ?array $snapshot = null): string
     {
+        $escapedUrl = htmlspecialchars($url);
+
         $html = '<!DOCTYPE html><html><head><title>Archive View</title>';
         $html .= '<style>
             body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; font-family: system-ui, sans-serif; }
@@ -123,7 +40,7 @@ class ArchiveHandler
         $html .= '</head><body>';
 
         $html .= '<div class="archive-bar">';
-        if ($snapshot) {
+        if ($snapshot !== null) {
             $tsSnapshot = (int) $snapshot['timestamp'];
             $date = date('Y-m-d H:i', $tsSnapshot);
             $diffStr = DateFormatter::timeAgo($tsSnapshot);
@@ -139,28 +56,28 @@ class ArchiveHandler
             if (!empty($snapshot['archive_org_url'])) {
                 $html .= '<a href="' . htmlspecialchars((string) $snapshot['archive_org_url']) . '" target="_blank">Archive.org</a>';
             }
-            $html .= '<a href="' . htmlspecialchars($url) . '" target="_blank" style="color: #ff9999;">Original Site</a>';
+            $html .= '<a href="' . $escapedUrl . '" target="_blank" style="color: #ff9999;">Original Site</a>';
             $html .= '<form method="POST" action="/archive/force">';
-            $html .= '<input type="hidden" name="url" value="' . htmlspecialchars($url) . '">';
+            $html .= '<input type="hidden" name="url" value="' . $escapedUrl . '">';
             $html .= '<button type="submit" title="Request a fresh snapshot">Force Update</button>';
             $html .= '</form>';
             $html .= '</div>';
         } else {
             $html .= "<div class=\"meta\">Snapshot processing or not available locally.</div>";
             $html .= '<div class="actions">';
-            $html .= '<a href="' . htmlspecialchars($url) . '" target="_blank" style="color: #ff9999;">Original Site</a>';
+            $html .= '<a href="' . $escapedUrl . '" target="_blank" style="color: #ff9999;">Original Site</a>';
             $html .= '<form method="POST" action="/archive/force">';
-            $html .= '<input type="hidden" name="url" value="' . htmlspecialchars($url) . '">';
+            $html .= '<input type="hidden" name="url" value="' . $escapedUrl . '">';
             $html .= '<button type="submit" title="Request a fresh snapshot">Force Update</button>';
             $html .= '</form>';
             $html .= '</div>';
         }
         $html .= '</div>';
 
-        if ($snapshot && !empty($snapshot['local_pdf_path'])) {
+        if ($snapshot !== null && !empty($snapshot['local_pdf_path'])) {
             $pdfUrl = htmlspecialchars((string) $snapshot['local_pdf_path']);
             $html .= "<iframe class=\"archive-frame\" src=\"{$pdfUrl}\"></iframe>";
-        } elseif ($snapshot && !empty($snapshot['archive_org_url'])) {
+        } elseif ($snapshot !== null && !empty($snapshot['archive_org_url'])) {
             $archiveUrl = htmlspecialchars((string) $snapshot['archive_org_url']);
             $html .= "<iframe class=\"archive-frame\" src=\"{$archiveUrl}\"></iframe>";
         } else {

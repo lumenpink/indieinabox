@@ -24,8 +24,6 @@
         <ul><li><a href="/docs/api/html/ActivityPub-ActivityBuilder.html">ActivityPub-ActivityBuilder</a></li>
 <li><a href="/docs/api/html/ActivityPub-InteractionHandler.html">ActivityPub-InteractionHandler</a></li>
 <li><a href="/docs/api/html/ActivityPub-KeyManager.html">ActivityPub-KeyManager</a></li>
-<li><a href="/docs/api/html/ActivityPubHandler.html">ActivityPubHandler</a></li>
-<li><a href="/docs/api/html/ArchiveHandler.html">ArchiveHandler</a></li>
 <li><a href="/docs/api/html/BackgroundWorker-ArchiveProcessor.html">BackgroundWorker-ArchiveProcessor</a></li>
 <li><a href="/docs/api/html/BackgroundWorker-InboxProcessor.html">BackgroundWorker-InboxProcessor</a></li>
 <li><a href="/docs/api/html/BackgroundWorker-OutboxDispatcher.html">BackgroundWorker-OutboxDispatcher</a></li>
@@ -83,7 +81,6 @@
 <li><a href="/docs/api/html/IndieAuth-ConsentView.html">IndieAuth-ConsentView</a></li>
 <li><a href="/docs/api/html/IndieAuth-PkceValidator.html">IndieAuth-PkceValidator</a></li>
 <li><a href="/docs/api/html/IndieAuth-TokenManager.html">IndieAuth-TokenManager</a></li>
-<li><a href="/docs/api/html/IndieAuthHandler.html">IndieAuthHandler</a></li>
 <li><a href="/docs/api/html/LinkChecker.html">LinkChecker</a></li>
 <li><a href="/docs/api/html/Localization-Translator.html">Localization-Translator</a></li>
 <li><a href="/docs/api/html/Markdown-ASTParser.html">Markdown-ASTParser</a></li>
@@ -101,7 +98,6 @@
 <li><a href="/docs/api/html/Micropub-PostCreator.html">Micropub-PostCreator</a></li>
 <li><a href="/docs/api/html/Micropub-QueryHandler.html">Micropub-QueryHandler</a></li>
 <li><a href="/docs/api/html/MicropubClientHandler.html">MicropubClientHandler</a></li>
-<li><a href="/docs/api/html/MicropubHandler.html">MicropubHandler</a></li>
 <li><a href="/docs/api/html/Microsub-ExtendedEntry.html">Microsub-ExtendedEntry</a></li>
 <li><a href="/docs/api/html/Microsub-NormalizationAdapter.html">Microsub-NormalizationAdapter</a></li>
 <li><a href="/docs/api/html/MicrosubHandler.html">MicrosubHandler</a></li>
@@ -117,6 +113,7 @@
 <li><a href="/docs/api/html/Repositories-Contracts-SettingsRepositoryInterface.html">Repositories-Contracts-SettingsRepositoryInterface</a></li>
 <li><a href="/docs/api/html/Repositories-FileInteractionRepository.html">Repositories-FileInteractionRepository</a></li>
 <li><a href="/docs/api/html/Repositories-SqliteSettingsRepository.html">Repositories-SqliteSettingsRepository</a></li>
+<li><a href="/docs/api/html/Services-ArchiveService.html">Services-ArchiveService</a></li>
 <li><a href="/docs/api/html/Services-ConfigurationService.html">Services-ConfigurationService</a></li>
 <li><a href="/docs/api/html/Services-FetchFeedsService.html">Services-FetchFeedsService</a></li>
 <li><a href="/docs/api/html/Services-FollowService.html">Services-FollowService</a></li>
@@ -153,12 +150,12 @@
 <li><a href="/docs/api/html/Twtxt-TwtxtManager.html">Twtxt-TwtxtManager</a></li>
 <li><a href="/docs/api/html/Updater.html">Updater</a></li>
 <li><a href="/docs/api/html/Version.html">Version</a></li>
+<li><a href="/docs/api/html/Views-ArchiveView.html">Views-ArchiveView</a></li>
 <li><a href="/docs/api/html/WebRouter.html">WebRouter</a></li>
 <li><a href="/docs/api/html/Webmention-HelpPageView.html">Webmention-HelpPageView</a></li>
 <li><a href="/docs/api/html/Webmention-LinkExtractor.html">Webmention-LinkExtractor</a></li>
 <li><a href="/docs/api/html/Webmention-PayloadParser.html">Webmention-PayloadParser</a></li>
 <li><a href="/docs/api/html/Webmention-SourceVerifier.html">Webmention-SourceVerifier</a></li>
-<li><a href="/docs/api/html/WebmentionHandler.html">WebmentionHandler</a></li>
 <li><a href="/docs/api/html/WebmentionSender.html">WebmentionSender</a></li>
 <li><a href="/docs/api/html/Whostyles.html">Whostyles</a></li>
 <li><a href="/docs/api/html/Yaml.html">Yaml</a></li></ul>
@@ -190,42 +187,27 @@ Parses the current REQUESTMain entry point for routing requests.<br />
 Parses the current REQUEST_URI, checks against known API/Admin endpoints,<br />
 and delegates to the respective handler. Falls back to serveStatic().</p>
 <p>@return void</p>
-<h3>createWebmentionHandler()</h3>
-<p><code>protected function createWebmentionHandler(): Indieinabox\WebmentionHandler</code></p>
-<p>Factory method to create a WebmentionHandler instance.</p>
-<h3>createIndieAuthHandler()</h3>
-<p><code>protected function createIndieAuthHandler(): Indieinabox\IndieAuthHandler</code></p>
-<p>Factory method to create an IndieAuthHandler instance.</p>
 <h3>createConfigHandler()</h3>
 <p><code>protected function createConfigHandler(): Indieinabox\ConfigHandler</code></p>
 <p>Factory method to create a ConfigHandler instance (Admin panel configuration).</p>
-<h3>createMicropubHandler()</h3>
-<p><code>protected function createMicropubHandler(): Indieinabox\MicropubHandler</code></p>
-<p>Factory method to create a MicropubHandler instance (Micropub Server).</p>
 <h3>createMicropubClientHandler()</h3>
 <p><code>protected function createMicropubClientHandler(): Indieinabox\MicropubClientHandler</code></p>
 <p>Factory method to create a MicropubClientHandler instance (Admin panel publishing).</p>
-<h3>createMicrosubHandler()</h3>
-<p><code>protected function createMicrosubHandler(): Indieinabox\MicrosubHandler</code></p>
-<p>Factory method to create a MicrosubHandler instance (Microsub Server).</p>
 <h3>createMicrosubReaderHandler()</h3>
 <p><code>protected function createMicrosubReaderHandler(): Indieinabox\MicrosubReaderHandler</code></p>
 <p>Factory method to create a MicrosubReaderHandler instance (Admin panel reader).</p>
 <h3>createModerationHandler()</h3>
 <p><code>protected function createModerationHandler(): Indieinabox\ModerationHandler</code></p>
 <p>Factory method to create a ModerationHandler instance (Admin panel moderation).</p>
-<h3>createActivityPubHandler()</h3>
-<p><code>protected function createActivityPubHandler(): Indieinabox\ActivityPubHandler</code></p>
-<p>Factory method to create an ActivityPubHandler instance (Fediverse integration).</p>
-<h3>createArchiveHandler()</h3>
-<p><code>protected function createArchiveHandler(): Indieinabox\ArchiveHandler</code></p>
-<p>Factory method to create an ArchiveHandler instance.</p>
 <h3>getWebmentionController()</h3>
 <p><code>public function getWebmentionController(): Indieinabox\Http\Controllers\WebmentionController</code></p>
 <h3>getIndieAuthController()</h3>
 <p><code>public function getIndieAuthController(): Indieinabox\Http\Controllers\IndieAuthController</code></p>
 <h3>getMicropubController()</h3>
 <p><code>public function getMicropubController(): Indieinabox\Http\Controllers\MicropubController</code></p>
+<h3>createMicrosubHandler()</h3>
+<p><code>protected function createMicrosubHandler(): Indieinabox\MicrosubHandler</code></p>
+<p>Factory method to create a MicrosubHandler instance (Microsub Server).</p>
 <h3>getMicrosubController()</h3>
 <p><code>public function getMicrosubController(): Indieinabox\Http\Controllers\MicrosubController</code></p>
 <h3>getActivityPubController()</h3>

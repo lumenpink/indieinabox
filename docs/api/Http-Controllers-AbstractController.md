@@ -42,3 +42,16 @@ Emits a redirect header.
 `protected function status(int $status): void`
 
 Sets HTTP status code.
+
+### jsonResponse()
+`protected function jsonResponse(?mixed $data, int $status = 200, array $headers = []): void`
+
+@param array<string, string> $headers
+
+### htmlResponse()
+`protected function htmlResponse(string $html, int $status = 200, array $headers = []): void`
+
+@param array<string, string> $headers
+
+### redirectResponse()
+`protected function redirectResponse(string $url, int $status = 302): void`

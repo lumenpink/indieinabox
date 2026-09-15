@@ -193,22 +193,6 @@ class WebRouter
     }
 
     /**
-     * Factory method to create a WebmentionHandler instance.
-     */
-    protected function createWebmentionHandler(): WebmentionHandler
-    {
-        return new WebmentionHandler($this->site);
-    }
-
-    /**
-     * Factory method to create an IndieAuthHandler instance.
-     */
-    protected function createIndieAuthHandler(): IndieAuthHandler
-    {
-        return new IndieAuthHandler($this->site);
-    }
-
-    /**
      * Factory method to create a ConfigHandler instance (Admin panel configuration).
      */
     protected function createConfigHandler(): ConfigHandler
@@ -217,27 +201,11 @@ class WebRouter
     }
 
     /**
-     * Factory method to create a MicropubHandler instance (Micropub Server).
-     */
-    protected function createMicropubHandler(): MicropubHandler
-    {
-        return new MicropubHandler($this->site);
-    }
-
-    /**
      * Factory method to create a MicropubClientHandler instance (Admin panel publishing).
      */
     protected function createMicropubClientHandler(): MicropubClientHandler
     {
         return new MicropubClientHandler($this->site);
-    }
-
-    /**
-     * Factory method to create a MicrosubHandler instance (Microsub Server).
-     */
-    protected function createMicrosubHandler(): MicrosubHandler
-    {
-        return new MicrosubHandler($this->site);
     }
 
     /**
@@ -256,39 +224,31 @@ class WebRouter
         return new ModerationHandler($this->site);
     }
 
-    /**
-     * Factory method to create an ActivityPubHandler instance (Fediverse integration).
-     */
-    protected function createActivityPubHandler(): ActivityPubHandler
-    {
-        return new ActivityPubHandler($this->site);
-    }
-
-    /**
-     * Factory method to create an ArchiveHandler instance.
-     */
-    protected function createArchiveHandler(): ArchiveHandler
-    {
-        return new ArchiveHandler($this->site);
-    }
-
     public function getWebmentionController(): WebmentionController
     {
-        return new WebmentionController($this->site, $this->createWebmentionHandler());
+        return new WebmentionController($this->site);
     }
 
     public function getIndieAuthController(): IndieAuthController
     {
-        return new IndieAuthController($this->site, $this->createIndieAuthHandler());
+        return new IndieAuthController($this->site);
     }
 
     public function getMicropubController(): MicropubController
     {
         return new MicropubController(
             $this->site,
-            $this->createMicropubHandler(),
+            null,
             $this->createMicropubClientHandler()
         );
+    }
+
+    /**
+     * Factory method to create a MicrosubHandler instance (Microsub Server).
+     */
+    protected function createMicrosubHandler(): MicrosubHandler
+    {
+        return new MicrosubHandler($this->site);
     }
 
     public function getMicrosubController(): MicrosubController
@@ -302,12 +262,12 @@ class WebRouter
 
     public function getActivityPubController(): ActivityPubController
     {
-        return new ActivityPubController($this->site, $this->createActivityPubHandler());
+        return new ActivityPubController($this->site);
     }
 
     public function getArchiveController(): ArchiveController
     {
-        return new ArchiveController($this->site, $this->createArchiveHandler());
+        return new ArchiveController($this->site);
     }
 
     public function getAdminController(): AdminController

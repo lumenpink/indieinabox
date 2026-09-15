@@ -2,24 +2,26 @@
 
 declare(strict_types=1);
 
-use Indieinabox\ActivityPubHandler;
-use Indieinabox\ArchiveHandler;
-use Indieinabox\Support\FileUtils;
-use Indieinabox\IndieAuthHandler;
-use Indieinabox\MicropubClientHandler;
-use Indieinabox\MicropubHandler;
-use Indieinabox\MicrosubHandler;
-use Indieinabox\MicrosubReaderHandler;
-use Indieinabox\ModerationHandler;
+use Indieinabox\Http\Controllers\ActivityPubController;
+use Indieinabox\Http\Controllers\ArchiveController;
+use Indieinabox\Http\Controllers\IndieAuthController;
+use Indieinabox\Http\Controllers\MicropubController;
+use Indieinabox\Http\Controllers\WebmentionController;
 use Indieinabox\Site;
 use Indieinabox\Site\Paths;
-use Indieinabox\WebmentionHandler;
+use Indieinabox\Support\FileUtils;
 use Indieinabox\WebRouter;
 
 beforeEach(function () {
     $this->tempDir = sys_get_temp_dir() . '/indie_webrouter_test_' . uniqid();
     mkdir($this->tempDir, 0777, true);
     mkdir($this->tempDir . '/public_html', 0777, true);
+
+    \Indieinabox\Database::disconnect();
+    \Indieinabox\Database::$dataDir = $this->tempDir . '/data';
+    \Indieinabox\Database::connect(':memory:');
+    $sql = (string) file_get_contents(dirname(__DIR__, 2) . '/database.sql');
+    \Indieinabox\Database::getDb()->exec($sql);
 
     $paths = new Paths($this->tempDir);
     $paths->outputDirHtml = 'public_html';
@@ -32,6 +34,7 @@ beforeEach(function () {
 });
 
 afterEach(function () {
+    \Indieinabox\Database::disconnect();
     FileUtils::recursiveRmdir($this->tempDir);
 });
 
@@ -74,7 +77,7 @@ it('returns 404 when static file is not found', function () {
     expect($output)->toContain('404 Not Found');
 });
 
-it('dispatches webmention requests to WebmentionHandler', function () {
+it('dispatches webmention requests to WebmentionController', function () {
     $_SERVER['REQUEST_URI'] = '/webmention';
 
     $state = new stdClass();
@@ -87,12 +90,13 @@ it('dispatches webmention requests to WebmentionHandler', function () {
             parent::__construct($site);
             $this->state = $state;
         }
-        protected function createWebmentionHandler(): WebmentionHandler
+        public function getWebmentionController(): WebmentionController
         {
-            return new class($this->site, $this->state) extends WebmentionHandler {
+            return new class($this->site, $this->state) extends WebmentionController {
                 private stdClass $state;
                 public function __construct(Site $site, stdClass $state)
                 {
+                    parent::__construct($site);
                     $this->state = $state;
                 }
                 public function handle(): void
@@ -107,7 +111,7 @@ it('dispatches webmention requests to WebmentionHandler', function () {
     expect($state->called)->toBeTrue();
 });
 
-it('dispatches auth requests to IndieAuthHandler', function () {
+it('dispatches auth requests to IndieAuthController', function () {
     $_SERVER['REQUEST_URI'] = '/auth';
 
     $state = new stdClass();
@@ -120,12 +124,13 @@ it('dispatches auth requests to IndieAuthHandler', function () {
             parent::__construct($site);
             $this->state = $state;
         }
-        protected function createIndieAuthHandler(): IndieAuthHandler
+        public function getIndieAuthController(): IndieAuthController
         {
-            return new class($this->site, $this->state) extends IndieAuthHandler {
+            return new class($this->site, $this->state) extends IndieAuthController {
                 private stdClass $state;
                 public function __construct(Site $site, stdClass $state)
                 {
+                    parent::__construct($site);
                     $this->state = $state;
                 }
                 public function handle(): void
@@ -140,7 +145,7 @@ it('dispatches auth requests to IndieAuthHandler', function () {
     expect($state->called)->toBeTrue();
 });
 
-it('dispatches micropub requests to MicropubHandler', function () {
+it('dispatches micropub requests to MicropubController', function () {
     $_SERVER['REQUEST_URI'] = '/micropub';
 
     $state = new stdClass();
@@ -153,12 +158,13 @@ it('dispatches micropub requests to MicropubHandler', function () {
             parent::__construct($site);
             $this->state = $state;
         }
-        protected function createMicropubHandler(): MicropubHandler
+        public function getMicropubController(): MicropubController
         {
-            return new class($this->site, $this->state) extends MicropubHandler {
+            return new class($this->site, $this->state) extends MicropubController {
                 private stdClass $state;
                 public function __construct(Site $site, stdClass $state)
                 {
+                    parent::__construct($site);
                     $this->state = $state;
                 }
                 public function handle(): void
@@ -173,7 +179,7 @@ it('dispatches micropub requests to MicropubHandler', function () {
     expect($state->called)->toBeTrue();
 });
 
-it('dispatches archive requests to ArchiveHandler', function () {
+it('dispatches archive requests to ArchiveController', function () {
     $_SERVER['REQUEST_URI'] = '/archive';
 
     $state = new stdClass();
@@ -186,12 +192,13 @@ it('dispatches archive requests to ArchiveHandler', function () {
             parent::__construct($site);
             $this->state = $state;
         }
-        protected function createArchiveHandler(): ArchiveHandler
+        public function getArchiveController(): ArchiveController
         {
-            return new class($this->site, $this->state) extends ArchiveHandler {
+            return new class($this->site, $this->state) extends ArchiveController {
                 private stdClass $state;
                 public function __construct(Site $site, stdClass $state)
                 {
+                    parent::__construct($site);
                     $this->state = $state;
                 }
                 public function handle(): void

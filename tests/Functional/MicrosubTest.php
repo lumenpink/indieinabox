@@ -16,12 +16,12 @@ class TestMicrosubRouter extends \Indieinabox\WebRouter
             {
                 parent::__construct($site);
 
-                // Override the internal IndieAuthHandler
+                // Override the internal tokenManager
                 $ref = new \ReflectionClass(parent::class);
-                $prop = $ref->getProperty('authHandler');
+                $prop = $ref->getProperty('tokenManager');
 
-                $mockAuth = new class($site) extends \Indieinabox\IndieAuthHandler {
-                    public function validateBearerToken(?string &$tokenOut = null): ?array
+                $mockAuth = new class extends \Indieinabox\IndieAuth\TokenManager {
+                    public function validateBearerToken(?string &$tokenOut = null, ?string $authHeader = null, ?string $queryToken = null, ?string $postToken = null): ?array
                     {
                         if (\TestMicrosubRouter::$mockTokenValid) {
                             return ['me' => 'https://mysite.com/', 'client_id' => 'test_client', 'scope' => 'read'];

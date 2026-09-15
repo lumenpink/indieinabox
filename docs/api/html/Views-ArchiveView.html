@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WebmentionHandler - Indieinabox API</title>
+    <title>Views-ArchiveView - Indieinabox API</title>
     <style>
         :root { --bg: #F4F1EA; --fg: #2C2E2F; --accent: #2C2E2F; }
         body { font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; margin: 0; display: flex; background: var(--bg); color: var(--fg); line-height: 1.6; }
@@ -24,8 +24,6 @@
         <ul><li><a href="/docs/api/html/ActivityPub-ActivityBuilder.html">ActivityPub-ActivityBuilder</a></li>
 <li><a href="/docs/api/html/ActivityPub-InteractionHandler.html">ActivityPub-InteractionHandler</a></li>
 <li><a href="/docs/api/html/ActivityPub-KeyManager.html">ActivityPub-KeyManager</a></li>
-<li><a href="/docs/api/html/ActivityPubHandler.html">ActivityPubHandler</a></li>
-<li><a href="/docs/api/html/ArchiveHandler.html">ArchiveHandler</a></li>
 <li><a href="/docs/api/html/BackgroundWorker-ArchiveProcessor.html">BackgroundWorker-ArchiveProcessor</a></li>
 <li><a href="/docs/api/html/BackgroundWorker-InboxProcessor.html">BackgroundWorker-InboxProcessor</a></li>
 <li><a href="/docs/api/html/BackgroundWorker-OutboxDispatcher.html">BackgroundWorker-OutboxDispatcher</a></li>
@@ -83,7 +81,6 @@
 <li><a href="/docs/api/html/IndieAuth-ConsentView.html">IndieAuth-ConsentView</a></li>
 <li><a href="/docs/api/html/IndieAuth-PkceValidator.html">IndieAuth-PkceValidator</a></li>
 <li><a href="/docs/api/html/IndieAuth-TokenManager.html">IndieAuth-TokenManager</a></li>
-<li><a href="/docs/api/html/IndieAuthHandler.html">IndieAuthHandler</a></li>
 <li><a href="/docs/api/html/LinkChecker.html">LinkChecker</a></li>
 <li><a href="/docs/api/html/Localization-Translator.html">Localization-Translator</a></li>
 <li><a href="/docs/api/html/Markdown-ASTParser.html">Markdown-ASTParser</a></li>
@@ -101,7 +98,6 @@
 <li><a href="/docs/api/html/Micropub-PostCreator.html">Micropub-PostCreator</a></li>
 <li><a href="/docs/api/html/Micropub-QueryHandler.html">Micropub-QueryHandler</a></li>
 <li><a href="/docs/api/html/MicropubClientHandler.html">MicropubClientHandler</a></li>
-<li><a href="/docs/api/html/MicropubHandler.html">MicropubHandler</a></li>
 <li><a href="/docs/api/html/Microsub-ExtendedEntry.html">Microsub-ExtendedEntry</a></li>
 <li><a href="/docs/api/html/Microsub-NormalizationAdapter.html">Microsub-NormalizationAdapter</a></li>
 <li><a href="/docs/api/html/MicrosubHandler.html">MicrosubHandler</a></li>
@@ -117,6 +113,7 @@
 <li><a href="/docs/api/html/Repositories-Contracts-SettingsRepositoryInterface.html">Repositories-Contracts-SettingsRepositoryInterface</a></li>
 <li><a href="/docs/api/html/Repositories-FileInteractionRepository.html">Repositories-FileInteractionRepository</a></li>
 <li><a href="/docs/api/html/Repositories-SqliteSettingsRepository.html">Repositories-SqliteSettingsRepository</a></li>
+<li><a href="/docs/api/html/Services-ArchiveService.html">Services-ArchiveService</a></li>
 <li><a href="/docs/api/html/Services-ConfigurationService.html">Services-ConfigurationService</a></li>
 <li><a href="/docs/api/html/Services-FetchFeedsService.html">Services-FetchFeedsService</a></li>
 <li><a href="/docs/api/html/Services-FollowService.html">Services-FollowService</a></li>
@@ -153,73 +150,28 @@
 <li><a href="/docs/api/html/Twtxt-TwtxtManager.html">Twtxt-TwtxtManager</a></li>
 <li><a href="/docs/api/html/Updater.html">Updater</a></li>
 <li><a href="/docs/api/html/Version.html">Version</a></li>
+<li><a href="/docs/api/html/Views-ArchiveView.html">Views-ArchiveView</a></li>
 <li><a href="/docs/api/html/WebRouter.html">WebRouter</a></li>
 <li><a href="/docs/api/html/Webmention-HelpPageView.html">Webmention-HelpPageView</a></li>
 <li><a href="/docs/api/html/Webmention-LinkExtractor.html">Webmention-LinkExtractor</a></li>
 <li><a href="/docs/api/html/Webmention-PayloadParser.html">Webmention-PayloadParser</a></li>
 <li><a href="/docs/api/html/Webmention-SourceVerifier.html">Webmention-SourceVerifier</a></li>
-<li><a href="/docs/api/html/WebmentionHandler.html">WebmentionHandler</a></li>
 <li><a href="/docs/api/html/WebmentionSender.html">WebmentionSender</a></li>
 <li><a href="/docs/api/html/Whostyles.html">Whostyles</a></li>
 <li><a href="/docs/api/html/Yaml.html">Yaml</a></li></ul>
     </div>
     <div class="content">
-        <h1 class="p-name">WebmentionHandler</h1>
-<p><strong>Namespace:</strong> <code>Indieinabox</code></p>
-<p>Class WebmentionHandler</p>
-<p>Handles incoming Webmention requests, validates endpoints, queues mentions,<br />
-and delegates source verification and view rendering to dedicated services.</p>
-<h2>Properties</h2>
-<h3><code>private Indieinabox\Site $site</code></h3>
-<p>@var Site Global site configuration and environment.</p>
-<h3><code>private Indieinabox\Webmention\SourceVerifier $sourceVerifier</code></h3>
-<p>@var SourceVerifier Source link verification service.</p>
+        <h1 class="p-name">ArchiveView</h1>
+<p><strong>Namespace:</strong> <code>Indieinabox\Views</code></p>
+<p>Class ArchiveView</p>
+<p>Renders the HTML toolbar and viewer markup for archived snapshots.</p>
 <h2>Methods</h2>
-<h3><em></em>construct()</h3>
-<p><code>public function __construct(Indieinabox\Site $site, ?Indieinabox\Webmention\SourceVerifier $sourceVerifier = null)</code></p>
-<p>Initializes the WebmentionHandler.</p>
-<p>@param Site $site Global site configuration and environment.<br />
-@param ?SourceVerifier $sourceVerifier Optional custom source verifier.</p>
-<h3>handle()</h3>
-<p><code>public function handle(): void</code></p>
-<p>Processes incoming webmentions via POST requests.<br />
-Validates source/target URIs, checks target file existence, and queues for moderation.<br />
-Renders help form on GET requests.</p>
-<p>@return void</p>
-<h3>verifySourceLink()</h3>
-<p><code>public function verifySourceLink(string $source, string $target): array</code></p>
-<p>Verifies that the source URL contains a link to target URL and extracts metadata.</p>
-<p>@param string $source<br />
-@param string $target<br />
-@return array{success: bool, message?: string, content?: array{title: string, text: string, whostyle?: array<array-key, mixed>|null}}</p>
-<h3>fetchUrl()</h3>
-<p><code>protected function fetchUrl(string $url)</code></p>
-<p>Allows overriding the URL fetcher for test mocking.</p>
-<p>@param string $url<br />
-@return string|false</p>
-<h3>urlsMatch()</h3>
-<p><code>public function urlsMatch(string $href, string $target, string $source): bool</code></p>
-<p>Compares target and link href to check if they match (including relative links).</p>
-<p>@param string $href<br />
-@param string $target<br />
-@param string $source<br />
-@return bool</p>
-<h3>queueWebmention()</h3>
-<p><code>public function queueWebmention(string $source, string $target): void</code></p>
-<p>Queues a webmention in inboxQueues a webmention in inbox_queue for asynchronous background worker processing.</p>
-<p>@param string $source<br />
-@param string $target<br />
-@return void</p>
-<h3>sendResponse()</h3>
-<p><code>private function sendResponse(int $code, string $message): void</code></p>
-<p>Sends a JSON HTTP response with a specific status code.</p>
-<p>@param int $code HTTP status code.<br />
-@param string $message Response message.<br />
-@return void</p>
-<h3>sendHelpPage()</h3>
-<p><code>private function sendHelpPage(): void</code></p>
-<p>Renders HTML help page for the webmention endpoint (used on GET requests).</p>
-<p>@return void</p>
+<h3>render()</h3>
+<p><code>public static function render(string $url, ?array $snapshot = null): string</code></p>
+<p>Renders the archive iframe toolbar and viewer HTML markup.</p>
+<p>@param string $url Target URL.<br />
+@param array<string, mixed>|null $snapshot Snapshot row if found.<br />
+@return string</p>
 
     </div>
 </body>

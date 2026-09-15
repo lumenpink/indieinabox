@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Indieinabox;
 
 use Exception;
+use Indieinabox\IndieAuth\TokenManager;
 use Indieinabox\Services\MicrosubService;
 
 /**
@@ -12,15 +13,15 @@ use Indieinabox\Services\MicrosubService;
  */
 class MicrosubHandler
 {
-    private IndieAuthHandler $authHandler;
+    private TokenManager $tokenManager;
     private MicrosubService $service;
 
     public function __construct(
         Site $site,
-        ?IndieAuthHandler $authHandler = null,
+        ?TokenManager $tokenManager = null,
         ?MicrosubService $service = null
     ) {
-        $this->authHandler = $authHandler ?? new IndieAuthHandler($site);
+        $this->tokenManager = $tokenManager ?? new TokenManager();
         $this->service = $service ?? new class($this) extends MicrosubService {
             private MicrosubHandler $handler;
 
@@ -47,7 +48,7 @@ class MicrosubHandler
             session_start();
         }
 
-        $tokenData = $this->authHandler->validateBearerToken();
+        $tokenData = $this->tokenManager->validateBearerToken();
 
         if (!$tokenData && empty($_SESSION['admin_authenticated'])) {
             http_response_code(401);

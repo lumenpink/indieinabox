@@ -73,4 +73,25 @@ abstract class AbstractController
     {
         http_response_code($status);
     }
+
+    /**
+     * @param array<string, string> $headers
+     */
+    protected function jsonResponse(mixed $data, int $status = 200, array $headers = []): void
+    {
+        $this->json($data, $status, $headers);
+    }
+
+    /**
+     * @param array<string, string> $headers
+     */
+    protected function htmlResponse(string $html, int $status = 200, array $headers = []): void
+    {
+        $this->html($html, $status, $headers);
+    }
+
+    protected function redirectResponse(string $url, int $status = 302): void
+    {
+        $this->redirect($url, $status);
+    }
 }

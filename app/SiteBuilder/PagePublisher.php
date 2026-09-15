@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Indieinabox\SiteBuilder;
 
-use Indieinabox\ActivityPubHandler;
+use Indieinabox\ActivityPub\ActivityBuilder;
 use Indieinabox\Localization\Translator;
 use Indieinabox\Markdown\ASTParser;
 use Indieinabox\Support\HtmlUtils;
@@ -184,7 +184,14 @@ class PagePublisher
             }
             $metadataArray = (array) $page->metadata;
             $title = $page->metadata->title === 'Untitled' ? null : $page->metadata->title;
-            $apObject = ActivityPubHandler::buildObjectForPageArray($postUrl, $actorId, $fqdn, $page->content->content, $title, $metadataArray);
+            $apObject = ActivityBuilder::buildObjectForPageArray(
+                $postUrl,
+                $actorId,
+                $fqdn,
+                $page->content->content,
+                $title,
+                $metadataArray
+            );
 
             $jsonDestination = dirname($destinationFile) . DIRECTORY_SEPARATOR . 'index.json';
             if (str_ends_with($destinationFile, '.html') && basename($destinationFile) !== 'index.html') {

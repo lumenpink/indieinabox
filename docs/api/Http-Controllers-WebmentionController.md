@@ -5,19 +5,22 @@ Controller handling incoming webmentions and the webmention help form page.
 
 ## Properties
 
-### `private Indieinabox\WebmentionHandler $handler`
+### `private Indieinabox\Services\WebmentionService $service`
 
 ### `protected Indieinabox\Site $site`
 
 ## Methods
 
 ### __construct()
-`public function __construct(Indieinabox\Site $site, ?Indieinabox\WebmentionHandler $handler = null)`
+`public function __construct(Indieinabox\Site $site, ?Indieinabox\Services\WebmentionService $service = null)`
 
 ### handle()
 `public function handle(): void`
 
-Dispatches the webmention request.
+Dispatches incoming webmentions via POST requests or renders help form on GET requests.
+
+### sendResponse()
+`protected function sendResponse(int $code, string $message): void`
 
 ### getSite()
 `public function getSite(): Indieinabox\Site`
@@ -49,3 +52,16 @@ Emits a redirect header.
 `protected function status(int $status): void`
 
 Sets HTTP status code.
+
+### jsonResponse()
+`protected function jsonResponse(?mixed $data, int $status = 200, array $headers = []): void`
+
+@param array<string, string> $headers
+
+### htmlResponse()
+`protected function htmlResponse(string $html, int $status = 200, array $headers = []): void`
+
+@param array<string, string> $headers
+
+### redirectResponse()
+`protected function redirectResponse(string $url, int $status = 302): void`

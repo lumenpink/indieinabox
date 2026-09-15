@@ -5,7 +5,7 @@ Controller handling Micropub server queries, post creation, media uploads, and t
 
 ## Properties
 
-### `private Indieinabox\MicropubHandler $serverHandler`
+### `private Indieinabox\IndieAuth\TokenManager $tokenManager`
 
 ### `private Indieinabox\MicropubClientHandler $clientHandler`
 
@@ -14,7 +14,7 @@ Controller handling Micropub server queries, post creation, media uploads, and t
 ## Methods
 
 ### __construct()
-`public function __construct(Indieinabox\Site $site, ?Indieinabox\MicropubHandler $serverHandler = null, ?Indieinabox\MicropubClientHandler $clientHandler = null)`
+`public function __construct(Indieinabox\Site $site, ?Indieinabox\IndieAuth\TokenManager $tokenManager = null, ?Indieinabox\MicropubClientHandler $clientHandler = null)`
 
 ### handle()
 `public function handle(): void`
@@ -25,6 +25,35 @@ Handles standard Micropub endpoint requests (POST create/media, GET config/syndi
 `public function client(): void`
 
 Handles the Micropub local web admin posting client.
+
+### handleGetRequest()
+`protected function handleGetRequest(): void`
+
+### handlePostRequest()
+`protected function handlePostRequest(array $tokenData): void`
+
+@param array<string, mixed> $tokenData
+
+### handleMediaEndpoint()
+`protected function handleMediaEndpoint(array $tokenData): void`
+
+@param array<string, mixed> $tokenData
+
+### getRawInput()
+`protected function getRawInput(): string`
+
+### moveUploadedFile()
+`protected function moveUploadedFile(string $tmpName, string $destPath): bool`
+
+### sendSuccessResponse()
+`protected function sendSuccessResponse(int $code, array $headers = [], ?mixed $body = null): void`
+
+@param int $code
+@param array<string, string> $headers
+@param mixed $body
+
+### sendErrorResponse()
+`protected function sendErrorResponse(int $code, string $error, string $description): void`
 
 ### getSite()
 `public function getSite(): Indieinabox\Site`
@@ -56,3 +85,16 @@ Emits a redirect header.
 `protected function status(int $status): void`
 
 Sets HTTP status code.
+
+### jsonResponse()
+`protected function jsonResponse(?mixed $data, int $status = 200, array $headers = []): void`
+
+@param array<string, string> $headers
+
+### htmlResponse()
+`protected function htmlResponse(string $html, int $status = 200, array $headers = []): void`
+
+@param array<string, string> $headers
+
+### redirectResponse()
+`protected function redirectResponse(string $url, int $status = 302): void`

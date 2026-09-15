@@ -24,8 +24,6 @@
         <ul><li><a href="/docs/api/html/ActivityPub-ActivityBuilder.html">ActivityPub-ActivityBuilder</a></li>
 <li><a href="/docs/api/html/ActivityPub-InteractionHandler.html">ActivityPub-InteractionHandler</a></li>
 <li><a href="/docs/api/html/ActivityPub-KeyManager.html">ActivityPub-KeyManager</a></li>
-<li><a href="/docs/api/html/ActivityPubHandler.html">ActivityPubHandler</a></li>
-<li><a href="/docs/api/html/ArchiveHandler.html">ArchiveHandler</a></li>
 <li><a href="/docs/api/html/BackgroundWorker-ArchiveProcessor.html">BackgroundWorker-ArchiveProcessor</a></li>
 <li><a href="/docs/api/html/BackgroundWorker-InboxProcessor.html">BackgroundWorker-InboxProcessor</a></li>
 <li><a href="/docs/api/html/BackgroundWorker-OutboxDispatcher.html">BackgroundWorker-OutboxDispatcher</a></li>
@@ -83,7 +81,6 @@
 <li><a href="/docs/api/html/IndieAuth-ConsentView.html">IndieAuth-ConsentView</a></li>
 <li><a href="/docs/api/html/IndieAuth-PkceValidator.html">IndieAuth-PkceValidator</a></li>
 <li><a href="/docs/api/html/IndieAuth-TokenManager.html">IndieAuth-TokenManager</a></li>
-<li><a href="/docs/api/html/IndieAuthHandler.html">IndieAuthHandler</a></li>
 <li><a href="/docs/api/html/LinkChecker.html">LinkChecker</a></li>
 <li><a href="/docs/api/html/Localization-Translator.html">Localization-Translator</a></li>
 <li><a href="/docs/api/html/Markdown-ASTParser.html">Markdown-ASTParser</a></li>
@@ -101,7 +98,6 @@
 <li><a href="/docs/api/html/Micropub-PostCreator.html">Micropub-PostCreator</a></li>
 <li><a href="/docs/api/html/Micropub-QueryHandler.html">Micropub-QueryHandler</a></li>
 <li><a href="/docs/api/html/MicropubClientHandler.html">MicropubClientHandler</a></li>
-<li><a href="/docs/api/html/MicropubHandler.html">MicropubHandler</a></li>
 <li><a href="/docs/api/html/Microsub-ExtendedEntry.html">Microsub-ExtendedEntry</a></li>
 <li><a href="/docs/api/html/Microsub-NormalizationAdapter.html">Microsub-NormalizationAdapter</a></li>
 <li><a href="/docs/api/html/MicrosubHandler.html">MicrosubHandler</a></li>
@@ -117,6 +113,7 @@
 <li><a href="/docs/api/html/Repositories-Contracts-SettingsRepositoryInterface.html">Repositories-Contracts-SettingsRepositoryInterface</a></li>
 <li><a href="/docs/api/html/Repositories-FileInteractionRepository.html">Repositories-FileInteractionRepository</a></li>
 <li><a href="/docs/api/html/Repositories-SqliteSettingsRepository.html">Repositories-SqliteSettingsRepository</a></li>
+<li><a href="/docs/api/html/Services-ArchiveService.html">Services-ArchiveService</a></li>
 <li><a href="/docs/api/html/Services-ConfigurationService.html">Services-ConfigurationService</a></li>
 <li><a href="/docs/api/html/Services-FetchFeedsService.html">Services-FetchFeedsService</a></li>
 <li><a href="/docs/api/html/Services-FollowService.html">Services-FollowService</a></li>
@@ -153,12 +150,12 @@
 <li><a href="/docs/api/html/Twtxt-TwtxtManager.html">Twtxt-TwtxtManager</a></li>
 <li><a href="/docs/api/html/Updater.html">Updater</a></li>
 <li><a href="/docs/api/html/Version.html">Version</a></li>
+<li><a href="/docs/api/html/Views-ArchiveView.html">Views-ArchiveView</a></li>
 <li><a href="/docs/api/html/WebRouter.html">WebRouter</a></li>
 <li><a href="/docs/api/html/Webmention-HelpPageView.html">Webmention-HelpPageView</a></li>
 <li><a href="/docs/api/html/Webmention-LinkExtractor.html">Webmention-LinkExtractor</a></li>
 <li><a href="/docs/api/html/Webmention-PayloadParser.html">Webmention-PayloadParser</a></li>
 <li><a href="/docs/api/html/Webmention-SourceVerifier.html">Webmention-SourceVerifier</a></li>
-<li><a href="/docs/api/html/WebmentionHandler.html">WebmentionHandler</a></li>
 <li><a href="/docs/api/html/WebmentionSender.html">WebmentionSender</a></li>
 <li><a href="/docs/api/html/Whostyles.html">Whostyles</a></li>
 <li><a href="/docs/api/html/Yaml.html">Yaml</a></li></ul>
@@ -168,18 +165,37 @@
 <p><strong>Namespace:</strong> <code>Indieinabox\Http\Controllers</code></p>
 <p>Controller handling Micropub server queries, post creation, media uploads, and the web-based posting client.</p>
 <h2>Properties</h2>
-<h3><code>private Indieinabox\MicropubHandler $serverHandler</code></h3>
+<h3><code>private Indieinabox\IndieAuth\TokenManager $tokenManager</code></h3>
 <h3><code>private Indieinabox\MicropubClientHandler $clientHandler</code></h3>
 <h3><code>protected Indieinabox\Site $site</code></h3>
 <h2>Methods</h2>
 <h3><em></em>construct()</h3>
-<p><code>public function __construct(Indieinabox\Site $site, ?Indieinabox\MicropubHandler $serverHandler = null, ?Indieinabox\MicropubClientHandler $clientHandler = null)</code></p>
+<p><code>public function __construct(Indieinabox\Site $site, ?Indieinabox\IndieAuth\TokenManager $tokenManager = null, ?Indieinabox\MicropubClientHandler $clientHandler = null)</code></p>
 <h3>handle()</h3>
 <p><code>public function handle(): void</code></p>
 <p>Handles standard Micropub endpoint requests (POST create/media, GET config/syndicate-to).</p>
 <h3>client()</h3>
 <p><code>public function client(): void</code></p>
 <p>Handles the Micropub local web admin posting client.</p>
+<h3>handleGetRequest()</h3>
+<p><code>protected function handleGetRequest(): void</code></p>
+<h3>handlePostRequest()</h3>
+<p><code>protected function handlePostRequest(array $tokenData): void</code></p>
+<p>@param array<string, mixed> $tokenData</p>
+<h3>handleMediaEndpoint()</h3>
+<p><code>protected function handleMediaEndpoint(array $tokenData): void</code></p>
+<p>@param array<string, mixed> $tokenData</p>
+<h3>getRawInput()</h3>
+<p><code>protected function getRawInput(): string</code></p>
+<h3>moveUploadedFile()</h3>
+<p><code>protected function moveUploadedFile(string $tmpName, string $destPath): bool</code></p>
+<h3>sendSuccessResponse()</h3>
+<p><code>protected function sendSuccessResponse(int $code, array $headers = [], ?mixed $body = null): void</code></p>
+<p>@param int $code<br />
+@param array<string, string> $headers<br />
+@param mixed $body</p>
+<h3>sendErrorResponse()</h3>
+<p><code>protected function sendErrorResponse(int $code, string $error, string $description): void</code></p>
 <h3>getSite()</h3>
 <p><code>public function getSite(): Indieinabox\Site</code></p>
 <h3>json()</h3>
@@ -200,6 +216,14 @@
 <h3>status()</h3>
 <p><code>protected function status(int $status): void</code></p>
 <p>Sets HTTP status code.</p>
+<h3>jsonResponse()</h3>
+<p><code>protected function jsonResponse(?mixed $data, int $status = 200, array $headers = []): void</code></p>
+<p>@param array<string, string> $headers</p>
+<h3>htmlResponse()</h3>
+<p><code>protected function htmlResponse(string $html, int $status = 200, array $headers = []): void</code></p>
+<p>@param array<string, string> $headers</p>
+<h3>redirectResponse()</h3>
+<p><code>protected function redirectResponse(string $url, int $status = 302): void</code></p>
 
     </div>
 </body>

@@ -14,7 +14,7 @@ Registry and orchestrator for protocol adapters (ActivityPub, Twtxt, Lemmy, etc.
 ## Methods
 
 ### __construct()
-`public function __construct(Indieinabox\Site $site)`
+`public function __construct(?Indieinabox\Site $site = null)`
 
 ### registerDefaultAdapters()
 `private function registerDefaultAdapters(): void`

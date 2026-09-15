@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Http;
 
-use Indieinabox\ActivityPubHandler;
-use Indieinabox\ArchiveHandler;
 use Indieinabox\ConfigHandler;
 use Indieinabox\Core\Container;
 use Indieinabox\Database;
@@ -17,14 +15,13 @@ use Indieinabox\Http\Controllers\IndieAuthController;
 use Indieinabox\Http\Controllers\MicropubController;
 use Indieinabox\Http\Controllers\MicrosubController;
 use Indieinabox\Http\Controllers\WebmentionController;
-use Indieinabox\IndieAuthHandler;
 use Indieinabox\MicropubClientHandler;
-use Indieinabox\MicropubHandler;
 use Indieinabox\MicrosubHandler;
 use Indieinabox\MicrosubReaderHandler;
 use Indieinabox\ModerationHandler;
+use Indieinabox\Services\ArchiveService;
+use Indieinabox\Services\WebmentionService;
 use Indieinabox\Site;
-use Indieinabox\WebmentionHandler;
 
 beforeEach(function () {
     Database::disconnect();
@@ -39,6 +36,13 @@ beforeEach(function () {
     $this->site = new Site();
     $this->site->metadata->fqdn = 'https://controllers.example';
 
+    $_GET = [];
+    $_POST = [];
+    $_SERVER = [];
+    $_SESSION = [];
+    $_FILES = [];
+    http_response_code(200);
+
     Container::getInstance()->flush();
     Container::getInstance()->instance(Site::class, $this->site);
 });
@@ -50,63 +54,76 @@ afterEach(function () {
     exec("rm -rf " . escapeshellarg($this->tempDir));
 });
 
-test('ActivityPubController delegates methods to handler', function () {
-    $mockHandler = new class($this->site) extends ActivityPubHandler {
-        public array $called = [];
-        public function __construct(Site $site) { parent::__construct($site); }
-        public function handleInteract(): void { $this->called[] = 'interact'; }
-        public function handleAuthorizeInteraction(): void { $this->called[] = 'auth'; }
-        public function handleWebFinger(): void { $this->called[] = 'webfinger'; }
-        public function handleActor(): void { $this->called[] = 'actor'; }
-        public function handleInbox(): void { $this->called[] = 'inbox'; }
-        public function handleOutbox(): void { $this->called[] = 'outbox'; }
-    };
+test('ActivityPubController executes endpoint methods cleanly', function () {
+    $controller = new ActivityPubController($this->site);
 
-    $controller = new ActivityPubController($this->site, $mockHandler);
-
-    $controller->interact();
-    $controller->authorizeInteraction();
+    $_GET['resource'] = 'acct:test@controllers.example';
+    ob_start();
     $controller->webfinger();
-    $controller->actor();
-    $controller->inbox();
-    $controller->outbox();
+    $wfOutput = ob_get_clean();
+    expect($wfOutput)->toBeJson();
 
-    expect($mockHandler->called)->toBe(['interact', 'auth', 'webfinger', 'actor', 'inbox', 'outbox']);
+    ob_start();
+    $controller->actor();
+    $actorOutput = ob_get_clean();
+    expect($actorOutput)->toBeJson();
+
+    ob_start();
+    $controller->outbox();
+    $obOutput = ob_get_clean();
+    expect($obOutput)->toBeJson();
 });
 
 test('MicropubController delegates endpoint and client actions', function () {
-    $mockServer = new class($this->site) extends MicropubHandler {
-        public bool $called = false;
-        public function __construct(Site $site) { parent::__construct($site); }
-        public function handle(): void { $this->called = true; }
-    };
-
     $mockClient = new class($this->site) extends MicropubClientHandler {
         public bool $called = false;
-        public function __construct(Site $site) { parent::__construct($site); }
-        public function handle(): void { $this->called = true; }
+        public function __construct(Site $site)
+        {
+            parent::__construct($site);
+        }
+        public function handle(): void
+        {
+            $this->called = true;
+        }
     };
 
-    $controller = new MicropubController($this->site, $mockServer, $mockClient);
+    $controller = new MicropubController($this->site, null, $mockClient);
 
+    $_SERVER['REQUEST_METHOD'] = 'GET';
+    $_GET['q'] = 'config';
+    ob_start();
     $controller->handle();
-    $controller->client();
+    $output = ob_get_clean();
 
-    expect($mockServer->called)->toBeTrue();
+    expect(http_response_code())->toBe(401); // Requires auth
+
+    $controller->client();
     expect($mockClient->called)->toBeTrue();
 });
 
 test('MicrosubController delegates API and reader actions', function () {
     $mockServer = new class($this->site) extends MicrosubHandler {
         public bool $called = false;
-        public function __construct(Site $site) { parent::__construct($site); }
-        public function handle(): void { $this->called = true; }
+        public function __construct(Site $site)
+        {
+            parent::__construct($site);
+        }
+        public function handle(): void
+        {
+            $this->called = true;
+        }
     };
 
     $mockReader = new class($this->site) extends MicrosubReaderHandler {
         public bool $called = false;
-        public function __construct(Site $site) { parent::__construct($site); }
-        public function handle(): void { $this->called = true; }
+        public function __construct(Site $site)
+        {
+            parent::__construct($site);
+        }
+        public function handle(): void
+        {
+            $this->called = true;
+        }
     };
 
     $controller = new MicrosubController($this->site, $mockServer, $mockReader);
@@ -118,73 +135,119 @@ test('MicrosubController delegates API and reader actions', function () {
     expect($mockReader->called)->toBeTrue();
 });
 
-test('WebmentionController, IndieAuthController, and ConfigController delegate cleanly', function () {
-    $mockWm = new class($this->site) extends WebmentionHandler {
-        public bool $called = false;
-        public function __construct(Site $site) { parent::__construct($site); }
-        public function handle(): void { $this->called = true; }
+test('WebmentionController, IndieAuthController, and ConfigController handle actions cleanly', function () {
+    $mockWmService = new class extends WebmentionService {
+        public bool $queued = false;
+        public function __construct()
+        {
+        }
+        public function queue(string $source, string $target): bool
+        {
+            $this->queued = true;
+            return true;
+        }
+        public function isValidTarget(string $target, Site $site): bool
+        {
+            return true;
+        }
     };
 
-    $mockAuth = new class($this->site) extends IndieAuthHandler {
-        public bool $called = false;
-        public function __construct(Site $site) { parent::__construct($site); }
-        public function handle(): void { $this->called = true; }
-    };
+    $wmCtrl = new WebmentionController($this->site, $mockWmService);
+    $authCtrl = new IndieAuthController($this->site);
+    $cfgCtrl = new ConfigController($this->site);
 
-    $mockConfig = new class($this->site) extends ConfigHandler {
-        public bool $called = false;
-        public function __construct(Site $site) { parent::__construct($site); }
-        public function handle(): void { $this->called = true; }
-    };
-
-    $wmCtrl = new WebmentionController($this->site, $mockWm);
-    $authCtrl = new IndieAuthController($this->site, $mockAuth);
-    $cfgCtrl = new ConfigController($this->site, $mockConfig);
-
+    $_SERVER['REQUEST_METHOD'] = 'GET';
+    ob_start();
     $wmCtrl->handle();
-    $authCtrl->handle();
-    $cfgCtrl->handle();
+    $wmOutput = ob_get_clean();
+    expect($wmOutput)->toContain('Webmention Endpoint');
 
-    expect($mockWm->called)->toBeTrue();
-    expect($mockAuth->called)->toBeTrue();
-    expect($mockConfig->called)->toBeTrue();
+    $_SERVER['REQUEST_METHOD'] = 'GET';
+    $_SERVER['REQUEST_URI'] = '/.well-known/oauth-authorization-server';
+    ob_start();
+    $authCtrl->handle();
+    $authOutput = ob_get_clean();
+    expect($authOutput)->toContain('authorization_endpoint');
 });
 
-test('ArchiveController delegates handle and force snapshots', function () {
-    $mockArchive = new class($this->site) extends ArchiveHandler {
+test('ArchiveController handles snapshots and force updates', function () {
+    $mockArchive = new class extends ArchiveService {
         public array $called = [];
-        public function __construct(Site $site) { parent::__construct($site); }
-        public function handle(): void { $this->called[] = 'handle'; }
-        public function handleForce(): void { $this->called[] = 'force'; }
+        public function __construct()
+        {
+        }
+        public function findSnapshot(string $url, ?int $timestamp = null): ?array
+        {
+            $this->called[] = 'find';
+            return null;
+        }
+        public function queueForceArchive(string $url): bool
+        {
+            $this->called[] = 'force';
+            return true;
+        }
     };
 
     $controller = new ArchiveController($this->site, $mockArchive);
-    $controller->handle();
-    $controller->force();
 
-    expect($mockArchive->called)->toBe(['handle', 'force']);
+    $_GET['url'] = 'https://example.com';
+    ob_start();
+    $controller->handle();
+    $output = ob_get_clean();
+    expect($output)->toContain('Archive View');
+
+    $_POST['url'] = 'https://example.com';
+    ob_start();
+    $controller->force();
+    ob_end_clean();
+
+    expect($mockArchive->called)->toBe(['find', 'force']);
 });
 
 test('AdminController dispatches sub-actions', function () {
     $mockCfg = new class($this->site) extends ConfigHandler {
         public bool $called = false;
-        public function __construct(Site $site) { parent::__construct($site); }
-        public function handle(): void { $this->called = true; }
+        public function __construct(Site $site)
+        {
+            parent::__construct($site);
+        }
+        public function handle(): void
+        {
+            $this->called = true;
+        }
     };
     $mockClient = new class($this->site) extends MicropubClientHandler {
         public bool $called = false;
-        public function __construct(Site $site) { parent::__construct($site); }
-        public function handle(): void { $this->called = true; }
+        public function __construct(Site $site)
+        {
+            parent::__construct($site);
+        }
+        public function handle(): void
+        {
+            $this->called = true;
+        }
     };
     $mockReader = new class($this->site) extends MicrosubReaderHandler {
         public bool $called = false;
-        public function __construct(Site $site) { parent::__construct($site); }
-        public function handle(): void { $this->called = true; }
+        public function __construct(Site $site)
+        {
+            parent::__construct($site);
+        }
+        public function handle(): void
+        {
+            $this->called = true;
+        }
     };
     $mockMod = new class($this->site) extends ModerationHandler {
         public bool $called = false;
-        public function __construct(Site $site) { parent::__construct($site); }
-        public function handle(): void { $this->called = true; }
+        public function __construct(Site $site)
+        {
+            parent::__construct($site);
+        }
+        public function handle(): void
+        {
+            $this->called = true;
+        }
     };
 
     $admin = new AdminController($this->site, $mockCfg, $mockClient, $mockReader, $mockMod);

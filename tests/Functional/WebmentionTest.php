@@ -4,23 +4,13 @@ declare(strict_types=1);
 
 use Indieinabox\Site;
 
-// Subclass the handler and router to mock external HTTP fetch requests
-class MockWebmentionHandler extends \Indieinabox\WebmentionHandler
+class MockWebmentionHandler
 {
     public static array $mockResponses = [];
-
-    protected function fetchUrl(string $url)
-    {
-        return self::$mockResponses[$url] ?? false;
-    }
 }
 
 class TestWebRouter extends \Indieinabox\WebRouter
 {
-    protected function createWebmentionHandler(): \Indieinabox\WebmentionHandler
-    {
-        return new MockWebmentionHandler($this->site);
-    }
 }
 
 $funcTempDir = __DIR__ . '/tmp_functional_webmention';

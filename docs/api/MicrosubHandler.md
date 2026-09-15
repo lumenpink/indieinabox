@@ -5,14 +5,14 @@ HTTP handler for Microsub server endpoints (channels, timeline, actions).
 
 ## Properties
 
-### `private Indieinabox\IndieAuthHandler $authHandler`
+### `private Indieinabox\IndieAuth\TokenManager $tokenManager`
 
 ### `private Indieinabox\Services\MicrosubService $service`
 
 ## Methods
 
 ### __construct()
-`public function __construct(Indieinabox\Site $site, ?Indieinabox\IndieAuthHandler $authHandler = null, ?Indieinabox\Services\MicrosubService $service = null)`
+`public function __construct(Indieinabox\Site $site, ?Indieinabox\IndieAuth\TokenManager $tokenManager = null, ?Indieinabox\Services\MicrosubService $service = null)`
 
 ### handle()
 `public function handle(): void`

@@ -9,8 +9,8 @@ use Indieinabox\Site;
  * @property MockMicropubTypesHandler $micropubMock
  */
 
-// Subclass the handler to avoid calling headers and exit
-class MockMicropubTypesHandler extends \Indieinabox\MicropubHandler
+// Subclass the controller to avoid calling headers and exit
+class MockMicropubTypesHandler extends \Indieinabox\Http\Controllers\MicropubController
 {
     public array $lastResponse = [];
     public ?string $mockJsonInput = null;
@@ -20,23 +20,24 @@ class MockMicropubTypesHandler extends \Indieinabox\MicropubHandler
         return $this->mockJsonInput ?? parent::getRawInput();
     }
 
-    protected function sendResponse(int $code, string $error, string $description): void
+    protected function sendErrorResponse(int $code, string $error, string $description): void
     {
         $this->lastResponse = [
             'status' => $code,
             'body' => [
                 'error' => $error,
-                'error_description' => $description
+                'error_description' => $description,
             ],
-            'headers' => []
+            'headers' => [],
         ];
     }
+
     protected function sendSuccessResponse(int $code, array $headers = [], $body = null): void
     {
         $this->lastResponse = [
             'status' => $code,
             'headers' => $headers,
-            'body' => $body
+            'body' => $body,
         ];
     }
 }

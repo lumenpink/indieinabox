@@ -1,6 +1,4 @@
-<?php
-
-use Indieinabox\ActivityPubHandler;
+use Indieinabox\Http\Controllers\ActivityPubController;
 use Indieinabox\Site;
 use Indieinabox\Database;
 use Indieinabox\Site\Metadata;
@@ -44,10 +42,10 @@ afterEach(function () {
 
 test('handleActor outputs correctly formatted ActivityPub JSON-LD with bio and media', function () {
     /** @var \Tests\TestCase $this */
-    $handler = new ActivityPubHandler($this->site);
+    $controller = new ActivityPubController($this->site);
     
     ob_start();
-    $handler->handleActor();
+    $controller->actor();
     $output = ob_get_clean();
     
     $data = json_decode($output, true);

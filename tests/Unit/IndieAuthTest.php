@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
+use Indieinabox\Http\Controllers\IndieAuthController;
 use Indieinabox\Site;
-use Indieinabox\IndieAuthHandler;
 
 $unitTempDir = __DIR__ . '/tmp_unit_indieauth';
 
@@ -34,10 +34,10 @@ it('generates dynamic oauth-authorization-server metadata correctly', function (
     $_SERVER['REQUEST_METHOD'] = 'GET';
     $_SERVER['REQUEST_URI'] = '/.well-known/oauth-authorization-server';
 
-    $handler = new IndieAuthHandler($site);
+    $controller = new IndieAuthController($site);
 
     ob_start();
-    $handler->handle();
+    $controller->handle();
     $output = ob_get_clean();
 
     $json = json_decode($output, true);

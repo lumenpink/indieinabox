@@ -101,6 +101,27 @@ Factory method to create an ArchiveHandler instance.
 
 @return ArchiveHandler
 
+### getWebmentionController()
+`public function getWebmentionController(): Indieinabox\Http\Controllers\WebmentionController`
+
+### getIndieAuthController()
+`public function getIndieAuthController(): Indieinabox\Http\Controllers\IndieAuthController`
+
+### getMicropubController()
+`public function getMicropubController(): Indieinabox\Http\Controllers\MicropubController`
+
+### getMicrosubController()
+`public function getMicrosubController(): Indieinabox\Http\Controllers\MicrosubController`
+
+### getActivityPubController()
+`public function getActivityPubController(): Indieinabox\Http\Controllers\ActivityPubController`
+
+### getArchiveController()
+`public function getArchiveController(): Indieinabox\Http\Controllers\ArchiveController`
+
+### getAdminController()
+`public function getAdminController(): Indieinabox\Http\Controllers\AdminController`
+
 ### serveStatic()
 `protected function serveStatic(): void`
 

@@ -4,6 +4,14 @@ declare(strict_types=1);
 
 namespace Indieinabox;
 
+use Indieinabox\Http\Controllers\ActivityPubController;
+use Indieinabox\Http\Controllers\AdminController;
+use Indieinabox\Http\Controllers\ArchiveController;
+use Indieinabox\Http\Controllers\IndieAuthController;
+use Indieinabox\Http\Controllers\MicropubController;
+use Indieinabox\Http\Controllers\MicrosubController;
+use Indieinabox\Http\Controllers\WebmentionController;
+
 /**
  * Class WebRouter
  * 
@@ -45,8 +53,7 @@ class WebRouter
         $isWebmentionPath = (preg_match('#^/webmentions?$#i', $requestUriClean) === 1);
 
         if ($isWebmentionParam || $isWebmentionPath) {
-            $handler = $this->createWebmentionHandler();
-            $handler->handle();
+            $this->getWebmentionController()->handle();
             return;
         }
 
@@ -58,8 +65,7 @@ class WebRouter
         $isMetadataPath = ($requestUriClean === '/.well-known/oauth-authorization-server');
 
         if ($isAuthParam || $isAuthPath || $isTokenParam || $isTokenPath || $isMetadataPath) {
-            $handler = $this->createIndieAuthHandler();
-            $handler->handle();
+            $this->getIndieAuthController()->handle();
             return;
         }
 
@@ -72,116 +78,104 @@ class WebRouter
 
         // Route: Micropub Client (Admin Publishing)
         if (strpos($requestUriClean, '/micropub/client') === 0) {
-            $handler = $this->createMicropubClientHandler();
-            $handler->handle();
+            $this->getMicropubController()->client();
             return;
         }
 
         // Route: Micropub Endpoint
         if (strpos($requestUriClean, '/micropub') === 0) {
-            $handler = $this->createMicropubHandler();
-            $handler->handle();
+            $this->getMicropubController()->handle();
             return;
         }
 
         // Route: Microsub Reader (Admin)
         if (strpos($requestUriClean, '/microsub/reader') === 0) {
-            $handler = $this->createMicrosubReaderHandler();
-            $handler->handle();
+            $this->getMicrosubController()->reader();
             return;
         }
 
         // Route: Microsub Endpoint
         if (strpos($requestUriClean, '/microsub') === 0) {
-            $handler = $this->createMicrosubHandler();
-            $handler->handle();
+            $this->getMicrosubController()->handle();
             return;
         }
 
         // Route: ActivityPub (if enabled)
         if (!empty($this->site->config['activitypub_enabled'])) {
+            $ap = $this->getActivityPubController();
             if ($requestUriClean === '/interact') {
-                $handler = $this->createActivityPubHandler();
-                $handler->handleInteract();
+                $ap->interact();
                 return;
             }
 
             if ($requestUriClean === '/authorize_interaction') {
-                $handler = $this->createActivityPubHandler();
-                $handler->handleAuthorizeInteraction();
+                $ap->authorizeInteraction();
                 return;
             }
 
             if ($requestUriClean === '/.well-known/webfinger') {
-                $handler = $this->createActivityPubHandler();
-                $handler->handleWebFinger();
+                $ap->webfinger();
                 return;
             }
 
             if ($requestUriClean === '/actor') {
-                $handler = $this->createActivityPubHandler();
-                $handler->handleActor();
+                $ap->actor();
                 return;
             }
 
             if ($requestUriClean === '/inbox') {
-                $handler = $this->createActivityPubHandler();
-                $handler->handleInbox();
+                $ap->inbox();
                 return;
             }
 
             if ($requestUriClean === '/outbox') {
-                $handler = $this->createActivityPubHandler();
-                $handler->handleOutbox();
+                $ap->outbox();
                 return;
             }
         }
 
         // Route: Cron Background Worker
         if ($requestUriClean === '/cron') {
-            $worker = new BackgroundWorker($this->site);
-            $worker->runAll();
-            echo "OK";
+            $this->getAdminController()->cron();
             return;
         }
 
         // Route: Archive Viewer and Force Snapshot
         if ($requestUriClean === '/archive') {
-            $handler = $this->createArchiveHandler();
-            $handler->handle();
+            $this->getArchiveController()->handle();
             return;
         }
 
         if ($requestUriClean === '/archive/force' && ($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
-            $handler = $this->createArchiveHandler();
-            $handler->handleForce();
+            $this->getArchiveController()->force();
             return;
         }
 
         // Admin Routes
         if (strpos($requestUriClean, '/admin') === 0) {
+            $admin = $this->getAdminController();
             if ($requestUriClean === '/admin') {
-                header('Location: /admin/microsub');
-                exit;
+                $admin->index();
+                return;
             }
             if (strpos($requestUriClean, '/admin/config') === 0) {
-                $this->createConfigHandler()->handle();
+                $admin->config();
                 return;
             }
             if (strpos($requestUriClean, '/admin/micropub') === 0) {
-                $this->createMicropubClientHandler()->handle();
+                $admin->micropub();
                 return;
             }
             if (strpos($requestUriClean, '/admin/microsub') === 0) {
-                $this->createMicrosubReaderHandler()->handle();
+                $admin->microsub();
                 return;
             }
             if (strpos($requestUriClean, '/admin/moderation') === 0) {
-                $this->createModerationHandler()->handle();
+                $admin->moderation();
                 return;
             }
         }
- 
+
         $this->serveStatic();
     }
 
@@ -283,6 +277,47 @@ class WebRouter
     protected function createArchiveHandler(): ArchiveHandler
     {
         return new ArchiveHandler($this->site);
+    }
+
+    public function getWebmentionController(): WebmentionController
+    {
+        return new WebmentionController($this->site, $this->createWebmentionHandler());
+    }
+
+    public function getIndieAuthController(): IndieAuthController
+    {
+        return new IndieAuthController($this->site, $this->createIndieAuthHandler());
+    }
+
+    public function getMicropubController(): MicropubController
+    {
+        return new MicropubController($this->site, $this->createMicropubHandler(), $this->createMicropubClientHandler());
+    }
+
+    public function getMicrosubController(): MicrosubController
+    {
+        return new MicrosubController($this->site, $this->createMicrosubHandler(), $this->createMicrosubReaderHandler());
+    }
+
+    public function getActivityPubController(): ActivityPubController
+    {
+        return new ActivityPubController($this->site, $this->createActivityPubHandler());
+    }
+
+    public function getArchiveController(): ArchiveController
+    {
+        return new ArchiveController($this->site, $this->createArchiveHandler());
+    }
+
+    public function getAdminController(): AdminController
+    {
+        return new AdminController(
+            $this->site,
+            $this->createConfigHandler(),
+            $this->createMicropubClientHandler(),
+            $this->createMicrosubReaderHandler(),
+            $this->createModerationHandler()
+        );
     }
 
     /**

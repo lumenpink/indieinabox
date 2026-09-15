@@ -44,11 +44,23 @@ Here is a breakdown of the workspace layout and its main contents:
     - `Contracts/FederationAdapter.php`: Universal protocol adapter contract (`getProtocol`, `supports`, `buildLikeActivity`, `buildReplyActivity`, `buildFollowActivity`, `deliverActivity`, `parseActivity`).
     - `ActivityPubAdapter.php`: W3C ActivityPub / ActivityStreams 2.0 implementation with HTTP Signatures and custom transport support.
     - `FederationManager.php`: Protocol registry, resolver, and adapter orchestrator.
+  - **`Http/`**: HTTP transport layer containing thin, single-responsibility HTTP Controllers under `Http/Controllers/`:
+    - `AbstractController.php`: Base HTTP controller with JSON, HTML, redirect, and status response methods.
+    - `ActivityPubController.php`: ActivityPub federation endpoints (`/interact`, `/authorize_interaction`, `/.well-known/webfinger`, `/actor`, `/inbox`, `/outbox`).
+    - `MicropubController.php`: Micropub server and admin client endpoints (`/micropub`, `/micropub/media`, `/micropub/client`).
+    - `MicrosubController.php`: Microsub server and web reader endpoints (`/microsub`, `/microsub/reader`).
+    - `WebmentionController.php`: Webmention receiver and interactive help form page (`/webmention`).
+    - `IndieAuthController.php`: IndieAuth/OAuth server endpoints (`/auth`, `/token`, `/.well-known/oauth-authorization-server`).
+    - `AdminController.php`: Dashboard panels (`/admin/config`, `/admin/micropub`, `/admin/microsub`, `/admin/moderation`, `/cron`).
+    - `ArchiveController.php`: Web archive explorer and snapshot capture (`/archive`, `/archive/force`).
+    - `ConfigController.php`: Administrative site and engine configuration.
   - **`Services/`**: Protocol-agnostic domain business services:
     - `FollowService.php`: Remote follower management, status checks, and distinct fan-out inbox resolution.
     - `OutboxService.php`: Outgoing delivery queueing, follower broadcast fan-out, and adapter-based delivery dispatch.
     - `InboxService.php`: Incoming activity queueing, follow/accept orchestration, and undo-follow processing.
     - `PublishPostService.php`: Note/article creation, markdown persistence, static site compilation, and federation broadcasting.
+    - `WebmentionService.php`: Webmention queueing, target validation, verification, and persistence.
+    - `ModerationService.php`: Moderation workflows for incoming interactions, comments, and spam handling.
   - **`Entry/`**: Universal `Entry` domain model for feed items, posts, and federation.
   - **`SiteBuilder/`**: Core site generation services (`ContentScanner`, `TranslationVirtualizer`, `PagePublisher`, `IndexPublisher`, `FeedPublisher`, `AssetPublisher`).
   - **`Feeds/`**: Feed generator interfaces and format implementations (`Rss`, `Atom`, `Twtxt`).

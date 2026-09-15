@@ -64,6 +64,15 @@
 <li><a href="/docs/api/html/Feeds-Generators-AtomFeedGenerator.html">Feeds-Generators-AtomFeedGenerator</a></li>
 <li><a href="/docs/api/html/Feeds-Generators-RssFeedGenerator.html">Feeds-Generators-RssFeedGenerator</a></li>
 <li><a href="/docs/api/html/Feeds-Generators-TwtxtFeedGenerator.html">Feeds-Generators-TwtxtFeedGenerator</a></li>
+<li><a href="/docs/api/html/Http-Controllers-AbstractController.html">Http-Controllers-AbstractController</a></li>
+<li><a href="/docs/api/html/Http-Controllers-ActivityPubController.html">Http-Controllers-ActivityPubController</a></li>
+<li><a href="/docs/api/html/Http-Controllers-AdminController.html">Http-Controllers-AdminController</a></li>
+<li><a href="/docs/api/html/Http-Controllers-ArchiveController.html">Http-Controllers-ArchiveController</a></li>
+<li><a href="/docs/api/html/Http-Controllers-ConfigController.html">Http-Controllers-ConfigController</a></li>
+<li><a href="/docs/api/html/Http-Controllers-IndieAuthController.html">Http-Controllers-IndieAuthController</a></li>
+<li><a href="/docs/api/html/Http-Controllers-MicropubController.html">Http-Controllers-MicropubController</a></li>
+<li><a href="/docs/api/html/Http-Controllers-MicrosubController.html">Http-Controllers-MicrosubController</a></li>
+<li><a href="/docs/api/html/Http-Controllers-WebmentionController.html">Http-Controllers-WebmentionController</a></li>
 <li><a href="/docs/api/html/HttpSignature.html">HttpSignature</a></li>
 <li><a href="/docs/api/html/IndieAuth-ConsentView.html">IndieAuth-ConsentView</a></li>
 <li><a href="/docs/api/html/IndieAuth-PkceValidator.html">IndieAuth-PkceValidator</a></li>
@@ -100,8 +109,10 @@
 <li><a href="/docs/api/html/ParserInterface.html">ParserInterface</a></li>
 <li><a href="/docs/api/html/Services-FollowService.html">Services-FollowService</a></li>
 <li><a href="/docs/api/html/Services-InboxService.html">Services-InboxService</a></li>
+<li><a href="/docs/api/html/Services-ModerationService.html">Services-ModerationService</a></li>
 <li><a href="/docs/api/html/Services-OutboxService.html">Services-OutboxService</a></li>
 <li><a href="/docs/api/html/Services-PublishPostService.html">Services-PublishPostService</a></li>
+<li><a href="/docs/api/html/Services-WebmentionService.html">Services-WebmentionService</a></li>
 <li><a href="/docs/api/html/ShortlinkManager.html">ShortlinkManager</a></li>
 <li><a href="/docs/api/html/Site-Localization.html">Site-Localization</a></li>
 <li><a href="/docs/api/html/Site-Metadata.html">Site-Metadata</a></li>
@@ -201,6 +212,20 @@ and delegates to the respective handler. Falls back to serveStatic().</p>
 <p><code>protected function createArchiveHandler(): Indieinabox\ArchiveHandler</code></p>
 <p>Factory method to create an ArchiveHandler instance.</p>
 <p>@return ArchiveHandler</p>
+<h3>getWebmentionController()</h3>
+<p><code>public function getWebmentionController(): Indieinabox\Http\Controllers\WebmentionController</code></p>
+<h3>getIndieAuthController()</h3>
+<p><code>public function getIndieAuthController(): Indieinabox\Http\Controllers\IndieAuthController</code></p>
+<h3>getMicropubController()</h3>
+<p><code>public function getMicropubController(): Indieinabox\Http\Controllers\MicropubController</code></p>
+<h3>getMicrosubController()</h3>
+<p><code>public function getMicrosubController(): Indieinabox\Http\Controllers\MicrosubController</code></p>
+<h3>getActivityPubController()</h3>
+<p><code>public function getActivityPubController(): Indieinabox\Http\Controllers\ActivityPubController</code></p>
+<h3>getArchiveController()</h3>
+<p><code>public function getArchiveController(): Indieinabox\Http\Controllers\ArchiveController</code></p>
+<h3>getAdminController()</h3>
+<p><code>public function getAdminController(): Indieinabox\Http\Controllers\AdminController</code></p>
 <h3>serveStatic()</h3>
 <p><code>protected function serveStatic(): void</code></p>
 <p>Attempts to serve static files from the output directory based on the request URI.<br />

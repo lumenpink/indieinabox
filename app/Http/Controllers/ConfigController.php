@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Indieinabox\Http\Controllers;
 
 use Indieinabox\ConfigHandler;
+use Indieinabox\Services\ConfigurationService;
 use Indieinabox\Site;
 
 /**
@@ -13,11 +14,21 @@ use Indieinabox\Site;
 class ConfigController extends AbstractController
 {
     private ConfigHandler $handler;
+    private ConfigurationService $configService;
 
-    public function __construct(Site $site, ?ConfigHandler $handler = null)
-    {
+    public function __construct(
+        Site $site,
+        ?ConfigHandler $handler = null,
+        ?ConfigurationService $configService = null
+    ) {
         parent::__construct($site);
-        $this->handler = $handler ?? new ConfigHandler($site);
+        $this->configService = $configService ?? new ConfigurationService();
+        $this->handler = $handler ?? new ConfigHandler($site, $this->configService);
+    }
+
+    public function getConfigurationService(): ConfigurationService
+    {
+        return $this->configService;
     }
 
     /**

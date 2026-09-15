@@ -61,6 +61,7 @@ Here is a breakdown of the workspace layout and its main contents:
     - `PublishPostService.php`: Note/article creation, markdown persistence, static site compilation, and federation broadcasting.
     - `WebmentionService.php`: Webmention queueing, target validation, verification, and persistence.
     - `ModerationService.php`: Moderation workflows for incoming interactions, comments, and spam handling.
+    - `ConfigurationService.php`: Site setup bootstrap, settings persistence, kind taxonomies, translations, and theme installations.
   - **`Entry/`**: Universal `Entry` domain model for feed items, posts, and federation.
   - **`SiteBuilder/`**: Core site generation services (`ContentScanner`, `TranslationVirtualizer`, `PagePublisher`, `IndexPublisher`, `FeedPublisher`, `AssetPublisher`).
   - **`Feeds/`**: Feed generator interfaces and format implementations (`Rss`, `Atom`, `Twtxt`).

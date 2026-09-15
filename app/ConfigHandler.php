@@ -13,15 +13,18 @@ class ConfigHandler
      * @var \Indieinabox\Site
      */
     private Site $site;
+    private \Indieinabox\Services\ConfigurationService $configService;
 
     /**
      * Initializes the ConfigHandler with the site context.
      *
      * @param \Indieinabox\Site $site Global site configuration and environment.
+     * @param ?\Indieinabox\Services\ConfigurationService $configService Optional configuration service.
      */
-    public function __construct(Site $site)
+    public function __construct(Site $site, ?\Indieinabox\Services\ConfigurationService $configService = null)
     {
         $this->site = $site;
+        $this->configService = $configService ?? new \Indieinabox\Services\ConfigurationService();
     }
 
     /**

@@ -9,14 +9,17 @@ Class ConfigHandler
 
 @var \Indieinabox\Site
 
+### `private Indieinabox\Services\ConfigurationService $configService`
+
 ## Methods
 
 ### __construct()
-`public function __construct(Indieinabox\Site $site)`
+`public function __construct(Indieinabox\Site $site, ?Indieinabox\Services\ConfigurationService $configService = null)`
 
 Initializes the ConfigHandler with the site context.
 
 @param \Indieinabox\Site $site Global site configuration and environment.
+@param ?\Indieinabox\Services\ConfigurationService $configService Optional configuration service.
 
 ### handle()
 `public function handle(): void`

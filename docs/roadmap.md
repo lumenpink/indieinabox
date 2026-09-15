@@ -322,10 +322,10 @@ app/
 - [x] **Domain-Driven Restructuring & HTTP Transport Separation**: Implemented dedicated HTTP Controllers and restructured business logic into domain services:
   - `Indieinabox\Http\Controllers\AbstractController`: Base controller providing standardized JSON, HTML, redirect, and status responses.
   - Dedicated HTTP Controllers: `ActivityPubController`, `MicropubController`, `MicrosubController`, `WebmentionController`, `IndieAuthController`, `AdminController`, `ArchiveController`, `ConfigController`.
-  - Extracted domain business logic into `app/Services/` (`WebmentionService`, `ModerationService`, `FollowService`, `OutboxService`, `InboxService`, `PublishPostService`).
+  - Extracted domain business logic into `app/Services/` (`ConfigurationService`, `WebmentionService`, `ModerationService`, `FollowService`, `OutboxService`, `InboxService`, `PublishPostService`).
   - Refactored `WebRouter` to route exclusively to HTTP Controllers via DI container hooks.
   - Comprehensive 3-tier test coverage:
-    - Unit: `ControllersTest`, `WebmentionServiceTest`, `ModerationServiceTest`.
+    - Unit: `ControllersTest`, `ConfigurationServiceTest`, `WebmentionServiceTest`, `ModerationServiceTest`.
     - Functional: `HttpRoutingWorkflowTest` verifying help pages, API redirects, cron tasks, and WebFinger discovery.
     - Integration: `HttpControllersIntegrationTest` verifying container autowiring of all controllers and services, and end-to-end SQLite queue insertions.
 - [x] **Protocol Adapter Pattern & Domain Services**: Created `FederationAdapter` interface and implemented protocol adapters with domain services:

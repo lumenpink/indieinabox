@@ -7,12 +7,17 @@ Controller specifically managing site and engine configuration settings in the a
 
 ### `private Indieinabox\ConfigHandler $handler`
 
+### `private Indieinabox\Services\ConfigurationService $configService`
+
 ### `protected Indieinabox\Site $site`
 
 ## Methods
 
 ### __construct()
-`public function __construct(Indieinabox\Site $site, ?Indieinabox\ConfigHandler $handler = null)`
+`public function __construct(Indieinabox\Site $site, ?Indieinabox\ConfigHandler $handler = null, ?Indieinabox\Services\ConfigurationService $configService = null)`
+
+### getConfigurationService()
+`public function getConfigurationService(): Indieinabox\Services\ConfigurationService`
 
 ### handle()
 `public function handle(): void`

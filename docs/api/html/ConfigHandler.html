@@ -107,6 +107,7 @@
 <li><a href="/docs/api/html/Page.html">Page</a></li>
 <li><a href="/docs/api/html/Pages.html">Pages</a></li>
 <li><a href="/docs/api/html/ParserInterface.html">ParserInterface</a></li>
+<li><a href="/docs/api/html/Services-ConfigurationService.html">Services-ConfigurationService</a></li>
 <li><a href="/docs/api/html/Services-FollowService.html">Services-FollowService</a></li>
 <li><a href="/docs/api/html/Services-InboxService.html">Services-InboxService</a></li>
 <li><a href="/docs/api/html/Services-ModerationService.html">Services-ModerationService</a></li>
@@ -157,11 +158,13 @@
 <h2>Properties</h2>
 <h3><code>private Indieinabox\Site $site</code></h3>
 <p>@var \Indieinabox\Site</p>
+<h3><code>private Indieinabox\Services\ConfigurationService $configService</code></h3>
 <h2>Methods</h2>
 <h3><em></em>construct()</h3>
-<p><code>public function __construct(Indieinabox\Site $site)</code></p>
+<p><code>public function __construct(Indieinabox\Site $site, ?Indieinabox\Services\ConfigurationService $configService = null)</code></p>
 <p>Initializes the ConfigHandler with the site context.</p>
-<p>@param \Indieinabox\Site $site Global site configuration and environment.</p>
+<p>@param \Indieinabox\Site $site Global site configuration and environment.<br />
+@param ?\Indieinabox\Services\ConfigurationService $configService Optional configuration service.</p>
 <h3>handle()</h3>
 <p><code>public function handle(): void</code></p>
 <p>Main handler entry point.<br />

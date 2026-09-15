@@ -19,6 +19,9 @@ Controller handling incoming webmentions and the webmention help form page.
 
 Dispatches the webmention request.
 
+### getSite()
+`public function getSite(): Indieinabox\Site`
+
 ### json()
 `protected function json(?mixed $data, int $status = 200, array $headers = []): void`
 

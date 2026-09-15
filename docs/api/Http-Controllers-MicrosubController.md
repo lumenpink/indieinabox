@@ -9,12 +9,14 @@ Controller handling Microsub server endpoints (channels, timeline, actions) and 
 
 ### `private Indieinabox\MicrosubReaderHandler $readerHandler`
 
+### `private ?Indieinabox\Services\MicrosubService $service`
+
 ### `protected Indieinabox\Site $site`
 
 ## Methods
 
 ### __construct()
-`public function __construct(Indieinabox\Site $site, ?Indieinabox\MicrosubHandler $serverHandler = null, ?Indieinabox\MicrosubReaderHandler $readerHandler = null)`
+`public function __construct(Indieinabox\Site $site, ?Indieinabox\MicrosubHandler $serverHandler = null, ?Indieinabox\MicrosubReaderHandler $readerHandler = null, ?Indieinabox\Services\MicrosubService $service = null)`
 
 ### handle()
 `public function handle(): void`
@@ -25,6 +27,12 @@ Handles standard Microsub API endpoint requests.
 `public function reader(): void`
 
 Handles the Microsub web reader interface.
+
+### getService()
+`public function getService(): ?Indieinabox\Services\MicrosubService`
+
+### getSite()
+`public function getSite(): Indieinabox\Site`
 
 ### json()
 `protected function json(?mixed $data, int $status = 200, array $headers = []): void`

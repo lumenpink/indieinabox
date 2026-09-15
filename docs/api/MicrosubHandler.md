@@ -1,52 +1,38 @@
 # MicrosubHandler
 **Namespace:** `Indieinabox`
 
-Class MicrosubHandler
+HTTP handler for Microsub server endpoints (channels, timeline, actions).
 
 ## Properties
 
 ### `private Indieinabox\IndieAuthHandler $authHandler`
 
-@var \Indieinabox\IndieAuthHandler
-
-### `private PDO $db`
-
-@var PDO
+### `private Indieinabox\Services\MicrosubService $service`
 
 ## Methods
 
 ### __construct()
-`public function __construct(Indieinabox\Site $site)`
-
-Initializes the MicrosubHandler.
-
-@param \Indieinabox\Site $site Global site configuration and environment.
+`public function __construct(Indieinabox\Site $site, ?Indieinabox\IndieAuthHandler $authHandler = null, ?Indieinabox\Services\MicrosubService $service = null)`
 
 ### handle()
 `public function handle(): void`
 
 Main entry point for handling Microsub requests.
-Enforces authentication and routes to handleGet or handlePost.
-
-@return void
 
 ### handleGet()
 `private function handleGet(string $action): void`
 
-Handles Microsub GET actions (channels, timeline, search).
-Retrieves lists of subscribed feeds or items in a feed.
-
-@param string $action The requested action ('channels', 'timeline', 'search', etc).
-@return void
+Handles Microsub GET actions (channels, timeline, search, follow).
 
 ### handlePost()
 `private function handlePost(string $action): void`
 
-Handles Microsub POST actions (subscribe, unsubscribe, mute, block, mark read).
-Modifies subscriptions or state in the underlying JSON data files.
+Handles Microsub POST actions (channels, timeline, interact, follow, unfollow, fetch).
 
-@param string $action The requested action.
-@return void
+### getRemoteUrl()
+`public function getRemoteUrl(string $url, mixed $context = null)`
+
+Internal proxy to fetchUrl so anonymous service adapter can invoke it.
 
 ### fetchUrl()
 `protected function fetchUrl(string $url, mixed $context = null)`

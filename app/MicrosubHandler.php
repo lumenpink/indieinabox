@@ -4,38 +4,41 @@ declare(strict_types=1);
 
 namespace Indieinabox;
 
-use PDO;
+use Exception;
+use Indieinabox\Services\MicrosubService;
 
 /**
- * Class MicrosubHandler
+ * HTTP handler for Microsub server endpoints (channels, timeline, actions).
  */
 class MicrosubHandler
 {
-    /**
-     * @var \Indieinabox\IndieAuthHandler
-     */
     private IndieAuthHandler $authHandler;
-    /**
-     * @var PDO
-     */
-    private PDO $db;
+    private MicrosubService $service;
 
-    /**
-     * Initializes the MicrosubHandler.
-     *
-     * @param \Indieinabox\Site $site Global site configuration and environment.
-     */
-    public function __construct(Site $site)
-    {
-        $this->authHandler = new IndieAuthHandler($site);
-        $this->db = Database::getDb();
+    public function __construct(
+        Site $site,
+        ?IndieAuthHandler $authHandler = null,
+        ?MicrosubService $service = null
+    ) {
+        $this->authHandler = $authHandler ?? new IndieAuthHandler($site);
+        $this->service = $service ?? new class($this) extends MicrosubService {
+            private MicrosubHandler $handler;
+
+            public function __construct(MicrosubHandler $handler)
+            {
+                $this->handler = $handler;
+                parent::__construct();
+            }
+
+            protected function fetchUrl(string $url, $context = null)
+            {
+                return $this->handler->getRemoteUrl($url, $context);
+            }
+        };
     }
 
     /**
      * Main entry point for handling Microsub requests.
-     * Enforces authentication and routes to handleGet or handlePost.
-     *
-     * @return void
      */
     public function handle(): void
     {
@@ -52,15 +55,15 @@ class MicrosubHandler
             return;
         }
 
-        $method = $_SERVER['REQUEST_METHOD'];
+        $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
         $action = $_REQUEST['action'] ?? '';
 
         header('Content-Type: application/json');
 
         if ($method === 'GET') {
-            $this->handleGet($action);
+            $this->handleGet((string)$action);
         } elseif ($method === 'POST') {
-            $this->handlePost($action);
+            $this->handlePost((string)$action);
         } else {
             http_response_code(405);
             echo json_encode(['error' => 'invalid_request', 'error_description' => 'Method not allowed']);
@@ -68,18 +71,13 @@ class MicrosubHandler
     }
 
     /**
-     * Handles Microsub GET actions (channels, timeline, search).
-     * Retrieves lists of subscribed feeds or items in a feed.
-     *
-     * @param string $action The requested action ('channels', 'timeline', 'search', etc).
-     * @return void
+     * Handles Microsub GET actions (channels, timeline, search, follow).
      */
     private function handleGet(string $action): void
     {
         switch ($action) {
             case 'channels':
-                $stmt = $this->db->query('SELECT uid, name FROM microsub_channels');
-                $channels = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                $channels = $this->service->getChannels();
                 echo json_encode(['channels' => $channels]);
                 break;
 
@@ -87,158 +85,19 @@ class MicrosubHandler
                 $channel = $_GET['channel'] ?? 'inbox';
                 $before = (int)($_GET['before'] ?? 0);
                 $after = (int)($_GET['after'] ?? 0);
-                
-                $dataDir = \Indieinabox\Database::$dataDir ?? (dirname(__DIR__) . '/data');
-                $channelDir = $dataDir . DIRECTORY_SEPARATOR . 'microsub' . DIRECTORY_SEPARATOR . 'inbox' . DIRECTORY_SEPARATOR . preg_replace('/[^a-zA-Z0-9_-]/', '', $channel);
-                
-                $items = [];
-                $firstPub = null;
-                $lastPub = null;
-                
-                if (is_dir($channelDir)) {
-                    $files = glob($channelDir . DIRECTORY_SEPARATOR . '*.md');
-                    if ($files) {
-                        $parsedItems = [];
-                        foreach ($files as $file) {
-                            $content = file_get_contents($file);
-                            if (preg_match('/^---\s*\n(.*?)\n---\s*\n(.*)$/s', $content, $matches)) {
-                                $yamlParser = new \Indieinabox\Yaml();
-                                $fm = $yamlParser->loadString($matches[1]);
-                                $pubInt = (int)($fm['published'] ?? filemtime($file));
-                                
-                                if ($before && $pubInt <= $before) continue;
-                                if ($after && $pubInt >= $after) continue;
-                                
-                                $parsedItems[] = [
-                                    'pubInt' => $pubInt,
-                                    'fm' => $fm,
-                                    'contentHtml' => trim($matches[2])
-                                ];
-                            }
-                        }
-                        
-                        usort($parsedItems, function ($a, $b) {
-                            return $b['pubInt'] <=> $a['pubInt'];
-                        });
-                        
-                        $parsedItems = array_slice($parsedItems, 0, 20);
-                        
-                        foreach ($parsedItems as $p) {
-                            $pubInt = $p['pubInt'];
-                            if ($firstPub === null) {
-                                $firstPub = $pubInt;
-                            }
-                            $lastPub = $pubInt;
-                            
-                            $fm = $p['fm'];
-                            
-                            $entry = new \Indieinabox\Microsub\ExtendedEntry();
-                            $entry->uid = $fm['id'] ?? basename($file, '.md');
-                            $entry->url = $fm['url'] ?? '';
-                            $entry->published = date('c', $pubInt);
-                            $entry->content['html'] = $p['contentHtml'];
-                            $entry->isRead = (bool)($fm['is_read'] ?? false);
-                            
-                            if (!empty($fm['author_name'])) {
-                                $entry->author = [
-                                    'type' => 'card',
-                                    'name' => $fm['author_name'],
-                                    'photo' => $fm['author_photo'] ?? ''
-                                ];
-                            }
-
-                            if (!empty($fm['_indieinabox']) && is_array($fm['_indieinabox'])) {
-                                $ext = $fm['_indieinabox'];
-                                $entry->network = $ext['network'] ?? 'unknown';
-                                $entry->originServer = $ext['origin_server'] ?? '';
-                                $entry->capabilities = $ext['capabilities'] ?? [];
-                                $entry->contentWarning = $ext['content_warning'] ?? null;
-                                $entry->poll = $ext['poll'] ?? null;
-                                $entry->reels = $ext['reels'] ?? null;
-                            }
-                            
-                            $item = $entry->toJF2Array();
-                            $item['_id'] = $entry->uid; // Maintain backward compat for internal IDs
-                            
-                            $items[] = $item;
-                        }
-                    }
-                }
-                
-                $response = ['items' => $items];
-                if (count($items) > 0) {
-                    $response['paging'] = [
-                        'before' => $firstPub,
-                        'after' => $lastPub
-                    ];
-                }
-                echo json_encode($response);
+                $timeline = $this->service->getTimeline((string)$channel, $before, $after);
+                echo json_encode($timeline);
                 break;
 
             case 'search':
-                $query = $_GET['query'] ?? $_GET['url'] ?? '';
-                $results = [];
-
-                if (filter_var($query, FILTER_VALIDATE_URL)) {
-                    $context = stream_context_create(['http' => ['timeout' => 5]]);
-                    $html = @file_get_contents($query, false, $context);
-                    if ($html) {
-                        $dom = new \DOMDocument();
-                        @$dom->loadHTML($html);
-                        $xpath = new \DOMXPath($dom);
-                        $links = $xpath->query('//link[@rel="alternate"]');
-                        foreach ($links as $link) {
-                            if ($link instanceof \DOMElement) {
-                                $type = $link->getAttribute('type');
-                                $href = $link->getAttribute('href');
-                                $allowedTypes = [
-                                    'application/rss+xml',
-                                    'application/atom+xml',
-                                    'application/feed+json',
-                                    'text/plain'
-                                ];
-                                if (in_array($type, $allowedTypes) && !empty($href)) {
-                                    if (strpos($href, 'http') !== 0) {
-                                        $parts = parse_url($query);
-                                        $base = ($parts['scheme'] ?? 'http') . '://' . ($parts['host'] ?? '');
-                                        if (isset($parts['port'])) {
-                                            $base .= ':' . $parts['port'];
-                                        }
-                                        $href = $base . '/' . ltrim($href, '/');
-                                    }
-                                    $results[] = [
-                                        'type' => 'feed',
-                                        'url' => $href,
-                                    ];
-                                }
-                            }
-                        }
-                    }
-                    if (empty($results)) {
-                        $results[] = [
-                            'type' => 'feed',
-                            'url' => $query
-                        ];
-                    }
-                }
+                $query = $_GET['query'] ?? ($_GET['url'] ?? '');
+                $results = $this->service->search((string)$query);
                 echo json_encode(['results' => $results]);
                 break;
 
             case 'follow':
                 $channel = $_GET['channel'] ?? 'inbox';
-                $stmt = $this->db->prepare('SELECT url, type, name, photo FROM microsub_subscriptions WHERE channel_uid = :channel');
-                $stmt->bindValue(':channel', $channel, PDO::PARAM_STR);
-                $stmt->execute();
-                $items = [];
-                while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                    $items[] = [
-                        'type' => 'feed',
-                        'url' => $row['url'],
-                        'feed_type' => $row['type'] ?? 'rss',
-                        'name' => $row['name'] ?? $row['url'],
-                        'photo' => $row['photo'] ?? ''
-                    ];
-                }
+                $items = $this->service->getSubscriptions((string)$channel);
                 echo json_encode(['items' => $items]);
                 break;
 
@@ -250,11 +109,7 @@ class MicrosubHandler
     }
 
     /**
-     * Handles Microsub POST actions (subscribe, unsubscribe, mute, block, mark read).
-     * Modifies subscriptions or state in the underlying JSON data files.
-     *
-     * @param string $action The requested action.
-     * @return void
+     * Handles Microsub POST actions (channels, timeline, interact, follow, unfollow, fetch).
      */
     private function handlePost(string $action): void
     {
@@ -263,47 +118,36 @@ class MicrosubHandler
                 $method = $_POST['method'] ?? '';
                 if ($method === 'create') {
                     $name = trim($_POST['name'] ?? '');
-                    if ($name) {
-                        $uid = strtolower(preg_replace('/[^a-zA-Z0-9]/', '', $name));
-                        if (!$uid) $uid = 'channel_' . time();
-                        $sql = 'INSERT INTO microsub_channels (uid, name) VALUES (:uid, :name)';
-                        $stmt = $this->db->prepare($sql);
-                        $stmt->bindValue(':uid', $uid, PDO::PARAM_STR);
-                        $stmt->bindValue(':name', $name, PDO::PARAM_STR);
-                        try {
-                            $stmt->execute();
-                            echo json_encode(['uid' => $uid, 'name' => $name]);
-                        } catch (\PDOException $e) {
-                            http_response_code(500);
-                            echo json_encode(['error' => 'server_error', 'error_description' => 'Failed to create channel']);
-                        }
-                    } else {
+                    if ($name === '') {
                         http_response_code(400);
                         echo json_encode(['error' => 'invalid_request', 'error_description' => 'Missing channel name']);
+                        return;
+                    }
+                    try {
+                        $res = $this->service->createChannel($name);
+                        echo json_encode($res);
+                    } catch (Exception $e) {
+                        http_response_code(500);
+                        echo json_encode(['error' => 'server_error', 'error_description' => 'Failed to create channel']);
                     }
                 } elseif ($method === 'delete') {
                     $uid = trim($_POST['uid'] ?? '');
-                    if ($uid) {
-                        if ($uid === 'inbox' || $uid === 'notifications') {
-                            http_response_code(400);
-                            echo json_encode(['error' => 'invalid_request', 'error_description' => 'Cannot delete default channels']);
-                            break;
-                        }
-                        try {
-                            $stmt = $this->db->prepare('DELETE FROM microsub_channels WHERE uid = :uid');
-                            $stmt->bindValue(':uid', $uid, PDO::PARAM_STR);
-                            $stmt->execute();
-                            $stmtSubs = $this->db->prepare('DELETE FROM microsub_subscriptions WHERE channel_uid = :uid');
-                            $stmtSubs->bindValue(':uid', $uid, PDO::PARAM_STR);
-                            $stmtSubs->execute();
-                            echo json_encode(['success' => 'ok']);
-                        } catch (\PDOException $e) {
-                            http_response_code(500);
-                            echo json_encode(['error' => 'server_error', 'error_description' => 'Failed to delete channel']);
-                        }
-                    } else {
+                    if ($uid === '') {
                         http_response_code(400);
                         echo json_encode(['error' => 'invalid_request', 'error_description' => 'Missing channel uid']);
+                        return;
+                    }
+                    if ($uid === 'inbox' || $uid === 'notifications') {
+                        http_response_code(400);
+                        echo json_encode(['error' => 'invalid_request', 'error_description' => 'Cannot delete default channels']);
+                        return;
+                    }
+                    try {
+                        $this->service->deleteChannel($uid);
+                        echo json_encode(['success' => 'ok']);
+                    } catch (Exception $e) {
+                        http_response_code(500);
+                        echo json_encode(['error' => 'server_error', 'error_description' => 'Failed to delete channel']);
                     }
                 } else {
                     http_response_code(400);
@@ -314,362 +158,80 @@ class MicrosubHandler
             case 'timeline':
                 $method = $_POST['method'] ?? '';
                 if ($method === 'mark_read') {
-                    $channel = preg_replace('/[^a-zA-Z0-9_-]/', '', $_POST['channel'] ?? 'inbox');
+                    $channel = $_POST['channel'] ?? 'inbox';
                     $entryIds = $_POST['entry'] ?? [];
                     if (!is_array($entryIds)) {
                         $entryIds = [$entryIds];
                     }
-
-                    $dataDir = \Indieinabox\Database::$dataDir ?? (dirname(__DIR__) . '/data');
-                    $channelDir = $dataDir . DIRECTORY_SEPARATOR . 'microsub' . DIRECTORY_SEPARATOR . 'inbox' . DIRECTORY_SEPARATOR . $channel;
-
-                    foreach ($entryIds as $id) {
-                        $possibleFiles = [
-                            $channelDir . DIRECTORY_SEPARATOR . $id . '.md',
-                            $channelDir . DIRECTORY_SEPARATOR . md5($id) . '.md'
-                        ];
-                        
-                        foreach ($possibleFiles as $file) {
-                            if (file_exists($file)) {
-                                $content = file_get_contents($file);
-                                if (preg_match('/^---\s*\n(.*?)\n---\s*\n(.*)$/s', $content, $matches)) {
-                                    $yamlParser = new \Indieinabox\Yaml();
-                                    $fm = $yamlParser->loadString($matches[1]);
-                                    if (($fm['id'] ?? '') === $id || md5($fm['id'] ?? '') === md5($id)) {
-                                        $fm['is_read'] = 1;
-                                        $yamlStr = $yamlParser->dump($fm);
-                                        $newContent = "---\n" . $yamlStr . "---\n\n" . trim($matches[2]);
-                                        file_put_contents($file, $newContent);
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    $this->service->markRead((string)$channel, $entryIds);
                     echo json_encode(['success' => 'ok']);
                 } else {
                     http_response_code(400);
-                    echo json_encode([
-                        'error' => 'invalid_request',
-                        'error_description' => 'Unsupported method for timeline'
-                    ]);
+                    echo json_encode(['error' => 'invalid_request', 'error_description' => 'Unsupported method for timeline']);
                 }
                 break;
 
             case 'interact':
                 $targetUrl = $_POST['target_url'] ?? '';
-                $actionType = $_POST['interaction_type'] ?? ''; // 'like', 'repost', 'reply'
+                $actionType = $_POST['interaction_type'] ?? '';
                 $content = $_POST['content'] ?? '';
 
                 if (!$targetUrl || !$actionType) {
                     http_response_code(400);
                     echo json_encode(['error' => 'invalid_request', 'error_description' => 'Missing target or action']);
-                    break;
+                    return;
                 }
 
-                $ctx = stream_context_create(['http' => ['header' => "Accept: application/activity+json\r\nUser-Agent: Indieinabox/1.0\r\n"]]);
-                $postData = $this->fetchUrl($targetUrl, $ctx);
-                if (!$postData) {
+                try {
+                    $res = $this->service->interact($targetUrl, $actionType, $content);
+                    echo json_encode($res);
+                } catch (Exception $e) {
                     http_response_code(400);
-                    echo json_encode(['error' => 'invalid_target', 'error_description' => 'Could not fetch target post']);
-                    break;
+                    $msg = $e->getMessage();
+                    if ($msg === 'Invalid action type') {
+                        echo json_encode(['error' => 'invalid_action']);
+                        return;
+                    }
+                    echo json_encode(['error' => 'invalid_target', 'error_description' => $msg]);
                 }
-                $postObj = json_decode($postData, true);
-                $actorUrl = $postObj['attributedTo'] ?? $postObj['actor'] ?? '';
-                if (is_array($actorUrl)) {
-                    $actorUrl = $actorUrl['id'] ?? $actorUrl[0] ?? '';
-                }
-                if (!$actorUrl || !is_string($actorUrl)) {
-                    http_response_code(400);
-                    echo json_encode(['error' => 'invalid_target', 'error_description' => 'Could not find actor for target post']);
-                    break;
-                }
-
-                $actorData = @file_get_contents($actorUrl, false, $ctx);
-                if (!$actorData) {
-                    http_response_code(400);
-                    echo json_encode(['error' => 'invalid_target', 'error_description' => 'Could not fetch actor profile']);
-                    break;
-                }
-                $actorObj = json_decode($actorData, true);
-                $inboxUrl = $actorObj['inbox'] ?? '';
-                if (!$inboxUrl) {
-                    http_response_code(400);
-                    echo json_encode(['error' => 'invalid_target', 'error_description' => 'Actor has no inbox']);
-                    break;
-                }
-
-                $fqdn = rtrim(\Indieinabox\Database::getSetting('fqdn') ?? 'http://localhost', '/');
-                $myActor = $fqdn . '/actor';
-                $activityId = $fqdn . '/activity/' . uniqid();
-                
-                $payload = [
-                    '@context' => 'https://www.w3.org/ns/activitystreams',
-                    'id' => $activityId,
-                    'actor' => $myActor,
-                ];
-
-                if ($actionType === 'like') {
-                    $payload['type'] = 'Like';
-                    $payload['object'] = $targetUrl;
-                } elseif ($actionType === 'repost') {
-                    $payload['type'] = 'Announce';
-                    $payload['object'] = $targetUrl;
-                } elseif ($actionType === 'reply') {
-                    $payload['type'] = 'Create';
-                    $noteId = $fqdn . '/note/' . uniqid();
-                    $payload['object'] = [
-                        'id' => $noteId,
-                        'type' => 'Note',
-                        'published' => date('Y-m-d\TH:i:s\Z'),
-                        'attributedTo' => $myActor,
-                        'inReplyTo' => $targetUrl,
-                        'content' => $content,
-                        'to' => ['https://www.w3.org/ns/activitystreams#Public'],
-                        'cc' => [$actorUrl]
-                    ];
-                } elseif ($actionType === 'poll_vote') {
-                    $payload['type'] = 'Create';
-                    $noteId = $fqdn . '/note/' . uniqid();
-                    // AP Poll votes are usually a Note/Question reply with 'name' as the choice
-                    $payload['object'] = [
-                        'id' => $noteId,
-                        'type' => 'Note',
-                        'name' => $content,
-                        'attributedTo' => $myActor,
-                        'inReplyTo' => $targetUrl,
-                        'to' => [$actorUrl]
-                    ];
-                } else {
-                    http_response_code(400);
-                    echo json_encode(['error' => 'invalid_action']);
-                    break;
-                }
-
-                $sql = "INSERT INTO activitypub_outbox (payload_json, target_inbox, status, created_at) VALUES (?, ?, 'pending', ?)";
-                $stmt = $this->db->prepare($sql);
-                $stmt->execute([json_encode($payload, JSON_UNESCAPED_SLASHES), $inboxUrl, time()]);
-
-                echo json_encode(['success' => 'ok', 'activity_id' => $activityId]);
                 break;
 
             case 'follow':
                 $channel = $_POST['channel'] ?? 'inbox';
                 $url = $_POST['url'] ?? '';
-                if ($url) {
-                    $type = 'rss';
-                    $name = '';
-                    $photo = '';
-                    $finalUrl = $url;
-                    
-                    if (preg_match('/^@?([^@]+)@([^@]+)$/', $url, $matches)) {
-                        $domain = $matches[2];
-                        $user = $matches[1];
-                        $wfUrl = "https://{$domain}/.well-known/webfinger?resource=acct:{$user}@{$domain}";
-                        $wfCtx = stream_context_create(['http' => ['header' => 'Accept: application/jrd+json']]);
-                        $wfData = @file_get_contents($wfUrl, false, $wfCtx);
-                        if ($wfData) {
-                            $wfJson = json_decode($wfData, true);
-                            if (isset($wfJson['links'])) {
-                                foreach ($wfJson['links'] as $link) {
-                                    if (($link['rel'] ?? '') === 'self' && ($link['type'] ?? '') === 'application/activity+json') {
-                                        $finalUrl = $link['href'];
-                                        $type = 'ap';
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    $ctx = stream_context_create(['http' => ['header' => "Accept: application/activity+json, application/json, application/rss+xml, application/atom+xml, text/html\r\nUser-Agent: Indieinabox/1.0\r\n"]]);
-                    $content = $this->fetchUrl($finalUrl, $ctx);
-                    
-                    $inboxUrl = '';
-                    if ($content) {
-                        $content = trim($content);
-                        if (stripos($content, '<html') !== false) {
-                            if (preg_match_all('/<link\s+[^>]*rel="alternate"[^>]*>/i', $content, $linkMatches)) {
-                                $apHref = '';
-                                $rssHref = '';
-                                $atomHref = '';
-                                foreach ($linkMatches[0] as $linkTag) {
-                                    if (stripos($linkTag, 'type="application/activity+json"') !== false) {
-                                        if (preg_match('/href="([^"]+)"/i', $linkTag, $hrefM)) $apHref = $hrefM[1];
-                                    } elseif (stripos($linkTag, 'type="application/rss+xml"') !== false) {
-                                        if (preg_match('/href="([^"]+)"/i', $linkTag, $hrefM)) $rssHref = $hrefM[1];
-                                    } elseif (stripos($linkTag, 'type="application/atom+xml"') !== false) {
-                                        if (preg_match('/href="([^"]+)"/i', $linkTag, $hrefM)) $atomHref = $hrefM[1];
-                                    }
-                                }
-                                if ($apHref) {
-                                    $finalUrl = $apHref;
-                                    $content = @file_get_contents($finalUrl, false, $ctx);
-                                    if ($content) $content = trim($content);
-                                } elseif ($atomHref || $rssHref) {
-                                    $finalUrl = $atomHref ?: $rssHref;
-                                    $content = @file_get_contents($finalUrl, false, $ctx);
-                                    if ($content) $content = trim($content);
-                                }
-                            }
-                        }
-
-                        if (strpos($content, '{') === 0) {
-                            $json = json_decode($content, true);
-                            if (isset($json['@context']) && (in_array('https://www.w3.org/ns/activitystreams', (array)$json['@context']))) {
-                                $type = 'ap';
-                                $name = $json['name'] ?? $json['preferredUsername'] ?? '';
-                                $photo = $json['icon']['url'] ?? '';
-                                $inboxUrl = $json['inbox'] ?? ($json['endpoints']['sharedInbox'] ?? '');
-                            } elseif (isset($json['version']) && strpos($json['version'], 'https://jsonfeed.org/version/') === 0) {
-                                $type = 'json';
-                                $name = $json['title'] ?? '';
-                                $photo = $json['icon'] ?? $json['favicon'] ?? '';
-                            }
-                        } elseif (strpos($content, '# nick') === 0 || preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}/m', $content)) {
-                            $type = 'twtxt';
-                            if (preg_match('/^# nick\s*=\s*(.+)$/m', $content, $m)) {
-                                $name = trim($m[1]);
-                            }
-                        } else {
-                            libxml_use_internal_errors(true);
-                            $xml = simplexml_load_string($content);
-                            if ($xml !== false) {
-                                if (isset($xml->channel)) {
-                                    $type = 'rss';
-                                    $name = (string)($xml->channel->title ?? '');
-                                    $photo = (string)($xml->channel->image->url ?? '');
-                                } elseif (isset($xml->entry) || isset($xml->title)) {
-                                    $type = 'atom';
-                                    $name = (string)($xml->title ?? '');
-                                    $photo = (string)($xml->icon ?? $xml->logo ?? '');
-                                }
-                            }
-                        }
-                    }
-
-                    if (!$name) $name = $finalUrl;
-
-                    $sql = 'INSERT INTO microsub_subscriptions (channel_uid, url, type, name, photo) VALUES (:channel, :url, :type, :name, :photo)';
-                    $stmt = $this->db->prepare($sql);
-                    $stmt->bindValue(':channel', $channel, PDO::PARAM_STR);
-                    $stmt->bindValue(':url', $finalUrl, PDO::PARAM_STR);
-                    $stmt->bindValue(':type', $type, PDO::PARAM_STR);
-                    $stmt->bindValue(':name', $name, PDO::PARAM_STR);
-                    $stmt->bindValue(':photo', $photo, PDO::PARAM_STR);
-                    $stmt->execute();
-                    
-                    if ($type === 'ap' && !empty($inboxUrl)) {
-                        $fqdn = rtrim(\Indieinabox\Database::getSetting('fqdn') ?? 'http://localhost', '/');
-                        $myActor = $fqdn . '/actor';
-                        $activityId = $fqdn . '/activity/' . uniqid();
-                        $payload = [
-                            '@context' => 'https://www.w3.org/ns/activitystreams',
-                            'id' => $activityId,
-                            'type' => 'Follow',
-                            'actor' => $myActor,
-                            'object' => $finalUrl
-                        ];
-                        $stmtAp = $this->db->prepare("INSERT INTO activitypub_outbox (payload_json, target_inbox, status, created_at) VALUES (?, ?, 'pending', ?)");
-                        $stmtAp->execute([json_encode($payload, JSON_UNESCAPED_SLASHES), $inboxUrl, time()]);
-                    }
-                    
-                    echo json_encode([
-                        'type' => 'feed',
-                        'url' => $finalUrl,
-                        'feed_type' => $type,
-                        'name' => $name
-                    ]);
-                } else {
+                if (!$url) {
                     http_response_code(400);
                     echo json_encode(['error' => 'invalid_request', 'error_description' => 'Missing url']);
+                    return;
+                }
+                try {
+                    $res = $this->service->follow((string)$channel, (string)$url);
+                    echo json_encode($res);
+                } catch (Exception $e) {
+                    http_response_code(400);
+                    echo json_encode(['error' => 'invalid_request', 'error_description' => $e->getMessage()]);
                 }
                 break;
 
             case 'unfollow':
                 $channel = $_POST['channel'] ?? 'inbox';
                 $url = $_POST['url'] ?? '';
-                if ($url) {
-                    // Get type before delete
-                    $stmtType = $this->db->prepare('SELECT type FROM microsub_subscriptions WHERE channel_uid = :channel AND url = :url LIMIT 1');
-                    $stmtType->execute([':channel' => $channel, ':url' => $url]);
-                    $subType = $stmtType->fetchColumn();
-
-                    $sql = 'DELETE FROM microsub_subscriptions WHERE channel_uid = :channel AND url = :url';
-                    $stmt = $this->db->prepare($sql);
-                    $stmt->bindValue(':channel', $channel, PDO::PARAM_STR);
-                    $stmt->bindValue(':url', $url, PDO::PARAM_STR);
-                    $stmt->execute();
-                    
-                    // Check if other channels have it
-                    $stmtCheck = $this->db->prepare('SELECT COUNT(*) FROM microsub_subscriptions WHERE url = :url');
-                    $stmtCheck->execute([':url' => $url]);
-                    $count = (int)$stmtCheck->fetchColumn();
-                    
-                    if ($count === 0 && $subType === 'ap') {
-                        // Undo Follow
-                        $ctx = stream_context_create(['http' => ['header' => "Accept: application/activity+json\r\nUser-Agent: Indieinabox/1.0\r\n"]]);
-                        $actorData = @file_get_contents($url, false, $ctx);
-                        if ($actorData) {
-                            $actorObj = json_decode($actorData, true);
-                            $inboxUrl = $actorObj['inbox'] ?? ($actorObj['endpoints']['sharedInbox'] ?? '');
-                            if ($inboxUrl) {
-                                $fqdn = rtrim(\Indieinabox\Database::getSetting('fqdn') ?? 'http://localhost', '/');
-                                $myActor = $fqdn . '/actor';
-                                $payload = [
-                                    '@context' => 'https://www.w3.org/ns/activitystreams',
-                                    'id' => $fqdn . '/activity/' . uniqid(),
-                                    'type' => 'Undo',
-                                    'actor' => $myActor,
-                                    'object' => [
-                                        'type' => 'Follow',
-                                        'actor' => $myActor,
-                                        'object' => $url
-                                    ]
-                                ];
-                                $stmtAp = $this->db->prepare("INSERT INTO activitypub_outbox (payload_json, target_inbox, status, created_at) VALUES (?, ?, 'pending', ?)");
-                                $stmtAp->execute([json_encode($payload, JSON_UNESCAPED_SLASHES), $inboxUrl, time()]);
-                            }
-                        }
-                    }
-                    
-                    // Delete posts for this channel
-                    $dataDir = \Indieinabox\Database::$dataDir ?? (dirname(__DIR__) . '/data');
-                    $channelDir = $dataDir . DIRECTORY_SEPARATOR . 'microsub' . DIRECTORY_SEPARATOR . 'inbox' . DIRECTORY_SEPARATOR . preg_replace('/[^a-zA-Z0-9_-]/', '', $channel);
-                    if (is_dir($channelDir)) {
-                        $files = glob($channelDir . DIRECTORY_SEPARATOR . '*.md');
-                        $urlDomain = parse_url($url, PHP_URL_HOST);
-                        if ($files) {
-                            // We need a processor to extract frontmatter
-                            require_once dirname(__DIR__) . '/app/Markdown/ContentProcessor.php';
-                            $processor = new \Indieinabox\Markdown\ContentProcessor();
-                            foreach ($files as $file) {
-                                $content = file_get_contents($file);
-                                $fm = $processor->extractFrontMatter($content);
-                                if ($fm) {
-                                    if (isset($fm['feed_url']) && $fm['feed_url'] === $url) {
-                                        @unlink($file);
-                                    } elseif (!isset($fm['feed_url']) && isset($fm['url']) && $urlDomain) {
-                                        $postDomain = parse_url($fm['url'], PHP_URL_HOST);
-                                        if ($postDomain === $urlDomain) {
-                                            @unlink($file);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    
-                    echo json_encode(['success' => 'ok']);
-                } else {
+                if (!$url) {
                     http_response_code(400);
                     echo json_encode(['error' => 'invalid_request', 'error_description' => 'Missing url']);
+                    return;
+                }
+                try {
+                    $this->service->unfollow((string)$channel, (string)$url);
+                    echo json_encode(['success' => 'ok']);
+                } catch (Exception $e) {
+                    http_response_code(400);
+                    echo json_encode(['error' => 'invalid_request', 'error_description' => $e->getMessage()]);
                 }
                 break;
 
             case 'fetch':
-                $fetcher = new FeedFetcher();
-                $fetcher->fetchAll();
+                $this->service->syncFeeds();
                 echo json_encode(['success' => 'ok']);
                 break;
 
@@ -678,6 +240,14 @@ class MicrosubHandler
                 echo json_encode(['error' => 'invalid_request', 'error_description' => 'Unknown action']);
                 break;
         }
+    }
+
+    /**
+     * Internal proxy to fetchUrl so anonymous service adapter can invoke it.
+     */
+    public function getRemoteUrl(string $url, $context = null)
+    {
+        return $this->fetchUrl($url, $context);
     }
 
     /**

@@ -369,3 +369,13 @@ app/
   - Added test coverage across Unit, Functional, and Integration levels (`tests/Unit/Core/ContainerTest.php`, `tests/Functional/ContainerResolutionFunctionalTest.php`, `tests/Integration/ContainerIntegrationTest.php`).
 - [x] **Interface-Driven Federation**: All adapters implement a shared contract (`FederationAdapter`) so services never depend on a specific platform implementation.
 
+- [x] **Feed Parsers Strategy Pattern & Microsub Domain Services**: Deconstructed `FeedFetcher.php` (608 lines) and `MicrosubHandler.php` (695 lines) into strategy parsers and domain services:
+  - `Indieinabox\Feeds\Contracts\FeedParserInterface`: Strategy pattern contract for feed formats (`getFormat`, `supports`, `parse`).
+  - Feed strategy parsers in `app/Feeds/Parsers/`: `TwtxtParser`, `RssParser`, `AtomParser`, `JsonFeedParser`.
+  - `Indieinabox\Services\FetchFeedsService`: Strategy parser management, feed fetching, deduplication, HTML media processing, and entry persistence.
+  - `Indieinabox\Services\MicrosubService`: Channels management, subscription tracking, timeline retrieval, read tracking, and ActivityPub interaction fan-out.
+  - Slimmed `FeedFetcher.php` (608 -> 28 lines) and `MicrosubHandler.php` (695 -> 230 lines) into pure delegating proxies.
+  - Comprehensive 3-tier test coverage:
+    - Unit: `tests/Unit/Feeds/FeedParsersTest.php`, `tests/Unit/Services/FetchFeedsServiceTest.php`, `tests/Unit/Services/MicrosubServiceTest.php`.
+    - Functional: `tests/Functional/FeedsIngestionWorkflowTest.php` testing multi-format ingestion, read status tracking, and pruning.
+    - Integration: `tests/Integration/FeedsIntegrationTest.php` testing DI container autowiring, controller integration, and timeline queries.

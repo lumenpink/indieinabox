@@ -26,6 +26,9 @@ Handles standard Micropub endpoint requests (POST create/media, GET config/syndi
 
 Handles the Micropub local web admin posting client.
 
+### getSite()
+`public function getSite(): Indieinabox\Site`
+
 ### json()
 `protected function json(?mixed $data, int $status = 200, array $headers = []): void`
 

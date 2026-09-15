@@ -24,6 +24,9 @@ Controller specifically managing site and engine configuration settings in the a
 
 Dispatches the config handling logic.
 
+### getSite()
+`public function getSite(): Indieinabox\Site`
+
 ### json()
 `protected function json(?mixed $data, int $status = 200, array $headers = []): void`
 

@@ -59,11 +59,16 @@
 <li><a href="/docs/api/html/Federation-Contracts-FederationAdapter.html">Federation-Contracts-FederationAdapter</a></li>
 <li><a href="/docs/api/html/Federation-FederationManager.html">Federation-FederationManager</a></li>
 <li><a href="/docs/api/html/FeedFetcher.html">FeedFetcher</a></li>
+<li><a href="/docs/api/html/Feeds-Contracts-FeedParserInterface.html">Feeds-Contracts-FeedParserInterface</a></li>
 <li><a href="/docs/api/html/Feeds-FeedGeneratorInterface.html">Feeds-FeedGeneratorInterface</a></li>
 <li><a href="/docs/api/html/Feeds-FeedGenerators.html">Feeds-FeedGenerators</a></li>
 <li><a href="/docs/api/html/Feeds-Generators-AtomFeedGenerator.html">Feeds-Generators-AtomFeedGenerator</a></li>
 <li><a href="/docs/api/html/Feeds-Generators-RssFeedGenerator.html">Feeds-Generators-RssFeedGenerator</a></li>
 <li><a href="/docs/api/html/Feeds-Generators-TwtxtFeedGenerator.html">Feeds-Generators-TwtxtFeedGenerator</a></li>
+<li><a href="/docs/api/html/Feeds-Parsers-AtomParser.html">Feeds-Parsers-AtomParser</a></li>
+<li><a href="/docs/api/html/Feeds-Parsers-JsonFeedParser.html">Feeds-Parsers-JsonFeedParser</a></li>
+<li><a href="/docs/api/html/Feeds-Parsers-RssParser.html">Feeds-Parsers-RssParser</a></li>
+<li><a href="/docs/api/html/Feeds-Parsers-TwtxtParser.html">Feeds-Parsers-TwtxtParser</a></li>
 <li><a href="/docs/api/html/Http-Controllers-AbstractController.html">Http-Controllers-AbstractController</a></li>
 <li><a href="/docs/api/html/Http-Controllers-ActivityPubController.html">Http-Controllers-ActivityPubController</a></li>
 <li><a href="/docs/api/html/Http-Controllers-AdminController.html">Http-Controllers-AdminController</a></li>
@@ -108,8 +113,10 @@
 <li><a href="/docs/api/html/Pages.html">Pages</a></li>
 <li><a href="/docs/api/html/ParserInterface.html">ParserInterface</a></li>
 <li><a href="/docs/api/html/Services-ConfigurationService.html">Services-ConfigurationService</a></li>
+<li><a href="/docs/api/html/Services-FetchFeedsService.html">Services-FetchFeedsService</a></li>
 <li><a href="/docs/api/html/Services-FollowService.html">Services-FollowService</a></li>
 <li><a href="/docs/api/html/Services-InboxService.html">Services-InboxService</a></li>
+<li><a href="/docs/api/html/Services-MicrosubService.html">Services-MicrosubService</a></li>
 <li><a href="/docs/api/html/Services-ModerationService.html">Services-ModerationService</a></li>
 <li><a href="/docs/api/html/Services-OutboxService.html">Services-OutboxService</a></li>
 <li><a href="/docs/api/html/Services-PublishPostService.html">Services-PublishPostService</a></li>
@@ -164,6 +171,8 @@
 <h3>handle()</h3>
 <p><code>public function handle(): void</code></p>
 <p>Dispatches the webmention request.</p>
+<h3>getSite()</h3>
+<p><code>public function getSite(): Indieinabox\Site</code></p>
 <h3>json()</h3>
 <p><code>protected function json(?mixed $data, int $status = 200, array $headers = []): void</code></p>
 <p>Emits a JSON response.</p>

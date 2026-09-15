@@ -18,6 +18,11 @@ abstract class AbstractController
         $this->site = $site;
     }
 
+    public function getSite(): Site
+    {
+        return $this->site;
+    }
+
     /**
      * Emits a JSON response.
      *

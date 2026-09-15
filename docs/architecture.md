@@ -1,52 +1,50 @@
-# Project Architecture
+# Architecture & Technical Overview
 
-This document describes the high-level architecture, pipeline flow, and directory structure of the Indieinabox static site generator.
+Indieinabox is a minimalist, self-contained micro-publishing engine engineered for the IndieWeb and the fediverse. It generates static multi-protocol websites (HTML, Gemini, Gopher) while exposing self-hosted, decoupled dynamic services (IndieAuth, Micropub, Microsub, Webmentions, ActivityPub).
 
-## Build Pipeline Flow
+## System Architecture
 
-The static site generator build pipeline is executed via CLI by running `build.php`. `SiteBuilder` serves as the high-level orchestrator, coordinating dedicated domain services:
+The project follows Domain-Driven Design (DDD) and SOLID principles, structured into modular bounded contexts:
 
-```mermaid
-graph TD
-    A[Start Build: build.php] --> B[Bootstrap Application & Load Config]
-    B --> C[Instantiate Site & SiteBuilder]
-    C --> D[ContentScanner: Scan content/ & Ensure Mandatory Homepage]
-    D --> E[TranslationVirtualizer: Enforce Parity & Virtualize Missing Languages]
-    E --> F[ContentScanner: Render Raw Bodies to HTML]
-    F --> G[PagePublisher: Generate HTML, Gemini, Gopher, ActivityPub JSON]
-    G --> H[IndexPublisher: Publish Sitemaps, Section Indexes, Timeline & Taxonomies]
-    H --> I[FeedPublisher: Publish RSS, Atom, Twtxt Feeds via Entry Domain Model]
-    I --> J[AssetPublisher: Copy Static Files, View Assets & Media]
-    J --> K[AssetPublisher: Run Garbage Collector via Build Manifest]
-    K --> L[Build Complete]
 ```
-
-## Modular Service Architecture
-
-The core generation pipeline is decoupled into single-responsibility services:
-
-- **`ContentScanner`**: Traverses the content filesystem, initializes parser pipelines, ensures root homepages, and renders raw Markdown page bodies into HTML.
-- **`TranslationVirtualizer`**: Audits language completeness and automatically generates pseudo-translated page stubs for missing translations.
-- **`PagePublisher`**: Publishes individual page documents simultaneously across modern and retro protocols (HTML, Gemini `.gmi`, Gopher `gophermap`, ActivityPub JSON).
-- **`IndexPublisher`**: Generates sitemaps, monthly chronological section archives, tag and digital garden taxonomy index pages, and custom timeline pages.
-- **`FeedPublisher`**: Transforms universal `Entry` entities into syndicated feeds (RSS, Atom, Twtxt) via pluggable `FeedGeneratorInterface` implementations.
-- **`AssetPublisher`**: Copies static files, extracts theme view assets, synchronizes media libraries, and prunes orphaned files using the build manifest.
-- **`ThemeManager`**: Resolves, compiles, and renders layout templates and partials from disk or compiled `DefaultTheme` fallbacks.
+                  ┌─────────────────────────────────────────────────┐
+                  │                 WebRouter / CLI                 │
+                  └───────────────────────┬─────────────────────────┘
+                                          │
+                  ┌───────────────────────┴─────────────────────────┐
+                  │              HTTP Controllers                   │
+                  │ (Microsub, Micropub, ActivityPub, Webmention...│
+                  └───────────────────────┬─────────────────────────┘
+                                          │
+       ┌──────────────────────────────────┴─────────────────────────────────┐
+       ▼                                  ▼                                 ▼
+┌──────────────┐                  ┌──────────────┐                  ┌──────────────┐
+│  Federation  │                  │   Services   │                  │ Feed Parsers │
+│ (ActivityPub │                  │ (Follow,     │                  │  (Strategy:  │
+│   Adapter,   │                  │  Outbox,     │                  │  Twtxt, RSS, │
+│  Manager)    │                  │  Microsub,   │                  │  Atom, JSON) │
+└──────────────┘                  │  FetchFeeds) │                  └──────────────┘
+                                  └──────┬───────┘
+                                         ▼
+                                  ┌──────────────┐
+                                  │ Domain Core  │
+                                  │ (Container,  │
+                                  │  Models,     │
+                                  │  Storage)    │
+                                  └──────────────┘
+```
 
 ## Directory Structure
 
-Here is a breakdown of the workspace layout and its main contents:
-
-- **`app/`**: Object-oriented, namespaced code under PSR-4 (`Indieinabox\`).
-  - **`Core/`**: Core infrastructure including PSR-11 Dependency Injection `Container` with autowiring, and exception contracts.
-  - **`Console/`**: Command-line interface kernel, command contract, and dedicated single-responsibility commands (`BuildCommand`, `CronCommand`, `FetchCommand`, `PostCommand`, `ProfileCommand`, `ConfigCommand`, `SetupCommand`, `LinkCheckCommand`, `BackupCommand`, `TestWebmentionCommand`, `VersionCommand`, `UpdateCommand`).
-  - **`Federation/`**: Multi-protocol federation subsystem and adapters implementing `FederationAdapter`:
-    - `Contracts/FederationAdapter.php`: Universal protocol adapter contract (`getProtocol`, `supports`, `buildLikeActivity`, `buildReplyActivity`, `buildFollowActivity`, `deliverActivity`, `parseActivity`).
-    - `ActivityPubAdapter.php`: W3C ActivityPub / ActivityStreams 2.0 implementation with HTTP Signatures and custom transport support.
-    - `FederationManager.php`: Protocol registry, resolver, and adapter orchestrator.
-  - **`Http/`**: HTTP transport layer containing thin, single-responsibility HTTP Controllers under `Http/Controllers/`:
-    - `AbstractController.php`: Base HTTP controller with JSON, HTML, redirect, and status response methods.
-    - `ActivityPubController.php`: ActivityPub federation endpoints (`/interact`, `/authorize_interaction`, `/.well-known/webfinger`, `/actor`, `/inbox`, `/outbox`).
+- **`app/`**: Core application logic and bounded contexts:
+  - **`Core/`**: Lightweight PSR-11 Dependency Injection container (`Container.php`) and exception hierarchies.
+  - **`Federation/`**: Protocol adapters and federation abstraction layer:
+    - `Contracts/FederationAdapter.php`: Unified adapter interface for fediverse protocols.
+    - `ActivityPub/ActivityPubAdapter.php`: Native ActivityPub adapter implementation.
+    - `FederationManager.php`: Pluggable federation manager orchestrating actors, activities, and protocol delivery.
+  - **`Http/Controllers/`**: Decoupled transport controllers:
+    - `AbstractController.php`: Base HTTP controller with JSON, HTML, and redirect responses.
+    - `ActivityPubController.php`: ActivityPub actor, inbox, and outbox endpoints (`/actor`, `/inbox`, `/outbox`).
     - `MicropubController.php`: Micropub server and admin client endpoints (`/micropub`, `/micropub/media`, `/micropub/client`).
     - `MicrosubController.php`: Microsub server and web reader endpoints (`/microsub`, `/microsub/reader`).
     - `WebmentionController.php`: Webmention receiver and interactive help form page (`/webmention`).
@@ -62,9 +60,19 @@ Here is a breakdown of the workspace layout and its main contents:
     - `WebmentionService.php`: Webmention queueing, target validation, verification, and persistence.
     - `ModerationService.php`: Moderation workflows for incoming interactions, comments, and spam handling.
     - `ConfigurationService.php`: Site setup bootstrap, settings persistence, kind taxonomies, translations, and theme installations.
+    - `FetchFeedsService.php`: Syndication feed fetching, strategy-based parsing, media caching, and storage.
+    - `MicrosubService.php`: Microsub channels, subscriptions, timeline retrieval, read tracking, and social interactions.
+  - **`Feeds/`**: Feed generation and consumption:
+    - `Contracts/FeedParserInterface.php`: Strategy pattern contract for feed parser implementations.
+    - `Parsers/TwtxtParser.php`: Strategy parser for Twtxt flat-text feeds.
+    - `Parsers/RssParser.php`: Strategy parser for RSS 2.0 feeds.
+    - `Parsers/AtomParser.php`: Strategy parser for Atom XML feeds.
+    - `Parsers/JsonFeedParser.php`: Strategy parser for JSON Feed 1.1 format.
+    - `FeedGeneratorInterface.php`: Generator contract for outgoing syndication feeds.
+    - `Generators/`: Feed generation implementations (`RssFeedGenerator`, `AtomFeedGenerator`, `TwtxtFeedGenerator`).
+  - **`Microsub/`**: Universal microsub entries and normalization adapters (`ExtendedEntry`, `NormalizationAdapter`).
   - **`Entry/`**: Universal `Entry` domain model for feed items, posts, and federation.
   - **`SiteBuilder/`**: Core site generation services (`ContentScanner`, `TranslationVirtualizer`, `PagePublisher`, `IndexPublisher`, `FeedPublisher`, `AssetPublisher`).
-  - **`Feeds/`**: Feed generator interfaces and format implementations (`Rss`, `Atom`, `Twtxt`).
   - **`Markdown/`**: Custom AST parser, processors, validators, and protocol renderers (HTML, Gemtext, Gophermap).
   - **`Theme/`**: Theme metadata, SEO helpers, and microformats components.
   - **`Support/`**: Domain utilities (`TextParser`, `DateFormatter`, `HtmlUtils`, `FileUtils`).
@@ -81,11 +89,12 @@ Here is a breakdown of the workspace layout and its main contents:
 - **`public_gopher/`**: Static Gophermap output.
 - **`public_gemini/`**: Static Gemini (`.gmi`) output.
 - **`docs/`**: Technical documentation and API specifications.
-- **`tests/`**: Unit, integration, and functional test suites using Pest PHP.
+- **`tests/`**: Unit, integration, and functional test suites across 3 tiers using Pest PHP.
 
 ## Feature Notes
 
 * **Universal Entry Entity:** All feeds, timelines, and federated items share the same domain entity model (`Indieinabox\Entry\Entry`).
+* **Feed Parsers Strategy Pattern:** Swappable, testable strategies (`FeedParserInterface`) handle Twtxt, RSS, Atom, and JSON Feed formats.
 * **Offline-first Admin UI:** The admin panel never makes blocking external network requests during page load. All federation, webmentions, and updates run asynchronously.
 * **Image Dithering:** Embedded photos are automatically processed and dithered into bandwidth-efficient global palette GIFs and thumbnails.
 * **Multi-protocol Publishing:** Every content piece is natively published for the Web (HTML + microformats2 + ActivityPub), Gemini, and Gopher.

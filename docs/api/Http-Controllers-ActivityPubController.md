@@ -32,6 +32,9 @@ Controller managing HTTP endpoints for ActivityPub federation, actor discovery, 
 ### outbox()
 `public function outbox(): void`
 
+### getSite()
+`public function getSite(): Indieinabox\Site`
+
 ### json()
 `protected function json(?mixed $data, int $status = 200, array $headers = []): void`
 

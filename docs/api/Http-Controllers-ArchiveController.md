@@ -24,6 +24,9 @@ Renders or serves the archive index and stored snapshots.
 
 Triggers a forced archive snapshot.
 
+### getSite()
+`public function getSite(): Indieinabox\Site`
+
 ### json()
 `protected function json(?mixed $data, int $status = 200, array $headers = []): void`
 

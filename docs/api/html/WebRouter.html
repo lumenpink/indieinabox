@@ -78,6 +78,7 @@
 <li><a href="/docs/api/html/Http-Controllers-MicropubController.html">Http-Controllers-MicropubController</a></li>
 <li><a href="/docs/api/html/Http-Controllers-MicrosubController.html">Http-Controllers-MicrosubController</a></li>
 <li><a href="/docs/api/html/Http-Controllers-WebmentionController.html">Http-Controllers-WebmentionController</a></li>
+<li><a href="/docs/api/html/Http-StaticFileServer.html">Http-StaticFileServer</a></li>
 <li><a href="/docs/api/html/HttpSignature.html">HttpSignature</a></li>
 <li><a href="/docs/api/html/IndieAuth-ConsentView.html">IndieAuth-ConsentView</a></li>
 <li><a href="/docs/api/html/IndieAuth-PkceValidator.html">IndieAuth-PkceValidator</a></li>
@@ -167,16 +168,21 @@
 <p><strong>Namespace:</strong> <code>Indieinabox</code></p>
 <p>Class WebRouter</p>
 <p>Handles incoming HTTP requests by mapping the request URI to the appropriate<br />
-handler class (e.g., Micropub, Microsub, Admin panel, ActivityPub, Webmention, Archive).<br />
-If no specific handler matches, it serves static files or emits 404.</p>
+controller (e.g., Micropub, Microsub, Admin panel, ActivityPub, Webmention, Archive).<br />
+If no specific controller matches, it delegates to StaticFileServer.</p>
 <h2>Properties</h2>
 <h3><code>protected Indieinabox\Site $site</code></h3>
 <p>@var Site</p>
+<h3><code>protected Indieinabox\Http\StaticFileServer $fileServer</code></h3>
+<p>@var StaticFileServer</p>
 <h2>Methods</h2>
 <h3><em></em>construct()</h3>
-<p><code>public function __construct(Indieinabox\Site $site)</code></p>
-<p>Initializes the WebRouter with the global site configuration.</p>
-<p>@param Site $site The site configuration object.</p>
+<p><code>public function __construct(Indieinabox\Site $site, ?Indieinabox\Http\StaticFileServer $fileServer = null)</code></p>
+<p>Initializes the WebRouter with the global site configuration and static file server.</p>
+<p>@param Site $site The site configuration object.<br />
+@param StaticFileServer|null $fileServer The static file server instance.</p>
+<h3>getFileServer()</h3>
+<p><code>public function getFileServer(): Indieinabox\Http\StaticFileServer</code></p>
 <h3>handleRequest()</h3>
 <p><code>public function handleRequest(): void</code></p>
 <p>Main entry point for routing requests.<br />
@@ -187,43 +193,33 @@ and delegates to the respective handler. Falls back to serveStatic().</p>
 <h3>createWebmentionHandler()</h3>
 <p><code>protected function createWebmentionHandler(): Indieinabox\WebmentionHandler</code></p>
 <p>Factory method to create a WebmentionHandler instance.</p>
-<p>@return WebmentionHandler</p>
 <h3>createIndieAuthHandler()</h3>
 <p><code>protected function createIndieAuthHandler(): Indieinabox\IndieAuthHandler</code></p>
 <p>Factory method to create an IndieAuthHandler instance.</p>
-<p>@return IndieAuthHandler</p>
 <h3>createConfigHandler()</h3>
 <p><code>protected function createConfigHandler(): Indieinabox\ConfigHandler</code></p>
 <p>Factory method to create a ConfigHandler instance (Admin panel configuration).</p>
-<p>@return ConfigHandler</p>
 <h3>createMicropubHandler()</h3>
 <p><code>protected function createMicropubHandler(): Indieinabox\MicropubHandler</code></p>
 <p>Factory method to create a MicropubHandler instance (Micropub Server).</p>
-<p>@return MicropubHandler</p>
 <h3>createMicropubClientHandler()</h3>
 <p><code>protected function createMicropubClientHandler(): Indieinabox\MicropubClientHandler</code></p>
 <p>Factory method to create a MicropubClientHandler instance (Admin panel publishing).</p>
-<p>@return MicropubClientHandler</p>
 <h3>createMicrosubHandler()</h3>
 <p><code>protected function createMicrosubHandler(): Indieinabox\MicrosubHandler</code></p>
 <p>Factory method to create a MicrosubHandler instance (Microsub Server).</p>
-<p>@return MicrosubHandler</p>
 <h3>createMicrosubReaderHandler()</h3>
 <p><code>protected function createMicrosubReaderHandler(): Indieinabox\MicrosubReaderHandler</code></p>
 <p>Factory method to create a MicrosubReaderHandler instance (Admin panel reader).</p>
-<p>@return MicrosubReaderHandler</p>
 <h3>createModerationHandler()</h3>
 <p><code>protected function createModerationHandler(): Indieinabox\ModerationHandler</code></p>
 <p>Factory method to create a ModerationHandler instance (Admin panel moderation).</p>
-<p>@return ModerationHandler</p>
 <h3>createActivityPubHandler()</h3>
 <p><code>protected function createActivityPubHandler(): Indieinabox\ActivityPubHandler</code></p>
 <p>Factory method to create an ActivityPubHandler instance (Fediverse integration).</p>
-<p>@return ActivityPubHandler</p>
 <h3>createArchiveHandler()</h3>
 <p><code>protected function createArchiveHandler(): Indieinabox\ArchiveHandler</code></p>
 <p>Factory method to create an ArchiveHandler instance.</p>
-<p>@return ArchiveHandler</p>
 <h3>getWebmentionController()</h3>
 <p><code>public function getWebmentionController(): Indieinabox\Http\Controllers\WebmentionController</code></p>
 <h3>getIndieAuthController()</h3>
@@ -240,13 +236,10 @@ and delegates to the respective handler. Falls back to serveStatic().</p>
 <p><code>public function getAdminController(): Indieinabox\Http\Controllers\AdminController</code></p>
 <h3>serveStatic()</h3>
 <p><code>protected function serveStatic(): void</code></p>
-<p>Attempts to serve static files from the output directory based on the request URI.<br />
-Determines MIME types and outputs appropriate headers.<br />
-Supports content negotiation for ActivityPub requests.</p>
-<p>@return void</p>
+<p>Attempts to serve static files from the output directory via StaticFileServer.</p>
 <h3>getMimeType()</h3>
 <p><code>public function getMimeType(string $extension): string</code></p>
-<p>Resolves the MIME content-type for a file extension.</p>
+<p>Resolves the MIME content-type for a file extension via StaticFileServer.</p>
 <p>@param string $extension<br />
 @return string</p>
 

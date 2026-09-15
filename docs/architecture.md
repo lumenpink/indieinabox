@@ -42,16 +42,18 @@ The project follows Domain-Driven Design (DDD) and SOLID principles, structured 
     - `Contracts/FederationAdapter.php`: Unified adapter interface for fediverse protocols.
     - `ActivityPub/ActivityPubAdapter.php`: Native ActivityPub adapter implementation.
     - `FederationManager.php`: Pluggable federation manager orchestrating actors, activities, and protocol delivery.
-  - **`Http/Controllers/`**: Decoupled transport controllers:
-    - `AbstractController.php`: Base HTTP controller with JSON, HTML, and redirect responses.
-    - `ActivityPubController.php`: ActivityPub actor, inbox, and outbox endpoints (`/actor`, `/inbox`, `/outbox`).
-    - `MicropubController.php`: Micropub server and admin client endpoints (`/micropub`, `/micropub/media`, `/micropub/client`).
-    - `MicrosubController.php`: Microsub server and web reader endpoints (`/microsub`, `/microsub/reader`).
-    - `WebmentionController.php`: Webmention receiver and interactive help form page (`/webmention`).
-    - `IndieAuthController.php`: IndieAuth/OAuth server endpoints (`/auth`, `/token`, `/.well-known/oauth-authorization-server`).
-    - `AdminController.php`: Dashboard panels (`/admin/config`, `/admin/micropub`, `/admin/microsub`, `/admin/moderation`, `/cron`).
-    - `ArchiveController.php`: Web archive explorer and snapshot capture (`/archive`, `/archive/force`).
-    - `ConfigController.php`: Administrative site and engine configuration.
+  - **`Http/`**: HTTP transport layer and static asset delivery:
+    - `StaticFileServer.php`: Dedicated HTTP static asset and media file server with ActivityPub content negotiation and MIME resolution.
+    - `Controllers/`: Decoupled transport controllers:
+      - `AbstractController.php`: Base HTTP controller with JSON, HTML, and redirect responses.
+      - `ActivityPubController.php`: ActivityPub actor, inbox, and outbox endpoints (`/actor`, `/inbox`, `/outbox`).
+      - `MicropubController.php`: Micropub server and admin client endpoints (`/micropub`, `/micropub/media`, `/micropub/client`).
+      - `MicrosubController.php`: Microsub server and web reader endpoints (`/microsub`, `/microsub/reader`).
+      - `WebmentionController.php`: Webmention receiver and interactive help form page (`/webmention`).
+      - `IndieAuthController.php`: IndieAuth/OAuth server endpoints (`/auth`, `/token`, `/.well-known/oauth-authorization-server`).
+      - `AdminController.php`: Dashboard panels (`/admin/config`, `/admin/micropub`, `/admin/microsub`, `/admin/moderation`, `/cron`).
+      - `ArchiveController.php`: Web archive explorer and snapshot capture (`/archive`, `/archive/force`).
+      - `ConfigController.php`: Administrative site and engine configuration.
   - **`Services/`**: Protocol-agnostic domain business services:
     - `FollowService.php`: Remote follower management, status checks, and distinct fan-out inbox resolution.
     - `OutboxService.php`: Outgoing delivery queueing, follower broadcast fan-out, and adapter-based delivery dispatch.

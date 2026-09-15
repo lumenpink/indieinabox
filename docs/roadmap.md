@@ -390,3 +390,10 @@ app/
     - Unit: `tests/Unit/Repositories/SqliteSettingsRepositoryTest.php`, `tests/Unit/Repositories/FileInteractionRepositoryTest.php`.
     - Functional: `tests/Functional/RepositoriesWorkflowTest.php` testing config bootstrapping, translation saving, interaction moderation, and page query.
     - Integration: `tests/Integration/RepositoriesIntegrationTest.php` testing DI container singleton autowiring and database static facade routing.
+- [x] **HTTP Static File Server & WebRouter Decoupling (Phase D)**: Separated static asset serving from routing orchestration:
+  - `Indieinabox\Http\StaticFileServer`: Dedicated static asset and media file server handling content negotiation for ActivityPub representations (`application/activity+json`), fallback directory indexes (`index.html`), and MIME type resolution.
+  - Refactored `WebRouter` to inject `StaticFileServer` via constructor and delegate all static file requests and MIME lookups to it.
+  - Comprehensive 3-tier test coverage:
+    - Unit: `tests/Unit/Http/StaticFileServerTest.php` verifying MIME resolution, 404 responses, directory indexes, media fallback, and ActivityPub content negotiation.
+    - Functional: `tests/Functional/StaticServingWorkflowTest.php` testing static asset delivery, ActivityPub JSON negotiation, media paths, and API route precedence over static files.
+    - Integration: `tests/Integration/StaticFileServerIntegrationTest.php` testing DI container autowiring, custom server injection, and end-to-end dispatch against real site output directories.

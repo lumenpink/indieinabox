@@ -11,13 +11,14 @@ use Indieinabox\Http\Controllers\IndieAuthController;
 use Indieinabox\Http\Controllers\MicropubController;
 use Indieinabox\Http\Controllers\MicrosubController;
 use Indieinabox\Http\Controllers\WebmentionController;
+use Indieinabox\Http\StaticFileServer;
 
 /**
  * Class WebRouter
- * 
+ *
  * Handles incoming HTTP requests by mapping the request URI to the appropriate
- * handler class (e.g., Micropub, Microsub, Admin panel, ActivityPub, Webmention, Archive).
- * If no specific handler matches, it serves static files or emits 404.
+ * controller (e.g., Micropub, Microsub, Admin panel, ActivityPub, Webmention, Archive).
+ * If no specific controller matches, it delegates to StaticFileServer.
  */
 class WebRouter
 {
@@ -27,13 +28,25 @@ class WebRouter
     protected Site $site;
 
     /**
-     * Initializes the WebRouter with the global site configuration.
+     * @var StaticFileServer
+     */
+    protected StaticFileServer $fileServer;
+
+    /**
+     * Initializes the WebRouter with the global site configuration and static file server.
      *
      * @param Site $site The site configuration object.
+     * @param StaticFileServer|null $fileServer The static file server instance.
      */
-    public function __construct(Site $site)
+    public function __construct(Site $site, ?StaticFileServer $fileServer = null)
     {
         $this->site = $site;
+        $this->fileServer = $fileServer ?? new StaticFileServer($site);
+    }
+
+    public function getFileServer(): StaticFileServer
+    {
+        return $this->fileServer;
     }
 
     /**
@@ -77,25 +90,25 @@ class WebRouter
         }
 
         // Route: Micropub Client (Admin Publishing)
-        if (strpos($requestUriClean, '/micropub/client') === 0) {
+        if (str_starts_with($requestUriClean, '/micropub/client')) {
             $this->getMicropubController()->client();
             return;
         }
 
         // Route: Micropub Endpoint
-        if (strpos($requestUriClean, '/micropub') === 0) {
+        if (str_starts_with($requestUriClean, '/micropub')) {
             $this->getMicropubController()->handle();
             return;
         }
 
         // Route: Microsub Reader (Admin)
-        if (strpos($requestUriClean, '/microsub/reader') === 0) {
+        if (str_starts_with($requestUriClean, '/microsub/reader')) {
             $this->getMicrosubController()->reader();
             return;
         }
 
         // Route: Microsub Endpoint
-        if (strpos($requestUriClean, '/microsub') === 0) {
+        if (str_starts_with($requestUriClean, '/microsub')) {
             $this->getMicrosubController()->handle();
             return;
         }
@@ -152,25 +165,25 @@ class WebRouter
         }
 
         // Admin Routes
-        if (strpos($requestUriClean, '/admin') === 0) {
+        if (str_starts_with($requestUriClean, '/admin')) {
             $admin = $this->getAdminController();
             if ($requestUriClean === '/admin') {
                 $admin->index();
                 return;
             }
-            if (strpos($requestUriClean, '/admin/config') === 0) {
+            if (str_starts_with($requestUriClean, '/admin/config')) {
                 $admin->config();
                 return;
             }
-            if (strpos($requestUriClean, '/admin/micropub') === 0) {
+            if (str_starts_with($requestUriClean, '/admin/micropub')) {
                 $admin->micropub();
                 return;
             }
-            if (strpos($requestUriClean, '/admin/microsub') === 0) {
+            if (str_starts_with($requestUriClean, '/admin/microsub')) {
                 $admin->microsub();
                 return;
             }
-            if (strpos($requestUriClean, '/admin/moderation') === 0) {
+            if (str_starts_with($requestUriClean, '/admin/moderation')) {
                 $admin->moderation();
                 return;
             }
@@ -181,8 +194,6 @@ class WebRouter
 
     /**
      * Factory method to create a WebmentionHandler instance.
-     *
-     * @return WebmentionHandler
      */
     protected function createWebmentionHandler(): WebmentionHandler
     {
@@ -191,8 +202,6 @@ class WebRouter
 
     /**
      * Factory method to create an IndieAuthHandler instance.
-     *
-     * @return IndieAuthHandler
      */
     protected function createIndieAuthHandler(): IndieAuthHandler
     {
@@ -201,8 +210,6 @@ class WebRouter
 
     /**
      * Factory method to create a ConfigHandler instance (Admin panel configuration).
-     *
-     * @return ConfigHandler
      */
     protected function createConfigHandler(): ConfigHandler
     {
@@ -211,8 +218,6 @@ class WebRouter
 
     /**
      * Factory method to create a MicropubHandler instance (Micropub Server).
-     *
-     * @return MicropubHandler
      */
     protected function createMicropubHandler(): MicropubHandler
     {
@@ -221,8 +226,6 @@ class WebRouter
 
     /**
      * Factory method to create a MicropubClientHandler instance (Admin panel publishing).
-     *
-     * @return MicropubClientHandler
      */
     protected function createMicropubClientHandler(): MicropubClientHandler
     {
@@ -231,8 +234,6 @@ class WebRouter
 
     /**
      * Factory method to create a MicrosubHandler instance (Microsub Server).
-     *
-     * @return MicrosubHandler
      */
     protected function createMicrosubHandler(): MicrosubHandler
     {
@@ -241,8 +242,6 @@ class WebRouter
 
     /**
      * Factory method to create a MicrosubReaderHandler instance (Admin panel reader).
-     *
-     * @return MicrosubReaderHandler
      */
     protected function createMicrosubReaderHandler(): MicrosubReaderHandler
     {
@@ -251,8 +250,6 @@ class WebRouter
 
     /**
      * Factory method to create a ModerationHandler instance (Admin panel moderation).
-     *
-     * @return ModerationHandler
      */
     protected function createModerationHandler(): ModerationHandler
     {
@@ -261,8 +258,6 @@ class WebRouter
 
     /**
      * Factory method to create an ActivityPubHandler instance (Fediverse integration).
-     *
-     * @return ActivityPubHandler
      */
     protected function createActivityPubHandler(): ActivityPubHandler
     {
@@ -271,8 +266,6 @@ class WebRouter
 
     /**
      * Factory method to create an ArchiveHandler instance.
-     *
-     * @return ArchiveHandler
      */
     protected function createArchiveHandler(): ArchiveHandler
     {
@@ -291,12 +284,20 @@ class WebRouter
 
     public function getMicropubController(): MicropubController
     {
-        return new MicropubController($this->site, $this->createMicropubHandler(), $this->createMicropubClientHandler());
+        return new MicropubController(
+            $this->site,
+            $this->createMicropubHandler(),
+            $this->createMicropubClientHandler()
+        );
     }
 
     public function getMicrosubController(): MicrosubController
     {
-        return new MicrosubController($this->site, $this->createMicrosubHandler(), $this->createMicrosubReaderHandler());
+        return new MicrosubController(
+            $this->site,
+            $this->createMicrosubHandler(),
+            $this->createMicrosubReaderHandler()
+        );
     }
 
     public function getActivityPubController(): ActivityPubController
@@ -321,87 +322,21 @@ class WebRouter
     }
 
     /**
-     * Attempts to serve static files from the output directory based on the request URI.
-     * Determines MIME types and outputs appropriate headers.
-     * Supports content negotiation for ActivityPub requests.
-     *
-     * @return void
+     * Attempts to serve static files from the output directory via StaticFileServer.
      */
     protected function serveStatic(): void
     {
-        $requestUri = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?? '/';
-        $outputDir = $this->site->paths->outputDirHtml;
-        $path = str_replace(['..', '//'], ['', '/'], urldecode($requestUri));
-
-        if ($path === '' || $path === '/') {
-            $path = '/index.html';
-        }
-
-        $base = rtrim($this->site->paths->baseDir, DIRECTORY_SEPARATOR);
-        $filePath = $base . DIRECTORY_SEPARATOR . $outputDir . $path;
-
-        if (strpos($path, '/media/') === 0) {
-            $contentMediaPath = rtrim($this->site->paths->getContentPath(), DIRECTORY_SEPARATOR);
-            $contentMediaPath .= str_replace('/', DIRECTORY_SEPARATOR, $path);
-            if (file_exists($contentMediaPath) && is_file($contentMediaPath)) {
-                $filePath = $contentMediaPath;
-            }
-        }
-
-        if (is_dir($filePath)) {
-            $filePath = rtrim($filePath, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . 'index.html';
-        }
-
-        $acceptsAP = (
-            strpos($_SERVER['HTTP_ACCEPT'] ?? '', 'application/activity+json') !== false ||
-            strpos($_SERVER['HTTP_ACCEPT'] ?? '', 'application/ld+json') !== false
-        );
-
-        if ($acceptsAP) {
-            $jsonPath = (string) preg_replace('/\.html$/', '.json', $filePath);
-            if (file_exists($jsonPath) && is_file($jsonPath)) {
-                header('Content-Type: application/activity+json; charset=utf-8');
-                readfile($jsonPath);
-                return;
-            }
-        }
-
-        if (file_exists($filePath) && is_file($filePath)) {
-            $ext = pathinfo($filePath, PATHINFO_EXTENSION);
-            $contentType = $this->getMimeType($ext);
-            header('Content-Type: ' . $contentType);
-            readfile($filePath);
-            return;
-        }
-
-        header('HTTP/1.1 404 Not Found');
-        header('Content-Type: text/plain; charset=utf-8');
-        echo "404 Not Found. File path checked: " . $filePath;
+        $this->fileServer->serve();
     }
 
     /**
-     * Resolves the MIME content-type for a file extension.
+     * Resolves the MIME content-type for a file extension via StaticFileServer.
      *
      * @param string $extension
      * @return string
      */
     public function getMimeType(string $extension): string
     {
-        $mimeTypes = [
-            'html' => 'text/html; charset=utf-8',
-            'css'  => 'text/css; charset=utf-8',
-            'js'   => 'application/javascript; charset=utf-8',
-            'png'  => 'image/png',
-            'jpg'  => 'image/jpeg',
-            'jpeg' => 'image/jpeg',
-            'gif'  => 'image/gif',
-            'svg'  => 'image/svg+xml',
-            'xml'  => 'application/xml; charset=utf-8',
-            'json' => 'application/json; charset=utf-8',
-            'txt'  => 'text/plain; charset=utf-8',
-            'gmi'  => 'text/gemini; charset=utf-8',
-        ];
-
-        return $mimeTypes[strtolower($extension)] ?? 'application/octet-stream';
+        return $this->fileServer->getMimeType($extension);
     }
 }

@@ -26,6 +26,7 @@
 <li><a href="/docs/api/html/ActivityPub-KeyManager.html">ActivityPub-KeyManager</a></li>
 <li><a href="/docs/api/html/BackgroundWorker-ArchiveProcessor.html">BackgroundWorker-ArchiveProcessor</a></li>
 <li><a href="/docs/api/html/BackgroundWorker-BackgroundWorker.html">BackgroundWorker-BackgroundWorker</a></li>
+<li><a href="/docs/api/html/BackgroundWorker-Contracts-BackgroundWorkerInterface.html">BackgroundWorker-Contracts-BackgroundWorkerInterface</a></li>
 <li><a href="/docs/api/html/BackgroundWorker-InboxProcessor.html">BackgroundWorker-InboxProcessor</a></li>
 <li><a href="/docs/api/html/BackgroundWorker-OutboxDispatcher.html">BackgroundWorker-OutboxDispatcher</a></li>
 <li><a href="/docs/api/html/BackgroundWorker-OutgoingWebmentionDispatcher.html">BackgroundWorker-OutgoingWebmentionDispatcher</a></li>
@@ -130,6 +131,8 @@
 <li><a href="/docs/api/html/Services-ArchiveService.html">Services-ArchiveService</a></li>
 <li><a href="/docs/api/html/Services-BackupService.html">Services-BackupService</a></li>
 <li><a href="/docs/api/html/Services-ConfigurationService.html">Services-ConfigurationService</a></li>
+<li><a href="/docs/api/html/Services-Contracts-BackupServiceInterface.html">Services-Contracts-BackupServiceInterface</a></li>
+<li><a href="/docs/api/html/Services-Contracts-UpdateServiceInterface.html">Services-Contracts-UpdateServiceInterface</a></li>
 <li><a href="/docs/api/html/Services-FetchFeedsService.html">Services-FetchFeedsService</a></li>
 <li><a href="/docs/api/html/Services-FollowService.html">Services-FollowService</a></li>
 <li><a href="/docs/api/html/Services-InboxService.html">Services-InboxService</a></li>
@@ -139,6 +142,7 @@
 <li><a href="/docs/api/html/Services-OutboxService.html">Services-OutboxService</a></li>
 <li><a href="/docs/api/html/Services-PublishPostService.html">Services-PublishPostService</a></li>
 <li><a href="/docs/api/html/Services-ShortlinkService.html">Services-ShortlinkService</a></li>
+<li><a href="/docs/api/html/Services-UpdateManager.html">Services-UpdateManager</a></li>
 <li><a href="/docs/api/html/Services-UpdateService.html">Services-UpdateService</a></li>
 <li><a href="/docs/api/html/Services-WebmentionService.html">Services-WebmentionService</a></li>
 <li><a href="/docs/api/html/ShortlinkManager.html">ShortlinkManager</a></li>
@@ -196,61 +200,37 @@
     <div class="content">
         <h1 class="p-name">UpdateService</h1>
 <p><strong>Namespace:</strong> <code>Indieinabox\Services</code></p>
+<p>Static facade for UpdateServiceInterface operations.</p>
 <h2>Properties</h2>
 <h3><code>public static ?string $customExecutablePath</code></h3>
 <p>Optional override for the executable path (used for testing and custom runners).</p>
 <h3><code>public static ?string $customVersionsDir</code></h3>
 <p>Optional override for versions directory (used for testing).</p>
 <h2>Methods</h2>
+<h3>getManager()</h3>
+<p><code>private static function getManager(): Indieinabox\Services\Contracts\UpdateServiceInterface</code></p>
 <h3>getVersionsDir()</h3>
 <p><code>public static function getVersionsDir(): string</code></p>
-<p>Returns the directory where version backups are stored.</p>
-<p>@return string</p>
 <h3>checkAvailableVersions()</h3>
 <p><code>public static function checkAvailableVersions(): array</code></p>
-<p>Checks Codeberg API for available releases and caches them in the database.</p>
-<p>@return array<int, array<string, mixed>&gt;</p>
 <h3>getAvailableUpdates()</h3>
 <p><code>public static function getAvailableUpdates(): array</code></p>
-<p>Retrieves currently cached available updates.</p>
-<p>@return array<int, array<string, mixed>&gt;</p>
 <h3>getLatestRelease()</h3>
 <p><code>public static function getLatestRelease(bool $includePrerelease = false): ?array</code></p>
-<p>Finds the latest release matching release preference.</p>
-<p>@param bool $includePrerelease<br />
-@return array<string, mixed>|null</p>
 <h3>downloadAndInstall()</h3>
 <p><code>public static function downloadAndInstall(string $downloadUrl): bool</code></p>
-<p>Downloads and installs an update from the specified URL.<br />
-Performs a backup before overwriting.</p>
-<p>@param string $downloadUrl<br />
-@return bool</p>
 <h3>backupCurrentVersion()</h3>
 <p><code>public static function backupCurrentVersion(): string|false</code></p>
-<p>Backs up the current executable, retaining only the MAXBacks up the current executable, retaining only the MAX_BACKUPS most recent backups.</p>
-<p>@return string|false Path to the created backup file, or false if backup failed.</p>
 <h3>rollback()</h3>
 <p><code>public static function rollback(?string $backupFilename = null): bool</code></p>
-<p>Rolls back to a previous backup.</p>
-<p>@param string|null $backupFilename Filename of backup to restore. If null, restores the latest backup.<br />
-@return bool</p>
 <h3>getLocalBackups()</h3>
 <p><code>public static function getLocalBackups(): array</code></p>
-<p>Retrieves the list of local backup files, sorted with newest first.</p>
-<p>@return array<int, array{filename: string, path: string, version: ?string, date: int, formatted_date: string, size: int}></p>
 <h3>cleanupOldBackups()</h3>
 <p><code>public static function cleanupOldBackups(): int</code></p>
-<p>Enforces the MAXEnforces the MAX_BACKUPS limit by deleting the oldest backups.</p>
-<p>@return int Number of deleted backup files.</p>
 <h3>processScheduledUpdate()</h3>
 <p><code>public static function processScheduledUpdate(int $intervalSeconds = 21600): array</code></p>
-<p>Executes scheduled update checking and auto-upgrade logic for CRON.</p>
-<p>@param int $intervalSeconds Interval in seconds between checks (default: 21600 = 6 hours).<br />
-@return array{checked: bool, upgraded: bool, message: string}</p>
 <h3>getCurrentExecutablePath()</h3>
 <p><code>public static function getCurrentExecutablePath(): string</code></p>
-<p>Determines the path of the current main executable (indieinabox.php, index.php, or build.php).</p>
-<p>@return string</p>
 
     </div>
 </body>

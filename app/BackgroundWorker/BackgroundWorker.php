@@ -5,13 +5,19 @@ declare(strict_types=1);
 namespace Indieinabox\BackgroundWorker;
 
 use Indieinabox\BackgroundWorker\ArchiveProcessor;
+use Indieinabox\BackgroundWorker\Contracts\BackgroundWorkerInterface;
 use Indieinabox\BackgroundWorker\InboxProcessor;
 use Indieinabox\BackgroundWorker\OutboxDispatcher;
 use Indieinabox\BackgroundWorker\OutgoingWebmentionDispatcher;
 use Indieinabox\BackgroundWorker\WebmentionDiscovery;
+use Indieinabox\Core\Container;
 use Indieinabox\Core\Database;
+use Indieinabox\Repositories\Contracts\SettingsRepositoryInterface;
+use Indieinabox\Repositories\SqliteSettingsRepository;
 use Indieinabox\Services\BackupService;
-use Indieinabox\Services\UpdateService;
+use Indieinabox\Services\Contracts\BackupServiceInterface;
+use Indieinabox\Services\Contracts\UpdateServiceInterface;
+use Indieinabox\Services\UpdateManager;
 use Indieinabox\Site\Site;
 use Indieinabox\SiteBuilder\SiteBuilder;
 use Indieinabox\Twtxt\TwtxtManager;
@@ -23,34 +29,57 @@ use PDO;
  * Coordinates and dispatches background tasks: inbox queue, outbox delivery,
  * outgoing webmentions, archive snapshotting, backups, and updates.
  */
-class BackgroundWorker
+class BackgroundWorker implements BackgroundWorkerInterface
 {
-    /**
-     * @var PDO
-     */
     private PDO $db;
-
-    /**
-     * @var Site
-     */
     private Site $site;
+    private SettingsRepositoryInterface $settingsRepo;
+    private UpdateServiceInterface $updateService;
+    private BackupServiceInterface $backupService;
 
     /**
-     * Initializes the BackgroundWorker.
-     *
-     * @param Site $site Global site configuration and environment.
+     * Initializes the BackgroundWorker with dependency injection.
      */
-    public function __construct(Site $site)
-    {
+    public function __construct(
+        Site $site,
+        ?SettingsRepositoryInterface $settingsRepo = null,
+        ?PDO $db = null,
+        ?UpdateServiceInterface $updateService = null,
+        ?BackupServiceInterface $backupService = null
+    ) {
         $this->site = $site;
-        $this->db = Database::getDb();
+        $this->db = $db ?? Database::getDb();
+
+        $container = class_exists(Container::class) ? Container::getInstance() : null;
+
+        if ($settingsRepo !== null) {
+            $this->settingsRepo = $settingsRepo;
+        } elseif ($container && $container->has(SettingsRepositoryInterface::class)) {
+            $this->settingsRepo = $container->get(SettingsRepositoryInterface::class);
+        } else {
+            $this->settingsRepo = new SqliteSettingsRepository($this->db);
+        }
+
+        if ($updateService !== null) {
+            $this->updateService = $updateService;
+        } elseif ($container && $container->has(UpdateServiceInterface::class)) {
+            $this->updateService = $container->get(UpdateServiceInterface::class);
+        } else {
+            $this->updateService = new UpdateManager($this->settingsRepo);
+        }
+
+        if ($backupService !== null) {
+            $this->backupService = $backupService;
+        } elseif ($container && $container->has(BackupServiceInterface::class)) {
+            $this->backupService = $container->get(BackupServiceInterface::class);
+        } else {
+            $this->backupService = new BackupService($this->site);
+        }
     }
 
     /**
      * Executes all background tasks (inbox, outbox, archives, feeds, updates).
      * Normally called periodically via cron or CLI.
-     *
-     * @return void
      */
     public function runAll(): void
     {
@@ -79,8 +108,6 @@ class BackgroundWorker
 
     /**
      * Discovers Webmention support for queued domains.
-     *
-     * @return void
      */
     public function processWebmentionDiscovery(): void
     {
@@ -90,12 +117,10 @@ class BackgroundWorker
 
     /**
      * Executes the daily backup if cron is enabled.
-     *
-     * @return void
      */
     public function processBackups(): void
     {
-        $config = Database::getAllSettings();
+        $config = $this->settingsRepo->all();
         if (empty($config['backup_cron_enabled'])) {
             return;
         }
@@ -107,38 +132,32 @@ class BackgroundWorker
 
         echo "Running automatic daily backup...\n";
 
-        $backupService = new BackupService($this->site);
-        $backupService->run();
+        $this->backupService->run();
 
-        $stmt = $this->db->prepare("INSERT OR REPLACE INTO settings (key, value) VALUES ('last_backup_date', ?)");
-        $stmt->execute([$today]);
+        $this->settingsRepo->set('last_backup_date', $today);
 
         echo "Daily backup complete.\n";
     }
 
     /**
      * Checks for application updates and performs auto-upgrade if enabled.
-     *
-     * @return void
      */
     public function processUpdates(): void
     {
         echo "Checking for application updates...\n";
-        $result = UpdateService::processScheduledUpdate();
+        $result = $this->updateService->processScheduledUpdate();
         echo $result['message'] . "\n";
     }
 
     /**
      * Fetches remote Twtxt timeline and hub mentions asynchronously.
      * Rebuilds the site to update the static timeline page if new entries are found.
-     *
-     * @return void
      */
     public function processTwtxtFeeds(): void
     {
         echo "Running Twtxt Feed processor...\n";
 
-        $twtxtManager = new \Indieinabox\Twtxt\TwtxtManager();
+        $twtxtManager = new TwtxtManager();
         $cacheDir = $this->site->paths->baseDir . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'twtxt_cache';
 
         $fetched = false;
@@ -166,8 +185,6 @@ class BackgroundWorker
 
     /**
      * Processes the incoming queue (Webmentions, ActivityPub activities, site rebuilds).
-     *
-     * @return void
      */
     public function processInboxQueue(): void
     {
@@ -177,8 +194,6 @@ class BackgroundWorker
 
     /**
      * Processes outgoing webmentions.
-     *
-     * @return void
      */
     public function processOutgoingWebmentions(): void
     {
@@ -189,8 +204,6 @@ class BackgroundWorker
     /**
      * Processes the outgoing queue (Outbox).
      * Delivers queued activities to followers' inboxes using HTTP Signatures.
-     *
-     * @return void
      */
     public function processOutbox(): void
     {
@@ -201,8 +214,6 @@ class BackgroundWorker
     /**
      * Processes the archive queue.
      * Saves external links to Archive.org and downloads local PDF snapshots via Microlink.
-     *
-     * @return void
      */
     public function processArchiveQueue(): void
     {

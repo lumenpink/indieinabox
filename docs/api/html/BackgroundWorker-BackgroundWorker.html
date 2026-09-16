@@ -26,6 +26,7 @@
 <li><a href="/docs/api/html/ActivityPub-KeyManager.html">ActivityPub-KeyManager</a></li>
 <li><a href="/docs/api/html/BackgroundWorker-ArchiveProcessor.html">BackgroundWorker-ArchiveProcessor</a></li>
 <li><a href="/docs/api/html/BackgroundWorker-BackgroundWorker.html">BackgroundWorker-BackgroundWorker</a></li>
+<li><a href="/docs/api/html/BackgroundWorker-Contracts-BackgroundWorkerInterface.html">BackgroundWorker-Contracts-BackgroundWorkerInterface</a></li>
 <li><a href="/docs/api/html/BackgroundWorker-InboxProcessor.html">BackgroundWorker-InboxProcessor</a></li>
 <li><a href="/docs/api/html/BackgroundWorker-OutboxDispatcher.html">BackgroundWorker-OutboxDispatcher</a></li>
 <li><a href="/docs/api/html/BackgroundWorker-OutgoingWebmentionDispatcher.html">BackgroundWorker-OutgoingWebmentionDispatcher</a></li>
@@ -130,6 +131,8 @@
 <li><a href="/docs/api/html/Services-ArchiveService.html">Services-ArchiveService</a></li>
 <li><a href="/docs/api/html/Services-BackupService.html">Services-BackupService</a></li>
 <li><a href="/docs/api/html/Services-ConfigurationService.html">Services-ConfigurationService</a></li>
+<li><a href="/docs/api/html/Services-Contracts-BackupServiceInterface.html">Services-Contracts-BackupServiceInterface</a></li>
+<li><a href="/docs/api/html/Services-Contracts-UpdateServiceInterface.html">Services-Contracts-UpdateServiceInterface</a></li>
 <li><a href="/docs/api/html/Services-FetchFeedsService.html">Services-FetchFeedsService</a></li>
 <li><a href="/docs/api/html/Services-FollowService.html">Services-FollowService</a></li>
 <li><a href="/docs/api/html/Services-InboxService.html">Services-InboxService</a></li>
@@ -139,6 +142,7 @@
 <li><a href="/docs/api/html/Services-OutboxService.html">Services-OutboxService</a></li>
 <li><a href="/docs/api/html/Services-PublishPostService.html">Services-PublishPostService</a></li>
 <li><a href="/docs/api/html/Services-ShortlinkService.html">Services-ShortlinkService</a></li>
+<li><a href="/docs/api/html/Services-UpdateManager.html">Services-UpdateManager</a></li>
 <li><a href="/docs/api/html/Services-UpdateService.html">Services-UpdateService</a></li>
 <li><a href="/docs/api/html/Services-WebmentionService.html">Services-WebmentionService</a></li>
 <li><a href="/docs/api/html/ShortlinkManager.html">ShortlinkManager</a></li>
@@ -201,54 +205,45 @@
 outgoing webmentions, archive snapshotting, backups, and updates.</p>
 <h2>Properties</h2>
 <h3><code>private PDO $db</code></h3>
-<p>@var PDO</p>
 <h3><code>private Indieinabox\Site\Site $site</code></h3>
-<p>@var Site</p>
+<h3><code>private Indieinabox\Repositories\Contracts\SettingsRepositoryInterface $settingsRepo</code></h3>
+<h3><code>private Indieinabox\Services\Contracts\UpdateServiceInterface $updateService</code></h3>
+<h3><code>private Indieinabox\Services\Contracts\BackupServiceInterface $backupService</code></h3>
 <h2>Methods</h2>
 <h3><em></em>construct()</h3>
-<p><code>public function __construct(Indieinabox\Site\Site $site)</code></p>
-<p>Initializes the BackgroundWorker.</p>
-<p>@param Site $site Global site configuration and environment.</p>
+<p><code>public function __construct(Indieinabox\Site\Site $site, ?Indieinabox\Repositories\Contracts\SettingsRepositoryInterface $settingsRepo = null, ?PDO $db = null, ?Indieinabox\Services\Contracts\UpdateServiceInterface $updateService = null, ?Indieinabox\Services\Contracts\BackupServiceInterface $backupService = null)</code></p>
+<p>Initializes the BackgroundWorker with dependency injection.</p>
 <h3>runAll()</h3>
 <p><code>public function runAll(): void</code></p>
 <p>Executes all background tasks (inbox, outbox, archives, feeds, updates).<br />
 Normally called periodically via cron or CLI.</p>
-<p>@return void</p>
 <h3>processWebmentionDiscovery()</h3>
 <p><code>public function processWebmentionDiscovery(): void</code></p>
 <p>Discovers Webmention support for queued domains.</p>
-<p>@return void</p>
 <h3>processBackups()</h3>
 <p><code>public function processBackups(): void</code></p>
 <p>Executes the daily backup if cron is enabled.</p>
-<p>@return void</p>
 <h3>processUpdates()</h3>
 <p><code>public function processUpdates(): void</code></p>
 <p>Checks for application updates and performs auto-upgrade if enabled.</p>
-<p>@return void</p>
 <h3>processTwtxtFeeds()</h3>
 <p><code>public function processTwtxtFeeds(): void</code></p>
 <p>Fetches remote Twtxt timeline and hub mentions asynchronously.<br />
 Rebuilds the site to update the static timeline page if new entries are found.</p>
-<p>@return void</p>
 <h3>processInboxQueue()</h3>
 <p><code>public function processInboxQueue(): void</code></p>
 <p>Processes the incoming queue (Webmentions, ActivityPub activities, site rebuilds).</p>
-<p>@return void</p>
 <h3>processOutgoingWebmentions()</h3>
 <p><code>public function processOutgoingWebmentions(): void</code></p>
 <p>Processes outgoing webmentions.</p>
-<p>@return void</p>
 <h3>processOutbox()</h3>
 <p><code>public function processOutbox(): void</code></p>
 <p>Processes the outgoing queue (Outbox).<br />
 Delivers queued activities to followers&apos; inboxes using HTTP Signatures.</p>
-<p>@return void</p>
 <h3>processArchiveQueue()</h3>
 <p><code>public function processArchiveQueue(): void</code></p>
 <p>Processes the archive queue.<br />
 Saves external links to Archive.org and downloads local PDF snapshots via Microlink.</p>
-<p>@return void</p>
 
     </div>
 </body>

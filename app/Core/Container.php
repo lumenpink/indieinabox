@@ -98,6 +98,32 @@ class Container implements ContainerInterface
             return new \Indieinabox\Repositories\SqliteMicrosubRepository($pdo);
         });
         $this->bind(\Indieinabox\Repositories\SqliteMicrosubRepository::class, \Indieinabox\Repositories\Contracts\MicrosubRepositoryInterface::class);
+
+        $this->singleton(\Indieinabox\Services\Contracts\UpdateServiceInterface::class, function (self $container) {
+            $settingsRepo = $container->has(SettingsRepositoryInterface::class) ? $container->get(SettingsRepositoryInterface::class) : null;
+            return new \Indieinabox\Services\UpdateManager($settingsRepo);
+        });
+        $this->bind(\Indieinabox\Services\UpdateManager::class, \Indieinabox\Services\Contracts\UpdateServiceInterface::class);
+
+        $this->singleton(\Indieinabox\Services\Contracts\BackupServiceInterface::class, function (self $container) {
+            $site = $container->has(\Indieinabox\Site\Site::class) ? $container->get(\Indieinabox\Site\Site::class) : ($GLOBALS['site'] ?? null);
+            return new \Indieinabox\Services\BackupService($site);
+        });
+        $this->bind(\Indieinabox\Services\BackupService::class, \Indieinabox\Services\Contracts\BackupServiceInterface::class);
+
+        $this->singleton(\Indieinabox\BackgroundWorker\Contracts\BackgroundWorkerInterface::class, function (self $container) {
+            $site = $container->has(\Indieinabox\Site\Site::class) ? $container->get(\Indieinabox\Site\Site::class) : ($GLOBALS['site'] ?? null);
+            if ($site === null) {
+                $paths = new \Indieinabox\Site\Paths(\Indieinabox\Core\Database::$dataDir ?: sys_get_temp_dir());
+                $site = new \Indieinabox\Site\Site(null, $paths);
+            }
+            $settingsRepo = $container->has(SettingsRepositoryInterface::class) ? $container->get(SettingsRepositoryInterface::class) : null;
+            $pdo = $container->has(PDO::class) ? $container->get(PDO::class) : null;
+            $updateService = $container->has(\Indieinabox\Services\Contracts\UpdateServiceInterface::class) ? $container->get(\Indieinabox\Services\Contracts\UpdateServiceInterface::class) : null;
+            $backupService = $container->has(\Indieinabox\Services\Contracts\BackupServiceInterface::class) ? $container->get(\Indieinabox\Services\Contracts\BackupServiceInterface::class) : null;
+            return new \Indieinabox\BackgroundWorker\BackgroundWorker($site, $settingsRepo, $pdo, $updateService, $backupService);
+        });
+        $this->bind(\Indieinabox\BackgroundWorker\BackgroundWorker::class, \Indieinabox\BackgroundWorker\Contracts\BackgroundWorkerInterface::class);
     }
 
     /**

@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Services-Contracts-UpdateServiceInterface - Indieinabox API</title>
+    <style>
+        :root { --bg: #F4F1EA; --fg: #2C2E2F; --accent: #2C2E2F; }
+        body { font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; margin: 0; display: flex; background: var(--bg); color: var(--fg); line-height: 1.6; }
+        .sidebar { width: 300px; background: rgba(0,0,0,0.05); padding: 20px; overflow-y: auto; height: 100vh; position: fixed; }
+        .sidebar ul { list-style: none; padding: 0; }
+        .sidebar li { margin-bottom: 5px; }
+        .sidebar a { text-decoration: none; color: var(--accent); font-size: 0.9em; }
+        .sidebar a:hover { text-decoration: underline; }
+        .content { margin-left: 320px; padding: 40px; max-width: 800px; }
+        pre { background: rgba(0, 0, 0, 0.05); padding: 1em; overflow-x: auto; }
+        code { background: rgba(0, 0, 0, 0.05); padding: 2px 4px; font-size: 0.9em; }
+        a { color: var(--accent); }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h3>API Reference</h3>
+        <ul><li><a href="/docs/api/html/ActivityPub-ActivityBuilder.html">ActivityPub-ActivityBuilder</a></li>
+<li><a href="/docs/api/html/ActivityPub-InteractionHandler.html">ActivityPub-InteractionHandler</a></li>
+<li><a href="/docs/api/html/ActivityPub-KeyManager.html">ActivityPub-KeyManager</a></li>
+<li><a href="/docs/api/html/BackgroundWorker-ArchiveProcessor.html">BackgroundWorker-ArchiveProcessor</a></li>
+<li><a href="/docs/api/html/BackgroundWorker-BackgroundWorker.html">BackgroundWorker-BackgroundWorker</a></li>
+<li><a href="/docs/api/html/BackgroundWorker-Contracts-BackgroundWorkerInterface.html">BackgroundWorker-Contracts-BackgroundWorkerInterface</a></li>
+<li><a href="/docs/api/html/BackgroundWorker-InboxProcessor.html">BackgroundWorker-InboxProcessor</a></li>
+<li><a href="/docs/api/html/BackgroundWorker-OutboxDispatcher.html">BackgroundWorker-OutboxDispatcher</a></li>
+<li><a href="/docs/api/html/BackgroundWorker-OutgoingWebmentionDispatcher.html">BackgroundWorker-OutgoingWebmentionDispatcher</a></li>
+<li><a href="/docs/api/html/BackgroundWorker-WebmentionDiscovery.html">BackgroundWorker-WebmentionDiscovery</a></li>
+<li><a href="/docs/api/html/BackgroundWorker.html">BackgroundWorker</a></li>
+<li><a href="/docs/api/html/BackupManager.html">BackupManager</a></li>
+<li><a href="/docs/api/html/Bootstrap.html">Bootstrap</a></li>
+<li><a href="/docs/api/html/ConfigHandler.html">ConfigHandler</a></li>
+<li><a href="/docs/api/html/Console-Commands-AbstractCommand.html">Console-Commands-AbstractCommand</a></li>
+<li><a href="/docs/api/html/Console-Commands-BackupCommand.html">Console-Commands-BackupCommand</a></li>
+<li><a href="/docs/api/html/Console-Commands-BuildCommand.html">Console-Commands-BuildCommand</a></li>
+<li><a href="/docs/api/html/Console-Commands-ConfigCommand.html">Console-Commands-ConfigCommand</a></li>
+<li><a href="/docs/api/html/Console-Commands-CronCommand.html">Console-Commands-CronCommand</a></li>
+<li><a href="/docs/api/html/Console-Commands-FetchCommand.html">Console-Commands-FetchCommand</a></li>
+<li><a href="/docs/api/html/Console-Commands-LinkCheckCommand.html">Console-Commands-LinkCheckCommand</a></li>
+<li><a href="/docs/api/html/Console-Commands-PostCommand.html">Console-Commands-PostCommand</a></li>
+<li><a href="/docs/api/html/Console-Commands-ProfileCommand.html">Console-Commands-ProfileCommand</a></li>
+<li><a href="/docs/api/html/Console-Commands-SetupCommand.html">Console-Commands-SetupCommand</a></li>
+<li><a href="/docs/api/html/Console-Commands-TestWebmentionCommand.html">Console-Commands-TestWebmentionCommand</a></li>
+<li><a href="/docs/api/html/Console-Commands-UpdateCommand.html">Console-Commands-UpdateCommand</a></li>
+<li><a href="/docs/api/html/Console-Commands-VersionCommand.html">Console-Commands-VersionCommand</a></li>
+<li><a href="/docs/api/html/Console-ConsoleKernel.html">Console-ConsoleKernel</a></li>
+<li><a href="/docs/api/html/Console-Contracts-CommandInterface.html">Console-Contracts-CommandInterface</a></li>
+<li><a href="/docs/api/html/Core-Bootstrap.html">Core-Bootstrap</a></li>
+<li><a href="/docs/api/html/Core-Container.html">Core-Container</a></li>
+<li><a href="/docs/api/html/Core-Database.html">Core-Database</a></li>
+<li><a href="/docs/api/html/Core-Exceptions-ContainerException.html">Core-Exceptions-ContainerException</a></li>
+<li><a href="/docs/api/html/Core-Exceptions-NotFoundException.html">Core-Exceptions-NotFoundException</a></li>
+<li><a href="/docs/api/html/Core-Version.html">Core-Version</a></li>
+<li><a href="/docs/api/html/Database.html">Database</a></li>
+<li><a href="/docs/api/html/Entry-Entry.html">Entry-Entry</a></li>
+<li><a href="/docs/api/html/Federation-ActivityPubAdapter.html">Federation-ActivityPubAdapter</a></li>
+<li><a href="/docs/api/html/Federation-Contracts-FederationAdapter.html">Federation-Contracts-FederationAdapter</a></li>
+<li><a href="/docs/api/html/Federation-FederationManager.html">Federation-FederationManager</a></li>
+<li><a href="/docs/api/html/Federation-HttpSignature.html">Federation-HttpSignature</a></li>
+<li><a href="/docs/api/html/FeedFetcher.html">FeedFetcher</a></li>
+<li><a href="/docs/api/html/Feeds-Contracts-FeedParserInterface.html">Feeds-Contracts-FeedParserInterface</a></li>
+<li><a href="/docs/api/html/Feeds-FeedGeneratorInterface.html">Feeds-FeedGeneratorInterface</a></li>
+<li><a href="/docs/api/html/Feeds-FeedGenerators.html">Feeds-FeedGenerators</a></li>
+<li><a href="/docs/api/html/Feeds-Generators-AtomFeedGenerator.html">Feeds-Generators-AtomFeedGenerator</a></li>
+<li><a href="/docs/api/html/Feeds-Generators-RssFeedGenerator.html">Feeds-Generators-RssFeedGenerator</a></li>
+<li><a href="/docs/api/html/Feeds-Generators-TwtxtFeedGenerator.html">Feeds-Generators-TwtxtFeedGenerator</a></li>
+<li><a href="/docs/api/html/Feeds-Parsers-AtomParser.html">Feeds-Parsers-AtomParser</a></li>
+<li><a href="/docs/api/html/Feeds-Parsers-JsonFeedParser.html">Feeds-Parsers-JsonFeedParser</a></li>
+<li><a href="/docs/api/html/Feeds-Parsers-RssParser.html">Feeds-Parsers-RssParser</a></li>
+<li><a href="/docs/api/html/Feeds-Parsers-TwtxtParser.html">Feeds-Parsers-TwtxtParser</a></li>
+<li><a href="/docs/api/html/Http-Controllers-AbstractController.html">Http-Controllers-AbstractController</a></li>
+<li><a href="/docs/api/html/Http-Controllers-ActivityPubController.html">Http-Controllers-ActivityPubController</a></li>
+<li><a href="/docs/api/html/Http-Controllers-AdminController.html">Http-Controllers-AdminController</a></li>
+<li><a href="/docs/api/html/Http-Controllers-ArchiveController.html">Http-Controllers-ArchiveController</a></li>
+<li><a href="/docs/api/html/Http-Controllers-ConfigController.html">Http-Controllers-ConfigController</a></li>
+<li><a href="/docs/api/html/Http-Controllers-IndieAuthController.html">Http-Controllers-IndieAuthController</a></li>
+<li><a href="/docs/api/html/Http-Controllers-MicropubController.html">Http-Controllers-MicropubController</a></li>
+<li><a href="/docs/api/html/Http-Controllers-MicrosubController.html">Http-Controllers-MicrosubController</a></li>
+<li><a href="/docs/api/html/Http-Controllers-WebmentionController.html">Http-Controllers-WebmentionController</a></li>
+<li><a href="/docs/api/html/Http-StaticFileServer.html">Http-StaticFileServer</a></li>
+<li><a href="/docs/api/html/Http-WebRouter.html">Http-WebRouter</a></li>
+<li><a href="/docs/api/html/HttpSignature.html">HttpSignature</a></li>
+<li><a href="/docs/api/html/IndieAuth-ConsentView.html">IndieAuth-ConsentView</a></li>
+<li><a href="/docs/api/html/IndieAuth-PkceValidator.html">IndieAuth-PkceValidator</a></li>
+<li><a href="/docs/api/html/IndieAuth-TokenManager.html">IndieAuth-TokenManager</a></li>
+<li><a href="/docs/api/html/LinkChecker.html">LinkChecker</a></li>
+<li><a href="/docs/api/html/Localization-Translator.html">Localization-Translator</a></li>
+<li><a href="/docs/api/html/Markdown-ASTParser.html">Markdown-ASTParser</a></li>
+<li><a href="/docs/api/html/Markdown-ContentProcessor.html">Markdown-ContentProcessor</a></li>
+<li><a href="/docs/api/html/Markdown-FileProcessor.html">Markdown-FileProcessor</a></li>
+<li><a href="/docs/api/html/Markdown-GemtextRenderer.html">Markdown-GemtextRenderer</a></li>
+<li><a href="/docs/api/html/Markdown-GophermapRenderer.html">Markdown-GophermapRenderer</a></li>
+<li><a href="/docs/api/html/Markdown-HtmlRenderer.html">Markdown-HtmlRenderer</a></li>
+<li><a href="/docs/api/html/Markdown-LanguageProcessor.html">Markdown-LanguageProcessor</a></li>
+<li><a href="/docs/api/html/Markdown-MarkdownParser.html">Markdown-MarkdownParser</a></li>
+<li><a href="/docs/api/html/Markdown-MarkdownValidator.html">Markdown-MarkdownValidator</a></li>
+<li><a href="/docs/api/html/Markdown-ParserInterface.html">Markdown-ParserInterface</a></li>
+<li><a href="/docs/api/html/Markdown-RendererInterface.html">Markdown-RendererInterface</a></li>
+<li><a href="/docs/api/html/MarkdownParser.html">MarkdownParser</a></li>
+<li><a href="/docs/api/html/Media-ImageProcessor.html">Media-ImageProcessor</a></li>
+<li><a href="/docs/api/html/Micropub-MediaHandler.html">Micropub-MediaHandler</a></li>
+<li><a href="/docs/api/html/Micropub-PostCreator.html">Micropub-PostCreator</a></li>
+<li><a href="/docs/api/html/Micropub-QueryHandler.html">Micropub-QueryHandler</a></li>
+<li><a href="/docs/api/html/MicropubClientHandler.html">MicropubClientHandler</a></li>
+<li><a href="/docs/api/html/Microsub-ExtendedEntry.html">Microsub-ExtendedEntry</a></li>
+<li><a href="/docs/api/html/Microsub-NormalizationAdapter.html">Microsub-NormalizationAdapter</a></li>
+<li><a href="/docs/api/html/MicrosubHandler.html">MicrosubHandler</a></li>
+<li><a href="/docs/api/html/MicrosubReaderHandler.html">MicrosubReaderHandler</a></li>
+<li><a href="/docs/api/html/ModerationHandler.html">ModerationHandler</a></li>
+<li><a href="/docs/api/html/Page-Content.html">Page-Content</a></li>
+<li><a href="/docs/api/html/Page-Localization.html">Page-Localization</a></li>
+<li><a href="/docs/api/html/Page-Metadata.html">Page-Metadata</a></li>
+<li><a href="/docs/api/html/Page-Page.html">Page-Page</a></li>
+<li><a href="/docs/api/html/Page-Pages.html">Page-Pages</a></li>
+<li><a href="/docs/api/html/Page.html">Page</a></li>
+<li><a href="/docs/api/html/Pages.html">Pages</a></li>
+<li><a href="/docs/api/html/ParserInterface.html">ParserInterface</a></li>
+<li><a href="/docs/api/html/Repositories-Contracts-ActivityPubRepositoryInterface.html">Repositories-Contracts-ActivityPubRepositoryInterface</a></li>
+<li><a href="/docs/api/html/Repositories-Contracts-InteractionRepositoryInterface.html">Repositories-Contracts-InteractionRepositoryInterface</a></li>
+<li><a href="/docs/api/html/Repositories-Contracts-MicrosubRepositoryInterface.html">Repositories-Contracts-MicrosubRepositoryInterface</a></li>
+<li><a href="/docs/api/html/Repositories-Contracts-SettingsRepositoryInterface.html">Repositories-Contracts-SettingsRepositoryInterface</a></li>
+<li><a href="/docs/api/html/Repositories-FileInteractionRepository.html">Repositories-FileInteractionRepository</a></li>
+<li><a href="/docs/api/html/Repositories-SqliteActivityPubRepository.html">Repositories-SqliteActivityPubRepository</a></li>
+<li><a href="/docs/api/html/Repositories-SqliteMicrosubRepository.html">Repositories-SqliteMicrosubRepository</a></li>
+<li><a href="/docs/api/html/Repositories-SqliteSettingsRepository.html">Repositories-SqliteSettingsRepository</a></li>
+<li><a href="/docs/api/html/Services-ArchiveService.html">Services-ArchiveService</a></li>
+<li><a href="/docs/api/html/Services-BackupService.html">Services-BackupService</a></li>
+<li><a href="/docs/api/html/Services-ConfigurationService.html">Services-ConfigurationService</a></li>
+<li><a href="/docs/api/html/Services-Contracts-BackupServiceInterface.html">Services-Contracts-BackupServiceInterface</a></li>
+<li><a href="/docs/api/html/Services-Contracts-UpdateServiceInterface.html">Services-Contracts-UpdateServiceInterface</a></li>
+<li><a href="/docs/api/html/Services-FetchFeedsService.html">Services-FetchFeedsService</a></li>
+<li><a href="/docs/api/html/Services-FollowService.html">Services-FollowService</a></li>
+<li><a href="/docs/api/html/Services-InboxService.html">Services-InboxService</a></li>
+<li><a href="/docs/api/html/Services-LinkCheckerService.html">Services-LinkCheckerService</a></li>
+<li><a href="/docs/api/html/Services-MicrosubService.html">Services-MicrosubService</a></li>
+<li><a href="/docs/api/html/Services-ModerationService.html">Services-ModerationService</a></li>
+<li><a href="/docs/api/html/Services-OutboxService.html">Services-OutboxService</a></li>
+<li><a href="/docs/api/html/Services-PublishPostService.html">Services-PublishPostService</a></li>
+<li><a href="/docs/api/html/Services-ShortlinkService.html">Services-ShortlinkService</a></li>
+<li><a href="/docs/api/html/Services-UpdateManager.html">Services-UpdateManager</a></li>
+<li><a href="/docs/api/html/Services-UpdateService.html">Services-UpdateService</a></li>
+<li><a href="/docs/api/html/Services-WebmentionService.html">Services-WebmentionService</a></li>
+<li><a href="/docs/api/html/ShortlinkManager.html">ShortlinkManager</a></li>
+<li><a href="/docs/api/html/Site-Localization.html">Site-Localization</a></li>
+<li><a href="/docs/api/html/Site-Metadata.html">Site-Metadata</a></li>
+<li><a href="/docs/api/html/Site-Options.html">Site-Options</a></li>
+<li><a href="/docs/api/html/Site-Paths.html">Site-Paths</a></li>
+<li><a href="/docs/api/html/Site-Site.html">Site-Site</a></li>
+<li><a href="/docs/api/html/Site-Support.html">Site-Support</a></li>
+<li><a href="/docs/api/html/Site-Twtxt.html">Site-Twtxt</a></li>
+<li><a href="/docs/api/html/Site.html">Site</a></li>
+<li><a href="/docs/api/html/SiteBuilder-AssetPublisher.html">SiteBuilder-AssetPublisher</a></li>
+<li><a href="/docs/api/html/SiteBuilder-ContentScanner.html">SiteBuilder-ContentScanner</a></li>
+<li><a href="/docs/api/html/SiteBuilder-FeedPublisher.html">SiteBuilder-FeedPublisher</a></li>
+<li><a href="/docs/api/html/SiteBuilder-IndexPublisher.html">SiteBuilder-IndexPublisher</a></li>
+<li><a href="/docs/api/html/SiteBuilder-PagePublisher.html">SiteBuilder-PagePublisher</a></li>
+<li><a href="/docs/api/html/SiteBuilder-SiteBuilder.html">SiteBuilder-SiteBuilder</a></li>
+<li><a href="/docs/api/html/SiteBuilder-TranslationVirtualizer.html">SiteBuilder-TranslationVirtualizer</a></li>
+<li><a href="/docs/api/html/SiteBuilder.html">SiteBuilder</a></li>
+<li><a href="/docs/api/html/Support-DateFormatter.html">Support-DateFormatter</a></li>
+<li><a href="/docs/api/html/Support-FileUtils.html">Support-FileUtils</a></li>
+<li><a href="/docs/api/html/Support-HtmlUtils.html">Support-HtmlUtils</a></li>
+<li><a href="/docs/api/html/Support-TextParser.html">Support-TextParser</a></li>
+<li><a href="/docs/api/html/Support-Yaml.html">Support-Yaml</a></li>
+<li><a href="/docs/api/html/Taxonomy-Contracts-SeoMetadataResolverInterface.html">Taxonomy-Contracts-SeoMetadataResolverInterface</a></li>
+<li><a href="/docs/api/html/Taxonomy-Contracts-TaxonomyServiceInterface.html">Taxonomy-Contracts-TaxonomyServiceInterface</a></li>
+<li><a href="/docs/api/html/Taxonomy-KindHelper.html">Taxonomy-KindHelper</a></li>
+<li><a href="/docs/api/html/Taxonomy-SeoMetadataResolver.html">Taxonomy-SeoMetadataResolver</a></li>
+<li><a href="/docs/api/html/Taxonomy-TaxonomyService.html">Taxonomy-TaxonomyService</a></li>
+<li><a href="/docs/api/html/Theme-ThemeData.html">Theme-ThemeData</a></li>
+<li><a href="/docs/api/html/Theme-ThemeHelper.html">Theme-ThemeHelper</a></li>
+<li><a href="/docs/api/html/Theme-ThemeManager.html">Theme-ThemeManager</a></li>
+<li><a href="/docs/api/html/Theme-Whostyles.html">Theme-Whostyles</a></li>
+<li><a href="/docs/api/html/ThemeManager.html">ThemeManager</a></li>
+<li><a href="/docs/api/html/Translations-UrlTranslations.html">Translations-UrlTranslations</a></li>
+<li><a href="/docs/api/html/Twtxt-TwtxtManager.html">Twtxt-TwtxtManager</a></li>
+<li><a href="/docs/api/html/Updater.html">Updater</a></li>
+<li><a href="/docs/api/html/Version.html">Version</a></li>
+<li><a href="/docs/api/html/Views-Admin-AdminLayoutView.html">Views-Admin-AdminLayoutView</a></li>
+<li><a href="/docs/api/html/Views-Admin-ConfigView.html">Views-Admin-ConfigView</a></li>
+<li><a href="/docs/api/html/Views-Admin-MicropubClientView.html">Views-Admin-MicropubClientView</a></li>
+<li><a href="/docs/api/html/Views-Admin-MicrosubReaderView.html">Views-Admin-MicrosubReaderView</a></li>
+<li><a href="/docs/api/html/Views-Admin-ModerationView.html">Views-Admin-ModerationView</a></li>
+<li><a href="/docs/api/html/Views-ArchiveView.html">Views-ArchiveView</a></li>
+<li><a href="/docs/api/html/WebRouter.html">WebRouter</a></li>
+<li><a href="/docs/api/html/Webmention-HelpPageView.html">Webmention-HelpPageView</a></li>
+<li><a href="/docs/api/html/Webmention-LinkExtractor.html">Webmention-LinkExtractor</a></li>
+<li><a href="/docs/api/html/Webmention-PayloadParser.html">Webmention-PayloadParser</a></li>
+<li><a href="/docs/api/html/Webmention-SourceVerifier.html">Webmention-SourceVerifier</a></li>
+<li><a href="/docs/api/html/Webmention-WebmentionSender.html">Webmention-WebmentionSender</a></li>
+<li><a href="/docs/api/html/WebmentionSender.html">WebmentionSender</a></li>
+<li><a href="/docs/api/html/Whostyles.html">Whostyles</a></li>
+<li><a href="/docs/api/html/Yaml.html">Yaml</a></li></ul>
+    </div>
+    <div class="content">
+        <h1 class="p-name">UpdateServiceInterface</h1>
+<p><strong>Namespace:</strong> <code>Indieinabox\Services\Contracts</code></p>
+<p>Interface UpdateServiceInterface</p>
+<p>Defines version checking, binary download, backup, and rollback capabilities.</p>
+<h2>Methods</h2>
+<h3>getVersionsDir()</h3>
+<p><code>abstract public function getVersionsDir(): string</code></p>
+<p>Returns the directory where version backups are stored.</p>
+<h3>checkAvailableVersions()</h3>
+<p><code>abstract public function checkAvailableVersions(): array</code></p>
+<p>Checks remote repository for available releases.</p>
+<p>@return array<int, array<string, mixed>&gt;</p>
+<h3>getAvailableUpdates()</h3>
+<p><code>abstract public function getAvailableUpdates(): array</code></p>
+<p>Retrieves currently cached available updates.</p>
+<p>@return array<int, array<string, mixed>&gt;</p>
+<h3>getLatestRelease()</h3>
+<p><code>abstract public function getLatestRelease(bool $includePrerelease = false): ?array</code></p>
+<p>Finds latest release matching stability preference.</p>
+<p>@return array<string, mixed>|null</p>
+<h3>downloadAndInstall()</h3>
+<p><code>abstract public function downloadAndInstall(string $downloadUrl): bool</code></p>
+<p>Downloads and installs update from the specified URL.</p>
+<h3>backupCurrentVersion()</h3>
+<p><code>abstract public function backupCurrentVersion(): string|false</code></p>
+<p>Backs up current executable, enforcing MAXBacks up current executable, enforcing MAX_BACKUPS retention.</p>
+<p>@return string|false</p>
+<h3>getLocalBackups()</h3>
+<p><code>abstract public function getLocalBackups(): array</code></p>
+<p>Returns list of local executable backup files.</p>
+<p>@return array<int, array{filename: string, path: string, version: ?string, date: int, formatted_date: string, size: int}></p>
+<h3>rollback()</h3>
+<p><code>abstract public function rollback(?string $backupFilename = null): bool</code></p>
+<p>Rolls back executable to a previous version from backup.</p>
+<h3>processScheduledUpdate()</h3>
+<p><code>abstract public function processScheduledUpdate(int $intervalSeconds = 21600): array</code></p>
+<p>Checks and applies updates based on scheduled interval and auto-upgrade settings.</p>
+<p>@return array{checked: bool, upgraded: bool, message: string}</p>
+<h3>cleanupOldBackups()</h3>
+<p><code>abstract public function cleanupOldBackups(): int</code></p>
+<p>Enforces MAXEnforces MAX_BACKUPS retention limit.</p>
+<h3>getCurrentExecutablePath()</h3>
+<p><code>abstract public function getCurrentExecutablePath(): string</code></p>
+<p>Determines path to current main executable.</p>
+
+    </div>
+</body>
+</html>

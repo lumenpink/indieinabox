@@ -74,6 +74,18 @@ class Container implements ContainerInterface
         });
         $this->bind(ParserInterface::class, MarkdownParser::class);
         $this->bind(FederationAdapter::class, ActivityPubAdapter::class);
+        $this->singleton(\Indieinabox\Taxonomy\Contracts\TaxonomyServiceInterface::class, function (self $container) {
+            $site = $container->has(\Indieinabox\Site\Site::class) ? $container->get(\Indieinabox\Site\Site::class) : ($GLOBALS['site'] ?? null);
+            $settingsRepo = $container->has(SettingsRepositoryInterface::class) ? $container->get(SettingsRepositoryInterface::class) : null;
+            return new \Indieinabox\Taxonomy\TaxonomyService($site, $settingsRepo);
+        });
+        $this->bind(\Indieinabox\Taxonomy\TaxonomyService::class, \Indieinabox\Taxonomy\Contracts\TaxonomyServiceInterface::class);
+
+        $this->singleton(\Indieinabox\Taxonomy\Contracts\SeoMetadataResolverInterface::class, function (self $container) {
+            $site = $container->has(\Indieinabox\Site\Site::class) ? $container->get(\Indieinabox\Site\Site::class) : ($GLOBALS['site'] ?? null);
+            return new \Indieinabox\Taxonomy\SeoMetadataResolver($site);
+        });
+        $this->bind(\Indieinabox\Taxonomy\SeoMetadataResolver::class, \Indieinabox\Taxonomy\Contracts\SeoMetadataResolverInterface::class);
     }
 
     /**

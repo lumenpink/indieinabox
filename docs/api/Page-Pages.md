@@ -64,6 +64,16 @@ Filters pages by language.
 @param string $lang
 @return array<string, Page>
 
+### getRecentPosts()
+`public function getRecentPosts(int $limit = 5, ?string $lang = null, ?callable $filter = null): array`
+
+Retrieves recent posts, optionally filtered by language and custom predicate, sorted descending by date.
+
+@param int $limit Maximum number of posts to return.
+@param string|null $lang Optional language to filter by.
+@param callable|null $filter Optional filter predicate.
+@return array<int, Page>
+
 ### offsetExists()
 `public function offsetExists(?mixed $key)`
 

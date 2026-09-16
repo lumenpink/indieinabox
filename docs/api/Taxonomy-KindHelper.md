@@ -3,13 +3,16 @@
 
 Class KindHelper
 
-Manages post kind taxonomy, kind configuration, URL mapping,
-post listing, SEO metadata resolution, and incoming interactions.
+Facade bridge delegating to TaxonomyService, SeoMetadataResolver,
+and Pages collection methods.
 
 ## Methods
 
-### getSite()
-`private static function getSite(): ?Indieinabox\Site\Site`
+### getTaxonomyService()
+`private static function getTaxonomyService(?Indieinabox\Site\Site $site = null): Indieinabox\Taxonomy\Contracts\TaxonomyServiceInterface`
+
+### getSeoResolver()
+`private static function getSeoResolver(?Indieinabox\Site\Site $site = null): Indieinabox\Taxonomy\Contracts\SeoMetadataResolverInterface`
 
 ### getKindConfig()
 `public static function getKindConfig(string $kind): array`
@@ -67,7 +70,8 @@ Get original content slug translation.
 ### listposts()
 `public static function listposts(?Indieinabox\Page\Pages $pageCollection = null, ?Indieinabox\Site\Site $siteInstance = null, ?Indieinabox\Page\Page $currentPage = null): string`
 
-List posts, sorting by date descending, up to 10 posts.
+List posts, sorting by date descending, up to 5 posts.
+Delegates sorting to Pages::getRecentPosts.
 
 @param Pages|null $pageCollection
 @param Site|null $siteInstance

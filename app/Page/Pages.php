@@ -118,4 +118,35 @@ class Pages extends ArrayObject
             return $pageLang === $lang;
         });
     }
+
+    /**
+     * Retrieves recent posts, optionally filtered by language and custom predicate, sorted descending by date.
+     *
+     * @param int $limit Maximum number of posts to return.
+     * @param string|null $lang Optional language to filter by.
+     * @param callable|null $filter Optional filter predicate.
+     * @return array<int, Page>
+     */
+    public function getRecentPosts(int $limit = 5, ?string $lang = null, ?callable $filter = null): array
+    {
+        $filtered = array_values($this->pages);
+        if ($filter !== null) {
+            $filtered = array_filter($filtered, $filter);
+        }
+        if ($lang !== null) {
+            $filtered = array_filter($filtered, function ($p) use ($lang) {
+                $pageLang = $p instanceof Page ? $p->lang : ($p['lang'] ?? 'en');
+                return $pageLang === $lang;
+            });
+        }
+        usort($filtered, function ($a, $b) {
+            $dateA = $a instanceof Page ? $a->date : ($a['date'] ?? 0);
+            $dateB = $b instanceof Page ? $b->date : ($b['date'] ?? 0);
+            $timeA = $dateA instanceof \DateTimeInterface ? $dateA->getTimestamp() : (int) $dateA;
+            $timeB = $dateB instanceof \DateTimeInterface ? $dateB->getTimestamp() : (int) $dateB;
+            return $timeB <=> $timeA;
+        });
+
+        return array_slice(array_values($filtered), 0, $limit);
+    }
 }

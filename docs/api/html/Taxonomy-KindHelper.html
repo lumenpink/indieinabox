@@ -159,7 +159,11 @@
 <li><a href="/docs/api/html/Support-HtmlUtils.html">Support-HtmlUtils</a></li>
 <li><a href="/docs/api/html/Support-TextParser.html">Support-TextParser</a></li>
 <li><a href="/docs/api/html/Support-Yaml.html">Support-Yaml</a></li>
+<li><a href="/docs/api/html/Taxonomy-Contracts-SeoMetadataResolverInterface.html">Taxonomy-Contracts-SeoMetadataResolverInterface</a></li>
+<li><a href="/docs/api/html/Taxonomy-Contracts-TaxonomyServiceInterface.html">Taxonomy-Contracts-TaxonomyServiceInterface</a></li>
 <li><a href="/docs/api/html/Taxonomy-KindHelper.html">Taxonomy-KindHelper</a></li>
+<li><a href="/docs/api/html/Taxonomy-SeoMetadataResolver.html">Taxonomy-SeoMetadataResolver</a></li>
+<li><a href="/docs/api/html/Taxonomy-TaxonomyService.html">Taxonomy-TaxonomyService</a></li>
 <li><a href="/docs/api/html/Theme-ThemeData.html">Theme-ThemeData</a></li>
 <li><a href="/docs/api/html/Theme-ThemeHelper.html">Theme-ThemeHelper</a></li>
 <li><a href="/docs/api/html/Theme-ThemeManager.html">Theme-ThemeManager</a></li>
@@ -189,11 +193,13 @@
         <h1 class="p-name">KindHelper</h1>
 <p><strong>Namespace:</strong> <code>Indieinabox\Taxonomy</code></p>
 <p>Class KindHelper</p>
-<p>Manages post kind taxonomy, kind configuration, URL mapping,<br />
-post listing, SEO metadata resolution, and incoming interactions.</p>
+<p>Facade bridge delegating to TaxonomyService, SeoMetadataResolver,<br />
+and Pages collection methods.</p>
 <h2>Methods</h2>
-<h3>getSite()</h3>
-<p><code>private static function getSite(): ?Indieinabox\Site\Site</code></p>
+<h3>getTaxonomyService()</h3>
+<p><code>private static function getTaxonomyService(?Indieinabox\Site\Site $site = null): Indieinabox\Taxonomy\Contracts\TaxonomyServiceInterface</code></p>
+<h3>getSeoResolver()</h3>
+<p><code>private static function getSeoResolver(?Indieinabox\Site\Site $site = null): Indieinabox\Taxonomy\Contracts\SeoMetadataResolverInterface</code></p>
 <h3>getKindConfig()</h3>
 <p><code>public static function getKindConfig(string $kind): array</code></p>
 <p>Retrieves kind configuration with sensible defaults.</p>
@@ -231,7 +237,8 @@ post listing, SEO metadata resolution, and incoming interactions.</p>
 @return string</p>
 <h3>listposts()</h3>
 <p><code>public static function listposts(?Indieinabox\Page\Pages $pageCollection = null, ?Indieinabox\Site\Site $siteInstance = null, ?Indieinabox\Page\Page $currentPage = null): string</code></p>
-<p>List posts, sorting by date descending, up to 10 posts.</p>
+<p>List posts, sorting by date descending, up to 5 posts.<br />
+Delegates sorting to Pages::getRecentPosts.</p>
 <p>@param Pages|null $pageCollection<br />
 @param Site|null $siteInstance<br />
 @param Page|null $currentPage<br />

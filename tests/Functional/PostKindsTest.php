@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-use Indieinabox\SiteBuilder;
+use Indieinabox\SiteBuilder\SiteBuilder;
 use Indieinabox\Site;
 use Indieinabox\Site\Paths;
 

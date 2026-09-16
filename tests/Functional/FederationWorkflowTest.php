@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tests\Functional;
 
 use Indieinabox\Core\Container;
-use Indieinabox\Database;
+use Indieinabox\Core\Database;
 use Indieinabox\Federation\ActivityPubAdapter;
 use Indieinabox\Federation\FederationManager;
 use Indieinabox\Services\FollowService;

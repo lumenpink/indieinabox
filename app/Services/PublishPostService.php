@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Indieinabox\Services;
 
 use Indieinabox\ActivityPub\ActivityBuilder;
-use Indieinabox\Database;
+use Indieinabox\Core\Database;
 use Indieinabox\Site;
-use Indieinabox\SiteBuilder;
+use Indieinabox\SiteBuilder\SiteBuilder;
 
 /**
  * Protocol-agnostic service to compose, persist, build, and syndicate new posts and notes.

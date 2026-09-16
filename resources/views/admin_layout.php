@@ -82,7 +82,7 @@
                 $channels = [];
                 $currentChannel = 'inbox';
                 if (($activeTab ?? '') === 'microsub') {
-                    $db = \Indieinabox\Database::getDb();
+                    $db = \Indieinabox\Core\Database::getDb();
                     $stmt = $db->query('SELECT uid, name FROM microsub_channels');
                     if ($stmt) {
                         $channels = $stmt->fetchAll(PDO::FETCH_ASSOC);

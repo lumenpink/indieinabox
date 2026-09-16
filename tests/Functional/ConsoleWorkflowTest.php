@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use Indieinabox\Console\ConsoleKernel;
-use Indieinabox\Database;
+use Indieinabox\Core\Database;
 use Indieinabox\Site;
 
 beforeEach(function () {

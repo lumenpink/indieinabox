@@ -2,12 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Indieinabox;
+namespace Indieinabox\Services;
+
+use Indieinabox\Page;
 
 /**
- * Class ShortlinkManager
+ * Class ShortlinkService
  */
-class ShortlinkManager
+class ShortlinkService
 {
     /**
      * @var string
@@ -19,7 +21,7 @@ class ShortlinkManager
      */
     public function __construct(?string $cacheDir = null)
     {
-        $this->cacheDir = $cacheDir ?? (dirname(__DIR__) . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'shortlinks');
+        $this->cacheDir = $cacheDir ?? (dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'shortlinks');
     }
 
     /**

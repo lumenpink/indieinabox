@@ -39,10 +39,10 @@ mb_internal_encoding("UTF-8");
 
 // $yaml = new Yaml(); // Replaced with Database
 
-$config = \Indieinabox\Database::getAllSettings();
-$config['kinds'] = \Indieinabox\Database::getKinds();
-$config['translations'] = \Indieinabox\Database::getTranslations();
-$config['urltranslations'] = \Indieinabox\Database::getUrlTranslations();
+$config = \Indieinabox\Core\Database::getAllSettings();
+$config['kinds'] = \Indieinabox\Core\Database::getKinds();
+$config['translations'] = \Indieinabox\Core\Database::getTranslations();
+$config['urltranslations'] = \Indieinabox\Core\Database::getUrlTranslations();
 if (empty($config['sitename'])) {
     // Default fallback if DB is somehow empty
     $config = [
@@ -133,7 +133,7 @@ if (isset($config['contentdir'])) {
     $site->paths->contentDir = $config['contentdir'];
 }
 if (isset($config['active_theme']) && $config['active_theme'] !== 'default') {
-    $site->paths->themeDir = \Indieinabox\Database::$dataDir . DIRECTORY_SEPARATOR . 'themes' . DIRECTORY_SEPARATOR . $config['active_theme'];
+    $site->paths->themeDir = \Indieinabox\Core\Database::$dataDir . DIRECTORY_SEPARATOR . 'themes' . DIRECTORY_SEPARATOR . $config['active_theme'];
 } elseif (isset($config['themedir'])) {
     $site->paths->themeDir = $config['themedir'];
 }
@@ -175,13 +175,13 @@ if (isset($config['twtxt'])) {
 }
 
 global $urltranslations;
-$urltranslations = \Indieinabox\Database::getUrlTranslations();
+$urltranslations = \Indieinabox\Core\Database::getUrlTranslations();
 
 if (php_sapi_name() === 'cli') {
     $kernel = new \Indieinabox\Console\ConsoleKernel($site);
     $exitCode = $kernel->handle($argv);
     exit($exitCode);
 } else {
-    $router = new \Indieinabox\WebRouter($site);
+    $router = new \Indieinabox\Http\WebRouter($site);
     $router->handleRequest();
 }

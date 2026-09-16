@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Indieinabox\Console\Commands;
 
-use Indieinabox\SiteBuilder;
+use Indieinabox\SiteBuilder\SiteBuilder;
 
 /**
  * Command to orchestrate static site generation across HTML, Gemini, Gopher, and syndication feeds.

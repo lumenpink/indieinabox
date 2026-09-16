@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Indieinabox\Console\Commands;
 
-use Indieinabox\Version;
+use Indieinabox\Core\Version;
 
 /**
  * Command to display current application version, runtime mode, and build timestamp.

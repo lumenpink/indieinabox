@@ -9,9 +9,9 @@ if (!defined('DS')) {
 }
 
 // @codeCoverageIgnoreStart
-if (!class_exists(\Indieinabox\Bootstrap::class, false)) {
-    require_once dirname(__DIR__) . '/app/Bootstrap.php';
+if (!class_exists(\Indieinabox\Core\Bootstrap::class, false)) {
+    require_once dirname(__DIR__) . '/app/Core/Bootstrap.php';
 }
 // @codeCoverageIgnoreEnd
 
-\Indieinabox\Bootstrap::run(dirname(__DIR__));
+\Indieinabox\Core\Bootstrap::run(dirname(__DIR__));

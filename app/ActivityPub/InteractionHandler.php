@@ -6,7 +6,7 @@ namespace Indieinabox\ActivityPub;
 
 use PDO;
 use Indieinabox\Site;
-use Indieinabox\Database;
+use Indieinabox\Core\Database;
 use Indieinabox\Localization\Translator;
 
 /**
@@ -283,8 +283,8 @@ class InteractionHandler
      */
     protected function triggerSiteBuild(): void
     {
-        if (class_exists('\Indieinabox\SiteBuilder')) {
-            $builder = new \Indieinabox\SiteBuilder($this->site);
+        if (class_exists(\Indieinabox\SiteBuilder\SiteBuilder::class)) {
+            $builder = new \Indieinabox\SiteBuilder\SiteBuilder($this->site);
             $builder->build();
         }
     }

@@ -2,7 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Indieinabox;
+namespace Indieinabox\Markdown;
+
+use Indieinabox\Page;
 
 /**
  * Class ParserInterface

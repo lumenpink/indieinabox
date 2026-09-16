@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Indieinabox\Yaml;
+use Indieinabox\Support\Yaml;
 
 $integrationSandbox = __DIR__ . '/tmp_integration_sandbox';
 

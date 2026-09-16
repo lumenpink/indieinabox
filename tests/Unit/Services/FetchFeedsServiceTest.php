@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Indieinabox\Database;
+use Indieinabox\Core\Database;
 use Indieinabox\Services\FetchFeedsService;
 use Indieinabox\Feeds\Contracts\FeedParserInterface;
 use Indieinabox\Microsub\ExtendedEntry;

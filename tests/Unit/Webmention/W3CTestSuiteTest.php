@@ -3,10 +3,10 @@
 declare(strict_types=1);
 
 use Indieinabox\Site;
-use Indieinabox\WebmentionSender;
+use Indieinabox\Webmention\WebmentionSender;
 use Indieinabox\Webmention\SourceVerifier;
 use Indieinabox\Theme\ThemeData;
-use Indieinabox\Database;
+use Indieinabox\Core\Database;
 
 beforeEach(function () {
     /** @var \Tests\TestCase $this */

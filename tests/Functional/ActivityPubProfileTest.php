@@ -1,6 +1,6 @@
 use Indieinabox\Http\Controllers\ActivityPubController;
 use Indieinabox\Site;
-use Indieinabox\Database;
+use Indieinabox\Core\Database;
 use Indieinabox\Site\Metadata;
 
 /**

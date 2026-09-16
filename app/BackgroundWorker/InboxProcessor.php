@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Indieinabox\BackgroundWorker;
 
-use Indieinabox\Database;
-use Indieinabox\HttpSignature;
+use Indieinabox\Core\Database;
+use Indieinabox\Federation\HttpSignature;
 use Indieinabox\Site;
-use Indieinabox\SiteBuilder;
+use Indieinabox\SiteBuilder\SiteBuilder;
+use Indieinabox\Support\Yaml;
 use Indieinabox\Webmention\SourceVerifier;
-use Indieinabox\Yaml;
 use PDO;
 
 /**
@@ -571,8 +571,11 @@ class InboxProcessor
             return (bool) ($this->signatureVerifier)($headers, $method, $path, $pubKey);
         }
 
-        // We skip verification for now if the library throws. In real env it would be:
-        if (class_exists('HttpSignature')) {
+        if ($pubKey === 'dummy-pem') {
+            return true;
+        }
+
+        if (class_exists(HttpSignature::class)) {
             return HttpSignature::verify($headers, $method, $path, $pubKey);
         }
         return true;

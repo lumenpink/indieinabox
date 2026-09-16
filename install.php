@@ -81,12 +81,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['data_dir'])) {
             }
             
             // Trigger site build to process HTML/Gem/Gopher immediately
-            if (class_exists('\Indieinabox\SiteBuilder')) {
-                \Indieinabox\Database::$dataDir = $dataDir;
-                \Indieinabox\Database::connect($dbPath);
+            if (class_exists('\Indieinabox\SiteBuilder\SiteBuilder')) {
+                \Indieinabox\Core\Database::$dataDir = $dataDir;
+                \Indieinabox\Core\Database::connect($dbPath);
                 $site = new \Indieinabox\Site();
                 $site->paths->baseDir = $baseDir;
-                $site->config = \Indieinabox\Database::getAllSettings();
+                $site->config = \Indieinabox\Core\Database::getAllSettings();
                 
                 // We need to set the paths correctly before building
                 $baseOut = $site->config['outputdir'] ?? 'public';
@@ -103,7 +103,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['data_dir'])) {
                     $site->paths->themeDir = $bundleDir . DIRECTORY_SEPARATOR . 'resources';
                 }
                 
-                $builder = new \Indieinabox\SiteBuilder($site);
+                $builder = new \Indieinabox\SiteBuilder\SiteBuilder($site);
                 $builder->build();
             }
             

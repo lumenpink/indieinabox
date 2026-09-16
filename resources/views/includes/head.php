@@ -7,7 +7,7 @@ $colors = ThemeData::getThemeColors($page);
 ?>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<meta name="generator" content="Indieinabox v<?= htmlspecialchars(\Indieinabox\Version::get()) ?>" />
+<meta name="generator" content="Indieinabox v<?= htmlspecialchars(\Indieinabox\Core\Version::get()) ?>" />
 <title><?= htmlspecialchars(ThemeData::getPageTitle($page, $site)) ?></title>
 <?= ThemeData::getMetaTags($page, $site) ?>
 <?= ThemeData::getOpenGraphTags($page, $site) ?>

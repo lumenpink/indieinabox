@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Services;
 
-use Indieinabox\Database;
+use Indieinabox\Core\Database;
 use Indieinabox\Services\FollowService;
 use PDO;
 

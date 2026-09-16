@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace Indieinabox\Console\Commands;
 
-use Indieinabox\Database;
-use Indieinabox\SiteBuilder;
+use Indieinabox\Core\Database;
+use Indieinabox\Site;
+use Indieinabox\SiteBuilder\SiteBuilder;
 
 /**
  * Command to compose and publish notes with attached media via CLI.

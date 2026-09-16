@@ -5,7 +5,7 @@ declare(strict_types=1);
 use Indieinabox\Support\FileUtils;
 use Indieinabox\Page;
 use Indieinabox\Pages;
-use Indieinabox\ParserInterface;
+use Indieinabox\Markdown\ParserInterface;
 use Indieinabox\Site;
 use Indieinabox\Site\Paths;
 use Indieinabox\SiteBuilder\ContentScanner;

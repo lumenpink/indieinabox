@@ -56,7 +56,7 @@ usort($appFiles, function (string $a, string $b): int {
     return strcmp($a, $b);
 });
 
-require_once $base . '/app/Version.php';
+require_once $base . '/app/Core/Version.php';
 
 // Prepare the compiled code
 $compiled = "<?php\n\ndeclare(strict_types=1);\n\n";
@@ -94,7 +94,7 @@ $compiled .= "            exit(1);\n";
 $compiled .= "        }\n";
 $compiled .= "    }\n";
 $compiled .= "    if (!defined('INDIEINABOX_COMPILED_VERSION')) {\n";
-$compiled .= "        define('INDIEINABOX_COMPILED_VERSION', '" . addslashes(\Indieinabox\Version::get()) . "');\n";
+$compiled .= "        define('INDIEINABOX_COMPILED_VERSION', '" . addslashes(\Indieinabox\Core\Version::get()) . "');\n";
 $compiled .= "    }\n";
 $compiled .= "    if (!defined('INDIEINABOX_BUILD_DATE')) {\n";
 $compiled .= "        define('INDIEINABOX_BUILD_DATE', '" . addslashes(date('c')) . "');\n";
@@ -119,7 +119,7 @@ foreach ($appFiles as $file) {
     $content = preg_replace('/^\s*namespace\s+[^;{\s]+\s*;/m', '', $content);
     
     // Fix directory traversals because compiled file is one level higher than app/ directory
-    $content = str_replace('dirname(__DIR__)', '__DIR__', $content);
+    $content = str_replace(['dirname(__DIR__, 2)', 'dirname(__DIR__)'], '__DIR__', $content);
     
     $cleaned = trim($content);
     $relativeName = str_replace($base . '/', '', $file);
@@ -313,12 +313,12 @@ $runnerCode .= <<<'EOT'
                             file_put_contents($notesDir . DIRECTORY_SEPARATOR . 'data-ownership.md', $welcomeNote);
                         }
                         
-                        if (class_exists('\Indieinabox\SiteBuilder')) {
-                            \Indieinabox\Database::$dataDir = $dataDir;
-                            \Indieinabox\Database::connect($dbPath);
+                        if (class_exists('\Indieinabox\SiteBuilder\SiteBuilder')) {
+                            \Indieinabox\Core\Database::$dataDir = $dataDir;
+                            \Indieinabox\Core\Database::connect($dbPath);
                             $site = new \Indieinabox\Site();
                             $site->paths->baseDir = $base;
-                            $site->config = \Indieinabox\Database::getAllSettings();
+                            $site->config = \Indieinabox\Core\Database::getAllSettings();
                             
                             $baseOut = $site->config['outputdir'] ?? 'public';
                             $site->paths->outputDirHtml = $baseOut . '_html';
@@ -333,7 +333,7 @@ $runnerCode .= <<<'EOT'
                                 $site->paths->themeDir = $base . DIRECTORY_SEPARATOR . 'resources'; // compiled bundle defaults to embedded if not found later
                             }
                             
-                            $builder = new \Indieinabox\SiteBuilder($site);
+                            $builder = new \Indieinabox\SiteBuilder\SiteBuilder($site);
                             $builder->build();
                         }
                         
@@ -440,8 +440,8 @@ HTML;
         if (isset($dbConfig['db_path']) && file_exists($dbConfig['db_path'])) {
             $dbPath = $dbConfig['db_path'];
         }
-        \Indieinabox\Database::$dataDir = $dbConfig['data_dir'];
-        \Indieinabox\Database::connect($dbPath);
+        \Indieinabox\Core\Database::$dataDir = $dbConfig['data_dir'];
+        \Indieinabox\Core\Database::connect($dbPath);
     } catch (\Exception $e) {
         die("Database Connection Error: " . $e->getMessage());
     }

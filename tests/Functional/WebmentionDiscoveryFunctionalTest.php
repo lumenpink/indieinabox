@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Tests\Functional;
 
 use PHPUnit\Framework\TestCase;
-use Indieinabox\BackgroundWorker;
+use Indieinabox\BackgroundWorker\BackgroundWorker;
 use Indieinabox\Site;
-use Indieinabox\Database;
+use Indieinabox\Core\Database;
 
 class WebmentionDiscoveryFunctionalTest extends TestCase
 {

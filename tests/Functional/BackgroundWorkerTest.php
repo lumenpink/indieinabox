@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-use Indieinabox\BackgroundWorker;
+use Indieinabox\BackgroundWorker\BackgroundWorker;
 use Indieinabox\BackgroundWorker\ArchiveProcessor;
 use Indieinabox\BackgroundWorker\InboxProcessor;
-use Indieinabox\Database;
+use Indieinabox\Core\Database;
 use Indieinabox\Support\FileUtils;
 use Indieinabox\Site;
 

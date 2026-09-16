@@ -6,8 +6,8 @@ namespace Indieinabox\Services;
 
 use PDO;
 use Exception;
-use Indieinabox\Database;
-use Indieinabox\Yaml;
+use Indieinabox\Core\Database;
+use Indieinabox\Support\Yaml;
 use Indieinabox\Feeds\Contracts\FeedParserInterface;
 use Indieinabox\Feeds\Parsers\TwtxtParser;
 use Indieinabox\Feeds\Parsers\RssParser;
@@ -412,7 +412,7 @@ class FetchFeedsService
         $stmt = $this->db->query("SELECT private_key FROM activitypub_keys WHERE key_id = 'main-key'");
         $row = $stmt ? $stmt->fetch(PDO::FETCH_ASSOC) : null;
 
-        if ($row && !empty($row['private_key']) && class_exists('\Indieinabox\HttpSignature')) {
+        if ($row && !empty($row['private_key']) && class_exists('\Indieinabox\Federation\HttpSignature')) {
             $privateKey = $row['private_key'];
             $fqdn = Database::getSetting('fqdn');
 
@@ -420,7 +420,7 @@ class FetchFeedsService
                 $fqdn = rtrim($fqdn, '/');
                 $keyId = $fqdn . '/actor#main-key';
 
-                $sigHeaders = \Indieinabox\HttpSignature::sign(
+                $sigHeaders = \Indieinabox\Federation\HttpSignature::sign(
                     $keyId,
                     $privateKey,
                     'GET',

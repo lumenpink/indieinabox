@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Indieinabox\Database;
+use Indieinabox\Core\Database;
 use Indieinabox\IndieAuth\TokenManager;
 use Indieinabox\IndieAuth\PkceValidator;
 

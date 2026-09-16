@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tests\Unit\Http;
 
 use Indieinabox\Core\Container;
-use Indieinabox\Database;
+use Indieinabox\Core\Database;
 use Indieinabox\Http\Controllers\ActivityPubController;
 use Indieinabox\Http\Controllers\AdminController;
 use Indieinabox\Http\Controllers\ArchiveController;

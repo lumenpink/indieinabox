@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Indieinabox\Yaml;
+use Indieinabox\Support\Yaml;
 
 it('loads YAML configuration from a string', function () {
     $yamlString = "title: Indie Site\nauthor: ~lumen\nbuildall: true";

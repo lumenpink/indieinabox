@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Indieinabox\Database;
+use Indieinabox\Core\Database;
 use Indieinabox\Federation\ActivityPubAdapter;
 use Indieinabox\Site;
 

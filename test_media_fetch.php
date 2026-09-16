@@ -2,8 +2,8 @@
 require 'vendor/autoload.php';
 
 $config = require __DIR__ . '/.config.php';
-\Indieinabox\Database::$dataDir = dirname($config['db_path']);
-\Indieinabox\Database::connect($config['db_path']);
+\Indieinabox\Core\Database::$dataDir = dirname($config['db_path']);
+\Indieinabox\Core\Database::connect($config['db_path']);
 
 $fetcher = new \Indieinabox\FeedFetcher();
 

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Indieinabox\Console\Commands;
 
 use Indieinabox\Theme\ThemeData;
-use Indieinabox\WebmentionSender;
+use Indieinabox\Webmention\WebmentionSender;
 
 /**
  * Command to test Webmention endpoint discovery, outbound ping delivery, and h-card compliance.

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 use Indieinabox\BackgroundWorker\InboxProcessor;
 use Indieinabox\Site;
-use Indieinabox\Database;
+use Indieinabox\Core\Database;
 
 beforeEach(function () {
     $this->tempDir = sys_get_temp_dir() . '/inbox_proc_test_' . uniqid('', true);

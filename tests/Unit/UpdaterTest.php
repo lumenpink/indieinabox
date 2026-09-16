@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use Indieinabox\Updater;
-use Indieinabox\Database;
+use Indieinabox\Core\Database;
+use Indieinabox\Services\UpdateService;
 
 beforeEach(function () {
     /** @var \Tests\TestCase $this */
@@ -20,14 +20,14 @@ beforeEach(function () {
     $this->mockExecutable = $this->tempDir . '/indieinabox.php';
     file_put_contents($this->mockExecutable, '<?php echo "original executable";');
 
-    Updater::$customExecutablePath = $this->mockExecutable;
-    Updater::$customVersionsDir = $this->versionsDir;
+    UpdateService::$customExecutablePath = $this->mockExecutable;
+    UpdateService::$customVersionsDir = $this->versionsDir;
 });
 
 afterEach(function () {
     /** @var \Tests\TestCase $this */
-    Updater::$customExecutablePath = null;
-    Updater::$customVersionsDir = null;
+    UpdateService::$customExecutablePath = null;
+    UpdateService::$customVersionsDir = null;
     Database::disconnect();
 
     if (is_dir($this->tempDir)) {
@@ -36,20 +36,20 @@ afterEach(function () {
 });
 
 test('Updater enforces MAX_BACKUPS = 2', function () {
-    expect(Updater::MAX_BACKUPS)->toBe(2);
+    expect(UpdateService::MAX_BACKUPS)->toBe(2);
 });
 
-test('Updater::getVersionsDir creates and returns versions directory', function () {
+test('UpdateService::getVersionsDir creates and returns versions directory', function () {
     /** @var \Tests\TestCase $this */
-    $dir = Updater::getVersionsDir();
+    $dir = UpdateService::getVersionsDir();
     expect(is_dir($dir))->toBeTrue();
     expect($dir)->toBe($this->versionsDir);
 });
 
-test('Updater::backupCurrentVersion creates backup file and enforces 2 backups limit', function () {
+test('UpdateService::backupCurrentVersion creates backup file and enforces 2 backups limit', function () {
     /** @var \Tests\TestCase $this */
     // First backup
-    $backup1 = Updater::backupCurrentVersion();
+    $backup1 = UpdateService::backupCurrentVersion();
     expect($backup1)->not->toBeFalse();
     expect(file_exists((string) $backup1))->toBeTrue();
     expect(basename((string) $backup1))->toMatch('/^indieinabox_backup_v.+\.php$/');
@@ -57,20 +57,20 @@ test('Updater::backupCurrentVersion creates backup file and enforces 2 backups l
     sleep(1);
 
     // Second backup
-    $backup2 = Updater::backupCurrentVersion();
+    $backup2 = UpdateService::backupCurrentVersion();
     expect($backup2)->not->toBeFalse();
     expect(file_exists((string) $backup2))->toBeTrue();
 
-    $backups = Updater::getLocalBackups();
+    $backups = UpdateService::getLocalBackups();
     expect(count($backups))->toBe(2);
 
     sleep(1);
 
     // Third backup - should rotate and prune oldest
-    $backup3 = Updater::backupCurrentVersion();
+    $backup3 = UpdateService::backupCurrentVersion();
     expect($backup3)->not->toBeFalse();
 
-    $backupsAfter = Updater::getLocalBackups();
+    $backupsAfter = UpdateService::getLocalBackups();
     expect(count($backupsAfter))->toBe(2);
 
     // Verify oldest was pruned
@@ -79,7 +79,7 @@ test('Updater::backupCurrentVersion creates backup file and enforces 2 backups l
     expect(file_exists((string) $backup3))->toBeTrue();
 });
 
-test('Updater::getLocalBackups parses version and sorts descending by date', function () {
+test('UpdateService::getLocalBackups parses version and sorts descending by date', function () {
     /** @var \Tests\TestCase $this */
     $dir = $this->versionsDir;
     if (!is_dir($dir)) {
@@ -95,7 +95,7 @@ test('Updater::getLocalBackups parses version and sorts descending by date', fun
     file_put_contents($file2, '<?php // backup 2');
     touch($file2, 1700001000);
 
-    $backups = Updater::getLocalBackups();
+    $backups = UpdateService::getLocalBackups();
     expect(count($backups))->toBe(2);
     expect($backups[0]['filename'])->toBe(basename($file2));
     expect($backups[0]['version'])->toBe('0.2.0');
@@ -103,11 +103,11 @@ test('Updater::getLocalBackups parses version and sorts descending by date', fun
     expect($backups[1]['version'])->toBe('0.1.0');
 });
 
-test('Updater::rollback restores content from backup', function () {
+test('UpdateService::rollback restores content from backup', function () {
     /** @var \Tests\TestCase $this */
     // Create initial executable content
     file_put_contents($this->mockExecutable, '<?php echo "version 1.0";');
-    $backup = Updater::backupCurrentVersion();
+    $backup = UpdateService::backupCurrentVersion();
     expect($backup)->not->toBeFalse();
 
     // Overwrite executable with new version
@@ -115,16 +115,16 @@ test('Updater::rollback restores content from backup', function () {
     expect(file_get_contents($this->mockExecutable))->toBe('<?php echo "version 2.0";');
 
     // Rollback to previous backup
-    $success = Updater::rollback(basename((string) $backup));
+    $success = UpdateService::rollback(basename((string) $backup));
     expect($success)->toBeTrue();
     expect(file_get_contents($this->mockExecutable))->toBe('<?php echo "version 1.0";');
 });
 
-test('Updater::processScheduledUpdate skips check if recent', function () {
+test('UpdateService::processScheduledUpdate skips check if recent', function () {
     /** @var \Tests\TestCase $this */
     Database::saveSetting('last_update_check', time());
 
-    $result = Updater::processScheduledUpdate();
+    $result = UpdateService::processScheduledUpdate();
     expect($result['checked'])->toBeFalse();
     expect($result['upgraded'])->toBeFalse();
     expect($result['message'])->toContain('Skipping update check');

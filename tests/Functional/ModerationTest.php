@@ -23,7 +23,7 @@ beforeEach(function () {
         'resources'
     );
     $this->site = new Site(null, $this->paths);
-    \Indieinabox\Database::$dataDir = $this->tempDir . '/data';
+    \Indieinabox\Core\Database::$dataDir = $this->tempDir . '/data';
     
     $_SESSION = [];
     $_POST = [];

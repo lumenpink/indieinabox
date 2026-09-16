@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Indieinabox\Localization;
 
-use Indieinabox\Database;
+use Indieinabox\Core\Database;
 use Indieinabox\Page;
 use Indieinabox\Support\FileUtils;
 use Indieinabox\Support\TextParser;

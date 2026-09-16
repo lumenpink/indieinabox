@@ -7,7 +7,7 @@ namespace Tests\Functional\Microsub;
 use PHPUnit\Framework\TestCase;
 use Indieinabox\Microsub\NormalizationAdapter;
 use Indieinabox\Microsub\ExtendedEntry;
-use Indieinabox\Database;
+use Indieinabox\Core\Database;
 use Opis\JsonSchema\Validator;
 
 /**

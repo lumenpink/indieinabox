@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tests\Integration;
 
 use Indieinabox\Core\Container;
-use Indieinabox\Database;
+use Indieinabox\Core\Database;
 use Indieinabox\Http\Controllers\ActivityPubController;
 use Indieinabox\Http\Controllers\AdminController;
 use Indieinabox\Http\Controllers\ArchiveController;
@@ -14,11 +14,11 @@ use Indieinabox\Http\Controllers\IndieAuthController;
 use Indieinabox\Http\Controllers\MicropubController;
 use Indieinabox\Http\Controllers\MicrosubController;
 use Indieinabox\Http\Controllers\WebmentionController;
+use Indieinabox\Http\WebRouter;
 use Indieinabox\Services\ModerationService;
 use Indieinabox\Services\WebmentionService;
 use Indieinabox\Site;
 use Indieinabox\Site\Paths;
-use Indieinabox\WebRouter;
 
 beforeEach(function () {
     Database::disconnect();

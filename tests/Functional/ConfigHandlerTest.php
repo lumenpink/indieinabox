@@ -3,10 +3,10 @@
 declare(strict_types=1);
 
 use Indieinabox\Site;
-use Indieinabox\WebRouter;
-use Indieinabox\Yaml;
+use Indieinabox\Http\WebRouter;
+use Indieinabox\Support\Yaml;
 use Indieinabox\Page;
-use Indieinabox\MarkdownParser;
+use Indieinabox\Markdown\MarkdownParser;
 use Indieinabox\Markdown\FileProcessor;
 use Indieinabox\Markdown\ContentProcessor;
 use Indieinabox\Markdown\LanguageProcessor;
@@ -23,11 +23,11 @@ beforeEach(function () use ($configTestTempDir) {
         mkdir($configTestTempDir . '/content', 0777, true);
     }
     
-    \Indieinabox\Database::disconnect();
+    \Indieinabox\Core\Database::disconnect();
 
-    \Indieinabox\Database::connect(':memory:');
+    \Indieinabox\Core\Database::connect(':memory:');
     $sql = file_get_contents(dirname(__DIR__, 2) . '/database.sql');
-    \Indieinabox\Database::getDb()->exec($sql);
+    \Indieinabox\Core\Database::getDb()->exec($sql);
     if (!is_dir($configTestTempDir . '/resources/views')) {
         mkdir($configTestTempDir . '/resources/views', 0777, true);
     }
@@ -99,7 +99,7 @@ it('processes bootstrap password configuration and writes .config.yml', function
     }
     ob_get_clean();
 
-    $db = \Indieinabox\Database::getDb();
+    $db = \Indieinabox\Core\Database::getDb();
     $stmt = $db->query("SELECT value FROM settings WHERE key = 'sitename'");
     $sitename = trim($stmt->fetchColumn(), '"');
     
@@ -164,7 +164,7 @@ it('authenticates user and sets session on valid authorization callback', functi
         'me' => 'https://mysite.com/'
     ];
 
-    $db = \Indieinabox\Database::getDb();
+    $db = \Indieinabox\Core\Database::getDb();
     $stmt = $db->prepare('INSERT INTO indieauth_codes (code_hash, client_id, redirect_uri, state, scope, code_challenge, code_challenge_method, expires_at, me) VALUES (:hash, :client_id, :redirect_uri, :state, :scope, :challenge, :method, :expires, :me)');
     $stmt->bindValue(':hash', hash('sha256', $code));
     $stmt->bindValue(':client_id', 'https://mysite.com/admin/config');
@@ -194,7 +194,7 @@ it('authenticates user and sets session on valid authorization callback', functi
     }
     ob_get_clean();
 
-    $db = \Indieinabox\Database::getDb();
+    $db = \Indieinabox\Core\Database::getDb();
     $stmt = $db->query("SELECT COUNT(*) FROM indieauth_codes WHERE code_hash = '" . hash('sha256', $code) . "'");
     $count = (int)$stmt->fetchColumn();
 
@@ -291,7 +291,7 @@ it('saves config and processes lang/kind removals and fallbacks', function () us
     }
     ob_get_clean();
 
-    $db = \Indieinabox\Database::getDb();
+    $db = \Indieinabox\Core\Database::getDb();
     $stmt = $db->query("SELECT value FROM settings WHERE key = 'lang'");
     $data = json_decode($stmt->fetchColumn(), true);
     expect($data)->toBe(['en']);
@@ -317,7 +317,7 @@ it('saves config and processes lang/kind removals and fallbacks', function () us
     } catch (\Exception $e) {}
     ob_get_clean();
 
-    $db = \Indieinabox\Database::getDb();
+    $db = \Indieinabox\Core\Database::getDb();
     $stmt = $db->query("SELECT value FROM settings WHERE key = 'lang'");
     $langData = json_decode($stmt->fetchColumn(), true);
     expect($langData)->toBe(['en']); // Default fallback to ['en']

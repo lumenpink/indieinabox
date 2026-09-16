@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Indieinabox;
+namespace Indieinabox\Federation;
 
 /**
  * Class HttpSignature

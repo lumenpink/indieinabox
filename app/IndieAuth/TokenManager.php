@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Indieinabox\IndieAuth;
 
 use PDO;
-use Indieinabox\Database;
+use Indieinabox\Core\Database;
 
 /**
  * Class TokenManager

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Indieinabox\Console\Commands;
 
-use Indieinabox\FeedFetcher;
+use Indieinabox\Services\FetchFeedsService;
 
 /**
  * Command to poll and ingest external subscriptions and twtxt feeds.
@@ -37,7 +37,7 @@ class FetchCommand extends AbstractCommand
     public function execute(array $argv): int
     {
         echo "Fetching feeds...\n";
-        $fetcher = new FeedFetcher();
+        $fetcher = new FetchFeedsService();
         $fetcher->fetchAll();
         echo "Feeds fetched successfully.\n";
         return 0;

@@ -6,7 +6,7 @@ namespace Indieinabox\Repositories;
 
 use PDO;
 use Exception;
-use Indieinabox\Database;
+use Indieinabox\Core\Database;
 use Indieinabox\Repositories\Contracts\SettingsRepositoryInterface;
 
 /**

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Indieinabox\BackgroundWorker;
 
 use Indieinabox\Site;
-use Indieinabox\WebmentionSender;
+use Indieinabox\Webmention\WebmentionSender;
 use PDO;
 
 /**

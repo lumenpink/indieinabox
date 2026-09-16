@@ -6,7 +6,7 @@ use Indieinabox\Support\FileUtils;
 use Indieinabox\Markdown\ContentProcessor;
 use Indieinabox\Markdown\FileProcessor;
 use Indieinabox\Markdown\LanguageProcessor;
-use Indieinabox\MarkdownParser;
+use Indieinabox\Markdown\MarkdownParser;
 use Indieinabox\Page;
 use Indieinabox\Site;
 use Indieinabox\Site\Paths;

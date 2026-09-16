@@ -47,7 +47,7 @@ class MockMicropubHandler extends \Indieinabox\Http\Controllers\MicropubControll
     }
 }
 
-class TestMicropubRouter extends \Indieinabox\WebRouter
+class TestMicropubRouter extends \Indieinabox\Http\WebRouter
 {
     public MockMicropubHandler $micropubMock;
 
@@ -77,12 +77,12 @@ beforeEach(function () use ($funcTempDir) {
     $_SESSION = [];
     
     // Set up test database
-    \Indieinabox\Database::disconnect();
+    \Indieinabox\Core\Database::disconnect();
     
     $testDbPath = $funcTempDir . '/test.sqlite';
-    \Indieinabox\Database::$dataDir = $funcTempDir;
-    \Indieinabox\Database::connect($testDbPath);
-    $db = \Indieinabox\Database::getDb();
+    \Indieinabox\Core\Database::$dataDir = $funcTempDir;
+    \Indieinabox\Core\Database::connect($testDbPath);
+    $db = \Indieinabox\Core\Database::getDb();
     $db->exec(file_get_contents(dirname(__DIR__, 2) . '/database.sql'));
 
     // Insert a valid token
@@ -187,7 +187,7 @@ it('creates an article post via JSON content', function () {
     expect($content)->toContain('- test');
 
     // Verify it queued the site build
-    $db = \Indieinabox\Database::getDb();
+    $db = \Indieinabox\Core\Database::getDb();
     $stmt = $db->query("SELECT * FROM inbox_queue WHERE type = 'build_site'");
     $queueItem = $stmt->fetch(\PDO::FETCH_ASSOC);
     expect($queueItem)->not->toBeFalse();

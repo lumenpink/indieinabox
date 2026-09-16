@@ -10,7 +10,7 @@ Service managing moderation workflows for incoming notifications, comments, and 
 ## Methods
 
 ### __construct()
-`public function __construct(?string $dataDir = null, ?Indieinabox\Yaml $yaml = null, ?Indieinabox\Repositories\Contracts\InteractionRepositoryInterface $interactions = null)`
+`public function __construct(?string $dataDir = null, ?Indieinabox\Support\Yaml $yaml = null, ?Indieinabox\Repositories\Contracts\InteractionRepositoryInterface $interactions = null)`
 
 ### getRepository()
 `public function getRepository(): Indieinabox\Repositories\Contracts\InteractionRepositoryInterface`

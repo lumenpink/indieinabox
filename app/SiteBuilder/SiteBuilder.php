@@ -2,8 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Indieinabox;
+namespace Indieinabox\SiteBuilder;
 
+use Indieinabox\Markdown\ParserInterface;
+use Indieinabox\Pages;
+use Indieinabox\Site;
 use Indieinabox\SiteBuilder\AssetPublisher;
 use Indieinabox\SiteBuilder\ContentScanner;
 use Indieinabox\SiteBuilder\FeedPublisher;
@@ -28,7 +31,7 @@ class SiteBuilder
      */
     private Pages $pages;
     /**
-     * @var \Indieinabox\ParserInterface
+     * @var \Indieinabox\Markdown\ParserInterface
      */
     private ParserInterface $parser;
     /**
@@ -61,7 +64,7 @@ class SiteBuilder
      *
      * @param \Indieinabox\Site $site The site configuration and environment settings.
      * @param \Indieinabox\Pages|null $pages An optional collection of parsed pages.
-     * @param \Indieinabox\ParserInterface|null $parser An optional markdown parser implementation.
+     * @param \Indieinabox\Markdown\ParserInterface|null $parser An optional markdown parser implementation.
      * @param \Indieinabox\SiteBuilder\AssetPublisher|null $assetPublisher An optional asset publisher.
      * @param \Indieinabox\SiteBuilder\FeedPublisher|null $feedPublisher An optional feed publisher.
      * @param \Indieinabox\SiteBuilder\PagePublisher|null $pagePublisher An optional page publisher.
@@ -104,7 +107,7 @@ class SiteBuilder
     /**
      * Retrieves the markdown parser implementation.
      *
-     * @return \Indieinabox\ParserInterface
+     * @return \Indieinabox\Markdown\ParserInterface
      */
     public function getParser(): ParserInterface
     {

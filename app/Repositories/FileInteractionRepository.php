@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Indieinabox\Repositories;
 
 use DirectoryIterator;
-use Indieinabox\Database;
-use Indieinabox\Yaml;
+use Indieinabox\Core\Database;
+use Indieinabox\Support\Yaml;
 use Indieinabox\Repositories\Contracts\InteractionRepositoryInterface;
 
 /**

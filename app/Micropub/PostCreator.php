@@ -6,7 +6,7 @@ namespace Indieinabox\Micropub;
 
 use Indieinabox\Site;
 use Indieinabox\Support\TextParser;
-use Indieinabox\Database;
+use Indieinabox\Core\Database;
 
 /**
  * Class PostCreator
@@ -177,9 +177,7 @@ class PostCreator
         }
 
         // Queue outgoing webmentions
-        if (class_exists('\\Indieinabox\\WebmentionSender')) {
-            \Indieinabox\WebmentionSender::queueOutgoingWebmentions($postUrl, $frontmatter, $content);
-        }
+        \Indieinabox\Webmention\WebmentionSender::queueOutgoingWebmentions($postUrl, $frontmatter, $content);
 
         return [
             'status' => 202,

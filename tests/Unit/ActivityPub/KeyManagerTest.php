@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use Indieinabox\ActivityPub\KeyManager;
-use Indieinabox\Database;
+use Indieinabox\Core\Database;
 
 beforeEach(function () {
     $this->tempDir = sys_get_temp_dir() . '/iiab_keymgr_test_' . uniqid();

@@ -7,10 +7,10 @@ namespace Indieinabox\SiteBuilder;
 use Indieinabox\Markdown\ContentProcessor;
 use Indieinabox\Markdown\FileProcessor;
 use Indieinabox\Markdown\LanguageProcessor;
-use Indieinabox\MarkdownParser;
+use Indieinabox\Markdown\MarkdownParser;
 use Indieinabox\Page;
 use Indieinabox\Pages;
-use Indieinabox\ParserInterface;
+use Indieinabox\Markdown\ParserInterface;
 use Indieinabox\Site;
 use Indieinabox\Translations\UrlTranslations;
 

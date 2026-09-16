@@ -131,7 +131,7 @@ class NormalizationAdapter
         $entry->originServer = $domain;
 
         if ($domain !== 'unknown') {
-            $db = \Indieinabox\Database::getDb();
+            $db = \Indieinabox\Core\Database::getDb();
             $stmt = $db->prepare('SELECT supports_webmention, last_checked FROM webmention_discovery_cache WHERE domain = ?');
             $stmt->execute([$domain]);
             $row = $stmt->fetch(\PDO::FETCH_ASSOC);

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 use Indieinabox\BackgroundWorker\OutboxDispatcher;
 use Indieinabox\Site;
-use Indieinabox\Database;
+use Indieinabox\Core\Database;
 
 beforeEach(function () {
     $this->tempDir = sys_get_temp_dir() . '/ap_outbox_test_' . uniqid('', true);

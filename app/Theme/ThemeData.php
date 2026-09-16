@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Indieinabox\Theme;
 
-use Indieinabox\Database;
+use Indieinabox\Core\Database;
 use Indieinabox\Localization\Translator;
 use Indieinabox\Page;
 use Indieinabox\Site;

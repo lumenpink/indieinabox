@@ -7,7 +7,7 @@ namespace Indieinabox\Webmention;
 use DOMDocument;
 use DOMElement;
 use DOMXPath;
-use Indieinabox\Whostyles;
+use Indieinabox\Theme\Whostyles;
 
 /**
  * Class SourceVerifier

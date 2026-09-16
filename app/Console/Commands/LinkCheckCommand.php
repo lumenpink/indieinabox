@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Indieinabox\Console\Commands;
 
-use Indieinabox\LinkChecker;
+use Indieinabox\Services\LinkCheckerService;
 
 /**
  * Command to scan built static site files and verify internal and external hyperlink validity.
@@ -38,7 +38,7 @@ class LinkCheckCommand extends AbstractCommand
             }
         }
 
-        $checker = new LinkChecker($this->site);
+        $checker = new LinkCheckerService($this->site);
         $checker->run($reportPath, $skipExternal);
         return 0;
     }

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Indieinabox;
+namespace Indieinabox\Webmention;
 
+use Indieinabox\Core\Database;
 use PDO;
-use Indieinabox\Webmention\LinkExtractor;
 
 /**
  * Class WebmentionSender

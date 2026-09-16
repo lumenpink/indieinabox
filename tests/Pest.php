@@ -54,8 +54,8 @@ expect()->extend('toBeOne', function () {
 */
 
 afterEach(function () {
-    if (class_exists(\Indieinabox\Database::class)) {
-        \Indieinabox\Database::disconnect();
+    if (class_exists(\Indieinabox\Core\Database::class)) {
+        \Indieinabox\Core\Database::disconnect();
     }
 });
 

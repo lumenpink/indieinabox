@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use Indieinabox\Site;
-use Indieinabox\WebRouter;
+use Indieinabox\Http\WebRouter;
 
 $funcTempDir = __DIR__ . '/../../data_test_ap';
 
@@ -17,14 +17,14 @@ beforeEach(function () use ($funcTempDir) {
     $GLOBALS['test_ap_site'] = $site;
     
     // Clear static Database instance for isolation
-    \Indieinabox\Database::disconnect();
+    \Indieinabox\Core\Database::disconnect();
     
     $testDbPath = $funcTempDir . '/test.sqlite';
     if (file_exists($testDbPath)) {
         unlink($testDbPath);
     }
-    \Indieinabox\Database::connect($testDbPath);
-    $db = \Indieinabox\Database::getDb();
+    \Indieinabox\Core\Database::connect($testDbPath);
+    $db = \Indieinabox\Core\Database::getDb();
     
     $schema = file_get_contents(__DIR__ . '/../../database.sql');
     $schema = str_replace('INSERT INTO settings', 'INSERT OR REPLACE INTO settings', $schema);
@@ -34,7 +34,7 @@ beforeEach(function () use ($funcTempDir) {
     $db->exec("INSERT OR REPLACE INTO settings (key, value) VALUES ('fqdn', 'http://localhost:8080')");
     $db->exec("INSERT OR REPLACE INTO settings (key, value) VALUES ('activitypub_handle', 'lumen')");
     
-    $GLOBALS['test_ap_site']->config = \Indieinabox\Database::getAllSettings();
+    $GLOBALS['test_ap_site']->config = \Indieinabox\Core\Database::getAllSettings();
     $GLOBALS['test_ap_site']->config['activitypub_enabled'] = '1';
     
     $GLOBALS['test_ap_db'] = $db;

@@ -6,9 +6,8 @@ namespace Indieinabox\Federation;
 
 use Indieinabox\ActivityPub\ActivityBuilder;
 use Indieinabox\ActivityPub\KeyManager;
-use Indieinabox\Database;
+use Indieinabox\Core\Database;
 use Indieinabox\Federation\Contracts\FederationAdapter;
-use Indieinabox\HttpSignature;
 use Indieinabox\Site;
 use Throwable;
 

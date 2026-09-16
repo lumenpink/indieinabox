@@ -2,12 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Indieinabox;
+namespace Indieinabox\Services;
 
-class BackupManager {
+use Indieinabox\Core\Database;
+use Indieinabox\Site;
+
+class BackupService
+{
     private Site $site;
     
-    public function __construct(Site $site) {
+    public function __construct(Site $site)
+    {
         $this->site = $site;
     }
     

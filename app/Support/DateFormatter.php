@@ -6,7 +6,7 @@ namespace Indieinabox\Support;
 
 use DateTime;
 use DateTimeZone;
-use Indieinabox\Database;
+use Indieinabox\Core\Database;
 use Indieinabox\Page;
 
 /**

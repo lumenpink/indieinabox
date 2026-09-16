@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Indieinabox;
+namespace Indieinabox\Http;
 
 use Indieinabox\Http\Controllers\ActivityPubController;
 use Indieinabox\Http\Controllers\AdminController;
@@ -12,6 +12,7 @@ use Indieinabox\Http\Controllers\MicropubController;
 use Indieinabox\Http\Controllers\MicrosubController;
 use Indieinabox\Http\Controllers\WebmentionController;
 use Indieinabox\Http\StaticFileServer;
+use Indieinabox\Site;
 
 /**
  * Class WebRouter

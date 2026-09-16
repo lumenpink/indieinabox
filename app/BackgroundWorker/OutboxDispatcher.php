@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Indieinabox\BackgroundWorker;
 
+use Indieinabox\Core\Database;
+use Indieinabox\Federation\HttpSignature;
 use Indieinabox\Site;
-use Indieinabox\Database;
-use Indieinabox\HttpSignature;
 use PDO;
 
 /**

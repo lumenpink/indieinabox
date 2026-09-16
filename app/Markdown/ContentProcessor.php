@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Indieinabox\Markdown;
 
-use Indieinabox\Yaml;
+use Indieinabox\Support\Yaml;
 
 /**
  * Class ContentProcessor

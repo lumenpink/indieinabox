@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use Indieinabox\Database;
-use Indieinabox\WebmentionSender;
+use Indieinabox\Core\Database;
+use Indieinabox\Webmention\WebmentionSender;
 
 beforeEach(function () {
     $this->tempDir = sys_get_temp_dir() . '/iiab_wmsender_test_' . uniqid();

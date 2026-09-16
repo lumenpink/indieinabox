@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Indieinabox\Console\Commands;
 
-use Indieinabox\BackupManager;
+use Indieinabox\Services\BackupService;
 
 /**
  * Command to archive database, content, and media directories into a timestamped zip archive.
@@ -31,8 +31,8 @@ class BackupCommand extends AbstractCommand
         $skipContent = $this->hasFlag($argv, '--no-content');
         $skipMedia = $this->hasFlag($argv, '--no-media');
 
-        $backupManager = new BackupManager($this->site);
-        $backupManager->run($skipContent, $skipMedia);
+        $backupService = new BackupService($this->site);
+        $backupService->run($skipContent, $skipMedia);
         return 0;
     }
 }

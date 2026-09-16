@@ -37,12 +37,18 @@ The project follows Domain-Driven Design (DDD) and SOLID principles, structured 
 ## Directory Structure
 
 - **`app/`**: Core application logic and bounded contexts:
-  - **`Core/`**: Lightweight PSR-11 Dependency Injection container (`Container.php`) and exception hierarchies.
+  - **`Core/`**: Foundational runtime services:
+    - `Container.php`: Lightweight PSR-11 Dependency Injection container.
+    - `Database.php`: Centralized SQLite database connector and settings management.
+    - `Bootstrap.php`: System bootstrapper and environment initialization.
+    - `Version.php`: Semantic versioning, build metadata, and commit hash tracking.
   - **`Federation/`**: Protocol adapters and federation abstraction layer:
     - `Contracts/FederationAdapter.php`: Unified adapter interface for fediverse protocols.
     - `ActivityPub/ActivityPubAdapter.php`: Native ActivityPub adapter implementation.
     - `FederationManager.php`: Pluggable federation manager orchestrating actors, activities, and protocol delivery.
+    - `HttpSignature.php`: Cryptographic HTTP signature creation and verification for ActivityPub requests.
   - **`Http/`**: HTTP transport layer and static asset delivery:
+    - `WebRouter.php`: Central HTTP request dispatcher routing paths to transport controllers and static assets.
     - `StaticFileServer.php`: Dedicated HTTP static asset and media file server with ActivityPub content negotiation and MIME resolution.
     - `Controllers/`: Decoupled transport controllers:
       - `AbstractController.php`: Base HTTP controller with JSON, HTML, and redirect responses.
@@ -65,6 +71,22 @@ The project follows Domain-Driven Design (DDD) and SOLID principles, structured 
     - `ConfigurationService.php`: Site setup bootstrap, settings persistence, kind taxonomies, translations, and theme installations.
     - `FetchFeedsService.php`: Syndication feed fetching, strategy-based parsing, media caching, and storage.
     - `MicrosubService.php`: Microsub channels, subscriptions, timeline retrieval, read tracking, and social interactions.
+    - `BackupService.php`: Automated archive snapshots, rotation, and data integrity backups.
+    - `UpdateService.php`: Semantic version updates, remote release checks, and rollbacks.
+    - `ShortlinkService.php`: Custom base58 shortlinks, redirection mapping, and permalinks.
+    - `LinkCheckerService.php`: External link health checking, broken link reporting, and status tracking.
+  - **`BackgroundWorker/`**: Periodic queue processing and background workers:
+    - `BackgroundWorker.php`: Orchestrator for all background execution pipelines and cron locks.
+    - `InboxProcessor.php`: Incoming webmention and ActivityPub queue processor with spam checks.
+    - `OutboxDispatcher.php`: Outgoing ActivityPub delivery worker and retry queue dispatcher.
+    - `ArchiveProcessor.php`: Background web page archiver and snapshot creator.
+    - `OutgoingWebmentionDispatcher.php`: Dispatches pending webmentions to remote discovery endpoints.
+    - `WebmentionDiscovery.php`: Discovers webmention endpoints on target URLs.
+  - **`Webmention/`**: Webmention protocol components:
+    - `WebmentionSender.php`: Endpoint discovery and outgoing webmention transmission.
+    - `LinkExtractor.php`: Extracts links and interaction targets from content.
+    - `PayloadParser.php`: Parses microformats2 and metadata from source documents.
+    - `SourceVerifier.php`: Verifies that source documents link back to target URLs.
   - **`Views/`**: Presentation components cleanly decoupled from transport controllers:
     - `ArchiveView.php`: Snapshot explorer toolbar and iframe view presenter.
     - `Webmention/HelpPageView.php`: Interactive webmention endpoint test and documentation page.
@@ -90,10 +112,10 @@ The project follows Domain-Driven Design (DDD) and SOLID principles, structured 
     - `Generators/`: Feed generation implementations (`RssFeedGenerator`, `AtomFeedGenerator`, `TwtxtFeedGenerator`).
   - **`Microsub/`**: Universal microsub entries and normalization adapters (`ExtendedEntry`, `NormalizationAdapter`).
   - **`Entry/`**: Universal `Entry` domain model for feed items, posts, and federation.
-  - **`SiteBuilder/`**: Core site generation services (`ContentScanner`, `TranslationVirtualizer`, `PagePublisher`, `IndexPublisher`, `FeedPublisher`, `AssetPublisher`).
-  - **`Markdown/`**: Custom AST parser, processors, validators, and protocol renderers (HTML, Gemtext, Gophermap).
-  - **`Theme/`**: Theme metadata, SEO helpers, and microformats components.
-  - **`Support/`**: Domain utilities (`TextParser`, `DateFormatter`, `HtmlUtils`, `FileUtils`).
+  - **`SiteBuilder/`**: Core site generation services (`SiteBuilder`, `ContentScanner`, `TranslationVirtualizer`, `PagePublisher`, `IndexPublisher`, `FeedPublisher`, `AssetPublisher`).
+  - **`Markdown/`**: Custom AST parser, processors, validators, and protocol renderers (`MarkdownParser`, `ParserInterface`, HTML, Gemtext, Gophermap).
+  - **`Theme/`**: Theme management and rendering (`ThemeManager`, `Whostyles`, `ThemeData`, `ThemeHelper`).
+  - **`Support/`**: Domain utilities (`Yaml`, `TextParser`, `DateFormatter`, `HtmlUtils`, `FileUtils`).
   - **`Taxonomy/`**: Kind helpers and post categorization services (`KindHelper`).
   - **`Localization/`**: Translation services (`Translator`).
   - **`Media/`**: Dithering and image generation services (`ImageProcessor`).

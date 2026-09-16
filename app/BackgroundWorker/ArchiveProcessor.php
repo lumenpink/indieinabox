@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Indieinabox\BackgroundWorker;
 
-use Indieinabox\Database;
+use Indieinabox\Core\Database;
 use Indieinabox\Site;
 use PDO;
 

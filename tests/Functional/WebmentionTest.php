@@ -9,7 +9,7 @@ class MockWebmentionHandler
     public static array $mockResponses = [];
 }
 
-class TestWebRouter extends \Indieinabox\WebRouter
+class TestWebRouter extends \Indieinabox\Http\WebRouter
 {
 }
 
@@ -26,12 +26,12 @@ beforeEach(function () use ($funcTempDir) {
     $_SERVER = [];
     
     // Set up test database
-    \Indieinabox\Database::disconnect();
+    \Indieinabox\Core\Database::disconnect();
     
     $testDbPath = $funcTempDir . '/test.sqlite';
-    \Indieinabox\Database::$dataDir = $funcTempDir . '/data';
-    \Indieinabox\Database::connect($testDbPath);
-    $db = \Indieinabox\Database::getDb();
+    \Indieinabox\Core\Database::$dataDir = $funcTempDir . '/data';
+    \Indieinabox\Core\Database::connect($testDbPath);
+    $db = \Indieinabox\Core\Database::getDb();
     $db->exec(file_get_contents(dirname(__DIR__, 2) . '/database.sql'));
 });
 
@@ -251,7 +251,7 @@ HTML;
         ->and($json['message'])->toContain('Webmention accepted and queued for processing');
 
     // Run InboxProcessor to process the queued payload
-    $processor = new \Indieinabox\BackgroundWorker\InboxProcessor($site, \Indieinabox\Database::getDb(), fn($url) => MockWebmentionHandler::$mockResponses[$url] ?? false);
+    $processor = new \Indieinabox\BackgroundWorker\InboxProcessor($site, \Indieinabox\Core\Database::getDb(), fn($url) => MockWebmentionHandler::$mockResponses[$url] ?? false);
     $processor->process();
 
     // Assert webmention was saved to markdown file
@@ -263,7 +263,7 @@ HTML;
     
     $content = file_get_contents($mdFile);
     preg_match('/^---\s*\n(.*?)\n---\s*\n(.*)$/s', $content, $matches);
-    $yamlParser = new \Indieinabox\Yaml();
+    $yamlParser = new \Indieinabox\Support\Yaml();
     $data = $yamlParser->loadString($matches[1]);
     
     expect($data['source'])->toBe($source);
@@ -299,7 +299,7 @@ function setupWebmentionTest(string $funcTempDir, string $sourceHtml): array
     $router->handleRequest();
     ob_get_clean();
 
-    $processor = new \Indieinabox\BackgroundWorker\InboxProcessor($site, \Indieinabox\Database::getDb(), fn($url) => MockWebmentionHandler::$mockResponses[$url] ?? false);
+    $processor = new \Indieinabox\BackgroundWorker\InboxProcessor($site, \Indieinabox\Core\Database::getDb(), fn($url) => MockWebmentionHandler::$mockResponses[$url] ?? false);
     $processor->process();
 
     $expectedHash = md5('about');
@@ -307,7 +307,7 @@ function setupWebmentionTest(string $funcTempDir, string $sourceHtml): array
     if (file_exists($mdFile)) {
         $content = file_get_contents($mdFile);
         preg_match('/^---\s*\n(.*?)\n---\s*\n(.*)$/s', $content, $matches);
-        $yamlParser = new \Indieinabox\Yaml();
+        $yamlParser = new \Indieinabox\Support\Yaml();
         $data = $yamlParser->loadString($matches[1]);
         $data['text'] = trim($matches[2]);
         return [$data];

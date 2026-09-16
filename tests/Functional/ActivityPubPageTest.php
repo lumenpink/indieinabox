@@ -4,8 +4,8 @@ declare(strict_types=1);
 use PHPUnit\Framework\Assert;
 use Indieinabox\Site;
 use Indieinabox\Site\Paths;
-use Indieinabox\SiteBuilder;
-use Indieinabox\WebRouter;
+use Indieinabox\SiteBuilder\SiteBuilder;
+use Indieinabox\Http\WebRouter;
 
 beforeEach(function () {
     /** @var \Tests\TestCase|mixed $this */

@@ -1,6 +1,8 @@
 <?php
 
-namespace Indieinabox;
+declare(strict_types=1);
+
+namespace Indieinabox\Theme;
 
 /**
  * Class Whostyles

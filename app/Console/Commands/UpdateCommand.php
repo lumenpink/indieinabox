@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Indieinabox\Console\Commands;
 
-use Indieinabox\Database;
-use Indieinabox\Updater;
-use Indieinabox\Version;
+use Indieinabox\Core\Database;
+use Indieinabox\Core\Version;
+use Indieinabox\Services\UpdateService;
 
 /**
  * Command to check, apply, inspect backups, and rollback application versions via CLI.
@@ -38,7 +38,7 @@ class UpdateCommand extends AbstractCommand
         $action = $argv[2] ?? '--check';
         if ($action === 'check' || $action === '--check') {
             echo "Checking Codeberg releases for updates...\n";
-            $releases = Updater::checkAvailableVersions();
+            $releases = UpdateService::checkAvailableVersions();
             $current = Version::get();
             echo "Current version: {$current}\n";
 
@@ -63,14 +63,14 @@ class UpdateCommand extends AbstractCommand
 
         if ($action === 'apply' || $action === '--apply' || $action === 'install') {
             echo "Fetching latest release information...\n";
-            $latest = Updater::getLatestRelease(false);
+            $latest = UpdateService::getLatestRelease(false);
             if (!$latest || empty($latest['download_url'])) {
                 echo "Error: No downloadable release found.\n";
                 return 1;
             }
 
             echo "Backing up current executable and installing " . ($latest['name'] ?? $latest['tag_name']) . "...\n";
-            $success = Updater::downloadAndInstall((string) $latest['download_url']);
+            $success = UpdateService::downloadAndInstall((string) $latest['download_url']);
             if ($success) {
                 Database::saveSetting('last_installed_update_id', $latest['id'] ?? null);
                 echo "Success: Update installed successfully!\n";
@@ -82,8 +82,8 @@ class UpdateCommand extends AbstractCommand
         }
 
         if ($action === 'backups' || $action === '--backups' || $action === 'list') {
-            $backups = Updater::getLocalBackups();
-            echo "Local version backups (retaining up to " . Updater::MAX_BACKUPS . "):\n\n";
+            $backups = UpdateService::getLocalBackups();
+            echo "Local version backups (retaining up to " . UpdateService::MAX_BACKUPS . "):\n\n";
             if (empty($backups)) {
                 echo "No backups found.\n";
                 return 0;
@@ -104,7 +104,7 @@ class UpdateCommand extends AbstractCommand
                 $target = null;
             }
 
-            $backups = Updater::getLocalBackups();
+            $backups = UpdateService::getLocalBackups();
             if (empty($backups)) {
                 echo "Error: No backups available for rollback.\n";
                 return 1;
@@ -112,7 +112,7 @@ class UpdateCommand extends AbstractCommand
 
             $targetFilename = $target ?? $backups[0]['filename'];
             echo "Rolling back to backup: {$targetFilename}...\n";
-            $success = Updater::rollback($targetFilename);
+            $success = UpdateService::rollback($targetFilename);
             if ($success) {
                 echo "Success: Rollback completed successfully!\n";
                 return 0;

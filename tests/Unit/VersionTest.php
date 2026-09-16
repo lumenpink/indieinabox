@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Indieinabox\Version;
+use Indieinabox\Core\Version;
 
 test('Version::getBaseVersion returns semver string', function () {
     $base = Version::getBaseVersion();

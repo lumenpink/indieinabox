@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Indieinabox;
+namespace Indieinabox\Markdown;
 
-use Indieinabox\Markdown\ContentProcessor;
-use Indieinabox\Markdown\FileProcessor;
-use Indieinabox\Markdown\LanguageProcessor;
+use Indieinabox\Core\Database;
+use Indieinabox\Page;
+use Indieinabox\Site;
 use Indieinabox\Support\DateFormatter;
 use Indieinabox\Support\TextParser;
 use Indieinabox\Taxonomy\KindHelper;

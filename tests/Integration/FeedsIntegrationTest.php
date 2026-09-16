@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use Indieinabox\Core\Container;
-use Indieinabox\Database;
+use Indieinabox\Core\Database;
 use Indieinabox\Http\Controllers\MicrosubController;
 use Indieinabox\Services\FetchFeedsService;
 use Indieinabox\Services\MicrosubService;

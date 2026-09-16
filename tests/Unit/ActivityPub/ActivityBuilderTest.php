@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use Indieinabox\ActivityPub\ActivityBuilder;
-use Indieinabox\Database;
+use Indieinabox\Core\Database;
 
 beforeEach(function () {
     $this->tempDir = sys_get_temp_dir() . '/iiab_actbld_test_' . uniqid();

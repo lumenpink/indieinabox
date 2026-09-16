@@ -23,11 +23,11 @@ beforeEach(function () {
     $backupPage = $page ?? null;
     $backupP = $p ?? null;
 
-    \Indieinabox\Database::disconnect();
+    \Indieinabox\Core\Database::disconnect();
 
-    \Indieinabox\Database::connect(':memory:');
+    \Indieinabox\Core\Database::connect(':memory:');
     $sql = file_get_contents(dirname(__DIR__, 2) . '/database.sql');
-    \Indieinabox\Database::getDb()->exec($sql);
+    \Indieinabox\Core\Database::getDb()->exec($sql);
 
     $site = new Site(
         null,
@@ -89,7 +89,7 @@ it('adds missing keys to database dynamically', function () {
     expect(translate('Missing key example', 'es'))->toBe('Missing key example');
     expect($site->config['translations']['Missing key example']['es'])->toBe('');
 
-    $db = \Indieinabox\Database::getDb();
+    $db = \Indieinabox\Core\Database::getDb();
     $stmt = $db->query("SELECT * FROM translations WHERE phrase_key = 'Missing key example' AND lang = 'es'");
     $row = $stmt->fetch(\PDO::FETCH_ASSOC);
     

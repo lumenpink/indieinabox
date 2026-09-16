@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Indieinabox\Console\Commands;
 
-use Indieinabox\BackgroundWorker;
+use Indieinabox\BackgroundWorker\BackgroundWorker;
 
 /**
  * Command to execute periodic background worker pipelines.

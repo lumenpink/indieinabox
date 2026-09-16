@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Indieinabox\Yaml;
+use Indieinabox\Support\Yaml;
 
 // Setup directories
 $sandbox = dirname(__DIR__) . '/Integration/tmp_sandbox';

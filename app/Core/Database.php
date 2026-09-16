@@ -2,11 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Indieinabox;
+namespace Indieinabox\Core;
 
 use Exception;
 use PDO;
-use Indieinabox\Core\Container;
 use Indieinabox\Repositories\Contracts\SettingsRepositoryInterface;
 use Indieinabox\Repositories\SqliteSettingsRepository;
 

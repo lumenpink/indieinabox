@@ -418,4 +418,19 @@ app/
     - `MicropubController.php`: Updated client endpoint (`/micropub/client`) to render `MicropubClientView`.
     - `ConfigController.php`: Cleanly delegates administration requests to `AdminController`.
   - Maintained 100% single-file compilation compatibility (`composer compile`), zero CodeSniffer warnings/errors across all 142 files, and full 3-tier test suite passes (453 tests).
+- [x] **Bounded Context Reorganization of Flat App Root (Phase 3)**:
+  - Eliminated flat `app/` root files and reorganized all application components into cohesive bounded context namespaces and subdirectories:
+    - `Indieinabox\Core`: `Version.php`, `Bootstrap.php`, `Database.php`, `Container.php`.
+    - `Indieinabox\Services`: `BackupService.php` (renamed from `BackupManager`), `UpdateService.php` (renamed from `Updater`), `ShortlinkService.php` (renamed from `ShortlinkManager`), `LinkCheckerService.php` (renamed from `LinkChecker`), along with existing domain services.
+    - `Indieinabox\Http`: `WebRouter.php`, `StaticFileServer.php`, and controllers.
+    - `Indieinabox\Federation`: `HttpSignature.php`, `ActivityPubAdapter.php`, `FederationManager.php`.
+    - `Indieinabox\BackgroundWorker`: `BackgroundWorker.php`, `InboxProcessor.php`, `OutboxDispatcher.php`, `ArchiveProcessor.php`, `OutgoingWebmentionDispatcher.php`, `WebmentionDiscovery.php`.
+    - `Indieinabox\SiteBuilder`: `SiteBuilder.php`, `ContentScanner.php`, `TranslationVirtualizer.php`, `PagePublisher.php`, `IndexPublisher.php`, `FeedPublisher.php`, `AssetPublisher.php`.
+    - `Indieinabox\Theme`: `ThemeManager.php`, `Whostyles.php`, `ThemeData.php`, `ThemeHelper.php`.
+    - `Indieinabox\Markdown`: `MarkdownParser.php`, `ParserInterface.php`, AST parser, processors, validators, and renderers.
+    - `Indieinabox\Support`: `Yaml.php`, `TextParser.php`, `DateFormatter.php`, `HtmlUtils.php`, `FileUtils.php`.
+    - `Indieinabox\Webmention`: `WebmentionSender.php`, `LinkExtractor.php`, `PayloadParser.php`, `SourceVerifier.php`.
+  - Removed obsolete legacy alias proxy `app/FeedFetcher.php`.
+  - Updated single-file compiler (`compile.php`), `build.php`, `bootstrap/app.php`, `cron.php`, `install.php`, and all view templates.
+  - Verified 100% single-file compilation compatibility (`composer compile` into `indieinabox.php`), passing `composer test:compiled`, 100% passing tests (453 tests across Unit, Functional, Integration), and 0 PHP CodeSniffer warnings/errors.
 

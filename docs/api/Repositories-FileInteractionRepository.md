@@ -7,12 +7,12 @@ File-backed repository storing interactions in channel markdown files.
 
 ### `private ?string $customDataDir`
 
-### `private Indieinabox\Yaml $yaml`
+### `private Indieinabox\Support\Yaml $yaml`
 
 ## Methods
 
 ### __construct()
-`public function __construct(?string $dataDir = null, ?Indieinabox\Yaml $yaml = null)`
+`public function __construct(?string $dataDir = null, ?Indieinabox\Support\Yaml $yaml = null)`
 
 ### getDataDir()
 `public function getDataDir(): string`

@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use Indieinabox\Core\Container;
-use Indieinabox\Database;
+use Indieinabox\Core\Database;
 use Indieinabox\Repositories\Contracts\InteractionRepositoryInterface;
 use Indieinabox\Repositories\Contracts\SettingsRepositoryInterface;
 use Indieinabox\Repositories\FileInteractionRepository;

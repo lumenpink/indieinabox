@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use Indieinabox\Site;
-use Indieinabox\Database;
+use Indieinabox\Core\Database;
 use Indieinabox\Micropub\PostCreator;
 
 beforeEach(function () {

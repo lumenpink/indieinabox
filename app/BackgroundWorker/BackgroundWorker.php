@@ -2,13 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Indieinabox;
+namespace Indieinabox\BackgroundWorker;
 
 use Indieinabox\BackgroundWorker\ArchiveProcessor;
 use Indieinabox\BackgroundWorker\InboxProcessor;
 use Indieinabox\BackgroundWorker\OutboxDispatcher;
 use Indieinabox\BackgroundWorker\OutgoingWebmentionDispatcher;
 use Indieinabox\BackgroundWorker\WebmentionDiscovery;
+use Indieinabox\Core\Database;
+use Indieinabox\Services\BackupService;
+use Indieinabox\Services\UpdateService;
+use Indieinabox\Site;
+use Indieinabox\SiteBuilder\SiteBuilder;
+use Indieinabox\Twtxt\TwtxtManager;
 use PDO;
 
 /**
@@ -101,12 +107,8 @@ class BackgroundWorker
 
         echo "Running automatic daily backup...\n";
 
-        if (!class_exists('\\Indieinabox\\BackupManager')) {
-            require_once __DIR__ . '/BackupManager.php';
-        }
-
-        $backupManager = new BackupManager($this->site);
-        $backupManager->run();
+        $backupService = new BackupService($this->site);
+        $backupService->run();
 
         $stmt = $this->db->prepare("INSERT OR REPLACE INTO settings (key, value) VALUES ('last_backup_date', ?)");
         $stmt->execute([$today]);
@@ -122,7 +124,7 @@ class BackgroundWorker
     public function processUpdates(): void
     {
         echo "Checking for application updates...\n";
-        $result = Updater::processScheduledUpdate();
+        $result = UpdateService::processScheduledUpdate();
         echo $result['message'] . "\n";
     }
 

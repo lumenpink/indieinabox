@@ -14,7 +14,7 @@ use Indieinabox\Console\Commands\SetupCommand;
 use Indieinabox\Console\Commands\TestWebmentionCommand;
 use Indieinabox\Console\Commands\UpdateCommand;
 use Indieinabox\Console\Commands\VersionCommand;
-use Indieinabox\Database;
+use Indieinabox\Core\Database;
 use Indieinabox\Site;
 
 beforeEach(function () {
@@ -151,7 +151,7 @@ test('UpdateCommand backups outputs backup list', function () {
     /** @var \Tests\TestCase $this */
     $cmd = new UpdateCommand($this->site);
     $versionsDir = $this->tempDir . '/versions';
-    \Indieinabox\Updater::$customVersionsDir = $versionsDir;
+    \Indieinabox\Services\UpdateService::$customVersionsDir = $versionsDir;
 
     ob_start();
     $code = $cmd->execute(['indieinabox.php', 'update', '--backups']);
@@ -161,7 +161,7 @@ test('UpdateCommand backups outputs backup list', function () {
     expect($output)->toContain('Local version backups (retaining up to 2):')
         ->toContain('No backups found.');
 
-    \Indieinabox\Updater::$customVersionsDir = null;
+    \Indieinabox\Services\UpdateService::$customVersionsDir = null;
 });
 
 test('TestWebmentionCommand validates h-card markup', function () {

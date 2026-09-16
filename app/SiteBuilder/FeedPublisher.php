@@ -90,7 +90,7 @@ class FeedPublisher
             foreach ($this->generators as $generator) {
                 $outFile = $langDirHtml . DIRECTORY_SEPARATOR . $generator->getFilename();
                 $generator->generate($entries, $outFile, $this->site, $lang);
-                \Indieinabox\SiteBuilder::addManifest($outFile);
+                SiteBuilder::addManifest($outFile);
 
                 // Twtxt replicate to Gemini and Gopher
                 if ($generator instanceof TwtxtFeedGenerator && file_exists($outFile)) {
@@ -98,8 +98,8 @@ class FeedPublisher
                     $gopherTwtxt = $langDirGopher . DIRECTORY_SEPARATOR . $generator->getFilename();
                     copy($outFile, $geminiTwtxt);
                     copy($outFile, $gopherTwtxt);
-                    \Indieinabox\SiteBuilder::addManifest($geminiTwtxt);
-                    \Indieinabox\SiteBuilder::addManifest($gopherTwtxt);
+                    SiteBuilder::addManifest($geminiTwtxt);
+                    SiteBuilder::addManifest($gopherTwtxt);
                 }
             }
         }

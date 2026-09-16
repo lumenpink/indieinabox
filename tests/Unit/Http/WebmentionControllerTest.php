@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Http;
 
-use Indieinabox\Database;
+use Indieinabox\Core\Database;
 use Indieinabox\Http\Controllers\WebmentionController;
 use Indieinabox\Services\WebmentionService;
 use Indieinabox\Site;

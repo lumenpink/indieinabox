@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tests\Integration;
 
 use PHPUnit\Framework\TestCase;
-use Indieinabox\Database;
+use Indieinabox\Core\Database;
 use Indieinabox\Microsub\NormalizationAdapter;
 
 class WebmentionDiscoveryIntegrationTest extends TestCase

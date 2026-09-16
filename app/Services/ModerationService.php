@@ -7,7 +7,7 @@ namespace Indieinabox\Services;
 use Indieinabox\Core\Container;
 use Indieinabox\Repositories\Contracts\InteractionRepositoryInterface;
 use Indieinabox\Repositories\FileInteractionRepository;
-use Indieinabox\Yaml;
+use Indieinabox\Support\Yaml;
 
 /**
  * Service managing moderation workflows for incoming notifications, comments, and interactions.

@@ -5,7 +5,7 @@ declare(strict_types=1);
 use PHPUnit\Framework\Assert;
 use Indieinabox\Site;
 use Indieinabox\Site\Paths;
-use Indieinabox\SiteBuilder;
+use Indieinabox\SiteBuilder\SiteBuilder;
 use Indieinabox\Page;
 
 beforeEach(function () {
@@ -31,12 +31,12 @@ beforeEach(function () {
     $this->appViewsDir = __DIR__ . '/../../resources/views';
     
     // Set up test database
-    \Indieinabox\Database::disconnect();
+    \Indieinabox\Core\Database::disconnect();
     
     $testDbPath = $this->tempDir . '/test.sqlite';
-    \Indieinabox\Database::$dataDir = $this->tempDir . '/data';
-    \Indieinabox\Database::connect($testDbPath);
-    $db = \Indieinabox\Database::getDb();
+    \Indieinabox\Core\Database::$dataDir = $this->tempDir . '/data';
+    \Indieinabox\Core\Database::connect($testDbPath);
+    $db = \Indieinabox\Core\Database::getDb();
     $db->exec(file_get_contents(dirname(__DIR__, 2) . '/database.sql'));
 });
 

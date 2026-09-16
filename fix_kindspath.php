@@ -3,10 +3,10 @@ require 'vendor/autoload.php';
 require 'app/Database.php';
 
 $dbPath = '/home/lumen/jardim/data/.indieinabox.sqlite';
-\Indieinabox\Database::connect($dbPath);
-$db = \Indieinabox\Database::getDb();
+\Indieinabox\Core\Database::connect($dbPath);
+$db = \Indieinabox\Core\Database::getDb();
 
-$kinds = \Indieinabox\Database::getKinds();
+$kinds = \Indieinabox\Core\Database::getKinds();
 $kindspath = [];
 
 foreach ($kinds as $k => $conf) {
@@ -18,5 +18,5 @@ foreach ($kinds as $k => $conf) {
     }
 }
 
-\Indieinabox\Database::saveSetting('kindspath', json_encode($kindspath, JSON_UNESCAPED_UNICODE));
+\Indieinabox\Core\Database::saveSetting('kindspath', json_encode($kindspath, JSON_UNESCAPED_UNICODE));
 echo "Fixed kindspath.\n";

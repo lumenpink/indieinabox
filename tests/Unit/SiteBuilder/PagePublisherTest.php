@@ -7,7 +7,7 @@ use Indieinabox\Page;
 use Indieinabox\Pages;
 use Indieinabox\Site;
 use Indieinabox\Site\Paths;
-use Indieinabox\SiteBuilder;
+use Indieinabox\SiteBuilder\SiteBuilder;
 use Indieinabox\SiteBuilder\PagePublisher;
 
 beforeEach(function () {

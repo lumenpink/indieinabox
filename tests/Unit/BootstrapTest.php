@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use Indieinabox\Bootstrap;
-use Indieinabox\Database;
+use Indieinabox\Core\Bootstrap;
+use Indieinabox\Core\Database;
 
 it('passes checkVersion when PHP version is compatible (>= 8.2)', function () {
     $result = Bootstrap::checkVersion(80200, '8.2.0', 'cli');

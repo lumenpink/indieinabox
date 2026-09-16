@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Indieinabox\SiteBuilder;
 
 use Indieinabox\Site;
-use Indieinabox\SiteBuilder;
 use Indieinabox\Support\FileUtils;
 
 /**

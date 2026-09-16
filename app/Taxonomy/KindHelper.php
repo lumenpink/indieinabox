@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Indieinabox\Taxonomy;
 
-use Indieinabox\Database;
+use Indieinabox\Core\Database;
 use Indieinabox\Page;
 use Indieinabox\Pages;
 use Indieinabox\Site;
 use Indieinabox\Support\TextParser;
 use Indieinabox\Theme\ThemeManager;
-use Indieinabox\Yaml;
+use Indieinabox\Support\Yaml;
 
 /**
  * Class KindHelper

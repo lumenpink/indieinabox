@@ -1,11 +1,13 @@
 <?php
 declare(strict_types=1);
 
-namespace Indieinabox;
+namespace Indieinabox\Services;
 
 use Exception;
+use Indieinabox\Core\Database;
+use Indieinabox\Core\Version;
 
-class Updater
+class UpdateService
 {
     public const API_URL = 'https://codeberg.org/api/v1/repos/indieinabox/indieinabox/releases';
     public const MAX_BACKUPS = 2;
@@ -36,7 +38,7 @@ class Updater
 
         $dir = !empty(Database::$dataDir)
             ? Database::$dataDir . '/versions'
-            : dirname(__DIR__) . '/data/versions';
+            : dirname(__DIR__, 2) . '/data/versions';
 
         if (!is_dir($dir)) {
             @mkdir($dir, 0755, true);
@@ -413,7 +415,7 @@ class Updater
             }
         }
 
-        $baseDir = dirname(__DIR__);
+        $baseDir = dirname(__DIR__, 2);
         if (file_exists($baseDir . '/indieinabox.php')) {
             return $baseDir . '/indieinabox.php';
         }

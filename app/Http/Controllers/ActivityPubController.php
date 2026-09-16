@@ -6,7 +6,7 @@ namespace Indieinabox\Http\Controllers;
 
 use Indieinabox\ActivityPub\InteractionHandler;
 use Indieinabox\ActivityPub\KeyManager;
-use Indieinabox\Database;
+use Indieinabox\Core\Database;
 use Indieinabox\Site;
 use PDO;
 

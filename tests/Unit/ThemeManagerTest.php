@@ -5,7 +5,7 @@ declare(strict_types=1);
 use Indieinabox\Support\FileUtils;
 use Indieinabox\Site;
 use Indieinabox\Site\Paths;
-use Indieinabox\ThemeManager;
+use Indieinabox\Theme\ThemeManager;
 
 beforeEach(function () {
     $this->tempDir = sys_get_temp_dir() . '/indie_theme_mgr_test_' . uniqid();

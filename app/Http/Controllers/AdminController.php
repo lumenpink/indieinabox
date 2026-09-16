@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Indieinabox\Http\Controllers;
 
-use Indieinabox\BackgroundWorker;
-use Indieinabox\Database;
+use Indieinabox\BackgroundWorker\BackgroundWorker;
+use Indieinabox\Core\Database;
 use Indieinabox\Services\ConfigurationService;
 use Indieinabox\Services\MicrosubService;
 use Indieinabox\Services\ModerationService;
+use Indieinabox\Services\UpdateService;
 use Indieinabox\Site;
-use Indieinabox\SiteBuilder;
-use Indieinabox\Updater;
+use Indieinabox\SiteBuilder\SiteBuilder;
 use Indieinabox\Views\Admin\ConfigView;
 use Indieinabox\Views\Admin\MicropubClientView;
 use Indieinabox\Views\Admin\MicrosubReaderView;
@@ -108,12 +108,12 @@ class AdminController extends AbstractController
         if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
             if (isset($_POST['action'])) {
                 if ($_POST['action'] === 'manual_update' && !empty($_POST['download_url'])) {
-                    Updater::downloadAndInstall((string) $_POST['download_url']);
+                    UpdateService::downloadAndInstall((string) $_POST['download_url']);
                     $this->redirect('/admin/config?saved=1');
                     return;
                 }
                 if ($_POST['action'] === 'rollback_update' && !empty($_POST['backup_filename'])) {
-                    Updater::rollback((string) $_POST['backup_filename']);
+                    UpdateService::rollback((string) $_POST['backup_filename']);
                     $this->redirect('/admin/config?saved=1');
                     return;
                 }

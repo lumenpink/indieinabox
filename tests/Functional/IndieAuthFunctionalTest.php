@@ -3,8 +3,8 @@
 declare(strict_types=1);
 
 use Indieinabox\Site;
-use Indieinabox\WebRouter;
-use Indieinabox\Yaml;
+use Indieinabox\Http\WebRouter;
+use Indieinabox\Support\Yaml;
 
 $authFuncTempDir = __DIR__ . '/tmp_auth_functional';
 
@@ -16,11 +16,11 @@ beforeEach(function () use ($authFuncTempDir) {
     $_POST = [];
     $_SERVER = [];
     
-    \Indieinabox\Database::disconnect();
+    \Indieinabox\Core\Database::disconnect();
 
-    \Indieinabox\Database::connect(':memory:');
+    \Indieinabox\Core\Database::connect(':memory:');
     $sql = file_get_contents(dirname(__DIR__, 2) . '/database.sql');
-    \Indieinabox\Database::getDb()->exec($sql);
+    \Indieinabox\Core\Database::getDb()->exec($sql);
 });
 
 afterEach(function () use ($authFuncTempDir) {
@@ -110,7 +110,7 @@ it('renders authorization form and processes login with plain text password', fu
     $router->handleRequest();
     $output = ob_get_clean();
 
-    $db = \Indieinabox\Database::getDb();
+    $db = \Indieinabox\Core\Database::getDb();
     $stmt = $db->query("SELECT * FROM indieauth_codes");
     $codes = $stmt->fetchAll(\PDO::FETCH_ASSOC);
     expect($codes)->toHaveCount(1);
@@ -143,7 +143,7 @@ it('processes login with bcrypt-hashed password', function () use ($authFuncTemp
     $router->handleRequest();
     ob_get_clean();
 
-    $db = \Indieinabox\Database::getDb();
+    $db = \Indieinabox\Core\Database::getDb();
     $stmt = $db->query("SELECT * FROM indieauth_codes");
     $codes = $stmt->fetchAll(\PDO::FETCH_ASSOC);
     expect($codes)->toHaveCount(1);
@@ -158,7 +158,7 @@ it('verifies authorization code and exchanges it for access token with PKCE S256
     $code = 'authcode_123';
     $codeChallenge = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode(hash('sha256', 'my_code_verifier_123_abc', true)));
     
-    $db = \Indieinabox\Database::getDb();
+    $db = \Indieinabox\Core\Database::getDb();
     $stmt = $db->prepare('INSERT INTO indieauth_codes (code_hash, client_id, redirect_uri, state, scope, code_challenge, code_challenge_method, expires_at, me) VALUES (:hash, :client_id, :redirect_uri, :state, :scope, :challenge, :method, :expires, :me)');
     $stmt->bindValue(':hash', hash('sha256', $code));
     $stmt->bindValue(':client_id', 'https://app.com/');

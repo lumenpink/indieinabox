@@ -6,10 +6,10 @@ namespace Tests\Integration;
 
 use Indieinabox\Core\Container;
 use Indieinabox\Http\StaticFileServer;
+use Indieinabox\Http\WebRouter;
 use Indieinabox\Site;
 use Indieinabox\Site\Paths;
 use Indieinabox\Support\FileUtils;
-use Indieinabox\WebRouter;
 
 describe('StaticFileServer Integration', function () {
     beforeEach(function () {

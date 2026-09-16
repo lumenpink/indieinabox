@@ -6,11 +6,11 @@ namespace Tests\Integration;
 
 use Indieinabox\ActivityPub\KeyManager;
 use Indieinabox\Core\Container;
-use Indieinabox\Database;
+use Indieinabox\Core\Database;
 use Indieinabox\Federation\ActivityPubAdapter;
 use Indieinabox\Federation\Contracts\FederationAdapter;
 use Indieinabox\Federation\FederationManager;
-use Indieinabox\HttpSignature;
+use Indieinabox\Federation\HttpSignature;
 use Indieinabox\Services\FollowService;
 use Indieinabox\Services\InboxService;
 use Indieinabox\Services\OutboxService;

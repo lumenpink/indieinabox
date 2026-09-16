@@ -5,7 +5,7 @@ declare(strict_types=1);
 use Indieinabox\Site;
 
 // We need a mock WebRouter or MicrosubHandler
-class TestMicrosubRouter extends \Indieinabox\WebRouter
+class TestMicrosubRouter extends \Indieinabox\Http\WebRouter
 {
     public static bool $mockTokenValid = true;
 
@@ -53,15 +53,15 @@ beforeEach(function () use ($funcTempDir) {
     $_SESSION = [];
 
     // Set up test database
-    \Indieinabox\Database::disconnect();
+    \Indieinabox\Core\Database::disconnect();
 
     $testDbPath = $funcTempDir . '/test.sqlite';
     if (file_exists($testDbPath)) {
         unlink($testDbPath);
     }
-    \Indieinabox\Database::$dataDir = $funcTempDir . '/data';
-    \Indieinabox\Database::connect($testDbPath);
-    $db = \Indieinabox\Database::getDb();
+    \Indieinabox\Core\Database::$dataDir = $funcTempDir . '/data';
+    \Indieinabox\Core\Database::connect($testDbPath);
+    $db = \Indieinabox\Core\Database::getDb();
 
     $schema = file_get_contents(__DIR__ . '/../../database.sql');
     $db->exec($schema);
@@ -137,7 +137,7 @@ it('allows following a url', function () use ($funcTempDir) {
     expect($json['type'])->toBe('feed');
     expect($json['url'])->toBe('https://example.com/feed.xml');
 
-    $db = \Indieinabox\Database::getDb();
+    $db = \Indieinabox\Core\Database::getDb();
     $stmt = $db->query("SELECT * FROM microsub_subscriptions WHERE channel_uid = 'inbox'");
     $subs = $stmt->fetchAll();
     expect(count($subs))->toBe(1);
@@ -155,7 +155,7 @@ it('fetches timeline with pagination', function () use ($funcTempDir) {
         @mkdir($inboxDir, 0755, true);
     }
     
-    $yamlParser = new \Indieinabox\Yaml();
+    $yamlParser = new \Indieinabox\Support\Yaml();
     
     $fm1 = $yamlParser->dump(['id' => 'id1', 'url' => 'http://1', 'published' => 1000, 'author_name' => 'Author', 'is_read' => 0]);
     file_put_contents($inboxDir . '/id1.md', "---\n$fm1---\n\npost 1");

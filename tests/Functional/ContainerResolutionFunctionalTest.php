@@ -5,7 +5,7 @@ declare(strict_types=1);
 use Indieinabox\Core\Container;
 use Indieinabox\Site;
 use Indieinabox\Taxonomy\KindHelper;
-use Indieinabox\ThemeManager;
+use Indieinabox\Theme\ThemeManager;
 
 beforeEach(function () {
     $this->tempDir = sys_get_temp_dir() . '/iiab_functional_container_' . uniqid();

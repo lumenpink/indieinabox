@@ -1,7 +1,7 @@
 <?php
 require 'vendor/autoload.php';
 require 'app/Database.php';
-\Indieinabox\Database::connect('/home/lumen/jardim/data/.indieinabox.sqlite');
+\Indieinabox\Core\Database::connect('/home/lumen/jardim/data/.indieinabox.sqlite');
 $site = new \Indieinabox\Site(
     new \Indieinabox\Site\Metadata(),
     new \Indieinabox\Site\Paths(),
@@ -10,8 +10,8 @@ $site = new \Indieinabox\Site(
     new \Indieinabox\Site\Support(),
     new \Indieinabox\Site\Twtxt()
 );
-$site->config = \Indieinabox\Database::getAllSettings();
-$site->config['kinds'] = \Indieinabox\Database::getKinds();
+$site->config = \Indieinabox\Core\Database::getAllSettings();
+$site->config['kinds'] = \Indieinabox\Core\Database::getKinds();
 $site->localization->defaultLang = 'pt';
 $site->localization->lang = ['pt'];
 $site->paths->contentDir = __DIR__ . '/content';

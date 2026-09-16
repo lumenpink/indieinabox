@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Indieinabox\Views\Admin;
 
-use Indieinabox\Database;
+use Indieinabox\Core\Database;
 use PDO;
 
 /**

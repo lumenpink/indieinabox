@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Indieinabox\Services;
 
-use Indieinabox\Database;
+use Indieinabox\Core\Database;
 use Indieinabox\Site;
 use Indieinabox\Webmention\SourceVerifier;
 use PDO;

@@ -6,7 +6,7 @@ namespace Indieinabox\Webmention;
 
 use DOMDocument;
 use DOMXPath;
-use Indieinabox\Whostyles;
+use Indieinabox\Theme\Whostyles;
 use Mf2;
 
 /**

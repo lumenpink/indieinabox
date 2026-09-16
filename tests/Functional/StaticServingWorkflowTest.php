@@ -8,7 +8,7 @@ use Indieinabox\Http\StaticFileServer;
 use Indieinabox\Site;
 use Indieinabox\Site\Paths;
 use Indieinabox\Support\FileUtils;
-use Indieinabox\WebRouter;
+use Indieinabox\Http\WebRouter;
 
 beforeEach(function () {
     $this->tempDir = sys_get_temp_dir() . '/indie_static_workflow_' . uniqid();
@@ -17,12 +17,12 @@ beforeEach(function () {
     mkdir($this->tempDir . '/public_html/assets', 0777, true);
     mkdir($this->tempDir . '/content/media', 0777, true);
 
-    \Indieinabox\Database::disconnect();
-    \Indieinabox\Database::$dataDir = $this->tempDir . '/data';
-    \Indieinabox\Database::connect(':memory:');
+    \Indieinabox\Core\Database::disconnect();
+    \Indieinabox\Core\Database::$dataDir = $this->tempDir . '/data';
+    \Indieinabox\Core\Database::connect(':memory:');
     $sql = (string) file_get_contents(dirname(__DIR__, 2) . '/database.sql');
     if ($sql !== '') {
-        \Indieinabox\Database::getDb()->exec($sql);
+        \Indieinabox\Core\Database::getDb()->exec($sql);
     }
 
     $paths = new Paths($this->tempDir);
@@ -36,7 +36,7 @@ beforeEach(function () {
 });
 
 afterEach(function () {
-    \Indieinabox\Database::disconnect();
+    \Indieinabox\Core\Database::disconnect();
     FileUtils::recursiveRmdir($this->tempDir);
 });
 

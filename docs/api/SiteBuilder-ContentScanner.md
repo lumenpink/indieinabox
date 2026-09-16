@@ -7,15 +7,15 @@ Scans directories for Markdown content files and manages initial page collection
 
 ### `private Indieinabox\Site $site`
 
-### `private Indieinabox\ParserInterface $parser`
+### `private Indieinabox\Markdown\ParserInterface $parser`
 
 ## Methods
 
 ### __construct()
-`public function __construct(Indieinabox\Site $site, ?Indieinabox\ParserInterface $parser = null)`
+`public function __construct(Indieinabox\Site $site, ?Indieinabox\Markdown\ParserInterface $parser = null)`
 
 ### getParser()
-`public function getParser(): Indieinabox\ParserInterface`
+`public function getParser(): Indieinabox\Markdown\ParserInterface`
 
 ### scan()
 `public function scan(string $dir, Indieinabox\Pages $pages): void`

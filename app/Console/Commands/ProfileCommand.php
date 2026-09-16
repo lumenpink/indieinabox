@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Indieinabox\Console\Commands;
 
-use Indieinabox\Database;
+use Indieinabox\Core\Database;
 
 /**
  * Command to manage identity, profile bio, avatar, and banner images via CLI.

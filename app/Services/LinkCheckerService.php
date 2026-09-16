@@ -1,9 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace Indieinabox;
+namespace Indieinabox\Services;
 
-class LinkChecker
+use Indieinabox\Site;
+
+class LinkCheckerService
 {
     private Site $site;
     private array $errors = [];

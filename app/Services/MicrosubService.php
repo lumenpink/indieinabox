@@ -9,9 +9,9 @@ use Exception;
 use DOMDocument;
 use DOMElement;
 use DOMXPath;
-use Indieinabox\Database;
+use Indieinabox\Core\Database;
 use Indieinabox\Site;
-use Indieinabox\Yaml;
+use Indieinabox\Support\Yaml;
 use Indieinabox\Markdown\ContentProcessor;
 use Indieinabox\Microsub\ExtendedEntry;
 

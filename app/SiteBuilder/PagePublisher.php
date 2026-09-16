@@ -14,10 +14,9 @@ use Indieinabox\Markdown\GemtextRenderer;
 use Indieinabox\Markdown\GophermapRenderer;
 use Indieinabox\Page;
 use Indieinabox\Pages;
-use Indieinabox\ShortlinkManager;
+use Indieinabox\Services\ShortlinkService;
 use Indieinabox\Site;
-use Indieinabox\SiteBuilder;
-use Indieinabox\ThemeManager;
+use Indieinabox\Theme\ThemeManager;
 
 /**
  * Handles rendering, compilation, and file publication of Page objects
@@ -74,7 +73,7 @@ class PagePublisher
 
         // Generate shortlink if enabled
         if (!empty($site->config['shortlink']['enabled'])) {
-            $shortlinkManager = new ShortlinkManager();
+            $shortlinkManager = new ShortlinkService();
             $fqdn = rtrim($site->metadata->fqdn ?? 'http://localhost', '/');
             $isDev = isset($site->options->dev) && $site->options->dev;
             $page->shortlink = $shortlinkManager->getShortlink($page, $fqdn, $site->config['shortlink'], $isDev);
@@ -533,7 +532,7 @@ class PagePublisher
         // Also legacy folder names for backup
         global $kindspath;
         if ($kindspath === null) {
-            $kindspath = \Indieinabox\Database::getSetting('kindspath', []);
+            $kindspath = \Indieinabox\Core\Database::getSetting('kindspath', []);
         }
         if (!empty($kindspath)) {
             foreach ($kindspath as $key => $values) {

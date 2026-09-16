@@ -12,7 +12,7 @@ use Indieinabox\Site;
 use Indieinabox\Support\TextParser;
 use Indieinabox\Taxonomy\KindHelper;
 use Indieinabox\Theme\ThemeHelper;
-use Indieinabox\ThemeManager;
+use Indieinabox\Theme\ThemeManager;
 use Indieinabox\Twtxt\TwtxtManager;
 
 /**

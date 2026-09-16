@@ -2,7 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Indieinabox;
+namespace Indieinabox\Theme;
+
+use Indieinabox\Core\Container;
+use Indieinabox\Site;
 
 /**
  * Class ThemeManager

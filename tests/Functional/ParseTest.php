@@ -6,7 +6,7 @@ use bovigo\vfs\vfsStream;
 use Indieinabox\Site;
 use Indieinabox\Site\Paths;
 use Indieinabox\Site\Support;
-use Indieinabox\MarkdownParser;
+use Indieinabox\Markdown\MarkdownParser;
 use Indieinabox\Markdown\FileProcessor;
 use Indieinabox\Markdown\ContentProcessor;
 use Indieinabox\Markdown\LanguageProcessor;
@@ -166,13 +166,13 @@ it('virtualizes missing language translations and updates flags links correctly'
         ]
     ]);
 
-    $builder = new \Indieinabox\SiteBuilder($site);
+    $builder = new \Indieinabox\SiteBuilder\SiteBuilder($site);
     $builder->scan('vfs://root/content');
     
     expect($builder->getPages()->count())->toBe(1);
     
     // Create a new builder to avoid duplicate scanning during build()
-    $builder = new \Indieinabox\SiteBuilder($site);
+    $builder = new \Indieinabox\SiteBuilder\SiteBuilder($site);
     $builder->build();
     
     $pages = $builder->getPages()->all();
@@ -235,7 +235,7 @@ it('virtualizes page translations without titles by prefixing text content', fun
         ]
     ]);
 
-    $builder = new \Indieinabox\SiteBuilder($site);
+    $builder = new \Indieinabox\SiteBuilder\SiteBuilder($site);
     $builder->build();
     
     $pages = $builder->getPages()->all();

@@ -54,12 +54,12 @@ beforeEach(function () use ($funcTypesTempDir) {
     $_FILES = [];
     
     // Set up test database
-    \Indieinabox\Database::disconnect();
+    \Indieinabox\Core\Database::disconnect();
     
     $testDbPath = $funcTypesTempDir . '/test.sqlite';
-    \Indieinabox\Database::$dataDir = $funcTypesTempDir;
-    \Indieinabox\Database::connect($testDbPath);
-    $db = \Indieinabox\Database::getDb();
+    \Indieinabox\Core\Database::$dataDir = $funcTypesTempDir;
+    \Indieinabox\Core\Database::connect($testDbPath);
+    $db = \Indieinabox\Core\Database::getDb();
     $db->exec(file_get_contents(dirname(__DIR__, 2) . '/database.sql'));
 
     // Insert a valid token

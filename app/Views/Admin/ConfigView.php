@@ -224,8 +224,8 @@ class ConfigView
                         </div>
 
                         <?php
-                        $availableUpdates = \Indieinabox\Database::getSetting('available_updates', []);
-                        $lastCheck = \Indieinabox\Database::getSetting('last_update_check', 0);
+                        $availableUpdates = \Indieinabox\Core\Database::getSetting('available_updates', []);
+                        $lastCheck = \Indieinabox\Core\Database::getSetting('last_update_check', 0);
                         if (empty($availableUpdates)) {
                             echo '<p>No updates available or checking hasn\'t run yet. (Last check: ' . ($lastCheck ? date('Y-m-d H:i:s', $lastCheck) : 'Never') . ')</p>';
                         } else {
@@ -245,7 +245,7 @@ class ConfigView
                         ?>
 
                         <?php
-                        $backups = \Indieinabox\Updater::getLocalBackups();
+                        $backups = \Indieinabox\Services\UpdateService::getLocalBackups();
                         if (!empty($backups)) {
                             echo '<h4>Local Backups (Rollback)</h4><ul>';
                             foreach ($backups as $bkp) {
@@ -288,7 +288,7 @@ class ConfigView
                 </fieldset>
 
                 <?php
-                $themesDir = \Indieinabox\Database::$dataDir . '/themes';
+                $themesDir = \Indieinabox\Core\Database::$dataDir . '/themes';
                 $availableThemes = ['default'];
                 if (is_dir($themesDir)) {
                     $items = scandir($themesDir) ?: [];

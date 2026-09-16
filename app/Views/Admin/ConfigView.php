@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Indieinabox\Views\Admin;
 
-use Indieinabox\Site;
+use Indieinabox\Site\Site;
 
 /**
  * Presentation view component that renders the configuration and bootstrap views.

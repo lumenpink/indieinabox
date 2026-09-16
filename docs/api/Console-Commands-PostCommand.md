@@ -5,7 +5,7 @@ Command to compose and publish notes with attached media via CLI.
 
 ## Properties
 
-### `protected Indieinabox\Site $site`
+### `protected Indieinabox\Site\Site $site`
 
 ## Methods
 
@@ -22,7 +22,7 @@ Command to compose and publish notes with attached media via CLI.
 `public function execute(array $argv): int`
 
 ### __construct()
-`public function __construct(Indieinabox\Site $site)`
+`public function __construct(Indieinabox\Site\Site $site)`
 
 ### getAliases()
 `public function getAliases(): array`

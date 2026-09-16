@@ -7,12 +7,12 @@ Controller handling the web archive viewer and forced snapshot captures.
 
 ### `private Indieinabox\Services\ArchiveService $service`
 
-### `protected Indieinabox\Site $site`
+### `protected Indieinabox\Site\Site $site`
 
 ## Methods
 
 ### __construct()
-`public function __construct(Indieinabox\Site $site, ?Indieinabox\Services\ArchiveService $service = null)`
+`public function __construct(Indieinabox\Site\Site $site, ?Indieinabox\Services\ArchiveService $service = null)`
 
 ### handle()
 `public function handle(): void`
@@ -25,7 +25,7 @@ Renders or serves the archive index and stored snapshots.
 Triggers a forced archive snapshot.
 
 ### getSite()
-`public function getSite(): Indieinabox\Site`
+`public function getSite(): Indieinabox\Site\Site`
 
 ### json()
 `protected function json(?mixed $data, int $status = 200, array $headers = []): void`

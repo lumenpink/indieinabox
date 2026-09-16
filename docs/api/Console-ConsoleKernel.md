@@ -5,7 +5,7 @@ Kernel responsible for registering, routing, and executing CLI commands.
 
 ## Properties
 
-### `private Indieinabox\Site $site`
+### `private Indieinabox\Site\Site $site`
 
 ### `private array $commands`
 
@@ -18,7 +18,7 @@ Kernel responsible for registering, routing, and executing CLI commands.
 ## Methods
 
 ### __construct()
-`public function __construct(Indieinabox\Site $site)`
+`public function __construct(Indieinabox\Site\Site $site)`
 
 ### registerDefaultCommands()
 `private function registerDefaultCommands(): void`

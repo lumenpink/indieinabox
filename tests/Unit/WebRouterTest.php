@@ -9,7 +9,7 @@ use Indieinabox\Http\Controllers\IndieAuthController;
 use Indieinabox\Http\Controllers\MicropubController;
 use Indieinabox\Http\Controllers\MicrosubController;
 use Indieinabox\Http\Controllers\WebmentionController;
-use Indieinabox\Site;
+use Indieinabox\Site\Site;
 use Indieinabox\Site\Paths;
 use Indieinabox\Support\FileUtils;
 use Indieinabox\Http\WebRouter;

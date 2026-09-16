@@ -7,7 +7,7 @@ Class FileProcessor
 
 ### `private mixed $site`
 
-@var \Indieinabox\Site
+@var \Indieinabox\Site\Site
 
 ### `private mixed $base`
 
@@ -16,9 +16,9 @@ Class FileProcessor
 ## Methods
 
 ### __construct()
-`public function __construct(Indieinabox\Site $site, string $base)`
+`public function __construct(Indieinabox\Site\Site $site, string $base)`
 
-@param \Indieinabox\Site $site
+@param \Indieinabox\Site\Site $site
 @param string $base
 
 ### isValidFile()

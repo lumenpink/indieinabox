@@ -114,6 +114,8 @@
 <li><a href="/docs/api/html/Page-Content.html">Page-Content</a></li>
 <li><a href="/docs/api/html/Page-Localization.html">Page-Localization</a></li>
 <li><a href="/docs/api/html/Page-Metadata.html">Page-Metadata</a></li>
+<li><a href="/docs/api/html/Page-Page.html">Page-Page</a></li>
+<li><a href="/docs/api/html/Page-Pages.html">Page-Pages</a></li>
 <li><a href="/docs/api/html/Page.html">Page</a></li>
 <li><a href="/docs/api/html/Pages.html">Pages</a></li>
 <li><a href="/docs/api/html/ParserInterface.html">ParserInterface</a></li>
@@ -140,6 +142,7 @@
 <li><a href="/docs/api/html/Site-Metadata.html">Site-Metadata</a></li>
 <li><a href="/docs/api/html/Site-Options.html">Site-Options</a></li>
 <li><a href="/docs/api/html/Site-Paths.html">Site-Paths</a></li>
+<li><a href="/docs/api/html/Site-Site.html">Site-Site</a></li>
 <li><a href="/docs/api/html/Site-Support.html">Site-Support</a></li>
 <li><a href="/docs/api/html/Site-Twtxt.html">Site-Twtxt</a></li>
 <li><a href="/docs/api/html/Site.html">Site</a></li>
@@ -190,10 +193,10 @@
 <h3><code>private PDO $db</code></h3>
 <h3><code>private Indieinabox\ActivityPub\KeyManager $keyManager</code></h3>
 <h3><code>private Indieinabox\ActivityPub\InteractionHandler $interactionHandler</code></h3>
-<h3><code>protected Indieinabox\Site $site</code></h3>
+<h3><code>protected Indieinabox\Site\Site $site</code></h3>
 <h2>Methods</h2>
 <h3><em></em>construct()</h3>
-<p><code>public function __construct(Indieinabox\Site $site, ?PDO $db = null, ?Indieinabox\ActivityPub\KeyManager $keyManager = null, ?Indieinabox\ActivityPub\InteractionHandler $interactionHandler = null)</code></p>
+<p><code>public function __construct(Indieinabox\Site\Site $site, ?PDO $db = null, ?Indieinabox\ActivityPub\KeyManager $keyManager = null, ?Indieinabox\ActivityPub\InteractionHandler $interactionHandler = null)</code></p>
 <h3>getKeyManager()</h3>
 <p><code>public function getKeyManager(): Indieinabox\ActivityPub\KeyManager</code></p>
 <h3>getInteractionHandler()</h3>
@@ -217,7 +220,7 @@
 <p><code>public function outbox(): void</code></p>
 <p>Handles GET requests to the outbox (/outbox).</p>
 <h3>getSite()</h3>
-<p><code>public function getSite(): Indieinabox\Site</code></p>
+<p><code>public function getSite(): Indieinabox\Site\Site</code></p>
 <h3>json()</h3>
 <p><code>protected function json(?mixed $data, int $status = 200, array $headers = []): void</code></p>
 <p>Emits a JSON response.</p>

@@ -6,8 +6,8 @@ if (!defined('DS')) {
     define('DS', DIRECTORY_SEPARATOR);
 }
 
-use Indieinabox\Site;
-use Indieinabox\Pages;
+use Indieinabox\Site\Site;
+use Indieinabox\Page\Pages;
 
 require_once __DIR__ . '/bootstrap/app.php';
 
@@ -100,7 +100,7 @@ if (php_sapi_name() === 'cli') {
 }
 
 $site = new Site();
-\Indieinabox\Core\Container::getInstance()->instance(\Indieinabox\Site::class, $site);
+\Indieinabox\Core\Container::getInstance()->instance(\Indieinabox\Site\Site::class, $site);
 \Indieinabox\Core\Container::getInstance()->instance('site', $site);
 $site->paths->baseDir = $base;
 $site->config = $config;

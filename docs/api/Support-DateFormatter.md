@@ -17,7 +17,7 @@ Returns a human-readable relative time string (e.g. "5 minutes ago").
 @return string
 
 ### localizeddate()
-`public static function localizeddate(Indieinabox\Page|array $page): array`
+`public static function localizeddate(Indieinabox\Page\Page|array $page): array`
 
 Formats a page's date into localized long and ISO strings.
 

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Indieinabox\Services;
 
-use Indieinabox\Page;
+use Indieinabox\Page\Page;
 
 /**
  * Class ShortlinkService

@@ -114,6 +114,8 @@
 <li><a href="/docs/api/html/Page-Content.html">Page-Content</a></li>
 <li><a href="/docs/api/html/Page-Localization.html">Page-Localization</a></li>
 <li><a href="/docs/api/html/Page-Metadata.html">Page-Metadata</a></li>
+<li><a href="/docs/api/html/Page-Page.html">Page-Page</a></li>
+<li><a href="/docs/api/html/Page-Pages.html">Page-Pages</a></li>
 <li><a href="/docs/api/html/Page.html">Page</a></li>
 <li><a href="/docs/api/html/Pages.html">Pages</a></li>
 <li><a href="/docs/api/html/ParserInterface.html">ParserInterface</a></li>
@@ -140,6 +142,7 @@
 <li><a href="/docs/api/html/Site-Metadata.html">Site-Metadata</a></li>
 <li><a href="/docs/api/html/Site-Options.html">Site-Options</a></li>
 <li><a href="/docs/api/html/Site-Paths.html">Site-Paths</a></li>
+<li><a href="/docs/api/html/Site-Site.html">Site-Site</a></li>
 <li><a href="/docs/api/html/Site-Support.html">Site-Support</a></li>
 <li><a href="/docs/api/html/Site-Twtxt.html">Site-Twtxt</a></li>
 <li><a href="/docs/api/html/Site.html">Site</a></li>
@@ -190,22 +193,22 @@ Provides autonomous methods for themes to retrieve standard markup for pages,<br
 abstracting away the low-level logic of metadata, interactions, syndication, etc.</p>
 <h2>Methods</h2>
 <h3>getMetadataHtml()</h3>
-<p><code>public static function getMetadataHtml(Indieinabox\Page $page): string</code></p>
+<p><code>public static function getMetadataHtml(Indieinabox\Page\Page $page): string</code></p>
 <p>Renders the post metadata HTML (date, tags, shortlinks, interactions summary).</p>
 <h3>getIndieWebContext()</h3>
-<p><code>public static function getIndieWebContext(Indieinabox\Page $page): string</code></p>
+<p><code>public static function getIndieWebContext(Indieinabox\Page\Page $page): string</code></p>
 <p>Renders Indieweb properties context (e.g. in-reply-to, like-of, rsvp)</p>
 <h3>getAITranslationNotice()</h3>
-<p><code>public static function getAITranslationNotice(Indieinabox\Page $page): string</code></p>
+<p><code>public static function getAITranslationNotice(Indieinabox\Page\Page $page): string</code></p>
 <p>Renders AI Translation Notice if present</p>
 <h3>getSyndicationLinks()</h3>
-<p><code>public static function getSyndicationLinks(Indieinabox\Page $page): string</code></p>
+<p><code>public static function getSyndicationLinks(Indieinabox\Page\Page $page): string</code></p>
 <p>Renders Syndication Links (Also on...)</p>
 <h3>getInteractionsHtml()</h3>
-<p><code>public static function getInteractionsHtml(Indieinabox\Page $page): string</code></p>
+<p><code>public static function getInteractionsHtml(Indieinabox\Page\Page $page): string</code></p>
 <p>Renders Interactions (Likes, Reposts, Replies)</p>
 <h3>renderPostSnippet()</h3>
-<p><code>public static function renderPostSnippet(Indieinabox\Page $contextPage, Indieinabox\Page $post): string</code></p>
+<p><code>public static function renderPostSnippet(Indieinabox\Page\Page $contextPage, Indieinabox\Page\Page $post): string</code></p>
 <p>Renders a post snippet for list views (like indices and taxonomies).</p>
 <p>@param Page $contextPage The page where this list is being rendered (for relative paths).<br />
 @param Page $post The post being rendered.<br />

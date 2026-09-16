@@ -7,8 +7,8 @@ use Indieinabox\Markdown\ContentProcessor;
 use Indieinabox\Markdown\FileProcessor;
 use Indieinabox\Markdown\LanguageProcessor;
 use Indieinabox\Markdown\MarkdownParser;
-use Indieinabox\Page;
-use Indieinabox\Site;
+use Indieinabox\Page\Page;
+use Indieinabox\Site\Site;
 use Indieinabox\Site\Paths;
 use Indieinabox\Translations\UrlTranslations;
 

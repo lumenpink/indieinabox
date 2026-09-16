@@ -422,7 +422,7 @@ class Entry
     /**
      * Converts a Page instance to an Entry.
      */
-    public static function fromPage(\Indieinabox\Page $page): self
+    public static function fromPage(\Indieinabox\Page\Page $page): self
     {
         return $page->toEntry();
     }

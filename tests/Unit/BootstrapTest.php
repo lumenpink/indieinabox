@@ -78,7 +78,7 @@ it('registers and exercises fallback autoloader', function () {
     $autoloader('Indieinabox\\Page');
     // Call again now that class is loaded to test early return
     $autoloader('Indieinabox\\Page');
-    expect(class_exists(\Indieinabox\Page::class, false))->toBeTrue();
+    expect(class_exists(\Indieinabox\Page\Page::class, false))->toBeTrue();
 
     // 2. Non-existent class under Indieinabox\ namespace
     $autoloader('Indieinabox\\NonExistentClassXYZ');

@@ -9,7 +9,7 @@ Generates a twtxt.txt feed from Entry objects.
 `public function getFilename(): string`
 
 ### generate()
-`public function generate(array $entries, string $outputPath, Indieinabox\Site $site, string $lang = 'en'): void`
+`public function generate(array $entries, string $outputPath, Indieinabox\Site\Site $site, string $lang = 'en'): void`
 
 @param Entry[] $entries
 
@@ -20,7 +20,7 @@ Generates a twtxt.txt feed from Entry objects.
 @return Entry[]
 
 ### formatEntryToTwtxt()
-`private function formatEntryToTwtxt(Indieinabox\Entry\Entry $entry, string $fqdn, Indieinabox\Site $site): string`
+`private function formatEntryToTwtxt(Indieinabox\Entry\Entry $entry, string $fqdn, Indieinabox\Site\Site $site): string`
 
 ### resolveEntryUrl()
 `private function resolveEntryUrl(Indieinabox\Entry\Entry $entry, string $fqdn): string`

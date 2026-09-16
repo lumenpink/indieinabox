@@ -6,7 +6,7 @@ namespace Tests\Unit\Services;
 
 use Indieinabox\Core\Database;
 use Indieinabox\Services\ConfigurationService;
-use Indieinabox\Site;
+use Indieinabox\Site\Site;
 
 beforeEach(function () {
     Database::disconnect();

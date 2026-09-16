@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 use Indieinabox\Core\Database;
 use Indieinabox\Federation\ActivityPubAdapter;
-use Indieinabox\Site;
+use Indieinabox\Site\Site;
 
 beforeEach(function () {
     Database::disconnect();

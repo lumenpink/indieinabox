@@ -7,7 +7,7 @@ namespace Indieinabox\Support;
 use DateTime;
 use DateTimeZone;
 use Indieinabox\Core\Database;
-use Indieinabox\Page;
+use Indieinabox\Page\Page;
 
 /**
  * Class DateFormatter

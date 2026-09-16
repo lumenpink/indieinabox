@@ -5,7 +5,7 @@ Command to manage identity, profile bio, avatar, and banner images via CLI.
 
 ## Properties
 
-### `protected Indieinabox\Site $site`
+### `protected Indieinabox\Site\Site $site`
 
 ## Methods
 
@@ -25,7 +25,7 @@ Command to manage identity, profile bio, avatar, and banner images via CLI.
 `private function resizeImage(string $src, string $dest, int $maxWidth, int $maxHeight): void`
 
 ### __construct()
-`public function __construct(Indieinabox\Site $site)`
+`public function __construct(Indieinabox\Site\Site $site)`
 
 ### getAliases()
 `public function getAliases(): array`

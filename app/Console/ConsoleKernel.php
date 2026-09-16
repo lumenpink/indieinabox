@@ -17,7 +17,7 @@ use Indieinabox\Console\Commands\TestWebmentionCommand;
 use Indieinabox\Console\Commands\UpdateCommand;
 use Indieinabox\Console\Commands\VersionCommand;
 use Indieinabox\Console\Contracts\CommandInterface;
-use Indieinabox\Site;
+use Indieinabox\Site\Site;
 
 /**
  * Kernel responsible for registering, routing, and executing CLI commands.

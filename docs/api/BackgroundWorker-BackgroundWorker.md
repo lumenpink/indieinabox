@@ -12,14 +12,14 @@ outgoing webmentions, archive snapshotting, backups, and updates.
 
 @var PDO
 
-### `private Indieinabox\Site $site`
+### `private Indieinabox\Site\Site $site`
 
 @var Site
 
 ## Methods
 
 ### __construct()
-`public function __construct(Indieinabox\Site $site)`
+`public function __construct(Indieinabox\Site\Site $site)`
 
 Initializes the BackgroundWorker.
 

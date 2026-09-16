@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use Indieinabox\Services\ShortlinkService;
-use Indieinabox\Page;
+use Indieinabox\Page\Page;
 
 $cacheDir = '';
 

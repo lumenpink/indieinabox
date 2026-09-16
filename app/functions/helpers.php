@@ -45,7 +45,7 @@ function updateTranslations(): void
 }
 
 /**
- * @param \Indieinabox\Page|array<string, mixed> $page
+ * @param \Indieinabox\Page\Page|array<string, mixed> $page
  * @return array{long: string, iso: string}
  */
 function localizeddate($page): array
@@ -68,7 +68,7 @@ function removegeneric($var): bool
 }
 
 /**
- * @param \Indieinabox\Page|array<string, mixed> $page
+ * @param \Indieinabox\Page\Page|array<string, mixed> $page
  * @return array{localized: string, kind: string}
  */
 function kind($page): array
@@ -117,8 +117,8 @@ function getDirContents(string $dir, array &$results = []): array
 }
 
 /**
- * @param array<int, array<string, mixed>|\Indieinabox\Page> $pages
- * @return array<int, array<string, mixed>|\Indieinabox\Page>
+ * @param array<int, array<string, mixed>|\Indieinabox\Page\Page> $pages
+ * @return array<int, array<string, mixed>|\Indieinabox\Page\Page>
  */
 function sortByDate(array $pages): array
 {

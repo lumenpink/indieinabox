@@ -10,7 +10,7 @@ use Indieinabox\Services\ConfigurationService;
 use Indieinabox\Services\MicrosubService;
 use Indieinabox\Services\ModerationService;
 use Indieinabox\Services\UpdateService;
-use Indieinabox\Site;
+use Indieinabox\Site\Site;
 use Indieinabox\SiteBuilder\SiteBuilder;
 use Indieinabox\Views\Admin\ConfigView;
 use Indieinabox\Views\Admin\MicropubClientView;

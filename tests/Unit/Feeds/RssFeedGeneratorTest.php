@@ -5,7 +5,7 @@ declare(strict_types=1);
 use Indieinabox\Entry\Entry;
 use Indieinabox\Feeds\Generators\RssFeedGenerator;
 use Indieinabox\Support\FileUtils;
-use Indieinabox\Site;
+use Indieinabox\Site\Site;
 use Indieinabox\Site\Paths;
 
 beforeEach(function () {

@@ -11,12 +11,12 @@ Controller managing administrative panels (settings, config, client, reader, mod
 
 ### `private Indieinabox\Services\MicrosubService $microsubService`
 
-### `protected Indieinabox\Site $site`
+### `protected Indieinabox\Site\Site $site`
 
 ## Methods
 
 ### __construct()
-`public function __construct(Indieinabox\Site $site, ?Indieinabox\Services\ConfigurationService $configService = null, ?Indieinabox\Services\ModerationService $moderationService = null, ?Indieinabox\Services\MicrosubService $microsubService = null)`
+`public function __construct(Indieinabox\Site\Site $site, ?Indieinabox\Services\ConfigurationService $configService = null, ?Indieinabox\Services\ModerationService $moderationService = null, ?Indieinabox\Services\MicrosubService $microsubService = null)`
 
 ### getConfigurationService()
 `public function getConfigurationService(): Indieinabox\Services\ConfigurationService`
@@ -71,7 +71,7 @@ Cron endpoint triggering background processing.
 `public function rebuildSite(): void`
 
 ### getSite()
-`public function getSite(): Indieinabox\Site`
+`public function getSite(): Indieinabox\Site\Site`
 
 ### json()
 `protected function json(?mixed $data, int $status = 200, array $headers = []): void`

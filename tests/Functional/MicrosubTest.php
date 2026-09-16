@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Indieinabox\Site;
+use Indieinabox\Site\Site;
 
 // We need a mock WebRouter or MicrosubHandler
 class TestMicrosubRouter extends \Indieinabox\Http\WebRouter

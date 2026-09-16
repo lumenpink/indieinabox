@@ -114,6 +114,8 @@
 <li><a href="/docs/api/html/Page-Content.html">Page-Content</a></li>
 <li><a href="/docs/api/html/Page-Localization.html">Page-Localization</a></li>
 <li><a href="/docs/api/html/Page-Metadata.html">Page-Metadata</a></li>
+<li><a href="/docs/api/html/Page-Page.html">Page-Page</a></li>
+<li><a href="/docs/api/html/Page-Pages.html">Page-Pages</a></li>
 <li><a href="/docs/api/html/Page.html">Page</a></li>
 <li><a href="/docs/api/html/Pages.html">Pages</a></li>
 <li><a href="/docs/api/html/ParserInterface.html">ParserInterface</a></li>
@@ -140,6 +142,7 @@
 <li><a href="/docs/api/html/Site-Metadata.html">Site-Metadata</a></li>
 <li><a href="/docs/api/html/Site-Options.html">Site-Options</a></li>
 <li><a href="/docs/api/html/Site-Paths.html">Site-Paths</a></li>
+<li><a href="/docs/api/html/Site-Site.html">Site-Site</a></li>
 <li><a href="/docs/api/html/Site-Support.html">Site-Support</a></li>
 <li><a href="/docs/api/html/Site-Twtxt.html">Site-Twtxt</a></li>
 <li><a href="/docs/api/html/Site.html">Site</a></li>
@@ -189,13 +192,13 @@
 <h2>Properties</h2>
 <h3><code>private array $links</code></h3>
 <p>@var array<array{target: string, label: string}></p>
-<h3><code>private ?Indieinabox\Page $page</code></h3>
-<p>@var \Indieinabox\Page|null</p>
+<h3><code>private ?Indieinabox\Page\Page $page</code></h3>
+<p>@var \Indieinabox\Page\Page|null</p>
 <h2>Methods</h2>
 <h3><em></em>construct()</h3>
-<p><code>public function __construct(?Indieinabox\Page $page = null)</code></p>
+<p><code>public function __construct(?Indieinabox\Page\Page $page = null)</code></p>
 <p>Initializes the GemtextRenderer with the current page context.</p>
-<p>@param \Indieinabox\Page|null $page The page being rendered, used for resolving relative links.</p>
+<p>@param \Indieinabox\Page\Page|null $page The page being rendered, used for resolving relative links.</p>
 <h3>render()</h3>
 <p><code>public function render(Indieinabox\Markdown\Node $node): string</code></p>
 <p>Renders a Node AST to Gemini/Gemtext format.</p>

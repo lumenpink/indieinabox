@@ -1,6 +1,6 @@
 <?php
-/** @var \Indieinabox\Page $page */
-/** @var \Indieinabox\Site $site */
+/** @var \Indieinabox\Page\Page $page */
+/** @var \Indieinabox\Site\Site $site */
 use Indieinabox\Theme\ThemeData;
 
 $colors = ThemeData::getThemeColors($page);

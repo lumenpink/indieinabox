@@ -9,12 +9,12 @@ Domain service managing Microsub channels, subscriptions, timeline retrieval, an
 
 ### `private Indieinabox\Services\FetchFeedsService $feedFetcher`
 
-### `private ?Indieinabox\Site $site`
+### `private ?Indieinabox\Site\Site $site`
 
 ## Methods
 
 ### __construct()
-`public function __construct(?PDO $db = null, ?Indieinabox\Services\FetchFeedsService $feedFetcher = null, ?Indieinabox\Site $site = null)`
+`public function __construct(?PDO $db = null, ?Indieinabox\Services\FetchFeedsService $feedFetcher = null, ?Indieinabox\Site\Site $site = null)`
 
 ### getChannels()
 `public function getChannels(): array`

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Indieinabox\Site;
+use Indieinabox\Site\Site;
 use Indieinabox\Http\WebRouter;
 use Indieinabox\Support\Yaml;
 

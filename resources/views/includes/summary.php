@@ -1,6 +1,6 @@
 <?php
-/** @var \Indieinabox\Page $page */
-/** @var \Indieinabox\Site $site */
+/** @var \Indieinabox\Page\Page $page */
+/** @var \Indieinabox\Site\Site $site */
 $_kindLabel = \Indieinabox\Taxonomy\KindHelper::kindLabel($page->kind);
 ?>
 <article class="h-entry the-summary" style="margin-bottom: 2em;">

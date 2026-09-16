@@ -8,7 +8,7 @@ use DateTimeZone;
 use Indieinabox\Entry\Entry;
 use Indieinabox\Feeds\FeedGeneratorInterface;
 use Indieinabox\Taxonomy\KindHelper;
-use Indieinabox\Site;
+use Indieinabox\Site\Site;
 use Indieinabox\Twtxt\TwtxtManager;
 
 /**

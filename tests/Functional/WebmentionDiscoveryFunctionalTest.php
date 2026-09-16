@@ -6,7 +6,7 @@ namespace Tests\Functional;
 
 use PHPUnit\Framework\TestCase;
 use Indieinabox\BackgroundWorker\BackgroundWorker;
-use Indieinabox\Site;
+use Indieinabox\Site\Site;
 use Indieinabox\Core\Database;
 
 class WebmentionDiscoveryFunctionalTest extends TestCase

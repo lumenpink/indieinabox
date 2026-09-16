@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Indieinabox\Http\Controllers;
 
 use Indieinabox\Services\WebmentionService;
-use Indieinabox\Site;
+use Indieinabox\Site\Site;
 use Indieinabox\Webmention\HelpPageView;
 
 /**

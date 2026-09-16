@@ -6,7 +6,7 @@ namespace Tests\Functional;
 
 use Indieinabox\Core\Container;
 use Indieinabox\Core\Database;
-use Indieinabox\Site;
+use Indieinabox\Site\Site;
 use Indieinabox\Site\Paths;
 use Indieinabox\Http\WebRouter;
 

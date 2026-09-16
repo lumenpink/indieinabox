@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Indieinabox\Console\Commands;
 
 use Indieinabox\Core\Database;
-use Indieinabox\Site;
+use Indieinabox\Site\Site;
 use Indieinabox\SiteBuilder\SiteBuilder;
 
 /**

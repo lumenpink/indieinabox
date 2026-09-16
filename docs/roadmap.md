@@ -433,4 +433,16 @@ app/
   - Removed obsolete legacy alias proxy `app/FeedFetcher.php`.
   - Updated single-file compiler (`compile.php`), `build.php`, `bootstrap/app.php`, `cron.php`, `install.php`, and all view templates.
   - Verified 100% single-file compilation compatibility (`composer compile` into `indieinabox.php`), passing `composer test:compiled`, 100% passing tests (453 tests across Unit, Functional, Integration), and 0 PHP CodeSniffer warnings/errors.
+- [x] **Domain Aggregate Purity & Encapsulation (Phase 4)**:
+  - Relocated domain entities out of root `app/` into dedicated bounded contexts:
+    - `Site.php` -> `app/Site/Site.php` under `Indieinabox\Site\Site`.
+    - `Page.php` -> `app/Page/Page.php` under `Indieinabox\Page\Page`.
+    - `Pages.php` -> `app/Page/Pages.php` under `Indieinabox\Page\Pages`.
+  - Achieved a 100% clean `app/` root directory (0 PHP files in `app/` root; all classes strictly placed in bounded context directories).
+  - Enhanced domain encapsulation with strongly-typed aggregate methods:
+    - `Site`: Added domain methods `isDev()`, `isPrettyLinks()`, `getBaseDir()`, `getOutputDirHtml()`, `getThemeDir()`, `getDefaultLanguage()`, `getFqdn()`, `getTitle()`.
+    - `Page`: Added domain methods `isDraft()`, `hasTitle()`, `getTitle()`, `getSlug()`, `getKind()`, `getLanguage()`, `hasTag()`, `getDate()`.
+    - `Pages`: Added strongly-typed collection methods `find()`, `has()`, `remove()`, `filterByKind()`, `filterByLanguage()`.
+  - Migrated over 160 references across controllers, services, publishers, commands, and view templates.
+  - Verified 100% single-file compilation compatibility (`composer compile` into `indieinabox.php`), passing `composer test:compiled`, 100% passing tests (455 tests across Unit, Functional, Integration), and 0 PHP CodeSniffer warnings/errors.
 

@@ -114,6 +114,8 @@
 <li><a href="/docs/api/html/Page-Content.html">Page-Content</a></li>
 <li><a href="/docs/api/html/Page-Localization.html">Page-Localization</a></li>
 <li><a href="/docs/api/html/Page-Metadata.html">Page-Metadata</a></li>
+<li><a href="/docs/api/html/Page-Page.html">Page-Page</a></li>
+<li><a href="/docs/api/html/Page-Pages.html">Page-Pages</a></li>
 <li><a href="/docs/api/html/Page.html">Page</a></li>
 <li><a href="/docs/api/html/Pages.html">Pages</a></li>
 <li><a href="/docs/api/html/ParserInterface.html">ParserInterface</a></li>
@@ -140,6 +142,7 @@
 <li><a href="/docs/api/html/Site-Metadata.html">Site-Metadata</a></li>
 <li><a href="/docs/api/html/Site-Options.html">Site-Options</a></li>
 <li><a href="/docs/api/html/Site-Paths.html">Site-Paths</a></li>
+<li><a href="/docs/api/html/Site-Site.html">Site-Site</a></li>
 <li><a href="/docs/api/html/Site-Support.html">Site-Support</a></li>
 <li><a href="/docs/api/html/Site-Twtxt.html">Site-Twtxt</a></li>
 <li><a href="/docs/api/html/Site.html">Site</a></li>
@@ -187,13 +190,13 @@
 <p><strong>Namespace:</strong> <code>Indieinabox\SiteBuilder</code></p>
 <p>Publishes index pages: section indexes, timeline indexes, taxonomies, and sitemaps.</p>
 <h2>Properties</h2>
-<h3><code>private Indieinabox\Site $site</code></h3>
+<h3><code>private Indieinabox\Site\Site $site</code></h3>
 <h3><code>private Indieinabox\SiteBuilder\PagePublisher $pagePublisher</code></h3>
 <h2>Methods</h2>
 <h3><em></em>construct()</h3>
-<p><code>public function __construct(Indieinabox\Site $site, Indieinabox\SiteBuilder\PagePublisher $pagePublisher)</code></p>
+<p><code>public function __construct(Indieinabox\Site\Site $site, Indieinabox\SiteBuilder\PagePublisher $pagePublisher)</code></p>
 <h3>publishAll()</h3>
-<p><code>public function publishAll(Indieinabox\Pages $pages): void</code></p>
+<p><code>public function publishAll(Indieinabox\Page\Pages $pages): void</code></p>
 <p>Publishes all aggregators, taxonomy indexes, sitemaps, and timeline pages.</p>
 <p>@param Pages $pages<br />
 @return void</p>
@@ -202,12 +205,12 @@
 <p>Generates a sitemap.xml / index page for all active languages.</p>
 <p>@return void</p>
 <h3>publishKindIndexes()</h3>
-<p><code>public function publishKindIndexes(Indieinabox\Pages $pages): void</code></p>
+<p><code>public function publishKindIndexes(Indieinabox\Page\Pages $pages): void</code></p>
 <p>Publishes section and timeline indexes for all configured post kinds.</p>
 <p>@param Pages $pages<br />
 @return void</p>
 <h3>publishTaxonomies()</h3>
-<p><code>public function publishTaxonomies(Indieinabox\Pages $pages): void</code></p>
+<p><code>public function publishTaxonomies(Indieinabox\Page\Pages $pages): void</code></p>
 <p>Publishes index pages for standard taxonomies (tags and flowerbeds).</p>
 <p>@param Pages $pages<br />
 @return void</p>
@@ -216,7 +219,7 @@
 <p>Compiles the static timeline page from subscribed feeds and hubs.</p>
 <p>@return void</p>
 <h3>loadThemeFeedView()</h3>
-<p><code>public function loadThemeFeedView(Indieinabox\Pages $pages): void</code></p>
+<p><code>public function loadThemeFeedView(Indieinabox\Page\Pages $pages): void</code></p>
 <p>Loads the theme feed view file if provided by the active theme.</p>
 <p>@param Pages $pages<br />
 @return void</p>

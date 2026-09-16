@@ -12,7 +12,7 @@ use Indieinabox\BackgroundWorker\WebmentionDiscovery;
 use Indieinabox\Core\Database;
 use Indieinabox\Services\BackupService;
 use Indieinabox\Services\UpdateService;
-use Indieinabox\Site;
+use Indieinabox\Site\Site;
 use Indieinabox\SiteBuilder\SiteBuilder;
 use Indieinabox\Twtxt\TwtxtManager;
 use PDO;

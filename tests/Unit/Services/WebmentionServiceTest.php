@@ -6,7 +6,7 @@ namespace Tests\Unit\Services;
 
 use Indieinabox\Core\Database;
 use Indieinabox\Services\WebmentionService;
-use Indieinabox\Site;
+use Indieinabox\Site\Site;
 use Indieinabox\Site\Paths;
 
 beforeEach(function () {

@@ -3,10 +3,10 @@
 declare(strict_types=1);
 
 use PHPUnit\Framework\Assert;
-use Indieinabox\Site;
+use Indieinabox\Site\Site;
 use Indieinabox\Site\Paths;
 use Indieinabox\SiteBuilder\SiteBuilder;
-use Indieinabox\Page;
+use Indieinabox\Page\Page;
 
 beforeEach(function () {
     /** @var \Tests\TestCase|mixed $this */

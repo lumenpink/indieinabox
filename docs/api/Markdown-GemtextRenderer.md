@@ -9,18 +9,18 @@ Class GemtextRenderer
 
 @var array<array{target: string, label: string}>
 
-### `private ?Indieinabox\Page $page`
+### `private ?Indieinabox\Page\Page $page`
 
-@var \Indieinabox\Page|null
+@var \Indieinabox\Page\Page|null
 
 ## Methods
 
 ### __construct()
-`public function __construct(?Indieinabox\Page $page = null)`
+`public function __construct(?Indieinabox\Page\Page $page = null)`
 
 Initializes the GemtextRenderer with the current page context.
 
-@param \Indieinabox\Page|null $page The page being rendered, used for resolving relative links.
+@param \Indieinabox\Page\Page|null $page The page being rendered, used for resolving relative links.
 
 ### render()
 `public function render(Indieinabox\Markdown\Node $node): string`

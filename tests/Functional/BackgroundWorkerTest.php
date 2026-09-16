@@ -7,7 +7,7 @@ use Indieinabox\BackgroundWorker\ArchiveProcessor;
 use Indieinabox\BackgroundWorker\InboxProcessor;
 use Indieinabox\Core\Database;
 use Indieinabox\Support\FileUtils;
-use Indieinabox\Site;
+use Indieinabox\Site\Site;
 
 $funcTempDir = __DIR__ . '/tmp_functional_bgworker';
 

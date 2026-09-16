@@ -2,7 +2,7 @@
 require 'vendor/autoload.php';
 require 'app/Database.php';
 \Indieinabox\Core\Database::connect('/home/lumen/jardim/data/.indieinabox.sqlite');
-$site = new \Indieinabox\Site(
+$site = new \Indieinabox\Site\Site(
     new \Indieinabox\Site\Metadata(),
     new \Indieinabox\Site\Paths(),
     new \Indieinabox\Site\Options(),

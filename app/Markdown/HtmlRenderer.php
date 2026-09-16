@@ -6,7 +6,7 @@ namespace Indieinabox\Markdown;
 
 use Indieinabox\Localization\Translator;
 use Indieinabox\Media\ImageProcessor;
-use Indieinabox\Page;
+use Indieinabox\Page\Page;
 use Indieinabox\Support\TextParser;
 use Indieinabox\Taxonomy\KindHelper;
 
@@ -16,37 +16,37 @@ use Indieinabox\Taxonomy\KindHelper;
 class HtmlRenderer implements RendererInterface
 {
     /**
-     * @var \Indieinabox\Page|null
+     * @var \Indieinabox\Page\Page|null
      */
-    private ?\Indieinabox\Page $page = null;
+    private ?\Indieinabox\Page\Page $page = null;
 
     /**
-     * @var \Indieinabox\Site|null
+     * @var \Indieinabox\Site\Site|null
      */
-    private ?\Indieinabox\Site $site = null;
+    private ?\Indieinabox\Site\Site $site = null;
 
-    public function __construct(?\Indieinabox\Page $page = null, ?\Indieinabox\Site $site = null)
+    public function __construct(?\Indieinabox\Page\Page $page = null, ?\Indieinabox\Site\Site $site = null)
     {
         $this->page = $page;
         $this->site = $site;
     }
 
-    private function getSite(): ?\Indieinabox\Site
+    private function getSite(): ?\Indieinabox\Site\Site
     {
         if ($this->site !== null) {
             return $this->site;
         }
         $container = \Indieinabox\Core\Container::getInstance();
-        return $container->has(\Indieinabox\Site::class) ? $container->get(\Indieinabox\Site::class) : ($GLOBALS['site'] ?? null);
+        return $container->has(\Indieinabox\Site\Site::class) ? $container->get(\Indieinabox\Site\Site::class) : ($GLOBALS['site'] ?? null);
     }
 
     /**
      * Set active page context.
      *
-     * @param \Indieinabox\Page $page
+     * @param \Indieinabox\Page\Page $page
      * @return void
      */
-    public function setPage(\Indieinabox\Page $page): void
+    public function setPage(\Indieinabox\Page\Page $page): void
     {
         $this->page = $page;
     }
@@ -225,7 +225,7 @@ class HtmlRenderer implements RendererInterface
                 $slugTarget = end($slugTargetParts);
                 $slugTargetFull = implode('/', $slugTargetParts);
                 
-                if (isset($pages) && ($pages instanceof \Indieinabox\Pages || is_iterable($pages))) {
+                if (isset($pages) && ($pages instanceof \Indieinabox\Page\Pages || is_iterable($pages))) {
                     $matches = [];
                     // Try to find in the same language first
                     foreach ($pages as $p) {

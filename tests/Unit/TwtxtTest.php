@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use Indieinabox\Entry\Entry;
-use Indieinabox\Site;
+use Indieinabox\Site\Site;
 use Indieinabox\Twtxt\TwtxtManager;
 
 beforeEach(function () {

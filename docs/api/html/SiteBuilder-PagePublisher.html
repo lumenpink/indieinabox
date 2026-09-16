@@ -114,6 +114,8 @@
 <li><a href="/docs/api/html/Page-Content.html">Page-Content</a></li>
 <li><a href="/docs/api/html/Page-Localization.html">Page-Localization</a></li>
 <li><a href="/docs/api/html/Page-Metadata.html">Page-Metadata</a></li>
+<li><a href="/docs/api/html/Page-Page.html">Page-Page</a></li>
+<li><a href="/docs/api/html/Page-Pages.html">Page-Pages</a></li>
 <li><a href="/docs/api/html/Page.html">Page</a></li>
 <li><a href="/docs/api/html/Pages.html">Pages</a></li>
 <li><a href="/docs/api/html/ParserInterface.html">ParserInterface</a></li>
@@ -140,6 +142,7 @@
 <li><a href="/docs/api/html/Site-Metadata.html">Site-Metadata</a></li>
 <li><a href="/docs/api/html/Site-Options.html">Site-Options</a></li>
 <li><a href="/docs/api/html/Site-Paths.html">Site-Paths</a></li>
+<li><a href="/docs/api/html/Site-Site.html">Site-Site</a></li>
 <li><a href="/docs/api/html/Site-Support.html">Site-Support</a></li>
 <li><a href="/docs/api/html/Site-Twtxt.html">Site-Twtxt</a></li>
 <li><a href="/docs/api/html/Site.html">Site</a></li>
@@ -188,13 +191,13 @@
 <p>Handles rendering, compilation, and file publication of Page objects<br />
 across HTML, Gemini, and Gopher protocols.</p>
 <h2>Properties</h2>
-<h3><code>private Indieinabox\Site $site</code></h3>
-<h3><code>private Indieinabox\Pages $pages</code></h3>
+<h3><code>private Indieinabox\Site\Site $site</code></h3>
+<h3><code>private Indieinabox\Page\Pages $pages</code></h3>
 <h2>Methods</h2>
 <h3><em></em>construct()</h3>
-<p><code>public function __construct(Indieinabox\Site $site, Indieinabox\Pages $pages)</code></p>
+<p><code>public function __construct(Indieinabox\Site\Site $site, Indieinabox\Page\Pages $pages)</code></p>
 <h3>publish()</h3>
-<p><code>public function publish(Indieinabox\Page $page): void</code></p>
+<p><code>public function publish(Indieinabox\Page\Page $page): void</code></p>
 <p>Publishes a page across all supported output formats (HTML, Gemini, Gopher).</p>
 <p>@param Page $page<br />
 @return void</p>
@@ -204,27 +207,27 @@ across HTML, Gemini, and Gopher protocols.</p>
 <p>@param iterable<Page> $pages<br />
 @return void</p>
 <h3>publishHtml()</h3>
-<p><code>public function publishHtml(Indieinabox\Page $page): void</code></p>
+<p><code>public function publishHtml(Indieinabox\Page\Page $page): void</code></p>
 <p>Renders a single Page object into an HTML file using the configured theme.<br />
 Handles slug resolution, metadata extraction, ActivityPub JSON, interactions, and shortlink generation.</p>
 <p>@param Page $page The page to render.<br />
 @return void</p>
 <h3>publishGemini()</h3>
-<p><code>public function publishGemini(Indieinabox\Page $page): void</code></p>
+<p><code>public function publishGemini(Indieinabox\Page\Page $page): void</code></p>
 <p>Renders a page into Gemini Gemtext (.gmi) and writes it to the Gemini output directory.</p>
 <p>@param Page $page The page to render.<br />
 @return void</p>
 <h3>publishGopher()</h3>
-<p><code>public function publishGopher(Indieinabox\Page $page): void</code></p>
+<p><code>public function publishGopher(Indieinabox\Page\Page $page): void</code></p>
 <p>Renders a page into Gopher format (gophermap) and writes it to the gopher output directory.<br />
 Formats links and metadata according to RFC 1436.</p>
 <p>@param Page $page The page to render.<br />
 @return void</p>
 <h3>getLanguageLinks()</h3>
-<p><code>public function getLanguageLinks(Indieinabox\Page $page): array</code></p>
+<p><code>public function getLanguageLinks(Indieinabox\Page\Page $page): array</code></p>
 <p>@return array<string, string></p>
 <h3>getMenuLinks()</h3>
-<p><code>public function getMenuLinks(Indieinabox\Page $page): array</code></p>
+<p><code>public function getMenuLinks(Indieinabox\Page\Page $page): array</code></p>
 <p>@return array<string, array<int, array<string, mixed>&gt;&gt;</p>
 
     </div>

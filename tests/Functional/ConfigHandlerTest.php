@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-use Indieinabox\Site;
+use Indieinabox\Site\Site;
 use Indieinabox\Http\WebRouter;
 use Indieinabox\Support\Yaml;
-use Indieinabox\Page;
+use Indieinabox\Page\Page;
 use Indieinabox\Markdown\MarkdownParser;
 use Indieinabox\Markdown\FileProcessor;
 use Indieinabox\Markdown\ContentProcessor;

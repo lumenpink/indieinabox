@@ -10,7 +10,7 @@ namespace Indieinabox\Markdown;
 class FileProcessor
 {
     /**
-     * @var \Indieinabox\Site
+     * @var \Indieinabox\Site\Site
      */
     private $site;
 
@@ -20,10 +20,10 @@ class FileProcessor
     private $base;
 
     /**
-     * @param \Indieinabox\Site $site
+     * @param \Indieinabox\Site\Site $site
      * @param string $base
      */
-    public function __construct(\Indieinabox\Site $site, string $base)
+    public function __construct(\Indieinabox\Site\Site $site, string $base)
     {
         $this->site = $site;
         $this->base = $base;

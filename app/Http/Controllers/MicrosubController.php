@@ -7,7 +7,7 @@ namespace Indieinabox\Http\Controllers;
 use Exception;
 use Indieinabox\IndieAuth\TokenManager;
 use Indieinabox\Services\MicrosubService;
-use Indieinabox\Site;
+use Indieinabox\Site\Site;
 use Indieinabox\Views\Admin\MicrosubReaderView;
 
 /**

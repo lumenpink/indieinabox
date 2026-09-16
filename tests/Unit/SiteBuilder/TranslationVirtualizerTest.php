@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-use Indieinabox\Page;
-use Indieinabox\Pages;
-use Indieinabox\Site;
+use Indieinabox\Page\Page;
+use Indieinabox\Page\Pages;
+use Indieinabox\Site\Site;
 use Indieinabox\Site\Localization;
 use Indieinabox\SiteBuilder\TranslationVirtualizer;
 

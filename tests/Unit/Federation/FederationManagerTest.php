@@ -5,7 +5,7 @@ declare(strict_types=1);
 use Indieinabox\Federation\ActivityPubAdapter;
 use Indieinabox\Federation\Contracts\FederationAdapter;
 use Indieinabox\Federation\FederationManager;
-use Indieinabox\Site;
+use Indieinabox\Site\Site;
 
 test('FederationManager registers default ActivityPub adapter and allows custom adapters', function () {
     $site = new Site();

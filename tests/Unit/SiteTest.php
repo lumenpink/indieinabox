@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Indieinabox\Site;
+use Indieinabox\Site\Site;
 use Indieinabox\Site\Options;
 use Indieinabox\Site\Paths;
 use Indieinabox\Site\Localization;
@@ -82,5 +82,14 @@ it(
             'defaultTitle' => 'NoTitle',
             'fqdn' => 'http://example.com'
         ]);
+
+        expect($site->isDev())->toBeFalse();
+        expect($site->isPrettyLinks())->toBeTrue();
+        expect($site->getBaseDir())->toBe('/custom');
+        expect($site->getOutputDirHtml())->toBe('custom_html');
+        expect($site->getDefaultLanguage())->toBe('pt');
+        expect($site->getFqdn())->toBe('http://example.com');
+        expect($site->getTitle())->toBe('NoTitle');
     }
 );
+

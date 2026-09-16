@@ -15,16 +15,16 @@ class GemtextRenderer implements RendererInterface
     private array $links = [];
 
     /**
-     * @var \Indieinabox\Page|null
+     * @var \Indieinabox\Page\Page|null
      */
-    private ?\Indieinabox\Page $page = null;
+    private ?\Indieinabox\Page\Page $page = null;
 
     /**
      * Initializes the GemtextRenderer with the current page context.
      *
-     * @param \Indieinabox\Page|null $page The page being rendered, used for resolving relative links.
+     * @param \Indieinabox\Page\Page|null $page The page being rendered, used for resolving relative links.
      */
-    public function __construct(?\Indieinabox\Page $page = null)
+    public function __construct(?\Indieinabox\Page\Page $page = null)
     {
         $this->page = $page;
     }

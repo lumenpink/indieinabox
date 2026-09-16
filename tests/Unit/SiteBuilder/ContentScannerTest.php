@@ -3,10 +3,10 @@
 declare(strict_types=1);
 
 use Indieinabox\Support\FileUtils;
-use Indieinabox\Page;
-use Indieinabox\Pages;
+use Indieinabox\Page\Page;
+use Indieinabox\Page\Pages;
 use Indieinabox\Markdown\ParserInterface;
-use Indieinabox\Site;
+use Indieinabox\Site\Site;
 use Indieinabox\Site\Paths;
 use Indieinabox\SiteBuilder\ContentScanner;
 

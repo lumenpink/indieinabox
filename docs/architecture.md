@@ -111,6 +111,13 @@ The project follows Domain-Driven Design (DDD) and SOLID principles, structured 
     - `FeedGeneratorInterface.php`: Generator contract for outgoing syndication feeds.
     - `Generators/`: Feed generation implementations (`RssFeedGenerator`, `AtomFeedGenerator`, `TwtxtFeedGenerator`).
   - **`Microsub/`**: Universal microsub entries and normalization adapters (`ExtendedEntry`, `NormalizationAdapter`).
+  - **`Site/`**: Site domain aggregate and value objects:
+    - `Site.php`: Central domain configuration aggregate encapsulating metadata, paths, options, localization, and theme state.
+    - Value objects: `Paths.php`, `Metadata.php`, `Options.php`, `Localization.php`, `Support.php`, `Twtxt.php`.
+  - **`Page/`**: Document domain aggregate and collections:
+    - `Page.php`: Document domain aggregate encapsulating parsed markdown, YAML frontmatter, taxonomy kinds, and multi-format renderings.
+    - `Pages.php`: Strongly-typed page collection aggregate providing domain querying, filtering, and indexing.
+    - Value objects: `Content.php`, `Localization.php`, `Metadata.php`.
   - **`Entry/`**: Universal `Entry` domain model for feed items, posts, and federation.
   - **`SiteBuilder/`**: Core site generation services (`SiteBuilder`, `ContentScanner`, `TranslationVirtualizer`, `PagePublisher`, `IndexPublisher`, `FeedPublisher`, `AssetPublisher`).
   - **`Markdown/`**: Custom AST parser, processors, validators, and protocol renderers (`MarkdownParser`, `ParserInterface`, HTML, Gemtext, Gophermap).

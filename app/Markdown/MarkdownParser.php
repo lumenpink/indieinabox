@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Indieinabox\Markdown;
 
 use Indieinabox\Core\Database;
-use Indieinabox\Page;
-use Indieinabox\Site;
+use Indieinabox\Page\Page;
+use Indieinabox\Site\Site;
 use Indieinabox\Support\DateFormatter;
 use Indieinabox\Support\TextParser;
 use Indieinabox\Taxonomy\KindHelper;

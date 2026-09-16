@@ -6,9 +6,9 @@ namespace Indieinabox\SiteBuilder;
 
 use Indieinabox\Markdown\LanguageProcessor;
 use Indieinabox\Taxonomy\KindHelper;
-use Indieinabox\Page;
-use Indieinabox\Pages;
-use Indieinabox\Site;
+use Indieinabox\Page\Page;
+use Indieinabox\Page\Pages;
+use Indieinabox\Site\Site;
 use Indieinabox\Translations\UrlTranslations;
 use RuntimeException;
 

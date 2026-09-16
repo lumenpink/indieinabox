@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Indieinabox\Site;
+use Indieinabox\Site\Site;
 use Indieinabox\Micropub\QueryHandler;
 
 test('QueryHandler responds to q=config with media endpoint and syndicate-to', function () {

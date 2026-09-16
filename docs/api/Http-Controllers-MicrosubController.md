@@ -9,12 +9,12 @@ Controller handling Microsub server endpoints (channels, timeline, actions) and 
 
 ### `protected Indieinabox\Services\MicrosubService $service`
 
-### `protected Indieinabox\Site $site`
+### `protected Indieinabox\Site\Site $site`
 
 ## Methods
 
 ### __construct()
-`public function __construct(Indieinabox\Site $site, ?Indieinabox\IndieAuth\TokenManager $tokenManager = null, ?Indieinabox\Services\MicrosubService $service = null)`
+`public function __construct(Indieinabox\Site\Site $site, ?Indieinabox\IndieAuth\TokenManager $tokenManager = null, ?Indieinabox\Services\MicrosubService $service = null)`
 
 ### getService()
 `public function getService(): Indieinabox\Services\MicrosubService`
@@ -53,7 +53,7 @@ Proxy helper for remote URL fetching.
 Helper to fetch remote URL contents. Overridable in tests to avoid real network access.
 
 ### getSite()
-`public function getSite(): Indieinabox\Site`
+`public function getSite(): Indieinabox\Site\Site`
 
 ### json()
 `protected function json(?mixed $data, int $status = 200, array $headers = []): void`

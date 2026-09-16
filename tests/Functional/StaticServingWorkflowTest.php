@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tests\Functional;
 
 use Indieinabox\Http\StaticFileServer;
-use Indieinabox\Site;
+use Indieinabox\Site\Site;
 use Indieinabox\Site\Paths;
 use Indieinabox\Support\FileUtils;
 use Indieinabox\Http\WebRouter;

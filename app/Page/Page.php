@@ -2,12 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Indieinabox;
+namespace Indieinabox\Page;
 
 use DateTime;
-use Indieinabox\Page\Metadata;
-use Indieinabox\Page\Content;
-use Indieinabox\Page\Localization;
 use Indieinabox\Localization\Translator;
 
 /**
@@ -443,5 +440,69 @@ class Page
                 'noauthor' => $this->metadata->noauthor ?? false,
             ],
         ]);
+    }
+
+    /**
+     * Checks whether this page is marked as a draft.
+     */
+    public function isDraft(): bool
+    {
+        return in_array('draft', (array) ($this->metadata->tags ?? []), true);
+    }
+
+    /**
+     * Checks whether this page has a custom title.
+     */
+    public function hasTitle(): bool
+    {
+        return !empty($this->metadata->title);
+    }
+
+    /**
+     * Returns the title of the page with fallback translation.
+     */
+    public function getTitle(): string
+    {
+        return (string) $this->__get('title');
+    }
+
+    /**
+     * Returns the canonical slug of the page.
+     */
+    public function getSlug(): string
+    {
+        return $this->slug;
+    }
+
+    /**
+     * Returns the taxonomy kind of the page.
+     */
+    public function getKind(): string
+    {
+        return (string) ($this->metadata->kind ?? 'note');
+    }
+
+    /**
+     * Returns the language code of the page.
+     */
+    public function getLanguage(): string
+    {
+        return (string) ($this->localization->lang ?? 'en');
+    }
+
+    /**
+     * Checks whether the page contains a specific tag.
+     */
+    public function hasTag(string $tag): bool
+    {
+        return in_array($tag, (array) ($this->metadata->tags ?? []), true);
+    }
+
+    /**
+     * Returns the publication date of the page.
+     */
+    public function getDate(): DateTime
+    {
+        return $this->date;
     }
 }

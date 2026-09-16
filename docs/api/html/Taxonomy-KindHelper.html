@@ -114,6 +114,8 @@
 <li><a href="/docs/api/html/Page-Content.html">Page-Content</a></li>
 <li><a href="/docs/api/html/Page-Localization.html">Page-Localization</a></li>
 <li><a href="/docs/api/html/Page-Metadata.html">Page-Metadata</a></li>
+<li><a href="/docs/api/html/Page-Page.html">Page-Page</a></li>
+<li><a href="/docs/api/html/Page-Pages.html">Page-Pages</a></li>
 <li><a href="/docs/api/html/Page.html">Page</a></li>
 <li><a href="/docs/api/html/Pages.html">Pages</a></li>
 <li><a href="/docs/api/html/ParserInterface.html">ParserInterface</a></li>
@@ -140,6 +142,7 @@
 <li><a href="/docs/api/html/Site-Metadata.html">Site-Metadata</a></li>
 <li><a href="/docs/api/html/Site-Options.html">Site-Options</a></li>
 <li><a href="/docs/api/html/Site-Paths.html">Site-Paths</a></li>
+<li><a href="/docs/api/html/Site-Site.html">Site-Site</a></li>
 <li><a href="/docs/api/html/Site-Support.html">Site-Support</a></li>
 <li><a href="/docs/api/html/Site-Twtxt.html">Site-Twtxt</a></li>
 <li><a href="/docs/api/html/Site.html">Site</a></li>
@@ -190,14 +193,14 @@
 post listing, SEO metadata resolution, and incoming interactions.</p>
 <h2>Methods</h2>
 <h3>getSite()</h3>
-<p><code>private static function getSite(): ?Indieinabox\Site</code></p>
+<p><code>private static function getSite(): ?Indieinabox\Site\Site</code></p>
 <h3>getKindConfig()</h3>
 <p><code>public static function getKindConfig(string $kind): array</code></p>
 <p>Retrieves kind configuration with sensible defaults.</p>
 <p>@param string $kind<br />
 @return array<string, mixed></p>
 <h3>kind()</h3>
-<p><code>public static function kind(?mixed $page, ?Indieinabox\Site $siteInstance = null): array</code></p>
+<p><code>public static function kind(?mixed $page, ?Indieinabox\Site\Site $siteInstance = null): array</code></p>
 <p>Determines the kind and localized folder for a page.</p>
 <p>@param Page|array<string, mixed> $page<br />
 @param Site|null $siteInstance<br />
@@ -215,7 +218,7 @@ post listing, SEO metadata resolution, and incoming interactions.</p>
 @param string|null $lang Target language (defaults to current page lang)<br />
 @return string</p>
 <h3>kindLink()</h3>
-<p><code>public static function kindLink(Indieinabox\Page $page, string $kind): string</code></p>
+<p><code>public static function kindLink(Indieinabox\Page\Page $page, string $kind): string</code></p>
 <p>Return a hyperlinked, human-readable display label for a post kind.</p>
 <p>@param Page $page The page context where this link is rendered<br />
 @param string $kind Internal kind slug<br />
@@ -236,12 +239,12 @@ post listing, SEO metadata resolution, and incoming interactions.</p>
 <p>@param mixed $var<br />
 @return bool</p>
 <h3>getSeoMetadata()</h3>
-<p><code>public static function getSeoMetadata(Indieinabox\Page $page): array</code></p>
+<p><code>public static function getSeoMetadata(Indieinabox\Page\Page $page): array</code></p>
 <p>Helper function to extract and normalize SEO metadata.</p>
 <p>@param Page $page<br />
 @return array<string, string></p>
 <h3>getInteractions()</h3>
-<p><code>public static function getInteractions(Indieinabox\Page $page, ?string $type = null): array</code></p>
+<p><code>public static function getInteractions(Indieinabox\Page\Page $page, ?string $type = null): array</code></p>
 <p>Get incoming interactions (likes, reposts, replies) for a specific Page.</p>
 <p>@param Page $page<br />
 @param string|null $type (e.g. &apos;like&apos;, &apos;repost&apos;, &apos;reply&apos;)<br />

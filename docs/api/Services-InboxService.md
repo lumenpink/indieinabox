@@ -5,7 +5,7 @@ Service orchestrating incoming federated activities, follow requests, and intera
 
 ## Properties
 
-### `private Indieinabox\Site $site`
+### `private Indieinabox\Site\Site $site`
 
 ### `private Indieinabox\Federation\FederationManager $federationManager`
 
@@ -18,7 +18,7 @@ Service orchestrating incoming federated activities, follow requests, and intera
 ## Methods
 
 ### __construct()
-`public function __construct(Indieinabox\Site $site, Indieinabox\Federation\FederationManager $federationManager, Indieinabox\Services\FollowService $followService, Indieinabox\Services\OutboxService $outboxService, ?PDO $db = null)`
+`public function __construct(Indieinabox\Site\Site $site, Indieinabox\Federation\FederationManager $federationManager, Indieinabox\Services\FollowService $followService, Indieinabox\Services\OutboxService $outboxService, ?PDO $db = null)`
 
 ### enqueue()
 `public function enqueue(string $type, array|string $payload): int`

@@ -9,12 +9,12 @@ Controller specifically managing site and engine configuration settings in the a
 
 ### `private Indieinabox\Services\ConfigurationService $configService`
 
-### `protected Indieinabox\Site $site`
+### `protected Indieinabox\Site\Site $site`
 
 ## Methods
 
 ### __construct()
-`public function __construct(Indieinabox\Site $site, ?Indieinabox\Http\Controllers\AdminController $adminController = null, ?Indieinabox\Services\ConfigurationService $configService = null)`
+`public function __construct(Indieinabox\Site\Site $site, ?Indieinabox\Http\Controllers\AdminController $adminController = null, ?Indieinabox\Services\ConfigurationService $configService = null)`
 
 ### getConfigurationService()
 `public function getConfigurationService(): Indieinabox\Services\ConfigurationService`
@@ -25,7 +25,7 @@ Controller specifically managing site and engine configuration settings in the a
 Dispatches the config handling logic.
 
 ### getSite()
-`public function getSite(): Indieinabox\Site`
+`public function getSite(): Indieinabox\Site\Site`
 
 ### json()
 `protected function json(?mixed $data, int $status = 200, array $headers = []): void`

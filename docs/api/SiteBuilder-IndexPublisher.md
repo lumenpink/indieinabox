@@ -5,17 +5,17 @@ Publishes index pages: section indexes, timeline indexes, taxonomies, and sitema
 
 ## Properties
 
-### `private Indieinabox\Site $site`
+### `private Indieinabox\Site\Site $site`
 
 ### `private Indieinabox\SiteBuilder\PagePublisher $pagePublisher`
 
 ## Methods
 
 ### __construct()
-`public function __construct(Indieinabox\Site $site, Indieinabox\SiteBuilder\PagePublisher $pagePublisher)`
+`public function __construct(Indieinabox\Site\Site $site, Indieinabox\SiteBuilder\PagePublisher $pagePublisher)`
 
 ### publishAll()
-`public function publishAll(Indieinabox\Pages $pages): void`
+`public function publishAll(Indieinabox\Page\Pages $pages): void`
 
 Publishes all aggregators, taxonomy indexes, sitemaps, and timeline pages.
 
@@ -30,7 +30,7 @@ Generates a sitemap.xml / index page for all active languages.
 @return void
 
 ### publishKindIndexes()
-`public function publishKindIndexes(Indieinabox\Pages $pages): void`
+`public function publishKindIndexes(Indieinabox\Page\Pages $pages): void`
 
 Publishes section and timeline indexes for all configured post kinds.
 
@@ -38,7 +38,7 @@ Publishes section and timeline indexes for all configured post kinds.
 @return void
 
 ### publishTaxonomies()
-`public function publishTaxonomies(Indieinabox\Pages $pages): void`
+`public function publishTaxonomies(Indieinabox\Page\Pages $pages): void`
 
 Publishes index pages for standard taxonomies (tags and flowerbeds).
 
@@ -53,7 +53,7 @@ Compiles the static timeline page from subscribed feeds and hubs.
 @return void
 
 ### loadThemeFeedView()
-`public function loadThemeFeedView(Indieinabox\Pages $pages): void`
+`public function loadThemeFeedView(Indieinabox\Page\Pages $pages): void`
 
 Loads the theme feed view file if provided by the active theme.
 

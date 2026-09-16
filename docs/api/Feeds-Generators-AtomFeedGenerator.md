@@ -9,7 +9,7 @@ Generates an Atom 1.0 feed from Entry objects.
 `public function getFilename(): string`
 
 ### generate()
-`public function generate(array $entries, string $outputPath, Indieinabox\Site $site, string $lang = 'en'): void`
+`public function generate(array $entries, string $outputPath, Indieinabox\Site\Site $site, string $lang = 'en'): void`
 
 @param Entry[] $entries
 

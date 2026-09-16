@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 use Indieinabox\Core\Container;
 use Indieinabox\Core\Database;
-use Indieinabox\Page;
+use Indieinabox\Page\Page;
 use Indieinabox\Repositories\Contracts\InteractionRepositoryInterface;
 use Indieinabox\Repositories\Contracts\SettingsRepositoryInterface;
 use Indieinabox\Services\ConfigurationService;

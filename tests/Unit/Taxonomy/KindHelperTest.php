@@ -3,8 +3,8 @@
 declare(strict_types=1);
 
 use Indieinabox\Core\Container;
-use Indieinabox\Page;
-use Indieinabox\Site;
+use Indieinabox\Page\Page;
+use Indieinabox\Site\Site;
 use Indieinabox\Site\Localization;
 use Indieinabox\Taxonomy\KindHelper;
 

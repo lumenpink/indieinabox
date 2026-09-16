@@ -5,7 +5,7 @@ Command to test Webmention endpoint discovery, outbound ping delivery, and h-car
 
 ## Properties
 
-### `protected Indieinabox\Site $site`
+### `protected Indieinabox\Site\Site $site`
 
 ## Methods
 
@@ -29,7 +29,7 @@ Validates the presence and completeness of an h-card for IndieWebify.me Level 1.
 @param array<int, string> $argv
 
 ### __construct()
-`public function __construct(Indieinabox\Site $site)`
+`public function __construct(Indieinabox\Site\Site $site)`
 
 ### getAliases()
 `public function getAliases(): array`

@@ -7,12 +7,12 @@ Controller handling incoming webmentions and the webmention help form page.
 
 ### `private Indieinabox\Services\WebmentionService $service`
 
-### `protected Indieinabox\Site $site`
+### `protected Indieinabox\Site\Site $site`
 
 ## Methods
 
 ### __construct()
-`public function __construct(Indieinabox\Site $site, ?Indieinabox\Services\WebmentionService $service = null)`
+`public function __construct(Indieinabox\Site\Site $site, ?Indieinabox\Services\WebmentionService $service = null)`
 
 ### handle()
 `public function handle(): void`
@@ -23,7 +23,7 @@ Dispatches incoming webmentions via POST requests or renders help form on GET re
 `protected function sendResponse(int $code, string $message): void`
 
 ### getSite()
-`public function getSite(): Indieinabox\Site`
+`public function getSite(): Indieinabox\Site\Site`
 
 ### json()
 `protected function json(?mixed $data, int $status = 200, array $headers = []): void`

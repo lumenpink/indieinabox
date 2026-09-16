@@ -11,7 +11,7 @@ Presentation view component that renders the configuration and bootstrap views.
 Renders the bootstrap first-run setup form.
 
 ### renderConfig()
-`public static function renderConfig(Indieinabox\Site $site, array $config, ?string $message = null, ?string $error = null): string`
+`public static function renderConfig(Indieinabox\Site\Site $site, array $config, ?string $message = null, ?string $error = null): string`
 
 Renders the main administration configuration form tabs.
 

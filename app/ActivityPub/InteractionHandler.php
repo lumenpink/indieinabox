@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Indieinabox\ActivityPub;
 
 use PDO;
-use Indieinabox\Site;
+use Indieinabox\Site\Site;
 use Indieinabox\Core\Database;
 use Indieinabox\Localization\Translator;
 

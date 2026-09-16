@@ -21,14 +21,14 @@ builds canonical slugs, determines layouts, and maps metadata.
 
 @var LanguageProcessor
 
-### `private Indieinabox\Site $site`
+### `private Indieinabox\Site\Site $site`
 
 @var Site
 
 ## Methods
 
 ### __construct()
-`public function __construct(Indieinabox\Markdown\FileProcessor $fileProcessor, Indieinabox\Markdown\ContentProcessor $contentProcessor, Indieinabox\Markdown\LanguageProcessor $languageProcessor, Indieinabox\Site $site)`
+`public function __construct(Indieinabox\Markdown\FileProcessor $fileProcessor, Indieinabox\Markdown\ContentProcessor $contentProcessor, Indieinabox\Markdown\LanguageProcessor $languageProcessor, Indieinabox\Site\Site $site)`
 
 @param FileProcessor $fileProcessor
 @param ContentProcessor $contentProcessor
@@ -51,12 +51,12 @@ builds canonical slugs, determines layouts, and maps metadata.
 @return LanguageProcessor
 
 ### getSite()
-`public function getSite(): Indieinabox\Site`
+`public function getSite(): Indieinabox\Site\Site`
 
 @return Site
 
 ### parse()
-`public function parse(string $file): ?Indieinabox\Page`
+`public function parse(string $file): ?Indieinabox\Page\Page`
 
 Parses a markdown file from disk into a populated Page object.
 
@@ -94,7 +94,7 @@ Calculates the relative traversal path (e.g., './' or '../../') based on slug de
 @return string
 
 ### setMetadata()
-`private function setMetadata(Indieinabox\Page $page, array $rawPage): Indieinabox\Page`
+`private function setMetadata(Indieinabox\Page\Page $page, array $rawPage): Indieinabox\Page\Page`
 
 Applies metadata, localized kind mappings, and localized date formatting to the Page object.
 

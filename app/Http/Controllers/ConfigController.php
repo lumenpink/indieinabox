@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Indieinabox\Http\Controllers;
 
 use Indieinabox\Services\ConfigurationService;
-use Indieinabox\Site;
+use Indieinabox\Site\Site;
 
 /**
  * Controller specifically managing site and engine configuration settings in the admin dashboard.

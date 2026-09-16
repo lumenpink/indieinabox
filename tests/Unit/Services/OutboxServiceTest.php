@@ -9,7 +9,7 @@ use Indieinabox\Federation\Contracts\FederationAdapter;
 use Indieinabox\Federation\FederationManager;
 use Indieinabox\Services\FollowService;
 use Indieinabox\Services\OutboxService;
-use Indieinabox\Site;
+use Indieinabox\Site\Site;
 
 beforeEach(function () {
     Database::disconnect();

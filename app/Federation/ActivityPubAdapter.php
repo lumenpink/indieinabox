@@ -8,7 +8,7 @@ use Indieinabox\ActivityPub\ActivityBuilder;
 use Indieinabox\ActivityPub\KeyManager;
 use Indieinabox\Core\Database;
 use Indieinabox\Federation\Contracts\FederationAdapter;
-use Indieinabox\Site;
+use Indieinabox\Site\Site;
 use Throwable;
 
 /**

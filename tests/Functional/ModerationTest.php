@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 use PHPUnit\Framework\Assert;
 use Indieinabox\Http\Controllers\AdminController;
-use Indieinabox\Site;
+use Indieinabox\Site\Site;
 use Indieinabox\Site\Paths;
 
 beforeEach(function () {

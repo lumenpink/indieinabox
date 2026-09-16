@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use Indieinabox\Media\ImageProcessor;
-use Indieinabox\Page;
+use Indieinabox\Page\Page;
 use Indieinabox\Page\Metadata;
 use Indieinabox\Support\FileUtils;
 use Indieinabox\Taxonomy\KindHelper;

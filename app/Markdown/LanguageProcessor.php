@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Indieinabox\Markdown;
 
-use Indieinabox\Page;
-use Indieinabox\Site;
+use Indieinabox\Page\Page;
+use Indieinabox\Site\Site;
 use Indieinabox\Translations\UrlTranslations;
 
 /**

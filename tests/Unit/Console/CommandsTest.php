@@ -15,7 +15,7 @@ use Indieinabox\Console\Commands\TestWebmentionCommand;
 use Indieinabox\Console\Commands\UpdateCommand;
 use Indieinabox\Console\Commands\VersionCommand;
 use Indieinabox\Core\Database;
-use Indieinabox\Site;
+use Indieinabox\Site\Site;
 
 beforeEach(function () {
     /** @var \Tests\TestCase $this */

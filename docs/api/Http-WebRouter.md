@@ -9,7 +9,7 @@ If no specific controller matches, it delegates to StaticFileServer.
 
 ## Properties
 
-### `protected Indieinabox\Site $site`
+### `protected Indieinabox\Site\Site $site`
 
 @var Site
 
@@ -20,7 +20,7 @@ If no specific controller matches, it delegates to StaticFileServer.
 ## Methods
 
 ### __construct()
-`public function __construct(Indieinabox\Site $site, ?Indieinabox\Http\StaticFileServer $fileServer = null)`
+`public function __construct(Indieinabox\Site\Site $site, ?Indieinabox\Http\StaticFileServer $fileServer = null)`
 
 Initializes the WebRouter with the global site configuration and static file server.
 

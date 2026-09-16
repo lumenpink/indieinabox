@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Indieinabox\IndieAuth;
 
-use Indieinabox\Site;
+use Indieinabox\Site\Site;
 
 /**
  * Class ConsentView

@@ -12,7 +12,7 @@ use Indieinabox\Http\Controllers\MicropubController;
 use Indieinabox\Http\Controllers\MicrosubController;
 use Indieinabox\Http\Controllers\WebmentionController;
 use Indieinabox\Http\StaticFileServer;
-use Indieinabox\Site;
+use Indieinabox\Site\Site;
 
 /**
  * Class WebRouter

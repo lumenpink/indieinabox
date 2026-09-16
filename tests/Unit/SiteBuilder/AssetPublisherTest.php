@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use Indieinabox\Support\FileUtils;
-use Indieinabox\Site;
+use Indieinabox\Site\Site;
 use Indieinabox\Site\Paths;
 use Indieinabox\SiteBuilder\AssetPublisher;
 

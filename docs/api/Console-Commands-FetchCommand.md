@@ -5,7 +5,7 @@ Command to poll and ingest external subscriptions and twtxt feeds.
 
 ## Properties
 
-### `protected Indieinabox\Site $site`
+### `protected Indieinabox\Site\Site $site`
 
 ## Methods
 
@@ -27,7 +27,7 @@ Command to poll and ingest external subscriptions and twtxt feeds.
 `public function execute(array $argv): int`
 
 ### __construct()
-`public function __construct(Indieinabox\Site $site)`
+`public function __construct(Indieinabox\Site\Site $site)`
 
 ### getOption()
 `protected function getOption(array $argv, string $longOpt): ?string`

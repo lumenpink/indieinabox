@@ -27,7 +27,7 @@ Verifies that the source URL contains a valid link back to the target.
 @return array{success: bool, message?: string, content?: array{title: string, text: string, whostyle?: array<array-key, mixed>|null}}
 
 ### isValidTarget()
-`public function isValidTarget(string $target, Indieinabox\Site $site): bool`
+`public function isValidTarget(string $target, Indieinabox\Site\Site $site): bool`
 
 Validates whether a target URL belongs to this site and resolves to an existing page file.
 

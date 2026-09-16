@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use Indieinabox\Core\Container;
-use Indieinabox\Site;
+use Indieinabox\Site\Site;
 use Indieinabox\Taxonomy\KindHelper;
 use Indieinabox\Theme\ThemeManager;
 

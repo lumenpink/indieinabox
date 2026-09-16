@@ -8,14 +8,14 @@ discovers target endpoints, and dispatches POST requests.
 
 ## Properties
 
-### `private Indieinabox\Site $site`
+### `private Indieinabox\Site\Site $site`
 
 ### `private PDO $db`
 
 ## Methods
 
 ### __construct()
-`public function __construct(Indieinabox\Site $site, PDO $db)`
+`public function __construct(Indieinabox\Site\Site $site, PDO $db)`
 
 ### process()
 `public function process(): void`

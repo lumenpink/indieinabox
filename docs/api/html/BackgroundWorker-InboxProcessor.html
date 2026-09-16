@@ -114,6 +114,8 @@
 <li><a href="/docs/api/html/Page-Content.html">Page-Content</a></li>
 <li><a href="/docs/api/html/Page-Localization.html">Page-Localization</a></li>
 <li><a href="/docs/api/html/Page-Metadata.html">Page-Metadata</a></li>
+<li><a href="/docs/api/html/Page-Page.html">Page-Page</a></li>
+<li><a href="/docs/api/html/Page-Pages.html">Page-Pages</a></li>
 <li><a href="/docs/api/html/Page.html">Page</a></li>
 <li><a href="/docs/api/html/Pages.html">Pages</a></li>
 <li><a href="/docs/api/html/ParserInterface.html">ParserInterface</a></li>
@@ -140,6 +142,7 @@
 <li><a href="/docs/api/html/Site-Metadata.html">Site-Metadata</a></li>
 <li><a href="/docs/api/html/Site-Options.html">Site-Options</a></li>
 <li><a href="/docs/api/html/Site-Paths.html">Site-Paths</a></li>
+<li><a href="/docs/api/html/Site-Site.html">Site-Site</a></li>
 <li><a href="/docs/api/html/Site-Support.html">Site-Support</a></li>
 <li><a href="/docs/api/html/Site-Twtxt.html">Site-Twtxt</a></li>
 <li><a href="/docs/api/html/Site.html">Site</a></li>
@@ -189,7 +192,7 @@
 <p>Processes pending items in inboxProcesses pending items in inbox_queue: Webmentions, ActivityPub activities,<br />
 and site build events.</p>
 <h2>Properties</h2>
-<h3><code>private Indieinabox\Site $site</code></h3>
+<h3><code>private Indieinabox\Site\Site $site</code></h3>
 <h3><code>private PDO $db</code></h3>
 <h3><code>private mixed $fetcher</code></h3>
 <p>@var callable|null</p>
@@ -199,7 +202,7 @@ and site build events.</p>
 <p>@var callable|null</p>
 <h2>Methods</h2>
 <h3><em></em>construct()</h3>
-<p><code>public function __construct(Indieinabox\Site $site, PDO $db, ?callable $fetcher = null, ?callable $jsonFetcher = null, ?callable $signatureVerifier = null)</code></p>
+<p><code>public function __construct(Indieinabox\Site\Site $site, PDO $db, ?callable $fetcher = null, ?callable $jsonFetcher = null, ?callable $signatureVerifier = null)</code></p>
 <p>@param Site $site<br />
 @param PDO $db<br />
 @param callable|null $fetcher Optional HTTP fetcher hook fn(string $url): string|false<br />

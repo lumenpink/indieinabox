@@ -7,7 +7,7 @@ use Indieinabox\Core\Database;
 use Indieinabox\Http\Controllers\MicrosubController;
 use Indieinabox\Services\FetchFeedsService;
 use Indieinabox\Services\MicrosubService;
-use Indieinabox\Site;
+use Indieinabox\Site\Site;
 
 $integTempDir = __DIR__ . '/tmp_integ_feeds';
 

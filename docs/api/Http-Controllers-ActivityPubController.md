@@ -11,12 +11,12 @@ Controller managing HTTP endpoints for ActivityPub federation, actor discovery, 
 
 ### `private Indieinabox\ActivityPub\InteractionHandler $interactionHandler`
 
-### `protected Indieinabox\Site $site`
+### `protected Indieinabox\Site\Site $site`
 
 ## Methods
 
 ### __construct()
-`public function __construct(Indieinabox\Site $site, ?PDO $db = null, ?Indieinabox\ActivityPub\KeyManager $keyManager = null, ?Indieinabox\ActivityPub\InteractionHandler $interactionHandler = null)`
+`public function __construct(Indieinabox\Site\Site $site, ?PDO $db = null, ?Indieinabox\ActivityPub\KeyManager $keyManager = null, ?Indieinabox\ActivityPub\InteractionHandler $interactionHandler = null)`
 
 ### getKeyManager()
 `public function getKeyManager(): Indieinabox\ActivityPub\KeyManager`
@@ -55,7 +55,7 @@ Handles incoming activities (POST to /inbox).
 Handles GET requests to the outbox (/outbox).
 
 ### getSite()
-`public function getSite(): Indieinabox\Site`
+`public function getSite(): Indieinabox\Site\Site`
 
 ### json()
 `protected function json(?mixed $data, int $status = 200, array $headers = []): void`

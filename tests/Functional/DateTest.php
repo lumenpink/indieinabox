@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Indieinabox\Page;
+use Indieinabox\Page\Page;
 
 beforeEach(function () {
     global $originaldaysofweek, $originalmonths, $intl;

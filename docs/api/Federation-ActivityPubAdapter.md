@@ -5,7 +5,7 @@ Protocol adapter implementing W3C ActivityPub / ActivityStreams 2.0 federation.
 
 ## Properties
 
-### `private Indieinabox\Site $site`
+### `private Indieinabox\Site\Site $site`
 
 ### `private mixed $transport`
 
@@ -14,7 +14,7 @@ Protocol adapter implementing W3C ActivityPub / ActivityStreams 2.0 federation.
 ## Methods
 
 ### __construct()
-`public function __construct(Indieinabox\Site $site, ?callable $transport = null)`
+`public function __construct(Indieinabox\Site\Site $site, ?callable $transport = null)`
 
 @param Site $site
 @param callable|null $transport Optional HTTP client hook: fn(string $url, array $headers, string $body): array{code: int, body: string, error: string}

@@ -7,7 +7,7 @@ namespace Indieinabox\Services;
 use Indieinabox\Core\Container;
 use Indieinabox\Repositories\Contracts\SettingsRepositoryInterface;
 use Indieinabox\Repositories\SqliteSettingsRepository;
-use Indieinabox\Site;
+use Indieinabox\Site\Site;
 use Indieinabox\SiteBuilder\SiteBuilder;
 use PDO;
 use ZipArchive;

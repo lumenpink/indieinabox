@@ -8,7 +8,7 @@ use Indieinabox\IndieAuth\TokenManager;
 use Indieinabox\Micropub\MediaHandler;
 use Indieinabox\Micropub\PostCreator;
 use Indieinabox\Micropub\QueryHandler;
-use Indieinabox\Site;
+use Indieinabox\Site\Site;
 use Indieinabox\Views\Admin\MicropubClientView;
 
 /**

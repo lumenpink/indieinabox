@@ -6,7 +6,7 @@ namespace Tests\Unit\Http;
 
 use Indieinabox\Core\Database;
 use Indieinabox\Http\Controllers\ActivityPubController;
-use Indieinabox\Site;
+use Indieinabox\Site\Site;
 use Indieinabox\Site\Metadata;
 use PDO;
 

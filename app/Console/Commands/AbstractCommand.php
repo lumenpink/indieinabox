@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Indieinabox\Console\Commands;
 
 use Indieinabox\Console\Contracts\CommandInterface;
-use Indieinabox\Site;
+use Indieinabox\Site\Site;
 
 /**
  * Base abstract command providing common CLI argument and option parsing helpers.

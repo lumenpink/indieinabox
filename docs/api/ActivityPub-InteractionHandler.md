@@ -7,7 +7,7 @@ Handles client-side Fediverse interactions (/interact and /authorize_interaction
 
 ## Properties
 
-### `private Indieinabox\Site $site`
+### `private Indieinabox\Site\Site $site`
 
 @var Site Global site instance.
 
@@ -18,7 +18,7 @@ Handles client-side Fediverse interactions (/interact and /authorize_interaction
 ## Methods
 
 ### __construct()
-`public function __construct(Indieinabox\Site $site, ?PDO $db = null)`
+`public function __construct(Indieinabox\Site\Site $site, ?PDO $db = null)`
 
 InteractionHandler constructor.
 

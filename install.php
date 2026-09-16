@@ -84,7 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['data_dir'])) {
             if (class_exists('\Indieinabox\SiteBuilder\SiteBuilder')) {
                 \Indieinabox\Core\Database::$dataDir = $dataDir;
                 \Indieinabox\Core\Database::connect($dbPath);
-                $site = new \Indieinabox\Site();
+                $site = new \Indieinabox\Site\Site();
                 $site->paths->baseDir = $baseDir;
                 $site->config = \Indieinabox\Core\Database::getAllSettings();
                 

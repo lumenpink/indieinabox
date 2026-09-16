@@ -114,6 +114,8 @@
 <li><a href="/docs/api/html/Page-Content.html">Page-Content</a></li>
 <li><a href="/docs/api/html/Page-Localization.html">Page-Localization</a></li>
 <li><a href="/docs/api/html/Page-Metadata.html">Page-Metadata</a></li>
+<li><a href="/docs/api/html/Page-Page.html">Page-Page</a></li>
+<li><a href="/docs/api/html/Page-Pages.html">Page-Pages</a></li>
 <li><a href="/docs/api/html/Page.html">Page</a></li>
 <li><a href="/docs/api/html/Pages.html">Pages</a></li>
 <li><a href="/docs/api/html/ParserInterface.html">ParserInterface</a></li>
@@ -140,6 +142,7 @@
 <li><a href="/docs/api/html/Site-Metadata.html">Site-Metadata</a></li>
 <li><a href="/docs/api/html/Site-Options.html">Site-Options</a></li>
 <li><a href="/docs/api/html/Site-Paths.html">Site-Paths</a></li>
+<li><a href="/docs/api/html/Site-Site.html">Site-Site</a></li>
 <li><a href="/docs/api/html/Site-Support.html">Site-Support</a></li>
 <li><a href="/docs/api/html/Site-Twtxt.html">Site-Twtxt</a></li>
 <li><a href="/docs/api/html/Site.html">Site</a></li>
@@ -189,10 +192,10 @@
 <p>Orchestrates the static site generation process. It coordinates scanning,<br />
 translation virtualization, content rendering, feed generation, and asset publishing.</p>
 <h2>Properties</h2>
-<h3><code>private Indieinabox\Site $site</code></h3>
-<p>@var \Indieinabox\Site</p>
-<h3><code>private Indieinabox\Pages $pages</code></h3>
-<p>@var \Indieinabox\Pages</p>
+<h3><code>private Indieinabox\Site\Site $site</code></h3>
+<p>@var \Indieinabox\Site\Site</p>
+<h3><code>private Indieinabox\Page\Pages $pages</code></h3>
+<p>@var \Indieinabox\Page\Pages</p>
 <h3><code>private Indieinabox\Markdown\ParserInterface $parser</code></h3>
 <p>@var \Indieinabox\Markdown\ParserInterface</p>
 <h3><code>private Indieinabox\SiteBuilder\ContentScanner $contentScanner</code></h3>
@@ -215,10 +218,10 @@ for Garbage Collection.<br />
 @var string[]</p>
 <h2>Methods</h2>
 <h3><em></em>construct()</h3>
-<p><code>public function __construct(Indieinabox\Site $site, ?Indieinabox\Pages $pages = null, ?Indieinabox\Markdown\ParserInterface $parser = null, ?Indieinabox\SiteBuilder\AssetPublisher $assetPublisher = null, ?Indieinabox\SiteBuilder\FeedPublisher $feedPublisher = null, ?Indieinabox\SiteBuilder\PagePublisher $pagePublisher = null, ?Indieinabox\SiteBuilder\TranslationVirtualizer $translationVirtualizer = null, ?Indieinabox\SiteBuilder\IndexPublisher $indexPublisher = null, ?Indieinabox\SiteBuilder\ContentScanner $contentScanner = null)</code></p>
+<p><code>public function __construct(Indieinabox\Site\Site $site, ?Indieinabox\Page\Pages $pages = null, ?Indieinabox\Markdown\ParserInterface $parser = null, ?Indieinabox\SiteBuilder\AssetPublisher $assetPublisher = null, ?Indieinabox\SiteBuilder\FeedPublisher $feedPublisher = null, ?Indieinabox\SiteBuilder\PagePublisher $pagePublisher = null, ?Indieinabox\SiteBuilder\TranslationVirtualizer $translationVirtualizer = null, ?Indieinabox\SiteBuilder\IndexPublisher $indexPublisher = null, ?Indieinabox\SiteBuilder\ContentScanner $contentScanner = null)</code></p>
 <p>SiteBuilder constructor.</p>
-<p>@param \Indieinabox\Site $site The site configuration and environment settings.<br />
-@param \Indieinabox\Pages|null $pages An optional collection of parsed pages.<br />
+<p>@param \Indieinabox\Site\Site $site The site configuration and environment settings.<br />
+@param \Indieinabox\Page\Pages|null $pages An optional collection of parsed pages.<br />
 @param \Indieinabox\Markdown\ParserInterface|null $parser An optional markdown parser implementation.<br />
 @param \Indieinabox\SiteBuilder\AssetPublisher|null $assetPublisher An optional asset publisher.<br />
 @param \Indieinabox\SiteBuilder\FeedPublisher|null $feedPublisher An optional feed publisher.<br />
@@ -227,9 +230,9 @@ for Garbage Collection.<br />
 @param \Indieinabox\SiteBuilder\IndexPublisher|null $indexPublisher An optional index publisher.<br />
 @param \Indieinabox\SiteBuilder\ContentScanner|null $contentScanner An optional content scanner.</p>
 <h3>getPages()</h3>
-<p><code>public function getPages(): Indieinabox\Pages</code></p>
+<p><code>public function getPages(): Indieinabox\Page\Pages</code></p>
 <p>Retrieves the collection of processed pages.</p>
-<p>@return \Indieinabox\Pages The pages collection.</p>
+<p>@return \Indieinabox\Page\Pages The pages collection.</p>
 <h3>getParser()</h3>
 <p><code>public function getParser(): Indieinabox\Markdown\ParserInterface</code></p>
 <p>Retrieves the markdown parser implementation.</p>

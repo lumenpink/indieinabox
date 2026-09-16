@@ -6,8 +6,8 @@ namespace Indieinabox\Theme;
 
 use Indieinabox\Core\Database;
 use Indieinabox\Localization\Translator;
-use Indieinabox\Page;
-use Indieinabox\Site;
+use Indieinabox\Page\Page;
+use Indieinabox\Site\Site;
 use Indieinabox\Support\TextParser;
 use Indieinabox\Taxonomy\KindHelper;
 
@@ -76,7 +76,7 @@ class ThemeHelper
         $html .= '</div>';
 
         $container = \Indieinabox\Core\Container::getInstance();
-        $site = $container->has(\Indieinabox\Site::class) ? $container->get(\Indieinabox\Site::class) : ($GLOBALS['site'] ?? null);
+        $site = $container->has(\Indieinabox\Site\Site::class) ? $container->get(\Indieinabox\Site\Site::class) : ($GLOBALS['site'] ?? null);
         $defaultLang = $site->localization->defaultLang ?? 'en';
         $pageLang = $page->lang ?? $defaultLang;
         $langPrefix = ($pageLang === $defaultLang) ? '' : $pageLang . '/';

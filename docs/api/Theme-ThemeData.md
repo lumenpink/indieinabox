@@ -9,7 +9,7 @@ decoupling low-level logic from presentation views.
 ## Methods
 
 ### getPageTitle()
-`public static function getPageTitle(Indieinabox\Page $page, Indieinabox\Site $site): string`
+`public static function getPageTitle(Indieinabox\Page\Page $page, Indieinabox\Site\Site $site): string`
 
 Gets the formatted page title.
 
@@ -18,7 +18,7 @@ Gets the formatted page title.
 @return string
 
 ### getThemeColors()
-`public static function getThemeColors(Indieinabox\Page $page): array`
+`public static function getThemeColors(Indieinabox\Page\Page $page): array`
 
 Gets the calculated theme colors based on the page kind.
 
@@ -26,7 +26,7 @@ Gets the calculated theme colors based on the page kind.
 @return array<string, string> An array containing 'bg' and 'fg' color hex codes.
 
 ### getMetaTags()
-`public static function getMetaTags(Indieinabox\Page $page, Indieinabox\Site $site): string`
+`public static function getMetaTags(Indieinabox\Page\Page $page, Indieinabox\Site\Site $site): string`
 
 Generates the standard meta tags (description, canonical, shortlink).
 
@@ -35,7 +35,7 @@ Generates the standard meta tags (description, canonical, shortlink).
 @return string HTML meta tags.
 
 ### getOpenGraphTags()
-`public static function getOpenGraphTags(Indieinabox\Page $page, Indieinabox\Site $site): string`
+`public static function getOpenGraphTags(Indieinabox\Page\Page $page, Indieinabox\Site\Site $site): string`
 
 Generates OpenGraph meta tags.
 
@@ -44,7 +44,7 @@ Generates OpenGraph meta tags.
 @return string HTML meta tags.
 
 ### getTwitterCardTags()
-`public static function getTwitterCardTags(Indieinabox\Page $page, Indieinabox\Site $site): string`
+`public static function getTwitterCardTags(Indieinabox\Page\Page $page, Indieinabox\Site\Site $site): string`
 
 Generates Twitter Card meta tags.
 
@@ -53,7 +53,7 @@ Generates Twitter Card meta tags.
 @return string HTML meta tags.
 
 ### getJsonLd()
-`public static function getJsonLd(Indieinabox\Page $page, Indieinabox\Site $site): string`
+`public static function getJsonLd(Indieinabox\Page\Page $page, Indieinabox\Site\Site $site): string`
 
 Generates the Schema.org JSON-LD script tag.
 
@@ -62,7 +62,7 @@ Generates the Schema.org JSON-LD script tag.
 @return string HTML script tag containing JSON-LD.
 
 ### getLanguageSelector()
-`public static function getLanguageSelector(Indieinabox\Page $page, Indieinabox\Site $site, ?array $langLinks = null): string`
+`public static function getLanguageSelector(Indieinabox\Page\Page $page, Indieinabox\Site\Site $site, ?array $langLinks = null): string`
 
 Generates the language selector HTML markup.
 
@@ -72,7 +72,7 @@ Generates the language selector HTML markup.
 @return string HTML nav block or empty string if single language.
 
 ### getHeaderNavLinks()
-`public static function getHeaderNavLinks(Indieinabox\Page $page, Indieinabox\Site $site, array $headerLinks = []): string`
+`public static function getHeaderNavLinks(Indieinabox\Page\Page $page, Indieinabox\Site\Site $site, array $headerLinks = []): string`
 
 Generates the top navigation links HTML markup.
 
@@ -82,7 +82,7 @@ Generates the top navigation links HTML markup.
 @return string HTML nav block.
 
 ### getFooterLinks()
-`public static function getFooterLinks(Indieinabox\Page $page, array $footerLinks = []): string`
+`public static function getFooterLinks(Indieinabox\Page\Page $page, array $footerLinks = []): string`
 
 Generates the footer links HTML markup including RSS and ATOM.
 
@@ -91,7 +91,7 @@ Generates the footer links HTML markup including RSS and ATOM.
 @return string HTML nav block.
 
 ### getHCard()
-`public static function getHCard(Indieinabox\Site $site): string`
+`public static function getHCard(Indieinabox\Site\Site $site): string`
 
 Generates a semantic h-card markup for the site author (IndieWebify.me Level 1).
 

@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use Indieinabox\Http\Controllers\IndieAuthController;
-use Indieinabox\Site;
+use Indieinabox\Site\Site;
 
 $unitTempDir = __DIR__ . '/tmp_unit_indieauth';
 

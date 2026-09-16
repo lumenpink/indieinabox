@@ -12,7 +12,7 @@ use Indieinabox\Services\FollowService;
 use Indieinabox\Services\InboxService;
 use Indieinabox\Services\OutboxService;
 use Indieinabox\Services\PublishPostService;
-use Indieinabox\Site;
+use Indieinabox\Site\Site;
 use Indieinabox\Site\Paths;
 
 beforeEach(function () {

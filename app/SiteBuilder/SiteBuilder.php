@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Indieinabox\SiteBuilder;
 
 use Indieinabox\Markdown\ParserInterface;
-use Indieinabox\Pages;
-use Indieinabox\Site;
+use Indieinabox\Page\Pages;
+use Indieinabox\Site\Site;
 use Indieinabox\SiteBuilder\AssetPublisher;
 use Indieinabox\SiteBuilder\ContentScanner;
 use Indieinabox\SiteBuilder\FeedPublisher;
@@ -23,11 +23,11 @@ use Indieinabox\SiteBuilder\TranslationVirtualizer;
 class SiteBuilder
 {
     /**
-     * @var \Indieinabox\Site
+     * @var \Indieinabox\Site\Site
      */
     private Site $site;
     /**
-     * @var \Indieinabox\Pages
+     * @var \Indieinabox\Page\Pages
      */
     private Pages $pages;
     /**
@@ -62,8 +62,8 @@ class SiteBuilder
     /**
      * SiteBuilder constructor.
      *
-     * @param \Indieinabox\Site $site The site configuration and environment settings.
-     * @param \Indieinabox\Pages|null $pages An optional collection of parsed pages.
+     * @param \Indieinabox\Site\Site $site The site configuration and environment settings.
+     * @param \Indieinabox\Page\Pages|null $pages An optional collection of parsed pages.
      * @param \Indieinabox\Markdown\ParserInterface|null $parser An optional markdown parser implementation.
      * @param \Indieinabox\SiteBuilder\AssetPublisher|null $assetPublisher An optional asset publisher.
      * @param \Indieinabox\SiteBuilder\FeedPublisher|null $feedPublisher An optional feed publisher.
@@ -97,7 +97,7 @@ class SiteBuilder
     /**
      * Retrieves the collection of processed pages.
      *
-     * @return \Indieinabox\Pages The pages collection.
+     * @return \Indieinabox\Page\Pages The pages collection.
      */
     public function getPages(): Pages
     {

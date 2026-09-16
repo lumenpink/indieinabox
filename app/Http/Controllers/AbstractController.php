@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Indieinabox\Http\Controllers;
 
-use Indieinabox\Site;
+use Indieinabox\Site\Site;
 
 /**
  * Base HTTP Controller providing standard request handling and response emission methods.

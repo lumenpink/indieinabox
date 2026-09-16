@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use Indieinabox\Http\StaticFileServer;
-use Indieinabox\Site;
+use Indieinabox\Site\Site;
 use Indieinabox\Site\Paths;
 use Indieinabox\Support\FileUtils;
 

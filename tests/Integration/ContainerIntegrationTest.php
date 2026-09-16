@@ -5,7 +5,7 @@ declare(strict_types=1);
 use Indieinabox\Console\ConsoleKernel;
 use Indieinabox\Core\Container;
 use Indieinabox\Core\Database;
-use Indieinabox\Site;
+use Indieinabox\Site\Site;
 
 beforeEach(function () {
     $this->tempDir = sys_get_temp_dir() . '/iiab_integration_container_' . uniqid();

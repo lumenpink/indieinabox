@@ -114,6 +114,8 @@
 <li><a href="/docs/api/html/Page-Content.html">Page-Content</a></li>
 <li><a href="/docs/api/html/Page-Localization.html">Page-Localization</a></li>
 <li><a href="/docs/api/html/Page-Metadata.html">Page-Metadata</a></li>
+<li><a href="/docs/api/html/Page-Page.html">Page-Page</a></li>
+<li><a href="/docs/api/html/Page-Pages.html">Page-Pages</a></li>
 <li><a href="/docs/api/html/Page.html">Page</a></li>
 <li><a href="/docs/api/html/Pages.html">Pages</a></li>
 <li><a href="/docs/api/html/ParserInterface.html">ParserInterface</a></li>
@@ -140,6 +142,7 @@
 <li><a href="/docs/api/html/Site-Metadata.html">Site-Metadata</a></li>
 <li><a href="/docs/api/html/Site-Options.html">Site-Options</a></li>
 <li><a href="/docs/api/html/Site-Paths.html">Site-Paths</a></li>
+<li><a href="/docs/api/html/Site-Site.html">Site-Site</a></li>
 <li><a href="/docs/api/html/Site-Support.html">Site-Support</a></li>
 <li><a href="/docs/api/html/Site-Twtxt.html">Site-Twtxt</a></li>
 <li><a href="/docs/api/html/Site.html">Site</a></li>
@@ -187,19 +190,19 @@
 <p><strong>Namespace:</strong> <code>Indieinabox\SiteBuilder</code></p>
 <p>Handles translation parity and virtualization of missing pages across languages.</p>
 <h2>Properties</h2>
-<h3><code>private Indieinabox\Site $site</code></h3>
+<h3><code>private Indieinabox\Site\Site $site</code></h3>
 <h2>Methods</h2>
 <h3><em></em>construct()</h3>
-<p><code>public function __construct(Indieinabox\Site $site)</code></p>
+<p><code>public function __construct(Indieinabox\Site\Site $site)</code></p>
 <h3>virtualize()</h3>
-<p><code>public function virtualize(Indieinabox\Pages $pages): void</code></p>
+<p><code>public function virtualize(Indieinabox\Page\Pages $pages): void</code></p>
 <p>Generates pseudo-translated pages for missing languages to maintain parity.<br />
 Uses configured rules (e.g., full parity, from-main-only) and translates<br />
 missing slugs according to URL translation mappings.</p>
 <p>@param Pages $pages<br />
 @return void</p>
 <h3>pseudoTranslate()</h3>
-<p><code>public function pseudoTranslate(Indieinabox\Page $page, string $targetLang): void</code></p>
+<p><code>public function pseudoTranslate(Indieinabox\Page\Page $page, string $targetLang): void</code></p>
 <p>Applies a pseudo-translation prefix to a page&apos;s title or content.<br />
 Used visually to flag that a page was automatically virtualized.</p>
 <p>@param Page $page The page to translate in place.<br />

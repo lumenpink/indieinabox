@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Indieinabox\Micropub;
 
-use Indieinabox\Site;
+use Indieinabox\Site\Site;
 
 /**
  * Class MediaHandler

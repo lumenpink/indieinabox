@@ -10,7 +10,7 @@ use DOMDocument;
 use DOMElement;
 use DOMXPath;
 use Indieinabox\Core\Database;
-use Indieinabox\Site;
+use Indieinabox\Site\Site;
 use Indieinabox\Support\Yaml;
 use Indieinabox\Markdown\ContentProcessor;
 use Indieinabox\Microsub\ExtendedEntry;

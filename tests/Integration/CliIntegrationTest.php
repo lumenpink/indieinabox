@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 use Indieinabox\Console\ConsoleKernel;
 use Indieinabox\Core\Database;
-use Indieinabox\Site;
+use Indieinabox\Site\Site;
 use Indieinabox\Site\Metadata;
 
 beforeEach(function () {

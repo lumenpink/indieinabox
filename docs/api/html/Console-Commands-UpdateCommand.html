@@ -114,6 +114,8 @@
 <li><a href="/docs/api/html/Page-Content.html">Page-Content</a></li>
 <li><a href="/docs/api/html/Page-Localization.html">Page-Localization</a></li>
 <li><a href="/docs/api/html/Page-Metadata.html">Page-Metadata</a></li>
+<li><a href="/docs/api/html/Page-Page.html">Page-Page</a></li>
+<li><a href="/docs/api/html/Page-Pages.html">Page-Pages</a></li>
 <li><a href="/docs/api/html/Page.html">Page</a></li>
 <li><a href="/docs/api/html/Pages.html">Pages</a></li>
 <li><a href="/docs/api/html/ParserInterface.html">ParserInterface</a></li>
@@ -140,6 +142,7 @@
 <li><a href="/docs/api/html/Site-Metadata.html">Site-Metadata</a></li>
 <li><a href="/docs/api/html/Site-Options.html">Site-Options</a></li>
 <li><a href="/docs/api/html/Site-Paths.html">Site-Paths</a></li>
+<li><a href="/docs/api/html/Site-Site.html">Site-Site</a></li>
 <li><a href="/docs/api/html/Site-Support.html">Site-Support</a></li>
 <li><a href="/docs/api/html/Site-Twtxt.html">Site-Twtxt</a></li>
 <li><a href="/docs/api/html/Site.html">Site</a></li>
@@ -187,7 +190,7 @@
 <p><strong>Namespace:</strong> <code>Indieinabox\Console\Commands</code></p>
 <p>Command to check, apply, inspect backups, and rollback application versions via CLI.</p>
 <h2>Properties</h2>
-<h3><code>protected Indieinabox\Site $site</code></h3>
+<h3><code>protected Indieinabox\Site\Site $site</code></h3>
 <h2>Methods</h2>
 <h3>getName()</h3>
 <p><code>public function getName(): string</code></p>
@@ -198,7 +201,7 @@
 <h3>execute()</h3>
 <p><code>public function execute(array $argv): int</code></p>
 <h3><em></em>construct()</h3>
-<p><code>public function __construct(Indieinabox\Site $site)</code></p>
+<p><code>public function __construct(Indieinabox\Site\Site $site)</code></p>
 <h3>getAliases()</h3>
 <p><code>public function getAliases(): array</code></p>
 <p>@return array<int, string></p>

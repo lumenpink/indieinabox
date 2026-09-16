@@ -6,7 +6,7 @@ Contract for format-specific feed generators.
 ## Methods
 
 ### generate()
-`abstract public function generate(array $entries, string $outputPath, Indieinabox\Site $site, string $lang = 'en'): void`
+`abstract public function generate(array $entries, string $outputPath, Indieinabox\Site\Site $site, string $lang = 'en'): void`
 
 Generates a feed from a list of Entry objects and writes to the destination path.
 

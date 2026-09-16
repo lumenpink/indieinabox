@@ -2,14 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Indieinabox;
-
-use Indieinabox\Site\Metadata;
-use Indieinabox\Site\Paths;
-use Indieinabox\Site\Options;
-use Indieinabox\Site\Localization;
-use Indieinabox\Site\Support;
-use Indieinabox\Site\Twtxt;
+namespace Indieinabox\Site;
 
 /**
  * Class Site
@@ -111,5 +104,45 @@ class Site
                 return $this->metadata->defaultTitle;
         }
         return null;
+    }
+
+    public function isDev(): bool
+    {
+        return (bool) $this->options->dev;
+    }
+
+    public function isPrettyLinks(): bool
+    {
+        return (bool) $this->options->prettylinks;
+    }
+
+    public function getBaseDir(): string
+    {
+        return $this->paths->baseDir;
+    }
+
+    public function getOutputDirHtml(): string
+    {
+        return $this->paths->outputDirHtml;
+    }
+
+    public function getThemeDir(): string
+    {
+        return $this->paths->themeDir;
+    }
+
+    public function getDefaultLanguage(): string
+    {
+        return $this->localization->defaultLang;
+    }
+
+    public function getFqdn(): string
+    {
+        return $this->metadata->fqdn;
+    }
+
+    public function getTitle(): string
+    {
+        return $this->metadata->defaultTitle;
     }
 }

@@ -6,7 +6,7 @@ namespace Indieinabox\Services;
 
 use Indieinabox\ActivityPub\ActivityBuilder;
 use Indieinabox\Core\Database;
-use Indieinabox\Site;
+use Indieinabox\Site\Site;
 use Indieinabox\SiteBuilder\SiteBuilder;
 
 /**

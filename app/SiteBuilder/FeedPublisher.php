@@ -9,9 +9,9 @@ use Indieinabox\Feeds\FeedGeneratorInterface;
 use Indieinabox\Feeds\Generators\AtomFeedGenerator;
 use Indieinabox\Feeds\Generators\RssFeedGenerator;
 use Indieinabox\Feeds\Generators\TwtxtFeedGenerator;
-use Indieinabox\Page;
-use Indieinabox\Pages;
-use Indieinabox\Site;
+use Indieinabox\Page\Page;
+use Indieinabox\Page\Pages;
+use Indieinabox\Site\Site;
 
 /**
  * Orchestrates generation and publishing of feeds across all languages and protocols.

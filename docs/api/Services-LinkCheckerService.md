@@ -3,7 +3,7 @@
 
 ## Properties
 
-### `private Indieinabox\Site $site`
+### `private Indieinabox\Site\Site $site`
 
 ### `private array $errors`
 
@@ -12,7 +12,7 @@
 ## Methods
 
 ### __construct()
-`public function __construct(Indieinabox\Site $site)`
+`public function __construct(Indieinabox\Site\Site $site)`
 
 ### run()
 `public function run(?string $reportPath = null, bool $skipExternal = false): void`

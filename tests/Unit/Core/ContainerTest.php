@@ -5,7 +5,7 @@ declare(strict_types=1);
 use Indieinabox\Core\Container;
 use Indieinabox\Core\Exceptions\ContainerException;
 use Indieinabox\Core\Exceptions\NotFoundException;
-use Indieinabox\Site;
+use Indieinabox\Site\Site;
 
 beforeEach(function () {
     /** @var \Tests\TestCase $this */

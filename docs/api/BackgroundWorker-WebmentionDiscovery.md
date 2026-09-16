@@ -8,7 +8,7 @@ if they support receiving Webmentions.
 
 ## Properties
 
-### `private Indieinabox\Site $site`
+### `private Indieinabox\Site\Site $site`
 
 ### `private PDO $db`
 
@@ -19,7 +19,7 @@ if they support receiving Webmentions.
 ## Methods
 
 ### __construct()
-`public function __construct(Indieinabox\Site $site, PDO $db, ?callable $fetcher = null)`
+`public function __construct(Indieinabox\Site\Site $site, PDO $db, ?callable $fetcher = null)`
 
 @param Site $site
 @param PDO $db

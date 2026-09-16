@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Indieinabox\Services;
 
-use Indieinabox\Site;
+use Indieinabox\Site\Site;
 
 class LinkCheckerService
 {

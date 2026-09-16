@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Indieinabox\Page;
+use Indieinabox\Page\Page;
 use Indieinabox\Page\Metadata;
 use Indieinabox\Page\Content;
 use Indieinabox\Page\Localization;
@@ -68,7 +68,7 @@ test('garden kind receives default tags if missing', function () {
         'kind' => 'garden',
         'title' => 'My Digital Garden'
     ];
-    $page = \Indieinabox\Page::fromArray($data);
+    $page = \Indieinabox\Page\Page::fromArray($data);
     expect($page->metadata->flowerbed)->toBe(['general']);
     expect($page->metadata->confidence)->toBe('possible');
     expect($page->metadata->maturity)->toBe('sprout');
@@ -84,9 +84,57 @@ test('garden kind respects provided tags', function () {
         'maturity' => 'tree',
         'importance' => 'critical'
     ];
-    $page = \Indieinabox\Page::fromArray($data);
+    $page = \Indieinabox\Page\Page::fromArray($data);
     expect($page->metadata->flowerbed)->toBe(['tech', 'design']);
     expect($page->metadata->confidence)->toBe('certain');
     expect($page->metadata->maturity)->toBe('tree');
     expect($page->metadata->importance)->toBe('critical');
 });
+
+test('Page domain methods provide clean encapsulation', function () {
+    $page = Page::fromArray([
+        'title' => 'Domain Article',
+        'slug' => 'domain-article',
+        'kind' => 'article',
+        'lang' => 'pt',
+        'tags' => ['ddd', 'clean-arch', 'draft'],
+    ]);
+
+    expect($page->isDraft())->toBeTrue();
+    expect($page->hasTitle())->toBeTrue();
+    expect($page->getTitle())->toBe('Domain Article');
+    expect($page->getSlug())->toBe('domain-article');
+    expect($page->getKind())->toBe('article');
+    expect($page->getLanguage())->toBe('pt');
+    expect($page->hasTag('ddd'))->toBeTrue();
+    expect($page->hasTag('nonexistent'))->toBeFalse();
+    expect($page->getDate())->toBeInstanceOf(DateTime::class);
+});
+
+test('Pages collection aggregate filters and queries domain pages', function () {
+    $pages = new \Indieinabox\Page\Pages();
+    $page1 = Page::fromArray(['title' => 'Post 1', 'slug' => 'post-1', 'kind' => 'article', 'lang' => 'en']);
+    $page2 = Page::fromArray(['title' => 'Post 2', 'slug' => 'post-2', 'kind' => 'note', 'lang' => 'pt']);
+
+    $pages->add($page1);
+    $pages->add($page2);
+
+    expect($pages->count())->toBe(2);
+    expect($pages->has('post-1'))->toBeTrue();
+    expect($pages->has('missing'))->toBeFalse();
+    expect($pages->find('post-1'))->toBe($page1);
+    expect($pages->find('missing'))->toBeNull();
+
+    $articles = $pages->filterByKind('article');
+    expect(count($articles))->toBe(1);
+    expect(array_keys($articles))->toContain('post-1');
+
+    $ptPages = $pages->filterByLanguage('pt');
+    expect(count($ptPages))->toBe(1);
+    expect(array_keys($ptPages))->toContain('post-2');
+
+    $pages->remove('post-1');
+    expect($pages->has('post-1'))->toBeFalse();
+    expect($pages->count())->toBe(1);
+});
+

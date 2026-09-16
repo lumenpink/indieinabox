@@ -6,7 +6,7 @@ namespace Indieinabox\Http\Controllers;
 
 use Indieinabox\IndieAuth\ConsentView;
 use Indieinabox\IndieAuth\TokenManager;
-use Indieinabox\Site;
+use Indieinabox\Site\Site;
 
 /**
  * Controller handling IndieAuth authentication, authorization code exchange, token issues, and metadata.

@@ -6,7 +6,7 @@ namespace Indieinabox\BackgroundWorker;
 
 use Indieinabox\Core\Database;
 use Indieinabox\Federation\HttpSignature;
-use Indieinabox\Site;
+use Indieinabox\Site\Site;
 use Indieinabox\SiteBuilder\SiteBuilder;
 use Indieinabox\Support\Yaml;
 use Indieinabox\Webmention\SourceVerifier;

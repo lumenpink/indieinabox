@@ -12,10 +12,10 @@ use Indieinabox\Support\TextParser;
 use Indieinabox\Taxonomy\KindHelper;
 use Indieinabox\Markdown\GemtextRenderer;
 use Indieinabox\Markdown\GophermapRenderer;
-use Indieinabox\Page;
-use Indieinabox\Pages;
+use Indieinabox\Page\Page;
+use Indieinabox\Page\Pages;
 use Indieinabox\Services\ShortlinkService;
-use Indieinabox\Site;
+use Indieinabox\Site\Site;
 use Indieinabox\Theme\ThemeManager;
 
 /**

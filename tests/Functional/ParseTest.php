@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use bovigo\vfs\vfsStream;
-use Indieinabox\Site;
+use Indieinabox\Site\Site;
 use Indieinabox\Site\Paths;
 use Indieinabox\Site\Support;
 use Indieinabox\Markdown\MarkdownParser;
@@ -76,7 +76,7 @@ it('parses markdown file and extracts tags and formats links', function () {
     $filePath = 'vfs://root/content/blog/my-post.md';
     $page = $parser->parse($filePath);
 
-    expect($page)->toBeInstanceOf(\Indieinabox\Page::class);
+    expect($page)->toBeInstanceOf(\Indieinabox\Page\Page::class);
     expect($page->title)->toBe('My Cool Post');
     expect($page->slug)->toBe('blog/my-post/');
 
@@ -132,7 +132,7 @@ it('detects language from top-level directory path and sets correct slug/kind', 
     $filePath = 'vfs://root/content/pt/articles/my-post.md';
     $page = $parser->parse($filePath);
 
-    expect($page)->toBeInstanceOf(\Indieinabox\Page::class);
+    expect($page)->toBeInstanceOf(\Indieinabox\Page\Page::class);
     expect($page->lang)->toBe('pt');
     expect($page->slug)->toBe('pt/artigos/my-post/');
     expect($page->kind)->toBe('article');

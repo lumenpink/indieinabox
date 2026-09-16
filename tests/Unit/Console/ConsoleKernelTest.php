@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 use Indieinabox\Console\Commands\AbstractCommand;
 use Indieinabox\Console\ConsoleKernel;
-use Indieinabox\Site;
+use Indieinabox\Site\Site;
 
 beforeEach(function () {
     /** @var \Tests\TestCase $this */

@@ -16,7 +16,7 @@ use Indieinabox\Http\Controllers\MicrosubController;
 use Indieinabox\Http\Controllers\WebmentionController;
 use Indieinabox\Services\ArchiveService;
 use Indieinabox\Services\WebmentionService;
-use Indieinabox\Site;
+use Indieinabox\Site\Site;
 
 beforeEach(function () {
     Database::disconnect();

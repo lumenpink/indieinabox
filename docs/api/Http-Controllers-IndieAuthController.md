@@ -7,12 +7,12 @@ Controller handling IndieAuth authentication, authorization code exchange, token
 
 ### `private Indieinabox\IndieAuth\TokenManager $tokenManager`
 
-### `protected Indieinabox\Site $site`
+### `protected Indieinabox\Site\Site $site`
 
 ## Methods
 
 ### __construct()
-`public function __construct(Indieinabox\Site $site, ?Indieinabox\IndieAuth\TokenManager $tokenManager = null)`
+`public function __construct(Indieinabox\Site\Site $site, ?Indieinabox\IndieAuth\TokenManager $tokenManager = null)`
 
 ### getTokenManager()
 `public function getTokenManager(): Indieinabox\IndieAuth\TokenManager`
@@ -66,7 +66,7 @@ Validates a provided Bearer token against stored valid tokens.
 Verifies the provided token via a GET request to the token endpoint.
 
 ### getSite()
-`public function getSite(): Indieinabox\Site`
+`public function getSite(): Indieinabox\Site\Site`
 
 ### json()
 `protected function json(?mixed $data, int $status = 200, array $headers = []): void`

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Indieinabox\Http\Controllers;
 
 use Indieinabox\Services\ArchiveService;
-use Indieinabox\Site;
+use Indieinabox\Site\Site;
 use Indieinabox\Views\ArchiveView;
 
 /**

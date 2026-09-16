@@ -8,7 +8,7 @@ Handles Micropub GET queries such as 'q=config', 'q=syndicate-to', and 'q=source
 ## Methods
 
 ### handle()
-`public static function handle(Indieinabox\Site $site, string $query): array`
+`public static function handle(Indieinabox\Site\Site $site, string $query): array`
 
 Executes a Micropub GET query and returns the response payload.
 

@@ -91,6 +91,6 @@ Validates and installs an uploaded theme zip file.
 @return string Installed theme folder name.
 
 ### triggerRebuild()
-`public function triggerRebuild(?Indieinabox\Site $site = null): void`
+`public function triggerRebuild(?Indieinabox\Site\Site $site = null): void`
 
 Triggers a complete static site generation rebuild.

@@ -122,11 +122,11 @@ class ContentProcessor
 
     /**
      * @param string $content
-     * @param \Indieinabox\Page|null $page
+     * @param \Indieinabox\Page\Page|null $page
      *
      * @return string
      */
-    public function processContent(string $content, ?\Indieinabox\Page $page = null): string
+    public function processContent(string $content, ?\Indieinabox\Page\Page $page = null): string
     {
         $content = $this->addTrailingSlashesToInternalLinks($content);
         $ast = $this->astParser->parse($content);

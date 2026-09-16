@@ -8,7 +8,7 @@ Handles file uploads to the Micropub media endpoint (/micropub/media).
 ## Methods
 
 ### handleUpload()
-`public static function handleUpload(Indieinabox\Site $site, array $file, ?callable $mover = null): array`
+`public static function handleUpload(Indieinabox\Site\Site $site, array $file, ?callable $mover = null): array`
 
 Processes an uploaded media file, moves it to the media storage, and returns its public URL.
 

@@ -17,20 +17,20 @@ Class GophermapRenderer
 
 @var int
 
-### `private ?Indieinabox\Page $page`
+### `private ?Indieinabox\Page\Page $page`
 
-@var \Indieinabox\Page|null
+@var \Indieinabox\Page\Page|null
 
 ## Methods
 
 ### __construct()
-`public function __construct(string $host = 'gopher.example.com', int $port = 70, ?Indieinabox\Page $page = null)`
+`public function __construct(string $host = 'gopher.example.com', int $port = 70, ?Indieinabox\Page\Page $page = null)`
 
 Initializes the GophermapRenderer.
 
 @param string $host The hostname to use for internal Gopher links.
 @param int|string $port The port number to use for internal Gopher links.
-@param \Indieinabox\Page|null $page The page being rendered, used for resolving relative links.
+@param \Indieinabox\Page\Page|null $page The page being rendered, used for resolving relative links.
 
 ### render()
 `public function render(Indieinabox\Markdown\Node $node): string`

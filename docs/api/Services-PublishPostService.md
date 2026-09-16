@@ -5,14 +5,14 @@ Protocol-agnostic service to compose, persist, build, and syndicate new posts an
 
 ## Properties
 
-### `private Indieinabox\Site $site`
+### `private Indieinabox\Site\Site $site`
 
 ### `private ?Indieinabox\Services\OutboxService $outboxService`
 
 ## Methods
 
 ### __construct()
-`public function __construct(Indieinabox\Site $site, ?Indieinabox\Services\OutboxService $outboxService = null)`
+`public function __construct(Indieinabox\Site\Site $site, ?Indieinabox\Services\OutboxService $outboxService = null)`
 
 ### publish()
 `public function publish(string $text, array $mediaPaths = [], string $kind = 'note', ?string $title = null): array`

@@ -5,15 +5,15 @@ Handles translation parity and virtualization of missing pages across languages.
 
 ## Properties
 
-### `private Indieinabox\Site $site`
+### `private Indieinabox\Site\Site $site`
 
 ## Methods
 
 ### __construct()
-`public function __construct(Indieinabox\Site $site)`
+`public function __construct(Indieinabox\Site\Site $site)`
 
 ### virtualize()
-`public function virtualize(Indieinabox\Pages $pages): void`
+`public function virtualize(Indieinabox\Page\Pages $pages): void`
 
 Generates pseudo-translated pages for missing languages to maintain parity.
 Uses configured rules (e.g., full parity, from-main-only) and translates
@@ -23,7 +23,7 @@ missing slugs according to URL translation mappings.
 @return void
 
 ### pseudoTranslate()
-`public function pseudoTranslate(Indieinabox\Page $page, string $targetLang): void`
+`public function pseudoTranslate(Indieinabox\Page\Page $page, string $targetLang): void`
 
 Applies a pseudo-translation prefix to a page's title or content.
 Used visually to flag that a page was automatically virtualized.

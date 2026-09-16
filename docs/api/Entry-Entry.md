@@ -241,7 +241,7 @@ Creates a new instance with updated properties (immutability).
 @param array<string, mixed> $changes
 
 ### fromPage()
-`public static function fromPage(Indieinabox\Page $page): Indieinabox\Entry\Entry`
+`public static function fromPage(Indieinabox\Page\Page $page): Indieinabox\Entry\Entry`
 
 Converts a Page instance to an Entry.
 

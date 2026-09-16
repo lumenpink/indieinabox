@@ -63,10 +63,10 @@ Set the date from file modification time if not provided in frontmatter.
 @return array<string, mixed>
 
 ### processContent()
-`public function processContent(string $content, ?Indieinabox\Page $page = null): string`
+`public function processContent(string $content, ?Indieinabox\Page\Page $page = null): string`
 
 @param string $content
-@param \Indieinabox\Page|null $page
+@param \Indieinabox\Page\Page|null $page
 
 @return string
 

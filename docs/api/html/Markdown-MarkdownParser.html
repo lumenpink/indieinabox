@@ -114,6 +114,8 @@
 <li><a href="/docs/api/html/Page-Content.html">Page-Content</a></li>
 <li><a href="/docs/api/html/Page-Localization.html">Page-Localization</a></li>
 <li><a href="/docs/api/html/Page-Metadata.html">Page-Metadata</a></li>
+<li><a href="/docs/api/html/Page-Page.html">Page-Page</a></li>
+<li><a href="/docs/api/html/Page-Pages.html">Page-Pages</a></li>
 <li><a href="/docs/api/html/Page.html">Page</a></li>
 <li><a href="/docs/api/html/Pages.html">Pages</a></li>
 <li><a href="/docs/api/html/ParserInterface.html">ParserInterface</a></li>
@@ -140,6 +142,7 @@
 <li><a href="/docs/api/html/Site-Metadata.html">Site-Metadata</a></li>
 <li><a href="/docs/api/html/Site-Options.html">Site-Options</a></li>
 <li><a href="/docs/api/html/Site-Paths.html">Site-Paths</a></li>
+<li><a href="/docs/api/html/Site-Site.html">Site-Site</a></li>
 <li><a href="/docs/api/html/Site-Support.html">Site-Support</a></li>
 <li><a href="/docs/api/html/Site-Twtxt.html">Site-Twtxt</a></li>
 <li><a href="/docs/api/html/Site.html">Site</a></li>
@@ -196,11 +199,11 @@ builds canonical slugs, determines layouts, and maps metadata.</p>
 <p>@var ContentProcessor</p>
 <h3><code>private Indieinabox\Markdown\LanguageProcessor $languageProcessor</code></h3>
 <p>@var LanguageProcessor</p>
-<h3><code>private Indieinabox\Site $site</code></h3>
+<h3><code>private Indieinabox\Site\Site $site</code></h3>
 <p>@var Site</p>
 <h2>Methods</h2>
 <h3><em></em>construct()</h3>
-<p><code>public function __construct(Indieinabox\Markdown\FileProcessor $fileProcessor, Indieinabox\Markdown\ContentProcessor $contentProcessor, Indieinabox\Markdown\LanguageProcessor $languageProcessor, Indieinabox\Site $site)</code></p>
+<p><code>public function __construct(Indieinabox\Markdown\FileProcessor $fileProcessor, Indieinabox\Markdown\ContentProcessor $contentProcessor, Indieinabox\Markdown\LanguageProcessor $languageProcessor, Indieinabox\Site\Site $site)</code></p>
 <p>@param FileProcessor $fileProcessor<br />
 @param ContentProcessor $contentProcessor<br />
 @param LanguageProcessor $languageProcessor<br />
@@ -215,10 +218,10 @@ builds canonical slugs, determines layouts, and maps metadata.</p>
 <p><code>public function getLanguageProcessor(): Indieinabox\Markdown\LanguageProcessor</code></p>
 <p>@return LanguageProcessor</p>
 <h3>getSite()</h3>
-<p><code>public function getSite(): Indieinabox\Site</code></p>
+<p><code>public function getSite(): Indieinabox\Site\Site</code></p>
 <p>@return Site</p>
 <h3>parse()</h3>
-<p><code>public function parse(string $file): ?Indieinabox\Page</code></p>
+<p><code>public function parse(string $file): ?Indieinabox\Page\Page</code></p>
 <p>Parses a markdown file from disk into a populated Page object.</p>
 <p>@param string $file The path to the markdown file.<br />
 @return Page|null The parsed page or null if invalid or skipped.</p>
@@ -248,7 +251,7 @@ builds canonical slugs, determines layouts, and maps metadata.</p>
 <p>@param string $slug<br />
 @return string</p>
 <h3>setMetadata()</h3>
-<p><code>private function setMetadata(Indieinabox\Page $page, array $rawPage): Indieinabox\Page</code></p>
+<p><code>private function setMetadata(Indieinabox\Page\Page $page, array $rawPage): Indieinabox\Page\Page</code></p>
 <p>Applies metadata, localized kind mappings, and localized date formatting to the Page object.</p>
 <p>@param Page $page<br />
 @param array<string, mixed> $rawPage<br />

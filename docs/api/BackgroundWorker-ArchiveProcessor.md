@@ -8,7 +8,7 @@ and generating local PDF snapshots via the Microlink API.
 
 ## Properties
 
-### `private Indieinabox\Site $site`
+### `private Indieinabox\Site\Site $site`
 
 ### `private PDO $db`
 
@@ -31,7 +31,7 @@ and generating local PDF snapshots via the Microlink API.
 ## Methods
 
 ### __construct()
-`public function __construct(Indieinabox\Site $site, PDO $db, ?callable $urlResolver = null, ?callable $archiveOrgSender = null, ?callable $pdfFetcher = null, ?callable $fetcher = null)`
+`public function __construct(Indieinabox\Site\Site $site, PDO $db, ?callable $urlResolver = null, ?callable $archiveOrgSender = null, ?callable $pdfFetcher = null, ?callable $fetcher = null)`
 
 @param Site $site
 @param PDO $db

@@ -3,10 +3,10 @@
 declare(strict_types=1);
 
 use bovigo\vfs\vfsStream;
-use Indieinabox\Site;
+use Indieinabox\Site\Site;
 use Indieinabox\Site\Paths;
 use Indieinabox\Site\Localization;
-use Indieinabox\Page;
+use Indieinabox\Page\Page;
 
 beforeEach(function () {
     global $site, $translations, $page, $p;

@@ -114,6 +114,8 @@
 <li><a href="/docs/api/html/Page-Content.html">Page-Content</a></li>
 <li><a href="/docs/api/html/Page-Localization.html">Page-Localization</a></li>
 <li><a href="/docs/api/html/Page-Metadata.html">Page-Metadata</a></li>
+<li><a href="/docs/api/html/Page-Page.html">Page-Page</a></li>
+<li><a href="/docs/api/html/Page-Pages.html">Page-Pages</a></li>
 <li><a href="/docs/api/html/Page.html">Page</a></li>
 <li><a href="/docs/api/html/Pages.html">Pages</a></li>
 <li><a href="/docs/api/html/ParserInterface.html">ParserInterface</a></li>
@@ -140,6 +142,7 @@
 <li><a href="/docs/api/html/Site-Metadata.html">Site-Metadata</a></li>
 <li><a href="/docs/api/html/Site-Options.html">Site-Options</a></li>
 <li><a href="/docs/api/html/Site-Paths.html">Site-Paths</a></li>
+<li><a href="/docs/api/html/Site-Site.html">Site-Site</a></li>
 <li><a href="/docs/api/html/Site-Support.html">Site-Support</a></li>
 <li><a href="/docs/api/html/Site-Twtxt.html">Site-Twtxt</a></li>
 <li><a href="/docs/api/html/Site.html">Site</a></li>
@@ -190,62 +193,62 @@
 decoupling low-level logic from presentation views.</p>
 <h2>Methods</h2>
 <h3>getPageTitle()</h3>
-<p><code>public static function getPageTitle(Indieinabox\Page $page, Indieinabox\Site $site): string</code></p>
+<p><code>public static function getPageTitle(Indieinabox\Page\Page $page, Indieinabox\Site\Site $site): string</code></p>
 <p>Gets the formatted page title.</p>
 <p>@param Page $page<br />
 @param Site $site<br />
 @return string</p>
 <h3>getThemeColors()</h3>
-<p><code>public static function getThemeColors(Indieinabox\Page $page): array</code></p>
+<p><code>public static function getThemeColors(Indieinabox\Page\Page $page): array</code></p>
 <p>Gets the calculated theme colors based on the page kind.</p>
 <p>@param Page $page<br />
 @return array<string, string> An array containing &apos;bg&apos; and &apos;fg&apos; color hex codes.</p>
 <h3>getMetaTags()</h3>
-<p><code>public static function getMetaTags(Indieinabox\Page $page, Indieinabox\Site $site): string</code></p>
+<p><code>public static function getMetaTags(Indieinabox\Page\Page $page, Indieinabox\Site\Site $site): string</code></p>
 <p>Generates the standard meta tags (description, canonical, shortlink).</p>
 <p>@param Page $page<br />
 @param Site $site<br />
 @return string HTML meta tags.</p>
 <h3>getOpenGraphTags()</h3>
-<p><code>public static function getOpenGraphTags(Indieinabox\Page $page, Indieinabox\Site $site): string</code></p>
+<p><code>public static function getOpenGraphTags(Indieinabox\Page\Page $page, Indieinabox\Site\Site $site): string</code></p>
 <p>Generates OpenGraph meta tags.</p>
 <p>@param Page $page<br />
 @param Site $site<br />
 @return string HTML meta tags.</p>
 <h3>getTwitterCardTags()</h3>
-<p><code>public static function getTwitterCardTags(Indieinabox\Page $page, Indieinabox\Site $site): string</code></p>
+<p><code>public static function getTwitterCardTags(Indieinabox\Page\Page $page, Indieinabox\Site\Site $site): string</code></p>
 <p>Generates Twitter Card meta tags.</p>
 <p>@param Page $page<br />
 @param Site $site<br />
 @return string HTML meta tags.</p>
 <h3>getJsonLd()</h3>
-<p><code>public static function getJsonLd(Indieinabox\Page $page, Indieinabox\Site $site): string</code></p>
+<p><code>public static function getJsonLd(Indieinabox\Page\Page $page, Indieinabox\Site\Site $site): string</code></p>
 <p>Generates the Schema.org JSON-LD script tag.</p>
 <p>@param Page $page<br />
 @param Site $site<br />
 @return string HTML script tag containing JSON-LD.</p>
 <h3>getLanguageSelector()</h3>
-<p><code>public static function getLanguageSelector(Indieinabox\Page $page, Indieinabox\Site $site, ?array $langLinks = null): string</code></p>
+<p><code>public static function getLanguageSelector(Indieinabox\Page\Page $page, Indieinabox\Site\Site $site, ?array $langLinks = null): string</code></p>
 <p>Generates the language selector HTML markup.</p>
 <p>@param Page $page<br />
 @param Site $site<br />
 @param array<string, string>|null $langLinks Array of language codes to relative paths.<br />
 @return string HTML nav block or empty string if single language.</p>
 <h3>getHeaderNavLinks()</h3>
-<p><code>public static function getHeaderNavLinks(Indieinabox\Page $page, Indieinabox\Site $site, array $headerLinks = []): string</code></p>
+<p><code>public static function getHeaderNavLinks(Indieinabox\Page\Page $page, Indieinabox\Site\Site $site, array $headerLinks = []): string</code></p>
 <p>Generates the top navigation links HTML markup.</p>
 <p>@param Page $page<br />
 @param Site $site<br />
 @param array<int, array<string, string>&gt; $headerLinks<br />
 @return string HTML nav block.</p>
 <h3>getFooterLinks()</h3>
-<p><code>public static function getFooterLinks(Indieinabox\Page $page, array $footerLinks = []): string</code></p>
+<p><code>public static function getFooterLinks(Indieinabox\Page\Page $page, array $footerLinks = []): string</code></p>
 <p>Generates the footer links HTML markup including RSS and ATOM.</p>
 <p>@param Page $page<br />
 @param array<int, array<string, string>&gt; $footerLinks<br />
 @return string HTML nav block.</p>
 <h3>getHCard()</h3>
-<p><code>public static function getHCard(Indieinabox\Site $site): string</code></p>
+<p><code>public static function getHCard(Indieinabox\Site\Site $site): string</code></p>
 <p>Generates a semantic h-card markup for the site author (IndieWebify.me Level 1).</p>
 <p>@param Site $site<br />
 @return string HTML h-card block.</p>

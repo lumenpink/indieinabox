@@ -7,7 +7,7 @@ require_once __DIR__ . '/bootstrap/app.php';
 
 use Indieinabox\BackgroundWorker\BackgroundWorker;
 use Indieinabox\Core\Database;
-use Indieinabox\Site;
+use Indieinabox\Site\Site;
 
 $config = require __DIR__ . '/.config.php';
 Database::$dataDir = dirname($config['db_path']);

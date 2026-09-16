@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-use Indieinabox\Page;
+use Indieinabox\Page\Page;
 use Indieinabox\SiteBuilder\SiteBuilder;
-use Indieinabox\Site;
+use Indieinabox\Site\Site;
 use Indieinabox\Site\Localization;
 
 beforeEach(function () {
@@ -28,7 +28,7 @@ it('throws exception when translation_auto is disabled and parity is missing', f
         'nick' => 'about',
         'slug' => '/about/'
     ]);
-    $pages = new \Indieinabox\Pages();
+    $pages = new \Indieinabox\Page\Pages();
     $pages->add($page);
     $builder = new SiteBuilder($this->site, $pages);
 
@@ -49,7 +49,7 @@ it('generates pseudo translations when translation_auto is pseudo', function () 
         'content' => 'Hello'
     ]);
     
-    $pages = new \Indieinabox\Pages();
+    $pages = new \Indieinabox\Page\Pages();
     $pages->add($page);
     $builder = new SiteBuilder($this->site, $pages);
 
@@ -83,7 +83,7 @@ it('respects parity rules (from-main-only)', function () {
         'slug' => '/pt/teste/'
     ]);
     
-    $pages = new \Indieinabox\Pages();
+    $pages = new \Indieinabox\Page\Pages();
     $pages->add($pagePt);
     $builder = new SiteBuilder($this->site, $pages);
 
@@ -103,7 +103,7 @@ it('getLanguageLinks falls back to home when parity is disabled and translation 
         'slug' => '/about/'
     ]);
     
-    $pages = new \Indieinabox\Pages();
+    $pages = new \Indieinabox\Page\Pages();
     $pages->add($page);
     $builder = new SiteBuilder($this->site, $pages);
     

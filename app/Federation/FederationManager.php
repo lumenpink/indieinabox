@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Indieinabox\Federation;
 
 use Indieinabox\Federation\Contracts\FederationAdapter;
-use Indieinabox\Site;
+use Indieinabox\Site\Site;
 use RuntimeException;
 
 /**

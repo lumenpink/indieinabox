@@ -6,9 +6,9 @@ namespace Indieinabox\SiteBuilder;
 
 use DateTime;
 use Indieinabox\Localization\Translator;
-use Indieinabox\Page;
-use Indieinabox\Pages;
-use Indieinabox\Site;
+use Indieinabox\Page\Page;
+use Indieinabox\Page\Pages;
+use Indieinabox\Site\Site;
 use Indieinabox\Support\TextParser;
 use Indieinabox\Taxonomy\KindHelper;
 use Indieinabox\Theme\ThemeHelper;
@@ -266,7 +266,7 @@ class IndexPublisher
 
                     if (file_exists($summaryFile)) {
                         ob_start();
-                        \Indieinabox\Core\Container::getInstance()->instance(\Indieinabox\Site::class, $this->site);
+                        \Indieinabox\Core\Container::getInstance()->instance(\Indieinabox\Site\Site::class, $this->site);
                         $site = $this->site;
                         $page = clone $p;
                         $page->relpath = $monthPage->relpath;
@@ -309,7 +309,7 @@ class IndexPublisher
 
                 if (file_exists($summaryFile)) {
                     ob_start();
-                    \Indieinabox\Core\Container::getInstance()->instance(\Indieinabox\Site::class, $this->site);
+                    \Indieinabox\Core\Container::getInstance()->instance(\Indieinabox\Site\Site::class, $this->site);
                     $site = $this->site;
                     $page = clone $p;
                     $page->relpath = $indexPage->relpath;

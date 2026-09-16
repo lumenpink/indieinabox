@@ -9,7 +9,7 @@ post listing, SEO metadata resolution, and incoming interactions.
 ## Methods
 
 ### getSite()
-`private static function getSite(): ?Indieinabox\Site`
+`private static function getSite(): ?Indieinabox\Site\Site`
 
 ### getKindConfig()
 `public static function getKindConfig(string $kind): array`
@@ -20,7 +20,7 @@ Retrieves kind configuration with sensible defaults.
 @return array<string, mixed>
 
 ### kind()
-`public static function kind(?mixed $page, ?Indieinabox\Site $siteInstance = null): array`
+`public static function kind(?mixed $page, ?Indieinabox\Site\Site $siteInstance = null): array`
 
 Determines the kind and localized folder for a page.
 
@@ -47,7 +47,7 @@ Return a human-readable, localized display label for a post kind.
 @return string
 
 ### kindLink()
-`public static function kindLink(Indieinabox\Page $page, string $kind): string`
+`public static function kindLink(Indieinabox\Page\Page $page, string $kind): string`
 
 Return a hyperlinked, human-readable display label for a post kind.
 
@@ -80,7 +80,7 @@ Remove generic/page items from filter list.
 @return bool
 
 ### getSeoMetadata()
-`public static function getSeoMetadata(Indieinabox\Page $page): array`
+`public static function getSeoMetadata(Indieinabox\Page\Page $page): array`
 
 Helper function to extract and normalize SEO metadata.
 
@@ -88,7 +88,7 @@ Helper function to extract and normalize SEO metadata.
 @return array<string, string>
 
 ### getInteractions()
-`public static function getInteractions(Indieinabox\Page $page, ?string $type = null): array`
+`public static function getInteractions(Indieinabox\Page\Page $page, ?string $type = null): array`
 
 Get incoming interactions (likes, reposts, replies) for a specific Page.
 

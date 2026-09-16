@@ -7,7 +7,7 @@ namespace Indieinabox\Feeds\Generators;
 use DateTimeZone;
 use Indieinabox\Entry\Entry;
 use Indieinabox\Feeds\FeedGeneratorInterface;
-use Indieinabox\Site;
+use Indieinabox\Site\Site;
 use XMLWriter;
 
 /**

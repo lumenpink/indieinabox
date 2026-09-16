@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Indieinabox\Taxonomy;
 
 use Indieinabox\Core\Database;
-use Indieinabox\Page;
-use Indieinabox\Pages;
-use Indieinabox\Site;
+use Indieinabox\Page\Page;
+use Indieinabox\Page\Pages;
+use Indieinabox\Site\Site;
 use Indieinabox\Support\TextParser;
 use Indieinabox\Theme\ThemeManager;
 use Indieinabox\Support\Yaml;

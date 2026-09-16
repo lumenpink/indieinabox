@@ -114,6 +114,8 @@
 <li><a href="/docs/api/html/Page-Content.html">Page-Content</a></li>
 <li><a href="/docs/api/html/Page-Localization.html">Page-Localization</a></li>
 <li><a href="/docs/api/html/Page-Metadata.html">Page-Metadata</a></li>
+<li><a href="/docs/api/html/Page-Page.html">Page-Page</a></li>
+<li><a href="/docs/api/html/Page-Pages.html">Page-Pages</a></li>
 <li><a href="/docs/api/html/Page.html">Page</a></li>
 <li><a href="/docs/api/html/Pages.html">Pages</a></li>
 <li><a href="/docs/api/html/ParserInterface.html">ParserInterface</a></li>
@@ -140,6 +142,7 @@
 <li><a href="/docs/api/html/Site-Metadata.html">Site-Metadata</a></li>
 <li><a href="/docs/api/html/Site-Options.html">Site-Options</a></li>
 <li><a href="/docs/api/html/Site-Paths.html">Site-Paths</a></li>
+<li><a href="/docs/api/html/Site-Site.html">Site-Site</a></li>
 <li><a href="/docs/api/html/Site-Support.html">Site-Support</a></li>
 <li><a href="/docs/api/html/Site-Twtxt.html">Site-Twtxt</a></li>
 <li><a href="/docs/api/html/Site.html">Site</a></li>
@@ -187,15 +190,15 @@
 <p><strong>Namespace:</strong> <code>Indieinabox\SiteBuilder</code></p>
 <p>Scans directories for Markdown content files and manages initial page collection.</p>
 <h2>Properties</h2>
-<h3><code>private Indieinabox\Site $site</code></h3>
+<h3><code>private Indieinabox\Site\Site $site</code></h3>
 <h3><code>private Indieinabox\Markdown\ParserInterface $parser</code></h3>
 <h2>Methods</h2>
 <h3><em></em>construct()</h3>
-<p><code>public function __construct(Indieinabox\Site $site, ?Indieinabox\Markdown\ParserInterface $parser = null)</code></p>
+<p><code>public function __construct(Indieinabox\Site\Site $site, ?Indieinabox\Markdown\ParserInterface $parser = null)</code></p>
 <h3>getParser()</h3>
 <p><code>public function getParser(): Indieinabox\Markdown\ParserInterface</code></p>
 <h3>scan()</h3>
-<p><code>public function scan(string $dir, Indieinabox\Pages $pages): void</code></p>
+<p><code>public function scan(string $dir, Indieinabox\Page\Pages $pages): void</code></p>
 <p>Recursively scans a directory for markdown content files.<br />
 Parses valid markdown files into Page objects and adds them to the collection.<br />
 Skips system directories (e.g., app, vendor, output dirs).</p>
@@ -203,13 +206,13 @@ Skips system directories (e.g., app, vendor, output dirs).</p>
 @param Pages $pages The collection to populate.<br />
 @return void</p>
 <h3>ensureMandatoryHomepage()</h3>
-<p><code>public function ensureMandatoryHomepage(Indieinabox\Pages $pages): void</code></p>
+<p><code>public function ensureMandatoryHomepage(Indieinabox\Page\Pages $pages): void</code></p>
 <p>Ensures a mandatory homepage (index.html) exists in the output.<br />
 If one was not provided in the content directory, it creates a generic fallback.</p>
 <p>@param Pages $pages<br />
 @return void</p>
 <h3>renderRawBodies()</h3>
-<p><code>public function renderRawBodies(Indieinabox\Pages $pageCollection): void</code></p>
+<p><code>public function renderRawBodies(Indieinabox\Page\Pages $pageCollection): void</code></p>
 <p>Renders raw markdown bodies into final HTML content for all pages in the collection.<br />
 Sets global variables $pages and $site for template and processor compatibility.</p>
 <p>@param Pages $pageCollection The collection of pages to render.<br />

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Indieinabox\Http;
 
-use Indieinabox\Site;
+use Indieinabox\Site\Site;
 
 /**
  * Serves static assets, compiled HTML, and media files from site output directories,

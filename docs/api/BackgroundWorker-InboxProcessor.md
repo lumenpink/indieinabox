@@ -8,7 +8,7 @@ and site build events.
 
 ## Properties
 
-### `private Indieinabox\Site $site`
+### `private Indieinabox\Site\Site $site`
 
 ### `private PDO $db`
 
@@ -27,7 +27,7 @@ and site build events.
 ## Methods
 
 ### __construct()
-`public function __construct(Indieinabox\Site $site, PDO $db, ?callable $fetcher = null, ?callable $jsonFetcher = null, ?callable $signatureVerifier = null)`
+`public function __construct(Indieinabox\Site\Site $site, PDO $db, ?callable $fetcher = null, ?callable $jsonFetcher = null, ?callable $signatureVerifier = null)`
 
 @param Site $site
 @param PDO $db

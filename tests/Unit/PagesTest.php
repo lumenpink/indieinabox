@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use Indieinabox\Pages;
-use Indieinabox\Page;
+use Indieinabox\Page\Pages;
+use Indieinabox\Page\Page;
 
 it('initializes empty Pages collection', function () {
     $pages = new Pages();

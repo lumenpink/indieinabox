@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Indieinabox\Feeds;
 
 use Indieinabox\Entry\Entry;
-use Indieinabox\Site;
+use Indieinabox\Site\Site;
 
 /**
  * Contract for format-specific feed generators.

@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use Indieinabox\Page;
-use Indieinabox\Site;
+use Indieinabox\Page\Page;
+use Indieinabox\Site\Site;
 use Indieinabox\Site\Localization;
 
 beforeEach(function () {

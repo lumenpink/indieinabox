@@ -5,28 +5,28 @@ Class HtmlRenderer
 
 ## Properties
 
-### `private ?Indieinabox\Page $page`
+### `private ?Indieinabox\Page\Page $page`
 
-@var \Indieinabox\Page|null
+@var \Indieinabox\Page\Page|null
 
-### `private ?Indieinabox\Site $site`
+### `private ?Indieinabox\Site\Site $site`
 
-@var \Indieinabox\Site|null
+@var \Indieinabox\Site\Site|null
 
 ## Methods
 
 ### __construct()
-`public function __construct(?Indieinabox\Page $page = null, ?Indieinabox\Site $site = null)`
+`public function __construct(?Indieinabox\Page\Page $page = null, ?Indieinabox\Site\Site $site = null)`
 
 ### getSite()
-`private function getSite(): ?Indieinabox\Site`
+`private function getSite(): ?Indieinabox\Site\Site`
 
 ### setPage()
-`public function setPage(Indieinabox\Page $page): void`
+`public function setPage(Indieinabox\Page\Page $page): void`
 
 Set active page context.
 
-@param \Indieinabox\Page $page
+@param \Indieinabox\Page\Page $page
 @return void
 
 ### getColors()

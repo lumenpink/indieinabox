@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Indieinabox\Services;
 
 use Indieinabox\Core\Database;
-use Indieinabox\Site;
+use Indieinabox\Site\Site;
 
 class BackupService
 {

@@ -316,7 +316,7 @@ $runnerCode .= <<<'EOT'
                         if (class_exists('\Indieinabox\SiteBuilder\SiteBuilder')) {
                             \Indieinabox\Core\Database::$dataDir = $dataDir;
                             \Indieinabox\Core\Database::connect($dbPath);
-                            $site = new \Indieinabox\Site();
+                            $site = new \Indieinabox\Site\Site();
                             $site->paths->baseDir = $base;
                             $site->config = \Indieinabox\Core\Database::getAllSettings();
                             

@@ -8,7 +8,7 @@ Renders the HTML consent/authorization screen and JSON error responses for Indie
 ## Methods
 
 ### renderLoginForm()
-`public static function renderLoginForm(Indieinabox\Site $site, array $params, ?string $error = null): void`
+`public static function renderLoginForm(Indieinabox\Site\Site $site, array $params, ?string $error = null): void`
 
 Renders the HTML login and authorization consent form.
 

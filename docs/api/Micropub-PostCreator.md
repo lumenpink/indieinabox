@@ -9,7 +9,7 @@ post type discovery, frontmatter generation, and publication queuing.
 ## Methods
 
 ### create()
-`public static function create(Indieinabox\Site $site, array $input): array`
+`public static function create(Indieinabox\Site\Site $site, array $input): array`
 
 Creates a new post on disk from Micropub input and enqueues federation events.
 

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Indieinabox\Site;
+use Indieinabox\Site\Site;
 use Indieinabox\SiteBuilder\SiteBuilder;
 use Indieinabox\Site\Paths;
 
@@ -170,7 +170,7 @@ test('pages in secondary language are virtualized back to default language', fun
 test('pseudoTranslate mocks the translation format correctly', function () {
     /** @var \Tests\TestCase $this */
     $builder = new SiteBuilder($this->site);
-    $page = \Indieinabox\Page::fromArray([
+    $page = \Indieinabox\Page\Page::fromArray([
         'title' => 'Original Title',
         'kind' => 'article'
     ]);
@@ -183,7 +183,7 @@ test('pseudoTranslate mocks the translation format correctly', function () {
     expect($page->content->content)->toBe('Original content'); // Did not change body because it has a title
     
     // Test without title (e.g. note)
-    $pageNote = \Indieinabox\Page::fromArray([
+    $pageNote = \Indieinabox\Page\Page::fromArray([
         'kind' => 'note'
     ]);
     $pageNote->content = new \Indieinabox\Page\Content('Original body');

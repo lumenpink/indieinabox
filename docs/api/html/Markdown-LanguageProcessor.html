@@ -114,6 +114,8 @@
 <li><a href="/docs/api/html/Page-Content.html">Page-Content</a></li>
 <li><a href="/docs/api/html/Page-Localization.html">Page-Localization</a></li>
 <li><a href="/docs/api/html/Page-Metadata.html">Page-Metadata</a></li>
+<li><a href="/docs/api/html/Page-Page.html">Page-Page</a></li>
+<li><a href="/docs/api/html/Page-Pages.html">Page-Pages</a></li>
 <li><a href="/docs/api/html/Page.html">Page</a></li>
 <li><a href="/docs/api/html/Pages.html">Pages</a></li>
 <li><a href="/docs/api/html/ParserInterface.html">ParserInterface</a></li>
@@ -140,6 +142,7 @@
 <li><a href="/docs/api/html/Site-Metadata.html">Site-Metadata</a></li>
 <li><a href="/docs/api/html/Site-Options.html">Site-Options</a></li>
 <li><a href="/docs/api/html/Site-Paths.html">Site-Paths</a></li>
+<li><a href="/docs/api/html/Site-Site.html">Site-Site</a></li>
 <li><a href="/docs/api/html/Site-Support.html">Site-Support</a></li>
 <li><a href="/docs/api/html/Site-Twtxt.html">Site-Twtxt</a></li>
 <li><a href="/docs/api/html/Site.html">Site</a></li>
@@ -194,42 +197,42 @@ Processes language-related data for a given page.</p>
 <p>@var UrlTranslations</p>
 <h2>Methods</h2>
 <h3><em></em>construct()</h3>
-<p><code>public function __construct(Indieinabox\Site $site, Indieinabox\Translations\UrlTranslations $urlTranslations)</code></p>
+<p><code>public function __construct(Indieinabox\Site\Site $site, Indieinabox\Translations\UrlTranslations $urlTranslations)</code></p>
 <p>LanguageProcessor constructor.</p>
 <p>@param Site $site<br />
 @param UrlTranslations $urlTranslations</p>
 <h3>processLanguage()</h3>
-<p><code>public function processLanguage(Indieinabox\Page $page): Indieinabox\Page</code></p>
+<p><code>public function processLanguage(Indieinabox\Page\Page $page): Indieinabox\Page\Page</code></p>
 <p>Process the language-related data for a given page.</p>
 <p>@param Page $page<br />
 @return Page</p>
 <h3>setDefaultLanguage()</h3>
-<p><code>private function setDefaultLanguage(Indieinabox\Page $page): Indieinabox\Page</code></p>
+<p><code>private function setDefaultLanguage(Indieinabox\Page\Page $page): Indieinabox\Page\Page</code></p>
 <p>Set the default language for the page.</p>
 <p>@param Page $page<br />
 @return Page</p>
 <h3>processOtherLanguages()</h3>
-<p><code>private function processOtherLanguages(Indieinabox\Page $page): Indieinabox\Page</code></p>
+<p><code>private function processOtherLanguages(Indieinabox\Page\Page $page): Indieinabox\Page\Page</code></p>
 <p>Process other languages for the page.</p>
 <p>@param Page $page<br />
 @return Page</p>
 <h3>processLanguagePaths()</h3>
-<p><code>private function processLanguagePaths(Indieinabox\Page $page): Indieinabox\Page</code></p>
+<p><code>private function processLanguagePaths(Indieinabox\Page\Page $page): Indieinabox\Page\Page</code></p>
 <p>Process language paths for the page.</p>
 <p>@param Page $page<br />
 @return Page</p>
 <h3>processOriginalContent()</h3>
-<p><code>private function processOriginalContent(Indieinabox\Page $page): Indieinabox\Page</code></p>
+<p><code>private function processOriginalContent(Indieinabox\Page\Page $page): Indieinabox\Page\Page</code></p>
 <p>Process original content for the page.</p>
 <p>@param Page $page<br />
 @return Page</p>
 <h3>determineOriginalContent()</h3>
-<p><code>private function determineOriginalContent(Indieinabox\Page $page): string</code></p>
+<p><code>private function determineOriginalContent(Indieinabox\Page\Page $page): string</code></p>
 <p>Determine the original content for the page.</p>
 <p>@param Page $page<br />
 @return string</p>
 <h3>generateLanguageSlugs()</h3>
-<p><code>private function generateLanguageSlugs(Indieinabox\Page $page): array</code></p>
+<p><code>private function generateLanguageSlugs(Indieinabox\Page\Page $page): array</code></p>
 <p>Generate language slugs for the page.</p>
 <p>@param Page $page<br />
 @return array<int, string></p>

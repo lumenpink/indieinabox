@@ -7,7 +7,7 @@ namespace Indieinabox\Services;
 use Indieinabox\ActivityPub\ActivityBuilder;
 use Indieinabox\Core\Database;
 use Indieinabox\Federation\FederationManager;
-use Indieinabox\Site;
+use Indieinabox\Site\Site;
 use PDO;
 
 /**

@@ -1,7 +1,7 @@
 <?php
-/** @var \Indieinabox\Page $page */
-/** @var \Indieinabox\Site $site */
-/** @var \Indieinabox\Pages $pages */
+/** @var \Indieinabox\Page\Page $page */
+/** @var \Indieinabox\Site\Site $site */
+/** @var \Indieinabox\Page\Pages $pages */
 ?>
 <!DOCTYPE html>
 <html lang="<?= $page->lang ?>">

@@ -8,13 +8,13 @@ translation virtualization, content rendering, feed generation, and asset publis
 
 ## Properties
 
-### `private Indieinabox\Site $site`
+### `private Indieinabox\Site\Site $site`
 
-@var \Indieinabox\Site
+@var \Indieinabox\Site\Site
 
-### `private Indieinabox\Pages $pages`
+### `private Indieinabox\Page\Pages $pages`
 
-@var \Indieinabox\Pages
+@var \Indieinabox\Page\Pages
 
 ### `private Indieinabox\Markdown\ParserInterface $parser`
 
@@ -53,12 +53,12 @@ for Garbage Collection.
 ## Methods
 
 ### __construct()
-`public function __construct(Indieinabox\Site $site, ?Indieinabox\Pages $pages = null, ?Indieinabox\Markdown\ParserInterface $parser = null, ?Indieinabox\SiteBuilder\AssetPublisher $assetPublisher = null, ?Indieinabox\SiteBuilder\FeedPublisher $feedPublisher = null, ?Indieinabox\SiteBuilder\PagePublisher $pagePublisher = null, ?Indieinabox\SiteBuilder\TranslationVirtualizer $translationVirtualizer = null, ?Indieinabox\SiteBuilder\IndexPublisher $indexPublisher = null, ?Indieinabox\SiteBuilder\ContentScanner $contentScanner = null)`
+`public function __construct(Indieinabox\Site\Site $site, ?Indieinabox\Page\Pages $pages = null, ?Indieinabox\Markdown\ParserInterface $parser = null, ?Indieinabox\SiteBuilder\AssetPublisher $assetPublisher = null, ?Indieinabox\SiteBuilder\FeedPublisher $feedPublisher = null, ?Indieinabox\SiteBuilder\PagePublisher $pagePublisher = null, ?Indieinabox\SiteBuilder\TranslationVirtualizer $translationVirtualizer = null, ?Indieinabox\SiteBuilder\IndexPublisher $indexPublisher = null, ?Indieinabox\SiteBuilder\ContentScanner $contentScanner = null)`
 
 SiteBuilder constructor.
 
-@param \Indieinabox\Site $site The site configuration and environment settings.
-@param \Indieinabox\Pages|null $pages An optional collection of parsed pages.
+@param \Indieinabox\Site\Site $site The site configuration and environment settings.
+@param \Indieinabox\Page\Pages|null $pages An optional collection of parsed pages.
 @param \Indieinabox\Markdown\ParserInterface|null $parser An optional markdown parser implementation.
 @param \Indieinabox\SiteBuilder\AssetPublisher|null $assetPublisher An optional asset publisher.
 @param \Indieinabox\SiteBuilder\FeedPublisher|null $feedPublisher An optional feed publisher.
@@ -68,11 +68,11 @@ SiteBuilder constructor.
 @param \Indieinabox\SiteBuilder\ContentScanner|null $contentScanner An optional content scanner.
 
 ### getPages()
-`public function getPages(): Indieinabox\Pages`
+`public function getPages(): Indieinabox\Page\Pages`
 
 Retrieves the collection of processed pages.
 
-@return \Indieinabox\Pages The pages collection.
+@return \Indieinabox\Page\Pages The pages collection.
 
 ### getParser()
 `public function getParser(): Indieinabox\Markdown\ParserInterface`

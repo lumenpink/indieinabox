@@ -9,14 +9,14 @@ and delivers them to remote Fediverse inboxes.
 
 ## Properties
 
-### `private Indieinabox\Site $site`
+### `private Indieinabox\Site\Site $site`
 
 ### `private PDO $db`
 
 ## Methods
 
 ### __construct()
-`public function __construct(Indieinabox\Site $site, PDO $db)`
+`public function __construct(Indieinabox\Site\Site $site, PDO $db)`
 
 ### process()
 `public function process(): void`

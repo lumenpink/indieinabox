@@ -17,7 +17,7 @@ use Indieinabox\Http\Controllers\WebmentionController;
 use Indieinabox\Http\WebRouter;
 use Indieinabox\Services\ModerationService;
 use Indieinabox\Services\WebmentionService;
-use Indieinabox\Site;
+use Indieinabox\Site\Site;
 use Indieinabox\Site\Paths;
 
 beforeEach(function () {

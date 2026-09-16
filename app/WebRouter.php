@@ -192,38 +192,6 @@ class WebRouter
         $this->serveStatic();
     }
 
-    /**
-     * Factory method to create a ConfigHandler instance (Admin panel configuration).
-     */
-    protected function createConfigHandler(): ConfigHandler
-    {
-        return new ConfigHandler($this->site);
-    }
-
-    /**
-     * Factory method to create a MicropubClientHandler instance (Admin panel publishing).
-     */
-    protected function createMicropubClientHandler(): MicropubClientHandler
-    {
-        return new MicropubClientHandler($this->site);
-    }
-
-    /**
-     * Factory method to create a MicrosubReaderHandler instance (Admin panel reader).
-     */
-    protected function createMicrosubReaderHandler(): MicrosubReaderHandler
-    {
-        return new MicrosubReaderHandler($this->site);
-    }
-
-    /**
-     * Factory method to create a ModerationHandler instance (Admin panel moderation).
-     */
-    protected function createModerationHandler(): ModerationHandler
-    {
-        return new ModerationHandler($this->site);
-    }
-
     public function getWebmentionController(): WebmentionController
     {
         return new WebmentionController($this->site);
@@ -236,28 +204,12 @@ class WebRouter
 
     public function getMicropubController(): MicropubController
     {
-        return new MicropubController(
-            $this->site,
-            null,
-            $this->createMicropubClientHandler()
-        );
-    }
-
-    /**
-     * Factory method to create a MicrosubHandler instance (Microsub Server).
-     */
-    protected function createMicrosubHandler(): MicrosubHandler
-    {
-        return new MicrosubHandler($this->site);
+        return new MicropubController($this->site);
     }
 
     public function getMicrosubController(): MicrosubController
     {
-        return new MicrosubController(
-            $this->site,
-            $this->createMicrosubHandler(),
-            $this->createMicrosubReaderHandler()
-        );
+        return new MicrosubController($this->site);
     }
 
     public function getActivityPubController(): ActivityPubController
@@ -272,13 +224,7 @@ class WebRouter
 
     public function getAdminController(): AdminController
     {
-        return new AdminController(
-            $this->site,
-            $this->createConfigHandler(),
-            $this->createMicropubClientHandler(),
-            $this->createMicrosubReaderHandler(),
-            $this->createModerationHandler()
-        );
+        return new AdminController($this->site);
     }
 
     /**

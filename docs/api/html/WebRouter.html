@@ -150,6 +150,11 @@
 <li><a href="/docs/api/html/Twtxt-TwtxtManager.html">Twtxt-TwtxtManager</a></li>
 <li><a href="/docs/api/html/Updater.html">Updater</a></li>
 <li><a href="/docs/api/html/Version.html">Version</a></li>
+<li><a href="/docs/api/html/Views-Admin-AdminLayoutView.html">Views-Admin-AdminLayoutView</a></li>
+<li><a href="/docs/api/html/Views-Admin-ConfigView.html">Views-Admin-ConfigView</a></li>
+<li><a href="/docs/api/html/Views-Admin-MicropubClientView.html">Views-Admin-MicropubClientView</a></li>
+<li><a href="/docs/api/html/Views-Admin-MicrosubReaderView.html">Views-Admin-MicrosubReaderView</a></li>
+<li><a href="/docs/api/html/Views-Admin-ModerationView.html">Views-Admin-ModerationView</a></li>
 <li><a href="/docs/api/html/Views-ArchiveView.html">Views-ArchiveView</a></li>
 <li><a href="/docs/api/html/WebRouter.html">WebRouter</a></li>
 <li><a href="/docs/api/html/Webmention-HelpPageView.html">Webmention-HelpPageView</a></li>
@@ -187,27 +192,12 @@ Parses the current REQUESTMain entry point for routing requests.<br />
 Parses the current REQUEST_URI, checks against known API/Admin endpoints,<br />
 and delegates to the respective handler. Falls back to serveStatic().</p>
 <p>@return void</p>
-<h3>createConfigHandler()</h3>
-<p><code>protected function createConfigHandler(): Indieinabox\ConfigHandler</code></p>
-<p>Factory method to create a ConfigHandler instance (Admin panel configuration).</p>
-<h3>createMicropubClientHandler()</h3>
-<p><code>protected function createMicropubClientHandler(): Indieinabox\MicropubClientHandler</code></p>
-<p>Factory method to create a MicropubClientHandler instance (Admin panel publishing).</p>
-<h3>createMicrosubReaderHandler()</h3>
-<p><code>protected function createMicrosubReaderHandler(): Indieinabox\MicrosubReaderHandler</code></p>
-<p>Factory method to create a MicrosubReaderHandler instance (Admin panel reader).</p>
-<h3>createModerationHandler()</h3>
-<p><code>protected function createModerationHandler(): Indieinabox\ModerationHandler</code></p>
-<p>Factory method to create a ModerationHandler instance (Admin panel moderation).</p>
 <h3>getWebmentionController()</h3>
 <p><code>public function getWebmentionController(): Indieinabox\Http\Controllers\WebmentionController</code></p>
 <h3>getIndieAuthController()</h3>
 <p><code>public function getIndieAuthController(): Indieinabox\Http\Controllers\IndieAuthController</code></p>
 <h3>getMicropubController()</h3>
 <p><code>public function getMicropubController(): Indieinabox\Http\Controllers\MicropubController</code></p>
-<h3>createMicrosubHandler()</h3>
-<p><code>protected function createMicrosubHandler(): Indieinabox\MicrosubHandler</code></p>
-<p>Factory method to create a MicrosubHandler instance (Microsub Server).</p>
 <h3>getMicrosubController()</h3>
 <p><code>public function getMicrosubController(): Indieinabox\Http\Controllers\MicrosubController</code></p>
 <h3>getActivityPubController()</h3>

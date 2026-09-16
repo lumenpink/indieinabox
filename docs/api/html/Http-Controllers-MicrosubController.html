@@ -150,6 +150,11 @@
 <li><a href="/docs/api/html/Twtxt-TwtxtManager.html">Twtxt-TwtxtManager</a></li>
 <li><a href="/docs/api/html/Updater.html">Updater</a></li>
 <li><a href="/docs/api/html/Version.html">Version</a></li>
+<li><a href="/docs/api/html/Views-Admin-AdminLayoutView.html">Views-Admin-AdminLayoutView</a></li>
+<li><a href="/docs/api/html/Views-Admin-ConfigView.html">Views-Admin-ConfigView</a></li>
+<li><a href="/docs/api/html/Views-Admin-MicropubClientView.html">Views-Admin-MicropubClientView</a></li>
+<li><a href="/docs/api/html/Views-Admin-MicrosubReaderView.html">Views-Admin-MicrosubReaderView</a></li>
+<li><a href="/docs/api/html/Views-Admin-ModerationView.html">Views-Admin-ModerationView</a></li>
 <li><a href="/docs/api/html/Views-ArchiveView.html">Views-ArchiveView</a></li>
 <li><a href="/docs/api/html/WebRouter.html">WebRouter</a></li>
 <li><a href="/docs/api/html/Webmention-HelpPageView.html">Webmention-HelpPageView</a></li>
@@ -165,21 +170,34 @@
 <p><strong>Namespace:</strong> <code>Indieinabox\Http\Controllers</code></p>
 <p>Controller handling Microsub server endpoints (channels, timeline, actions) and the reader UI.</p>
 <h2>Properties</h2>
-<h3><code>private Indieinabox\MicrosubHandler $serverHandler</code></h3>
-<h3><code>private Indieinabox\MicrosubReaderHandler $readerHandler</code></h3>
-<h3><code>private ?Indieinabox\Services\MicrosubService $service</code></h3>
+<h3><code>protected Indieinabox\IndieAuth\TokenManager $tokenManager</code></h3>
+<h3><code>protected Indieinabox\Services\MicrosubService $service</code></h3>
 <h3><code>protected Indieinabox\Site $site</code></h3>
 <h2>Methods</h2>
 <h3><em></em>construct()</h3>
-<p><code>public function __construct(Indieinabox\Site $site, ?Indieinabox\MicrosubHandler $serverHandler = null, ?Indieinabox\MicrosubReaderHandler $readerHandler = null, ?Indieinabox\Services\MicrosubService $service = null)</code></p>
+<p><code>public function __construct(Indieinabox\Site $site, ?Indieinabox\IndieAuth\TokenManager $tokenManager = null, ?Indieinabox\Services\MicrosubService $service = null)</code></p>
+<h3>getService()</h3>
+<p><code>public function getService(): Indieinabox\Services\MicrosubService</code></p>
+<h3>getTokenManager()</h3>
+<p><code>public function getTokenManager(): Indieinabox\IndieAuth\TokenManager</code></p>
 <h3>handle()</h3>
 <p><code>public function handle(): void</code></p>
 <p>Handles standard Microsub API endpoint requests.</p>
+<h3>handleGet()</h3>
+<p><code>protected function handleGet(string $action): void</code></p>
+<p>Handles Microsub GET actions (channels, timeline, search, follow).</p>
+<h3>handlePost()</h3>
+<p><code>protected function handlePost(string $action): void</code></p>
+<p>Handles Microsub POST actions (channels, timeline, interact, follow, unfollow, fetch).</p>
 <h3>reader()</h3>
 <p><code>public function reader(): void</code></p>
 <p>Handles the Microsub web reader interface.</p>
-<h3>getService()</h3>
-<p><code>public function getService(): ?Indieinabox\Services\MicrosubService</code></p>
+<h3>getRemoteUrl()</h3>
+<p><code>public function getRemoteUrl(string $url, mixed $context = null): string|false</code></p>
+<p>Proxy helper for remote URL fetching.</p>
+<h3>fetchUrl()</h3>
+<p><code>protected function fetchUrl(string $url, mixed $context = null): string|false</code></p>
+<p>Helper to fetch remote URL contents. Overridable in tests to avoid real network access.</p>
 <h3>getSite()</h3>
 <p><code>public function getSite(): Indieinabox\Site</code></p>
 <h3>json()</h3>

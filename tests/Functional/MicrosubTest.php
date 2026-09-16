@@ -9,30 +9,25 @@ class TestMicrosubRouter extends \Indieinabox\WebRouter
 {
     public static bool $mockTokenValid = true;
 
-    protected function createMicrosubHandler(): \Indieinabox\MicrosubHandler
+    public function getMicrosubController(): \Indieinabox\Http\Controllers\MicrosubController
     {
-        $handler = new class($this->site) extends \Indieinabox\MicrosubHandler {
-            public function __construct(Site $site)
+        $mockAuth = new class extends \Indieinabox\IndieAuth\TokenManager {
+            public function validateBearerToken(?string &$tokenOut = null, ?string $authHeader = null, ?string $queryToken = null, ?string $postToken = null): ?array
             {
-                parent::__construct($site);
+                if (\TestMicrosubRouter::$mockTokenValid) {
+                    return ['me' => 'https://mysite.com/', 'client_id' => 'test_client', 'scope' => 'read'];
+                }
+                return null;
+            }
+        };
 
-                // Override the internal tokenManager
-                $ref = new \ReflectionClass(parent::class);
-                $prop = $ref->getProperty('tokenManager');
-
-                $mockAuth = new class extends \Indieinabox\IndieAuth\TokenManager {
-                    public function validateBearerToken(?string &$tokenOut = null, ?string $authHeader = null, ?string $queryToken = null, ?string $postToken = null): ?array
-                    {
-                        if (\TestMicrosubRouter::$mockTokenValid) {
-                            return ['me' => 'https://mysite.com/', 'client_id' => 'test_client', 'scope' => 'read'];
-                        }
-                        return null;
-                    }
-                };
-                $prop->setValue($this, $mockAuth);
+        return new class($this->site, $mockAuth) extends \Indieinabox\Http\Controllers\MicrosubController {
+            public function __construct(Site $site, \Indieinabox\IndieAuth\TokenManager $auth)
+            {
+                parent::__construct($site, $auth);
             }
 
-            protected function fetchUrl(string $url, $context = null)
+            protected function fetchUrl(string $url, $context = null): string|false
             {
                 // Return dummy feed content for follow action or false for invalid targets without network I/O
                 if (str_contains($url, 'feed.xml')) {
@@ -41,8 +36,6 @@ class TestMicrosubRouter extends \Indieinabox\WebRouter
                 return false;
             }
         };
-
-        return $handler;
     }
 }
 

@@ -150,6 +150,11 @@
 <li><a href="/docs/api/html/Twtxt-TwtxtManager.html">Twtxt-TwtxtManager</a></li>
 <li><a href="/docs/api/html/Updater.html">Updater</a></li>
 <li><a href="/docs/api/html/Version.html">Version</a></li>
+<li><a href="/docs/api/html/Views-Admin-AdminLayoutView.html">Views-Admin-AdminLayoutView</a></li>
+<li><a href="/docs/api/html/Views-Admin-ConfigView.html">Views-Admin-ConfigView</a></li>
+<li><a href="/docs/api/html/Views-Admin-MicropubClientView.html">Views-Admin-MicropubClientView</a></li>
+<li><a href="/docs/api/html/Views-Admin-MicrosubReaderView.html">Views-Admin-MicrosubReaderView</a></li>
+<li><a href="/docs/api/html/Views-Admin-ModerationView.html">Views-Admin-ModerationView</a></li>
 <li><a href="/docs/api/html/Views-ArchiveView.html">Views-ArchiveView</a></li>
 <li><a href="/docs/api/html/WebRouter.html">WebRouter</a></li>
 <li><a href="/docs/api/html/Webmention-HelpPageView.html">Webmention-HelpPageView</a></li>
@@ -165,26 +170,46 @@
 <p><strong>Namespace:</strong> <code>Indieinabox\Http\Controllers</code></p>
 <p>Controller managing administrative panels (settings, config, client, reader, moderation, cron).</p>
 <h2>Properties</h2>
-<h3><code>private Indieinabox\ConfigHandler $configHandler</code></h3>
-<h3><code>private Indieinabox\MicropubClientHandler $micropubClientHandler</code></h3>
-<h3><code>private Indieinabox\MicrosubReaderHandler $microsubReaderHandler</code></h3>
-<h3><code>private Indieinabox\ModerationHandler $moderationHandler</code></h3>
+<h3><code>private Indieinabox\Services\ConfigurationService $configService</code></h3>
+<h3><code>private Indieinabox\Services\ModerationService $moderationService</code></h3>
+<h3><code>private Indieinabox\Services\MicrosubService $microsubService</code></h3>
 <h3><code>protected Indieinabox\Site $site</code></h3>
 <h2>Methods</h2>
 <h3><em></em>construct()</h3>
-<p><code>public function __construct(Indieinabox\Site $site, ?Indieinabox\ConfigHandler $configHandler = null, ?Indieinabox\MicropubClientHandler $micropubClientHandler = null, ?Indieinabox\MicrosubReaderHandler $microsubReaderHandler = null, ?Indieinabox\ModerationHandler $moderationHandler = null)</code></p>
+<p><code>public function __construct(Indieinabox\Site $site, ?Indieinabox\Services\ConfigurationService $configService = null, ?Indieinabox\Services\ModerationService $moderationService = null, ?Indieinabox\Services\MicrosubService $microsubService = null)</code></p>
+<h3>getConfigurationService()</h3>
+<p><code>public function getConfigurationService(): Indieinabox\Services\ConfigurationService</code></p>
+<h3>getModerationService()</h3>
+<p><code>public function getModerationService(): Indieinabox\Services\ModerationService</code></p>
+<h3>getMicrosubService()</h3>
+<p><code>public function getMicrosubService(): Indieinabox\Services\MicrosubService</code></p>
 <h3>index()</h3>
 <p><code>public function index(): void</code></p>
 <h3>config()</h3>
 <p><code>public function config(): void</code></p>
+<p>Admin site configuration endpoint.</p>
 <h3>micropub()</h3>
 <p><code>public function micropub(): void</code></p>
+<p>Admin Micropub web posting client.</p>
 <h3>microsub()</h3>
 <p><code>public function microsub(): void</code></p>
+<p>Admin Microsub timeline reader.</p>
 <h3>moderation()</h3>
 <p><code>public function moderation(): void</code></p>
+<p>Admin interactions and comments moderation panel.</p>
 <h3>cron()</h3>
 <p><code>public function cron(): void</code></p>
+<p>Cron endpoint triggering background processing.</p>
+<h3>handleBootstrap()</h3>
+<p><code>private function handleBootstrap(): void</code></p>
+<h3>redirectToAuth()</h3>
+<p><code>private function redirectToAuth(): void</code></p>
+<h3>handleCallback()</h3>
+<p><code>private function handleCallback(): void</code></p>
+<h3>saveConfig()</h3>
+<p><code>protected function saveConfig(): void</code></p>
+<h3>rebuildSite()</h3>
+<p><code>public function rebuildSite(): void</code></p>
 <h3>getSite()</h3>
 <p><code>public function getSite(): Indieinabox\Site</code></p>
 <h3>json()</h3>

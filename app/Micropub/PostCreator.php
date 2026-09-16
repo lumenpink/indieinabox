@@ -242,15 +242,15 @@ class PostCreator
      */
     private static function enqueueSiteBuild(): void
     {
-        if (!class_exists('\\Indieinabox\\ConfigHandler')) {
-            return;
-        }
-
-        $db = Database::getDb();
-        $stmt = $db->query("SELECT 1 FROM inbox_queue WHERE type = 'build_site'");
-        if ($stmt && !$stmt->fetch()) {
-            $insert = $db->prepare('INSERT INTO inbox_queue (type, payload_json, created_at) VALUES (?, ?, ?)');
-            $insert->execute(['build_site', json_encode([]), time()]);
+        try {
+            $db = Database::getDb();
+            $stmt = $db->query("SELECT 1 FROM inbox_queue WHERE type = 'build_site'");
+            if ($stmt && !$stmt->fetch()) {
+                $insert = $db->prepare('INSERT INTO inbox_queue (type, payload_json, created_at) VALUES (?, ?, ?)');
+                $insert->execute(['build_site', json_encode([]), time()]);
+            }
+        } catch (\Throwable) {
+            // Database not connected or table unavailable; skip enqueue
         }
     }
 }

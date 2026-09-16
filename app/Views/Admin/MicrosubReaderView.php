@@ -2,54 +2,23 @@
 
 declare(strict_types=1);
 
-namespace Indieinabox;
+namespace Indieinabox\Views\Admin;
 
 /**
- * Class MicrosubReaderHandler
+ * Presentation view component that renders the Microsub web reader interface.
  */
-class MicrosubReaderHandler
+class MicrosubReaderView
 {
     /**
-     * @var \Indieinabox\Site
-     */
-    private Site $site;
-
-    /**
-     * Initializes the MicrosubReaderHandler.
+     * Renders the Microsub web reader interface wrapped in the admin layout.
      *
-     * @param \Indieinabox\Site $site Global site configuration and environment.
+     * @param string $fqdn Fully qualified domain name of the site.
+     * @return string Rendered HTML.
      */
-    public function __construct(Site $site)
+    public static function render(string $fqdn): string
     {
-        $this->site = $site;
-    }
-
-    /**
-     * Handles requests for the Microsub reader interface.
-     * Enforces authentication and routes to specific reader actions or views.
-     *
-     * @return void
-     */
-    public function handle(): void
-    {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_set_cookie_params(43200);
-            session_start();
-        }
-
-        // Require authentication
-        if (empty($_SESSION['admin_authenticated'])) {
-            $fqdn = rtrim($this->site->metadata->fqdn ?? '', '/');
-            header('Location: ' . $fqdn . '/admin/config');
-            return;
-        }
-
-        $fqdn = rtrim($this->site->metadata->fqdn ?? '', '/');
-        $endpoint = $fqdn . '/microsub';
-        
-        $activeTab = 'microsub';
-        $adminLayoutPath = dirname(__DIR__) . '/resources/views/admin_layout.php';
-        
+        $fqdnClean = rtrim($fqdn, '/');
+        $endpoint = $fqdnClean . '/microsub';
         ob_start();
         ?>
     <style>
@@ -815,12 +784,8 @@ class MicrosubReaderHandler
         }
     </script>
 </div>
-<?php
-        $content = ob_get_clean();
-        \Indieinabox\ThemeManager::loadView($adminLayoutPath, [
-            'content' => $content,
-            'activeTab' => $activeTab,
-            'fqdn' => $fqdn
-        ]);
+        <?php
+        $inner = (string) ob_get_clean();
+        return AdminLayoutView::render($inner, 'microsub', $fqdnClean);
     }
 }

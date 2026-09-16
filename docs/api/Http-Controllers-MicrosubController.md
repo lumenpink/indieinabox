@@ -5,31 +5,52 @@ Controller handling Microsub server endpoints (channels, timeline, actions) and 
 
 ## Properties
 
-### `private Indieinabox\MicrosubHandler $serverHandler`
+### `protected Indieinabox\IndieAuth\TokenManager $tokenManager`
 
-### `private Indieinabox\MicrosubReaderHandler $readerHandler`
-
-### `private ?Indieinabox\Services\MicrosubService $service`
+### `protected Indieinabox\Services\MicrosubService $service`
 
 ### `protected Indieinabox\Site $site`
 
 ## Methods
 
 ### __construct()
-`public function __construct(Indieinabox\Site $site, ?Indieinabox\MicrosubHandler $serverHandler = null, ?Indieinabox\MicrosubReaderHandler $readerHandler = null, ?Indieinabox\Services\MicrosubService $service = null)`
+`public function __construct(Indieinabox\Site $site, ?Indieinabox\IndieAuth\TokenManager $tokenManager = null, ?Indieinabox\Services\MicrosubService $service = null)`
+
+### getService()
+`public function getService(): Indieinabox\Services\MicrosubService`
+
+### getTokenManager()
+`public function getTokenManager(): Indieinabox\IndieAuth\TokenManager`
 
 ### handle()
 `public function handle(): void`
 
 Handles standard Microsub API endpoint requests.
 
+### handleGet()
+`protected function handleGet(string $action): void`
+
+Handles Microsub GET actions (channels, timeline, search, follow).
+
+### handlePost()
+`protected function handlePost(string $action): void`
+
+Handles Microsub POST actions (channels, timeline, interact, follow, unfollow, fetch).
+
 ### reader()
 `public function reader(): void`
 
 Handles the Microsub web reader interface.
 
-### getService()
-`public function getService(): ?Indieinabox\Services\MicrosubService`
+### getRemoteUrl()
+`public function getRemoteUrl(string $url, mixed $context = null): string|false`
+
+Proxy helper for remote URL fetching.
+
+### fetchUrl()
+`protected function fetchUrl(string $url, mixed $context = null): string|false`
+
+Helper to fetch remote URL contents. Overridable in tests to avoid real network access.
 
 ### getSite()
 `public function getSite(): Indieinabox\Site`

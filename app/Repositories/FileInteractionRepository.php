@@ -14,20 +14,28 @@ use Indieinabox\Repositories\Contracts\InteractionRepositoryInterface;
  */
 class FileInteractionRepository implements InteractionRepositoryInterface
 {
-    private string $dataDir;
+    private ?string $customDataDir;
     private Yaml $yaml;
 
     public function __construct(?string $dataDir = null, ?Yaml $yaml = null)
     {
-        $this->dataDir = $dataDir ?? (Database::$dataDir !== '' && Database::$dataDir !== null
-            ? Database::$dataDir
-            : (dirname(__DIR__, 2) . '/data'));
+        $this->customDataDir = $dataDir;
         $this->yaml = $yaml ?? new Yaml();
+    }
+
+    public function getDataDir(): string
+    {
+        if ($this->customDataDir !== null) {
+            return $this->customDataDir;
+        }
+        return (Database::$dataDir !== '' && Database::$dataDir !== null)
+            ? Database::$dataDir
+            : (dirname(__DIR__, 2) . '/data');
     }
 
     private function getNotificationsDir(): string
     {
-        $dir = $this->dataDir . DIRECTORY_SEPARATOR . 'microsub' . DIRECTORY_SEPARATOR . 'inbox' . DIRECTORY_SEPARATOR . 'notifications';
+        $dir = $this->getDataDir() . DIRECTORY_SEPARATOR . 'microsub' . DIRECTORY_SEPARATOR . 'inbox' . DIRECTORY_SEPARATOR . 'notifications';
         if (!is_dir($dir)) {
             @mkdir($dir, 0755, true);
         }
@@ -36,7 +44,7 @@ class FileInteractionRepository implements InteractionRepositoryInterface
 
     private function getSpamDir(): string
     {
-        $dir = $this->dataDir . DIRECTORY_SEPARATOR . 'microsub' . DIRECTORY_SEPARATOR . 'inbox' . DIRECTORY_SEPARATOR . 'spam';
+        $dir = $this->getDataDir() . DIRECTORY_SEPARATOR . 'microsub' . DIRECTORY_SEPARATOR . 'inbox' . DIRECTORY_SEPARATOR . 'spam';
         if (!is_dir($dir)) {
             @mkdir($dir, 0755, true);
         }

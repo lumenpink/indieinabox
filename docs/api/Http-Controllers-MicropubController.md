@@ -7,14 +7,12 @@ Controller handling Micropub server queries, post creation, media uploads, and t
 
 ### `private Indieinabox\IndieAuth\TokenManager $tokenManager`
 
-### `private Indieinabox\MicropubClientHandler $clientHandler`
-
 ### `protected Indieinabox\Site $site`
 
 ## Methods
 
 ### __construct()
-`public function __construct(Indieinabox\Site $site, ?Indieinabox\IndieAuth\TokenManager $tokenManager = null, ?Indieinabox\MicropubClientHandler $clientHandler = null)`
+`public function __construct(Indieinabox\Site $site, ?Indieinabox\IndieAuth\TokenManager $tokenManager = null)`
 
 ### handle()
 `public function handle(): void`

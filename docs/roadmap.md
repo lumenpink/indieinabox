@@ -404,3 +404,18 @@ app/
   - Purified HTTP transport controllers (`ArchiveController`, `WebmentionController`, `IndieAuthController`, `ActivityPubController`, `MicropubController`) to directly coordinate HTTP requests, domain services, and presentation views.
   - Decoupled all internal callers (`PagePublisher`, `PostCreator`, `MicrosubHandler`, and `WebRouter`).
   - Maintained 100% single-file compilation compatibility (`indieinabox.php`), zero CodeSniffer warnings/errors, and complete 3-tier test coverage (Unit, Functional, Integration).
+- [x] **Admin & Reader Decoupling and UI Presentation Views Layer (Phase 2)**:
+  - Eliminated the remaining 5 legacy UI and transport handlers: `ConfigHandler.php`, `MicropubClientHandler.php`, `MicrosubReaderHandler.php`, `ModerationHandler.php`, and `MicrosubHandler.php`.
+  - Extracted a dedicated Presentation Views layer under `app/Views/Admin/`:
+    - `AdminLayoutView.php`: Reusable modern dashboard layout with responsive styling, navigation, and English UI labels.
+    - `ConfigView.php`: Complete admin configuration interface and bootstrap setup view.
+    - `MicropubClientView.php`: Native micro-publishing interface for note, article, and media publishing.
+    - `MicrosubReaderView.php`: Multi-channel timeline reader UI with feed subscriptions and interaction cards.
+    - `ModerationView.php`: Moderation dashboard for inspecting, approving, or discarding pending mentions and spam.
+  - Purified transport controllers:
+    - `AdminController.php`: Directly coordinates settings, bootstrap setup, auto-updater, site rebuild, micropub, microsub, and moderation using `ConfigurationService`, `ModerationService`, and `MicrosubService`.
+    - `MicrosubController.php`: Merged all Microsub API actions (`channels`, `timeline`, `follow`, `unfollow`, `interact`, `fetch`) and reader view into a single cohesive controller delegating to `MicrosubService` and rendering `MicrosubReaderView`.
+    - `MicropubController.php`: Updated client endpoint (`/micropub/client`) to render `MicropubClientView`.
+    - `ConfigController.php`: Cleanly delegates administration requests to `AdminController`.
+  - Maintained 100% single-file compilation compatibility (`composer compile`), zero CodeSniffer warnings/errors across all 142 files, and full 3-tier test suite passes (453 tests).
+

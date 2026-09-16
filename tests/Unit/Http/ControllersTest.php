@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Http;
 
-use Indieinabox\ConfigHandler;
 use Indieinabox\Core\Container;
 use Indieinabox\Database;
 use Indieinabox\Http\Controllers\ActivityPubController;
@@ -15,10 +14,6 @@ use Indieinabox\Http\Controllers\IndieAuthController;
 use Indieinabox\Http\Controllers\MicropubController;
 use Indieinabox\Http\Controllers\MicrosubController;
 use Indieinabox\Http\Controllers\WebmentionController;
-use Indieinabox\MicropubClientHandler;
-use Indieinabox\MicrosubHandler;
-use Indieinabox\MicrosubReaderHandler;
-use Indieinabox\ModerationHandler;
 use Indieinabox\Services\ArchiveService;
 use Indieinabox\Services\WebmentionService;
 use Indieinabox\Site;
@@ -30,8 +25,8 @@ beforeEach(function () {
     Database::$dataDir = $this->tempDir;
     $dbPath = $this->tempDir . '/.indieinabox.sqlite';
     Database::connect($dbPath);
-    Database::getDb()->exec("CREATE TABLE IF NOT EXISTS settings (key TEXT PRIMARY KEY, value TEXT)");
-    Database::getDb()->exec("CREATE TABLE IF NOT EXISTS activitypub_keys (key_id TEXT PRIMARY KEY, private_key TEXT NOT NULL, public_key TEXT NOT NULL, created_at INTEGER NOT NULL)");
+    $sql = (string) file_get_contents(dirname(__DIR__, 3) . '/database.sql');
+    Database::getDb()->exec($sql);
 
     $this->site = new Site();
     $this->site->metadata->fqdn = 'https://controllers.example';
@@ -75,19 +70,7 @@ test('ActivityPubController executes endpoint methods cleanly', function () {
 });
 
 test('MicropubController delegates endpoint and client actions', function () {
-    $mockClient = new class($this->site) extends MicropubClientHandler {
-        public bool $called = false;
-        public function __construct(Site $site)
-        {
-            parent::__construct($site);
-        }
-        public function handle(): void
-        {
-            $this->called = true;
-        }
-    };
-
-    $controller = new MicropubController($this->site, null, $mockClient);
+    $controller = new MicropubController($this->site);
 
     $_SERVER['REQUEST_METHOD'] = 'GET';
     $_GET['q'] = 'config';
@@ -97,42 +80,33 @@ test('MicropubController delegates endpoint and client actions', function () {
 
     expect(http_response_code())->toBe(401); // Requires auth
 
+    $_SESSION['admin_authenticated'] = true;
+    ob_start();
     $controller->client();
-    expect($mockClient->called)->toBeTrue();
+    $clientHtml = ob_get_clean();
+    expect($clientHtml)->toContain('Indieinabox Publisher');
 });
 
 test('MicrosubController delegates API and reader actions', function () {
-    $mockServer = new class($this->site) extends MicrosubHandler {
-        public bool $called = false;
-        public function __construct(Site $site)
-        {
-            parent::__construct($site);
-        }
-        public function handle(): void
-        {
-            $this->called = true;
-        }
-    };
+    $controller = new MicrosubController($this->site);
 
-    $mockReader = new class($this->site) extends MicrosubReaderHandler {
-        public bool $called = false;
-        public function __construct(Site $site)
-        {
-            parent::__construct($site);
-        }
-        public function handle(): void
-        {
-            $this->called = true;
-        }
-    };
-
-    $controller = new MicrosubController($this->site, $mockServer, $mockReader);
-
+    $_SERVER['REQUEST_METHOD'] = 'GET';
+    $_REQUEST['action'] = 'channels';
+    ob_start();
     $controller->handle();
-    $controller->reader();
+    $output = ob_get_clean();
+    expect(http_response_code())->toBe(401); // Unauthorized
 
-    expect($mockServer->called)->toBeTrue();
-    expect($mockReader->called)->toBeTrue();
+    $_SESSION['admin_authenticated'] = true;
+    ob_start();
+    $controller->handle();
+    $channelsJson = ob_get_clean();
+    expect($channelsJson)->toBeJson();
+
+    ob_start();
+    $controller->reader();
+    $readerHtml = ob_get_clean();
+    expect($readerHtml)->toContain('Timeline');
 });
 
 test('WebmentionController, IndieAuthController, and ConfigController handle actions cleanly', function () {
@@ -205,60 +179,33 @@ test('ArchiveController handles snapshots and force updates', function () {
 });
 
 test('AdminController dispatches sub-actions', function () {
-    $mockCfg = new class($this->site) extends ConfigHandler {
-        public bool $called = false;
-        public function __construct(Site $site)
-        {
-            parent::__construct($site);
-        }
-        public function handle(): void
-        {
-            $this->called = true;
-        }
-    };
-    $mockClient = new class($this->site) extends MicropubClientHandler {
-        public bool $called = false;
-        public function __construct(Site $site)
-        {
-            parent::__construct($site);
-        }
-        public function handle(): void
-        {
-            $this->called = true;
-        }
-    };
-    $mockReader = new class($this->site) extends MicrosubReaderHandler {
-        public bool $called = false;
-        public function __construct(Site $site)
-        {
-            parent::__construct($site);
-        }
-        public function handle(): void
-        {
-            $this->called = true;
-        }
-    };
-    $mockMod = new class($this->site) extends ModerationHandler {
-        public bool $called = false;
-        public function __construct(Site $site)
-        {
-            parent::__construct($site);
-        }
-        public function handle(): void
-        {
-            $this->called = true;
-        }
-    };
+    $admin = new AdminController($this->site);
 
-    $admin = new AdminController($this->site, $mockCfg, $mockClient, $mockReader, $mockMod);
-
+    // Unauthenticated config renders bootstrap if no password exists
+    ob_start();
     $admin->config();
-    $admin->micropub();
-    $admin->microsub();
-    $admin->moderation();
+    $bootstrapHtml = ob_get_clean();
+    expect($bootstrapHtml)->toContain('IndieAuth Password');
 
-    expect($mockCfg->called)->toBeTrue();
-    expect($mockClient->called)->toBeTrue();
-    expect($mockReader->called)->toBeTrue();
-    expect($mockMod->called)->toBeTrue();
+    $_SESSION['admin_authenticated'] = true;
+
+    ob_start();
+    $admin->micropub();
+    $pubHtml = ob_get_clean();
+    expect($pubHtml)->toContain('Indieinabox Publisher');
+
+    ob_start();
+    $admin->microsub();
+    $subHtml = ob_get_clean();
+    expect($subHtml)->toContain('Timeline');
+
+    ob_start();
+    $admin->moderation();
+    $modHtml = ob_get_clean();
+    expect($modHtml)->toContain('Comment Moderation');
+
+    ob_start();
+    $admin->cron();
+    $cronOutput = ob_get_clean();
+    expect($cronOutput)->toContain('OK');
 });

@@ -5,20 +5,27 @@ Controller managing administrative panels (settings, config, client, reader, mod
 
 ## Properties
 
-### `private Indieinabox\ConfigHandler $configHandler`
+### `private Indieinabox\Services\ConfigurationService $configService`
 
-### `private Indieinabox\MicropubClientHandler $micropubClientHandler`
+### `private Indieinabox\Services\ModerationService $moderationService`
 
-### `private Indieinabox\MicrosubReaderHandler $microsubReaderHandler`
-
-### `private Indieinabox\ModerationHandler $moderationHandler`
+### `private Indieinabox\Services\MicrosubService $microsubService`
 
 ### `protected Indieinabox\Site $site`
 
 ## Methods
 
 ### __construct()
-`public function __construct(Indieinabox\Site $site, ?Indieinabox\ConfigHandler $configHandler = null, ?Indieinabox\MicropubClientHandler $micropubClientHandler = null, ?Indieinabox\MicrosubReaderHandler $microsubReaderHandler = null, ?Indieinabox\ModerationHandler $moderationHandler = null)`
+`public function __construct(Indieinabox\Site $site, ?Indieinabox\Services\ConfigurationService $configService = null, ?Indieinabox\Services\ModerationService $moderationService = null, ?Indieinabox\Services\MicrosubService $microsubService = null)`
+
+### getConfigurationService()
+`public function getConfigurationService(): Indieinabox\Services\ConfigurationService`
+
+### getModerationService()
+`public function getModerationService(): Indieinabox\Services\ModerationService`
+
+### getMicrosubService()
+`public function getMicrosubService(): Indieinabox\Services\MicrosubService`
 
 ### index()
 `public function index(): void`
@@ -26,17 +33,42 @@ Controller managing administrative panels (settings, config, client, reader, mod
 ### config()
 `public function config(): void`
 
+Admin site configuration endpoint.
+
 ### micropub()
 `public function micropub(): void`
+
+Admin Micropub web posting client.
 
 ### microsub()
 `public function microsub(): void`
 
+Admin Microsub timeline reader.
+
 ### moderation()
 `public function moderation(): void`
 
+Admin interactions and comments moderation panel.
+
 ### cron()
 `public function cron(): void`
+
+Cron endpoint triggering background processing.
+
+### handleBootstrap()
+`private function handleBootstrap(): void`
+
+### redirectToAuth()
+`private function redirectToAuth(): void`
+
+### handleCallback()
+`private function handleCallback(): void`
+
+### saveConfig()
+`protected function saveConfig(): void`
+
+### rebuildSite()
+`public function rebuildSite(): void`
 
 ### getSite()
 `public function getSite(): Indieinabox\Site`

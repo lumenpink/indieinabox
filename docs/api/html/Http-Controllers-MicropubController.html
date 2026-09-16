@@ -150,6 +150,11 @@
 <li><a href="/docs/api/html/Twtxt-TwtxtManager.html">Twtxt-TwtxtManager</a></li>
 <li><a href="/docs/api/html/Updater.html">Updater</a></li>
 <li><a href="/docs/api/html/Version.html">Version</a></li>
+<li><a href="/docs/api/html/Views-Admin-AdminLayoutView.html">Views-Admin-AdminLayoutView</a></li>
+<li><a href="/docs/api/html/Views-Admin-ConfigView.html">Views-Admin-ConfigView</a></li>
+<li><a href="/docs/api/html/Views-Admin-MicropubClientView.html">Views-Admin-MicropubClientView</a></li>
+<li><a href="/docs/api/html/Views-Admin-MicrosubReaderView.html">Views-Admin-MicrosubReaderView</a></li>
+<li><a href="/docs/api/html/Views-Admin-ModerationView.html">Views-Admin-ModerationView</a></li>
 <li><a href="/docs/api/html/Views-ArchiveView.html">Views-ArchiveView</a></li>
 <li><a href="/docs/api/html/WebRouter.html">WebRouter</a></li>
 <li><a href="/docs/api/html/Webmention-HelpPageView.html">Webmention-HelpPageView</a></li>
@@ -166,11 +171,10 @@
 <p>Controller handling Micropub server queries, post creation, media uploads, and the web-based posting client.</p>
 <h2>Properties</h2>
 <h3><code>private Indieinabox\IndieAuth\TokenManager $tokenManager</code></h3>
-<h3><code>private Indieinabox\MicropubClientHandler $clientHandler</code></h3>
 <h3><code>protected Indieinabox\Site $site</code></h3>
 <h2>Methods</h2>
 <h3><em></em>construct()</h3>
-<p><code>public function __construct(Indieinabox\Site $site, ?Indieinabox\IndieAuth\TokenManager $tokenManager = null, ?Indieinabox\MicropubClientHandler $clientHandler = null)</code></p>
+<p><code>public function __construct(Indieinabox\Site $site, ?Indieinabox\IndieAuth\TokenManager $tokenManager = null)</code></p>
 <h3>handle()</h3>
 <p><code>public function handle(): void</code></p>
 <p>Handles standard Micropub endpoint requests (POST create/media, GET config/syndicate-to).</p>

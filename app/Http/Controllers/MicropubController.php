@@ -8,8 +8,8 @@ use Indieinabox\IndieAuth\TokenManager;
 use Indieinabox\Micropub\MediaHandler;
 use Indieinabox\Micropub\PostCreator;
 use Indieinabox\Micropub\QueryHandler;
-use Indieinabox\MicropubClientHandler;
 use Indieinabox\Site;
+use Indieinabox\Views\Admin\MicropubClientView;
 
 /**
  * Controller handling Micropub server queries, post creation, media uploads, and the web-based posting client.
@@ -17,16 +17,13 @@ use Indieinabox\Site;
 class MicropubController extends AbstractController
 {
     private TokenManager $tokenManager;
-    private MicropubClientHandler $clientHandler;
 
     public function __construct(
         Site $site,
-        ?TokenManager $tokenManager = null,
-        ?MicropubClientHandler $clientHandler = null
+        ?TokenManager $tokenManager = null
     ) {
         parent::__construct($site);
         $this->tokenManager = $tokenManager ?? new TokenManager();
-        $this->clientHandler = $clientHandler ?? new MicropubClientHandler($site);
     }
 
     /**
@@ -74,7 +71,19 @@ class MicropubController extends AbstractController
      */
     public function client(): void
     {
-        $this->clientHandler->handle();
+        if (session_status() === PHP_SESSION_NONE) {
+            session_set_cookie_params(43200);
+            session_start();
+        }
+
+        if (empty($_SESSION['admin_authenticated'])) {
+            $fqdn = rtrim($this->site->metadata->fqdn ?? '', '/');
+            $this->redirect($fqdn . '/admin/config');
+            return;
+        }
+
+        $fqdn = rtrim($this->site->metadata->fqdn ?? '', '/');
+        $this->html(MicropubClientView::render($fqdn));
     }
 
     protected function handleGetRequest(): void

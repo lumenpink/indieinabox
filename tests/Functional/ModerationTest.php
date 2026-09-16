@@ -3,9 +3,9 @@
 declare(strict_types=1);
 
 use PHPUnit\Framework\Assert;
+use Indieinabox\Http\Controllers\AdminController;
 use Indieinabox\Site;
 use Indieinabox\Site\Paths;
-use Indieinabox\ModerationHandler;
 
 beforeEach(function () {
     /** @var \Tests\TestCase|mixed $this */
@@ -38,11 +38,9 @@ afterEach(function () {
 it('redirects to config if not authenticated', function () {
     /** @var \Tests\TestCase|mixed $this */
     
-    $handler = new ModerationHandler($this->site);
-    
-    $_SESSION['admin_authenticated'] = false;
+    $controller = new \Indieinabox\Http\Controllers\AdminController($this->site);
     ob_start();
-    $handler->handle();
+    $controller->moderation();
     $output = ob_get_clean();
     
     // We expect it to redirect and return without rendering HTML
@@ -63,9 +61,9 @@ it('lists pending interactions', function () {
     $approvedYaml = "---\nid: test_approved_1\ninteraction_type: reply\nurl: https://example.com/reply\nauthor_name: Test Replier\nstatus: approved\n---\nBody";
     file_put_contents($notificationsDir . '/hash_reply1.md', $approvedYaml);
 
-    $handler = new ModerationHandler($this->site);
+    $controller = new AdminController($this->site);
     ob_start();
-    $handler->handle();
+    $controller->moderation();
     $output = ob_get_clean();
     
     Assert::assertStringContainsString('Test Liker', $output); // Pending should be listed
@@ -87,9 +85,9 @@ it('approves a pending interaction', function () {
         'id' => 'hash_pending1'
     ];
     
-    $handler = new ModerationHandler($this->site);
+    $controller = new AdminController($this->site);
     ob_start();
-    $handler->handle();
+    $controller->moderation();
     ob_end_clean();
     
     // Verify file is now approved
@@ -112,9 +110,9 @@ it('deletes a pending interaction', function () {
         'id' => 'hash_pending1'
     ];
     
-    $handler = new ModerationHandler($this->site);
+    $controller = new AdminController($this->site);
     ob_start();
-    $handler->handle();
+    $controller->moderation();
     ob_end_clean();
     
     // Verify file is deleted

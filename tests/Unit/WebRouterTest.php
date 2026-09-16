@@ -3,9 +3,11 @@
 declare(strict_types=1);
 
 use Indieinabox\Http\Controllers\ActivityPubController;
+use Indieinabox\Http\Controllers\AdminController;
 use Indieinabox\Http\Controllers\ArchiveController;
 use Indieinabox\Http\Controllers\IndieAuthController;
 use Indieinabox\Http\Controllers\MicropubController;
+use Indieinabox\Http\Controllers\MicrosubController;
 use Indieinabox\Http\Controllers\WebmentionController;
 use Indieinabox\Site;
 use Indieinabox\Site\Paths;
@@ -202,6 +204,74 @@ it('dispatches archive requests to ArchiveController', function () {
                     $this->state = $state;
                 }
                 public function handle(): void
+                {
+                    $this->state->called = true;
+                }
+            };
+        }
+    };
+
+    $router->handleRequest();
+    expect($state->called)->toBeTrue();
+});
+
+it('dispatches microsub requests to MicrosubController', function () {
+    $_SERVER['REQUEST_URI'] = '/microsub';
+
+    $state = new stdClass();
+    $state->called = false;
+
+    $router = new class($this->site, $state) extends WebRouter {
+        private stdClass $state;
+        public function __construct(Site $site, stdClass $state)
+        {
+            parent::__construct($site);
+            $this->state = $state;
+        }
+        public function getMicrosubController(): MicrosubController
+        {
+            return new class($this->site, $this->state) extends MicrosubController {
+                private stdClass $state;
+                public function __construct(Site $site, stdClass $state)
+                {
+                    parent::__construct($site);
+                    $this->state = $state;
+                }
+                public function handle(): void
+                {
+                    $this->state->called = true;
+                }
+            };
+        }
+    };
+
+    $router->handleRequest();
+    expect($state->called)->toBeTrue();
+});
+
+it('dispatches admin requests to AdminController', function () {
+    $_SERVER['REQUEST_URI'] = '/admin/config';
+
+    $state = new stdClass();
+    $state->called = false;
+
+    $router = new class($this->site, $state) extends WebRouter {
+        private stdClass $state;
+        public function __construct(Site $site, stdClass $state)
+        {
+            parent::__construct($site);
+            $this->state = $state;
+        }
+        public function getAdminController(): AdminController
+        {
+            return new class($this->site, $this->state) extends AdminController {
+                private stdClass $state;
+                public function __construct(Site $site, stdClass $state)
+                {
+                    parent::__construct($site);
+                    $this->state = $state;
+                }
+                public function config(): void
                 {
                     $this->state->called = true;
                 }

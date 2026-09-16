@@ -65,10 +65,16 @@ The project follows Domain-Driven Design (DDD) and SOLID principles, structured 
     - `ConfigurationService.php`: Site setup bootstrap, settings persistence, kind taxonomies, translations, and theme installations.
     - `FetchFeedsService.php`: Syndication feed fetching, strategy-based parsing, media caching, and storage.
     - `MicrosubService.php`: Microsub channels, subscriptions, timeline retrieval, read tracking, and social interactions.
-  - **`Views/`**: Presentation components cleanly decoupled from transport handlers:
+  - **`Views/`**: Presentation components cleanly decoupled from transport controllers:
     - `ArchiveView.php`: Snapshot explorer toolbar and iframe view presenter.
     - `Webmention/HelpPageView.php`: Interactive webmention endpoint test and documentation page.
     - `IndieAuth/ConsentView.php`: IndieAuth authorization consent prompt view.
+    - `Admin/`: Administrative and reader UI presentation views:
+      - `AdminLayoutView.php`: Base dashboard layout with responsive navigation, styling, and metadata.
+      - `ConfigView.php`: Site setup bootstrap and complete configuration dashboard.
+      - `MicropubClientView.php`: Lightweight client UI for publishing notes, articles, and media uploads.
+      - `MicrosubReaderView.php`: Timeline reader UI with multi-channel navigation, preview cards, and interactions.
+      - `ModerationView.php`: Moderation dashboard for inspecting, approving, or discarding incoming mentions and spam.
   - **`Repositories/`**: Repository Pattern persistence abstractions and contracts:
     - `Contracts/SettingsRepositoryInterface.php`: Storage contract for application settings, kind taxonomies, and translations.
     - `SqliteSettingsRepository.php`: SQLite implementation of settings repository with JSON decoding.

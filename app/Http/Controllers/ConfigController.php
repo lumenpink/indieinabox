@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Indieinabox\Http\Controllers;
 
-use Indieinabox\ConfigHandler;
 use Indieinabox\Services\ConfigurationService;
 use Indieinabox\Site;
 
@@ -13,17 +12,17 @@ use Indieinabox\Site;
  */
 class ConfigController extends AbstractController
 {
-    private ConfigHandler $handler;
+    private AdminController $adminController;
     private ConfigurationService $configService;
 
     public function __construct(
         Site $site,
-        ?ConfigHandler $handler = null,
+        ?AdminController $adminController = null,
         ?ConfigurationService $configService = null
     ) {
         parent::__construct($site);
         $this->configService = $configService ?? new ConfigurationService();
-        $this->handler = $handler ?? new ConfigHandler($site, $this->configService);
+        $this->adminController = $adminController ?? new AdminController($site, $this->configService);
     }
 
     public function getConfigurationService(): ConfigurationService
@@ -36,6 +35,6 @@ class ConfigController extends AbstractController
      */
     public function handle(): void
     {
-        $this->handler->handle();
+        $this->adminController->config();
     }
 }

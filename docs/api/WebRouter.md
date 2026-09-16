@@ -39,26 +39,6 @@ and delegates to the respective handler. Falls back to serveStatic().
 
 @return void
 
-### createConfigHandler()
-`protected function createConfigHandler(): Indieinabox\ConfigHandler`
-
-Factory method to create a ConfigHandler instance (Admin panel configuration).
-
-### createMicropubClientHandler()
-`protected function createMicropubClientHandler(): Indieinabox\MicropubClientHandler`
-
-Factory method to create a MicropubClientHandler instance (Admin panel publishing).
-
-### createMicrosubReaderHandler()
-`protected function createMicrosubReaderHandler(): Indieinabox\MicrosubReaderHandler`
-
-Factory method to create a MicrosubReaderHandler instance (Admin panel reader).
-
-### createModerationHandler()
-`protected function createModerationHandler(): Indieinabox\ModerationHandler`
-
-Factory method to create a ModerationHandler instance (Admin panel moderation).
-
 ### getWebmentionController()
 `public function getWebmentionController(): Indieinabox\Http\Controllers\WebmentionController`
 
@@ -67,11 +47,6 @@ Factory method to create a ModerationHandler instance (Admin panel moderation).
 
 ### getMicropubController()
 `public function getMicropubController(): Indieinabox\Http\Controllers\MicropubController`
-
-### createMicrosubHandler()
-`protected function createMicrosubHandler(): Indieinabox\MicrosubHandler`
-
-Factory method to create a MicrosubHandler instance (Microsub Server).
 
 ### getMicrosubController()
 `public function getMicrosubController(): Indieinabox\Http\Controllers\MicrosubController`

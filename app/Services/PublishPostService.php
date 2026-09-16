@@ -9,6 +9,8 @@ use Indieinabox\Core\Container;
 use Indieinabox\Core\Database;
 use Indieinabox\Events\Contracts\EventDispatcherInterface;
 use Indieinabox\Events\PostPublishedEvent;
+use Indieinabox\Repositories\Contracts\ContentRepositoryInterface;
+use Indieinabox\Repositories\FileSystemContentRepository;
 use Indieinabox\Site\Site;
 use Indieinabox\SiteBuilder\SiteBuilder;
 
@@ -20,11 +22,13 @@ class PublishPostService
     private Site $site;
     private ?OutboxService $outboxService;
     private ?EventDispatcherInterface $events;
+    private ContentRepositoryInterface $contentRepo;
 
     public function __construct(
         Site $site,
         ?OutboxService $outboxService = null,
-        ?EventDispatcherInterface $events = null
+        ?EventDispatcherInterface $events = null,
+        ?ContentRepositoryInterface $contentRepo = null
     ) {
         $this->site = $site;
         $this->outboxService = $outboxService;
@@ -32,6 +36,17 @@ class PublishPostService
 
         if ($this->events === null && class_exists(Container::class) && Container::getInstance()->has(EventDispatcherInterface::class)) {
             $this->events = Container::getInstance()->get(EventDispatcherInterface::class);
+        }
+
+        if ($contentRepo !== null) {
+            $this->contentRepo = $contentRepo;
+        } else {
+            $container = class_exists(Container::class) ? Container::getInstance() : null;
+            if ($container && $container->has(ContentRepositoryInterface::class)) {
+                $this->contentRepo = $container->get(ContentRepositoryInterface::class);
+            } else {
+                $this->contentRepo = new FileSystemContentRepository(null, $this->site);
+            }
         }
     }
 
@@ -51,37 +66,30 @@ class PublishPostService
         ?string $title = null
     ): array {
         $date = date('Y-m-d-H-i-s');
-        $contentDir = Database::$dataDir . '/../content';
-
         $subfolder = $kind === 'article' ? 'articles' : 'notes';
-        $postDir = $contentDir . '/' . $subfolder;
-        if (!is_dir($postDir)) {
-            @mkdir($postDir, 0755, true);
-        }
 
-        $postPath = $postDir . '/' . $date . '.md';
-
-        $content = '';
+        $frontmatter = [];
         if ($title !== null && $title !== '') {
-            $content .= "---\ntitle: " . addslashes($title) . "\ndate: " . date('Y-m-d H:i:s') . "\n---\n\n";
+            $frontmatter['title'] = $title;
+            $frontmatter['date'] = date('Y-m-d H:i:s');
         }
 
-        $content .= $text;
+        $body = $text;
 
         if (!empty($mediaPaths)) {
-            $content .= "\n\n";
+            $body .= "\n\n";
             foreach ($mediaPaths as $mp) {
                 if (preg_match('/\.(mp4|webm|mov)$/i', $mp)) {
-                    $content .= "<video src=\"{$mp}\" controls></video>\n";
+                    $body .= "<video src=\"{$mp}\" controls></video>\n";
                 } elseif (preg_match('/\.(mp3|ogg|wav)$/i', $mp)) {
-                    $content .= "<audio src=\"{$mp}\" controls></audio>\n";
+                    $body .= "<audio src=\"{$mp}\" controls></audio>\n";
                 } else {
-                    $content .= "![]({$mp})\n";
+                    $body .= "![]({$mp})\n";
                 }
             }
         }
 
-        file_put_contents($postPath, $content);
+        $postPath = $this->contentRepo->save($subfolder, $date, $body, $frontmatter);
 
         // Rebuild static site
         $builder = new SiteBuilder($this->site);
@@ -96,7 +104,7 @@ class PublishPostService
                 $postPath,
                 $kind,
                 $title,
-                $content,
+                $body,
                 $mediaPaths
             ));
         }

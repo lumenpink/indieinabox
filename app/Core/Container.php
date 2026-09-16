@@ -129,6 +129,12 @@ class Container implements ContainerInterface
             return new \Indieinabox\Events\EventDispatcher();
         });
         $this->bind(\Indieinabox\Events\EventDispatcher::class, \Indieinabox\Events\Contracts\EventDispatcherInterface::class);
+
+        $this->singleton(\Indieinabox\Repositories\Contracts\ContentRepositoryInterface::class, function (self $container) {
+            $site = $container->has(\Indieinabox\Site\Site::class) ? $container->get(\Indieinabox\Site\Site::class) : ($GLOBALS['site'] ?? null);
+            return new \Indieinabox\Repositories\FileSystemContentRepository(null, $site);
+        });
+        $this->bind(\Indieinabox\Repositories\FileSystemContentRepository::class, \Indieinabox\Repositories\Contracts\ContentRepositoryInterface::class);
     }
 
     /**

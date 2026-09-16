@@ -128,10 +128,12 @@
 <li><a href="/docs/api/html/Pages.html">Pages</a></li>
 <li><a href="/docs/api/html/ParserInterface.html">ParserInterface</a></li>
 <li><a href="/docs/api/html/Repositories-Contracts-ActivityPubRepositoryInterface.html">Repositories-Contracts-ActivityPubRepositoryInterface</a></li>
+<li><a href="/docs/api/html/Repositories-Contracts-ContentRepositoryInterface.html">Repositories-Contracts-ContentRepositoryInterface</a></li>
 <li><a href="/docs/api/html/Repositories-Contracts-InteractionRepositoryInterface.html">Repositories-Contracts-InteractionRepositoryInterface</a></li>
 <li><a href="/docs/api/html/Repositories-Contracts-MicrosubRepositoryInterface.html">Repositories-Contracts-MicrosubRepositoryInterface</a></li>
 <li><a href="/docs/api/html/Repositories-Contracts-SettingsRepositoryInterface.html">Repositories-Contracts-SettingsRepositoryInterface</a></li>
 <li><a href="/docs/api/html/Repositories-FileInteractionRepository.html">Repositories-FileInteractionRepository</a></li>
+<li><a href="/docs/api/html/Repositories-FileSystemContentRepository.html">Repositories-FileSystemContentRepository</a></li>
 <li><a href="/docs/api/html/Repositories-SqliteActivityPubRepository.html">Repositories-SqliteActivityPubRepository</a></li>
 <li><a href="/docs/api/html/Repositories-SqliteMicrosubRepository.html">Repositories-SqliteMicrosubRepository</a></li>
 <li><a href="/docs/api/html/Repositories-SqliteSettingsRepository.html">Repositories-SqliteSettingsRepository</a></li>
@@ -215,7 +217,7 @@
 post type discovery, frontmatter generation, and publication queuing.</p>
 <h2>Methods</h2>
 <h3>create()</h3>
-<p><code>public static function create(Indieinabox\Site\Site $site, array $input): array</code></p>
+<p><code>public static function create(Indieinabox\Site\Site $site, array $input, ?Indieinabox\Repositories\Contracts\ContentRepositoryInterface $contentRepo = null): array</code></p>
 <p>Creates a new post on disk from Micropub input and enqueues federation events.</p>
 <p>@param Site $site Global site configuration.<br />
 @param array<string, mixed> $input Form or JSON input payload.<br />

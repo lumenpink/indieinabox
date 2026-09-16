@@ -40,7 +40,11 @@ class PostCreator
      * @param array<string, mixed> $input Form or JSON input payload.
      * @return array{status: int, headers: array<string, string>, post_url: string, file_path: string, kind: string, slug: string}
      */
-    public static function create(Site $site, array $input): array
+    public static function create(
+        Site $site,
+        array $input,
+        ?\Indieinabox\Repositories\Contracts\ContentRepositoryInterface $contentRepo = null
+    ): array
     {
         $name = isset($input['name']) && $input['name'] !== '' ? (string) $input['name'] : null;
         $content = $input['content'] ?? '';
@@ -95,56 +99,20 @@ class PostCreator
             }
         }
 
-        $yaml = "---\n";
-        foreach ($frontmatter as $k => $v) {
-            if (is_array($v)) {
-                $yaml .= "$k:\n";
-                foreach ($v as $item) {
-                    $yaml .= "  - $item\n";
-                }
-            } else {
-                $yaml .= "$k: \"$v\"\n";
-            }
-        }
-        $yaml .= "---\n\n";
-
+        $body = $content;
         // Append photos to content if not already present
         foreach ($photos as $photo) {
-            if (is_string($photo) && strpos($content, $photo) === false) {
-                $yaml .= "![]($photo)\n\n";
+            if (is_string($photo) && strpos($body, $photo) === false) {
+                $body .= "\n\n![]($photo)\n\n";
             }
         }
 
-        $yaml .= $content;
-
-        // Determine directory path
-        $contentDir = rtrim($site->paths->contentDir, DIRECTORY_SEPARATOR);
-        $defaultLang = $site->localization->defaultLang ?? 'en';
-        if ($lang !== '' && $lang !== $defaultLang) {
-            $contentDir .= DIRECTORY_SEPARATOR . $lang;
-        }
+        $contentRepo = $contentRepo ?? new \Indieinabox\Repositories\FileSystemContentRepository(null, $site);
 
         $year = date('Y');
         $month = date('m');
-        $dir = $contentDir . DIRECTORY_SEPARATOR . $kind . DIRECTORY_SEPARATOR . $year . DIRECTORY_SEPARATOR . $month;
-
-        if (!is_dir($dir)) {
-            @mkdir($dir, 0777, true);
-        }
-
-        $originalSlug = $slug;
-        $counter = 1;
-        while (file_exists($dir . DIRECTORY_SEPARATOR . $slug . '.md')) {
-            if (is_numeric($originalSlug)) {
-                $slug = (string) ((int) $originalSlug + $counter);
-            } else {
-                $slug = $originalSlug . '-' . $counter;
-            }
-            $counter++;
-        }
-
-        $filePath = $dir . DIRECTORY_SEPARATOR . $slug . '.md';
-        file_put_contents($filePath, $yaml);
+        $slug = $contentRepo->generateUniqueSlug($kind, $slug, $lang, $year, $month);
+        $filePath = $contentRepo->save($kind, $slug, $body, $frontmatter, $lang, $year, $month);
 
         // Queue site rebuild
         self::enqueueSiteBuild();

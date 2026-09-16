@@ -115,7 +115,7 @@ test('PublishPostService handles articles with title and broadcasts to outbox', 
 
     expect(file_exists($result['filepath']))->toBeTrue();
     $content = file_get_contents($result['filepath']);
-    expect($content)->toContain('title: Federated Publishing');
+    expect($content)->toContain('title: "Federated Publishing"');
     expect($content)->toContain('![](/media/photo1.jpg)');
 
     // Verify outbox queued broadcast

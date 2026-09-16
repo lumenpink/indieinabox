@@ -48,12 +48,12 @@ class KindHelper
         }
 
         if (empty($config['content_dir'])) {
-            global $kindspath;
-            if ($kindspath === null) {
-                $kindspath = Database::getSetting('kindspath', []);
+            $kindsPath = $site ? ($site->config['kindspath'] ?? null) : null;
+            if ($kindsPath === null || empty($kindsPath)) {
+                $kindsPath = !empty($GLOBALS['kindspath']) ? $GLOBALS['kindspath'] : Database::getSetting('kindspath', []);
             }
-            if (!empty($kindspath[$kind])) {
-                $config['content_dir'] = is_array($kindspath[$kind]) ? reset($kindspath[$kind]) : $kindspath[$kind];
+            if (!empty($kindsPath[$kind])) {
+                $config['content_dir'] = is_array($kindsPath[$kind]) ? reset($kindsPath[$kind]) : $kindsPath[$kind];
             }
         }
 
@@ -118,12 +118,12 @@ class KindHelper
 
             // Fallback to kindspath setting if not found
             if (!isset($kind)) {
-                global $kindspath;
-                if ($kindspath === null) {
-                    $kindspath = Database::getSetting('kindspath', []);
+                $kindsPath = $site ? ($site->config['kindspath'] ?? null) : null;
+                if ($kindsPath === null || empty($kindsPath)) {
+                    $kindsPath = !empty($GLOBALS['kindspath']) ? $GLOBALS['kindspath'] : Database::getSetting('kindspath', []);
                 }
-                if (!empty($kindspath)) {
-                    foreach ($kindspath as $key => $value) {
+                if (!empty($kindsPath)) {
+                    foreach ($kindsPath as $key => $value) {
                         if (in_array($localizedkindSegment, (array)$value, true)) {
                             $kind = $key;
                             break;
@@ -280,7 +280,11 @@ class KindHelper
      */
     public static function getOriginalContent(string $slug, string $lang): string
     {
-        global $urltranslations;
+        $site = self::getSite();
+        $urltranslations = $site ? ($site->config['urltranslations'] ?? null) : null;
+        if ($urltranslations === null) {
+            $urltranslations = Database::getUrlTranslations();
+        }
         if (is_array($urltranslations)) {
             foreach ($urltranslations as $key => $val) {
                 if (isset($val[$lang]) && stripos($val[$lang], $slug) !== false) {
@@ -294,17 +298,22 @@ class KindHelper
     /**
      * List posts, sorting by date descending, up to 10 posts.
      *
+     * @param Pages|null $pageCollection
+     * @param Site|null $siteInstance
+     * @param Page|null $currentPage
      * @return string
      */
-    public static function listposts(): string
+    public static function listposts(?Pages $pageCollection = null, ?Site $siteInstance = null, ?Page $currentPage = null): string
     {
-        global $pages, $site, $p;
-        $mainPage = $p;
+        $container = \Indieinabox\Core\Container::getInstance();
+        $site = $siteInstance ?? self::getSite();
+        $pages = $pageCollection ?? ($container->has(Pages::class) ? $container->get(Pages::class) : null);
+        $mainPage = $currentPage ?? ($container->has(Page::class) ? $container->get(Page::class) : null);
         $currentLang = $mainPage instanceof Page
             ? $mainPage->lang
-            : ($mainPage['lang'] ?? ($site->localization->defaultLang ?? 'en'));
-        $base = $site->paths->baseDir;
-        $localpages = $pages instanceof Pages ? $pages->all() : $pages;
+            : ($mainPage['lang'] ?? ($site?->localization->defaultLang ?? 'en'));
+        $base = $site?->paths->baseDir ?? '';
+        $localpages = $pages instanceof Pages ? $pages->all() : (is_array($pages) ? $pages : []);
         $localpages = array_filter($localpages, [self::class, 'removeGeneric']);
         $localpages = array_filter($localpages, function ($pg) use ($currentLang) {
             $lang = $pg instanceof Page ? $pg->lang : ($pg['lang'] ?? 'en');
@@ -322,7 +331,7 @@ class KindHelper
         );
         $count = 0;
         ob_start();
-        $themeDir = $site->paths->themeDir ?? 'theme';
+        $themeDir = $site?->paths->themeDir ?? 'theme';
         foreach ($localpages as $originalPage) {
             $p = clone $originalPage;
             $page = clone $originalPage;

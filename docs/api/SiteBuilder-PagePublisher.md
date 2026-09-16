@@ -32,12 +32,13 @@ Publishes multiple pages across all supported formats.
 @return void
 
 ### publishHtml()
-`public function publishHtml(Indieinabox\Page\Page $page): void`
+`public function publishHtml(Indieinabox\Page\Page $page, array $additionalViewVars = []): void`
 
 Renders a single Page object into an HTML file using the configured theme.
 Handles slug resolution, metadata extraction, ActivityPub JSON, interactions, and shortlink generation.
 
 @param Page $page The page to render.
+@param array<string, mixed> $additionalViewVars Extra variables to expose to the layout view.
 @return void
 
 ### publishGemini()

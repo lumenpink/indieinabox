@@ -191,9 +191,10 @@
 <p>Handles translation parity and virtualization of missing pages across languages.</p>
 <h2>Properties</h2>
 <h3><code>private Indieinabox\Site\Site $site</code></h3>
+<h3><code>private ?Indieinabox\Repositories\Contracts\SettingsRepositoryInterface $settingsRepo</code></h3>
 <h2>Methods</h2>
 <h3><em></em>construct()</h3>
-<p><code>public function __construct(Indieinabox\Site\Site $site)</code></p>
+<p><code>public function __construct(Indieinabox\Site\Site $site, ?Indieinabox\Repositories\Contracts\SettingsRepositoryInterface $settingsRepo = null)</code></p>
 <h3>virtualize()</h3>
 <p><code>public function virtualize(Indieinabox\Page\Pages $pages): void</code></p>
 <p>Generates pseudo-translated pages for missing languages to maintain parity.<br />

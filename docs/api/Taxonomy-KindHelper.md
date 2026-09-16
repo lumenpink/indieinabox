@@ -65,10 +65,13 @@ Get original content slug translation.
 @return string
 
 ### listposts()
-`public static function listposts(): string`
+`public static function listposts(?Indieinabox\Page\Pages $pageCollection = null, ?Indieinabox\Site\Site $siteInstance = null, ?Indieinabox\Page\Page $currentPage = null): string`
 
 List posts, sorting by date descending, up to 10 posts.
 
+@param Pages|null $pageCollection
+@param Site|null $siteInstance
+@param Page|null $currentPage
 @return string
 
 ### removeGeneric()

@@ -3,18 +3,26 @@
 
 Class DateFormatter
 
-Formats relative timestamps, localized dates according to site intl settings,
-and sorts collections chronologically.
+Provides date/time formatting utilities, human-readable relative time (timeAgo),
+and localized date translations.
+
+## Properties
+
+### `private static ?array $intlConfig`
+
+### `private static ?array $originalDaysOfWeek`
+
+### `private static ?array $originalMonths`
 
 ## Methods
 
+### setConfig()
+`public static function setConfig(?array $intl = null, ?array $daysOfWeek = null, ?array $months = null): void`
+
 ### timeAgo()
-`public static function timeAgo(int $timestamp): string`
+`public static function timeAgo(string|int $time): string`
 
-Returns a human-readable relative time string (e.g. "5 minutes ago").
-
-@param int $timestamp
-@return string
+Calculates a human-readable relative time string (e.g. "5 minutes ago").
 
 ### localizeddate()
 `public static function localizeddate(Indieinabox\Page\Page|array $page): array`

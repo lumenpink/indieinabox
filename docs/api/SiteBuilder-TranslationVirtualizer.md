@@ -7,10 +7,12 @@ Handles translation parity and virtualization of missing pages across languages.
 
 ### `private Indieinabox\Site\Site $site`
 
+### `private ?Indieinabox\Repositories\Contracts\SettingsRepositoryInterface $settingsRepo`
+
 ## Methods
 
 ### __construct()
-`public function __construct(Indieinabox\Site\Site $site)`
+`public function __construct(Indieinabox\Site\Site $site, ?Indieinabox\Repositories\Contracts\SettingsRepositoryInterface $settingsRepo = null)`
 
 ### virtualize()
 `public function virtualize(Indieinabox\Page\Pages $pages): void`

@@ -25,10 +25,19 @@ class HtmlRenderer implements RendererInterface
      */
     private ?\Indieinabox\Site\Site $site = null;
 
-    public function __construct(?\Indieinabox\Page\Page $page = null, ?\Indieinabox\Site\Site $site = null)
-    {
+    /**
+     * @var \Indieinabox\Page\Pages|null
+     */
+    private ?\Indieinabox\Page\Pages $pages = null;
+
+    public function __construct(
+        ?\Indieinabox\Page\Page $page = null,
+        ?\Indieinabox\Site\Site $site = null,
+        ?\Indieinabox\Page\Pages $pages = null
+    ) {
         $this->page = $page;
         $this->site = $site;
+        $this->pages = $pages;
     }
 
     private function getSite(): ?\Indieinabox\Site\Site
@@ -37,7 +46,27 @@ class HtmlRenderer implements RendererInterface
             return $this->site;
         }
         $container = \Indieinabox\Core\Container::getInstance();
-        return $container->has(\Indieinabox\Site\Site::class) ? $container->get(\Indieinabox\Site\Site::class) : ($GLOBALS['site'] ?? null);
+        return $container->has(\Indieinabox\Site\Site::class) ? $container->get(\Indieinabox\Site\Site::class) : null;
+    }
+
+    private function getPages(): ?\Indieinabox\Page\Pages
+    {
+        if ($this->pages !== null) {
+            return $this->pages;
+        }
+        $container = \Indieinabox\Core\Container::getInstance();
+        return $container->has(\Indieinabox\Page\Pages::class) ? $container->get(\Indieinabox\Page\Pages::class) : null;
+    }
+
+    /**
+     * Set active page collection context.
+     *
+     * @param \Indieinabox\Page\Pages $pages
+     * @return void
+     */
+    public function setPages(\Indieinabox\Page\Pages $pages): void
+    {
+        $this->pages = $pages;
     }
 
     /**
@@ -182,12 +211,13 @@ class HtmlRenderer implements RendererInterface
         if ($node instanceof WikilinkNode) {
             $target = trim($node->target);
             
-            global $pages, $site;
+            $site = $this->getSite();
+            $pages = $this->getPages();
             $foundPage = null;
             $currentPageLang = $this->page ? ($this->page->lang ?? 'en') : 'en';
             
             $relpath = $this->page ? $this->page->relpath : './';
-            $defaultLang = $site->localization->defaultLang ?? 'en';
+            $defaultLang = $site?->localization->defaultLang ?? 'en';
             $langPrefix = ($currentPageLang !== $defaultLang) ? $currentPageLang . '/' : '';
             
             $isMeta = false;
@@ -202,7 +232,7 @@ class HtmlRenderer implements RendererInterface
                     $url = $relpath . $langPrefix;
                 } else {
                     $matchedKind = null;
-                    if (!empty($site->config['kinds'])) {
+                    if ($site !== null && !empty($site->config['kinds'])) {
                         foreach ($site->config['kinds'] as $k => $kindData) {
                             if ($metaKey === TextParser::slugize($k)) {
                                 $matchedKind = $k;

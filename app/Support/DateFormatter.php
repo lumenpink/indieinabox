@@ -6,26 +6,41 @@ namespace Indieinabox\Support;
 
 use DateTime;
 use DateTimeZone;
+use Indieinabox\Core\Container;
 use Indieinabox\Core\Database;
 use Indieinabox\Page\Page;
+use Indieinabox\Repositories\Contracts\SettingsRepositoryInterface;
 
 /**
  * Class DateFormatter
  *
- * Formats relative timestamps, localized dates according to site intl settings,
- * and sorts collections chronologically.
+ * Provides date/time formatting utilities, human-readable relative time (timeAgo),
+ * and localized date translations.
  */
 class DateFormatter
 {
-    /**
-     * Returns a human-readable relative time string (e.g. "5 minutes ago").
-     *
-     * @param int $timestamp
-     * @return string
-     */
-    public static function timeAgo(int $timestamp): string
+    private static ?array $intlConfig = null;
+    private static ?array $originalDaysOfWeek = null;
+    private static ?array $originalMonths = null;
+
+    public static function setConfig(?array $intl = null, ?array $daysOfWeek = null, ?array $months = null): void
     {
-        $diff = time() - $timestamp;
+        self::$intlConfig = $intl;
+        self::$originalDaysOfWeek = $daysOfWeek;
+        self::$originalMonths = $months;
+    }
+
+    /**
+     * Calculates a human-readable relative time string (e.g. "5 minutes ago").
+     */
+    public static function timeAgo(int|string $time): string
+    {
+        $time = is_numeric($time) ? (int) $time : strtotime((string) $time);
+        if ($time === false) {
+            return "";
+        }
+        $diff = time() - $time;
+
         if ($diff < 60) {
             return $diff . " seconds ago";
         } elseif ($diff < 3600) {
@@ -45,64 +60,59 @@ class DateFormatter
      */
     public static function localizeddate(Page|array $page): array
     {
-        global $originaldaysofweek, $originalmonths, $intl;
+        $container = class_exists(Container::class) ? Container::getInstance() : null;
+        $settingsRepo = $container && $container->has(SettingsRepositoryInterface::class) ? $container->get(SettingsRepositoryInterface::class) : null;
 
+        $intl = self::$intlConfig ?? ($settingsRepo ? $settingsRepo->get('intl', []) : (class_exists(Database::class) && Database::isConnected() ? Database::getSetting('intl', []) : ($GLOBALS['intl'] ?? [])));
         if (empty($intl)) {
-            $intl = Database::getSetting('intl', []);
-            if (empty($intl)) {
-                $intl = [
-                    'pt-br' => [
-                        'localizeddate' => [
-                            'date' => 'd \d\e F \de\ Y',
-                            'time' => 'H:iP',
-                            'full' => 'l, d \d\e F \d\e Y \à\s H:i e',
-                            'shortdate' => 'd/m/Y',
-                            'shorttime' => 'H:i',
-                            'shortfull' => 'd/m/Y H:i',
-                            'daysofweek' => ["Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado"],
-                            'months' => ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"],
-                        ],
+            $intl = [
+                'pt-br' => [
+                    'localizeddate' => [
+                        'date' => 'd \d\e F \de\ Y',
+                        'time' => 'H:iP',
+                        'full' => 'l, d \d\e F \d\e Y \à\s H:i e',
+                        'shortdate' => 'd/m/Y',
+                        'shorttime' => 'H:i',
+                        'shortfull' => 'd/m/Y H:i',
+                        'daysofweek' => ["Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado"],
+                        'months' => ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"],
                     ],
-                    'en' => [
-                        'localizeddate' => [
-                            'date' => 'F d, Y',
-                            'time' => 'h:i A',
-                            'full' => 'l, F d, Y \a\t h:i A',
-                            'shortdate' => 'm/d/Y',
-                            'shorttime' => 'h:i A',
-                            'shortfull' => 'm/d/Y h:i A',
-                            'daysofweek' => ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
-                            'months' => ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
-                        ],
+                ],
+                'en' => [
+                    'localizeddate' => [
+                        'date' => 'F d, Y',
+                        'time' => 'h:i A',
+                        'full' => 'l, F d, Y \a\t h:i A',
+                        'shortdate' => 'm/d/Y',
+                        'shorttime' => 'h:i A',
+                        'shortfull' => 'm/d/Y h:i A',
+                        'daysofweek' => ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+                        'months' => ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
                     ],
-                    'es' => [
-                        'localizeddate' => [
-                            'date' => 'd \d\e F \d\e Y',
-                            'time' => 'H:iP',
-                            'full' => 'l, d \d\e F \d\e Y \à\s H:iP',
-                            'shortdate' => 'd/m/Y',
-                            'shorttime' => 'H:i',
-                            'shortfull' => 'd/m/Y H:i',
-                            'daysofweek' => ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"],
-                            'months' => ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
-                        ],
+                ],
+                'es' => [
+                    'localizeddate' => [
+                        'date' => 'd \d\e F \d\e Y',
+                        'time' => 'H:iP',
+                        'full' => 'l, d \d\e F \d\e Y \à\s H:iP',
+                        'shortdate' => 'd/m/Y',
+                        'shorttime' => 'H:i',
+                        'shortfull' => 'd/m/Y H:i',
+                        'daysofweek' => ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"],
+                        'months' => ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
                     ],
-                ];
-            }
+                ],
+            ];
         }
 
+        $originaldaysofweek = self::$originalDaysOfWeek ?? ($settingsRepo ? $settingsRepo->get('originaldaysofweek', []) : (class_exists(Database::class) && Database::isConnected() ? Database::getSetting('originaldaysofweek', []) : ($GLOBALS['originaldaysofweek'] ?? [])));
         if (empty($originaldaysofweek)) {
-            $originaldaysofweek = Database::getSetting('originaldaysofweek', []);
-            if (empty($originaldaysofweek)) {
-                $originaldaysofweek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-            }
+            $originaldaysofweek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
         }
 
+        $originalmonths = self::$originalMonths ?? ($settingsRepo ? $settingsRepo->get('originalmonths', []) : (class_exists(Database::class) && Database::isConnected() ? Database::getSetting('originalmonths', []) : ($GLOBALS['originalmonths'] ?? [])));
         if (empty($originalmonths)) {
-            $originalmonths = Database::getSetting('originalmonths', []);
-            if (empty($originalmonths)) {
-                $originalmonths = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-            }
+            $originalmonths = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
         }
 
         setlocale(LC_TIME, 'en-us');

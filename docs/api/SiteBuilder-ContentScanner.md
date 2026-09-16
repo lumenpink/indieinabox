@@ -41,7 +41,6 @@ If one was not provided in the content directory, it creates a generic fallback.
 `public function renderRawBodies(Indieinabox\Page\Pages $pageCollection): void`
 
 Renders raw markdown bodies into final HTML content for all pages in the collection.
-Sets global variables $pages and $site for template and processor compatibility.
 
 @param Pages $pageCollection The collection of pages to render.
 @return void

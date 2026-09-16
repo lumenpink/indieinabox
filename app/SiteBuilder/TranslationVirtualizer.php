@@ -9,6 +9,9 @@ use Indieinabox\Taxonomy\KindHelper;
 use Indieinabox\Page\Page;
 use Indieinabox\Page\Pages;
 use Indieinabox\Site\Site;
+use Indieinabox\Core\Container;
+use Indieinabox\Core\Database;
+use Indieinabox\Repositories\Contracts\SettingsRepositoryInterface;
 use Indieinabox\Translations\UrlTranslations;
 use RuntimeException;
 
@@ -18,10 +21,14 @@ use RuntimeException;
 class TranslationVirtualizer
 {
     private Site $site;
+    private ?SettingsRepositoryInterface $settingsRepo;
 
-    public function __construct(Site $site)
+    public function __construct(Site $site, ?SettingsRepositoryInterface $settingsRepo = null)
     {
         $this->site = $site;
+        $this->settingsRepo = $settingsRepo ?? (Container::getInstance()->has(SettingsRepositoryInterface::class)
+            ? Container::getInstance()->get(SettingsRepositoryInterface::class)
+            : null);
     }
 
     /**
@@ -48,9 +55,10 @@ class TranslationVirtualizer
         }
         $autoVirtualize = (string) ($this->site->options->translation_auto ?? 'pseudo');
 
-        global $urltranslations;
         /** @var array<string, array<string, string>> $urlTranslationsArr */
-        $urlTranslationsArr = $urltranslations ?? [];
+        $urlTranslationsArr = (array) ($this->site->config['urltranslations'] ?? (
+            $this->settingsRepo ? $this->settingsRepo->getUrlTranslations() : Database::getUrlTranslations()
+        ));
         $reverseTranslations = [];
         foreach ($urlTranslationsArr as $defaultNick => $translations) {
             foreach ($translations as $l => $translatedNick) {

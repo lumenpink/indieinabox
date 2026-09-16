@@ -294,7 +294,7 @@ class MarkdownParser implements ParserInterface
             if (isset($parts[$folderIndex])) {
                 $oldFolder = $parts[$folderIndex];
                 $matchedKind = null;
-                global $kindspath;
+                $kindsPath = $this->site->config['kindspath'] ?? Database::getSetting('kindspath', []);
                 if (!empty($this->site->config['kinds'])) {
                     foreach ($this->site->config['kinds'] as $k => $conf) {
                         $cDir = $conf['content_dir'] ?? $k;
@@ -310,13 +310,9 @@ class MarkdownParser implements ParserInterface
                     }
                 }
 
-                if ($kindspath === null) {
-                    $kindspath = Database::getSetting('kindspath', []);
-                }
-
                 // Fallback to legacy folder names
-                if ($matchedKind === null && !empty($kindspath)) {
-                    foreach ($kindspath as $key => $value) {
+                if ($matchedKind === null && !empty($kindsPath)) {
+                    foreach ($kindsPath as $key => $value) {
                         if (in_array($oldFolder, $value, true)) {
                             $matchedKind = $key;
                             break;

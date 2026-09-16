@@ -110,13 +110,13 @@ class ThemeHelper
             
             $flowerbedLinks = [];
             foreach ($flowerbed as $fb) {
-                $flowerbedLinks[] = '<a href="' . $page->relpath . $langPrefix . 'flowerbed/' . TextParser::slugize($fb) . '/">' . htmlspecialchars(Translator::translate($fb)) . '</a>';
+                $flowerbedLinks[] = '<a href="' . $page->relpath . $langPrefix . 'flowerbed/' . TextParser::slugize($fb) . '/">' . htmlspecialchars(Translator::translate($fb, $pageLang)) . '</a>';
             }
             $html .= '<div class="meta-garden-fields" style="margin-left: 0.6em;">';
-            $html .= ' • ' . Translator::translate('Flowerbed') . ': ' . implode(', ', $flowerbedLinks) . '<br>';
-            $html .= ' • ' . Translator::translate('Confidence') . ': ' . htmlspecialchars(Translator::translate($confidence)) . '<br>';
-            $html .= ' • ' . Translator::translate('Maturity') . ': ' . htmlspecialchars(Translator::translate($maturity)) . '<br>';
-            $html .= ' • ' . Translator::translate('Importance') . ': ' . htmlspecialchars(Translator::translate($importance));
+            $html .= ' • ' . Translator::translate('Flowerbed', $pageLang) . ': ' . implode(', ', $flowerbedLinks) . '<br>';
+            $html .= ' • ' . Translator::translate('Confidence', $pageLang) . ': ' . htmlspecialchars(Translator::translate($confidence, $pageLang)) . '<br>';
+            $html .= ' • ' . Translator::translate('Maturity', $pageLang) . ': ' . htmlspecialchars(Translator::translate($maturity, $pageLang)) . '<br>';
+            $html .= ' • ' . Translator::translate('Importance', $pageLang) . ': ' . htmlspecialchars(Translator::translate($importance, $pageLang));
             $html .= '</div>';
         }
 

@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace Indieinabox\Localization;
 
+use Indieinabox\Core\Container;
 use Indieinabox\Core\Database;
 use Indieinabox\Page\Page;
+use Indieinabox\Repositories\Contracts\SettingsRepositoryInterface;
+use Indieinabox\Site\Site;
 use Indieinabox\Support\FileUtils;
 use Indieinabox\Support\TextParser;
 
@@ -26,18 +29,18 @@ class Translator
      */
     public static function translate(string $text, ?string $lang = null): string
     {
-        global $translations, $page, $p, $site;
-        if ($translations === null) {
-            $translations = Database::getTranslations();
-        }
+        $container = class_exists(Container::class) ? Container::getInstance() : null;
+        $site = $container && $container->has(Site::class) ? $container->get(Site::class) : ($GLOBALS['site'] ?? null);
+        $settingsRepo = $container && $container->has(SettingsRepositoryInterface::class) ? $container->get(SettingsRepositoryInterface::class) : null;
 
         if ($lang === null) {
-            if (isset($p)) {
-                $lang = $p instanceof Page ? $p->lang : ($p["lang"] ?? "en");
-            } elseif (isset($page)) {
-                $lang = $page instanceof Page ? $page->lang : ($page["lang"] ?? "en");
+            $contextPage = $container && $container->has(Page::class) ? $container->get(Page::class) : ($GLOBALS['p'] ?? ($GLOBALS['page'] ?? null));
+            if ($contextPage instanceof Page) {
+                $lang = $contextPage->lang;
+            } elseif (is_array($contextPage) && isset($contextPage['lang'])) {
+                $lang = (string) $contextPage['lang'];
             } else {
-                $lang = "en";
+                $lang = $site ? ($site->localization->defaultLang ?? 'en') : 'en';
             }
         }
 
@@ -145,13 +148,15 @@ class Translator
      *
      * @return void
      */
-    public static function updateTranslations(): void
+    public static function updateTranslations(?array $translations = null): void
     {
-        global $translations;
-        FileUtils::recursiveKsort($translations);
-        $db = Database::getDb();
+        $container = class_exists(Container::class) ? Container::getInstance() : null;
+        $settingsRepo = $container && $container->has(SettingsRepositoryInterface::class) ? $container->get(SettingsRepositoryInterface::class) : null;
+        $trans = $translations ?? ($settingsRepo ? $settingsRepo->getTranslations() : (class_exists(Database::class) && Database::isConnected() ? Database::getTranslations() : ($GLOBALS['translations'] ?? [])));
+        FileUtils::recursiveKsort($trans);
+        $db = $container && $container->has(\PDO::class) ? $container->get(\PDO::class) : Database::getDb();
         $db->beginTransaction();
-        foreach ($translations as $lang => $phrases) {
+        foreach ($trans as $lang => $phrases) {
             foreach ($phrases as $key => $val) {
                 // Check if exists
                 $stmt = $db->prepare('SELECT id FROM translations WHERE lang = :lang AND phrase_key = :key');

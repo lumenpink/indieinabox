@@ -13,13 +13,28 @@ Class HtmlRenderer
 
 @var \Indieinabox\Site\Site|null
 
+### `private ?Indieinabox\Page\Pages $pages`
+
+@var \Indieinabox\Page\Pages|null
+
 ## Methods
 
 ### __construct()
-`public function __construct(?Indieinabox\Page\Page $page = null, ?Indieinabox\Site\Site $site = null)`
+`public function __construct(?Indieinabox\Page\Page $page = null, ?Indieinabox\Site\Site $site = null, ?Indieinabox\Page\Pages $pages = null)`
 
 ### getSite()
 `private function getSite(): ?Indieinabox\Site\Site`
+
+### getPages()
+`private function getPages(): ?Indieinabox\Page\Pages`
+
+### setPages()
+`public function setPages(Indieinabox\Page\Pages $pages): void`
+
+Set active page collection context.
+
+@param \Indieinabox\Page\Pages $pages
+@return void
 
 ### setPage()
 `public function setPage(Indieinabox\Page\Page $page): void`

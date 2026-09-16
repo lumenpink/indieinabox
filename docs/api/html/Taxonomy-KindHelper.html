@@ -230,9 +230,12 @@ post listing, SEO metadata resolution, and incoming interactions.</p>
 @param string $lang<br />
 @return string</p>
 <h3>listposts()</h3>
-<p><code>public static function listposts(): string</code></p>
+<p><code>public static function listposts(?Indieinabox\Page\Pages $pageCollection = null, ?Indieinabox\Site\Site $siteInstance = null, ?Indieinabox\Page\Page $currentPage = null): string</code></p>
 <p>List posts, sorting by date descending, up to 10 posts.</p>
-<p>@return string</p>
+<p>@param Pages|null $pageCollection<br />
+@param Site|null $siteInstance<br />
+@param Page|null $currentPage<br />
+@return string</p>
 <h3>removeGeneric()</h3>
 <p><code>public static function removeGeneric(?mixed $var): bool</code></p>
 <p>Remove generic/page items from filter list.</p>

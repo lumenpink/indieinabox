@@ -123,15 +123,22 @@ class ContentProcessor
     /**
      * @param string $content
      * @param \Indieinabox\Page\Page|null $page
+     * @param \Indieinabox\Page\Pages|null $pages
      *
      * @return string
      */
-    public function processContent(string $content, ?\Indieinabox\Page\Page $page = null): string
-    {
+    public function processContent(
+        string $content,
+        ?\Indieinabox\Page\Page $page = null,
+        ?\Indieinabox\Page\Pages $pages = null
+    ): string {
         $content = $this->addTrailingSlashesToInternalLinks($content);
         $ast = $this->astParser->parse($content);
         if ($page !== null) {
             $this->htmlRenderer->setPage($page);
+        }
+        if ($pages !== null) {
+            $this->htmlRenderer->setPages($pages);
         }
         return $this->htmlRenderer->render($ast);
     }

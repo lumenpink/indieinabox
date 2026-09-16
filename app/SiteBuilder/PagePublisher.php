@@ -64,9 +64,10 @@ class PagePublisher
      * Handles slug resolution, metadata extraction, ActivityPub JSON, interactions, and shortlink generation.
      *
      * @param Page $page The page to render.
+     * @param array<string, mixed> $additionalViewVars Extra variables to expose to the layout view.
      * @return void
      */
-    public function publishHtml(Page $page): void
+    public function publishHtml(Page $page, array $additionalViewVars = []): void
     {
         $base = $this->site->paths->baseDir;
         $site = $this->site;
@@ -79,8 +80,6 @@ class PagePublisher
             $page->shortlink = $shortlinkManager->getShortlink($page, $fqdn, $site->config['shortlink'], $isDev);
         }
 
-        // Expose $p, $pages, $site, $langLinks, $headerLinks and $footerLinks to the global scope for view template compatibility
-        global $p, $site, $pages, $langLinks, $headerLinks, $footerLinks;
         $p = $page;
         $pages = $this->pages;
         $langLinks = $this->getLanguageLinks($page);
@@ -156,10 +155,11 @@ class PagePublisher
                 echo 'Built ' . $page->slug . "index.html\n";
             }
             ob_start();
+            $viewVars = array_merge(get_defined_vars(), $additionalViewVars);
             // phpcs:ignore Generic.PHP.ForbiddenFunctions.FoundWithAlternative
             ThemeManager::loadView(
                 $base . DIRECTORY_SEPARATOR . $themeDir . '/views/' . $page->metadata->layout . '.php',
-                get_defined_vars()
+                $viewVars
             );
             $fileContent = ob_get_clean();
 
@@ -489,10 +489,8 @@ class PagePublisher
      */
     public function getLanguageLinks(Page $page): array
     {
-        global $urltranslations;
-        if (!is_array($urltranslations)) {
-            $urltranslations = [];
-        }
+        /** @var array<string, array<string, string>> $urltranslations */
+        $urltranslations = (array) ($this->site->config['urltranslations'] ?? \Indieinabox\Core\Database::getUrlTranslations());
 
         $langs = $this->site->localization->lang;
         $defaultLang = $this->site->localization->defaultLang ?? 'en';
@@ -530,12 +528,9 @@ class PagePublisher
             }
         }
         // Also legacy folder names for backup
-        global $kindspath;
-        if ($kindspath === null) {
-            $kindspath = \Indieinabox\Core\Database::getSetting('kindspath', []);
-        }
-        if (!empty($kindspath)) {
-            foreach ($kindspath as $key => $values) {
+        $kindsPath = $this->site->config['kindspath'] ?? \Indieinabox\Core\Database::getSetting('kindspath', []);
+        if (!empty($kindsPath)) {
+            foreach ($kindsPath as $key => $values) {
                 foreach ($values as $val) {
                     $kindFolders[] = $val;
                 }

@@ -207,10 +207,11 @@ across HTML, Gemini, and Gopher protocols.</p>
 <p>@param iterable<Page> $pages<br />
 @return void</p>
 <h3>publishHtml()</h3>
-<p><code>public function publishHtml(Indieinabox\Page\Page $page): void</code></p>
+<p><code>public function publishHtml(Indieinabox\Page\Page $page, array $additionalViewVars = []): void</code></p>
 <p>Renders a single Page object into an HTML file using the configured theme.<br />
 Handles slug resolution, metadata extraction, ActivityPub JSON, interactions, and shortlink generation.</p>
 <p>@param Page $page The page to render.<br />
+@param array<string, mixed> $additionalViewVars Extra variables to expose to the layout view.<br />
 @return void</p>
 <h3>publishGemini()</h3>
 <p><code>public function publishGemini(Indieinabox\Page\Page $page): void</code></p>

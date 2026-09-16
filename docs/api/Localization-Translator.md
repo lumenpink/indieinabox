@@ -45,7 +45,7 @@ Translate and slugize
 @return string
 
 ### updateTranslations()
-`public static function updateTranslations(): void`
+`public static function updateTranslations(?array $translations = null): void`
 
 Update translations file / database
 

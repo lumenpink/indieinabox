@@ -164,15 +164,14 @@ class IndexPublisher
             'originalcontent' => ''
         ]);
 
-        global $timeline, $mentions;
-        $timeline = $timelineEntries;
-        $mentions = $mentionEntries;
-
         $themeDir = $this->site->paths->themeDir ?? 'theme';
         $layoutFile = $base . DIRECTORY_SEPARATOR . $themeDir
             . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR . 'timeline.php';
         if (file_exists($layoutFile) && is_readable($layoutFile)) {
-            $this->pagePublisher->publishHtml($timelinePage);
+            $this->pagePublisher->publishHtml($timelinePage, [
+                'timeline' => $timelineEntries,
+                'mentions' => $mentionEntries,
+            ]);
         } else {
             echo "Skipping timeline static page compilation: timeline layout not found.\n";
         }
@@ -188,8 +187,6 @@ class IndexPublisher
     {
         $base = $this->site->paths->baseDir;
         $site = $this->site;
-        // Expose to global scope for view template compatibility
-        global $pages, $site;
 
         $themeDir = $this->site->paths->themeDir ?? 'theme';
         $file = $base . DIRECTORY_SEPARATOR . $themeDir . DIRECTORY_SEPARATOR . 'views'

@@ -189,14 +189,18 @@
         <h1 class="p-name">DateFormatter</h1>
 <p><strong>Namespace:</strong> <code>Indieinabox\Support</code></p>
 <p>Class DateFormatter</p>
-<p>Formats relative timestamps, localized dates according to site intl settings,<br />
-and sorts collections chronologically.</p>
+<p>Provides date/time formatting utilities, human-readable relative time (timeAgo),<br />
+and localized date translations.</p>
+<h2>Properties</h2>
+<h3><code>private static ?array $intlConfig</code></h3>
+<h3><code>private static ?array $originalDaysOfWeek</code></h3>
+<h3><code>private static ?array $originalMonths</code></h3>
 <h2>Methods</h2>
+<h3>setConfig()</h3>
+<p><code>public static function setConfig(?array $intl = null, ?array $daysOfWeek = null, ?array $months = null): void</code></p>
 <h3>timeAgo()</h3>
-<p><code>public static function timeAgo(int $timestamp): string</code></p>
-<p>Returns a human-readable relative time string (e.g. &quot;5 minutes ago&quot;).</p>
-<p>@param int $timestamp<br />
-@return string</p>
+<p><code>public static function timeAgo(string|int $time): string</code></p>
+<p>Calculates a human-readable relative time string (e.g. &quot;5 minutes ago&quot;).</p>
 <h3>localizeddate()</h3>
 <p><code>public static function localizeddate(Indieinabox\Page\Page|array $page): array</code></p>
 <p>Formats a page&apos;s date into localized long and ISO strings.</p>

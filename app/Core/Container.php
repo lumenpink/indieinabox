@@ -135,6 +135,11 @@ class Container implements ContainerInterface
             return new \Indieinabox\Repositories\FileSystemContentRepository(null, $site);
         });
         $this->bind(\Indieinabox\Repositories\FileSystemContentRepository::class, \Indieinabox\Repositories\Contracts\ContentRepositoryInterface::class);
+
+        $this->singleton(\Indieinabox\Commands\Contracts\CommandBusInterface::class, function () {
+            return new \Indieinabox\Commands\CommandBus();
+        });
+        $this->bind(\Indieinabox\Commands\CommandBus::class, \Indieinabox\Commands\Contracts\CommandBusInterface::class);
     }
 
     /**

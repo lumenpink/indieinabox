@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace Indieinabox\Micropub;
 
+use Indieinabox\Commands\CreatePostCommand;
+use Indieinabox\Commands\Handlers\CreatePostCommandHandler;
+use Indieinabox\Repositories\Contracts\ContentRepositoryInterface;
 use Indieinabox\Site\Site;
-use Indieinabox\Support\TextParser;
-use Indieinabox\Core\Database;
 
 /**
  * Class PostCreator
@@ -44,117 +45,9 @@ class PostCreator
         Site $site,
         array $input,
         ?\Indieinabox\Repositories\Contracts\ContentRepositoryInterface $contentRepo = null
-    ): array
-    {
-        $name = isset($input['name']) && $input['name'] !== '' ? (string) $input['name'] : null;
-        $content = $input['content'] ?? '';
-        if (is_array($content)) {
-            $content = (string) ($content['html'] ?? ($content['value'] ?? ''));
-        } else {
-            $content = (string) $content;
-        }
-
-        $slug = (string) ($input['mp-slug'] ?? ($name !== null ? self::slugify($name) : date('dHis')));
-        $lang = (string) ($input['mp-language'] ?? '');
-        $category = $input['category'] ?? [];
-        if (!is_array($category) && !empty($category)) {
-            $category = [$category];
-        }
-
-        // Auto-extract hashtags from content
-        $extractedTags = TextParser::extractHashtags($content);
-        if (!empty($extractedTags)) {
-            $category = array_unique(array_merge($category, $extractedTags));
-        }
-
-        // Photo uploads sent with the post
-        $photos = [];
-        if (isset($input['photo'])) {
-            $photos = is_array($input['photo']) ? $input['photo'] : [$input['photo']];
-        }
-
-        // Post Type Discovery (W3C)
-        $kind = self::discoverPostType($input, $photos);
-
-        // Generate Frontmatter
-        $frontmatter = [];
-        if ($name !== null) {
-            $frontmatter['title'] = $name;
-        }
-        $frontmatter['date'] = date('Y-m-d H:i:s');
-        if (!empty($category)) {
-            $frontmatter['tags'] = array_values($category);
-        }
-
-        foreach (array_keys(self::INDIEWEB_PROPERTIES) as $prop) {
-            if (isset($input[$prop])) {
-                $frontmatter[str_replace('-', '_', $prop)] = $input[$prop];
-            }
-        }
-
-        $otherProps = ['read-status', 'rating', 'p-rating', 'syndicate-to', 'mp-syndicate-to'];
-        foreach ($otherProps as $op) {
-            if (isset($input[$op])) {
-                $frontmatter[str_replace('-', '_', $op)] = $input[$op];
-            }
-        }
-
-        $body = $content;
-        // Append photos to content if not already present
-        foreach ($photos as $photo) {
-            if (is_string($photo) && strpos($body, $photo) === false) {
-                $body .= "\n\n![]($photo)\n\n";
-            }
-        }
-
-        $contentRepo = $contentRepo ?? new \Indieinabox\Repositories\FileSystemContentRepository(null, $site);
-
-        $year = date('Y');
-        $month = date('m');
-        $slug = $contentRepo->generateUniqueSlug($kind, $slug, $lang, $year, $month);
-        $filePath = $contentRepo->save($kind, $slug, $body, $frontmatter, $lang, $year, $month);
-
-        // Queue site rebuild
-        self::enqueueSiteBuild();
-
-        // Build canonical URL
-        $baseUrl = rtrim($site->fqdn ?? '', '/');
-        $postUrl = $baseUrl . '/' . $kind . '/' . $year . '/' . $month . '/' . $slug . '.html';
-        if ($lang !== '' && $lang !== $defaultLang) {
-            $postUrl = $baseUrl . '/' . $lang . '/' . $kind . '/' . $year . '/' . $month . '/' . $slug . '.html';
-        }
-
-        // Queue ActivityPub outbox message via OutboxService
-        if (class_exists('\\Indieinabox\\Services\\OutboxService')) {
-            $actorId = $baseUrl . '/actor';
-            $object = \Indieinabox\ActivityPub\ActivityBuilder::buildObjectForPageArray(
-                $postUrl,
-                $actorId,
-                $baseUrl,
-                $content,
-                $name,
-                $frontmatter
-            );
-            $createActivity = \Indieinabox\ActivityPub\ActivityBuilder::buildCreateActivity(
-                $postUrl . '#activity',
-                $actorId,
-                $object
-            );
-            $outboxService = new \Indieinabox\Services\OutboxService();
-            $outboxService->broadcastActivity($createActivity);
-        }
-
-        // Queue outgoing webmentions
-        \Indieinabox\Webmention\WebmentionSender::queueOutgoingWebmentions($postUrl, $frontmatter, $content);
-
-        return [
-            'status' => 202,
-            'headers' => ['Location' => $postUrl],
-            'post_url' => $postUrl,
-            'file_path' => $filePath,
-            'kind' => $kind,
-            'slug' => $slug,
-        ];
+    ): array {
+        $handler = new \Indieinabox\Commands\Handlers\CreatePostCommandHandler($contentRepo);
+        return $handler->handle(new \Indieinabox\Commands\CreatePostCommand($site, $input));
     }
 
     /**
@@ -199,24 +92,5 @@ class PostCreator
         $text = strtolower($text);
 
         return $text === '' ? 'n-a' : $text;
-    }
-
-    /**
-     * Enqueues an asynchronous site rebuild in the background queue.
-     *
-     * @return void
-     */
-    private static function enqueueSiteBuild(): void
-    {
-        try {
-            $db = Database::getDb();
-            $stmt = $db->query("SELECT 1 FROM inbox_queue WHERE type = 'build_site'");
-            if ($stmt && !$stmt->fetch()) {
-                $insert = $db->prepare('INSERT INTO inbox_queue (type, payload_json, created_at) VALUES (?, ?, ?)');
-                $insert->execute(['build_site', json_encode([]), time()]);
-            }
-        } catch (\Throwable) {
-            // Database not connected or table unavailable; skip enqueue
-        }
     }
 }

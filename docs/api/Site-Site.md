@@ -37,6 +37,10 @@ paths, localization, and feature flags, providing a unified interface to access 
 
 @var Twtxt Contains Twtxt specific configurations, such as nickname and following list.
 
+### `public ?string $fqdn`
+
+@var string|null Fully-qualified domain name of the site.
+
 ## Methods
 
 ### __construct()

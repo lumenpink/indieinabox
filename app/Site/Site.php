@@ -41,6 +41,10 @@ class Site
      * @var Twtxt Contains Twtxt specific configurations, such as nickname and following list.
      */
     public Twtxt $twtxt;
+    /**
+     * @var string|null Fully-qualified domain name of the site.
+     */
+    public ?string $fqdn = null;
 
     /**
      * Site constructor.

@@ -34,6 +34,14 @@
 <li><a href="/docs/api/html/BackgroundWorker.html">BackgroundWorker</a></li>
 <li><a href="/docs/api/html/BackupManager.html">BackupManager</a></li>
 <li><a href="/docs/api/html/Bootstrap.html">Bootstrap</a></li>
+<li><a href="/docs/api/html/Commands-CommandBus.html">Commands-CommandBus</a></li>
+<li><a href="/docs/api/html/Commands-Contracts-CommandBusInterface.html">Commands-Contracts-CommandBusInterface</a></li>
+<li><a href="/docs/api/html/Commands-CreatePostCommand.html">Commands-CreatePostCommand</a></li>
+<li><a href="/docs/api/html/Commands-DeletePostCommand.html">Commands-DeletePostCommand</a></li>
+<li><a href="/docs/api/html/Commands-Handlers-CreatePostCommandHandler.html">Commands-Handlers-CreatePostCommandHandler</a></li>
+<li><a href="/docs/api/html/Commands-Handlers-DeletePostCommandHandler.html">Commands-Handlers-DeletePostCommandHandler</a></li>
+<li><a href="/docs/api/html/Commands-Handlers-UpdatePostCommandHandler.html">Commands-Handlers-UpdatePostCommandHandler</a></li>
+<li><a href="/docs/api/html/Commands-UpdatePostCommand.html">Commands-UpdatePostCommand</a></li>
 <li><a href="/docs/api/html/ConfigHandler.html">ConfigHandler</a></li>
 <li><a href="/docs/api/html/Console-Commands-AbstractCommand.html">Console-Commands-AbstractCommand</a></li>
 <li><a href="/docs/api/html/Console-Commands-BackupCommand.html">Console-Commands-BackupCommand</a></li>
@@ -231,6 +239,8 @@ paths, localization, and feature flags, providing a unified interface to access 
 <p>@var Support Contains feature support settings (e.g., specific protocol or format toggles).</p>
 <h3><code>public Indieinabox\Site\Twtxt $twtxt</code></h3>
 <p>@var Twtxt Contains Twtxt specific configurations, such as nickname and following list.</p>
+<h3><code>public ?string $fqdn</code></h3>
+<p>@var string|null Fully-qualified domain name of the site.</p>
 <h2>Methods</h2>
 <h3><em></em>construct()</h3>
 <p><code>public function __construct(?Indieinabox\Site\Metadata $metadata = null, ?Indieinabox\Site\Paths $paths = null, ?Indieinabox\Site\Options $options = null, ?Indieinabox\Site\Localization $localization = null, ?Indieinabox\Site\Support $support = null, ?Indieinabox\Site\Twtxt $twtxt = null)</code></p>

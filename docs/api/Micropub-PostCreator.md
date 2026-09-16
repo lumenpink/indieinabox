@@ -33,10 +33,3 @@ Converts a string into a URL-friendly slug.
 
 @param string $text
 @return string
-
-### enqueueSiteBuild()
-`private static function enqueueSiteBuild(): void`
-
-Enqueues an asynchronous site rebuild in the background queue.
-
-@return void

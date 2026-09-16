@@ -4,6 +4,12 @@ declare(strict_types=1);
 
 namespace Indieinabox\Http\Controllers;
 
+use Indieinabox\Commands\CommandBus;
+use Indieinabox\Commands\Contracts\CommandBusInterface;
+use Indieinabox\Commands\CreatePostCommand;
+use Indieinabox\Commands\DeletePostCommand;
+use Indieinabox\Commands\UpdatePostCommand;
+use Indieinabox\Core\Container;
 use Indieinabox\IndieAuth\TokenManager;
 use Indieinabox\Micropub\MediaHandler;
 use Indieinabox\Micropub\PostCreator;
@@ -17,13 +23,23 @@ use Indieinabox\Views\Admin\MicropubClientView;
 class MicropubController extends AbstractController
 {
     private TokenManager $tokenManager;
+    private CommandBusInterface $commandBus;
 
     public function __construct(
         Site $site,
-        ?TokenManager $tokenManager = null
+        ?TokenManager $tokenManager = null,
+        ?CommandBusInterface $commandBus = null
     ) {
         parent::__construct($site);
         $this->tokenManager = $tokenManager ?? new TokenManager();
+        $container = class_exists(Container::class) ? Container::getInstance() : null;
+        if ($commandBus !== null) {
+            $this->commandBus = $commandBus;
+        } elseif ($container && $container->has(CommandBusInterface::class)) {
+            $this->commandBus = $container->get(CommandBusInterface::class);
+        } else {
+            $this->commandBus = new CommandBus();
+        }
     }
 
     /**
@@ -105,10 +121,6 @@ class MicropubController extends AbstractController
     protected function handlePostRequest(array $tokenData): void
     {
         $scopes = explode(' ', (string) ($tokenData['scope'] ?? ''));
-        if (!empty($tokenData) && !in_array('create', $scopes, true)) {
-            $this->sendErrorResponse(403, 'Forbidden', 'The create scope is required.');
-            return;
-        }
 
         $contentType = $_SERVER['CONTENT_TYPE'] ?? '';
         $input = [];
@@ -119,6 +131,22 @@ class MicropubController extends AbstractController
             if (!is_array($data)) {
                 $this->sendErrorResponse(400, 'Invalid JSON', 'Malformed JSON payload.');
                 return;
+            }
+
+            if (isset($data['action'])) {
+                $input['action'] = (string) $data['action'];
+            }
+            if (isset($data['url'])) {
+                $input['url'] = (string) $data['url'];
+            }
+            if (isset($data['replace']) && is_array($data['replace'])) {
+                $input['replace'] = $data['replace'];
+            }
+            if (isset($data['add']) && is_array($data['add'])) {
+                $input['add'] = $data['add'];
+            }
+            if (isset($data['delete']) && is_array($data['delete'])) {
+                $input['delete'] = $data['delete'];
             }
 
             $input['h'] = $data['type'][0] ?? 'entry';
@@ -136,14 +164,72 @@ class MicropubController extends AbstractController
             $input = $_POST;
         }
 
-        $action = $input['action'] ?? 'create';
-        if ($action !== 'create') {
-            $this->sendErrorResponse(400, 'Not Supported', 'Only create action is supported for now.');
+        $action = (string) ($input['action'] ?? 'create');
+
+        if ($action === 'create') {
+            if (!empty($tokenData) && !in_array('create', $scopes, true)) {
+                $this->sendErrorResponse(403, 'Forbidden', 'The create scope is required.');
+                return;
+            }
+
+            $result = $this->commandBus->dispatch(new CreatePostCommand($this->site, $input));
+            $this->sendSuccessResponse($result['status'], $result['headers'] ?? []);
             return;
         }
 
-        $result = PostCreator::create($this->site, $input);
-        $this->sendSuccessResponse($result['status'], $result['headers']);
+        if ($action === 'update') {
+            if (!empty($tokenData) && !in_array('update', $scopes, true) && !in_array('create', $scopes, true)) {
+                $this->sendErrorResponse(403, 'Forbidden', 'The update scope is required.');
+                return;
+            }
+
+            $url = (string) ($input['url'] ?? '');
+            if ($url === '') {
+                $this->sendErrorResponse(400, 'Invalid Request', 'The url parameter is required for update action.');
+                return;
+            }
+
+            $result = $this->commandBus->dispatch(new UpdatePostCommand(
+                $this->site,
+                $url,
+                $input['replace'] ?? [],
+                $input['add'] ?? [],
+                $input['delete'] ?? []
+            ));
+
+            if (isset($result['error'])) {
+                $this->sendErrorResponse($result['status'], $result['error'], $result['error_description'] ?? '');
+                return;
+            }
+
+            $this->sendSuccessResponse($result['status'], $result['headers'] ?? []);
+            return;
+        }
+
+        if ($action === 'delete') {
+            if (!empty($tokenData) && !in_array('delete', $scopes, true) && !in_array('create', $scopes, true)) {
+                $this->sendErrorResponse(403, 'Forbidden', 'The delete scope is required.');
+                return;
+            }
+
+            $url = (string) ($input['url'] ?? '');
+            if ($url === '') {
+                $this->sendErrorResponse(400, 'Invalid Request', 'The url parameter is required for delete action.');
+                return;
+            }
+
+            $result = $this->commandBus->dispatch(new DeletePostCommand($this->site, $url));
+
+            if (isset($result['error'])) {
+                $this->sendErrorResponse($result['status'], $result['error'], $result['error_description'] ?? '');
+                return;
+            }
+
+            $this->sendSuccessResponse($result['status'], $result['headers'] ?? []);
+            return;
+        }
+
+        $this->sendErrorResponse(400, 'Not Supported', "Action [{$action}] is not supported.");
     }
 
     /**

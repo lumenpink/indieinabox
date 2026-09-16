@@ -189,16 +189,18 @@
         <h1 class="p-name">TokenManager</h1>
 <p><strong>Namespace:</strong> <code>Indieinabox\IndieAuth</code></p>
 <p>Class TokenManager</p>
-<p>Manages creation, storage, validation, and exchange of IndieAuth authorization codes<br />
-and long-lived Bearer access tokens.</p>
+<p>Manages generation, verification, and revocation of IndieAuth authorization codes<br />
+and bearer tokens with PKCE validation.</p>
 <h2>Properties</h2>
-<h3><code>private PDO $db</code></h3>
-<p>@var PDO Database connection.</p>
+<h3><code>private ?PDO $db</code></h3>
+<p>@var ?PDO Database connection.</p>
 <h2>Methods</h2>
 <h3><em></em>construct()</h3>
 <p><code>public function __construct(?PDO $db = null)</code></p>
 <p>TokenManager constructor.</p>
 <p>@param ?PDO $db Optional database connection.</p>
+<h3>getDb()</h3>
+<p><code>public function getDb(): PDO</code></p>
 <h3>createAuthorizationCode()</h3>
 <p><code>public function createAuthorizationCode(string $clientId, string $redirectUri, string $me, string $scope, ?string $codeChallenge = null, ?string $codeChallengeMethod = null, ?string $state = null, int $ttl = 600): string</code></p>
 <p>Creates an authorization code and stores its SHA-256 hash.</p>

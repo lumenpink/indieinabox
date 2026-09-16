@@ -208,6 +208,9 @@ Sets PRAGMAs for WAL mode and foreign keys for optimized concurrent usage.</p>
 Throws an exception if the connection has not been established yet.</p>
 <p>@return PDO The active PDO instance.<br />
 @throws Exception If the database is not connected.</p>
+<h3>isConnected()</h3>
+<p><code>public static function isConnected(): bool</code></p>
+<p>Checks if a database connection is actively open.</p>
 <h3>disconnect()</h3>
 <p><code>public static function disconnect(): void</code></p>
 <p>Closes the active PDO database connection.</p>

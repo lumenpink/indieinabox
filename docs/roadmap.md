@@ -445,4 +445,17 @@ app/
     - `Pages`: Added strongly-typed collection methods `find()`, `has()`, `remove()`, `filterByKind()`, `filterByLanguage()`.
   - Migrated over 160 references across controllers, services, publishers, commands, and view templates.
   - Verified 100% single-file compilation compatibility (`composer compile` into `indieinabox.php`), passing `composer test:compiled`, 100% passing tests (455 tests across Unit, Functional, Integration), and 0 PHP CodeSniffer warnings/errors.
+- [x] **Static Facade Elimination & Dependency Injection Autowiring (Phase 5)**:
+  - Eliminated static `Database::*` and hardcoded couplings across HTTP controllers (`AdminController`, `WebRouter`, `IndieAuthController`) and domain services (`ArchiveService`, `FollowService`, `OutboxService`, `WebmentionService`, `FetchFeedsService`, `TokenManager`).
+  - Container Enhancements:
+    - Added `forget(string $id): void` to evict cached instances.
+    - Added default bindings for `PDO::class`, `SettingsRepositoryInterface::class`, `InteractionRepositoryInterface::class`, `ParserInterface::class`, `FederationAdapter::class`.
+    - Enhanced `Container::make()` with graceful fallback for nullable and default-valued dependencies.
+  - Full DI in `WebRouter`: Controller factory methods resolve via `$this->container->make(ControllerClass::class, ['site' => $this->site])`.
+  - Full DI in `AdminController`: Injected `?PDO $db` and `?SettingsRepositoryInterface $settingsRepo` via constructor, with lazy initialization for `MicrosubService`.
+  - Injected `SettingsRepositoryInterface $settings` in `FetchFeedsService`, eliminating static `Database::getSetting()` calls for `fqdn`, `download_media_*`.
+  - Injected `PDO $db` via Container autowiring in `ArchiveService`, `FollowService`, `OutboxService`, `WebmentionService`, and lazy connection resolution in `TokenManager`.
+  - Global test isolation via `uses()->afterEach(...)->in('Unit', 'Integration', 'Functional')` in `tests/Pest.php` guaranteeing 100% clean Container and Database state between all test executions.
+  - Verified 100% single-file compilation compatibility (`composer compile`), passing `composer test:compiled`, 100% passing tests (455 tests), 0 PHP CodeSniffer warnings/errors across 141 files, and updated API docs (`composer docs:api && composer docs:api:html`).
+
 

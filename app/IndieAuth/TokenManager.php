@@ -5,20 +5,21 @@ declare(strict_types=1);
 namespace Indieinabox\IndieAuth;
 
 use PDO;
+use Indieinabox\Core\Container;
 use Indieinabox\Core\Database;
 
 /**
  * Class TokenManager
  *
- * Manages creation, storage, validation, and exchange of IndieAuth authorization codes
- * and long-lived Bearer access tokens.
+ * Manages generation, verification, and revocation of IndieAuth authorization codes
+ * and bearer tokens with PKCE validation.
  */
 class TokenManager
 {
     /**
-     * @var PDO Database connection.
+     * @var ?PDO Database connection.
      */
-    private PDO $db;
+    private ?PDO $db = null;
 
     /**
      * TokenManager constructor.
@@ -27,7 +28,25 @@ class TokenManager
      */
     public function __construct(?PDO $db = null)
     {
-        $this->db = $db ?? Database::getDb();
+        if ($db !== null) {
+            $this->db = $db;
+        } else {
+            try {
+                $this->db = Container::getInstance()->has(PDO::class)
+                    ? Container::getInstance()->get(PDO::class)
+                    : (class_exists(Database::class) && Database::isConnected() ? Database::getDb() : null);
+            } catch (\Throwable) {
+                $this->db = null;
+            }
+        }
+    }
+
+    public function getDb(): PDO
+    {
+        if ($this->db === null) {
+            $this->db = Database::getDb();
+        }
+        return $this->db;
     }
 
     /**
@@ -56,7 +75,7 @@ class TokenManager
         $now = time();
         $expiresAt = $now + $ttl;
 
-        $stmt = $this->db->prepare(
+        $stmt = $this->getDb()->prepare(
             'INSERT INTO indieauth_codes ' .
             '(code_hash, client_id, redirect_uri, state, scope, code_challenge, code_challenge_method, expires_at, me) ' .
             'VALUES (:hash, :client_id, :redirect_uri, :state, :scope, :challenge, :method, :expires, :me)'
@@ -133,7 +152,7 @@ class TokenManager
         }
 
         $token = 'ia_' . bin2hex(random_bytes(24));
-        $stmt = $this->db->prepare(
+        $stmt = $this->getDb()->prepare(
             'INSERT INTO indieauth_tokens (token_hash, client_id, scope, me, created_at) ' .
             'VALUES (:hash, :client_id, :scope, :me, :created)'
         );
@@ -183,7 +202,7 @@ class TokenManager
 
         $tokenOut = $token;
 
-        $stmt = $this->db->prepare('SELECT * FROM indieauth_tokens WHERE token_hash = :hash');
+        $stmt = $this->getDb()->prepare('SELECT * FROM indieauth_tokens WHERE token_hash = :hash');
         $stmt->bindValue(':hash', hash('sha256', $token), PDO::PARAM_STR);
         $stmt->execute();
         $tokenData = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -208,7 +227,7 @@ class TokenManager
     private function fetchAndConsumeCode(string $code): ?array
     {
         $hash = hash('sha256', $code);
-        $stmt = $this->db->prepare('SELECT * FROM indieauth_codes WHERE code_hash = :hash');
+        $stmt = $this->getDb()->prepare('SELECT * FROM indieauth_codes WHERE code_hash = :hash');
         $stmt->bindValue(':hash', $hash, PDO::PARAM_STR);
         $stmt->execute();
         $data = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -218,7 +237,7 @@ class TokenManager
         }
 
         // Delete immediately (one-time use code)
-        $del = $this->db->prepare('DELETE FROM indieauth_codes WHERE code_hash = :hash');
+        $del = $this->getDb()->prepare('DELETE FROM indieauth_codes WHERE code_hash = :hash');
         $del->bindValue(':hash', $hash, PDO::PARAM_STR);
         $del->execute();
 

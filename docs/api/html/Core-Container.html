@@ -213,6 +213,9 @@ factory resolution, and constructor autowiring.</p>
 <h3>instance()</h3>
 <p><code>public function instance(string $id, ?mixed $instance): void</code></p>
 <p>Registers an existing object instance into the container.</p>
+<h3>forget()</h3>
+<p><code>public function forget(string $id): void</code></p>
+<p>Removes an instance from the container cache.</p>
 <h3>bind()</h3>
 <p><code>public function bind(string $id, Closure|string $concrete, bool $singleton = false): void</code></p>
 <p>Registers a binding with the container.</p>

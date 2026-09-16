@@ -53,10 +53,14 @@ expect()->extend('toBeOne', function () {
 |
 */
 
-afterEach(function () {
+uses()->afterEach(function () {
     if (class_exists(\Indieinabox\Core\Database::class)) {
         \Indieinabox\Core\Database::disconnect();
     }
-});
+    if (class_exists(\Indieinabox\Core\Container::class)) {
+        \Indieinabox\Core\Container::getInstance()->flush();
+    }
+})->in('Unit', 'Integration', 'Functional');
+
 
 

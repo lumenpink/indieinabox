@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Indieinabox\Services;
 
+use Indieinabox\Core\Container;
 use Indieinabox\Core\Database;
 use Indieinabox\Federation\Contracts\FederationAdapter;
 use Indieinabox\Federation\FederationManager;
@@ -28,7 +29,7 @@ class OutboxService
             $federationManager = null;
         }
 
-        $this->db = $db ?? Database::getDb();
+        $this->db = $db ?? (Container::getInstance()->has(PDO::class) ? Container::getInstance()->get(PDO::class) : Database::getDb());
         $this->federationManager = $federationManager ?? new FederationManager();
         $this->followService = $followService ?? new FollowService($this->db);
     }

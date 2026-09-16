@@ -9,14 +9,18 @@ Controller managing administrative panels (settings, config, client, reader, mod
 
 ### `private Indieinabox\Services\ModerationService $moderationService`
 
-### `private Indieinabox\Services\MicrosubService $microsubService`
+### `private ?Indieinabox\Services\MicrosubService $microsubService`
+
+### `private ?PDO $db`
+
+### `private ?Indieinabox\Repositories\Contracts\SettingsRepositoryInterface $settingsRepo`
 
 ### `protected Indieinabox\Site\Site $site`
 
 ## Methods
 
 ### __construct()
-`public function __construct(Indieinabox\Site\Site $site, ?Indieinabox\Services\ConfigurationService $configService = null, ?Indieinabox\Services\ModerationService $moderationService = null, ?Indieinabox\Services\MicrosubService $microsubService = null)`
+`public function __construct(Indieinabox\Site\Site $site, ?Indieinabox\Services\ConfigurationService $configService = null, ?Indieinabox\Services\ModerationService $moderationService = null, ?Indieinabox\Services\MicrosubService $microsubService = null, ?PDO $db = null, ?Indieinabox\Repositories\Contracts\SettingsRepositoryInterface $settingsRepo = null)`
 
 ### getConfigurationService()
 `public function getConfigurationService(): Indieinabox\Services\ConfigurationService`

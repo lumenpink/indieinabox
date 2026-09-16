@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Indieinabox\Services;
 
+use Indieinabox\Core\Container;
 use Indieinabox\Core\Database;
 use PDO;
 
@@ -16,7 +17,7 @@ class FollowService
 
     public function __construct(?PDO $db = null)
     {
-        $this->db = $db ?? Database::getDb();
+        $this->db = $db ?? (Container::getInstance()->has(PDO::class) ? Container::getInstance()->get(PDO::class) : Database::getDb());
     }
 
     /**

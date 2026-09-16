@@ -45,6 +45,11 @@ Sets or resets the global container instance.
 
 Registers an existing object instance into the container.
 
+### forget()
+`public function forget(string $id): void`
+
+Removes an instance from the container cache.
+
 ### bind()
 `public function bind(string $id, Closure|string $concrete, bool $singleton = false): void`
 

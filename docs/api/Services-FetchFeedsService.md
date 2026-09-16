@@ -7,6 +7,8 @@ Domain service responsible for fetching, parsing, and storing external feed subs
 
 ### `private PDO $db`
 
+### `private Indieinabox\Repositories\Contracts\SettingsRepositoryInterface $settings`
+
 ### `private array $parsers`
 
 @var array<string, FeedParserInterface>
@@ -14,10 +16,11 @@ Domain service responsible for fetching, parsing, and storing external feed subs
 ## Methods
 
 ### __construct()
-`public function __construct(?PDO $db = null, ?array $parsers = null)`
+`public function __construct(?PDO $db = null, ?array $parsers = null, ?Indieinabox\Repositories\Contracts\SettingsRepositoryInterface $settings = null)`
 
 @param ?PDO $db
 @param array<int, FeedParserInterface>|null $parsers
+@param ?SettingsRepositoryInterface $settings
 
 ### addParser()
 `public function addParser(Indieinabox\Feeds\Contracts\FeedParserInterface $parser): Indieinabox\Services\FetchFeedsService`

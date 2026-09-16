@@ -3,14 +3,14 @@
 
 Class TokenManager
 
-Manages creation, storage, validation, and exchange of IndieAuth authorization codes
-and long-lived Bearer access tokens.
+Manages generation, verification, and revocation of IndieAuth authorization codes
+and bearer tokens with PKCE validation.
 
 ## Properties
 
-### `private PDO $db`
+### `private ?PDO $db`
 
-@var PDO Database connection.
+@var ?PDO Database connection.
 
 ## Methods
 
@@ -20,6 +20,9 @@ and long-lived Bearer access tokens.
 TokenManager constructor.
 
 @param ?PDO $db Optional database connection.
+
+### getDb()
+`public function getDb(): PDO`
 
 ### createAuthorizationCode()
 `public function createAuthorizationCode(string $clientId, string $redirectUri, string $me, string $scope, ?string $codeChallenge = null, ?string $codeChallengeMethod = null, ?string $state = null, int $ttl = 600): string`

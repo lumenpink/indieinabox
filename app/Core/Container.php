@@ -7,10 +7,16 @@ namespace Indieinabox\Core;
 use Closure;
 use Indieinabox\Core\Exceptions\ContainerException;
 use Indieinabox\Core\Exceptions\NotFoundException;
-use Indieinabox\Repositories\Contracts\SettingsRepositoryInterface;
-use Indieinabox\Repositories\SqliteSettingsRepository;
+use Indieinabox\Federation\ActivityPubAdapter;
+use Indieinabox\Federation\Contracts\FederationAdapter;
+use Indieinabox\Markdown\MarkdownParser;
+use Indieinabox\Markdown\ParserInterface;
 use Indieinabox\Repositories\Contracts\InteractionRepositoryInterface;
+use Indieinabox\Repositories\Contracts\SettingsRepositoryInterface;
 use Indieinabox\Repositories\FileInteractionRepository;
+use Indieinabox\Repositories\SqliteSettingsRepository;
+use Indieinabox\Site\Site;
+use PDO;
 use Psr\Container\ContainerInterface;
 use ReflectionClass;
 use ReflectionNamedType;
@@ -49,8 +55,25 @@ class Container implements ContainerInterface
      */
     public function registerDefaultBindings(): void
     {
-        $this->singleton(SettingsRepositoryInterface::class, SqliteSettingsRepository::class);
-        $this->singleton(InteractionRepositoryInterface::class, FileInteractionRepository::class);
+        $this->bind(PDO::class, function () {
+            return Database::getDb();
+        });
+        $this->singleton(SettingsRepositoryInterface::class, function (self $container) {
+            $pdo = null;
+            if ($container->has(PDO::class)) {
+                try {
+                    $pdo = $container->get(PDO::class);
+                } catch (\Throwable) {
+                    $pdo = null;
+                }
+            }
+            return new SqliteSettingsRepository($pdo);
+        });
+        $this->singleton(InteractionRepositoryInterface::class, function (self $container) {
+            return new FileInteractionRepository();
+        });
+        $this->bind(ParserInterface::class, MarkdownParser::class);
+        $this->bind(FederationAdapter::class, ActivityPubAdapter::class);
     }
 
     /**
@@ -78,6 +101,14 @@ class Container implements ContainerInterface
     public function instance(string $id, mixed $instance): void
     {
         $this->instances[$id] = $instance;
+    }
+
+    /**
+     * Removes an instance from the container cache.
+     */
+    public function forget(string $id): void
+    {
+        unset($this->instances[$id]);
     }
 
     /**
@@ -183,8 +214,20 @@ class Container implements ContainerInterface
                 if ($type instanceof ReflectionNamedType && !$type->isBuiltin()) {
                     $typeName = $type->getName();
                     if ($this->has($typeName)) {
-                        $dependencies[] = $this->get($typeName);
-                        continue;
+                        try {
+                            $dependencies[] = $this->get($typeName);
+                            continue;
+                        } catch (ContainerException $e) {
+                            if ($param->isDefaultValueAvailable()) {
+                                $dependencies[] = $param->getDefaultValue();
+                                continue;
+                            }
+                            if ($param->allowsNull()) {
+                                $dependencies[] = null;
+                                continue;
+                            }
+                            throw $e;
+                        }
                     }
                     if (class_exists($typeName)) {
                         try {

@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace Indieinabox\Http\Controllers;
 
 use Indieinabox\BackgroundWorker\BackgroundWorker;
+use Indieinabox\Core\Container;
 use Indieinabox\Core\Database;
+use Indieinabox\Repositories\Contracts\SettingsRepositoryInterface;
 use Indieinabox\Services\ConfigurationService;
 use Indieinabox\Services\MicrosubService;
 use Indieinabox\Services\ModerationService;
@@ -25,18 +27,46 @@ class AdminController extends AbstractController
 {
     private ConfigurationService $configService;
     private ModerationService $moderationService;
-    private MicrosubService $microsubService;
+    private ?MicrosubService $microsubService = null;
+    private ?PDO $db;
+    private ?SettingsRepositoryInterface $settingsRepo;
 
     public function __construct(
         Site $site,
         ?ConfigurationService $configService = null,
         ?ModerationService $moderationService = null,
-        ?MicrosubService $microsubService = null
+        ?MicrosubService $microsubService = null,
+        ?PDO $db = null,
+        ?SettingsRepositoryInterface $settingsRepo = null
     ) {
         parent::__construct($site);
-        $this->configService = $configService ?? new ConfigurationService();
+        if ($db !== null) {
+            $this->db = $db;
+        } else {
+            try {
+                $this->db = Container::getInstance()->has(PDO::class)
+                    ? Container::getInstance()->get(PDO::class)
+                    : (class_exists(Database::class) ? Database::getDb() : null);
+            } catch (\Throwable) {
+                $this->db = null;
+            }
+        }
+
+        if ($settingsRepo !== null) {
+            $this->settingsRepo = $settingsRepo;
+        } else {
+            try {
+                $this->settingsRepo = Container::getInstance()->has(SettingsRepositoryInterface::class)
+                    ? Container::getInstance()->get(SettingsRepositoryInterface::class)
+                    : (class_exists(Database::class) ? Database::getSettingsRepository() : null);
+            } catch (\Throwable) {
+                $this->settingsRepo = null;
+            }
+        }
+
+        $this->configService = $configService ?? new ConfigurationService($this->settingsRepo);
         $this->moderationService = $moderationService ?? new ModerationService();
-        $this->microsubService = $microsubService ?? new MicrosubService();
+        $this->microsubService = $microsubService;
     }
 
     public function getConfigurationService(): ConfigurationService
@@ -51,6 +81,9 @@ class AdminController extends AbstractController
 
     public function getMicrosubService(): MicrosubService
     {
+        if ($this->microsubService === null) {
+            $this->microsubService = new MicrosubService($this->db, null, $this->site);
+        }
         return $this->microsubService;
     }
 
@@ -127,9 +160,9 @@ class AdminController extends AbstractController
             return;
         }
 
-        $config = Database::getAllSettings();
-        $config['kinds'] = Database::getKinds();
-        $config['translations'] = Database::getTranslations();
+        $config = $this->settingsRepo ? $this->settingsRepo->all() : Database::getAllSettings();
+        $config['kinds'] = $this->settingsRepo ? $this->settingsRepo->getKinds() : Database::getKinds();
+        $config['translations'] = $this->settingsRepo ? $this->settingsRepo->getTranslations() : Database::getTranslations();
         $this->html(ConfigView::renderConfig($this->site, $config));
     }
 
@@ -281,7 +314,7 @@ class AdminController extends AbstractController
             return;
         }
 
-        $db = Database::getDb();
+        $db = $this->db ?? Database::getDb();
         $codeHash = hash('sha256', $code);
         $stmt = $db->prepare('SELECT * FROM indieauth_codes WHERE code_hash = :hash');
         $stmt->bindValue(':hash', $codeHash);
@@ -322,10 +355,10 @@ class AdminController extends AbstractController
 
     protected function saveConfig(): void
     {
-        $currentConfig = Database::getAllSettings();
-        $currentConfig['kinds'] = Database::getKinds();
-        $currentConfig['translations'] = Database::getTranslations();
-        $currentConfig['urltranslations'] = Database::getUrlTranslations();
+        $currentConfig = $this->settingsRepo ? $this->settingsRepo->all() : Database::getAllSettings();
+        $currentConfig['kinds'] = $this->settingsRepo ? $this->settingsRepo->getKinds() : Database::getKinds();
+        $currentConfig['translations'] = $this->settingsRepo ? $this->settingsRepo->getTranslations() : Database::getTranslations();
+        $currentConfig['urltranslations'] = $this->settingsRepo ? $this->settingsRepo->getUrlTranslations() : Database::getUrlTranslations();
 
         $base = trim((string) ($_POST['base'] ?? ''), '/');
         $currentConfig['base'] = (strlen($base) > 0 && $base !== '/') ? ('/' . ltrim($base, '/')) : '/';
@@ -600,7 +633,7 @@ class AdminController extends AbstractController
             $currentConfig['indieauth_password'] = password_hash((string) $_POST['new_password'], PASSWORD_BCRYPT);
         }
 
-        $db = Database::getDb();
+        $db = $this->db ?? Database::getDb();
         foreach ($currentConfig as $key => $val) {
             if ($key === 'kinds' || $key === 'translations' || $key === 'urltranslations') {
                 continue;
@@ -697,10 +730,10 @@ class AdminController extends AbstractController
     {
         ob_start();
         $basePath = $this->site->paths->baseDir;
-        $config = Database::getAllSettings();
-        $config['kinds'] = Database::getKinds();
-        $config['translations'] = Database::getTranslations();
-        $config['urltranslations'] = Database::getUrlTranslations();
+        $config = $this->settingsRepo ? $this->settingsRepo->all() : Database::getAllSettings();
+        $config['kinds'] = $this->settingsRepo ? $this->settingsRepo->getKinds() : Database::getKinds();
+        $config['translations'] = $this->settingsRepo ? $this->settingsRepo->getTranslations() : Database::getTranslations();
+        $config['urltranslations'] = $this->settingsRepo ? $this->settingsRepo->getUrlTranslations() : Database::getUrlTranslations();
 
         $newSite = new Site();
         $newSite->paths->baseDir = $basePath;

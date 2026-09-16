@@ -189,20 +189,22 @@
         <h1 class="p-name">WebRouter</h1>
 <p><strong>Namespace:</strong> <code>Indieinabox\Http</code></p>
 <p>Class WebRouter</p>
-<p>Handles incoming HTTP requests by mapping the request URI to the appropriate<br />
-controller (e.g., Micropub, Microsub, Admin panel, ActivityPub, Webmention, Archive).<br />
-If no specific controller matches, it delegates to StaticFileServer.</p>
+<p>Dedicated web dispatcher for the built-in PHP development server and single-file executable.<br />
+Routes clean URLs and queries to transport controllers or serves static files.</p>
 <h2>Properties</h2>
 <h3><code>protected Indieinabox\Site\Site $site</code></h3>
 <p>@var Site</p>
 <h3><code>protected Indieinabox\Http\StaticFileServer $fileServer</code></h3>
 <p>@var StaticFileServer</p>
+<h3><code>protected Indieinabox\Core\Container $container</code></h3>
+<p>@var Container</p>
 <h2>Methods</h2>
 <h3><em></em>construct()</h3>
-<p><code>public function __construct(Indieinabox\Site\Site $site, ?Indieinabox\Http\StaticFileServer $fileServer = null)</code></p>
-<p>Initializes the WebRouter with the global site configuration and static file server.</p>
+<p><code>public function __construct(Indieinabox\Site\Site $site, ?Indieinabox\Http\StaticFileServer $fileServer = null, ?Indieinabox\Core\Container $container = null)</code></p>
+<p>Initializes the WebRouter with the global site configuration, static file server, and container.</p>
 <p>@param Site $site The site configuration object.<br />
-@param StaticFileServer|null $fileServer The static file server instance.</p>
+@param StaticFileServer|null $fileServer The static file server instance.<br />
+@param Container|null $container The dependency injection container.</p>
 <h3>getFileServer()</h3>
 <p><code>public function getFileServer(): Indieinabox\Http\StaticFileServer</code></p>
 <h3>handleRequest()</h3>

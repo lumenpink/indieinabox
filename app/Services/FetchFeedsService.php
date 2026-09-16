@@ -6,7 +6,10 @@ namespace Indieinabox\Services;
 
 use PDO;
 use Exception;
+use Indieinabox\Core\Container;
 use Indieinabox\Core\Database;
+use Indieinabox\Repositories\Contracts\SettingsRepositoryInterface;
+use Indieinabox\Repositories\SqliteSettingsRepository;
 use Indieinabox\Support\Yaml;
 use Indieinabox\Feeds\Contracts\FeedParserInterface;
 use Indieinabox\Feeds\Parsers\TwtxtParser;
@@ -22,6 +25,7 @@ use Indieinabox\Microsub\NormalizationAdapter;
 class FetchFeedsService
 {
     private PDO $db;
+    private SettingsRepositoryInterface $settings;
 
     /**
      * @var array<string, FeedParserInterface>
@@ -31,10 +35,23 @@ class FetchFeedsService
     /**
      * @param ?PDO $db
      * @param array<int, FeedParserInterface>|null $parsers
+     * @param ?SettingsRepositoryInterface $settings
      */
-    public function __construct(?PDO $db = null, ?array $parsers = null)
-    {
-        $this->db = $db ?? Database::getDb();
+    public function __construct(
+        ?PDO $db = null,
+        ?array $parsers = null,
+        ?SettingsRepositoryInterface $settings = null
+    ) {
+        $this->db = $db ?? (Container::getInstance()->has(PDO::class) ? Container::getInstance()->get(PDO::class) : Database::getDb());
+        if ($settings !== null) {
+            $this->settings = $settings;
+        } elseif (Container::getInstance()->has(SettingsRepositoryInterface::class)) {
+            $this->settings = Container::getInstance()->get(SettingsRepositoryInterface::class);
+        } elseif (class_exists(Database::class) && Database::isConnected()) {
+            $this->settings = Database::getSettingsRepository();
+        } else {
+            $this->settings = new SqliteSettingsRepository($this->db);
+        }
 
         if ($parsers !== null) {
             foreach ($parsers as $parser) {
@@ -332,18 +349,18 @@ class FetchFeedsService
             return $url;
         }
 
-        $fqdn = rtrim(Database::getSetting('fqdn') ?? '', '/');
+        $fqdn = rtrim((string) ($this->settings->get('fqdn') ?? ''), '/');
         if (str_starts_with($url, '/media/') || ($fqdn && str_starts_with($url, $fqdn))) {
             return $url;
         }
 
-        $enabledStr = Database::getSetting("download_media_{$type}");
+        $enabledStr = $this->settings->get("download_media_{$type}");
         $enabled = $enabledStr === null || $enabledStr === '' || $enabledStr === '1' || $enabledStr === 'true';
         if (!$enabled) {
             return $url;
         }
 
-        $maxSizeStr = Database::getSetting("download_media_max_size_mb");
+        $maxSizeStr = $this->settings->get("download_media_max_size_mb");
         $maxSizeMB = $maxSizeStr !== null && $maxSizeStr !== '' ? (float)$maxSizeStr : 10.0;
         $maxSizeBytes = $maxSizeMB * 1024 * 1024;
 
@@ -414,7 +431,7 @@ class FetchFeedsService
 
         if ($row && !empty($row['private_key']) && class_exists('\Indieinabox\Federation\HttpSignature')) {
             $privateKey = $row['private_key'];
-            $fqdn = Database::getSetting('fqdn');
+            $fqdn = $this->settings->get('fqdn');
 
             if ($fqdn) {
                 $fqdn = rtrim($fqdn, '/');

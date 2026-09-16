@@ -192,11 +192,13 @@
 <h2>Properties</h2>
 <h3><code>private Indieinabox\Services\ConfigurationService $configService</code></h3>
 <h3><code>private Indieinabox\Services\ModerationService $moderationService</code></h3>
-<h3><code>private Indieinabox\Services\MicrosubService $microsubService</code></h3>
+<h3><code>private ?Indieinabox\Services\MicrosubService $microsubService</code></h3>
+<h3><code>private ?PDO $db</code></h3>
+<h3><code>private ?Indieinabox\Repositories\Contracts\SettingsRepositoryInterface $settingsRepo</code></h3>
 <h3><code>protected Indieinabox\Site\Site $site</code></h3>
 <h2>Methods</h2>
 <h3><em></em>construct()</h3>
-<p><code>public function __construct(Indieinabox\Site\Site $site, ?Indieinabox\Services\ConfigurationService $configService = null, ?Indieinabox\Services\ModerationService $moderationService = null, ?Indieinabox\Services\MicrosubService $microsubService = null)</code></p>
+<p><code>public function __construct(Indieinabox\Site\Site $site, ?Indieinabox\Services\ConfigurationService $configService = null, ?Indieinabox\Services\ModerationService $moderationService = null, ?Indieinabox\Services\MicrosubService $microsubService = null, ?PDO $db = null, ?Indieinabox\Repositories\Contracts\SettingsRepositoryInterface $settingsRepo = null)</code></p>
 <h3>getConfigurationService()</h3>
 <p><code>public function getConfigurationService(): Indieinabox\Services\ConfigurationService</code></p>
 <h3>getModerationService()</h3>

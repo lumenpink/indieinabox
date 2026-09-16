@@ -68,6 +68,10 @@ class Database
                 supports_webmention INTEGER NOT NULL DEFAULT 0,
                 last_checked INTEGER NOT NULL
             )');
+
+            if (class_exists(Container::class)) {
+                Container::getInstance()->instance(PDO::class, self::$db);
+            }
         } catch (Exception $e) {
             throw new Exception("Failed to connect to database: " . $e->getMessage());
         }
@@ -89,12 +93,24 @@ class Database
     }
 
     /**
+     * Checks if a database connection is actively open.
+     */
+    public static function isConnected(): bool
+    {
+        return self::$db !== null;
+    }
+
+    /**
      * Closes the active PDO database connection.
      */
     public static function disconnect(): void
     {
         self::$db = null;
         self::$settingsRepo = null;
+        if (class_exists(Container::class)) {
+            Container::getInstance()->forget(PDO::class);
+            Container::getInstance()->forget(SettingsRepositoryInterface::class);
+        }
     }
 
     /**

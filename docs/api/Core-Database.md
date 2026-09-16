@@ -34,6 +34,11 @@ Throws an exception if the connection has not been established yet.
 @return PDO The active PDO instance.
 @throws Exception If the database is not connected.
 
+### isConnected()
+`public static function isConnected(): bool`
+
+Checks if a database connection is actively open.
+
 ### disconnect()
 `public static function disconnect(): void`
 

@@ -191,13 +191,15 @@
 <p>Domain service responsible for fetching, parsing, and storing external feed subscriptions.</p>
 <h2>Properties</h2>
 <h3><code>private PDO $db</code></h3>
+<h3><code>private Indieinabox\Repositories\Contracts\SettingsRepositoryInterface $settings</code></h3>
 <h3><code>private array $parsers</code></h3>
 <p>@var array<string, FeedParserInterface></p>
 <h2>Methods</h2>
 <h3><em></em>construct()</h3>
-<p><code>public function __construct(?PDO $db = null, ?array $parsers = null)</code></p>
+<p><code>public function __construct(?PDO $db = null, ?array $parsers = null, ?Indieinabox\Repositories\Contracts\SettingsRepositoryInterface $settings = null)</code></p>
 <p>@param ?PDO $db<br />
-@param array<int, FeedParserInterface>|null $parsers</p>
+@param array<int, FeedParserInterface>|null $parsers<br />
+@param ?SettingsRepositoryInterface $settings</p>
 <h3>addParser()</h3>
 <p><code>public function addParser(Indieinabox\Feeds\Contracts\FeedParserInterface $parser): Indieinabox\Services\FetchFeedsService</code></p>
 <h3>getParsers()</h3>

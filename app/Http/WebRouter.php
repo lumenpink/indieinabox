@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Indieinabox\Http;
 
+use Indieinabox\Core\Container;
 use Indieinabox\Http\Controllers\ActivityPubController;
 use Indieinabox\Http\Controllers\AdminController;
 use Indieinabox\Http\Controllers\ArchiveController;
@@ -17,9 +18,8 @@ use Indieinabox\Site\Site;
 /**
  * Class WebRouter
  *
- * Handles incoming HTTP requests by mapping the request URI to the appropriate
- * controller (e.g., Micropub, Microsub, Admin panel, ActivityPub, Webmention, Archive).
- * If no specific controller matches, it delegates to StaticFileServer.
+ * Dedicated web dispatcher for the built-in PHP development server and single-file executable.
+ * Routes clean URLs and queries to transport controllers or serves static files.
  */
 class WebRouter
 {
@@ -34,15 +34,25 @@ class WebRouter
     protected StaticFileServer $fileServer;
 
     /**
-     * Initializes the WebRouter with the global site configuration and static file server.
+     * @var Container
+     */
+    protected Container $container;
+
+    /**
+     * Initializes the WebRouter with the global site configuration, static file server, and container.
      *
      * @param Site $site The site configuration object.
      * @param StaticFileServer|null $fileServer The static file server instance.
+     * @param Container|null $container The dependency injection container.
      */
-    public function __construct(Site $site, ?StaticFileServer $fileServer = null)
+    public function __construct(Site $site, ?StaticFileServer $fileServer = null, ?Container $container = null)
     {
         $this->site = $site;
         $this->fileServer = $fileServer ?? new StaticFileServer($site);
+        $this->container = $container ?? Container::getInstance();
+        if (!$this->container->has(Site::class)) {
+            $this->container->instance(Site::class, $site);
+        }
     }
 
     public function getFileServer(): StaticFileServer
@@ -195,37 +205,37 @@ class WebRouter
 
     public function getWebmentionController(): WebmentionController
     {
-        return new WebmentionController($this->site);
+        return $this->container->make(WebmentionController::class, ['site' => $this->site]);
     }
 
     public function getIndieAuthController(): IndieAuthController
     {
-        return new IndieAuthController($this->site);
+        return $this->container->make(IndieAuthController::class, ['site' => $this->site]);
     }
 
     public function getMicropubController(): MicropubController
     {
-        return new MicropubController($this->site);
+        return $this->container->make(MicropubController::class, ['site' => $this->site]);
     }
 
     public function getMicrosubController(): MicrosubController
     {
-        return new MicrosubController($this->site);
+        return $this->container->make(MicrosubController::class, ['site' => $this->site]);
     }
 
     public function getActivityPubController(): ActivityPubController
     {
-        return new ActivityPubController($this->site);
+        return $this->container->make(ActivityPubController::class, ['site' => $this->site]);
     }
 
     public function getArchiveController(): ArchiveController
     {
-        return new ArchiveController($this->site);
+        return $this->container->make(ArchiveController::class, ['site' => $this->site]);
     }
 
     public function getAdminController(): AdminController
     {
-        return new AdminController($this->site);
+        return $this->container->make(AdminController::class, ['site' => $this->site]);
     }
 
     /**

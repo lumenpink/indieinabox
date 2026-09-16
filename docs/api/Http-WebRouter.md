@@ -3,9 +3,8 @@
 
 Class WebRouter
 
-Handles incoming HTTP requests by mapping the request URI to the appropriate
-controller (e.g., Micropub, Microsub, Admin panel, ActivityPub, Webmention, Archive).
-If no specific controller matches, it delegates to StaticFileServer.
+Dedicated web dispatcher for the built-in PHP development server and single-file executable.
+Routes clean URLs and queries to transport controllers or serves static files.
 
 ## Properties
 
@@ -17,15 +16,20 @@ If no specific controller matches, it delegates to StaticFileServer.
 
 @var StaticFileServer
 
+### `protected Indieinabox\Core\Container $container`
+
+@var Container
+
 ## Methods
 
 ### __construct()
-`public function __construct(Indieinabox\Site\Site $site, ?Indieinabox\Http\StaticFileServer $fileServer = null)`
+`public function __construct(Indieinabox\Site\Site $site, ?Indieinabox\Http\StaticFileServer $fileServer = null, ?Indieinabox\Core\Container $container = null)`
 
-Initializes the WebRouter with the global site configuration and static file server.
+Initializes the WebRouter with the global site configuration, static file server, and container.
 
 @param Site $site The site configuration object.
 @param StaticFileServer|null $fileServer The static file server instance.
+@param Container|null $container The dependency injection container.
 
 ### getFileServer()
 `public function getFileServer(): Indieinabox\Http\StaticFileServer`

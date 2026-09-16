@@ -5,7 +5,10 @@ declare(strict_types=1);
 namespace Indieinabox\Services;
 
 use Indieinabox\ActivityPub\ActivityBuilder;
+use Indieinabox\Core\Container;
 use Indieinabox\Core\Database;
+use Indieinabox\Events\Contracts\EventDispatcherInterface;
+use Indieinabox\Events\PostPublishedEvent;
 use Indieinabox\Site\Site;
 use Indieinabox\SiteBuilder\SiteBuilder;
 
@@ -16,11 +19,20 @@ class PublishPostService
 {
     private Site $site;
     private ?OutboxService $outboxService;
+    private ?EventDispatcherInterface $events;
 
-    public function __construct(Site $site, ?OutboxService $outboxService = null)
-    {
+    public function __construct(
+        Site $site,
+        ?OutboxService $outboxService = null,
+        ?EventDispatcherInterface $events = null
+    ) {
         $this->site = $site;
         $this->outboxService = $outboxService;
+        $this->events = $events;
+
+        if ($this->events === null && class_exists(Container::class) && Container::getInstance()->has(EventDispatcherInterface::class)) {
+            $this->events = Container::getInstance()->get(EventDispatcherInterface::class);
+        }
     }
 
     /**
@@ -75,6 +87,20 @@ class PublishPostService
         $builder = new SiteBuilder($this->site);
         $builder->build();
 
+        $slug = '/' . $subfolder . '/' . $date;
+
+        // Dispatch domain event
+        if ($this->events !== null) {
+            $this->events->dispatch(new PostPublishedEvent(
+                $slug,
+                $postPath,
+                $kind,
+                $title,
+                $content,
+                $mediaPaths
+            ));
+        }
+
         // Enqueue federation broadcast if outbox service available
         if ($this->outboxService !== null) {
             $fqdn = rtrim($this->site->metadata->fqdn ?? (string) Database::getSetting('fqdn'), '/');
@@ -95,7 +121,7 @@ class PublishPostService
         }
 
         return [
-            'slug' => '/' . $subfolder . '/' . $date,
+            'slug' => $slug,
             'filepath' => $postPath,
         ];
     }

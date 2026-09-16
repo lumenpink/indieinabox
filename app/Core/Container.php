@@ -124,6 +124,11 @@ class Container implements ContainerInterface
             return new \Indieinabox\BackgroundWorker\BackgroundWorker($site, $settingsRepo, $pdo, $updateService, $backupService);
         });
         $this->bind(\Indieinabox\BackgroundWorker\BackgroundWorker::class, \Indieinabox\BackgroundWorker\Contracts\BackgroundWorkerInterface::class);
+
+        $this->singleton(\Indieinabox\Events\Contracts\EventDispatcherInterface::class, function () {
+            return new \Indieinabox\Events\EventDispatcher();
+        });
+        $this->bind(\Indieinabox\Events\EventDispatcher::class, \Indieinabox\Events\Contracts\EventDispatcherInterface::class);
     }
 
     /**

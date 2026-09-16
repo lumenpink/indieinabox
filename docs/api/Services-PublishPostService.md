@@ -9,10 +9,12 @@ Protocol-agnostic service to compose, persist, build, and syndicate new posts an
 
 ### `private ?Indieinabox\Services\OutboxService $outboxService`
 
+### `private ?Indieinabox\Events\Contracts\EventDispatcherInterface $events`
+
 ## Methods
 
 ### __construct()
-`public function __construct(Indieinabox\Site\Site $site, ?Indieinabox\Services\OutboxService $outboxService = null)`
+`public function __construct(Indieinabox\Site\Site $site, ?Indieinabox\Services\OutboxService $outboxService = null, ?Indieinabox\Events\Contracts\EventDispatcherInterface $events = null)`
 
 ### publish()
 `public function publish(string $text, array $mediaPaths = [], string $kind = 'note', ?string $title = null): array`

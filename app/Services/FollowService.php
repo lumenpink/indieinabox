@@ -5,7 +5,8 @@ declare(strict_types=1);
 namespace Indieinabox\Services;
 
 use Indieinabox\Core\Container;
-use Indieinabox\Core\Database;
+use Indieinabox\Repositories\Contracts\ActivityPubRepositoryInterface;
+use Indieinabox\Repositories\SqliteActivityPubRepository;
 use PDO;
 
 /**
@@ -13,11 +14,20 @@ use PDO;
  */
 class FollowService
 {
-    private PDO $db;
+    private ActivityPubRepositoryInterface $repository;
 
-    public function __construct(?PDO $db = null)
+    public function __construct(ActivityPubRepositoryInterface|PDO|null $repository = null)
     {
-        $this->db = $db ?? (Container::getInstance()->has(PDO::class) ? Container::getInstance()->get(PDO::class) : Database::getDb());
+        if ($repository instanceof ActivityPubRepositoryInterface) {
+            $this->repository = $repository;
+        } elseif ($repository instanceof PDO) {
+            $this->repository = new SqliteActivityPubRepository($repository);
+        } else {
+            $container = class_exists(Container::class) ? Container::getInstance() : null;
+            $this->repository = $container && $container->has(ActivityPubRepositoryInterface::class)
+                ? $container->get(ActivityPubRepositoryInterface::class)
+                : new SqliteActivityPubRepository();
+        }
     }
 
     /**
@@ -25,10 +35,7 @@ class FollowService
      */
     public function addFollower(string $actorUrl, string $inboxUrl, ?string $sharedInboxUrl = null): bool
     {
-        $stmt = $this->db->prepare(
-            'INSERT OR REPLACE INTO activitypub_followers (actor_url, inbox_url, shared_inbox_url) VALUES (?, ?, ?)'
-        );
-        return $stmt->execute([$actorUrl, $inboxUrl, $sharedInboxUrl]);
+        return $this->repository->addFollower($actorUrl, $inboxUrl, $sharedInboxUrl);
     }
 
     /**
@@ -36,8 +43,7 @@ class FollowService
      */
     public function removeFollower(string $actorUrl): bool
     {
-        $stmt = $this->db->prepare('DELETE FROM activitypub_followers WHERE actor_url = ?');
-        return $stmt->execute([$actorUrl]);
+        return $this->repository->removeFollower($actorUrl);
     }
 
     /**
@@ -45,9 +51,7 @@ class FollowService
      */
     public function isFollower(string $actorUrl): bool
     {
-        $stmt = $this->db->prepare('SELECT COUNT(*) FROM activitypub_followers WHERE actor_url = ?');
-        $stmt->execute([$actorUrl]);
-        return ((int) $stmt->fetchColumn()) > 0;
+        return $this->repository->isFollower($actorUrl);
     }
 
     /**
@@ -57,8 +61,7 @@ class FollowService
      */
     public function getFollowers(): array
     {
-        $stmt = $this->db->query('SELECT actor_url, inbox_url, shared_inbox_url FROM activitypub_followers');
-        return $stmt ? $stmt->fetchAll(PDO::FETCH_ASSOC) : [];
+        return $this->repository->getFollowers();
     }
 
     /**
@@ -68,19 +71,6 @@ class FollowService
      */
     public function getDistinctInboxes(): array
     {
-        $stmt = $this->db->query(
-            'SELECT DISTINCT COALESCE(NULLIF(shared_inbox_url, ""), inbox_url) as inbox FROM activitypub_followers WHERE inbox_url != ""'
-        );
-        if (!$stmt) {
-            return [];
-        }
-
-        $inboxes = [];
-        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            if (!empty($row['inbox'])) {
-                $inboxes[] = (string) $row['inbox'];
-            }
-        }
-        return $inboxes;
+        return $this->repository->getDistinctInboxes();
     }
 }

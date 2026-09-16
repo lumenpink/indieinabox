@@ -86,6 +86,18 @@ class Container implements ContainerInterface
             return new \Indieinabox\Taxonomy\SeoMetadataResolver($site);
         });
         $this->bind(\Indieinabox\Taxonomy\SeoMetadataResolver::class, \Indieinabox\Taxonomy\Contracts\SeoMetadataResolverInterface::class);
+
+        $this->singleton(\Indieinabox\Repositories\Contracts\ActivityPubRepositoryInterface::class, function (self $container) {
+            $pdo = $container->has(PDO::class) ? $container->get(PDO::class) : null;
+            return new \Indieinabox\Repositories\SqliteActivityPubRepository($pdo);
+        });
+        $this->bind(\Indieinabox\Repositories\SqliteActivityPubRepository::class, \Indieinabox\Repositories\Contracts\ActivityPubRepositoryInterface::class);
+
+        $this->singleton(\Indieinabox\Repositories\Contracts\MicrosubRepositoryInterface::class, function (self $container) {
+            $pdo = $container->has(PDO::class) ? $container->get(PDO::class) : null;
+            return new \Indieinabox\Repositories\SqliteMicrosubRepository($pdo);
+        });
+        $this->bind(\Indieinabox\Repositories\SqliteMicrosubRepository::class, \Indieinabox\Repositories\Contracts\MicrosubRepositoryInterface::class);
     }
 
     /**

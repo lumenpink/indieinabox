@@ -9,7 +9,12 @@ use Exception;
 use DOMDocument;
 use DOMElement;
 use DOMXPath;
+use Indieinabox\Core\Container;
 use Indieinabox\Core\Database;
+use Indieinabox\Repositories\Contracts\ActivityPubRepositoryInterface;
+use Indieinabox\Repositories\Contracts\MicrosubRepositoryInterface;
+use Indieinabox\Repositories\SqliteActivityPubRepository;
+use Indieinabox\Repositories\SqliteMicrosubRepository;
 use Indieinabox\Site\Site;
 use Indieinabox\Support\Yaml;
 use Indieinabox\Markdown\ContentProcessor;
@@ -23,15 +28,28 @@ class MicrosubService
     private PDO $db;
     private FetchFeedsService $feedFetcher;
     private ?Site $site;
+    private MicrosubRepositoryInterface $repository;
+    private ActivityPubRepositoryInterface $activityPubRepo;
 
     public function __construct(
         ?PDO $db = null,
         ?FetchFeedsService $feedFetcher = null,
-        ?Site $site = null
+        ?Site $site = null,
+        ?MicrosubRepositoryInterface $repository = null,
+        ?ActivityPubRepositoryInterface $activityPubRepo = null
     ) {
         $this->db = $db ?? Database::getDb();
         $this->feedFetcher = $feedFetcher ?? new FetchFeedsService($this->db);
         $this->site = $site;
+
+        $container = class_exists(Container::class) ? Container::getInstance() : null;
+        $this->repository = $repository ?? ($container && $container->has(MicrosubRepositoryInterface::class)
+            ? $container->get(MicrosubRepositoryInterface::class)
+            : new SqliteMicrosubRepository($this->db));
+
+        $this->activityPubRepo = $activityPubRepo ?? ($container && $container->has(ActivityPubRepositoryInterface::class)
+            ? $container->get(ActivityPubRepositoryInterface::class)
+            : new SqliteActivityPubRepository($this->db));
     }
 
     /**
@@ -41,8 +59,7 @@ class MicrosubService
      */
     public function getChannels(): array
     {
-        $stmt = $this->db->query('SELECT uid, name FROM microsub_channels');
-        return $stmt ? $stmt->fetchAll(PDO::FETCH_ASSOC) : [];
+        return $this->repository->getChannels();
     }
 
     /**
@@ -63,10 +80,7 @@ class MicrosubService
             $uid = 'channel_' . time();
         }
 
-        $stmt = $this->db->prepare('INSERT INTO microsub_channels (uid, name) VALUES (:uid, :name)');
-        $stmt->bindValue(':uid', $uid, PDO::PARAM_STR);
-        $stmt->bindValue(':name', $name, PDO::PARAM_STR);
-        $stmt->execute();
+        $this->repository->createChannel($uid, $name);
 
         return ['uid' => $uid, 'name' => $name];
     }
@@ -82,15 +96,7 @@ class MicrosubService
             throw new Exception("Cannot delete default or empty channel");
         }
 
-        $stmt = $this->db->prepare('DELETE FROM microsub_channels WHERE uid = :uid');
-        $stmt->bindValue(':uid', $uid, PDO::PARAM_STR);
-        $stmt->execute();
-
-        $stmtSubs = $this->db->prepare('DELETE FROM microsub_subscriptions WHERE channel_uid = :uid');
-        $stmtSubs->bindValue(':uid', $uid, PDO::PARAM_STR);
-        $stmtSubs->execute();
-
-        return true;
+        return $this->repository->deleteChannel($uid);
     }
 
     /**
@@ -237,12 +243,10 @@ class MicrosubService
      */
     public function getSubscriptions(string $channel = 'inbox'): array
     {
-        $stmt = $this->db->prepare('SELECT url, type, name, photo FROM microsub_subscriptions WHERE channel_uid = :channel');
-        $stmt->bindValue(':channel', $channel, PDO::PARAM_STR);
-        $stmt->execute();
+        $rows = $this->repository->getSubscriptions($channel);
 
         $items = [];
-        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        foreach ($rows as $row) {
             $items[] = [
                 'type' => 'feed',
                 'url' => $row['url'],
@@ -379,13 +383,7 @@ class MicrosubService
             $name = $finalUrl;
         }
 
-        $stmt = $this->db->prepare('INSERT INTO microsub_subscriptions (channel_uid, url, type, name, photo) VALUES (:channel, :url, :type, :name, :photo)');
-        $stmt->bindValue(':channel', $channel, PDO::PARAM_STR);
-        $stmt->bindValue(':url', $finalUrl, PDO::PARAM_STR);
-        $stmt->bindValue(':type', $type, PDO::PARAM_STR);
-        $stmt->bindValue(':name', $name, PDO::PARAM_STR);
-        $stmt->bindValue(':photo', $photo, PDO::PARAM_STR);
-        $stmt->execute();
+        $this->repository->addSubscription($channel, $finalUrl, $type, $name, $photo);
 
         if ($type === 'ap' && !empty($inboxUrl)) {
             $fqdn = rtrim(Database::getSetting('fqdn') ?? 'http://localhost', '/');
@@ -398,8 +396,7 @@ class MicrosubService
                 'actor' => $myActor,
                 'object' => $finalUrl,
             ];
-            $stmtAp = $this->db->prepare("INSERT INTO activitypub_outbox (payload_json, target_inbox, status, created_at) VALUES (?, ?, 'pending', ?)");
-            $stmtAp->execute([json_encode($payload, JSON_UNESCAPED_SLASHES), $inboxUrl, time()]);
+            $this->activityPubRepo->enqueueOutbox((string) json_encode($payload, JSON_UNESCAPED_SLASHES), $inboxUrl, time());
         }
 
         return [
@@ -420,19 +417,11 @@ class MicrosubService
             throw new Exception("Missing feed URL");
         }
 
-        $stmtType = $this->db->prepare('SELECT type FROM microsub_subscriptions WHERE channel_uid = :channel AND url = :url LIMIT 1');
-        $stmtType->execute([':channel' => $channel, ':url' => $url]);
-        $subType = $stmtType->fetchColumn();
-
-        $stmt = $this->db->prepare('DELETE FROM microsub_subscriptions WHERE channel_uid = :channel AND url = :url');
-        $stmt->bindValue(':channel', $channel, PDO::PARAM_STR);
-        $stmt->bindValue(':url', $url, PDO::PARAM_STR);
-        $stmt->execute();
+        $subType = $this->repository->getSubscriptionType($channel, $url);
+        $this->repository->removeSubscription($channel, $url);
 
         // Check if remaining channels still follow this url
-        $stmtCheck = $this->db->prepare('SELECT COUNT(*) FROM microsub_subscriptions WHERE url = :url');
-        $stmtCheck->execute([':url' => $url]);
-        $count = (int)$stmtCheck->fetchColumn();
+        $count = $this->repository->countSubscriptionsByUrl($url);
 
         if ($count === 0 && $subType === 'ap') {
             $ctx = stream_context_create(['http' => ['header' => "Accept: application/activity+json\r\nUser-Agent: Indieinabox/1.0\r\n"]]);
@@ -455,8 +444,7 @@ class MicrosubService
                                 'object' => $url,
                             ],
                         ];
-                        $stmtAp = $this->db->prepare("INSERT INTO activitypub_outbox (payload_json, target_inbox, status, created_at) VALUES (?, ?, 'pending', ?)");
-                        $stmtAp->execute([json_encode($payload, JSON_UNESCAPED_SLASHES), $inboxUrl, time()]);
+                        $this->activityPubRepo->enqueueOutbox((string) json_encode($payload, JSON_UNESCAPED_SLASHES), $inboxUrl, time());
                     }
                 }
             }
@@ -640,9 +628,7 @@ class MicrosubService
             throw new Exception("Invalid action type");
         }
 
-        $sql = "INSERT INTO activitypub_outbox (payload_json, target_inbox, status, created_at) VALUES (?, ?, 'pending', ?)";
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute([json_encode($payload, JSON_UNESCAPED_SLASHES), $inboxUrl, time()]);
+        $this->activityPubRepo->enqueueOutbox((string) json_encode($payload, JSON_UNESCAPED_SLASHES), $inboxUrl, time());
 
         return ['success' => 'ok', 'activity_id' => $activityId];
     }

@@ -119,9 +119,13 @@
 <li><a href="/docs/api/html/Page.html">Page</a></li>
 <li><a href="/docs/api/html/Pages.html">Pages</a></li>
 <li><a href="/docs/api/html/ParserInterface.html">ParserInterface</a></li>
+<li><a href="/docs/api/html/Repositories-Contracts-ActivityPubRepositoryInterface.html">Repositories-Contracts-ActivityPubRepositoryInterface</a></li>
 <li><a href="/docs/api/html/Repositories-Contracts-InteractionRepositoryInterface.html">Repositories-Contracts-InteractionRepositoryInterface</a></li>
+<li><a href="/docs/api/html/Repositories-Contracts-MicrosubRepositoryInterface.html">Repositories-Contracts-MicrosubRepositoryInterface</a></li>
 <li><a href="/docs/api/html/Repositories-Contracts-SettingsRepositoryInterface.html">Repositories-Contracts-SettingsRepositoryInterface</a></li>
 <li><a href="/docs/api/html/Repositories-FileInteractionRepository.html">Repositories-FileInteractionRepository</a></li>
+<li><a href="/docs/api/html/Repositories-SqliteActivityPubRepository.html">Repositories-SqliteActivityPubRepository</a></li>
+<li><a href="/docs/api/html/Repositories-SqliteMicrosubRepository.html">Repositories-SqliteMicrosubRepository</a></li>
 <li><a href="/docs/api/html/Repositories-SqliteSettingsRepository.html">Repositories-SqliteSettingsRepository</a></li>
 <li><a href="/docs/api/html/Services-ArchiveService.html">Services-ArchiveService</a></li>
 <li><a href="/docs/api/html/Services-BackupService.html">Services-BackupService</a></li>
@@ -196,10 +200,10 @@
 <h2>Properties</h2>
 <h3><code>private Indieinabox\Federation\FederationManager $federationManager</code></h3>
 <h3><code>private Indieinabox\Services\FollowService $followService</code></h3>
-<h3><code>private PDO $db</code></h3>
+<h3><code>private Indieinabox\Repositories\Contracts\ActivityPubRepositoryInterface $repository</code></h3>
 <h2>Methods</h2>
 <h3><em></em>construct()</h3>
-<p><code>public function __construct(Indieinabox\Federation\FederationManager|PDO|null $federationManager = null, ?Indieinabox\Services\FollowService $followService = null, ?PDO $db = null)</code></p>
+<p><code>public function __construct(Indieinabox\Federation\FederationManager|PDO|null $federationManager = null, ?Indieinabox\Services\FollowService $followService = null, Indieinabox\Repositories\Contracts\ActivityPubRepositoryInterface|PDO|null $repository = null)</code></p>
 <h3>enqueueDelivery()</h3>
 <p><code>public function enqueueDelivery(array|string $payload, string $targetInbox): int</code></p>
 <p>Enqueues an activity delivery targeting a specific inbox endpoint.</p>

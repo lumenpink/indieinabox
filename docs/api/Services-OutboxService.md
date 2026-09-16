@@ -9,12 +9,12 @@ Service managing outgoing federation queues, fan-out broadcasting, and delivery 
 
 ### `private Indieinabox\Services\FollowService $followService`
 
-### `private PDO $db`
+### `private Indieinabox\Repositories\Contracts\ActivityPubRepositoryInterface $repository`
 
 ## Methods
 
 ### __construct()
-`public function __construct(Indieinabox\Federation\FederationManager|PDO|null $federationManager = null, ?Indieinabox\Services\FollowService $followService = null, ?PDO $db = null)`
+`public function __construct(Indieinabox\Federation\FederationManager|PDO|null $federationManager = null, ?Indieinabox\Services\FollowService $followService = null, Indieinabox\Repositories\Contracts\ActivityPubRepositoryInterface|PDO|null $repository = null)`
 
 ### enqueueDelivery()
 `public function enqueueDelivery(array|string $payload, string $targetInbox): int`

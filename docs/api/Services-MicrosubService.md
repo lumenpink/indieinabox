@@ -11,10 +11,14 @@ Domain service managing Microsub channels, subscriptions, timeline retrieval, an
 
 ### `private ?Indieinabox\Site\Site $site`
 
+### `private Indieinabox\Repositories\Contracts\MicrosubRepositoryInterface $repository`
+
+### `private Indieinabox\Repositories\Contracts\ActivityPubRepositoryInterface $activityPubRepo`
+
 ## Methods
 
 ### __construct()
-`public function __construct(?PDO $db = null, ?Indieinabox\Services\FetchFeedsService $feedFetcher = null, ?Indieinabox\Site\Site $site = null)`
+`public function __construct(?PDO $db = null, ?Indieinabox\Services\FetchFeedsService $feedFetcher = null, ?Indieinabox\Site\Site $site = null, ?Indieinabox\Repositories\Contracts\MicrosubRepositoryInterface $repository = null, ?Indieinabox\Repositories\Contracts\ActivityPubRepositoryInterface $activityPubRepo = null)`
 
 ### getChannels()
 `public function getChannels(): array`

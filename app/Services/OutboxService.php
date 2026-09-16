@@ -5,9 +5,10 @@ declare(strict_types=1);
 namespace Indieinabox\Services;
 
 use Indieinabox\Core\Container;
-use Indieinabox\Core\Database;
 use Indieinabox\Federation\Contracts\FederationAdapter;
 use Indieinabox\Federation\FederationManager;
+use Indieinabox\Repositories\Contracts\ActivityPubRepositoryInterface;
+use Indieinabox\Repositories\SqliteActivityPubRepository;
 use PDO;
 
 /**
@@ -17,21 +18,35 @@ class OutboxService
 {
     private FederationManager $federationManager;
     private FollowService $followService;
-    private PDO $db;
+    private ActivityPubRepositoryInterface $repository;
 
     public function __construct(
         FederationManager|PDO|null $federationManager = null,
         ?FollowService $followService = null,
-        ?PDO $db = null
+        ActivityPubRepositoryInterface|PDO|null $repository = null
     ) {
+        $pdo = null;
         if ($federationManager instanceof PDO) {
-            $db = $federationManager;
+            $pdo = $federationManager;
             $federationManager = null;
+        } elseif ($repository instanceof PDO) {
+            $pdo = $repository;
+            $repository = null;
         }
 
-        $this->db = $db ?? (Container::getInstance()->has(PDO::class) ? Container::getInstance()->get(PDO::class) : Database::getDb());
+        if ($repository instanceof ActivityPubRepositoryInterface) {
+            $this->repository = $repository;
+        } elseif ($pdo !== null) {
+            $this->repository = new SqliteActivityPubRepository($pdo);
+        } else {
+            $container = class_exists(Container::class) ? Container::getInstance() : null;
+            $this->repository = $container && $container->has(ActivityPubRepositoryInterface::class)
+                ? $container->get(ActivityPubRepositoryInterface::class)
+                : new SqliteActivityPubRepository();
+        }
+
         $this->federationManager = $federationManager ?? new FederationManager();
-        $this->followService = $followService ?? new FollowService($this->db);
+        $this->followService = $followService ?? new FollowService($this->repository);
     }
 
     /**
@@ -47,11 +62,7 @@ class OutboxService
             ? (string) json_encode($payload, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)
             : $payload;
 
-        $stmt = $this->db->prepare(
-            "INSERT INTO activitypub_outbox (payload_json, target_inbox, status, created_at) VALUES (?, ?, 'pending', ?)"
-        );
-        $stmt->execute([$payloadJson, $targetInbox, time()]);
-        return (int) $this->db->lastInsertId();
+        return $this->repository->enqueueOutbox($payloadJson, $targetInbox, time());
     }
 
     /**
@@ -85,13 +96,7 @@ class OutboxService
         }
 
         $adapter = $this->federationManager->get($protocol);
-
-        $stmt = $this->db->prepare(
-            "SELECT id, payload_json, target_inbox FROM activitypub_outbox WHERE status = 'pending' LIMIT ?"
-        );
-        $stmt->bindValue(1, $limit, PDO::PARAM_INT);
-        $stmt->execute();
-        $messages = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $messages = $this->repository->getPendingOutbox($limit);
 
         $successCount = 0;
         foreach ($messages as $msg) {
@@ -102,8 +107,7 @@ class OutboxService
             $delivered = $adapter->deliverActivity($payload, $targetInbox);
             $status = $delivered ? 'sent' : 'failed';
 
-            $update = $this->db->prepare('UPDATE activitypub_outbox SET status = ? WHERE id = ?');
-            $update->execute([$status, $id]);
+            $this->repository->updateOutboxStatus($id, $status);
 
             if ($delivered) {
                 $successCount++;

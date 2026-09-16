@@ -5,12 +5,12 @@ Service managing federated follower relationships and inbox distribution targets
 
 ## Properties
 
-### `private PDO $db`
+### `private Indieinabox\Repositories\Contracts\ActivityPubRepositoryInterface $repository`
 
 ## Methods
 
 ### __construct()
-`public function __construct(?PDO $db = null)`
+`public function __construct(Indieinabox\Repositories\Contracts\ActivityPubRepositoryInterface|PDO|null $repository = null)`
 
 ### addFollower()
 `public function addFollower(string $actorUrl, string $inboxUrl, ?string $sharedInboxUrl = null): bool`

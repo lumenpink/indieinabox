@@ -232,6 +232,15 @@ final class InteractionDto
             $published = isset($object["published"]) ? new DateTimeImmutable((string) $object["published"]) : new DateTimeImmutable();
             $type = $target !== "" ? "reply" : "mention";
             $meta["object_id"] = (string) ($object["id"] ?? "");
+            if (isset($object["inReplyToBook"])) {
+                $meta["read_of"] = $object["inReplyToBook"];
+                if (isset($object["rating"])) {
+                    $meta["rating"] = $object["rating"];
+                }
+                if (isset($object["readingStatus"])) {
+                    $meta["read_status"] = $object["readingStatus"];
+                }
+            }
         } else {
             return null;
         }

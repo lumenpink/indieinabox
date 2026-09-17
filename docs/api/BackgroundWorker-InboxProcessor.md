@@ -24,16 +24,19 @@ and site build events.
 
 @var callable|null
 
+### `private Indieinabox\Services\Contracts\IngestInteractionServiceInterface $ingestService`
+
 ## Methods
 
 ### __construct()
-`public function __construct(Indieinabox\Site\Site $site, PDO $db, ?callable $fetcher = null, ?callable $jsonFetcher = null, ?callable $signatureVerifier = null)`
+`public function __construct(Indieinabox\Site\Site $site, PDO $db, ?callable $fetcher = null, ?callable $jsonFetcher = null, ?callable $signatureVerifier = null, ?Indieinabox\Services\Contracts\IngestInteractionServiceInterface $ingestService = null)`
 
 @param Site $site
 @param PDO $db
 @param callable|null $fetcher Optional HTTP fetcher hook fn(string $url): string|false
 @param callable|null $jsonFetcher Optional JSON fetcher hook fn(string $url): ?array
 @param callable|null $signatureVerifier Optional HTTP signature verifier hook
+@param IngestInteractionServiceInterface|null $ingestService
 
 ### process()
 `public function process(): void`

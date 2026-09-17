@@ -96,3 +96,100 @@ test('InboxProcessor extracts external links to archive_queue when enabled', fun
     expect($items)->toContain('https://external-site.org/info');
     expect($items)->not->toContain('https://example.com/internal');
 });
+
+test('InboxProcessor delegates webmention ingestion to IngestInteractionServiceInterface', function () {
+    $spy = new class implements \Indieinabox\Services\Contracts\IngestInteractionServiceInterface {
+        public ?array $webmentionCalled = null;
+        public ?array $activityCalled = null;
+
+        public function ingest(\Indieinabox\DTO\InteractionDto $interaction): bool
+        {
+            return true;
+        }
+
+        public function ingestWebmention(string $source, string $target, array $verifiedContent, string $status = "pending"): \Indieinabox\DTO\InteractionDto
+        {
+            $this->webmentionCalled = [
+                'source' => $source,
+                'target' => $target,
+                'verifiedContent' => $verifiedContent,
+                'status' => $status,
+            ];
+            return \Indieinabox\DTO\InteractionDto::fromArray(['id' => 'wm-1', 'source' => $source, 'target' => $target]);
+        }
+
+        public function ingestActivity(array $activity, ?array $actorData = null, string $status = "pending"): ?\Indieinabox\DTO\InteractionDto
+        {
+            $this->activityCalled = [
+                'activity' => $activity,
+                'actorData' => $actorData,
+                'status' => $status,
+            ];
+            return \Indieinabox\DTO\InteractionDto::fromArray(['id' => 'act-1']);
+        }
+    };
+
+    $sourceHtml = '<div class="h-entry"><a class="u-url" href="https://source.com/post">Post</a><a href="https://example.com/target">reply</a><p class="e-content">Great post!</p></div>';
+
+    $fetcher = function (string $url) use ($sourceHtml) {
+        if ($url === 'https://source.com/post') {
+            return $sourceHtml;
+        }
+        return false;
+    };
+
+    $processor = new InboxProcessor($this->site, $this->db, $fetcher, null, null, $spy);
+    $processor->handleWebmention([
+        'source' => 'https://source.com/post',
+        'target' => 'https://example.com/target',
+    ]);
+
+    expect($spy->webmentionCalled)->not->toBeNull()
+        ->and($spy->webmentionCalled['source'])->toBe('https://source.com/post')
+        ->and($spy->webmentionCalled['target'])->toBe('https://example.com/target')
+        ->and($spy->webmentionCalled['status'])->toBe('pending');
+});
+
+test('InboxProcessor delegates activitypub create ingestion to IngestInteractionServiceInterface', function () {
+    $spy = new class implements \Indieinabox\Services\Contracts\IngestInteractionServiceInterface {
+        public ?array $activityCalled = null;
+
+        public function ingest(\Indieinabox\DTO\InteractionDto $interaction): bool
+        {
+            return true;
+        }
+
+        public function ingestWebmention(string $source, string $target, array $verifiedContent, string $status = "pending"): \Indieinabox\DTO\InteractionDto
+        {
+            return \Indieinabox\DTO\InteractionDto::fromArray(['id' => 'wm-1']);
+        }
+
+        public function ingestActivity(array $activity, ?array $actorData = null, string $status = "pending"): ?\Indieinabox\DTO\InteractionDto
+        {
+            $this->activityCalled = [
+                'activity' => $activity,
+                'actorData' => $actorData,
+                'status' => $status,
+            ];
+            return \Indieinabox\DTO\InteractionDto::fromArray(['id' => 'act-1']);
+        }
+    };
+
+    $processor = new InboxProcessor($this->site, $this->db, null, null, null, $spy);
+    $processor->saveActivityPubCreate([
+        'type' => 'Create',
+        'actor' => 'https://remote.social/actor',
+        'object' => [
+            'id' => 'https://remote.social/notes/1',
+            'type' => 'Note',
+            'content' => 'Hello federated world',
+            'inReplyTo' => 'https://example.com/posts/first',
+        ],
+    ]);
+
+    expect($spy->activityCalled)->not->toBeNull()
+        ->and($spy->activityCalled['activity']['type'])->toBe('Create')
+        ->and($spy->activityCalled['activity']['actor'])->toBe('https://remote.social/actor')
+        ->and($spy->activityCalled['status'])->toBe('pending');
+});
+

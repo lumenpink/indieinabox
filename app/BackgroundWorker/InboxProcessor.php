@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace Indieinabox\BackgroundWorker;
 
+use Indieinabox\Core\Container;
 use Indieinabox\Core\Database;
 use Indieinabox\Federation\HttpSignature;
+use Indieinabox\Services\Contracts\IngestInteractionServiceInterface;
+use Indieinabox\Services\IngestInteractionService;
 use Indieinabox\Site\Site;
 use Indieinabox\SiteBuilder\SiteBuilder;
-use Indieinabox\Support\Yaml;
 use Indieinabox\Webmention\SourceVerifier;
 use PDO;
 
@@ -34,6 +36,7 @@ class InboxProcessor
      * @var callable|null
      */
     private $signatureVerifier;
+    private IngestInteractionServiceInterface $ingestService;
 
     /**
      * @param Site $site
@@ -41,19 +44,29 @@ class InboxProcessor
      * @param callable|null $fetcher Optional HTTP fetcher hook fn(string $url): string|false
      * @param callable|null $jsonFetcher Optional JSON fetcher hook fn(string $url): ?array
      * @param callable|null $signatureVerifier Optional HTTP signature verifier hook
+     * @param IngestInteractionServiceInterface|null $ingestService
      */
     public function __construct(
         Site $site,
         PDO $db,
         ?callable $fetcher = null,
         ?callable $jsonFetcher = null,
-        ?callable $signatureVerifier = null
+        ?callable $signatureVerifier = null,
+        ?IngestInteractionServiceInterface $ingestService = null
     ) {
         $this->site = $site;
         $this->db = $db;
         $this->fetcher = $fetcher;
         $this->jsonFetcher = $jsonFetcher;
         $this->signatureVerifier = $signatureVerifier;
+
+        if ($ingestService !== null) {
+            $this->ingestService = $ingestService;
+        } elseif (class_exists(Container::class) && Container::getInstance()->has(IngestInteractionServiceInterface::class)) {
+            $this->ingestService = Container::getInstance()->get(IngestInteractionServiceInterface::class);
+        } else {
+            $this->ingestService = new IngestInteractionService();
+        }
     }
 
     /**
@@ -145,69 +158,17 @@ class InboxProcessor
 
         $parsed = $verification['content'];
         $content = $parsed['text'] ?? '';
-        $whostyleData = $parsed['whostyle'] ?? null;
-        $interactionType = $parsed['interaction_type'] ?? 'webmention';
-
-        $targetPath = parse_url($target, PHP_URL_PATH) ?? '/';
-        $sitePath = parse_url($this->site->metadata->fqdn ?? '', PHP_URL_PATH);
-        if ($sitePath && $sitePath !== '/' && strpos($targetPath, $sitePath) === 0) {
-            $targetPath = substr($targetPath, strlen($sitePath));
-        }
-        $slug = trim($targetPath, '/');
-        if ($slug === '') {
-            $slug = 'home';
-        }
-        $hash = md5($slug);
-
-        $dataDir = Database::$dataDir ?? (dirname(__DIR__, 2) . '/data');
-        $notificationsDir = $dataDir . DIRECTORY_SEPARATOR . 'microsub' . DIRECTORY_SEPARATOR . 'inbox' . DIRECTORY_SEPARATOR . 'notifications';
-
-        if (!is_dir($notificationsDir)) {
-            @mkdir($notificationsDir, 0755, true);
-        }
-
         $authorName = $parsed['author_name'] ?: ($parsed['title'] ?: 'Webmention from ' . (parse_url($source, PHP_URL_HOST) ?? 'external link'));
 
-        $newMention = [
-            'id' => $hash . '_' . md5($source),
-            'target_hash' => $hash,
-            'source' => $source,
-            'target' => $target,
-            'author_name' => $authorName,
-            'author_photo' => $parsed['author_photo'] ?? '',
-            'url' => $parsed['author_url'] ?: $source,
-            'published' => time(),
-            'is_read' => 0,
-            'type' => 'webmention',
-            'interaction_type' => $interactionType,
-            'status' => 'pending',
-            'whostyle' => $whostyleData ?? []
-        ];
-
         $isSpam = $this->checkAkismet([
-            'author_name' => $newMention['author_name'],
+            'author_name' => $authorName,
             'author_url' => $source,
-            'content' => $content
+            'content' => $content,
         ]);
 
-        if ($isSpam) {
-            $newMention['status'] = 'spam';
-            $targetDir = $dataDir . DIRECTORY_SEPARATOR . 'microsub' . DIRECTORY_SEPARATOR . 'inbox' . DIRECTORY_SEPARATOR . 'spam';
-        } else {
-            $targetDir = $notificationsDir;
-        }
+        $status = $isSpam ? 'spam' : 'pending';
 
-        if (!is_dir($targetDir)) {
-            @mkdir($targetDir, 0755, true);
-        }
-
-        $filepath = $targetDir . DIRECTORY_SEPARATOR . $newMention['id'] . '.md';
-
-        $yaml = new Yaml();
-        $yamlStr = $yaml->dump($newMention);
-        $fileContent = "---\n" . trim($yamlStr) . "\n---\n\n" . $content;
-
-        file_put_contents($filepath, $fileContent);
+        $this->ingestService->ingestWebmention($source, $target, $parsed, $status);
 
         // Extract external links to ArchiveQueue
         $this->extractLinksToArchiveQueue($content);
@@ -288,8 +249,9 @@ class InboxProcessor
 
                     // Construct a fake Create activity to process locally
                     $fakeCreate = [
+                        'type' => 'Create',
                         'actor' => $innerObj['attributedTo'] ?? $announcedObj['actor'] ?? $activity['actor'],
-                        'object' => $innerObj
+                        'object' => $innerObj,
                     ];
                     $this->saveActivityPubCreate($fakeCreate);
                 }
@@ -388,50 +350,17 @@ class InboxProcessor
             }
         }
 
-        $frontmatter = [
-            'id' => $hash,
-            'url' => $object['url'] ?? $id,
-            'author_name' => $authorName,
-            'author_photo' => $authorPhoto,
-            'published' => $published,
-            'is_read' => 0,
-            'type' => 'activitypub'
-        ];
-
-        if (isset($object['inReplyToBook'])) {
-            $frontmatter['read_of'] = $object['inReplyToBook'];
-            if (isset($object['rating'])) {
-                $frontmatter['rating'] = $object['rating'];
-            }
-            if (isset($object['readingStatus'])) {
-                $frontmatter['read_status'] = $object['readingStatus'];
-            }
-        }
-
-        $yaml = new Yaml();
-        $yamlStr = $yaml->dump($frontmatter);
+        $activity['object']['content'] = $content;
 
         $isSpam = $this->checkAkismet([
             'author_name' => $authorName,
             'author_url' => $actor,
-            'content' => $content
+            'content' => $content,
         ]);
 
-        if ($isSpam) {
-            $frontmatter['status'] = 'spam';
-            $targetDir = $dataDir . DIRECTORY_SEPARATOR . 'microsub' . DIRECTORY_SEPARATOR . 'inbox' . DIRECTORY_SEPARATOR . 'spam';
-        } else {
-            $targetDir = $inboxDir;
-        }
+        $status = $isSpam ? 'spam' : 'pending';
 
-        if (!is_dir($targetDir)) {
-            @mkdir($targetDir, 0755, true);
-        }
-
-        $filepath = $targetDir . DIRECTORY_SEPARATOR . $hash . '.md';
-        $fileContent = "---\n" . trim($yamlStr) . "\n---\n\n" . $content;
-
-        file_put_contents($filepath, $fileContent);
+        $this->ingestService->ingestActivity($activity, $actorData, $status);
 
         // Extract external links to ArchiveQueue
         $this->extractLinksToArchiveQueue($content);

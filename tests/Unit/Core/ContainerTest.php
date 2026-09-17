@@ -14,6 +14,7 @@ beforeEach(function () {
 
 afterEach(function () {
     /** @var \Tests\TestCase $this */
+    \Indieinabox\Core\Database::disconnect();
     $this->container->flush();
 });
 
@@ -74,4 +75,33 @@ test('it manages static singleton instance', function () {
     Container::setInstance($custom);
     expect(Container::getInstance())->toBe($custom);
     Container::setInstance(null);
+});
+
+test('it registers and resolves all DDD and SOLID domain service interfaces', function () {
+    /** @var \Tests\TestCase $this */
+    \Indieinabox\Core\Database::connect(':memory:');
+    $container = Container::getInstance();
+    $container->instance(Site::class, new Site());
+
+    $interfaces = [
+        \Indieinabox\Repositories\Contracts\SettingsRepositoryInterface::class,
+        \Indieinabox\Repositories\Contracts\InteractionRepositoryInterface::class,
+        \Indieinabox\Taxonomy\Contracts\TaxonomyServiceInterface::class,
+        \Indieinabox\Taxonomy\Contracts\SeoMetadataResolverInterface::class,
+        \Indieinabox\Repositories\Contracts\ActivityPubRepositoryInterface::class,
+        \Indieinabox\Repositories\Contracts\MicrosubRepositoryInterface::class,
+        \Indieinabox\Services\Contracts\UpdateServiceInterface::class,
+        \Indieinabox\Services\Contracts\BackupServiceInterface::class,
+        \Indieinabox\BackgroundWorker\Contracts\BackgroundWorkerInterface::class,
+        \Indieinabox\Events\Contracts\EventDispatcherInterface::class,
+        \Indieinabox\Repositories\Contracts\ContentRepositoryInterface::class,
+        \Indieinabox\Commands\Contracts\CommandBusInterface::class,
+        \Indieinabox\Services\Contracts\IngestInteractionServiceInterface::class,
+    ];
+
+    foreach ($interfaces as $interface) {
+        expect($container->has($interface))->toBeTrue();
+        $resolved = $container->get($interface);
+        expect($resolved)->toBeInstanceOf($interface);
+    }
 });

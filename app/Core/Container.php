@@ -140,6 +140,13 @@ class Container implements ContainerInterface
             return new \Indieinabox\Commands\CommandBus();
         });
         $this->bind(\Indieinabox\Commands\CommandBus::class, \Indieinabox\Commands\Contracts\CommandBusInterface::class);
+
+        $this->singleton(\Indieinabox\Services\Contracts\IngestInteractionServiceInterface::class, function (self $container) {
+            $repo = $container->has(InteractionRepositoryInterface::class) ? $container->get(InteractionRepositoryInterface::class) : null;
+            $dispatcher = $container->has(\Indieinabox\Events\Contracts\EventDispatcherInterface::class) ? $container->get(\Indieinabox\Events\Contracts\EventDispatcherInterface::class) : null;
+            return new \Indieinabox\Services\IngestInteractionService($repo, $dispatcher);
+        });
+        $this->bind(\Indieinabox\Services\IngestInteractionService::class, \Indieinabox\Services\Contracts\IngestInteractionServiceInterface::class);
     }
 
     /**

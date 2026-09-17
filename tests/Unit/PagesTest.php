@@ -77,3 +77,49 @@ it('retrieves recent posts sorted descending by date with limit and custom filte
         ->and($filtered[0]->slug)->toBe('med')
         ->and($filtered[1]->slug)->toBe('old');
 });
+
+it('converts Page instance to associative array using toArray', function () {
+    $page = Page::fromArray([
+        'title' => 'Sample Post',
+        'slug' => 'sample-post',
+        'kind' => 'article',
+        'lang' => 'en',
+        'tags' => ['tech', 'indieweb'],
+        'content' => 'Hello universe',
+    ]);
+
+    $array = $page->toArray();
+    expect($array)->toBeArray()
+        ->and($array['slug'])->toBe('sample-post')
+        ->and($array['kind'])->toBe('article')
+        ->and($array['lang'])->toBe('en')
+        ->and($array['tags'])->toBe(['tech', 'indieweb'])
+        ->and($array['frontmatter']['title'])->toBe('Sample Post');
+});
+
+it('queries Pages collection using SpecificationInterface and composite specifications', function () {
+    $pages = new Pages();
+    $p1 = Page::fromArray(['slug' => 'art-en', 'kind' => 'article', 'lang' => 'en', 'tags' => ['php', 'web']]);
+    $p2 = Page::fromArray(['slug' => 'art-pt', 'kind' => 'article', 'lang' => 'pt', 'tags' => ['php']]);
+    $p3 = Page::fromArray(['slug' => 'note-en', 'kind' => 'note', 'lang' => 'en', 'tags' => ['quick']]);
+
+    $pages->add($p1);
+    $pages->add($p2);
+    $pages->add($p3);
+
+    $articleSpec = new \Indieinabox\Specifications\Content\KindSpecification('article');
+    $articles = $pages->query($articleSpec);
+    expect($articles)->toHaveCount(2)
+        ->and(array_keys($articles))->toEqualCanonicalizing(['art-en', 'art-pt']);
+
+    $enArticlesSpec = $articleSpec->and(new \Indieinabox\Specifications\Content\LanguageSpecification('en'));
+    $enArticles = $pages->query($enArticlesSpec);
+    expect($enArticles)->toHaveCount(1)
+        ->and(array_keys($enArticles))->toBe(['art-en']);
+
+    $phpTagSpec = new \Indieinabox\Specifications\Content\TagSpecification(['php']);
+    $phpPosts = $pages->query($phpTagSpec);
+    expect($phpPosts)->toHaveCount(2)
+        ->and(array_keys($phpPosts))->toEqualCanonicalizing(['art-en', 'art-pt']);
+});
+

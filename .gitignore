@@ -25,7 +25,7 @@ sonarqube
 scratch/
 *.lock
 .cron.lock
-tests/Functional/tmp_*/
+tests/**/tmp_*/
 data/avatars/
 data/microsub/
 data/archived_pdfs/

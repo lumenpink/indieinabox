@@ -157,3 +157,10 @@ Checks whether the page contains a specific tag.
 `public function getDate(): DateTime`
 
 Returns the publication date of the page.
+
+### toArray()
+`public function toArray(): array`
+
+Converts this Page instance into an associative array structure.
+
+@return array<string, mixed>

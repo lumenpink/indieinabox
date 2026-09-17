@@ -505,4 +505,46 @@ class Page
     {
         return $this->date;
     }
+
+    /**
+     * Converts this Page instance into an associative array structure.
+     *
+     * @return array<string, mixed>
+     */
+    public function toArray(): array
+    {
+        $dateStr = null;
+        if ($this->date instanceof \DateTimeInterface) {
+            $dateStr = $this->date->format('Y-m-d H:i:s');
+        }
+
+        $kind = $this->getKind();
+        $lang = $this->getLanguage();
+        $tags = (array) ($this->metadata->tags ?? []);
+        $category = (array) ($this->metadata->category ?? []);
+
+        return [
+            'slug' => $this->slug,
+            'relpath' => $this->relpath,
+            'filepath' => $this->filepath,
+            'title' => $this->getTitle(),
+            'kind' => $kind,
+            'lang' => $lang,
+            'date' => $dateStr,
+            'tags' => $tags,
+            'category' => $category,
+            'content' => (string) ($this->content->content ?? ''),
+            'originalcontent' => (string) ($this->content->originalcontent ?? ''),
+            'rawBody' => (string) ($this->content->rawBody ?? ''),
+            'frontmatter' => [
+                'title' => $this->metadata->title ?? null,
+                'kind' => $kind,
+                'lang' => $lang,
+                'date' => $dateStr,
+                'tags' => $tags,
+                'category' => $category,
+                'layout' => $this->metadata->layout ?? null,
+            ],
+        ];
+    }
 }

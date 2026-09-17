@@ -278,6 +278,11 @@
 @param string|null $lang Optional language to filter by.<br />
 @param callable|null $filter Optional filter predicate.<br />
 @return array<int, Page></p>
+<h3>query()</h3>
+<p><code>public function query(Indieinabox\Specifications\Contracts\SpecificationInterface $specification): array</code></p>
+<p>Queries pages matching a given specification.</p>
+<p>@param SpecificationInterface $specification<br />
+@return array<string, Page|array<string, mixed>&gt;</p>
 <h3>offsetExists()</h3>
 <p><code>public function offsetExists(?mixed $key)</code></p>
 <h3>offsetGet()</h3>

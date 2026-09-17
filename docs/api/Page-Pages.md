@@ -74,6 +74,14 @@ Retrieves recent posts, optionally filtered by language and custom predicate, so
 @param callable|null $filter Optional filter predicate.
 @return array<int, Page>
 
+### query()
+`public function query(Indieinabox\Specifications\Contracts\SpecificationInterface $specification): array`
+
+Queries pages matching a given specification.
+
+@param SpecificationInterface $specification
+@return array<string, Page|array<string, mixed>>
+
 ### offsetExists()
 `public function offsetExists(?mixed $key)`
 

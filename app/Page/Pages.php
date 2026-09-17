@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace Indieinabox\Page;
 
 use ArrayObject;
+use Indieinabox\Specifications\Contracts\SpecificationInterface;
 
 /**
  * @extends ArrayObject<string, Page>
@@ -148,5 +149,19 @@ class Pages extends ArrayObject
         });
 
         return array_slice(array_values($filtered), 0, $limit);
+    }
+
+    /**
+     * Queries pages matching a given specification.
+     *
+     * @param SpecificationInterface $specification
+     * @return array<string, Page|array<string, mixed>>
+     */
+    public function query(SpecificationInterface $specification): array
+    {
+        return array_filter($this->pages, function ($p) use ($specification) {
+            $candidate = ($p instanceof Page) ? $p->toArray() : (array) $p;
+            return $specification->isSatisfiedBy($candidate);
+        });
     }
 }

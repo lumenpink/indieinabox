@@ -174,9 +174,6 @@ if (isset($config['twtxt'])) {
     $site->twtxt->hubs = (array) ($twtxtData['hubs'] ?? []);
 }
 
-global $urltranslations;
-$urltranslations = \Indieinabox\Core\Database::getUrlTranslations();
-
 if (php_sapi_name() === 'cli') {
     $kernel = new \Indieinabox\Console\ConsoleKernel($site);
     $exitCode = $kernel->handle($argv);

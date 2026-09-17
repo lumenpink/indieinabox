@@ -19,6 +19,10 @@ Holds metadata related to the site.
 
 @var string
 
+### `public ?string $title`
+
+@var ?string
+
 ### `public string $fqdn`
 
 @var string

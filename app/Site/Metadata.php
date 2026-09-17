@@ -24,6 +24,10 @@ class Metadata
      */
     public string $defaultTitle;
     /**
+     * @var ?string
+     */
+    public ?string $title = null;
+    /**
      * @var string
      */
     public string $fqdn;
@@ -55,6 +59,7 @@ class Metadata
         $this->sitename = $sitename;
         $this->author = $author;
         $this->defaultTitle = $defaultTitle;
+        $this->title = $defaultTitle;
         $this->fqdn = $fqdn;
         $this->description = $description;
     }

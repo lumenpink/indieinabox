@@ -197,4 +197,62 @@ class FileSystemContentRepository implements ContentRepositoryInterface
 
         return $files;
     }
+
+    /**
+     * @param \Indieinabox\Specifications\Contracts\SpecificationInterface $specification
+     * @param string|null $dir
+     * @return array<int, array{filepath: string, frontmatter: array<string, mixed>, body: string, slug: string, kind: string, date: string|null, lang: string|null}>
+     */
+    public function query(\Indieinabox\Specifications\Contracts\SpecificationInterface $specification, ?string $dir = null): array
+    {
+        $searchDir = $dir !== null && $dir !== '' ? $dir : $this->contentBaseDir;
+        $files = $this->scan($searchDir);
+        $results = [];
+
+        foreach ($files as $file) {
+            $raw = $this->findByPath($file);
+            if ($raw === null) {
+                continue;
+            }
+
+            $parsed = $this->parseFrontmatterMarkdown($raw);
+            $frontmatter = $parsed['frontmatter'];
+            $body = $parsed['body'];
+
+            // Extract relative parts
+            $rel = ltrim(substr($file, strlen($searchDir)), DIRECTORY_SEPARATOR);
+            $parts = explode(DIRECTORY_SEPARATOR, $rel);
+
+            $slug = basename($file, '.md');
+            $kind = (string) ($frontmatter['kind'] ?? '');
+            $lang = isset($frontmatter['lang']) ? (string) $frontmatter['lang'] : (isset($frontmatter['language']) ? (string) $frontmatter['language'] : null);
+
+            if ($kind === '' && count($parts) >= 2) {
+                if (strlen($parts[0]) === 2 && count($parts) >= 3) {
+                    $lang = $lang ?? $parts[0];
+                    $kind = $parts[1];
+                } else {
+                    $kind = $parts[0];
+                }
+            }
+
+            $date = isset($frontmatter['date']) ? (string) $frontmatter['date'] : null;
+
+            $candidate = [
+                'filepath' => $file,
+                'frontmatter' => $frontmatter,
+                'body' => $body,
+                'slug' => (string) $slug,
+                'kind' => (string) $kind,
+                'date' => $date,
+                'lang' => $lang,
+            ];
+
+            if ($specification->isSatisfiedBy($candidate)) {
+                $results[] = $candidate;
+            }
+        }
+
+        return $results;
+    }
 }

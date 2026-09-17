@@ -65,3 +65,12 @@ Recursively scans a content directory for Markdown (.md) files.
 
 @param string $dir
 @return array<int, string> List of absolute file paths
+
+### query()
+`abstract public function query(Indieinabox\Specifications\Contracts\SpecificationInterface $specification, ?string $dir = null): array`
+
+Queries content files against a specification and returns matching parsed candidates.
+
+@param \Indieinabox\Specifications\Contracts\SpecificationInterface $specification
+@param string|null $dir Optional directory override
+@return array<int, array{filepath: string, frontmatter: array<string, mixed>, body: string, slug: string, kind: string, date: string|null, lang: string|null}>

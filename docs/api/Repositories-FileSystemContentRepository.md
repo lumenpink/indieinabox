@@ -40,3 +40,10 @@ Filesystem-backed implementation of ContentRepositoryInterface.
 
 ### scan()
 `public function scan(string $dir): array`
+
+### query()
+`public function query(Indieinabox\Specifications\Contracts\SpecificationInterface $specification, ?string $dir = null): array`
+
+@param \Indieinabox\Specifications\Contracts\SpecificationInterface $specification
+@param string|null $dir
+@return array<int, array{filepath: string, frontmatter: array<string, mixed>, body: string, slug: string, kind: string, date: string|null, lang: string|null}>

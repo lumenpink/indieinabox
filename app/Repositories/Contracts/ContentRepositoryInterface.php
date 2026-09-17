@@ -83,4 +83,13 @@ interface ContentRepositoryInterface
      * @return array<int, string> List of absolute file paths
      */
     public function scan(string $dir): array;
+
+    /**
+     * Queries content files against a specification and returns matching parsed candidates.
+     *
+     * @param \Indieinabox\Specifications\Contracts\SpecificationInterface $specification
+     * @param string|null $dir Optional directory override
+     * @return array<int, array{filepath: string, frontmatter: array<string, mixed>, body: string, slug: string, kind: string, date: string|null, lang: string|null}>
+     */
+    public function query(\Indieinabox\Specifications\Contracts\SpecificationInterface $specification, ?string $dir = null): array;
 }

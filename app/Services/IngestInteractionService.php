@@ -65,7 +65,7 @@ class IngestInteractionService implements IngestInteractionServiceInterface
             "author_name" => $interaction->getAuthorName(),
             "author_photo" => $interaction->getAuthorPhoto() ?? "",
             "author_url" => $interaction->getAuthorUrl() ?? "",
-            "url" => $interaction->getAuthorUrl() ?: $interaction->getSource(),
+            "url" => $interaction->getMetadata()["url"] ?? ($interaction->getAuthorUrl() ?: $interaction->getSource()),
             "published" => $interaction->getPublishedAt()->getTimestamp(),
             "is_read" => 0,
             "type" => $interaction->getProtocol(),
@@ -79,7 +79,12 @@ class IngestInteractionService implements IngestInteractionServiceInterface
             }
         }
 
-        $channel = $interaction->getStatus() === "spam" ? "spam" : "notifications";
+        $channel = "notifications";
+        if ($interaction->getStatus() === "spam") {
+            $channel = "spam";
+        } elseif ($interaction->getProtocol() === "activitypub" && in_array($interaction->getType(), ["mention", "create", "note", "article"], true)) {
+            $channel = "inbox";
+        }
         $saved = $this->interactionRepo->save(
             $interaction->getId(),
             $metadata,

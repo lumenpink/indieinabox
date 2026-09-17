@@ -9,10 +9,12 @@ Publishes index pages: section indexes, timeline indexes, taxonomies, and sitema
 
 ### `private Indieinabox\SiteBuilder\PagePublisher $pagePublisher`
 
+### `private Indieinabox\Taxonomy\Contracts\TaxonomyServiceInterface $taxonomyService`
+
 ## Methods
 
 ### __construct()
-`public function __construct(Indieinabox\Site\Site $site, Indieinabox\SiteBuilder\PagePublisher $pagePublisher)`
+`public function __construct(Indieinabox\Site\Site $site, Indieinabox\SiteBuilder\PagePublisher $pagePublisher, ?Indieinabox\Taxonomy\Contracts\TaxonomyServiceInterface $taxonomyService = null)`
 
 ### publishAll()
 `public function publishAll(Indieinabox\Page\Pages $pages): void`
@@ -83,3 +85,10 @@ Compiles index pages for a taxonomy (e.g. tags or flowerbeds).
 @param string $taxonomyKey The metadata key (e.g. 'tags', 'flowerbed')
 @param iterable<Page> $pages
 @return void
+
+### getTaxonomyService()
+`public function getTaxonomyService(): Indieinabox\Taxonomy\Contracts\TaxonomyServiceInterface`
+
+Retrieves the taxonomy service instance.
+
+@return \Indieinabox\Taxonomy\Contracts\TaxonomyServiceInterface

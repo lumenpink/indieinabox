@@ -255,6 +255,7 @@ translation virtualization, content rendering, feed generation, and asset publis
 <p>@var \Indieinabox\SiteBuilder\TranslationVirtualizer</p>
 <h3><code>private Indieinabox\SiteBuilder\IndexPublisher $indexPublisher</code></h3>
 <p>@var \Indieinabox\SiteBuilder\IndexPublisher</p>
+<h3><code>private Indieinabox\Taxonomy\Contracts\TaxonomyServiceInterface $taxonomyService</code></h3>
 <h3><code>public static array $manifest</code></h3>
 <p>Stores absolute paths of all generated files during the build process<br />
 for Garbage Collection.<br />
@@ -263,7 +264,7 @@ for Garbage Collection.<br />
 @var string[]</p>
 <h2>Methods</h2>
 <h3><em></em>construct()</h3>
-<p><code>public function __construct(Indieinabox\Site\Site $site, ?Indieinabox\Page\Pages $pages = null, ?Indieinabox\Markdown\ParserInterface $parser = null, ?Indieinabox\SiteBuilder\AssetPublisher $assetPublisher = null, ?Indieinabox\SiteBuilder\FeedPublisher $feedPublisher = null, ?Indieinabox\SiteBuilder\PagePublisher $pagePublisher = null, ?Indieinabox\SiteBuilder\TranslationVirtualizer $translationVirtualizer = null, ?Indieinabox\SiteBuilder\IndexPublisher $indexPublisher = null, ?Indieinabox\SiteBuilder\ContentScanner $contentScanner = null)</code></p>
+<p><code>public function __construct(Indieinabox\Site\Site $site, ?Indieinabox\Page\Pages $pages = null, ?Indieinabox\Markdown\ParserInterface $parser = null, ?Indieinabox\SiteBuilder\AssetPublisher $assetPublisher = null, ?Indieinabox\SiteBuilder\FeedPublisher $feedPublisher = null, ?Indieinabox\SiteBuilder\PagePublisher $pagePublisher = null, ?Indieinabox\SiteBuilder\TranslationVirtualizer $translationVirtualizer = null, ?Indieinabox\SiteBuilder\IndexPublisher $indexPublisher = null, ?Indieinabox\SiteBuilder\ContentScanner $contentScanner = null, ?Indieinabox\Taxonomy\Contracts\TaxonomyServiceInterface $taxonomyService = null)</code></p>
 <p>SiteBuilder constructor.</p>
 <p>@param \Indieinabox\Site\Site $site The site configuration and environment settings.<br />
 @param \Indieinabox\Page\Pages|null $pages An optional collection of parsed pages.<br />
@@ -273,7 +274,8 @@ for Garbage Collection.<br />
 @param \Indieinabox\SiteBuilder\PagePublisher|null $pagePublisher An optional page publisher.<br />
 @param \Indieinabox\SiteBuilder\TranslationVirtualizer|null $translationVirtualizer An optional translation virtualizer.<br />
 @param \Indieinabox\SiteBuilder\IndexPublisher|null $indexPublisher An optional index publisher.<br />
-@param \Indieinabox\SiteBuilder\ContentScanner|null $contentScanner An optional content scanner.</p>
+@param \Indieinabox\SiteBuilder\ContentScanner|null $contentScanner An optional content scanner.<br />
+@param \Indieinabox\Taxonomy\Contracts\TaxonomyServiceInterface|null $taxonomyService An optional taxonomy service.</p>
 <h3>getPages()</h3>
 <p><code>public function getPages(): Indieinabox\Page\Pages</code></p>
 <p>Retrieves the collection of processed pages.</p>
@@ -306,6 +308,10 @@ for Garbage Collection.<br />
 <p><code>public function getIndexPublisher(): Indieinabox\SiteBuilder\IndexPublisher</code></p>
 <p>Retrieves the index publisher instance.</p>
 <p>@return \Indieinabox\SiteBuilder\IndexPublisher</p>
+<h3>getTaxonomyService()</h3>
+<p><code>public function getTaxonomyService(): Indieinabox\Taxonomy\Contracts\TaxonomyServiceInterface</code></p>
+<p>Retrieves the taxonomy service instance.</p>
+<p>@return \Indieinabox\Taxonomy\Contracts\TaxonomyServiceInterface</p>
 <h3>addManifest()</h3>
 <p><code>public static function addManifest(string $path): void</code></p>
 <p>Adds a file path to the manifest array.</p>

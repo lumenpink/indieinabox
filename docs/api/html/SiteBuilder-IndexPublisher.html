@@ -237,9 +237,10 @@
 <h2>Properties</h2>
 <h3><code>private Indieinabox\Site\Site $site</code></h3>
 <h3><code>private Indieinabox\SiteBuilder\PagePublisher $pagePublisher</code></h3>
+<h3><code>private Indieinabox\Taxonomy\Contracts\TaxonomyServiceInterface $taxonomyService</code></h3>
 <h2>Methods</h2>
 <h3><em></em>construct()</h3>
-<p><code>public function __construct(Indieinabox\Site\Site $site, Indieinabox\SiteBuilder\PagePublisher $pagePublisher)</code></p>
+<p><code>public function __construct(Indieinabox\Site\Site $site, Indieinabox\SiteBuilder\PagePublisher $pagePublisher, ?Indieinabox\Taxonomy\Contracts\TaxonomyServiceInterface $taxonomyService = null)</code></p>
 <h3>publishAll()</h3>
 <p><code>public function publishAll(Indieinabox\Page\Pages $pages): void</code></p>
 <p>Publishes all aggregators, taxonomy indexes, sitemaps, and timeline pages.</p>
@@ -286,6 +287,10 @@
 @param string $taxonomyKey The metadata key (e.g. &apos;tags&apos;, &apos;flowerbed&apos;)<br />
 @param iterable<Page> $pages<br />
 @return void</p>
+<h3>getTaxonomyService()</h3>
+<p><code>public function getTaxonomyService(): Indieinabox\Taxonomy\Contracts\TaxonomyServiceInterface</code></p>
+<p>Retrieves the taxonomy service instance.</p>
+<p>@return \Indieinabox\Taxonomy\Contracts\TaxonomyServiceInterface</p>
 
     </div>
 </body>

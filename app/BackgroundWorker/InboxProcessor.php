@@ -303,6 +303,7 @@ class InboxProcessor
             // Download avatar locally
             if ($authorPhoto) {
                 $authorPhoto = $this->downloadAvatarLocally($actor, $authorPhoto);
+                $actorData['icon']['url'] = $authorPhoto;
             }
         }
 

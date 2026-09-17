@@ -245,12 +245,21 @@ final class InteractionDto
             return null;
         }
 
-        $targetSlug = trim(parse_url($target, PHP_URL_PATH) ?? $target, "/");
-        if ($targetSlug === "") {
-            $targetSlug = "home";
+        $objectId = is_array($object) ? (string) ($object["id"] ?? "") : "";
+        if (is_array($object) && isset($object["url"])) {
+            $meta["url"] = (string) $object["url"];
         }
-        $targetHash = md5($targetSlug);
-        $id = $targetHash . "_" . md5($activityId ?: ($actorUri . microtime()));
+
+        if ($target !== "") {
+            $targetSlug = trim(parse_url($target, PHP_URL_PATH) ?? $target, "/");
+            if ($targetSlug === "") {
+                $targetSlug = "home";
+            }
+            $targetHash = md5($targetSlug);
+            $id = $targetHash . "_" . md5($objectId ?: $activityId);
+        } else {
+            $id = md5($objectId ?: ($activityId ?: ($actorUri . microtime())));
+        }
 
         return new self(
             $id,

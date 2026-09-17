@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Indieinabox\SiteBuilder;
 
+use Indieinabox\Core\Container;
 use Indieinabox\Markdown\ParserInterface;
 use Indieinabox\Page\Pages;
 use Indieinabox\Site\Site;
@@ -13,6 +14,8 @@ use Indieinabox\SiteBuilder\FeedPublisher;
 use Indieinabox\SiteBuilder\IndexPublisher;
 use Indieinabox\SiteBuilder\PagePublisher;
 use Indieinabox\SiteBuilder\TranslationVirtualizer;
+use Indieinabox\Taxonomy\Contracts\TaxonomyServiceInterface;
+use Indieinabox\Taxonomy\TaxonomyService;
 
 /**
  * Class SiteBuilder
@@ -58,6 +61,7 @@ class SiteBuilder
      * @var \Indieinabox\SiteBuilder\IndexPublisher
      */
     private IndexPublisher $indexPublisher;
+    private TaxonomyServiceInterface $taxonomyService;
 
     /**
      * SiteBuilder constructor.
@@ -71,6 +75,7 @@ class SiteBuilder
      * @param \Indieinabox\SiteBuilder\TranslationVirtualizer|null $translationVirtualizer An optional translation virtualizer.
      * @param \Indieinabox\SiteBuilder\IndexPublisher|null $indexPublisher An optional index publisher.
      * @param \Indieinabox\SiteBuilder\ContentScanner|null $contentScanner An optional content scanner.
+     * @param \Indieinabox\Taxonomy\Contracts\TaxonomyServiceInterface|null $taxonomyService An optional taxonomy service.
      */
     public function __construct(
         Site $site,
@@ -81,7 +86,8 @@ class SiteBuilder
         ?PagePublisher $pagePublisher = null,
         ?TranslationVirtualizer $translationVirtualizer = null,
         ?IndexPublisher $indexPublisher = null,
-        ?ContentScanner $contentScanner = null
+        ?ContentScanner $contentScanner = null,
+        ?TaxonomyServiceInterface $taxonomyService = null
     ) {
         $this->site = $site;
         $this->pages = $pages ?? new Pages();
@@ -89,9 +95,19 @@ class SiteBuilder
         $this->parser = $this->contentScanner->getParser();
         $this->assetPublisher = $assetPublisher ?? new AssetPublisher($this->site);
         $this->feedPublisher = $feedPublisher ?? new FeedPublisher($this->site);
-        $this->pagePublisher = $pagePublisher ?? new PagePublisher($this->site, $this->pages);
-        $this->translationVirtualizer = $translationVirtualizer ?? new TranslationVirtualizer($this->site);
-        $this->indexPublisher = $indexPublisher ?? new IndexPublisher($this->site, $this->pagePublisher);
+
+        $container = class_exists(Container::class) ? Container::getInstance() : null;
+        if ($taxonomyService !== null) {
+            $this->taxonomyService = $taxonomyService;
+        } elseif ($container && $container->has(TaxonomyServiceInterface::class)) {
+            $this->taxonomyService = $container->get(TaxonomyServiceInterface::class);
+        } else {
+            $this->taxonomyService = new TaxonomyService($this->site);
+        }
+
+        $this->pagePublisher = $pagePublisher ?? new PagePublisher($this->site, $this->pages, $this->taxonomyService);
+        $this->translationVirtualizer = $translationVirtualizer ?? new TranslationVirtualizer($this->site, null, $this->taxonomyService);
+        $this->indexPublisher = $indexPublisher ?? new IndexPublisher($this->site, $this->pagePublisher, $this->taxonomyService);
     }
 
     /**
@@ -172,6 +188,16 @@ class SiteBuilder
     public function getIndexPublisher(): IndexPublisher
     {
         return $this->indexPublisher;
+    }
+
+    /**
+     * Retrieves the taxonomy service instance.
+     *
+     * @return \Indieinabox\Taxonomy\Contracts\TaxonomyServiceInterface
+     */
+    public function getTaxonomyService(): TaxonomyServiceInterface
+    {
+        return $this->taxonomyService;
     }
 
     /**

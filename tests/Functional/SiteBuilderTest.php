@@ -77,3 +77,26 @@ test('SiteBuilder generates output for html, gemini, gopher, and copies media', 
     expect(file_exists($mediaFile))->toBeTrue();
     expect(file_get_contents($mediaFile))->toEqual('dummy image data');
 });
+
+test('SiteBuilder accepts and injects custom TaxonomyServiceInterface into publishers', function () {
+    $customTaxonomy = new class($this->site) extends \Indieinabox\Taxonomy\TaxonomyService {
+    };
+
+    $builder = new SiteBuilder(
+        $this->site,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        $customTaxonomy
+    );
+
+    expect($builder->getTaxonomyService())->toBe($customTaxonomy)
+        ->and($builder->getPagePublisher()->getTaxonomyService())->toBe($customTaxonomy)
+        ->and($builder->getIndexPublisher()->getTaxonomyService())->toBe($customTaxonomy)
+        ->and($builder->getTranslationVirtualizer()->getTaxonomyService())->toBe($customTaxonomy);
+});

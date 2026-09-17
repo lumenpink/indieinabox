@@ -5,13 +5,14 @@ declare(strict_types=1);
 namespace Indieinabox\SiteBuilder;
 
 use Indieinabox\Markdown\LanguageProcessor;
-use Indieinabox\Taxonomy\KindHelper;
 use Indieinabox\Page\Page;
 use Indieinabox\Page\Pages;
 use Indieinabox\Site\Site;
 use Indieinabox\Core\Container;
 use Indieinabox\Core\Database;
 use Indieinabox\Repositories\Contracts\SettingsRepositoryInterface;
+use Indieinabox\Taxonomy\Contracts\TaxonomyServiceInterface;
+use Indieinabox\Taxonomy\TaxonomyService;
 use Indieinabox\Translations\UrlTranslations;
 use RuntimeException;
 
@@ -22,13 +23,26 @@ class TranslationVirtualizer
 {
     private Site $site;
     private ?SettingsRepositoryInterface $settingsRepo;
+    private TaxonomyServiceInterface $taxonomyService;
 
-    public function __construct(Site $site, ?SettingsRepositoryInterface $settingsRepo = null)
-    {
+    public function __construct(
+        Site $site,
+        ?SettingsRepositoryInterface $settingsRepo = null,
+        ?TaxonomyServiceInterface $taxonomyService = null
+    ) {
         $this->site = $site;
-        $this->settingsRepo = $settingsRepo ?? (Container::getInstance()->has(SettingsRepositoryInterface::class)
-            ? Container::getInstance()->get(SettingsRepositoryInterface::class)
+        $container = class_exists(Container::class) ? Container::getInstance() : null;
+        $this->settingsRepo = $settingsRepo ?? (($container && $container->has(SettingsRepositoryInterface::class))
+            ? $container->get(SettingsRepositoryInterface::class)
             : null);
+
+        if ($taxonomyService !== null) {
+            $this->taxonomyService = $taxonomyService;
+        } elseif ($container && $container->has(TaxonomyServiceInterface::class)) {
+            $this->taxonomyService = $container->get(TaxonomyServiceInterface::class);
+        } else {
+            $this->taxonomyService = new TaxonomyService($this->site);
+        }
     }
 
     /**
@@ -142,8 +156,8 @@ class TranslationVirtualizer
 
                     $this->pseudoTranslate($cloned, $targetLang);
 
-                    $kindFolder = KindHelper::getKindFolder($cloned->kind, $targetLang);
-                    $sourceKindFolder = KindHelper::getKindFolder($page->kind, $sourceLang);
+                    $kindFolder = $this->taxonomyService->getKindFolder($cloned->kind, $targetLang);
+                    $sourceKindFolder = $this->taxonomyService->getKindFolder($page->kind, $sourceLang);
 
                     if (in_array($sourceKindFolder, ['page', 'generic', 'home'], true)) {
                         $sourceKindFolder = '';
@@ -224,7 +238,7 @@ class TranslationVirtualizer
             && $page->title !== 'Untitled'
             && $page->title !== 'untitled';
 
-        $kindConfig = KindHelper::getKindConfig($page->kind);
+        $kindConfig = $this->taxonomyService->getKindConfig($page->kind);
         if (isset($kindConfig['has_title']) && !$kindConfig['has_title']) {
             $hasTitle = false;
         }
@@ -235,5 +249,15 @@ class TranslationVirtualizer
             $page->content->content = $prefix . $page->content->content;
             $page->content->rawBody = $prefix . $page->content->rawBody;
         }
+    }
+
+    /**
+     * Retrieves the taxonomy service instance.
+     *
+     * @return \Indieinabox\Taxonomy\Contracts\TaxonomyServiceInterface
+     */
+    public function getTaxonomyService(): TaxonomyServiceInterface
+    {
+        return $this->taxonomyService;
     }
 }

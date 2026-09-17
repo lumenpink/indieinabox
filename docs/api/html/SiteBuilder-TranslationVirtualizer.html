@@ -237,9 +237,10 @@
 <h2>Properties</h2>
 <h3><code>private Indieinabox\Site\Site $site</code></h3>
 <h3><code>private ?Indieinabox\Repositories\Contracts\SettingsRepositoryInterface $settingsRepo</code></h3>
+<h3><code>private Indieinabox\Taxonomy\Contracts\TaxonomyServiceInterface $taxonomyService</code></h3>
 <h2>Methods</h2>
 <h3><em></em>construct()</h3>
-<p><code>public function __construct(Indieinabox\Site\Site $site, ?Indieinabox\Repositories\Contracts\SettingsRepositoryInterface $settingsRepo = null)</code></p>
+<p><code>public function __construct(Indieinabox\Site\Site $site, ?Indieinabox\Repositories\Contracts\SettingsRepositoryInterface $settingsRepo = null, ?Indieinabox\Taxonomy\Contracts\TaxonomyServiceInterface $taxonomyService = null)</code></p>
 <h3>virtualize()</h3>
 <p><code>public function virtualize(Indieinabox\Page\Pages $pages): void</code></p>
 <p>Generates pseudo-translated pages for missing languages to maintain parity.<br />
@@ -254,6 +255,10 @@ Used visually to flag that a page was automatically virtualized.</p>
 <p>@param Page $page The page to translate in place.<br />
 @param string $targetLang The target language code used as the prefix.<br />
 @return void</p>
+<h3>getTaxonomyService()</h3>
+<p><code>public function getTaxonomyService(): Indieinabox\Taxonomy\Contracts\TaxonomyServiceInterface</code></p>
+<p>Retrieves the taxonomy service instance.</p>
+<p>@return \Indieinabox\Taxonomy\Contracts\TaxonomyServiceInterface</p>
 
     </div>
 </body>

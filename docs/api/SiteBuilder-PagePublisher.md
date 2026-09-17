@@ -10,10 +10,14 @@ across HTML, Gemini, and Gopher protocols.
 
 ### `private Indieinabox\Page\Pages $pages`
 
+### `private Indieinabox\Taxonomy\Contracts\TaxonomyServiceInterface $taxonomyService`
+
+### `private Indieinabox\Repositories\Contracts\InteractionRepositoryInterface $interactionRepo`
+
 ## Methods
 
 ### __construct()
-`public function __construct(Indieinabox\Site\Site $site, Indieinabox\Page\Pages $pages)`
+`public function __construct(Indieinabox\Site\Site $site, Indieinabox\Page\Pages $pages, ?Indieinabox\Taxonomy\Contracts\TaxonomyServiceInterface $taxonomyService = null, ?Indieinabox\Repositories\Contracts\InteractionRepositoryInterface $interactionRepo = null)`
 
 ### publish()
 `public function publish(Indieinabox\Page\Page $page): void`
@@ -67,3 +71,10 @@ Formats links and metadata according to RFC 1436.
 `public function getMenuLinks(Indieinabox\Page\Page $page): array`
 
 @return array<string, array<int, array<string, mixed>>>
+
+### getTaxonomyService()
+`public function getTaxonomyService(): Indieinabox\Taxonomy\Contracts\TaxonomyServiceInterface`
+
+Retrieves the taxonomy service instance.
+
+@return \Indieinabox\Taxonomy\Contracts\TaxonomyServiceInterface

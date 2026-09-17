@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace Indieinabox\SiteBuilder;
 
 use DateTime;
+use Indieinabox\Core\Container;
 use Indieinabox\Localization\Translator;
 use Indieinabox\Page\Page;
 use Indieinabox\Page\Pages;
 use Indieinabox\Site\Site;
 use Indieinabox\Support\TextParser;
-use Indieinabox\Taxonomy\KindHelper;
+use Indieinabox\Taxonomy\Contracts\TaxonomyServiceInterface;
+use Indieinabox\Taxonomy\TaxonomyService;
 use Indieinabox\Theme\ThemeHelper;
 use Indieinabox\Theme\ThemeManager;
 use Indieinabox\Twtxt\TwtxtManager;
@@ -22,11 +24,24 @@ class IndexPublisher
 {
     private Site $site;
     private PagePublisher $pagePublisher;
+    private TaxonomyServiceInterface $taxonomyService;
 
-    public function __construct(Site $site, PagePublisher $pagePublisher)
-    {
+    public function __construct(
+        Site $site,
+        PagePublisher $pagePublisher,
+        ?TaxonomyServiceInterface $taxonomyService = null
+    ) {
         $this->site = $site;
         $this->pagePublisher = $pagePublisher;
+
+        $container = class_exists(Container::class) ? Container::getInstance() : null;
+        if ($taxonomyService !== null) {
+            $this->taxonomyService = $taxonomyService;
+        } elseif ($container && $container->has(TaxonomyServiceInterface::class)) {
+            $this->taxonomyService = $container->get(TaxonomyServiceInterface::class);
+        } else {
+            $this->taxonomyService = new TaxonomyService($this->site);
+        }
     }
 
     /**
@@ -101,7 +116,7 @@ class IndexPublisher
             if (empty($pagesForKind)) {
                 continue;
             }
-            $config = $this->site->config['kinds'][$kind] ?? KindHelper::getKindConfig($kind);
+            $config = $this->site->config['kinds'][$kind] ?? $this->taxonomyService->getKindConfig($kind);
             if (isset($config['show_in_menu']) && !$config['show_in_menu']) {
                 continue;
             }
@@ -237,11 +252,11 @@ class IndexPublisher
         foreach ($grouped as $lang => $months) {
             /** @var Page[] $allPagesForLang */
             $allPagesForLang = [];
-            $titleBase = KindHelper::kindLabel($targetKind, $lang);
+            $titleBase = $this->taxonomyService->getKindLabel($targetKind, $lang);
 
             foreach ($months as $yearMonth => $monthPages) {
                 $monthSlug = ($lang === $this->site->localization->defaultLang ? '' : $lang . '/')
-                    . KindHelper::getKindFolder($targetKind, $lang) . '/' . $yearMonth . '/';
+                    . $this->taxonomyService->getKindFolder($targetKind, $lang) . '/' . $yearMonth . '/';
                 $monthPage = Page::fromArray([
                     'title' => $titleBase . ' - ' . $yearMonth,
                     'layout' => 'index_page',
@@ -284,7 +299,7 @@ class IndexPublisher
             }
 
             $indexSlug = ($lang === $this->site->localization->defaultLang ? '' : $lang . '/')
-                . KindHelper::getKindFolder($targetKind, $lang) . '/';
+                . $this->taxonomyService->getKindFolder($targetKind, $lang) . '/';
             $indexPage = Page::fromArray([
                 'title' => $titleBase,
                 'layout' => 'index_page',
@@ -354,9 +369,9 @@ class IndexPublisher
                 return $timeB <=> $timeA;
             });
 
-            $title = KindHelper::kindLabel($targetKind, $lang);
+            $title = $this->taxonomyService->getKindLabel($targetKind, $lang);
 
-            $kindFolder = KindHelper::getKindFolder($targetKind, $lang);
+            $kindFolder = $this->taxonomyService->getKindFolder($targetKind, $lang);
             $kindSlug = ($lang === $defaultLang ? '' : $lang . '/') . $kindFolder . '/';
             if (!$prettylinks) {
                 $kindSlug = ($lang === $defaultLang ? '' : $lang . '/') . $kindFolder . '.html';
@@ -490,5 +505,15 @@ class IndexPublisher
 
             $this->pagePublisher->publish($globalPage);
         }
+    }
+
+    /**
+     * Retrieves the taxonomy service instance.
+     *
+     * @return \Indieinabox\Taxonomy\Contracts\TaxonomyServiceInterface
+     */
+    public function getTaxonomyService(): TaxonomyServiceInterface
+    {
+        return $this->taxonomyService;
     }
 }

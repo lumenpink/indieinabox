@@ -9,10 +9,12 @@ Handles translation parity and virtualization of missing pages across languages.
 
 ### `private ?Indieinabox\Repositories\Contracts\SettingsRepositoryInterface $settingsRepo`
 
+### `private Indieinabox\Taxonomy\Contracts\TaxonomyServiceInterface $taxonomyService`
+
 ## Methods
 
 ### __construct()
-`public function __construct(Indieinabox\Site\Site $site, ?Indieinabox\Repositories\Contracts\SettingsRepositoryInterface $settingsRepo = null)`
+`public function __construct(Indieinabox\Site\Site $site, ?Indieinabox\Repositories\Contracts\SettingsRepositoryInterface $settingsRepo = null, ?Indieinabox\Taxonomy\Contracts\TaxonomyServiceInterface $taxonomyService = null)`
 
 ### virtualize()
 `public function virtualize(Indieinabox\Page\Pages $pages): void`
@@ -33,3 +35,10 @@ Used visually to flag that a page was automatically virtualized.
 @param Page $page The page to translate in place.
 @param string $targetLang The target language code used as the prefix.
 @return void
+
+### getTaxonomyService()
+`public function getTaxonomyService(): Indieinabox\Taxonomy\Contracts\TaxonomyServiceInterface`
+
+Retrieves the taxonomy service instance.
+
+@return \Indieinabox\Taxonomy\Contracts\TaxonomyServiceInterface

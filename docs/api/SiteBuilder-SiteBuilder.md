@@ -44,6 +44,8 @@ translation virtualization, content rendering, feed generation, and asset publis
 
 @var \Indieinabox\SiteBuilder\IndexPublisher
 
+### `private Indieinabox\Taxonomy\Contracts\TaxonomyServiceInterface $taxonomyService`
+
 ### `public static array $manifest`
 
 Stores absolute paths of all generated files during the build process
@@ -53,7 +55,7 @@ for Garbage Collection.
 ## Methods
 
 ### __construct()
-`public function __construct(Indieinabox\Site\Site $site, ?Indieinabox\Page\Pages $pages = null, ?Indieinabox\Markdown\ParserInterface $parser = null, ?Indieinabox\SiteBuilder\AssetPublisher $assetPublisher = null, ?Indieinabox\SiteBuilder\FeedPublisher $feedPublisher = null, ?Indieinabox\SiteBuilder\PagePublisher $pagePublisher = null, ?Indieinabox\SiteBuilder\TranslationVirtualizer $translationVirtualizer = null, ?Indieinabox\SiteBuilder\IndexPublisher $indexPublisher = null, ?Indieinabox\SiteBuilder\ContentScanner $contentScanner = null)`
+`public function __construct(Indieinabox\Site\Site $site, ?Indieinabox\Page\Pages $pages = null, ?Indieinabox\Markdown\ParserInterface $parser = null, ?Indieinabox\SiteBuilder\AssetPublisher $assetPublisher = null, ?Indieinabox\SiteBuilder\FeedPublisher $feedPublisher = null, ?Indieinabox\SiteBuilder\PagePublisher $pagePublisher = null, ?Indieinabox\SiteBuilder\TranslationVirtualizer $translationVirtualizer = null, ?Indieinabox\SiteBuilder\IndexPublisher $indexPublisher = null, ?Indieinabox\SiteBuilder\ContentScanner $contentScanner = null, ?Indieinabox\Taxonomy\Contracts\TaxonomyServiceInterface $taxonomyService = null)`
 
 SiteBuilder constructor.
 
@@ -66,6 +68,7 @@ SiteBuilder constructor.
 @param \Indieinabox\SiteBuilder\TranslationVirtualizer|null $translationVirtualizer An optional translation virtualizer.
 @param \Indieinabox\SiteBuilder\IndexPublisher|null $indexPublisher An optional index publisher.
 @param \Indieinabox\SiteBuilder\ContentScanner|null $contentScanner An optional content scanner.
+@param \Indieinabox\Taxonomy\Contracts\TaxonomyServiceInterface|null $taxonomyService An optional taxonomy service.
 
 ### getPages()
 `public function getPages(): Indieinabox\Page\Pages`
@@ -122,6 +125,13 @@ Retrieves the translation virtualizer instance.
 Retrieves the index publisher instance.
 
 @return \Indieinabox\SiteBuilder\IndexPublisher
+
+### getTaxonomyService()
+`public function getTaxonomyService(): Indieinabox\Taxonomy\Contracts\TaxonomyServiceInterface`
+
+Retrieves the taxonomy service instance.
+
+@return \Indieinabox\Taxonomy\Contracts\TaxonomyServiceInterface
 
 ### addManifest()
 `public static function addManifest(string $path): void`

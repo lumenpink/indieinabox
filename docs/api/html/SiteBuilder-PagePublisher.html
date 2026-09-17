@@ -238,9 +238,11 @@ across HTML, Gemini, and Gopher protocols.</p>
 <h2>Properties</h2>
 <h3><code>private Indieinabox\Site\Site $site</code></h3>
 <h3><code>private Indieinabox\Page\Pages $pages</code></h3>
+<h3><code>private Indieinabox\Taxonomy\Contracts\TaxonomyServiceInterface $taxonomyService</code></h3>
+<h3><code>private Indieinabox\Repositories\Contracts\InteractionRepositoryInterface $interactionRepo</code></h3>
 <h2>Methods</h2>
 <h3><em></em>construct()</h3>
-<p><code>public function __construct(Indieinabox\Site\Site $site, Indieinabox\Page\Pages $pages)</code></p>
+<p><code>public function __construct(Indieinabox\Site\Site $site, Indieinabox\Page\Pages $pages, ?Indieinabox\Taxonomy\Contracts\TaxonomyServiceInterface $taxonomyService = null, ?Indieinabox\Repositories\Contracts\InteractionRepositoryInterface $interactionRepo = null)</code></p>
 <h3>publish()</h3>
 <p><code>public function publish(Indieinabox\Page\Page $page): void</code></p>
 <p>Publishes a page across all supported output formats (HTML, Gemini, Gopher).</p>
@@ -275,6 +277,10 @@ Formats links and metadata according to RFC 1436.</p>
 <h3>getMenuLinks()</h3>
 <p><code>public function getMenuLinks(Indieinabox\Page\Page $page): array</code></p>
 <p>@return array<string, array<int, array<string, mixed>&gt;&gt;</p>
+<h3>getTaxonomyService()</h3>
+<p><code>public function getTaxonomyService(): Indieinabox\Taxonomy\Contracts\TaxonomyServiceInterface</code></p>
+<p>Retrieves the taxonomy service instance.</p>
+<p>@return \Indieinabox\Taxonomy\Contracts\TaxonomyServiceInterface</p>
 
     </div>
 </body>

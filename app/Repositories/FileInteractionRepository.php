@@ -51,6 +51,15 @@ class FileInteractionRepository implements InteractionRepositoryInterface
         return $dir;
     }
 
+    private function getInboxDir(): string
+    {
+        $dir = $this->getDataDir() . DIRECTORY_SEPARATOR . 'microsub' . DIRECTORY_SEPARATOR . 'inbox' . DIRECTORY_SEPARATOR . 'inbox';
+        if (!is_dir($dir)) {
+            @mkdir($dir, 0755, true);
+        }
+        return $dir;
+    }
+
     public function findByPageSlug(string $slug, ?string $type = null): array
     {
         $hash = md5($slug);
@@ -203,7 +212,11 @@ class FileInteractionRepository implements InteractionRepositoryInterface
 
     public function save(string $id, array $metadata, string $content = '', string $channel = 'notifications'): bool
     {
-        $dir = $channel === 'spam' ? $this->getSpamDir() : $this->getNotificationsDir();
+        $dir = match ($channel) {
+            'spam' => $this->getSpamDir(),
+            'inbox' => $this->getInboxDir(),
+            default => $this->getNotificationsDir(),
+        };
         $filePath = $dir . DIRECTORY_SEPARATOR . $id . '.md';
 
         $yamlStr = $this->yaml->dump($metadata);

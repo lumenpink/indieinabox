@@ -23,6 +23,9 @@ File-backed repository storing interactions in channel markdown files.
 ### getSpamDir()
 `private function getSpamDir(): string`
 
+### getInboxDir()
+`private function getInboxDir(): string`
+
 ### findByPageSlug()
 `public function findByPageSlug(string $slug, ?string $type = null): array`
 

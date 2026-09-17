@@ -5,11 +5,15 @@ declare(strict_types=1);
 namespace Indieinabox\SiteBuilder;
 
 use Indieinabox\ActivityPub\ActivityBuilder;
+use Indieinabox\Core\Container;
 use Indieinabox\Localization\Translator;
 use Indieinabox\Markdown\ASTParser;
+use Indieinabox\Repositories\Contracts\InteractionRepositoryInterface;
+use Indieinabox\Repositories\FileInteractionRepository;
 use Indieinabox\Support\HtmlUtils;
 use Indieinabox\Support\TextParser;
-use Indieinabox\Taxonomy\KindHelper;
+use Indieinabox\Taxonomy\Contracts\TaxonomyServiceInterface;
+use Indieinabox\Taxonomy\TaxonomyService;
 use Indieinabox\Markdown\GemtextRenderer;
 use Indieinabox\Markdown\GophermapRenderer;
 use Indieinabox\Page\Page;
@@ -26,11 +30,34 @@ class PagePublisher
 {
     private Site $site;
     private Pages $pages;
+    private TaxonomyServiceInterface $taxonomyService;
+    private InteractionRepositoryInterface $interactionRepo;
 
-    public function __construct(Site $site, Pages $pages)
-    {
+    public function __construct(
+        Site $site,
+        Pages $pages,
+        ?TaxonomyServiceInterface $taxonomyService = null,
+        ?InteractionRepositoryInterface $interactionRepo = null
+    ) {
         $this->site = $site;
         $this->pages = $pages;
+
+        $container = class_exists(Container::class) ? Container::getInstance() : null;
+        if ($taxonomyService !== null) {
+            $this->taxonomyService = $taxonomyService;
+        } elseif ($container && $container->has(TaxonomyServiceInterface::class)) {
+            $this->taxonomyService = $container->get(TaxonomyServiceInterface::class);
+        } else {
+            $this->taxonomyService = new TaxonomyService($this->site);
+        }
+
+        if ($interactionRepo !== null) {
+            $this->interactionRepo = $interactionRepo;
+        } elseif ($container && $container->has(InteractionRepositoryInterface::class)) {
+            $this->interactionRepo = $container->get(InteractionRepositoryInterface::class);
+        } else {
+            $this->interactionRepo = new FileInteractionRepository();
+        }
     }
 
     /**
@@ -144,9 +171,9 @@ class PagePublisher
         }
 
         // Build interactions pages if there are any interactions
-        $likes = KindHelper::getInteractions($page, 'like');
-        $reposts = KindHelper::getInteractions($page, 'repost');
-        $replies = KindHelper::getInteractions($page, 'reply');
+        $likes = $this->interactionRepo->findByPageSlug($page->slug, 'like');
+        $reposts = $this->interactionRepo->findByPageSlug($page->slug, 'repost');
+        $replies = $this->interactionRepo->findByPageSlug($page->slug, 'reply');
 
         if (!$skipGeneration) {
             if (str_ends_with($destinationFile, '.html')) {
@@ -523,7 +550,7 @@ class PagePublisher
         if (!empty($this->site->config['kinds'])) {
             foreach ($this->site->config['kinds'] as $k => $conf) {
                 foreach ($langs as $l) {
-                    $kindFolders[] = KindHelper::getKindFolder($k, $l);
+                    $kindFolders[] = $this->taxonomyService->getKindFolder($k, $l);
                 }
             }
         }
@@ -586,7 +613,7 @@ class PagePublisher
         foreach ($langs as $l) {
             $folder = '';
             if ($kind !== 'generic' && $kind !== 'page' && $kind !== 'home') {
-                $folder = KindHelper::getKindFolder($kind, $l);
+                $folder = $this->taxonomyService->getKindFolder($kind, $l);
             }
 
             // Get the translated slug part, fallback to baseKey (which is the english/default nick)
@@ -693,13 +720,13 @@ class PagePublisher
                     continue;
                 }
 
-                $folder = KindHelper::getKindFolder($k, $lang);
+                $folder = $this->taxonomyService->getKindFolder($k, $lang);
                 if ($prettylinks) {
                     $url = $page->relpath . $langPrefix . $folder . '/';
                 } else {
                     $url = $page->relpath . $langPrefix . $folder . '.html';
                 }
-                $label = KindHelper::kindLabel($k, $lang);
+                $label = $this->taxonomyService->getKindLabel($k, $lang);
                 $footerLinks[] = ['url' => $url, 'label' => $label, 'order' => PHP_INT_MAX];
             }
         }
@@ -762,5 +789,15 @@ class PagePublisher
             'header' => $headerLinks,
             'footer' => $footerLinks
         ];
+    }
+
+    /**
+     * Retrieves the taxonomy service instance.
+     *
+     * @return \Indieinabox\Taxonomy\Contracts\TaxonomyServiceInterface
+     */
+    public function getTaxonomyService(): TaxonomyServiceInterface
+    {
+        return $this->taxonomyService;
     }
 }

@@ -21,20 +21,9 @@
   - (version) integrate cccp.sh predictive versioning support and hardcoded compiled build
   - (updater) implement unified Updater with 2-backup rotation, auto-versioning, CLI, and CRON integration
   - (webmention) integrate mf2 parsing, W3C discovery, CLI testing tool and IndieWeb compliance
-  - (builder) extract PagePublisher from SiteBuilder and clean legacy delegators
-  - (feeds) implement pluggable FeedGenerators and FeedPublisher consuming Entry
-  - (entry) introduce universal Entry domain entity with federation and poll support
-  - (database) add support for listen, watch, and read content kinds
-  - (ci) add reports dashboard workflow and summary generation script
-  - (ci) introduce custom CI Docker image and optimize CI workflows
-  - (microsub) add webmention discovery and hashtag extraction support
-  - (microsub) add ExtendedEntry and NormalizationAdapter classes
-  - (federation) add yarnd, twtd, and webmention services to test environment
-  - add pixelfed-worker to docker-compose and update federation test scripts for compatibility with updated API calls
-  - implement setup and config CLI commands for instance initialization and variable management
-  - add Caddy configuration for federation testing and automate database initialization in setup script
 
 ### Bug Fixes
+  - (ci) prevent premature headers sent in test suite and improve socket readiness check
   - (core) declare Metadata::$title and remove obsolete global in build.php
 
 ## Previous Releases
@@ -145,6 +134,18 @@
 ### [nightly]
 
 ### Features
+  - (builder) extract PagePublisher from SiteBuilder and clean legacy delegators
+  - (feeds) implement pluggable FeedGenerators and FeedPublisher consuming Entry
+  - (entry) introduce universal Entry domain entity with federation and poll support
+  - (database) add support for listen, watch, and read content kinds
+  - (ci) add reports dashboard workflow and summary generation script
+  - (ci) introduce custom CI Docker image and optimize CI workflows
+  - (microsub) add webmention discovery and hashtag extraction support
+  - (microsub) add ExtendedEntry and NormalizationAdapter classes
+  - (federation) add yarnd, twtd, and webmention services to test environment
+  - add pixelfed-worker to docker-compose and update federation test scripts for compatibility with updated API calls
+  - implement setup and config CLI commands for instance initialization and variable management
+  - add Caddy configuration for federation testing and automate database initialization in setup script
   - (cli) add CLI handler for profile management and post creation
   - automate local SSL certificate injection and stabilize cross-platform federation initialization scripts
   - update federation setup to create admin user and authenticate notes with API token

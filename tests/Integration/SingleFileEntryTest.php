@@ -34,6 +34,25 @@ function getFreeIntegrationPort(int $startPort = 9100): int
     return $startPort;
 }
 
+function waitForServer(string $host, int $maxAttempts = 60, int $sleepMicroseconds = 50000): bool
+{
+    for ($i = 0; $i < $maxAttempts; $i++) {
+        set_error_handler(static fn() => true);
+        try {
+            $fp = stream_socket_client("tcp://$host", $errno, $errstr, 0.5);
+        } finally {
+            restore_error_handler();
+        }
+
+        if ($fp !== false) {
+            fclose($fp);
+            return true;
+        }
+        usleep($sleepMicroseconds);
+    }
+    return false;
+}
+
 beforeEach(function () use ($integrationSandbox) {
     cleanIntegrationSandbox($integrationSandbox);
     mkdir($integrationSandbox, 0777, true);
@@ -176,20 +195,22 @@ PHP
     $srvCmd2 = "exec php -S $host2 -t " . escapeshellarg($integrationSandbox . '/public_html');
     $process2 = proc_open($srvCmd2, $descriptorspec, $pipes2);
 
-    // Wait 250ms for servers to start
-    usleep(250000);
+    // Wait for both servers to be ready to accept connections (up to 3 seconds)
+    expect(waitForServer($host1))->toBeTrue('Failed to start router server on ' . $host1);
+    expect(waitForServer($host2))->toBeTrue('Failed to start static server on ' . $host2);
 
     try {
         // A. Verify GET help page endpoint
         $context = stream_context_create([
             'http' => [
-                'timeout' => 2,
+                'timeout' => 10,
                 'ignore_errors' => true
             ]
         ]);
         $getResponse = file_get_contents("http://$host1/webmention", false, $context);
 
-        expect($getResponse)->toContain('Webmention Endpoint');
+        expect($getResponse)->toBeString()
+            ->and($getResponse)->toContain('Webmention Endpoint');
 
         // B. Verify POST webmention endpoint with target validation
         // Mock a source page linking to target page on server 2
@@ -210,20 +231,29 @@ PHP
                 'method'        => 'POST',
                 'header'        => "Content-type: application/x-www-form-urlencoded\r\n",
                 'content'       => $postData,
-                'timeout'       => 3,
+                'timeout'       => 10,
                 'ignore_errors' => true
             ]
         ];
         $postContext = stream_context_create($postOpts);
         $postResponse = file_get_contents("http://$host1/webmention", false, $postContext);
 
-        $json = json_decode($postResponse, true);
-        if ($json['status'] !== 202) {
-            echo "Webmention failed: " . print_r($json, true) . "\n";
+        if ($postResponse === false) {
+            $stderr1 = isset($pipes1[2]) ? stream_get_contents($pipes1[2]) : '';
+            echo "Server 1 STDERR on POST fail: " . $stderr1 . "\n";
         }
-        expect($json)->toBeArray()
-            ->and($json['status'])->toBe(202)
-            ->and($json['message'])->toContain('Webmention accepted');
+
+        expect($postResponse)->toBeString('Failed to obtain response from POST http://' . $host1 . '/webmention');
+
+        $json = json_decode($postResponse, true);
+        if (!is_array($json) || ($json['status'] ?? null) !== 202) {
+            $stderr1 = isset($pipes1[2]) ? stream_get_contents($pipes1[2]) : '';
+            echo "Webmention failed. Raw response:\n" . var_export($postResponse, true) . "\n";
+            echo "Server 1 STDERR:\n" . $stderr1 . "\n";
+        }
+        expect($json)->toBeArray('Expected valid JSON array from /webmention, got: ' . var_export($postResponse, true))
+            ->and($json['status'] ?? null)->toBe(202)
+            ->and($json['message'] ?? '')->toContain('Webmention accepted');
 
         // Run background worker to process the queued webmention
         $cronCmd = 'cd ' . escapeshellarg($integrationSandbox) . ' && php indieinabox.php cron 2>&1';

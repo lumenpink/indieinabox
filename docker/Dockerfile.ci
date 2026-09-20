@@ -38,6 +38,7 @@ RUN install-php-extensions gd zip exif
 RUN pecl install xdebug \
     && docker-php-ext-enable xdebug \
     && echo "xdebug.mode=off" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+    && echo "display_errors = Off" >> /usr/local/etc/php/conf.d/docker-php-display-errors.ini \
     && rm -rf /tmp/pear
 
 # Composer 2 (copied from official image — no installer script needed)

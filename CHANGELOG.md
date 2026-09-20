@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 ### Features
+  - (cli) support setup parameters and headless execution closes #4
   - add environment variable fallbacks for cron and build webhook tokens
   - check for database configuration before running cron worker
   - (docker) configure non-root user 1000:1000, disable SSL for reverse proxy, and add build script

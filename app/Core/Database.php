@@ -209,4 +209,41 @@ class Database
     {
         return self::getSettingsRepository()->getKinds();
     }
+
+    /**
+     * Retrieves the database schema SQL.
+     */
+    public static function getSchemaSql(): string
+    {
+        global $__SQL_SCHEMA__;
+        if (!empty($__SQL_SCHEMA__)) {
+            return (string) $__SQL_SCHEMA__;
+        }
+
+        $candidates = [
+            dirname(__DIR__, 2) . '/database.sql',
+            dirname(__DIR__) . '/database.sql',
+            (defined('DS') ? dirname(__DIR__) : dirname(__DIR__, 2)) . '/database.sql',
+        ];
+
+        foreach ($candidates as $file) {
+            if (file_exists($file)) {
+                return (string) file_get_contents($file);
+            }
+        }
+
+        return '';
+    }
+
+    /**
+     * Initializes database schema if not already initialized.
+     */
+    public static function initializeSchema(?PDO $db = null, ?string $sql = null): void
+    {
+        $targetDb = $db ?? self::getDb();
+        $schemaSql = $sql ?? self::getSchemaSql();
+        if ($schemaSql !== '') {
+            $targetDb->exec($schemaSql);
+        }
+    }
 }

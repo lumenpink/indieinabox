@@ -38,13 +38,18 @@ mb_internal_encoding("UTF-8");
 
 // $yaml = new Yaml(); // Replaced with Database
 
-$config = \Indieinabox\Core\Database::getAllSettings();
-$config['kinds'] = \Indieinabox\Core\Database::getKinds();
-$config['translations'] = \Indieinabox\Core\Database::getTranslations();
-$config['urltranslations'] = \Indieinabox\Core\Database::getUrlTranslations();
+if (\Indieinabox\Core\Database::isConnected()) {
+    $config = \Indieinabox\Core\Database::getAllSettings();
+    $config['kinds'] = \Indieinabox\Core\Database::getKinds();
+    $config['translations'] = \Indieinabox\Core\Database::getTranslations();
+    $config['urltranslations'] = \Indieinabox\Core\Database::getUrlTranslations();
+} else {
+    $config = [];
+}
+
 if (empty($config['sitename'])) {
-    // Default fallback if DB is somehow empty
-    $config = [
+    // Default fallback if DB is not connected or empty
+    $config = array_merge([
         'base' => '/',
         'sitename' => 'My Site Name',
         'fqdn' => 'http://localhost:8080',
@@ -54,7 +59,7 @@ if (empty($config['sitename'])) {
         'lang' => 'en',
         'defaultlang' => 'en',
         'support' => ['md', 'txt', 'html', 'htm']
-    ];
+    ], $config);
 }
 if (isset($options["s"])) {
     $config["skipstatic"] = true;

@@ -263,8 +263,12 @@ $runnerCode .= <<<'EOT'
     $configFile = $base . DIRECTORY_SEPARATOR . '.config.php';
     if (!file_exists($configFile)) {
         if (PHP_SAPI === 'cli') {
-            file_put_contents('php://stderr', "\033[31;1mError: Database is not configured. Please run the web installer first.\033[0m\n");
-            exit(1);
+            global $argv;
+            $isSetup = isset($argv[1]) && $argv[1] === 'setup';
+            if (!$isSetup) {
+                file_put_contents('php://stderr', "\033[31;1mError: Database is not configured. Please run 'php indieinabox.php setup' or the web installer.\033[0m\n");
+                exit(1);
+            }
         } else {
             if (!extension_loaded('pdo_sqlite')) {
                 die("<h1>Error: PDO_SQLite extension is not enabled in PHP. Please enable it to continue.</h1>");
@@ -439,24 +443,26 @@ HTML;
         }
     }
 
-    $dbConfig = require $configFile;
-    if (!isset($dbConfig['data_dir'])) {
-        if (isset($dbConfig['db_path'])) {
-            $dbConfig['data_dir'] = dirname($dbConfig['db_path']);
-        } else {
-            die("Error: Invalid .config.php format. Missing 'data_dir'.");
+    if (file_exists($configFile)) {
+        $dbConfig = require $configFile;
+        if (!isset($dbConfig['data_dir'])) {
+            if (isset($dbConfig['db_path'])) {
+                $dbConfig['data_dir'] = dirname($dbConfig['db_path']);
+            } else {
+                die("Error: Invalid .config.php format. Missing 'data_dir'.");
+            }
         }
-    }
 
-    try {
-        $dbPath = $dbConfig['data_dir'] . '/.indieinabox.sqlite';
-        if (isset($dbConfig['db_path']) && file_exists($dbConfig['db_path'])) {
-            $dbPath = $dbConfig['db_path'];
+        try {
+            $dbPath = $dbConfig['data_dir'] . '/.indieinabox.sqlite';
+            if (isset($dbConfig['db_path']) && file_exists($dbConfig['db_path'])) {
+                $dbPath = $dbConfig['db_path'];
+            }
+            \Indieinabox\Core\Database::$dataDir = $dbConfig['data_dir'];
+            \Indieinabox\Core\Database::connect($dbPath);
+        } catch (\Exception $e) {
+            die("Database Connection Error: " . $e->getMessage());
         }
-        \Indieinabox\Core\Database::$dataDir = $dbConfig['data_dir'];
-        \Indieinabox\Core\Database::connect($dbPath);
-    } catch (\Exception $e) {
-        die("Database Connection Error: " . $e->getMessage());
     }
 
 EOT;

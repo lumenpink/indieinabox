@@ -75,9 +75,9 @@ it('registers and exercises fallback autoloader', function () {
     $autoloader = Bootstrap::registerAutoloader($baseDir);
 
     // 1. Existing class under Indieinabox\ namespace
-    $autoloader('Indieinabox\\Page');
+    $autoloader('Indieinabox\\Page\\Page');
     // Call again now that class is loaded to test early return
-    $autoloader('Indieinabox\\Page');
+    $autoloader('Indieinabox\\Page\\Page');
     expect(class_exists(\Indieinabox\Page\Page::class, false))->toBeTrue();
 
     // 2. Non-existent class under Indieinabox\ namespace

@@ -204,7 +204,16 @@ class Bootstrap
 
         if (!file_exists($configFile)) {
             if ($sapi === 'cli') {
-                $errorMsg = "Error: Database is not configured. Please run the web installer first.";
+                global $argv;
+                $isSetup = isset($argv[1]) && $argv[1] === 'setup';
+                if ($isSetup) {
+                    return [
+                        'data_dir' => $baseDir . '/data',
+                        'db_path' => $baseDir . '/data/indieinabox.sqlite',
+                        '_bootstrap_pending' => true,
+                    ];
+                }
+                $errorMsg = "Error: Database is not configured. Please run 'php indieinabox.php setup' or the web installer.";
                 if ($outputHandler !== null) {
                     $outputHandler($errorMsg);
                 } else {
@@ -268,6 +277,10 @@ class Bootstrap
      */
     public static function connectDatabase(array $dbConfig, ?callable $dieHandler = null): void
     {
+        if (!empty($dbConfig['_bootstrap_pending'])) {
+            return;
+        }
+
         try {
             $dataDir = (string)($dbConfig['data_dir'] ?? '');
             $dbPath = $dataDir . '/.indieinabox.sqlite';

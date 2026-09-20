@@ -287,8 +287,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           args: >
-            -Dsonar.projectKey=${{ vars.SONAR_PROJECT_KEY || 'indieinabox_indieinabox' }}
-            -Dsonar.organization=${{ vars.SONAR_ORG || 'indieinabox' }}
+            -Dsonar.projectKey=${{ vars.SONAR_PROJECT_KEY || 'lumenpink_indieinabox' }}
+            -Dsonar.organization=${{ vars.SONAR_ORG || 'lumenpink' }}
             -Dsonar.php.coverage.reportPaths=coverage/clover.xml
 
       # ── Option B: SonarQube ubuntu-latest (uncomment if preferred) ──────────────

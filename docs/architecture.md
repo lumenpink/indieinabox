@@ -135,6 +135,13 @@ The project follows Domain-Driven Design (DDD) and SOLID principles, structured 
 - **`public_html/`**: Static HTML output and assets.
 - **`public_gopher/`**: Static Gophermap output.
 - **`public_gemini/`**: Static Gemini (`.gmi`) output.
+- **`scripts/`**: Automation tools and utility scripts (`docker-build-push.sh`, `generate_api_docs.php`, `generate_ci_summary.php`).
+- **`docker/`**: Container definitions and configurations:
+  - `Dockerfile`: Multi-stage FrankenPHP Alpine production image (with `auto_https off` for reverse proxies and `1000:1000` user mapping).
+  - `Dockerfile.ci`: Lightweight PHP 8.4 CLI testing image for Forgejo/GitHub Actions.
+  - `Caddyfile`: Reverse proxy friendly FrankenPHP server routing.
+  - `entrypoint.sh`: POSIX shell container initializer populating `/app` and handling cron loops.
+- **`compile.php`**: Single-file bundler that packs the entire application into `indieinabox.php`, with automated PHP 8.4 microformats2 (`mf2/mf2`) explicit nullable compatibility patches.
 - **`docs/`**: Technical documentation and API specifications.
 - **`tests/`**: Unit, integration, and functional test suites across 3 tiers using Pest PHP.
 
@@ -142,6 +149,7 @@ The project follows Domain-Driven Design (DDD) and SOLID principles, structured 
 
 * **Universal Entry Entity:** All feeds, timelines, and federated items share the same domain entity model (`Indieinabox\Entry\Entry`).
 * **Feed Parsers Strategy Pattern:** Swappable, testable strategies (`FeedParserInterface`) handle Twtxt, RSS, Atom, and JSON Feed formats.
+* **Microformats 2 Modernization:** Embedded `mf2/mf2` parser signatures are automatically harmonized for PHP 8.4 during bundle compilation, avoiding deprecation notices on implicit nullable parameters while preserving standard compliance.
 * **Offline-first Admin UI:** The admin panel never makes blocking external network requests during page load. All federation, webmentions, and updates run asynchronously.
 * **Image Dithering:** Embedded photos are automatically processed and dithered into bandwidth-efficient global palette GIFs and thumbnails.
 * **Multi-protocol Publishing:** Every content piece is natively published for the Web (HTML + microformats2 + ActivityPub), Gemini, and Gopher.

@@ -97,6 +97,26 @@ composer sniffer
 php indieinabox.php test-links
 ```
 
+### Docker & Container Deployment
+
+Indieinabox provides production-ready Docker images based on FrankenPHP (Alpine Linux), configured to run behind reverse proxies (pure HTTP on port 80, `auto_https off`) and with non-root UID/GID `1000:1000` mapping.
+
+You can build and publish both application and CI images using the unified script in `scripts/`:
+
+```bash
+# Build the application image (lumenpink/indieinabox:latest)
+./scripts/docker-build-push.sh app
+
+# Build and push the application image to Docker Hub
+./scripts/docker-build-push.sh app --push
+
+# Build the CI testing image (lumenpink/indieinabox-ci:latest & :php8.4)
+./scripts/docker-build-push.sh ci
+
+# Build and push both images with a custom version tag
+./scripts/docker-build-push.sh all --tag v1.0.0 --push
+```
+
 ---
 
 ## 🌐 IndieWeb Standards & Compliance

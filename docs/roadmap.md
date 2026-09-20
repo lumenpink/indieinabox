@@ -457,5 +457,17 @@ app/
   - Injected `PDO $db` via Container autowiring in `ArchiveService`, `FollowService`, `OutboxService`, `WebmentionService`, and lazy connection resolution in `TokenManager`.
   - Global test isolation via `uses()->afterEach(...)->in('Unit', 'Integration', 'Functional')` in `tests/Pest.php` guaranteeing 100% clean Container and Database state between all test executions.
   - Verified 100% single-file compilation compatibility (`composer compile`), passing `composer test:compiled`, 100% passing tests (455 tests), 0 PHP CodeSniffer warnings/errors across 141 files, and updated API docs (`composer docs:api && composer docs:api:html`).
+- [x] **Container Infrastructure, CI Resilience & PHP 8.4 Harmonization (Phase 6)**:
+  - **Single-File Bundler & Parser Nullability (`compile.php`)**:
+    - Automated transformation of implicit nullable parameter signatures in `mf2/mf2` (`DOMElement $context = null` -> `?DOMElement $context = null`) during `php compile.php`.
+    - Eliminated PHP 8.4 deprecation notices without suppressing errors at runtime.
+  - **CI Test Suite Isolation**:
+    - Addressed `Cannot set response code - headers already sent` in CI runners by loading `tests/bootstrap.php` with `display_errors = 0` prior to Composer autoloading.
+    - Improved `SingleFileEntryTest` socket readiness check (`waitForServer`) and increased HTTP stream timeouts.
+  - **Docker & Production Runtime Improvements**:
+    - FrankenPHP (Alpine Linux): Migrated `entrypoint.sh` shebang to `/bin/sh` for native POSIX Alpine compatibility.
+    - Added non-root `UID:GID 1000:1000` mapping for `www-data` via Alpine `shadow` tools, resolving host permission collisions (`EACCES`).
+    - Configured `docker/Caddyfile` with `auto_https off` and clean `:80` listening for environments operating behind external reverse proxies.
+    - Implemented unified build and publish tool: `scripts/docker-build-push.sh` supporting `app`, `ci`, and `all` targets with `--push` and custom tags.
 
 

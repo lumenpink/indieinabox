@@ -296,7 +296,9 @@ Universal version resolver:
 - `getBaseVersion()`: Returns base semantic version (`VERSION` constant).
 - `getGitCommitHash()`: Resolves short commit hash from `.git/HEAD` or packed refs.
 - `isCompiled()`: Detects whether application is running from a compiled single file.
-- `getBuildDate()`: Returns build ISO 8601 timestamp if running from a compiled binary.
+- `getBuildDate()`: Returns build ISO 8601 timestamp if running from a compiled binary, with fallback to git commit date or VERSION file modification date.
+- `extractVersionFromRelease()`: Extracts SemVer version from release metadata (`tag_name`, `name`, or `body`).
+- `isNewerVersion()`: Accurately compares remote release versions against current installation (supporting SemVer prereleases, build metadata, and build timestamp fallbacks).
 
 ---
 

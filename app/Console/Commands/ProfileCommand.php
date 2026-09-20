@@ -11,16 +11,19 @@ use Indieinabox\Core\Database;
  */
 class ProfileCommand extends AbstractCommand
 {
+    #[\Override]
     public function getName(): string
     {
         return 'profile';
     }
 
+    #[\Override]
     public function getDescription(): string
     {
         return 'Configures site author profile, bio, avatar, and background banners.';
     }
 
+    #[\Override]
     public function getUsage(): string
     {
         return "Usage:\n" .
@@ -28,6 +31,7 @@ class ProfileCommand extends AbstractCommand
                "  php indieinabox.php profile media --avatar <path> --background <path>";
     }
 
+    #[\Override]
     public function execute(array $argv): int
     {
         $subcommand = $argv[2] ?? '';
@@ -88,18 +92,18 @@ class ProfileCommand extends AbstractCommand
             return;
         }
 
-        $width = $info[0];
-        $height = $info[1];
+        $width = (int) $info[0];
+        $height = (int) $info[1];
         $type = $info[2];
 
-        $ratio = min($maxWidth / $width, $maxHeight / $height);
+        $ratio = min((float) $maxWidth / (float) $width, (float) $maxHeight / (float) $height);
         if ($ratio >= 1) {
             copy($src, $dest);
             return;
         }
 
-        $newWidth = (int)($width * $ratio);
-        $newHeight = (int)($height * $ratio);
+        $newWidth = (int)((float)$width * $ratio);
+        $newHeight = (int)((float)$height * $ratio);
 
         $image = null;
         switch ($type) {

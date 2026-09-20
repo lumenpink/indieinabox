@@ -204,7 +204,7 @@ class MicrosubService
      */
     public function markRead(string $channel, array $entryIds): bool
     {
-        $channel = preg_replace('/[^a-zA-Z0-9_-]/', '', $channel ?? 'inbox');
+        $channel = preg_replace('/[^a-zA-Z0-9_-]/', '', $channel);
         $dataDir = Database::$dataDir ?? (dirname(__DIR__, 2) . '/data');
         $channelDir = $dataDir . DIRECTORY_SEPARATOR . 'microsub' . DIRECTORY_SEPARATOR . 'inbox' . DIRECTORY_SEPARATOR . $channel;
 
@@ -641,6 +641,11 @@ class MicrosubService
         return $this->feedFetcher->fetchAll();
     }
 
+    /**
+     * @param null|resource $context
+     *
+     * @return false|string
+     */
     protected function fetchUrl(string $url, $context = null)
     {
         return @file_get_contents($url, false, $context);

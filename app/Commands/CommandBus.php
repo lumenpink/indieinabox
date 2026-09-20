@@ -45,6 +45,7 @@ class CommandBus implements CommandBusInterface
      * @return mixed
      * @throws InvalidArgumentException
      */
+    #[\Override]
     public function dispatch(object $command): mixed
     {
         $commandClass = get_class($command);
@@ -85,6 +86,7 @@ class CommandBus implements CommandBusInterface
      * @param class-string $commandClass
      * @param callable|class-string $handler
      */
+    #[\Override]
     public function register(string $commandClass, callable|string $handler): void
     {
         $this->handlers[$commandClass] = $handler;
@@ -95,6 +97,7 @@ class CommandBus implements CommandBusInterface
      *
      * @param class-string $commandClass
      */
+    #[\Override]
     public function hasHandler(string $commandClass): bool
     {
         return isset($this->handlers[$commandClass]);

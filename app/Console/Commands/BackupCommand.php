@@ -11,21 +11,25 @@ use Indieinabox\Services\BackupService;
  */
 class BackupCommand extends AbstractCommand
 {
+    #[\Override]
     public function getName(): string
     {
         return 'backup';
     }
 
+    #[\Override]
     public function getDescription(): string
     {
         return 'Creates a portable ZIP archive containing the database, markdown content, and media.';
     }
 
+    #[\Override]
     public function getUsage(): string
     {
         return 'php indieinabox.php backup [--no-content] [--no-media]';
     }
 
+    #[\Override]
     public function execute(array $argv): int
     {
         $skipContent = $this->hasFlag($argv, '--no-content');

@@ -81,7 +81,7 @@ class Entry
         if (isset($data['publishedAt'])) {
             $this->publishedAt = $data['publishedAt'] instanceof DateTimeImmutable
                 ? $data['publishedAt']
-                : new DateTimeImmutable(is_numeric($data['publishedAt']) ? '@' . $data['publishedAt'] : (string) $data['publishedAt']);
+                : new DateTimeImmutable(is_numeric($data['publishedAt']) ? '@' . (string) $data['publishedAt'] : (string) $data['publishedAt']);
         } else {
             $this->publishedAt = new DateTimeImmutable();
         }
@@ -89,7 +89,7 @@ class Entry
         if (isset($data['updatedAt']) && $data['updatedAt'] !== null) {
             $this->updatedAt = $data['updatedAt'] instanceof DateTimeImmutable
                 ? $data['updatedAt']
-                : new DateTimeImmutable(is_numeric($data['updatedAt']) ? '@' . $data['updatedAt'] : (string) $data['updatedAt']);
+                : new DateTimeImmutable(is_numeric($data['updatedAt']) ? '@' . (string) $data['updatedAt'] : (string) $data['updatedAt']);
         } else {
             $this->updatedAt = null;
         }
@@ -438,7 +438,7 @@ class Entry
         $publishedAt = isset($data['timestamp'])
             ? ($data['timestamp'] instanceof DateTimeImmutable
                 ? $data['timestamp']
-                : new DateTimeImmutable(is_numeric($data['timestamp']) ? '@' . $data['timestamp'] : (string) $data['timestamp']))
+                : new DateTimeImmutable(is_numeric($data['timestamp']) ? '@' . (string) $data['timestamp'] : (string) $data['timestamp']))
             : new DateTimeImmutable();
 
         $nick = (string) ($data['nick'] ?? 'anonymous');

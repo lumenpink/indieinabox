@@ -11,11 +11,13 @@ use Indieinabox\Feeds\Contracts\FeedParserInterface;
  */
 class TwtxtParser implements FeedParserInterface
 {
+    #[\Override]
     public function getFormat(): string
     {
         return 'twtxt';
     }
 
+    #[\Override]
     public function supports(string $content): bool
     {
         $content = trim($content);
@@ -23,6 +25,7 @@ class TwtxtParser implements FeedParserInterface
             || preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}T/m', $content) === 1;
     }
 
+    #[\Override]
     public function parse(string $content, string $feedUrl): array
     {
         $lines = explode("\n", $content);

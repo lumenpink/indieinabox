@@ -234,7 +234,10 @@ class ASTParser
      * A linear, single-pass scanner/lexer to tokenize and parse inline formatting.
      *
      * @param string $text
-     * @return InlineNode[]
+     *
+     * @return (InlineNode|RawHtmlInlineNode)[]
+     *
+     * @psalm-return array<InlineNode|RawHtmlInlineNode>
      */
     private function parseInlineText(string $text): array
     {

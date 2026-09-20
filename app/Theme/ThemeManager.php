@@ -35,6 +35,7 @@ class ThemeManager
         // Try to load from embedded theme if compiled
         if (class_exists('\\DefaultTheme')) {
             $relativePath = self::resolveEmbeddedKey($__tm_view_path);
+            /** @psalm-suppress UndefinedClass */
             $__tm_content = \DefaultTheme::getView($relativePath);
             if ($__tm_content !== null) {
                 eval('?>' . $__tm_content);
@@ -100,7 +101,8 @@ class ThemeManager
         }
 
         if (class_exists('\\DefaultTheme')) {
-            $relativePath = self::resolveEmbeddedKey($viewPath);
+            self::resolveEmbeddedKey($viewPath);
+            /** @psalm-suppress UndefinedClass */
             return \DefaultTheme::getView($relativePath) !== null;
         }
 
@@ -121,7 +123,8 @@ class ThemeManager
         }
 
         if (class_exists('\\DefaultTheme')) {
-            $relativePath = self::resolveEmbeddedKey($viewPath);
+            self::resolveEmbeddedKey($viewPath);
+            /** @psalm-suppress UndefinedClass */
             return \DefaultTheme::getView($relativePath);
         }
 

@@ -27,6 +27,7 @@ class BackupService implements BackupServiceInterface
         }
     }
 
+    #[\Override]
     public function run(bool $skipContent = false, bool $skipMedia = false): void
     {
         $base = rtrim($this->site->paths->baseDir, DIRECTORY_SEPARATOR);
@@ -114,6 +115,7 @@ class BackupService implements BackupServiceInterface
         }
     }
 
+    #[\Override]
     public function rotateBackups(string $destDir, int $limit = 5): void
     {
         if ($limit < 1) {

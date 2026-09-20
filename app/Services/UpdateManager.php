@@ -30,6 +30,7 @@ class UpdateManager implements UpdateServiceInterface
         }
     }
 
+    #[\Override]
     public function getVersionsDir(): string
     {
         if (UpdateService::$customVersionsDir !== null) {
@@ -50,6 +51,7 @@ class UpdateManager implements UpdateServiceInterface
         return $dir;
     }
 
+    #[\Override]
     public function checkAvailableVersions(): array
     {
         try {
@@ -109,12 +111,14 @@ class UpdateManager implements UpdateServiceInterface
         }
     }
 
+    #[\Override]
     public function getAvailableUpdates(): array
     {
         $cached = $this->settingsRepo->get('available_updates', []);
         return is_array($cached) ? $cached : [];
     }
 
+    #[\Override]
     public function getLatestRelease(bool $includePrerelease = false): ?array
     {
         $updates = $this->getAvailableUpdates();
@@ -133,6 +137,7 @@ class UpdateManager implements UpdateServiceInterface
         return null;
     }
 
+    #[\Override]
     public function downloadAndInstall(string $downloadUrl): bool
     {
         $targetFile = $this->getCurrentExecutablePath();
@@ -181,6 +186,7 @@ class UpdateManager implements UpdateServiceInterface
         return true;
     }
 
+    #[\Override]
     public function backupCurrentVersion(): string|false
     {
         $versionsDir = $this->getVersionsDir();
@@ -205,6 +211,7 @@ class UpdateManager implements UpdateServiceInterface
         return $backupPath;
     }
 
+    #[\Override]
     public function rollback(?string $backupFilename = null): bool
     {
         $versionsDir = $this->getVersionsDir();
@@ -241,6 +248,7 @@ class UpdateManager implements UpdateServiceInterface
         return true;
     }
 
+    #[\Override]
     public function getLocalBackups(): array
     {
         $versionsDir = $this->getVersionsDir();
@@ -277,6 +285,7 @@ class UpdateManager implements UpdateServiceInterface
         return $backups;
     }
 
+    #[\Override]
     public function cleanupOldBackups(): int
     {
         $backups = $this->getLocalBackups();
@@ -294,6 +303,7 @@ class UpdateManager implements UpdateServiceInterface
         return $deleted;
     }
 
+    #[\Override]
     public function processScheduledUpdate(int $intervalSeconds = 21600): array
     {
         $lastCheck = (int) $this->settingsRepo->get('last_update_check', 0);
@@ -347,6 +357,7 @@ class UpdateManager implements UpdateServiceInterface
         return $result;
     }
 
+    #[\Override]
     public function getCurrentExecutablePath(): string
     {
         if (UpdateService::$customExecutablePath !== null) {

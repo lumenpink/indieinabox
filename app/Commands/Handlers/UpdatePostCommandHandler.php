@@ -73,7 +73,9 @@ class UpdatePostCommandHandler
             if (is_int($keyOrIndex) && is_string($value)) {
                 unset($frontmatter[$value]);
             } elseif (is_string($keyOrIndex) && is_array($value)) {
+                /** @psalm-suppress InvalidArrayOffset, NoValue */
                 if (isset($frontmatter[$keyOrIndex]) && is_array($frontmatter[$keyOrIndex])) {
+                    /** @psalm-suppress InvalidArrayOffset */
                     $frontmatter[$keyOrIndex] = array_values(array_diff($frontmatter[$keyOrIndex], $value));
                 }
             }

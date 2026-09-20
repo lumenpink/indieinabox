@@ -15,6 +15,7 @@ use XMLWriter;
  */
 class RssFeedGenerator implements FeedGeneratorInterface
 {
+    #[\Override]
     public function getFilename(): string
     {
         return 'rss.xml';
@@ -23,6 +24,7 @@ class RssFeedGenerator implements FeedGeneratorInterface
     /**
      * @param Entry[] $entries
      */
+    #[\Override]
     public function generate(array $entries, string $outputPath, Site $site, string $lang = 'en'): void
     {
         $limit = (int) ($site->options->feed_limit ?? 20);
@@ -77,6 +79,7 @@ class RssFeedGenerator implements FeedGeneratorInterface
             // Description / Content (including poll fallback if present)
             $contentHtml = $entry->getContent();
             if ($entry->hasPoll()) {
+                /** @psalm-suppress InvalidArgument — getPoll shape is a superset of what renderPollFallback expects */
                 $contentHtml .= $this->renderPollFallback($entry->getPoll());
             }
 

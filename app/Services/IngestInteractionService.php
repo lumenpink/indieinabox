@@ -49,6 +49,7 @@ class IngestInteractionService implements IngestInteractionServiceInterface
      * @param InteractionDto $interaction
      * @return bool
      */
+    #[\Override]
     public function ingest(InteractionDto $interaction): bool
     {
         $targetSlug = trim(parse_url($interaction->getTarget(), PHP_URL_PATH) ?? $interaction->getTarget(), "/");
@@ -119,6 +120,7 @@ class IngestInteractionService implements IngestInteractionServiceInterface
      * @param string $status
      * @return InteractionDto
      */
+    #[\Override]
     public function ingestWebmention(
         string $source,
         string $target,
@@ -138,6 +140,7 @@ class IngestInteractionService implements IngestInteractionServiceInterface
      * @param string $status
      * @return InteractionDto|null
      */
+    #[\Override]
     public function ingestActivity(
         array $activity,
         ?array $actorData = null,

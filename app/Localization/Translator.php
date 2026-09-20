@@ -31,7 +31,7 @@ class Translator
     {
         $container = class_exists(Container::class) ? Container::getInstance() : null;
         $site = $container && $container->has(Site::class) ? $container->get(Site::class) : ($GLOBALS['site'] ?? null);
-        $settingsRepo = $container && $container->has(SettingsRepositoryInterface::class) ? $container->get(SettingsRepositoryInterface::class) : null;
+        $container && $container->has(SettingsRepositoryInterface::class) ? $container->get(SettingsRepositoryInterface::class) : null;
 
         if ($lang === null) {
             $contextPage = $container && $container->has(Page::class) ? $container->get(Page::class) : ($GLOBALS['p'] ?? ($GLOBALS['page'] ?? null));

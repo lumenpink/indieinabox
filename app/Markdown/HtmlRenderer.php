@@ -83,7 +83,9 @@ class HtmlRenderer implements RendererInterface
     /**
      * Map active layout / kind to appropriate background and foreground colors.
      *
-     * @return array{bg: int[], fg: int[]}
+     * @return ((float|int|null|string)[]|null)[]
+     *
+     * @psalm-return array{bg: list{0?: float|int|null|string, 1?: float|int|null|string, 2?: float|int|null|string,...}|null, fg: list{0?: float|int|null|string, 1?: float|int|null|string, 2?: float|int|null|string,...}|null}
      */
     private function getColors(): array
     {
@@ -112,6 +114,7 @@ class HtmlRenderer implements RendererInterface
      * @param Node $node
      * @return string
      */
+    #[\Override]
     public function render(Node $node): string
     {
         if ($node instanceof RootNode) {
@@ -221,7 +224,6 @@ class HtmlRenderer implements RendererInterface
             $langPrefix = ($currentPageLang !== $defaultLang) ? $currentPageLang . '/' : '';
             
             $isMeta = false;
-            $url = '';
 
             // Check if it is explicitly marked as a metapage link using '%'
             if (str_starts_with($target, '%')) {
@@ -336,7 +338,7 @@ class HtmlRenderer implements RendererInterface
                 $fqdn = $site?->metadata?->fqdn ?? '';
                 if ($fqdn === '' || strpos($target, $fqdn) !== 0) {
                     $ts = $this->page && is_array($this->page->frontmatter) && isset($this->page->frontmatter['published']) 
-                          ? strtotime((string)$this->page->frontmatter['published']) 
+                          ? (strtotime((string)$this->page->frontmatter['published']) ?: time())
                           : time();
                     
                     // Fallback to page date if published not found but Date object exists

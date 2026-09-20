@@ -323,7 +323,7 @@ class FetchFeedsService
         return file_put_contents($filepath, $fileContent) !== false;
     }
 
-    public function processHtmlMedia(string $html): string
+    public function processHtmlMedia(string $html): string|null
     {
         return preg_replace_callback('/<(img|video|audio|source)[^>]+src=[\'"]([^\'"]+)[\'"][^>]*>/i', function ($matches) {
             $fullTag = $matches[0];
@@ -362,7 +362,7 @@ class FetchFeedsService
 
         $maxSizeStr = $this->settings->get("download_media_max_size_mb");
         $maxSizeMB = $maxSizeStr !== null && $maxSizeStr !== '' ? (float)$maxSizeStr : 10.0;
-        $maxSizeBytes = $maxSizeMB * 1024 * 1024;
+        $maxSizeBytes = $maxSizeMB * 1024.0 * 1024.0;
 
         $baseDir = dirname(__DIR__, 2) . '/data/microsub/media';
         if (!is_dir($baseDir)) {
@@ -419,12 +419,22 @@ class FetchFeedsService
         return $localUrl;
     }
 
-    protected function fetchUrl(string $url, $context = null)
+    /**
+     * @param null|resource $context
+     *
+     * @return false|string
+     */
+    protected function fetchUrl(string $url, $context = null): string|false
     {
         return @file_get_contents($url, false, $context);
     }
 
-    private function fetchApJson(string $url, $fallbackCtx = null)
+    /**
+     * @param null|resource $fallbackCtx
+     *
+     * @return false|string
+     */
+    private function fetchApJson(string $url, $fallbackCtx = null): string|false
     {
         $stmt = $this->db->query("SELECT private_key FROM activitypub_keys WHERE key_id = 'main-key'");
         $row = $stmt ? $stmt->fetch(PDO::FETCH_ASSOC) : null;

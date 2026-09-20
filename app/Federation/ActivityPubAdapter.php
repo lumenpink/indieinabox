@@ -32,16 +32,19 @@ class ActivityPubAdapter implements FederationAdapter
         $this->transport = $transport;
     }
 
+    #[\Override]
     public function getProtocol(): string
     {
         return 'activitypub';
     }
 
+    #[\Override]
     public function supports(string $protocol): bool
     {
         return in_array(strtolower($protocol), ['activitypub', 'ap'], true);
     }
 
+    #[\Override]
     public function buildLikeActivity(string $targetUrl): array
     {
         $actorUri = $this->getActorUri();
@@ -49,6 +52,7 @@ class ActivityPubAdapter implements FederationAdapter
         return ActivityBuilder::buildInteractionActivity($activityId, 'Like', $actorUri, $targetUrl);
     }
 
+    #[\Override]
     public function buildReplyActivity(string $targetUrl, string $content, ?string $inReplyTo = null): array
     {
         $fqdn = $this->getFqdn();
@@ -75,6 +79,7 @@ class ActivityPubAdapter implements FederationAdapter
         return ActivityBuilder::buildCreateActivity($activityId, $actorUri, $object);
     }
 
+    #[\Override]
     public function buildFollowActivity(string $targetActorUri): array
     {
         $actorUri = $this->getActorUri();
@@ -82,6 +87,7 @@ class ActivityPubAdapter implements FederationAdapter
         return ActivityBuilder::buildInteractionActivity($activityId, 'Follow', $actorUri, $targetActorUri);
     }
 
+    #[\Override]
     public function deliverActivity(array|string $activity, string $destinationUrl): bool
     {
         $payload = is_array($activity)
@@ -112,6 +118,7 @@ class ActivityPubAdapter implements FederationAdapter
         return $this->sendCurl($destinationUrl, $headers, $payload);
     }
 
+    #[\Override]
     public function parseActivity(string $payload): ?array
     {
         try {

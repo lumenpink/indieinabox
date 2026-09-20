@@ -240,9 +240,9 @@ class ArchiveProcessor
      * Fetches remote content over HTTP.
      *
      * @param string $url
-     * @return string|false
+     * @return string|bool
      */
-    public function fetchUrl(string $url)
+    public function fetchUrl(string $url): string|bool
     {
         if ($this->fetcher !== null) {
             return ($this->fetcher)($url);

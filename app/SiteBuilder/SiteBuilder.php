@@ -203,7 +203,7 @@ class SiteBuilder
     /**
      * Stores absolute paths of all generated files during the build process
      * for Garbage Collection.
-     * @var string[]
+     * @var array<string, bool>
      */
     public static array $manifest = [];
 
@@ -238,7 +238,7 @@ class SiteBuilder
         $this->translationVirtualizer->virtualize($this->pages);
         $this->contentScanner->renderRawBodies($this->pages);
         $s2 = microtime(true);
-        $timings['Scan + Virtualize'] = ($s2 - $s1) * 1000;
+        $timings['Scan + Virtualize'] = ($s2 - $s1) * 1000.0;
 
         // Generate files
         if (isset($this->site->options->skipPages) && $this->site->options->skipPages) {
@@ -247,19 +247,19 @@ class SiteBuilder
             $this->generateHTMLFiles();
         }
         $s3 = microtime(true);
-        $timings['Generate HTML/GMI/Gopher'] = ($s3 - $s2) * 1000;
+        $timings['Generate HTML/GMI/Gopher'] = ($s3 - $s2) * 1000.0;
         
         // Generate Feeds
         $this->feedPublisher->publishFeeds($this->pages);
         $this->indexPublisher->publishTimelineStaticPage();
         $this->indexPublisher->loadThemeFeedView($this->pages);
         $s4 = microtime(true);
-        $timings['Generate Feeds'] = ($s4 - $s3) * 1000;
+        $timings['Generate Feeds'] = ($s4 - $s3) * 1000.0;
 
         // Copy assets
         $this->assetPublisher->publishViewAssets($base . DIRECTORY_SEPARATOR . $themeDir . DIRECTORY_SEPARATOR . "views");
         $s5 = microtime(true);
-        $timings['Copy Assets'] = ($s5 - $s4) * 1000;
+        $timings['Copy Assets'] = ($s5 - $s4) * 1000.0;
 
         // Copy Media
         if (isset($this->site->options->skipMedia) && $this->site->options->skipMedia) {
@@ -268,7 +268,7 @@ class SiteBuilder
             $this->assetPublisher->publishMedia();
         }
         $s6 = microtime(true);
-        $timings['Copy Media'] = ($s6 - $s5) * 1000;
+        $timings['Copy Media'] = ($s6 - $s5) * 1000.0;
 
         // Copy static files
         if ($this->site->options->skipStatic) {
@@ -277,13 +277,13 @@ class SiteBuilder
             $this->assetPublisher->publishStaticFiles($base . DIRECTORY_SEPARATOR . $themeDir . DIRECTORY_SEPARATOR . "static");
         }
         $s7 = microtime(true);
-        $timings['Copy Static Files'] = ($s7 - $s6) * 1000;
+        $timings['Copy Static Files'] = ($s7 - $s6) * 1000.0;
 
         $this->assetPublisher->garbageCollect(self::$manifest);
         $s8 = microtime(true);
-        $timings['Garbage Collect'] = ($s8 - $s7) * 1000;
+        $timings['Garbage Collect'] = ($s8 - $s7) * 1000.0;
 
-        $totalTime = ($s8 - $t_start) * 1000;
+        $totalTime = ($s8 - $t_start) * 1000.0;
 
         // Output summary table
         echo "\n+----------------------------------+-----------------+\n";

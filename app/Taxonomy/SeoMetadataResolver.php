@@ -42,6 +42,7 @@ class SeoMetadataResolver implements SeoMetadataResolverInterface
      * @param Page $page
      * @return array{description: string, image: string, image_alt: string, schema_type: string}
      */
+    #[\Override]
     public function resolve(Page $page): array
     {
         // 1. Description Fallback (always truncated to 150 chars max for safety)

@@ -41,7 +41,9 @@ class WebmentionService
     /**
      * Verifies that the source URL contains a valid link back to the target.
      *
-     * @return array{success: bool, message?: string, content?: array{title: string, text: string, whostyle?: array<array-key, mixed>|null}}
+     * @return ((array|null|string)[]|bool|string)[]
+     *
+     * @psalm-return array{success: bool, content?: array{title: string, text: string, html: string, author_name: string, author_photo: string, author_url: string, interaction_type: string, rsvp: null|string, whostyle: array|null}, message?: 'No link to target URL found on source page.'|'Unable to fetch source URL.'}
      */
     public function verifySourceLink(string $source, string $target): array
     {

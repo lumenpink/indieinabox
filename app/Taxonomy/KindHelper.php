@@ -150,7 +150,6 @@ class KindHelper
         ob_start();
         $themeDir = $site?->paths->themeDir ?? 'theme';
         foreach ($recentPages as $originalPage) {
-            $p = clone $originalPage;
             $page = clone $originalPage;
             if ($mainPage instanceof Page) {
                 $page->relpath = $mainPage->relpath;

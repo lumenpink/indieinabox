@@ -11,6 +11,7 @@ use Indieinabox\Core\Version;
  */
 class VersionCommand extends AbstractCommand
 {
+    #[\Override]
     public function getName(): string
     {
         return 'version';
@@ -19,21 +20,25 @@ class VersionCommand extends AbstractCommand
     /**
      * @return array<int, string>
      */
+    #[\Override]
     public function getAliases(): array
     {
         return ['-v', '--version'];
     }
 
+    #[\Override]
     public function getDescription(): string
     {
         return 'Displays the installed Indieinabox version, runtime mode, and build date.';
     }
 
+    #[\Override]
     public function getUsage(): string
     {
         return 'php indieinabox.php version';
     }
 
+    #[\Override]
     public function execute(array $argv): int
     {
         $version = Version::get();

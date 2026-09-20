@@ -15,6 +15,7 @@ use XMLWriter;
  */
 class AtomFeedGenerator implements FeedGeneratorInterface
 {
+    #[\Override]
     public function getFilename(): string
     {
         return 'atom.xml';
@@ -23,6 +24,7 @@ class AtomFeedGenerator implements FeedGeneratorInterface
     /**
      * @param Entry[] $entries
      */
+    #[\Override]
     public function generate(array $entries, string $outputPath, Site $site, string $lang = 'en'): void
     {
         $limit = (int) ($site->options->feed_limit ?? 20);
@@ -101,6 +103,7 @@ class AtomFeedGenerator implements FeedGeneratorInterface
             // Content (HTML + poll fallback)
             $contentHtml = $entry->getContent();
             if ($entry->hasPoll()) {
+                /** @psalm-suppress InvalidArgument — getPoll shape is a superset of what renderPollFallback expects */
                 $contentHtml .= $this->renderPollFallback($entry->getPoll());
             }
 

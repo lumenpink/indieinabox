@@ -25,6 +25,7 @@ class KindSpecification extends CompositeSpecification
     /**
      * @param array<string, mixed> $candidate
      */
+    #[\Override]
     public function isSatisfiedBy(array $candidate): bool
     {
         $candidateKind = strtolower((string) ($candidate['kind'] ?? ''));

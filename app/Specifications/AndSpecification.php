@@ -23,6 +23,7 @@ class AndSpecification extends CompositeSpecification
     /**
      * @param array<string, mixed> $candidate
      */
+    #[\Override]
     public function isSatisfiedBy(array $candidate): bool
     {
         return $this->left->isSatisfiedBy($candidate) && $this->right->isSatisfiedBy($candidate);

@@ -35,6 +35,7 @@ class GemtextRenderer implements RendererInterface
      * @param Node $node
      * @return string
      */
+    #[\Override]
     public function render(Node $node): string
     {
         $this->links = [];

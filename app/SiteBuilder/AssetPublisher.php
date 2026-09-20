@@ -91,6 +91,7 @@ class AssetPublisher
         if (is_dir($dir)) {
             $this->copyFromDisk($dir, $base, $outputDir);
         } elseif (class_exists('\\DefaultTheme')) {
+            /** @psalm-suppress UndefinedClass */
             $staticFiles = \DefaultTheme::getStaticFiles();
             foreach ($staticFiles as $relativePath => $content) {
                 if (strpos($relativePath, 'static/') === 0) {
@@ -154,6 +155,7 @@ class AssetPublisher
         if (is_dir($dir)) {
             $this->copyAssetsFromDisk($dir, $base, $outputDir);
         } elseif (class_exists('\\DefaultTheme')) {
+            /** @psalm-suppress UndefinedClass */
             $views = \DefaultTheme::getViews();
             foreach ($views as $relativePath => $content) {
                 $ext = pathinfo($relativePath, PATHINFO_EXTENSION);

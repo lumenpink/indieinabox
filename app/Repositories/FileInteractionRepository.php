@@ -60,6 +60,7 @@ class FileInteractionRepository implements InteractionRepositoryInterface
         return $dir;
     }
 
+    #[\Override]
     public function findByPageSlug(string $slug, ?string $type = null): array
     {
         $hash = md5($slug);
@@ -107,6 +108,7 @@ class FileInteractionRepository implements InteractionRepositoryInterface
         return $interactions;
     }
 
+    #[\Override]
     public function listByStatus(string $status = 'pending'): array
     {
         $dir = $status === 'spam' ? $this->getSpamDir() : $this->getNotificationsDir();
@@ -158,6 +160,7 @@ class FileInteractionRepository implements InteractionRepositoryInterface
         return $items;
     }
 
+    #[\Override]
     public function updateStatus(string $id, string $status, string $type = 'pending'): bool
     {
         $notificationsDir = $this->getNotificationsDir();
@@ -210,6 +213,7 @@ class FileInteractionRepository implements InteractionRepositoryInterface
         return true;
     }
 
+    #[\Override]
     public function save(string $id, array $metadata, string $content = '', string $channel = 'notifications'): bool
     {
         $dir = match ($channel) {
@@ -225,6 +229,7 @@ class FileInteractionRepository implements InteractionRepositoryInterface
         return file_put_contents($filePath, $fileContent) !== false;
     }
 
+    #[\Override]
     public function delete(string $id, string $type = 'pending'): bool
     {
         $dir = $type === 'spam' ? $this->getSpamDir() : $this->getNotificationsDir();

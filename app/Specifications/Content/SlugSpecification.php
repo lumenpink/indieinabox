@@ -21,6 +21,7 @@ class SlugSpecification extends CompositeSpecification
     /**
      * @param array<string, mixed> $candidate
      */
+    #[\Override]
     public function isSatisfiedBy(array $candidate): bool
     {
         $candidateSlug = trim((string) ($candidate['slug'] ?? ''), '/');

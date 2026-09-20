@@ -11,21 +11,25 @@ use Indieinabox\SiteBuilder\SiteBuilder;
  */
 class BuildCommand extends AbstractCommand
 {
+    #[\Override]
     public function getName(): string
     {
         return 'build';
     }
 
+    #[\Override]
     public function getDescription(): string
     {
         return 'Compiles static HTML, Gemini, Gopher, syndication feeds, and assets.';
     }
 
+    #[\Override]
     public function getUsage(): string
     {
         return 'php indieinabox.php build [-s] [-f] [-a] [-M] [-m]';
     }
 
+    #[\Override]
     public function execute(array $argv): int
     {
         $builder = new SiteBuilder($this->site);

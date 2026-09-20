@@ -28,6 +28,7 @@ class TagSpecification extends CompositeSpecification
     /**
      * @param array<string, mixed> $candidate
      */
+    #[\Override]
     public function isSatisfiedBy(array $candidate): bool
     {
         $candidateTags = $candidate['frontmatter']['tags'] ?? ($candidate['tags'] ?? []);

@@ -11,11 +11,13 @@ use Indieinabox\Feeds\Contracts\FeedParserInterface;
  */
 class RssParser implements FeedParserInterface
 {
+    #[\Override]
     public function getFormat(): string
     {
         return 'rss';
     }
 
+    #[\Override]
     public function supports(string $content): bool
     {
         $trimmed = trim($content);
@@ -38,6 +40,7 @@ class RssParser implements FeedParserInterface
      *     author: ?array<string, mixed>
      * }>
      */
+    #[\Override]
     public function parse(string $content, string $feedUrl): array
     {
         libxml_use_internal_errors(true);

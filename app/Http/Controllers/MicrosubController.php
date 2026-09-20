@@ -34,6 +34,10 @@ class MicrosubController extends AbstractController
                 parent::__construct();
             }
 
+            #[\Override]
+            /**
+             * @return false|string
+             */
             protected function fetchUrl(string $url, $context = null)
             {
                 return $this->controller->getRemoteUrl($url, $context);
@@ -166,6 +170,7 @@ class MicrosubController extends AbstractController
                     if (!is_array($entryIds)) {
                         $entryIds = [$entryIds];
                     }
+                    /** @psalm-suppress InvalidArgument — $entryIds comes from $_POST, validated as array */
                     $this->service->markRead($channel, $entryIds);
                     $this->json(['success' => 'ok']);
                 } else {
@@ -259,6 +264,8 @@ class MicrosubController extends AbstractController
 
     /**
      * Proxy helper for remote URL fetching.
+     *
+     * @param null|resource $context
      */
     public function getRemoteUrl(string $url, $context = null): string|false
     {

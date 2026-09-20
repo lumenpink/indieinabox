@@ -21,6 +21,7 @@ class ValidationError implements \JsonSerializable
     /**
      * @return array<string, mixed>
      */
+    #[\Override]
     public function jsonSerialize(): array
     {
         return [
@@ -42,6 +43,7 @@ class ValidationWarning implements \JsonSerializable
     /**
      * @return array<string, mixed>
      */
+    #[\Override]
     public function jsonSerialize(): array
     {
         return [
@@ -69,6 +71,7 @@ class ValidationResult implements \JsonSerializable
     /**
      * @return array<string, mixed>
      */
+    #[\Override]
     public function jsonSerialize(): array
     {
         return [

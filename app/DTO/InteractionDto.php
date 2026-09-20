@@ -214,8 +214,6 @@ final class InteractionDto
         $activityId = (string) ($activity["id"] ?? (md5($actorUri . microtime())));
         $object = $activity["object"] ?? null;
 
-        $target = "";
-        $type = "mention";
         $content = "";
         $published = new DateTimeImmutable();
         $meta = ["activity_id" => $activityId];

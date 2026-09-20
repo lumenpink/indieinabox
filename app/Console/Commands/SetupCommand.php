@@ -11,21 +11,25 @@ use Indieinabox\Core\Database;
  */
 class SetupCommand extends AbstractCommand
 {
+    #[\Override]
     public function getName(): string
     {
         return 'setup';
     }
 
+    #[\Override]
     public function getDescription(): string
     {
         return 'Runs the initial setup wizard to configure admin credentials and domain FQDN.';
     }
 
+    #[\Override]
     public function getUsage(): string
     {
         return 'php indieinabox.php setup [--password <pass>] [--name <sitename>] [--fqdn <fqdn>]';
     }
 
+    #[\Override]
     public function execute(array $argv): int
     {
         $password = $this->getOption($argv, 'password');

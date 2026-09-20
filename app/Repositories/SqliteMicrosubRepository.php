@@ -30,12 +30,14 @@ class SqliteMicrosubRepository implements MicrosubRepositoryInterface
         return $container && $container->has(PDO::class) ? $container->get(PDO::class) : Database::getDb();
     }
 
+    #[\Override]
     public function getChannels(): array
     {
         $stmt = $this->getDb()->query('SELECT uid, name FROM microsub_channels');
         return $stmt ? $stmt->fetchAll(PDO::FETCH_ASSOC) : [];
     }
 
+    #[\Override]
     public function createChannel(string $uid, string $name): bool
     {
         $stmt = $this->getDb()->prepare('INSERT INTO microsub_channels (uid, name) VALUES (:uid, :name)');
@@ -44,6 +46,7 @@ class SqliteMicrosubRepository implements MicrosubRepositoryInterface
         return $stmt->execute();
     }
 
+    #[\Override]
     public function deleteChannel(string $uid): bool
     {
         $stmt = $this->getDb()->prepare('DELETE FROM microsub_channels WHERE uid = :uid');
@@ -55,6 +58,7 @@ class SqliteMicrosubRepository implements MicrosubRepositoryInterface
         return $stmtSubs->execute();
     }
 
+    #[\Override]
     public function getSubscriptions(string $channelUid): array
     {
         $stmt = $this->getDb()->prepare('SELECT url, type, name, photo FROM microsub_subscriptions WHERE channel_uid = :channel');
@@ -63,6 +67,7 @@ class SqliteMicrosubRepository implements MicrosubRepositoryInterface
         return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
     }
 
+    #[\Override]
     public function addSubscription(
         string $channelUid,
         string $url,
@@ -81,6 +86,7 @@ class SqliteMicrosubRepository implements MicrosubRepositoryInterface
         return $stmt->execute();
     }
 
+    #[\Override]
     public function getSubscriptionType(string $channelUid, string $url): ?string
     {
         $stmt = $this->getDb()->prepare('SELECT type FROM microsub_subscriptions WHERE channel_uid = :channel AND url = :url LIMIT 1');
@@ -91,6 +97,7 @@ class SqliteMicrosubRepository implements MicrosubRepositoryInterface
         return $val !== false ? (string) $val : null;
     }
 
+    #[\Override]
     public function removeSubscription(string $channelUid, string $url): bool
     {
         $stmt = $this->getDb()->prepare('DELETE FROM microsub_subscriptions WHERE channel_uid = :channel AND url = :url');
@@ -99,6 +106,7 @@ class SqliteMicrosubRepository implements MicrosubRepositoryInterface
         return $stmt->execute();
     }
 
+    #[\Override]
     public function countSubscriptionsByUrl(string $url): int
     {
         $stmt = $this->getDb()->prepare('SELECT COUNT(*) FROM microsub_subscriptions WHERE url = :url');

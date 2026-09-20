@@ -75,17 +75,17 @@ class ImageProcessor
             return false;
         }
 
-        $larguraOrig = imagesx($imgOriginal);
-        $alturaOrig = imagesy($imgOriginal);
+        $larguraOrig = (int) imagesx($imgOriginal);
+        $alturaOrig = (int) imagesy($imgOriginal);
 
         $srcX = 0;
         $srcY = 0;
 
         if ($larguraOrig > $alturaOrig) {
-            $srcX = (int)(($larguraOrig - $alturaOrig) / 2);
+            $srcX = (int)((float)($larguraOrig - $alturaOrig) / 2.0);
             $larguraOrig = $alturaOrig;
         } else {
-            $srcY = (int)(($alturaOrig - $larguraOrig) / 2);
+            $srcY = (int)((float)($alturaOrig - $larguraOrig) / 2.0);
             $alturaOrig = $larguraOrig;
         }
 
@@ -113,7 +113,7 @@ class ImageProcessor
                 $r = ($rgb >> 16) & 0xFF;
                 $g = ($rgb >> 8) & 0xFF;
                 $b = $rgb & 0xFF;
-                $luminosidade = ($r * 0.299 + $g * 0.587 + $b * 0.114);
+                $luminosidade = ((float)$r * 0.299 + (float)$g * 0.587 + (float)$b * 0.114);
 
                 $cor = ($luminosidade > 128) ? $allocatedBG : $allocatedFG;
                 imagesetpixel($imgFinal, $x, $y, $cor);
@@ -192,7 +192,7 @@ class ImageProcessor
 
         $larguraOrig = imagesx($imgOriginal);
         $alturaOrig = imagesy($imgOriginal);
-        $alturaFocal = (int)(($alturaOrig / $larguraOrig) * $larguraFocal);
+        $alturaFocal = (int)(((float)$alturaOrig / (float)$larguraOrig) * (float)$larguraFocal);
 
         $imgRedimensionada = imagecreatetruecolor($larguraFocal, $alturaFocal);
         imagecopyresampled(
@@ -208,18 +208,18 @@ class ImageProcessor
             $alturaOrig
         );
 
-        $brilhoTotal = 0;
+        $brilhoTotal = 0.0;
         $amostras = 0;
         for ($y = 0; $y < $alturaFocal; $y += 10) {
             for ($x = 0; $x < $larguraFocal; $x += 10) {
                 $rgb = imagecolorat($imgRedimensionada, $x, $y);
-                $brilhoTotal += ((($rgb >> 16) & 0xFF) * 0.299
-                    + (($rgb >> 8) & 0xFF) * 0.587
-                    + ($rgb & 0xFF) * 0.114);
+                $brilhoTotal += ((float)(($rgb >> 16) & 0xFF) * 0.299
+                    + (float)(($rgb >> 8) & 0xFF) * 0.587
+                    + (float)($rgb & 0xFF) * 0.114);
                 $amostras++;
             }
         }
-        $luminanciaMedia = ($brilhoTotal / $amostras) / 255;
+        $luminanciaMedia = ($brilhoTotal / (float)$amostras) / 255.0;
 
         $fatorGamma = 1.0;
         $fatorContraste = 1.0;
@@ -235,14 +235,14 @@ class ImageProcessor
         for ($y = 0; $y < $alturaFocal; $y++) {
             for ($x = 0; $x < $larguraFocal; $x++) {
                 $rgb = imagecolorat($imgRedimensionada, $x, $y);
-                $v = ((($rgb >> 16) & 0xFF) * 0.299 + (($rgb >> 8) & 0xFF) * 0.587 + ($rgb & 0xFF) * 0.114) / 255;
+                $v = ((float)(($rgb >> 16) & 0xFF) * 0.299 + (float)(($rgb >> 8) & 0xFF) * 0.587 + (float)($rgb & 0xFF) * 0.114) / 255.0;
 
                 if ($aplicarAutomacao) {
                     $v = pow($v, $fatorGamma);
                     $v = (($v - 0.5) * $fatorContraste) + 0.5;
                 }
 
-                $matrix[$y][$x] = max(0, min(1, $v)) * 255;
+                $matrix[$y][$x] = max(0.0, min(1.0, $v)) * 255.0;
             }
         }
 
@@ -250,9 +250,9 @@ class ImageProcessor
             for ($x = 0; $x < $larguraFocal; $x++) {
                 $oldPixel = $matrix[$y][$x];
                 $newPixel = ($oldPixel > 128) ? 255 : 0;
-                $matrix[$y][$x] = $newPixel;
+                $matrix[$y][$x] = (float)$newPixel;
 
-                $errorVal = ($oldPixel - $newPixel) / 8;
+                $errorVal = ($oldPixel - (float)$newPixel) / 8.0;
 
                 if ($x + 1 < $larguraFocal) {
                     $matrix[$y][$x + 1] += $errorVal;
@@ -351,19 +351,19 @@ class ImageProcessor
         $origWidth = imagesx($imgOriginal);
         $origHeight = imagesy($imgOriginal);
 
-        $targetRatio = $targetWidth / $targetHeight;
-        $origRatio = $origWidth / $origHeight;
+        $targetRatio = (float)$targetWidth / (float)$targetHeight;
+        $origRatio = (float)$origWidth / (float)$origHeight;
 
         if ($origRatio > $targetRatio) {
             $cropHeight = $origHeight;
-            $cropWidth = (int)($origHeight * $targetRatio);
-            $cropX = (int)(($origWidth - $cropWidth) / 2);
+            $cropWidth = (int)((float)$origHeight * $targetRatio);
+            $cropX = (int)(((float)$origWidth - (float)$cropWidth) / 2.0);
             $cropY = 0;
         } else {
             $cropWidth = $origWidth;
-            $cropHeight = (int)($origWidth / $targetRatio);
+            $cropHeight = (int)((float)$origWidth / $targetRatio);
             $cropX = 0;
-            $cropY = (int)(($origHeight - $cropHeight) / 2);
+            $cropY = (int)(((float)$origHeight - (float)$cropHeight) / 2.0);
         }
 
         $imgRedimensionada = imagecreatetruecolor($targetWidth, $targetHeight);
@@ -380,18 +380,18 @@ class ImageProcessor
             $cropHeight
         );
 
-        $brilhoTotal = 0;
+        $brilhoTotal = 0.0;
         $amostras = 0;
         for ($y = 0; $y < $targetHeight; $y += 10) {
             for ($x = 0; $x < $targetWidth; $x += 10) {
                 $rgb = imagecolorat($imgRedimensionada, $x, $y);
-                $brilhoTotal += ((($rgb >> 16) & 0xFF) * 0.299
-                    + (($rgb >> 8) & 0xFF) * 0.587
-                    + ($rgb & 0xFF) * 0.114);
+                $brilhoTotal += ((float)(($rgb >> 16) & 0xFF) * 0.299
+                    + (float)(($rgb >> 8) & 0xFF) * 0.587
+                    + (float)($rgb & 0xFF) * 0.114);
                 $amostras++;
             }
         }
-        $luminanciaMedia = ($brilhoTotal / $amostras) / 255;
+        $luminanciaMedia = ($brilhoTotal / (float)$amostras) / 255.0;
 
         $fatorGamma = 1.0;
         $fatorContraste = 1.0;
@@ -407,14 +407,14 @@ class ImageProcessor
         for ($y = 0; $y < $targetHeight; $y++) {
             for ($x = 0; $x < $targetWidth; $x++) {
                 $rgb = imagecolorat($imgRedimensionada, $x, $y);
-                $v = ((($rgb >> 16) & 0xFF) * 0.299 + (($rgb >> 8) & 0xFF) * 0.587 + ($rgb & 0xFF) * 0.114) / 255;
+                $v = ((float)(($rgb >> 16) & 0xFF) * 0.299 + (float)(($rgb >> 8) & 0xFF) * 0.587 + (float)($rgb & 0xFF) * 0.114) / 255.0;
 
                 if ($aplicarAutomacao) {
                     $v = pow($v, $fatorGamma);
                     $v = (($v - 0.5) * $fatorContraste) + 0.5;
                 }
 
-                $matrix[$y][$x] = max(0, min(1, $v)) * 255;
+                $matrix[$y][$x] = max(0.0, min(1.0, $v)) * 255.0;
             }
         }
 
@@ -422,9 +422,9 @@ class ImageProcessor
             for ($x = 0; $x < $targetWidth; $x++) {
                 $oldPixel = $matrix[$y][$x];
                 $newPixel = ($oldPixel > 128) ? 255 : 0;
-                $matrix[$y][$x] = $newPixel;
+                $matrix[$y][$x] = (float)$newPixel;
 
-                $errorVal = ($oldPixel - $newPixel) / 8;
+                $errorVal = ($oldPixel - (float)$newPixel) / 8.0;
 
                 if ($x + 1 < $targetWidth) {
                     $matrix[$y][$x + 1] += $errorVal;

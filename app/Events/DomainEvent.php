@@ -32,11 +32,13 @@ abstract class DomainEvent implements StoppableEventInterface
         return $this->eventId;
     }
 
+    #[\Override]
     public function isPropagationStopped(): bool
     {
         return $this->propagationStopped;
     }
 
+    #[\Override]
     public function stopPropagation(): void
     {
         $this->propagationStopped = true;

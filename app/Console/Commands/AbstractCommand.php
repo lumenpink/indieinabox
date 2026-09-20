@@ -22,11 +22,13 @@ abstract class AbstractCommand implements CommandInterface
     /**
      * @return array<int, string>
      */
+    #[\Override]
     public function getAliases(): array
     {
         return [];
     }
 
+    #[\Override]
     public function getUsage(): string
     {
         return 'php indieinabox.php ' . $this->getName();

@@ -13,7 +13,6 @@ require_once __DIR__ . '/bootstrap/app.php';
 
 $options = [];
 if (php_sapi_name() === 'cli') {
-    global $argv;
     $options = [];
     if (isset($argv)) {
         foreach ($argv as $arg) {

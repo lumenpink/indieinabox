@@ -40,9 +40,11 @@ class Pages extends ArrayObject
     {
         $slug = ($page instanceof Page) ? $page->slug : $page['slug'];
         if ($id === null) {
+            /** @psalm-suppress InvalidPropertyAssignmentValue — accepts legacy array for backward compat */
             $this->pages[$slug] = $page;
             $this->offsetSet($slug, $page);
         } else {
+            /** @psalm-suppress InvalidPropertyAssignmentValue — accepts legacy array for backward compat */
             $this->pages[(string) $id] = $page;
             $this->offsetSet((string) $id, $page);
         }
@@ -101,6 +103,7 @@ class Pages extends ArrayObject
     public function filterByKind(string $kind): array
     {
         return array_filter($this->pages, function ($p) use ($kind) {
+            /** @psalm-suppress UndefinedMethod */
             $pageKind = $p instanceof Page ? $p->kind : ($p['kind'] ?? null);
             return $pageKind === $kind;
         });
@@ -115,6 +118,7 @@ class Pages extends ArrayObject
     public function filterByLanguage(string $lang): array
     {
         return array_filter($this->pages, function ($p) use ($lang) {
+            /** @psalm-suppress UndefinedMethod */
             $pageLang = $p instanceof Page ? $p->lang : ($p['lang'] ?? null);
             return $pageLang === $lang;
         });
@@ -136,18 +140,22 @@ class Pages extends ArrayObject
         }
         if ($lang !== null) {
             $filtered = array_filter($filtered, function ($p) use ($lang) {
+                /** @psalm-suppress UndefinedMethod */
                 $pageLang = $p instanceof Page ? $p->lang : ($p['lang'] ?? 'en');
                 return $pageLang === $lang;
             });
         }
         usort($filtered, function ($a, $b) {
+            /** @psalm-suppress UndefinedMethod */
             $dateA = $a instanceof Page ? $a->date : ($a['date'] ?? 0);
+            /** @psalm-suppress UndefinedMethod */
             $dateB = $b instanceof Page ? $b->date : ($b['date'] ?? 0);
             $timeA = $dateA instanceof \DateTimeInterface ? $dateA->getTimestamp() : (int) $dateA;
             $timeB = $dateB instanceof \DateTimeInterface ? $dateB->getTimestamp() : (int) $dateB;
             return $timeB <=> $timeA;
         });
 
+        /** @psalm-suppress RedundantFunctionCall */
         return array_slice(array_values($filtered), 0, $limit);
     }
 

@@ -51,6 +51,7 @@ class TaxonomyService implements TaxonomyServiceInterface
      * @param string $kind
      * @return array<string, mixed>
      */
+    #[\Override]
     public function getKindConfig(string $kind): array
     {
         $site = $this->getSite();
@@ -96,12 +97,16 @@ class TaxonomyService implements TaxonomyServiceInterface
      * @param Page|array<string, mixed> $page
      * @return array{localized: string, kind: string}
      */
+    #[\Override]
     public function resolveKind(mixed $page): array
     {
         $site = $this->getSite();
         $isObject = $page instanceof Page;
+        /** @psalm-suppress UndefinedMethod, InvalidPropertyFetch */
         $pageKind = $isObject ? $page->kind : ($page['kind'] ?? null);
+        /** @psalm-suppress UndefinedMethod, InvalidPropertyFetch */
         $pageSlug = $isObject ? $page->slug : ($page['slug'] ?? '');
+        /** @psalm-suppress UndefinedMethod, InvalidPropertyFetch */
         $pageLang = $isObject ? $page->lang : ($page['lang'] ?? 'en');
 
         if ($pageKind !== null && $pageKind !== '') {
@@ -202,6 +207,7 @@ class TaxonomyService implements TaxonomyServiceInterface
      * @param string $lang
      * @return string
      */
+    #[\Override]
     public function getKindFolder(string $kind, string $lang): string
     {
         $config = $this->getKindConfig($kind);
@@ -234,6 +240,7 @@ class TaxonomyService implements TaxonomyServiceInterface
      * @param string|null $lang Target language (defaults to current page lang)
      * @return string
      */
+    #[\Override]
     public function getKindLabel(string $kind, ?string $lang = null): string
     {
         $site = $this->getSite();
@@ -260,6 +267,7 @@ class TaxonomyService implements TaxonomyServiceInterface
      * @param string $kind Internal kind slug
      * @return string
      */
+    #[\Override]
     public function getKindLink(Page $page, string $kind): string
     {
         $site = $this->getSite();
@@ -300,6 +308,7 @@ class TaxonomyService implements TaxonomyServiceInterface
      * @param string $lang
      * @return string
      */
+    #[\Override]
     public function getOriginalContent(string $slug, string $lang): string
     {
         $site = $this->getSite();
@@ -323,6 +332,7 @@ class TaxonomyService implements TaxonomyServiceInterface
      * @param mixed $var
      * @return bool
      */
+    #[\Override]
     public function isListingEligible(mixed $var): bool
     {
         $kind = $var instanceof Page ? $var->kind : ($var['kind'] ?? null);

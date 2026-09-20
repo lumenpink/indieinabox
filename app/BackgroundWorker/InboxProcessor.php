@@ -282,7 +282,6 @@ class InboxProcessor
             return;
         }
 
-        $hash = md5($id);
         $dataDir = Database::$dataDir ?? (dirname(__DIR__, 2) . '/data');
         $inboxDir = $dataDir . DIRECTORY_SEPARATOR . 'microsub' . DIRECTORY_SEPARATOR . 'inbox' . DIRECTORY_SEPARATOR . 'inbox';
 
@@ -294,7 +293,6 @@ class InboxProcessor
 
         // Fetch actor details
         $authorName = $actor;
-        $authorPhoto = '';
         $actorData = $this->fetchJsonUrl($actor);
         if ($actorData) {
             $authorName = $actorData['name'] ?? $actorData['preferredUsername'] ?? $actor;
@@ -307,7 +305,6 @@ class InboxProcessor
             }
         }
 
-        $published = isset($object['published']) ? strtotime((string) $object['published']) : time();
         $content = $object['content'] ?? ($object['summary'] ?? '');
 
         // Custom Emojis parsing
@@ -585,9 +582,9 @@ class InboxProcessor
      * Fetches the content of a remote URL.
      *
      * @param string $url
-     * @return string|false
+     * @return string|bool
      */
-    public function fetchUrl(string $url)
+    public function fetchUrl(string $url): string|bool
     {
         if ($this->fetcher !== null) {
             return ($this->fetcher)($url);

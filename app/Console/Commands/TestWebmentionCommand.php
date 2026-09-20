@@ -12,16 +12,19 @@ use Indieinabox\Webmention\WebmentionSender;
  */
 class TestWebmentionCommand extends AbstractCommand
 {
+    #[\Override]
     public function getName(): string
     {
         return 'test-webmention';
     }
 
+    #[\Override]
     public function getDescription(): string
     {
         return 'Tests Webmention endpoint discovery, ping transmission, and IndieWebify.me Level 1 h-card markup.';
     }
 
+    #[\Override]
     public function getUsage(): string
     {
         return "Usage:\n" .
@@ -29,6 +32,7 @@ class TestWebmentionCommand extends AbstractCommand
                "  php indieinabox.php test-webmention --validate-hcard [url-or-file]";
     }
 
+    #[\Override]
     public function execute(array $argv): int
     {
         if ($this->hasFlag($argv, '--validate-hcard')) {
@@ -118,8 +122,6 @@ class TestWebmentionCommand extends AbstractCommand
             }
         }
 
-        $html = '';
-        $sourceDesc = '';
         if ($target && (str_starts_with($target, 'http://') || str_starts_with($target, 'https://'))) {
             $sourceDesc = $target;
             $html = (string) @file_get_contents($target);

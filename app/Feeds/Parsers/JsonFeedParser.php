@@ -11,11 +11,13 @@ use Indieinabox\Feeds\Contracts\FeedParserInterface;
  */
 class JsonFeedParser implements FeedParserInterface
 {
+    #[\Override]
     public function getFormat(): string
     {
         return 'jsonfeed';
     }
 
+    #[\Override]
     public function supports(string $content): bool
     {
         $trimmed = trim($content);
@@ -39,6 +41,7 @@ class JsonFeedParser implements FeedParserInterface
      *     author: ?array<string, mixed>
      * }>
      */
+    #[\Override]
     public function parse(string $content, string $feedUrl): array
     {
         $json = json_decode(trim($content), true);

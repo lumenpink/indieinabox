@@ -13,16 +13,19 @@ use Indieinabox\Services\UpdateService;
  */
 class UpdateCommand extends AbstractCommand
 {
+    #[\Override]
     public function getName(): string
     {
         return 'update';
     }
 
+    #[\Override]
     public function getDescription(): string
     {
         return 'Checks for updates, upgrades the single-file binary, or rolls back to previous versions.';
     }
 
+    #[\Override]
     public function getUsage(): string
     {
         return "Usage: php indieinabox.php update [command]\n" .
@@ -33,6 +36,7 @@ class UpdateCommand extends AbstractCommand
                "  --rollback    Rollback to the latest backup or --file <filename>";
     }
 
+    #[\Override]
     public function execute(array $argv): int
     {
         $action = $argv[2] ?? '--check';
@@ -90,7 +94,7 @@ class UpdateCommand extends AbstractCommand
             }
 
             foreach ($backups as $index => $b) {
-                $num = $index + 1;
+                $num = (int) $index + 1;
                 $ver = $b['version'] ? "v" . $b['version'] : "version unknown";
                 $sizeKb = round($b['size'] / 1024, 1);
                 echo "  {$num}. {$b['filename']} ({$ver}, {$b['formatted_date']}, {$sizeKb} KB)\n";

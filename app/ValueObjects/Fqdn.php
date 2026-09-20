@@ -89,11 +89,13 @@ final class Fqdn implements Stringable, JsonSerializable
         return $this->value === $otherVal;
     }
 
+    #[\Override]
     public function __toString(): string
     {
         return $this->value;
     }
 
+    #[\Override]
     public function jsonSerialize(): string
     {
         return $this->value;

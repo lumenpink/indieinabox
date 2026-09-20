@@ -21,6 +21,7 @@ class LanguageSpecification extends CompositeSpecification
     /**
      * @param array<string, mixed> $candidate
      */
+    #[\Override]
     public function isSatisfiedBy(array $candidate): bool
     {
         $lang = $candidate['lang'] ?? ($candidate['frontmatter']['lang'] ?? ($candidate['frontmatter']['language'] ?? ''));

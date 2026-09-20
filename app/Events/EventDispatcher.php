@@ -22,6 +22,7 @@ class EventDispatcher implements EventDispatcherInterface
      */
     private array $sortedListeners = [];
 
+    #[\Override]
     public function dispatch(object $event): object
     {
         $eventClass = get_class($event);
@@ -38,17 +39,20 @@ class EventDispatcher implements EventDispatcherInterface
         return $event;
     }
 
+    #[\Override]
     public function listen(string $eventClass, callable $listener, int $priority = 0): void
     {
         $this->listeners[$eventClass][$priority][] = $listener;
         unset($this->sortedListeners[$eventClass]);
     }
 
+    #[\Override]
     public function hasListeners(string $eventClass): bool
     {
         return !empty($this->listeners[$eventClass]);
     }
 
+    #[\Override]
     public function getListeners(string $eventClass): array
     {
         if (isset($this->sortedListeners[$eventClass])) {
@@ -73,6 +77,7 @@ class EventDispatcher implements EventDispatcherInterface
         return $flattened;
     }
 
+    #[\Override]
     public function clearListeners(?string $eventClass = null): void
     {
         if ($eventClass === null) {

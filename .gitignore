@@ -11,6 +11,7 @@ fa
 .phive
 .phpdoc
 .vscode
+.antigravity
 tools
 indieinabox.php
 tests/Integration/tmp_sandbox/

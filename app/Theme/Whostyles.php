@@ -145,6 +145,7 @@ class Whostyles {
         ];
         
         for ($i = 0; $i < count($colorOrder); $i++) {
+            /** @psalm-suppress InvalidArrayOffset */
             $colors[$colorOrder[$i]] = self::decodeColor(substr($colorsB64, $i * 4, 4));
         }
 
@@ -219,9 +220,10 @@ class Whostyles {
      * and guarantees a minimum level of legibility (e.g., text against background).
      *
      * @param string $html The input HTML string containing whostyles.
-     * @return string The cleaned and adjusted HTML string.
+     *
+     * @return null|string The cleaned and adjusted HTML string.
      */
-    public static function clean(string $html): string {
+    public static function clean(string $html): string|null {
         return preg_replace_callback(
             '/((?:<|&lt;)meta(?:(?!(?:>|&gt;)).){0,250}?name=(?:["\']|&quot;|&#39;|&#039;)?whostyle(?:["\']|&quot;|&#39;|&#039;)?(?:(?!(?:>|&gt;)).){0,250}?content=(?:["\']|&quot;|&#39;|&#039;)?{ws2:[A-Za-z0-9\-_]{39}}(?:["\']|&quot;|&#39;|&#039;)?(?:(?!(?:>|&gt;)).){0,250}?(?:>|&gt;))|({ws2:[A-Za-z0-9\-_]{39}})/is',
             function ($matches) {
@@ -265,9 +267,9 @@ class Whostyles {
      * @return float The relative luminance (0.0 to 1.0).
      */
     private static function getLuminance(string $hex): float {
-        $r = hexdec(substr($hex, 1, 2)) / 255.0;
-        $g = hexdec(substr($hex, 3, 2)) / 255.0;
-        $b = hexdec(substr($hex, 5, 2)) / 255.0;
+        $r = (float) intval(hexdec(substr($hex, 1, 2))) / 255.0;
+        $g = (float) intval(hexdec(substr($hex, 3, 2))) / 255.0;
+        $b = (float) intval(hexdec(substr($hex, 5, 2))) / 255.0;
 
         $r = $r <= 0.03928 ? $r / 12.92 : pow(($r + 0.055) / 1.055, 2.4);
         $g = $g <= 0.03928 ? $g / 12.92 : pow(($g + 0.055) / 1.055, 2.4);
@@ -317,10 +319,10 @@ class Whostyles {
         $list = $M['lists'][$config['list']] ?? 'disc';
         $bstyle = $M['borders'][$config['border_style']] ?? 'none';
         
-        $bwidth = $config['border_width'] . 'px';
-        $bradius = $config['border_radius'] . 'px';
-        $soffset = ($config['shadow_offset'] - 4) . 'px';
-        $sblur = $config['shadow_blur'] . 'px';
+        $bwidth = (string) $config['border_width'] . 'px';
+        $bradius = (string) $config['border_radius'] . 'px';
+        $soffset = (string) ($config['shadow_offset'] - 4) . 'px';
+        $sblur = (string) $config['shadow_blur'] . 'px';
         $lspacing = number_format($config['letter_spacing'] * 0.1 - 0.5, 1, '.', '') . 'px';
 
         $l_bg = $colors['light_bg'];

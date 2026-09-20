@@ -26,6 +26,7 @@ class SqliteSettingsRepository implements SettingsRepositoryInterface
         return $this->db ?? Database::getDb();
     }
 
+    #[\Override]
     public function get(string $key, mixed $default = null): mixed
     {
         try {
@@ -53,6 +54,7 @@ class SqliteSettingsRepository implements SettingsRepositoryInterface
         }
     }
 
+    #[\Override]
     public function set(string $key, mixed $value): bool
     {
         try {
@@ -75,6 +77,7 @@ class SqliteSettingsRepository implements SettingsRepositoryInterface
         }
     }
 
+    #[\Override]
     public function all(): array
     {
         $settings = [];
@@ -118,6 +121,7 @@ class SqliteSettingsRepository implements SettingsRepositoryInterface
         return $settings;
     }
 
+    #[\Override]
     public function getTranslations(): array
     {
         $translations = [];
@@ -142,6 +146,7 @@ class SqliteSettingsRepository implements SettingsRepositoryInterface
         return $translations;
     }
 
+    #[\Override]
     public function getUrlTranslations(): array
     {
         $urlTranslations = [];
@@ -165,6 +170,7 @@ class SqliteSettingsRepository implements SettingsRepositoryInterface
         return $urlTranslations;
     }
 
+    #[\Override]
     public function getKinds(): array
     {
         $kinds = [];
@@ -184,6 +190,7 @@ class SqliteSettingsRepository implements SettingsRepositoryInterface
         return $kinds;
     }
 
+    #[\Override]
     public function saveKinds(array $kinds): bool
     {
         try {
@@ -201,6 +208,7 @@ class SqliteSettingsRepository implements SettingsRepositoryInterface
         }
     }
 
+    #[\Override]
     public function saveTranslations(array $translations): bool
     {
         try {
@@ -231,6 +239,7 @@ class SqliteSettingsRepository implements SettingsRepositoryInterface
         }
     }
 
+    #[\Override]
     public function saveUrlTranslations(array $urlTranslations): bool
     {
         try {

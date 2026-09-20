@@ -59,7 +59,6 @@ class FeedPublisher
         $defaultLang = $this->site->localization->defaultLang ?? 'en';
 
         $entriesByLang = [];
-        /** @var Page $page */
         foreach ($pages as $page) {
             $entry = $page->toEntry();
             $lang = $entry->getLang() ?: $defaultLang;

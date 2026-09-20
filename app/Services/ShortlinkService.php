@@ -30,9 +30,10 @@ class ShortlinkService
      * @param Page $page
      * @param string $fqdn
      * @param array $config
-     * @return string|null
+     *
+     * @return false|string
      */
-    public function getShortlink(Page $page, string $fqdn, array $config, bool $isDev = false): ?string
+    public function getShortlink(Page $page, string $fqdn, array $config, bool $isDev = false): string|false
     {
         $url = rtrim($fqdn, '/') . '/' . ltrim($page->slug, '/');
         
@@ -55,14 +56,5 @@ class ShortlinkService
         // Network operation is deferred to the cron worker. 
         // During the static build, we return the local hash if not cached.
         return $localHash;
-    }
-
-    private static function generateBoundary(int $length = 24): string {
-        $chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-        $boundary = '';
-        for ($i = 0; $i < $length; $i++) {
-            $boundary .= substr($chars, rand(0, strlen($chars) - 1), 1);
-        }
-        return $boundary;
     }
 }

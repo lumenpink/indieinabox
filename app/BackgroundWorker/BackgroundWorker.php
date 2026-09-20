@@ -81,6 +81,7 @@ class BackgroundWorker implements BackgroundWorkerInterface
      * Executes all background tasks (inbox, outbox, archives, feeds, updates).
      * Normally called periodically via cron or CLI.
      */
+    #[\Override]
     public function runAll(): void
     {
         $lockFile = Database::$dataDir . '/cron.lock';
@@ -109,6 +110,7 @@ class BackgroundWorker implements BackgroundWorkerInterface
     /**
      * Discovers Webmention support for queued domains.
      */
+    #[\Override]
     public function processWebmentionDiscovery(): void
     {
         $discovery = new WebmentionDiscovery($this->site, $this->db);
@@ -118,6 +120,7 @@ class BackgroundWorker implements BackgroundWorkerInterface
     /**
      * Executes the daily backup if cron is enabled.
      */
+    #[\Override]
     public function processBackups(): void
     {
         $config = $this->settingsRepo->all();
@@ -142,6 +145,7 @@ class BackgroundWorker implements BackgroundWorkerInterface
     /**
      * Checks for application updates and performs auto-upgrade if enabled.
      */
+    #[\Override]
     public function processUpdates(): void
     {
         echo "Checking for application updates...\n";
@@ -153,6 +157,7 @@ class BackgroundWorker implements BackgroundWorkerInterface
      * Fetches remote Twtxt timeline and hub mentions asynchronously.
      * Rebuilds the site to update the static timeline page if new entries are found.
      */
+    #[\Override]
     public function processTwtxtFeeds(): void
     {
         echo "Running Twtxt Feed processor...\n";
@@ -186,6 +191,7 @@ class BackgroundWorker implements BackgroundWorkerInterface
     /**
      * Processes the incoming queue (Webmentions, ActivityPub activities, site rebuilds).
      */
+    #[\Override]
     public function processInboxQueue(): void
     {
         $processor = new InboxProcessor($this->site, $this->db);
@@ -195,6 +201,7 @@ class BackgroundWorker implements BackgroundWorkerInterface
     /**
      * Processes outgoing webmentions.
      */
+    #[\Override]
     public function processOutgoingWebmentions(): void
     {
         $dispatcher = new OutgoingWebmentionDispatcher($this->site, $this->db);
@@ -205,6 +212,7 @@ class BackgroundWorker implements BackgroundWorkerInterface
      * Processes the outgoing queue (Outbox).
      * Delivers queued activities to followers' inboxes using HTTP Signatures.
      */
+    #[\Override]
     public function processOutbox(): void
     {
         $dispatcher = new OutboxDispatcher($this->site, $this->db);
@@ -215,6 +223,7 @@ class BackgroundWorker implements BackgroundWorkerInterface
      * Processes the archive queue.
      * Saves external links to Archive.org and downloads local PDF snapshots via Microlink.
      */
+    #[\Override]
     public function processArchiveQueue(): void
     {
         $processor = new ArchiveProcessor($this->site, $this->db);

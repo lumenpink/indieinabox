@@ -651,7 +651,8 @@ class AdminController extends AbstractController
                         $v['content_dir'] = $decoded;
                     }
                 }
-                $valStr = is_array($v) ? json_encode($v, JSON_UNESCAPED_UNICODE) : (string) $v;
+                /** @psalm-suppress InvalidCast — $v may be non-array at runtime despite Psalm's inference */
+                $valStr = is_array($v) ? (json_encode($v, JSON_UNESCAPED_UNICODE) ?: '') : (string) $v;
                 $stmt = $db->prepare('INSERT INTO kinds (kind_key, config_json) VALUES (:k, :v)');
                 $stmt->bindValue(':k', (string) $k);
                 $stmt->bindValue(':v', $valStr);

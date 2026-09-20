@@ -11,16 +11,19 @@ use Indieinabox\Core\Database;
  */
 class ConfigCommand extends AbstractCommand
 {
+    #[\Override]
     public function getName(): string
     {
         return 'config';
     }
 
+    #[\Override]
     public function getDescription(): string
     {
         return 'Gets or sets application configuration values stored in the database.';
     }
 
+    #[\Override]
     public function getUsage(): string
     {
         return "Usage:\n" .
@@ -28,6 +31,7 @@ class ConfigCommand extends AbstractCommand
                "  php indieinabox.php config get --key <key>";
     }
 
+    #[\Override]
     public function execute(array $argv): int
     {
         $subcommand = $argv[2] ?? '';

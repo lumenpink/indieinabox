@@ -50,9 +50,9 @@ class ContentProcessor
     /**
      * @param string $content
      *
-     * @return string
+     * @return null|string
      */
-    public function removeYamlFrontMatter(string $content): string
+    public function removeYamlFrontMatter(string $content): string|null
     {
         return preg_replace('/^---\s*\n((?:[^\n]*+\n)*)---\s*\n/sm', '', $content);
     }
@@ -146,9 +146,9 @@ class ContentProcessor
     /**
      * @param string $content
      *
-     * @return string
+     * @return null|string
      */
-    private function addTrailingSlashesToInternalLinks(string $content): string
+    private function addTrailingSlashesToInternalLinks(string $content): string|null
     {
         return preg_replace_callback(
             "/\[(.*?)\]\((.*?)\)/",

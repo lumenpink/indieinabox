@@ -13,21 +13,25 @@ use Indieinabox\SiteBuilder\SiteBuilder;
  */
 class PostCommand extends AbstractCommand
 {
+    #[\Override]
     public function getName(): string
     {
         return 'post';
     }
 
+    #[\Override]
     public function getDescription(): string
     {
         return 'Creates and publishes a new note with optional media attachments.';
     }
 
+    #[\Override]
     public function getUsage(): string
     {
         return 'php indieinabox.php post create --text <content> [--media <file>]';
     }
 
+    #[\Override]
     public function execute(array $argv): int
     {
         $subcommand = $argv[2] ?? '';

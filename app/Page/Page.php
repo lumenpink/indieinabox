@@ -30,6 +30,8 @@ use Indieinabox\Localization\Translator;
  * @property array<string> $images
  * @property string $rawBody
  * @property string $isodate
+ * @property array<string, mixed> $frontmatter Raw frontmatter data array via __get
+ * @property \DateTimeInterface|null $published Publication date via __get
  */
 class Page
 {

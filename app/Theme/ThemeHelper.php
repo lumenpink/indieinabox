@@ -44,7 +44,6 @@ class ThemeHelper
 
         // Line 2: Shortlink - Likes / Reposts / Replies
         $html .= '<div class="meta-line-2" style="margin-left: 0.6em;">';
-        $interactionsStart = '';
         if (!empty($page->shortlink)) {
             $html .= '<a href="' . htmlspecialchars($page->shortlink) . '" style="color: inherit; text-decoration: none; opacity: 0.8;">🔗</a> - ';
         }

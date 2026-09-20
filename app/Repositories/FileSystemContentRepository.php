@@ -59,6 +59,7 @@ class FileSystemContentRepository implements ContentRepositoryInterface
         return $dir;
     }
 
+    #[\Override]
     public function generateUniqueSlug(
         string $kind,
         string $baseSlug,
@@ -82,6 +83,7 @@ class FileSystemContentRepository implements ContentRepositoryInterface
         return $slug;
     }
 
+    #[\Override]
     public function buildFrontmatterMarkdown(array $frontmatter, string $body): string
     {
         if (empty($frontmatter)) {
@@ -108,6 +110,7 @@ class FileSystemContentRepository implements ContentRepositoryInterface
         return $yaml . ltrim($body);
     }
 
+    #[\Override]
     public function parseFrontmatterMarkdown(string $rawContent): array
     {
         if (preg_match('/^---\r?\n(.*?)\r?\n---\r?\n(.*)$/s', $rawContent, $matches)) {
@@ -125,6 +128,7 @@ class FileSystemContentRepository implements ContentRepositoryInterface
         ];
     }
 
+    #[\Override]
     public function save(
         string $kind,
         string $slug,
@@ -147,6 +151,7 @@ class FileSystemContentRepository implements ContentRepositoryInterface
         return $filepath;
     }
 
+    #[\Override]
     public function findByPath(string $filepath): ?string
     {
         if (!file_exists($filepath)) {
@@ -157,6 +162,7 @@ class FileSystemContentRepository implements ContentRepositoryInterface
         return $content !== false ? $content : null;
     }
 
+    #[\Override]
     public function delete(string $filepath): bool
     {
         if (file_exists($filepath)) {
@@ -165,11 +171,13 @@ class FileSystemContentRepository implements ContentRepositoryInterface
         return false;
     }
 
+    #[\Override]
     public function exists(string $filepath): bool
     {
         return file_exists($filepath);
     }
 
+    #[\Override]
     public function scan(string $dir): array
     {
         if (!is_dir($dir)) {
@@ -203,6 +211,7 @@ class FileSystemContentRepository implements ContentRepositoryInterface
      * @param string|null $dir
      * @return array<int, array{filepath: string, frontmatter: array<string, mixed>, body: string, slug: string, kind: string, date: string|null, lang: string|null}>
      */
+    #[\Override]
     public function query(\Indieinabox\Specifications\Contracts\SpecificationInterface $specification, ?string $dir = null): array
     {
         $searchDir = $dir !== null && $dir !== '' ? $dir : $this->contentBaseDir;

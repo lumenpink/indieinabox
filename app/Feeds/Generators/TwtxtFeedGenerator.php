@@ -16,6 +16,7 @@ use Indieinabox\Twtxt\TwtxtManager;
  */
 class TwtxtFeedGenerator implements FeedGeneratorInterface
 {
+    #[\Override]
     public function getFilename(): string
     {
         return 'twtxt.txt';
@@ -24,6 +25,7 @@ class TwtxtFeedGenerator implements FeedGeneratorInterface
     /**
      * @param Entry[] $entries
      */
+    #[\Override]
     public function generate(array $entries, string $outputPath, Site $site, string $lang = 'en'): void
     {
         $feedEntries = $this->prepareEntries($entries);

@@ -128,7 +128,6 @@ class ConfigView
         if (!is_array($langArr)) {
             $langArr = [$langArr];
         }
-        $langStr = implode(', ', $langArr);
         $prettyLinksActive = $config['prettylinks'] ?? true;
         $fqdn = rtrim($site->metadata->fqdn ?? '', '/');
 
@@ -250,7 +249,7 @@ class ConfigView
                             echo '<h4>Local Backups (Rollback)</h4><ul>';
                             foreach ($backups as $bkp) {
                                 echo '<li style="margin-bottom: 10px;">';
-                                echo htmlspecialchars($bkp['filename']) . ' <small>(' . date('Y-m-d H:i:s', $bkp['date']) . ', ' . round($bkp['size'] / 1024, 2) . ' KB)</small>';
+                                echo htmlspecialchars($bkp['filename']) . ' <small>(' . date('Y-m-d H:i:s', $bkp['date']) . ', ' . (string) round($bkp['size'] / 1024, 2) . ' KB)</small>';
                                 echo '<div style="margin-top: 5px; display: inline-block; margin-left: 10px;">';
                                 echo '<button type="button" class="btn" style="padding: 4px 10px; font-size: 0.9em; background: var(--accent); color: white; border: none;" onclick="submitActionForm(\'rollback_update\', \'backup_filename\', \'' . htmlspecialchars($bkp['filename']) . '\')">Rollback</button>';
                                 echo '</div>';

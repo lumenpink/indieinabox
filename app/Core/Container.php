@@ -171,7 +171,7 @@ class Container implements ContainerInterface
     /**
      * Registers an existing object instance into the container.
      */
-    public function instance(string $id, mixed $instance): void
+    public function instance(string $id, PDO|Site $instance): void
     {
         $this->instances[$id] = $instance;
     }
@@ -209,6 +209,7 @@ class Container implements ContainerInterface
      * @throws NotFoundException No entry was found for this identifier.
      * @throws ContainerException Error while retrieving the entry.
      */
+    #[\Override]
     public function get(string $id): mixed
     {
         if (isset($this->instances[$id])) {
@@ -237,6 +238,7 @@ class Container implements ContainerInterface
      *
      * @param string $id Identifier of the entry to look for.
      */
+    #[\Override]
     public function has(string $id): bool
     {
         return isset($this->instances[$id]) || isset($this->bindings[$id]);

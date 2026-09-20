@@ -24,7 +24,7 @@ class Localization
     /**
      * Localization constructor.
      *
-     * @param array<string>|string|number|null $lang
+     * @param array<string>|string|int|float|null $lang
      * @param string $defaultLang
      */
     public function __construct(
@@ -41,7 +41,7 @@ class Localization
 
     /**
      * @param string $name
-     * @return array<string>|string|number|null
+     * @return array<string>|string|int|float|null
      */
     public function __get(string $name)
     {
@@ -52,7 +52,7 @@ class Localization
     }
     /**
      * @param string $name
-     * @param array<string>|string|number|null $value
+     * @param array<string>|string|int|float|null $value
      */
     public function __set(string $name, $value)
     {
@@ -70,7 +70,7 @@ class Localization
     /**
      * Creates an array from a value.
      *
-     * @param array<string>|string|number|null $value
+     * @param array<string>|string|int|float|null $value
      * @return array<string>
      */
     public function createArrayFromValue($value): array

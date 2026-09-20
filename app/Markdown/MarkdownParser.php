@@ -96,6 +96,7 @@ class MarkdownParser implements ParserInterface
      * @param string $file The path to the markdown file.
      * @return Page|null The parsed page or null if invalid or skipped.
      */
+    #[\Override]
     public function parse(string $file): ?Page
     {
         if (!$this->fileProcessor->isValidFile($file)) {

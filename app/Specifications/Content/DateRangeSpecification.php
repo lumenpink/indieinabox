@@ -27,6 +27,7 @@ class DateRangeSpecification extends CompositeSpecification
     /**
      * @param array<string, mixed> $candidate
      */
+    #[\Override]
     public function isSatisfiedBy(array $candidate): bool
     {
         $dateStr = $candidate['date'] ?? ($candidate['frontmatter']['date'] ?? null);

@@ -201,7 +201,6 @@ class IndexPublisher
     public function loadThemeFeedView(Pages $pages): void
     {
         $base = $this->site->paths->baseDir;
-        $site = $this->site;
 
         $themeDir = $this->site->paths->themeDir ?? 'theme';
         $file = $base . DIRECTORY_SEPARATOR . $themeDir . DIRECTORY_SEPARATOR . 'views'
@@ -232,8 +231,10 @@ class IndexPublisher
         }
 
         foreach ($grouped as $lang => &$months) {
+            $_ = $lang; // psalm: key used in second loop
             krsort($months);
             foreach ($months as $yearMonth => &$monthPages) {
+                $_ = $yearMonth; // psalm: key used in second loop
                 usort($monthPages, function ($a, $b) {
                     $timeA = $a->date->getTimestamp();
                     $timeB = $b->date->getTimestamp();
@@ -279,13 +280,12 @@ class IndexPublisher
                     if (file_exists($summaryFile)) {
                         ob_start();
                         \Indieinabox\Core\Container::getInstance()->instance(\Indieinabox\Site\Site::class, $this->site);
-                        $site = $this->site;
                         $page = clone $p;
                         $page->relpath = $monthPage->relpath;
                         ThemeManager::loadView($summaryFile, get_defined_vars());
                         $monthContent .= ob_get_clean();
                     } else {
-                        $monthContent .= $p->content;
+                        $monthContent .= (string) $p->content;
                     }
                     $monthRaw .= $p->rawBody;
                 }
@@ -322,13 +322,12 @@ class IndexPublisher
                 if (file_exists($summaryFile)) {
                     ob_start();
                     \Indieinabox\Core\Container::getInstance()->instance(\Indieinabox\Site\Site::class, $this->site);
-                    $site = $this->site;
                     $page = clone $p;
                     $page->relpath = $indexPage->relpath;
                     ThemeManager::loadView($summaryFile, get_defined_vars());
                     $indexContent .= ob_get_clean();
                 } else {
-                    $indexContent .= $p->content;
+                    $indexContent .= (string) $p->content;
                 }
                 $indexRaw .= $p->rawBody;
             }

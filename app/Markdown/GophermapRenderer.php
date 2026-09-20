@@ -31,7 +31,7 @@ class GophermapRenderer implements RendererInterface
      * Initializes the GophermapRenderer.
      *
      * @param string $host The hostname to use for internal Gopher links.
-     * @param int|string $port The port number to use for internal Gopher links.
+     * @param int $port The port number to use for internal Gopher links.
      * @param \Indieinabox\Page\Page|null $page The page being rendered, used for resolving relative links.
      */
     public function __construct(string $host = 'gopher.example.com', int $port = 70, ?\Indieinabox\Page\Page $page = null)
@@ -47,6 +47,7 @@ class GophermapRenderer implements RendererInterface
      * @param Node $node
      * @return string
      */
+    #[\Override]
     public function render(Node $node): string
     {
         $this->links = [];
@@ -71,8 +72,9 @@ class GophermapRenderer implements RendererInterface
      * @param string $type The Gopher item type character (e.g., 'i' for info, '1' for directory, 'h' for HTML).
      * @param string $display The text to display to the user.
      * @param string $selector The path or selector for the resource.
-     * @param string|null $host The target hostname (defaults to this renderer's host if null).
-     * @param int|string|null $port The target port (defaults to this renderer's port if null).
+     * @param string $host The target hostname (defaults to this renderer's host if null).
+     * @param int $port The target port (defaults to this renderer's port if null).
+     *
      * @return string The formatted Gophermap line, terminated with CRLF.
      */
     private function formatLine(string $type, string $display, string $selector = '', string $host = '(null)', int $port = 0): string

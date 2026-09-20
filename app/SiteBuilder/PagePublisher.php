@@ -107,13 +107,10 @@ class PagePublisher
             $page->shortlink = $shortlinkManager->getShortlink($page, $fqdn, $site->config['shortlink'], $isDev);
         }
 
-        $p = $page;
-        $pages = $this->pages;
-        $langLinks = $this->getLanguageLinks($page);
+        $this->getLanguageLinks($page);
 
+        /** @psalm-suppress UnusedVariable — getMenuLinks is called for its side effects on the template context */
         $menuLinks = $this->getMenuLinks($page);
-        $headerLinks = $menuLinks['header'];
-        $footerLinks = $menuLinks['footer'];
 
         if (in_array('draft', $page->metadata->tags, true)) {
             return;
@@ -149,7 +146,7 @@ class PagePublisher
 
         // True incremental build: skip if destination is newer than source and theme (only in dev mode)
         $skipGeneration = false;
-        if (isset($this->site->options->dev) && $this->site->options->dev && empty($this->site->options->forceRebuild)) {
+        if (isset($this->site->options->dev) && $this->site->options->dev && !$this->site->options->forceRebuild) {
             $mdMtime = ($page->filepath && file_exists($page->filepath)) ? filemtime($page->filepath) : 0;
             static $maxThemeMtime = null;
             if ($maxThemeMtime === null) {
@@ -382,7 +379,7 @@ class PagePublisher
 
         // True incremental build: skip if destination is newer than source (only in dev mode)
         $skipGeneration = false;
-        if (isset($this->site->options->dev) && $this->site->options->dev && empty($this->site->options->forceRebuild)) {
+        if (isset($this->site->options->dev) && $this->site->options->dev && !$this->site->options->forceRebuild) {
             $mdMtime = ($page->filepath && file_exists($page->filepath)) ? filemtime($page->filepath) : 0;
             if (file_exists($destinationFile) && filemtime($destinationFile) >= $mdMtime) {
                 $skipGeneration = true;
@@ -462,7 +459,7 @@ class PagePublisher
 
         // True incremental build: skip if destination is newer than source (only in dev mode)
         $skipGeneration = false;
-        if (isset($this->site->options->dev) && $this->site->options->dev && empty($this->site->options->forceRebuild)) {
+        if (isset($this->site->options->dev) && $this->site->options->dev && !$this->site->options->forceRebuild) {
             $mdMtime = ($page->filepath && file_exists($page->filepath)) ? filemtime($page->filepath) : 0;
             if (file_exists($destinationFile) && filemtime($destinationFile) >= $mdMtime) {
                 $skipGeneration = true;
@@ -557,7 +554,7 @@ class PagePublisher
         // Also legacy folder names for backup
         $kindsPath = $this->site->config['kindspath'] ?? \Indieinabox\Core\Database::getSetting('kindspath', []);
         if (!empty($kindsPath)) {
-            foreach ($kindsPath as $key => $values) {
+            foreach ($kindsPath as $values) {
                 foreach ($values as $val) {
                     $kindFolders[] = $val;
                 }
@@ -585,7 +582,7 @@ class PagePublisher
                 $baseKey = $key;
                 break;
             }
-            foreach ($langsList as $lang => $translatedNick) {
+            foreach ($langsList as $translatedNick) {
                 if ($nick === $translatedNick) {
                     $translationGroup = $langsList;
                     $baseKey = $key;
@@ -763,7 +760,10 @@ class PagePublisher
         }
 
         // 3. Sort links: numbered first, then alphabetically
-        $sortFn = function ($a, $b) {
+        $sortFn = /**
+         * @psalm-return int<-1, 1>
+         */
+        function ($a, $b): int {
             $orderA = $a['order'] ?? PHP_INT_MAX;
             $orderB = $b['order'] ?? PHP_INT_MAX;
 

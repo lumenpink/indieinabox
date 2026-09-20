@@ -30,6 +30,7 @@ class SqliteActivityPubRepository implements ActivityPubRepositoryInterface
         return $container && $container->has(PDO::class) ? $container->get(PDO::class) : Database::getDb();
     }
 
+    #[\Override]
     public function addFollower(string $actorUrl, string $inboxUrl, ?string $sharedInboxUrl = null): bool
     {
         $stmt = $this->getDb()->prepare(
@@ -38,12 +39,14 @@ class SqliteActivityPubRepository implements ActivityPubRepositoryInterface
         return $stmt->execute([$actorUrl, $inboxUrl, $sharedInboxUrl]);
     }
 
+    #[\Override]
     public function removeFollower(string $actorUrl): bool
     {
         $stmt = $this->getDb()->prepare('DELETE FROM activitypub_followers WHERE actor_url = ?');
         return $stmt->execute([$actorUrl]);
     }
 
+    #[\Override]
     public function isFollower(string $actorUrl): bool
     {
         $stmt = $this->getDb()->prepare('SELECT COUNT(*) FROM activitypub_followers WHERE actor_url = ?');
@@ -51,12 +54,14 @@ class SqliteActivityPubRepository implements ActivityPubRepositoryInterface
         return ((int) $stmt->fetchColumn()) > 0;
     }
 
+    #[\Override]
     public function getFollowers(): array
     {
         $stmt = $this->getDb()->query('SELECT actor_url, inbox_url, shared_inbox_url FROM activitypub_followers');
         return $stmt ? $stmt->fetchAll(PDO::FETCH_ASSOC) : [];
     }
 
+    #[\Override]
     public function getDistinctInboxes(): array
     {
         $stmt = $this->getDb()->query(
@@ -75,6 +80,7 @@ class SqliteActivityPubRepository implements ActivityPubRepositoryInterface
         return $inboxes;
     }
 
+    #[\Override]
     public function enqueueOutbox(string $payloadJson, string $targetInbox, ?int $createdAt = null): int
     {
         $stmt = $this->getDb()->prepare(
@@ -84,6 +90,7 @@ class SqliteActivityPubRepository implements ActivityPubRepositoryInterface
         return (int) $this->getDb()->lastInsertId();
     }
 
+    #[\Override]
     public function getPendingOutbox(int $limit = 50): array
     {
         $stmt = $this->getDb()->prepare(
@@ -94,12 +101,14 @@ class SqliteActivityPubRepository implements ActivityPubRepositoryInterface
         return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
     }
 
+    #[\Override]
     public function updateOutboxStatus(int $id, string $status): bool
     {
         $stmt = $this->getDb()->prepare('UPDATE activitypub_outbox SET status = ? WHERE id = ?');
         return $stmt->execute([$status, $id]);
     }
 
+    #[\Override]
     public function pruneOutbox(int $olderThanTimestamp): int
     {
         $stmt = $this->getDb()->prepare("DELETE FROM activitypub_outbox WHERE status IN ('sent', 'failed') AND created_at < ?");

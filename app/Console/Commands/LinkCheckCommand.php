@@ -11,21 +11,25 @@ use Indieinabox\Services\LinkCheckerService;
  */
 class LinkCheckCommand extends AbstractCommand
 {
+    #[\Override]
     public function getName(): string
     {
         return 'test-links';
     }
 
+    #[\Override]
     public function getDescription(): string
     {
         return 'Crawls generated static HTML files to detect broken internal and external links.';
     }
 
+    #[\Override]
     public function getUsage(): string
     {
         return 'php indieinabox.php test-links [--skip-external] [--internal-only] [--report <path>]';
     }
 
+    #[\Override]
     public function execute(array $argv): int
     {
         $reportPath = null;

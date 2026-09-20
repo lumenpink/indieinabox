@@ -79,7 +79,7 @@ class IndieAuthController extends AbstractController
         $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 
         if ($method === 'GET') {
-            ConsentView::renderLoginForm($this->site, $_GET);
+            /** @psalm-suppress InvalidArgument */             ConsentView::renderLoginForm($this->site, $_GET);
             return;
         }
 
@@ -107,7 +107,7 @@ class IndieAuthController extends AbstractController
         $configuredPassword = $this->site->metadata->indieauthPassword;
 
         if (empty($configuredPassword)) {
-            ConsentView::renderLoginForm(
+            /** @psalm-suppress InvalidArgument */             ConsentView::renderLoginForm(
                 $this->site,
                 $_POST,
                 'IndieAuth is not configured on this server (password is empty).'
@@ -117,7 +117,7 @@ class IndieAuthController extends AbstractController
 
         $isValid = ($password === $configuredPassword) || password_verify($password, $configuredPassword);
         if (!$isValid) {
-            ConsentView::renderLoginForm($this->site, $_POST, 'Invalid password.');
+            /** @psalm-suppress InvalidArgument */             ConsentView::renderLoginForm($this->site, $_POST, 'Invalid password.');
             return;
         }
 

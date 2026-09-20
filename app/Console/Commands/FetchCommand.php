@@ -11,6 +11,7 @@ use Indieinabox\Services\FetchFeedsService;
  */
 class FetchCommand extends AbstractCommand
 {
+    #[\Override]
     public function getName(): string
     {
         return 'fetch';
@@ -19,21 +20,25 @@ class FetchCommand extends AbstractCommand
     /**
      * @return array<int, string>
      */
+    #[\Override]
     public function getAliases(): array
     {
         return ['microsub:fetch'];
     }
 
+    #[\Override]
     public function getDescription(): string
     {
         return 'Fetches remote RSS, Atom, and Twtxt subscription feeds into local storage.';
     }
 
+    #[\Override]
     public function getUsage(): string
     {
         return 'php indieinabox.php fetch';
     }
 
+    #[\Override]
     public function execute(array $argv): int
     {
         echo "Fetching feeds...\n";

@@ -23,6 +23,7 @@
   - (webmention) integrate mf2 parsing, W3C discovery, CLI testing tool and IndieWeb compliance
 
 ### Bug Fixes
+  - (compiler) harmonize mf2 parser parameter nullability for PHP 8.4
   - (ci) prevent premature headers sent in test suite and improve socket readiness check
   - (core) declare Metadata::$title and remove obsolete global in build.php
 

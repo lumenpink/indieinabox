@@ -125,6 +125,9 @@ foreach ($appFiles as $file) {
     $relativeName = str_replace($base . '/', '', $file);
 
     if (str_contains($file, 'vendor/mf2/mf2')) {
+        // PHP 8.4 compatibility: replace implicit nullable parameters with explicit ?DOMElement
+        $cleaned = preg_replace('/(\bpublic\s+function\s+[^)]*?\b)DOMElement\s+(\$context\s*=\s*null)/', '$1?DOMElement $2', $cleaned);
+
         $useLines = [];
         $otherLines = [];
         foreach (explode("\n", $cleaned) as $line) {

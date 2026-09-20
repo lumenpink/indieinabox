@@ -15,9 +15,15 @@ fi
 
 # Tratamento para o modo cron
 if [ "$1" = "cron" ]; then
-    echo ">> [indieinabox] Starting cron worker (running every 5 minutes)..."
+    echo ">> [indieinabox-cron] Starting background worker..."
     while true; do
-        php /app/indieinabox.php cron || echo ">> [indieinabox] Cron failed with exit code $?"
+        if [ ! -f "/app/.config.php" ] && [ ! -f "/app/data/.config.php" ]; then
+            echo ">> [indieinabox-cron] Database not configured yet. Waiting for web installer (checking in 30s)..."
+            sleep 30
+            continue
+        fi
+
+        php /app/indieinabox.php cron || echo ">> [indieinabox-cron] Cron execution ended with code $?"
         sleep 300
     done
 fi

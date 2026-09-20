@@ -7,6 +7,7 @@ namespace Indieinabox\Http\Controllers;
 use Indieinabox\BackgroundWorker\BackgroundWorker;
 use Indieinabox\Core\Container;
 use Indieinabox\Core\Database;
+use Indieinabox\Localization\LocaleManager;
 use Indieinabox\Repositories\Contracts\SettingsRepositoryInterface;
 use Indieinabox\Services\ConfigurationService;
 use Indieinabox\Services\MicrosubService;
@@ -717,6 +718,23 @@ class AdminController extends AbstractController
                 }
             }
             $currentConfig['urltranslations'] = $newUrlTranslations;
+        }
+
+        if (!empty($addedLangs)) {
+            foreach ($addedLangs as $nl) {
+                LocaleManager::applyLocale($currentConfig, $nl, false);
+            }
+        }
+
+        if (isset($_POST['autofill_locale'])) {
+            $targetLocale = trim((string) $_POST['autofill_locale']);
+            if ($targetLocale === 'all') {
+                foreach ($currentConfig['lang'] as $l) {
+                    LocaleManager::applyLocale($currentConfig, $l, false);
+                }
+            } else {
+                LocaleManager::applyLocale($currentConfig, $targetLocale, false);
+            }
         }
 
         if (!empty($addedLangs)) {

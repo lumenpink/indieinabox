@@ -643,6 +643,10 @@ class ConfigView
                 <div id="tab-localization-global" class="tab-content">
                 <fieldset>
                     <legend>Global Translations</legend>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; padding: 0.6rem 0.8rem; background: rgba(0,0,0,0.03); border: 1px solid var(--border-color); border-radius: 6px;">
+                        <span style="font-size: 0.85rem; opacity: 0.85;">Translations are automatically populated from locale dictionaries (such as <code>pt</code>, <code>es</code>, <code>en</code>) when adding languages.</span>
+                        <button type="submit" name="autofill_locale" value="all" class="btn-secondary" style="margin: 0; padding: 4px 10px; font-size: 0.8rem;" title="Auto-fill empty translations using available locale dictionaries">Auto-fill from Locales</button>
+                    </div>
                     <?php
                     $globalStrings = [
                         'Home' => 'Home link',

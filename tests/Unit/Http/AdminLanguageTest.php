@@ -139,3 +139,26 @@ test('ConfigView renders Main (Default) badge, Make Main button, and reorder arr
         ->toContain('name="move_down_lang"')
         ->toContain('Sub-language');
 });
+
+test('AdminController auto-fills translations from locale dictionary when a language is added', function () {
+    $repo = new SqliteSettingsRepository();
+    $repo->set('lang', ['en']);
+    $repo->set('defaultlang', 'en');
+
+    $admin = new AdminController($this->site, null, null, null, null, $repo);
+
+    $_SERVER['REQUEST_METHOD'] = 'POST';
+    $_POST = [
+        'lang' => ['en', 'pt'],
+        'sitename' => 'Test Site',
+    ];
+
+    ob_start();
+    $admin->config();
+    ob_end_clean();
+
+    $translations = $repo->getTranslations();
+    expect($translations['Home']['pt'] ?? null)->toBe('Início')
+        ->and($translations['Recent posts']['pt'] ?? null)->toBe('Publicações recentes');
+});
+

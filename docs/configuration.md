@@ -30,6 +30,12 @@ The primary generator settings are loaded from `config.yml` in the project root:
 * The first language in the `lang` array is always the **Main (Default)** translation route (`defaultlang`), rendered at the site root (`/`).
 * Secondary languages are rendered under localized prefix directories (e.g. `/es/`, `/pt/`).
 * In the Web Admin panel (`/admin/config`), languages can be reordered at any time using **Move Up (▲)** and **Move Down (▼)**, or promoted to primary directly using the **Make Main** button.
+* **Locale Dictionaries & Auto-Fill:**
+  * Bundled locale definitions are provided for `pt` (Português), `es` (Español), and `en` (English) under `resources/locales/`.
+  * When a new language is added to the configuration, missing translations and kind titles (e.g. `Artigos`, `Notas`) are automatically populated from the matching locale dictionary.
+  * If a dictionary is not yet available locally, Indieinabox attempts to download it from the official Codeberg repository and caches it in `data/locales/`.
+  * Regional language codes (such as `pt-BR` or `es-ES`) automatically resolve to their primary language dictionary (`pt` or `es`).
+  * An **Auto-fill from Locales** button in `/admin/config` allows refreshing/filling all empty translations at any time.
 
 ---
 

@@ -38,7 +38,16 @@ php indieinabox.php [action]
 ```
 
 *   **`build`** (default): Generates the static site.
-*   **`setup`**: Configures the initial instance interactively or via arguments (`--password`, `--name`, `--fqdn`).
+*   **`setup`**: Configures the initial instance interactively or headless via CLI flags:
+    *   `--name <sitename>`: Set website / blog name (default: `Indie In A Box`).
+    *   `--db <path>`: SQLite database file path (default: `data/db.sqlite3`).
+    *   `--lang <code[,code]>`: Primary / default language or comma-separated languages (default: `en`).
+    *   `--content <dir>`: Source content directory path (default: `content`).
+    *   `--password <pass>`: Web UI / IndieAuth admin password. If omitted in non-interactive mode, a secure 16-character password is automatically generated.
+    *   `--fqdn <url>`: Fully Qualified Domain Name / base site URL (e.g. `https://example.org`).
+    *   `--author <name>`: Author / owner display name.
+    *   `--build`: Automatically trigger the static site build after setup completes.
+    *   `--non-interactive` / `-y`: Run headlessly without terminal interaction.
 *   **`config set/get`**: Sets or retrieves a configuration variable directly to/from the database (e.g. `config set --key <k> --value <v>`).
 *   **`fetch`**: Forces a manual fetch of all followed RSS/Twtxt feeds.
 *   **`cron`**: Runs pending background tasks (such as retrying failed webmentions).

@@ -132,6 +132,114 @@ class Version
             return (string) constant('INDIEINABOX_BUILD_DATE');
         }
 
+        $versionFile = dirname(__DIR__, 2) . '/VERSION';
+        if (file_exists($versionFile)) {
+            $mtime = @filemtime($versionFile);
+            if ($mtime !== false && $mtime > 0) {
+                return date('c', $mtime);
+            }
+        }
+
+        if (function_exists('exec')) {
+            $output = [];
+            $code = 0;
+            @exec('git log -1 --format=%cI 2>/dev/null', $output, $code);
+            if ($code === 0 && !empty($output[0])) {
+                return trim($output[0]);
+            }
+        }
+
         return null;
+    }
+
+    /**
+     * Extracts a SemVer version string from release metadata (tag name, release name, or description body).
+     *
+     * @param array<string, mixed> $release
+     * @return string|null
+     */
+    public static function extractVersionFromRelease(array $release): ?string
+    {
+        $pattern = '/\bv?(\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?)\b/';
+
+        $tagName = isset($release['tag_name']) ? (string) $release['tag_name'] : '';
+        if ($tagName !== '' && strtolower($tagName) !== 'nightly' && preg_match($pattern, $tagName, $matches)) {
+            return $matches[1];
+        }
+
+        $name = isset($release['name']) ? (string) $release['name'] : '';
+        if ($name !== '' && preg_match($pattern, $name, $matches)) {
+            return $matches[1];
+        }
+
+        $body = isset($release['body']) ? (string) $release['body'] : '';
+        if ($body !== '' && preg_match('/Version:\s*v?(\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?)/i', $body, $matches)) {
+            return $matches[1];
+        }
+
+        return null;
+    }
+
+    /**
+     * Determines whether a remote version/release is strictly newer than the current version/release.
+     *
+     * @param string $remoteVersion Remote SemVer version or release tag.
+     * @param string|null $currentVersion Current SemVer version (defaults to Version::get()).
+     * @param string|null $remoteDate Remote release published date in ISO 8601 format.
+     * @param string|null $currentDate Current build/commit date in ISO 8601 format (defaults to Version::getBuildDate()).
+     * @return bool
+     */
+    public static function isNewerVersion(
+        string $remoteVersion,
+        ?string $currentVersion = null,
+        ?string $remoteDate = null,
+        ?string $currentDate = null
+    ): bool {
+        $currentVersion = $currentVersion ?? self::get();
+        $currentDate = $currentDate ?? self::getBuildDate();
+
+        $cleanRemote = ltrim($remoteVersion, 'vV');
+        $cleanCurrent = ltrim($currentVersion, 'vV');
+
+        $remoteParts = explode('+', $cleanRemote, 2);
+        $currentParts = explode('+', $cleanCurrent, 2);
+
+        $remoteSemver = $remoteParts[0];
+        $currentSemver = $currentParts[0];
+
+        $isRemoteSemver = (bool) preg_match('/^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$/', $remoteSemver);
+        $isCurrentSemver = (bool) preg_match('/^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$/', $currentSemver);
+
+        if ($isRemoteSemver && $isCurrentSemver) {
+            $cmp = version_compare($remoteSemver, $currentSemver);
+            if ($cmp > 0) {
+                return true;
+            }
+            if ($cmp < 0) {
+                return false;
+            }
+
+            // Base and prerelease are identical, compare build metadata if both present
+            if (isset($remoteParts[1], $currentParts[1]) && $remoteParts[1] !== $currentParts[1]) {
+                $metaCmp = version_compare($remoteParts[1], $currentParts[1]);
+                if ($metaCmp > 0) {
+                    return true;
+                }
+                if ($metaCmp < 0) {
+                    return false;
+                }
+            }
+        }
+
+        // Date-based comparison fallback (e.g. non-semver nightly tags, or equal semver)
+        if ($remoteDate !== null && $currentDate !== null) {
+            $remoteTs = strtotime($remoteDate);
+            $currentTs = strtotime($currentDate);
+            if ($remoteTs !== false && $currentTs !== false) {
+                return $remoteTs > $currentTs;
+            }
+        }
+
+        return false;
     }
 }

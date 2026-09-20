@@ -317,6 +317,13 @@ jobs:
       - name: Install Composer dependencies
         run: composer install --no-interaction --prefer-dist --no-progress --no-dev
 
+      - name: "Determine Version"
+        id: version
+        run: |
+          VERSION=$(php -r "require 'app/Core/Version.php'; echo Indieinabox\Core\Version::get();")
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "Resolved version: $VERSION"
+
       - name: Compile App
         run: php compile.php
 
@@ -362,10 +369,14 @@ jobs:
         uses: https://github.com/softprops/action-gh-release@v2
         with:
           tag_name: "nightly"
-          name: "Nightly Build"
+          name: "Nightly Build (${{ steps.version.outputs.version }})"
           prerelease: true
           files: indieinabox.php
-          body: "Automatic nightly build from main."
+          body: |
+            Automatic nightly build from main.
+
+            Version: ${{ steps.version.outputs.version }}
+            Commit: ${{ github.sha }}
 
   # ─────────────────────────────────────────────────────────────────────────────
   # JOB 6 — Stable Release (only on tags after tests pass)
@@ -386,13 +397,23 @@ jobs:
       - name: Install Composer dependencies
         run: composer install --no-interaction --prefer-dist --no-progress --no-dev
 
+      - name: "Determine Version"
+        id: version
+        run: |
+          VERSION=$(php -r "require 'app/Core/Version.php'; echo Indieinabox\Core\Version::get();")
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "Resolved version: $VERSION"
+
       - name: Compile App
         run: php compile.php
 
       - name: Create Stable Release
         uses: https://github.com/softprops/action-gh-release@v2
         with:
+          name: "Release ${{ steps.version.outputs.version }}"
           prerelease: false
           files: indieinabox.php
+          body: |
+            IndieInABox Release ${{ steps.version.outputs.version }}
 
 

@@ -322,6 +322,7 @@ class IndexPublisher
                 if (file_exists($summaryFile)) {
                     ob_start();
                     \Indieinabox\Core\Container::getInstance()->instance(\Indieinabox\Site\Site::class, $this->site);
+                    $site = $this->site;
                     $page = clone $p;
                     $page->relpath = $indexPage->relpath;
                     ThemeManager::loadView($summaryFile, get_defined_vars());

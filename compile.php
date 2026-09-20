@@ -93,8 +93,18 @@ $compiled .= "</html>\";\n";
 $compiled .= "            exit(1);\n";
 $compiled .= "        }\n";
 $compiled .= "    }\n";
+$overrideVersion = getenv('INDIEINABOX_VERSION') ?: null;
+if (isset($argv) && is_array($argv)) {
+    foreach ($argv as $arg) {
+        if (is_string($arg) && str_starts_with($arg, '--version=')) {
+            $overrideVersion = substr($arg, 10);
+        }
+    }
+}
+$versionToCompile = $overrideVersion ?: \Indieinabox\Core\Version::get();
+
 $compiled .= "    if (!defined('INDIEINABOX_COMPILED_VERSION')) {\n";
-$compiled .= "        define('INDIEINABOX_COMPILED_VERSION', '" . addslashes(\Indieinabox\Core\Version::get()) . "');\n";
+$compiled .= "        define('INDIEINABOX_COMPILED_VERSION', '" . addslashes($versionToCompile) . "');\n";
 $compiled .= "    }\n";
 $compiled .= "    if (!defined('INDIEINABOX_BUILD_DATE')) {\n";
 $compiled .= "        define('INDIEINABOX_BUILD_DATE', '" . addslashes(date('c')) . "');\n";

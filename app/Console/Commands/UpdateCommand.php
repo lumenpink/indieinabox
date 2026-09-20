@@ -55,9 +55,19 @@ class UpdateCommand extends AbstractCommand
             echo "Latest available release: " . ($latest['name'] ?? $latest['tag_name']) . " (" . $latest['tag_name'] . ")\n";
             echo "Download URL: " . ($latest['download_url'] ?? 'N/A') . "\n";
 
-            $cleanCurrent = preg_replace('/^v/', '', Version::getBaseVersion());
-            $cleanTag = preg_replace('/^v/', '', (string) $latest['tag_name']);
-            if (version_compare((string) $cleanTag, (string) $cleanCurrent, '>')) {
+            $targetVersion = (string) ($latest['version'] ?? $latest['tag_name'] ?? '');
+            $targetDate = isset($latest['published_at']) && is_string($latest['published_at']) && $latest['published_at'] !== ''
+                ? $latest['published_at']
+                : null;
+
+            $isNewer = Version::isNewerVersion(
+                $targetVersion,
+                $current,
+                $targetDate,
+                Version::getBuildDate()
+            );
+
+            if ($isNewer) {
                 echo "\nA newer version is available! Run 'php build.php update --apply' to install it.\n";
             } else {
                 echo "\nYou are already on the latest version.\n";

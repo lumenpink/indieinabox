@@ -129,3 +129,27 @@ test('UpdateService::processScheduledUpdate skips check if recent', function () 
     expect($result['upgraded'])->toBeFalse();
     expect($result['message'])->toContain('Skipping update check');
 });
+
+test('UpdateService::processScheduledUpdate does not upgrade if remote nightly is older than current version', function () {
+    /** @var \Tests\TestCase $this */
+    Database::saveSetting('last_update_check', time() - 30000);
+    Database::saveSetting('auto_upgrade_nightly', 1);
+
+    $oldNightly = [
+        [
+            'id' => 12345,
+            'name' => 'Nightly Build (0.0.1-dev.1+20200101.old)',
+            'tag_name' => 'nightly',
+            'version' => '0.0.1-dev.1+20200101.old',
+            'prerelease' => true,
+            'published_at' => '2020-01-01T00:00:00Z',
+            'download_url' => 'http://example.com/fake.php',
+        ]
+    ];
+    Database::saveSetting('available_updates', $oldNightly);
+
+    $result = UpdateService::processScheduledUpdate();
+    expect($result['checked'])->toBeTrue();
+    expect($result['upgraded'])->toBeFalse();
+    expect($result['message'])->toContain('Current version is up to date or newer');
+});

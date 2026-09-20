@@ -171,7 +171,7 @@ class Container implements ContainerInterface
     /**
      * Registers an existing object instance into the container.
      */
-    public function instance(string $id, PDO|Site $instance): void
+    public function instance(string $id, mixed $instance): void
     {
         $this->instances[$id] = $instance;
     }

@@ -107,10 +107,13 @@ class PagePublisher
             $page->shortlink = $shortlinkManager->getShortlink($page, $fqdn, $site->config['shortlink'], $isDev);
         }
 
-        $this->getLanguageLinks($page);
+        $p = $page;
+        $pages = $this->pages;
+        $langLinks = $this->getLanguageLinks($page);
 
-        /** @psalm-suppress UnusedVariable — getMenuLinks is called for its side effects on the template context */
         $menuLinks = $this->getMenuLinks($page);
+        $headerLinks = $menuLinks['header'];
+        $footerLinks = $menuLinks['footer'];
 
         if (in_array('draft', $page->metadata->tags, true)) {
             return;

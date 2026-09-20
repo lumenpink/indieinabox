@@ -93,12 +93,8 @@ class ConfigurationService
 
     /**
      * Saves or replaces a setting value in the database.
-     *
-     * @param bool|string|string[] $value
-     *
-     * @psalm-param bool|list{0: 'en'|'md', 1?: 'txt', 2?: 'html', 3?: 'htm'}|string $value
      */
-    public function saveSetting(string $key, array|bool|string $value): bool
+    public function saveSetting(string $key, mixed $value): bool
     {
         return $this->settings->set($key, $value);
     }

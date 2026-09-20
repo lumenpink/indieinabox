@@ -90,10 +90,20 @@ class UpdateManager implements UpdateServiceInterface
                 }
 
                 if ($assetUrl !== null) {
+                    $releaseName = (string) ($release['name'] ?? ($release['tag_name'] ?? 'Release'));
+                    $tagName = (string) ($release['tag_name'] ?? '');
+                    $body = (string) ($release['body'] ?? '');
+                    $extractedVersion = Version::extractVersionFromRelease([
+                        'tag_name' => $tagName,
+                        'name' => $releaseName,
+                        'body' => $body,
+                    ]);
+
                     $available[] = [
                         'id' => $release['id'] ?? null,
-                        'name' => $release['name'] ?? ($release['tag_name'] ?? 'Release'),
-                        'tag_name' => $release['tag_name'] ?? '',
+                        'name' => $releaseName,
+                        'tag_name' => $tagName,
+                        'version' => $extractedVersion,
                         'prerelease' => (bool) ($release['prerelease'] ?? false),
                         'published_at' => $release['published_at'] ?? '',
                         'download_url' => $assetUrl,
@@ -342,7 +352,19 @@ class UpdateManager implements UpdateServiceInterface
 
         if ($target !== null && !empty($target['download_url'])) {
             $lastInstalled = $this->settingsRepo->get('last_installed_update_id', null);
-            if (($target['id'] ?? null) !== $lastInstalled) {
+            $targetVersion = (string) ($target['version'] ?? $target['tag_name'] ?? '');
+            $targetDate = isset($target['published_at']) && is_string($target['published_at']) && $target['published_at'] !== ''
+                ? $target['published_at']
+                : null;
+
+            $isNewer = Version::isNewerVersion(
+                $targetVersion,
+                Version::get(),
+                $targetDate,
+                Version::getBuildDate()
+            );
+
+            if (($target['id'] ?? null) !== $lastInstalled && $isNewer) {
                 $success = $this->downloadAndInstall((string) $target['download_url']);
                 if ($success) {
                     $this->settingsRepo->set('last_installed_update_id', $target['id'] ?? null);
@@ -351,6 +373,8 @@ class UpdateManager implements UpdateServiceInterface
                 } else {
                     $result['message'] = 'Auto-upgrade failed to install ' . ($target['name'] ?? 'release');
                 }
+            } else {
+                $result['message'] = 'Current version is up to date or newer than available release.';
             }
         }
 

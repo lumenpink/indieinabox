@@ -82,9 +82,10 @@ class WebRouter
         }
 
         // Route: IndieAuth & OAuth Discovery
-        $isAuthParam = isset($_GET['auth']);
+        $isRootPath = ($requestUriClean === '' || $requestUriClean === '/index.php');
+        $isAuthParam = isset($_GET['auth']) && $isRootPath;
         $isAuthPath = (preg_match('#^/auth$#i', $requestUriClean) === 1);
-        $isTokenParam = isset($_GET['token']);
+        $isTokenParam = isset($_GET['token']) && $isRootPath;
         $isTokenPath = (preg_match('#^/token$#i', $requestUriClean) === 1);
         $isMetadataPath = ($requestUriClean === '/.well-known/oauth-authorization-server');
 
@@ -156,6 +157,12 @@ class WebRouter
                 $ap->outbox();
                 return;
             }
+        }
+
+        // Route: Build Webhook
+        if ($requestUriClean === '/build') {
+            $this->getAdminController()->build();
+            return;
         }
 
         // Route: Cron Background Worker

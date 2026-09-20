@@ -47,6 +47,18 @@ class SqliteSettingsRepository implements SettingsRepositoryInterface
                 return $value;
             }
 
+            if ($key === 'cron_token') {
+                $envVal = getenv('CRON_TOKEN') ?: getenv('WEBHOOK_TOKEN');
+                if ($envVal !== false && $envVal !== '') {
+                    return (string) $envVal;
+                }
+            } elseif ($key === 'build_token') {
+                $envVal = getenv('BUILD_TOKEN') ?: getenv('WEBHOOK_TOKEN');
+                if ($envVal !== false && $envVal !== '') {
+                    return (string) $envVal;
+                }
+            }
+
             return $default;
         } catch (Exception $e) {
             error_log("SqliteSettingsRepository::get error: " . $e->getMessage());
@@ -58,18 +70,13 @@ class SqliteSettingsRepository implements SettingsRepositoryInterface
     public function set(string $key, mixed $value): bool
     {
         try {
-            $stmt = $this->getDb()->prepare('INSERT INTO settings (key, value) VALUES (:key, :value) ON CONFLICT(key) DO UPDATE SET value = excluded.value');
+            $stmt = $this->getDb()->prepare('INSERT OR REPLACE INTO settings (key, value) VALUES (:key, :value)');
             if (!$stmt) {
                 return false;
             }
-
-            $encodedValue = (is_array($value) || is_object($value))
-                ? json_encode($value, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)
-                : (string)$value;
-
+            $val = is_array($value) ? json_encode($value, JSON_UNESCAPED_UNICODE) : (string) $value;
             $stmt->bindValue(':key', $key, PDO::PARAM_STR);
-            $stmt->bindValue(':value', $encodedValue, PDO::PARAM_STR);
-
+            $stmt->bindValue(':value', $val, PDO::PARAM_STR);
             return $stmt->execute();
         } catch (Exception $e) {
             error_log("SqliteSettingsRepository::set error: " . $e->getMessage());
@@ -82,9 +89,9 @@ class SqliteSettingsRepository implements SettingsRepositoryInterface
     {
         $settings = [];
         try {
-            $result = $this->getDb()->query('SELECT key, value FROM settings');
-            if ($result) {
-                while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
+            $stmt = $this->getDb()->query('SELECT key, value FROM settings');
+            if ($stmt) {
+                while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                     $value = $row['value'];
                     $decoded = json_decode($value, true);
                     if (json_last_error() === JSON_ERROR_NONE) {
@@ -111,8 +118,30 @@ class SqliteSettingsRepository implements SettingsRepositoryInterface
                             if (in_array($envKey, ['APP_URL', 'FQDN'], true)) {
                                 $settings['fqdn'] = $envVal;
                             }
+                            if ($envKey === 'CRON_TOKEN' && empty($settings['cron_token'])) {
+                                $settings['cron_token'] = $envVal;
+                            }
+                            if ($envKey === 'BUILD_TOKEN' && empty($settings['build_token'])) {
+                                $settings['build_token'] = $envVal;
+                            }
+                            if ($envKey === 'WEBHOOK_TOKEN' && empty($settings['webhook_token'])) {
+                                $settings['webhook_token'] = $envVal;
+                            }
                         }
                     }
+                }
+            }
+
+            if (empty($settings['cron_token'])) {
+                $cToken = getenv('CRON_TOKEN') ?: getenv('WEBHOOK_TOKEN');
+                if ($cToken !== false && $cToken !== '') {
+                    $settings['cron_token'] = (string) $cToken;
+                }
+            }
+            if (empty($settings['build_token'])) {
+                $bToken = getenv('BUILD_TOKEN') ?: getenv('WEBHOOK_TOKEN');
+                if ($bToken !== false && $bToken !== '') {
+                    $settings['build_token'] = (string) $bToken;
                 }
             }
         } catch (Exception $e) {

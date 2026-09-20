@@ -22,6 +22,8 @@ The primary generator settings are loaded from `config.yml` in the project root:
 | `defaultlang` | `string` | The default language translation route. |
 | `support` | `array` | Extensions list processed by generator (e.g. `[md, txt, html]`). |
 | `defaultcategory` | `string` | Category fallback value for pages. |
+| `cron_token` | `string` | Secret token required to trigger `GET /cron?token=...` externally (can also be set via `CRON_TOKEN` env). |
+| `build_token` | `string` | Secret token required to trigger `POST /build?token=...` webhook (can also be set via `BUILD_TOKEN` env). |
 
 ---
 

@@ -258,9 +258,121 @@ class AdminController extends AbstractController
      */
     public function cron(): void
     {
+        if (!$this->validateWebhookToken('cron_token', ['CRON_TOKEN', 'WEBHOOK_TOKEN'])) {
+            return;
+        }
+
+        http_response_code(200);
         $worker = new BackgroundWorker($this->site);
         $worker->runAll();
         echo "OK";
+    }
+
+    /**
+     * Webhook endpoint triggering static site rebuild.
+     */
+    public function build(): void
+    {
+        if (!$this->validateWebhookToken('build_token', ['BUILD_TOKEN', 'WEBHOOK_TOKEN'])) {
+            return;
+        }
+
+        $isAsync = !empty($_GET['async']) || !empty($_POST['async']);
+        if ($isAsync) {
+            $db = $this->db ?? Database::getDb();
+            $stmt = $db->query("SELECT 1 FROM inbox_queue WHERE type = 'build_site'");
+            if (!$stmt->fetch()) {
+                $insert = $db->prepare("INSERT INTO inbox_queue (type, payload_json, created_at) VALUES (?, ?, ?)");
+                $insert->execute(['build_site', json_encode([]), time()]);
+            }
+            $this->json([
+                'status' => 202,
+                'message' => 'Site build queued successfully.',
+            ], 202);
+            return;
+        }
+
+        $start = microtime(true);
+        $this->rebuildSite();
+        $duration = round((microtime(true) - $start) * 1000, 2);
+
+        $this->json([
+            'status' => 200,
+            'message' => 'Site rebuilt successfully.',
+            'duration_ms' => $duration,
+            'timestamp' => time(),
+        ], 200);
+    }
+
+    /**
+     * Validates incoming webhook token against configured tokens and environment variables.
+     *
+     * @param string $configKey Setting key name (e.g. 'cron_token' or 'build_token')
+     * @param list<string> $envFallbacks List of environment variable names to check
+     * @return bool True if authorized, false otherwise.
+     */
+    public function validateWebhookToken(string $configKey, array $envFallbacks = []): bool
+    {
+        $configuredToken = (string) ($this->site->config[$configKey] ?? '');
+        if ($configuredToken === '') {
+            $configuredToken = (string) ($this->settingsRepo
+                ? $this->settingsRepo->get($configKey, '')
+                : Database::getSetting($configKey, ''));
+        }
+        if ($configuredToken === '') {
+            foreach ($envFallbacks as $envName) {
+                $val = getenv($envName);
+                if ($val !== false && $val !== '') {
+                    $configuredToken = (string) $val;
+                    break;
+                }
+            }
+        }
+
+        $remoteAddr = (string) ($_SERVER['REMOTE_ADDR'] ?? '');
+        if ($remoteAddr !== '') {
+            $isLocal = in_array($remoteAddr, ['127.0.0.1', '::1', 'localhost'], true);
+        } else {
+            $isLocal = (PHP_SAPI === 'cli');
+        }
+
+        if ($configuredToken === '') {
+            if ($isLocal) {
+                return true;
+            }
+            $targetVar = $envFallbacks[0] ?? $configKey;
+            $this->json([
+                'status' => 403,
+                'error' => 'Forbidden: Token is not configured. Set ' . $targetVar . ' in environment or settings.',
+            ], 403);
+            return false;
+        }
+
+        $providedToken = (string) ($_GET['token'] ?? $_POST['token'] ?? '');
+        if ($providedToken === '') {
+            $auth = (string) ($_SERVER['HTTP_AUTHORIZATION'] ?? '');
+            if (str_starts_with($auth, 'Bearer ')) {
+                $providedToken = substr($auth, 7);
+            }
+        }
+        if ($providedToken === '') {
+            $providedToken = (string) (
+                $_SERVER['HTTP_X_WEBHOOK_TOKEN']
+                ?? $_SERVER['HTTP_X_CRON_TOKEN']
+                ?? $_SERVER['HTTP_X_BUILD_TOKEN']
+                ?? ''
+            );
+        }
+
+        if ($providedToken === '' || !hash_equals($configuredToken, $providedToken)) {
+            $this->json([
+                'status' => 401,
+                'error' => 'Unauthorized: Invalid or missing token.',
+            ], 401);
+            return false;
+        }
+
+        return true;
     }
 
     private function handleBootstrap(): void
@@ -398,6 +510,9 @@ class AdminController extends AbstractController
         $currentConfig['activitypub_handle'] = trim((string) ($_POST['activitypub_handle'] ?? 'schwartz'));
         $currentConfig['activitypub_cache_remote_emojis'] = isset($_POST['activitypub_cache_remote_emojis']);
         $currentConfig['feed_limit'] = isset($_POST['feed_limit']) ? (int) $_POST['feed_limit'] : 20;
+
+        $currentConfig['cron_token'] = trim((string) ($_POST['cron_token'] ?? ''));
+        $currentConfig['build_token'] = trim((string) ($_POST['build_token'] ?? ''));
 
         $supportVal = (string) ($_POST['support'] ?? 'md, txt, html, htm');
         $currentConfig['support'] = array_values(array_filter(array_map('trim', explode(',', $supportVal))));

@@ -761,6 +761,23 @@ class ConfigView
                     </div>
                 </fieldset>
 
+                <fieldset>
+                    <legend>Webhooks & Automation</legend>
+                    <p style="margin-top: 0;"><small>Secure external triggers for background cron processing and on-demand site rebuilds. Can also be defined via environment variables (<code>CRON_TOKEN</code>, <code>BUILD_TOKEN</code>, <code>WEBHOOK_TOKEN</code>).</small></p>
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label for="cron_token">Cron Webhook Token (<code>/cron</code>)</label>
+                            <input type="text" name="cron_token" id="cron_token" value="<?= htmlspecialchars((string)($config['cron_token'] ?? '')) ?>" placeholder="Leave blank for local-only, or enter secret token">
+                            <p class="help">Required to trigger <code>GET /cron?token=...</code> externally.</p>
+                        </div>
+                        <div class="form-group">
+                            <label for="build_token">Build Webhook Token (<code>/build</code>)</label>
+                            <input type="text" name="build_token" id="build_token" value="<?= htmlspecialchars((string)($config['build_token'] ?? '')) ?>" placeholder="Leave blank for local-only, or enter secret token">
+                            <p class="help">Required to trigger <code>POST /build?token=...</code> from Git/Sync watchers.</p>
+                        </div>
+                    </div>
+                </fieldset>
+
                 <fieldset style="border-color: var(--accent);">
                     <legend>Security</legend>
                     <div class="form-group">

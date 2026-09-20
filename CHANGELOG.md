@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 ### Features
+  - (i18n) allow reordering languages and setting main translation closes #2
   - (cli) support setup parameters and headless execution closes #4
   - add environment variable fallbacks for cron and build webhook tokens
   - check for database configuration before running cron worker

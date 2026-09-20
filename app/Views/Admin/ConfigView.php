@@ -371,23 +371,48 @@ class ConfigView
                         <input type="text" name="support" value="<?= htmlspecialchars(implode(', ', $config['support'] ?? ['md', 'txt', 'html', 'htm'])) ?>">
                     </div>
                     <div class="form-group">
-                        <label>Languages</label>
+                        <label>Languages & Primary Translation</label>
+                        <p style="font-size: 0.85em; opacity: 0.8; margin-top: 2px; margin-bottom: 8px;">
+                            The first language in the list is always the <strong>Main (Default)</strong> translation route.
+                        </p>
                         <table style="width: 100%; border-collapse: collapse; margin-bottom: 1em; border: 1px solid var(--border-color);">
                             <thead>
                                 <tr style="border-bottom: 1px solid var(--fg); text-align: left; background: rgba(0,0,0,0.05);">
                                     <th style="padding: 8px;">Language Code</th>
-                                    <th style="padding: 8px; width: 100px; text-align: right;">Action</th>
+                                    <th style="padding: 8px; width: 140px;">Status</th>
+                                    <th style="padding: 8px; width: 90px; text-align: center;">Order</th>
+                                    <th style="padding: 8px; width: 180px; text-align: right;">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php foreach ($langArr as $l): ?>
-                                <tr style="border-bottom: 1px solid var(--border-color);">
-                                    <td style="padding: 8px;">
+                                <?php foreach ($langArr as $idx => $l): ?>
+                                <tr style="border-bottom: 1px solid var(--border-color); <?= $idx === 0 ? 'background: rgba(46, 204, 113, 0.05);' : '' ?>">
+                                    <td style="padding: 8px; font-weight: <?= $idx === 0 ? '600' : 'normal' ?>;">
                                         <?= htmlspecialchars($l) ?>
                                         <input type="hidden" name="lang[]" value="<?= htmlspecialchars($l) ?>">
                                     </td>
+                                    <td style="padding: 8px;">
+                                        <?php if ($idx === 0): ?>
+                                            <span style="background: rgba(46, 204, 113, 0.2); color: #2ecc71; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600;">Main (Default)</span>
+                                        <?php else: ?>
+                                            <span style="opacity: 0.65; font-size: 0.8rem;">Sub-language</span>
+                                        <?php endif; ?>
+                                    </td>
+                                    <td style="padding: 8px; text-align: center;">
+                                        <div style="display: inline-flex; gap: 4px;">
+                                            <button type="submit" name="move_up_lang" value="<?= htmlspecialchars($l) ?>" class="btn-secondary" style="margin: 0; padding: 2px 6px; font-size: 0.75rem;" <?= $idx === 0 ? 'disabled' : '' ?> title="Move Up">▲</button>
+                                            <button type="submit" name="move_down_lang" value="<?= htmlspecialchars($l) ?>" class="btn-secondary" style="margin: 0; padding: 2px 6px; font-size: 0.75rem;" <?= $idx === count($langArr) - 1 ? 'disabled' : '' ?> title="Move Down">▼</button>
+                                        </div>
+                                    </td>
                                     <td style="padding: 8px; text-align: right;">
-                                        <button type="submit" name="remove_lang" value="<?= htmlspecialchars($l) ?>" class="btn-secondary" style="margin: 0; padding: 4px 8px; font-size: 0.8rem;">Remove</button>
+                                        <div style="display: inline-flex; gap: 6px; justify-content: flex-end;">
+                                            <?php if ($idx > 0): ?>
+                                                <button type="submit" name="set_main_lang" value="<?= htmlspecialchars($l) ?>" class="btn-secondary" style="margin: 0; padding: 4px 8px; font-size: 0.8rem;" title="Make this the main translation">Make Main</button>
+                                            <?php endif; ?>
+                                            <?php if (count($langArr) > 1): ?>
+                                                <button type="submit" name="remove_lang" value="<?= htmlspecialchars($l) ?>" class="btn-secondary" style="margin: 0; padding: 4px 8px; font-size: 0.8rem;">Remove</button>
+                                            <?php endif; ?>
+                                        </div>
                                     </td>
                                 </tr>
                                 <?php endforeach; ?>

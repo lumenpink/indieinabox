@@ -527,7 +527,33 @@ class AdminController extends AbstractController
         }
         if (isset($_POST['remove_lang'])) {
             $removeLang = trim((string) $_POST['remove_lang']);
-            $langs = array_values(array_filter($langs, fn($l) => $l !== $removeLang));
+            if (count($langs) > 1) {
+                $langs = array_values(array_filter($langs, fn($l) => $l !== $removeLang));
+            }
+        }
+        if (isset($_POST['set_main_lang'])) {
+            $setMain = trim((string) $_POST['set_main_lang']);
+            if (in_array($setMain, $langs, true)) {
+                $langs = array_values(array_unique(array_merge([$setMain], $langs)));
+            }
+        }
+        if (isset($_POST['move_up_lang'])) {
+            $target = trim((string) $_POST['move_up_lang']);
+            $idx = array_search($target, $langs, true);
+            if ($idx !== false && $idx > 0) {
+                $prev = $langs[$idx - 1];
+                $langs[$idx - 1] = $target;
+                $langs[$idx] = $prev;
+            }
+        }
+        if (isset($_POST['move_down_lang'])) {
+            $target = trim((string) $_POST['move_down_lang']);
+            $idx = array_search($target, $langs, true);
+            if ($idx !== false && $idx < count($langs) - 1) {
+                $next = $langs[$idx + 1];
+                $langs[$idx + 1] = $target;
+                $langs[$idx] = $next;
+            }
         }
         if (empty($langs)) {
             $langs = ['en'];

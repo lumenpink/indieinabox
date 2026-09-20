@@ -25,6 +25,12 @@ The primary generator settings are loaded from `config.yml` in the project root:
 | `cron_token` | `string` | Secret token required to trigger `GET /cron?token=...` externally (can also be set via `CRON_TOKEN` env). |
 | `build_token` | `string` | Secret token required to trigger `POST /build?token=...` webhook (can also be set via `BUILD_TOKEN` env). |
 
+### Language & Translation Routing
+
+* The first language in the `lang` array is always the **Main (Default)** translation route (`defaultlang`), rendered at the site root (`/`).
+* Secondary languages are rendered under localized prefix directories (e.g. `/es/`, `/pt/`).
+* In the Web Admin panel (`/admin/config`), languages can be reordered at any time using **Move Up (▲)** and **Move Down (▼)**, or promoted to primary directly using the **Make Main** button.
+
 ---
 
 ## 🚀 CLI Actions & Switches

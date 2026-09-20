@@ -37,6 +37,11 @@ RUN test -f indieinabox.php && php -l indieinabox.php
 # ==========================================
 FROM dunglas/frankenphp:php8.4-alpine
 
+# Instala bash, shadow e mapeia o usuário www-data para UID/GID 1000:1000 (compatível com o host)
+RUN apk add --no-cache bash shadow \
+    && groupmod -g 1000 www-data \
+    && usermod -u 1000 -g 1000 www-data
+
 # Apenas extensões estritamente necessárias para o runtime
 RUN install-php-extensions \
     pdo_sqlite \

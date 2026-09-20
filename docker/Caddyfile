@@ -1,10 +1,11 @@
 {
     frankenphp
     order php_server before file_server
+    auto_https off
 }
 
-# Inicia o servidor usando a variável de ambiente APP_DOMAIN ou localhost como fallback
-{$APP_DOMAIN:localhost} {
+# Servidor HTTP atrás de proxy reverso
+:80 {
     # Habilita compressão moderna
     encode zstd gzip
 

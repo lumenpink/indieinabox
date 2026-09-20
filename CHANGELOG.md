@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 ### Features
+  - (docker) configure non-root user 1000:1000, disable SSL for reverse proxy, and add build script
   - (page) support SpecificationInterface querying in Pages collection
   - (interactions) introduce InteractionDto and IngestInteractionService (Phase 15)
   - (specifications) implement Specification Pattern for content querying (Phase 14)

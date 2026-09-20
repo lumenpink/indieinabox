@@ -1,0 +1,15 @@
+.git
+.github
+.forgejo
+data
+tests
+coverage
+public_reports
+.cache
+.phpcs-cache
+.psalm-cache
+node_modules
+vendor
+tmp*
+*.sqlite*
+.env*

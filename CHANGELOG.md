@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 ### Features
+  - (cli) add export and import CLI commands with bundle inspection
   - (backup) implement ImportService with integrity verification and safety backup
   - (backup) implement portable ExportService with checksum manifest
   - (i18n) expand language display modes to native_short, native_long, code_short, and code_long

@@ -8,7 +8,9 @@ use Indieinabox\Console\Commands\BackupCommand;
 use Indieinabox\Console\Commands\BuildCommand;
 use Indieinabox\Console\Commands\ConfigCommand;
 use Indieinabox\Console\Commands\CronCommand;
+use Indieinabox\Console\Commands\ExportCommand;
 use Indieinabox\Console\Commands\FetchCommand;
+use Indieinabox\Console\Commands\ImportCommand;
 use Indieinabox\Console\Commands\LinkCheckCommand;
 use Indieinabox\Console\Commands\PostCommand;
 use Indieinabox\Console\Commands\ProfileCommand;
@@ -56,6 +58,8 @@ class ConsoleKernel
         $this->register(new SetupCommand($this->site));
         $this->register(new LinkCheckCommand($this->site));
         $this->register(new BackupCommand($this->site));
+        $this->register(new ExportCommand($this->site));
+        $this->register(new ImportCommand($this->site));
         $this->register(new TestWebmentionCommand($this->site));
         $this->register(new VersionCommand($this->site));
         $this->register(new UpdateCommand($this->site));

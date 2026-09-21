@@ -213,6 +213,25 @@ class WebRouter
             return;
         }
 
+        // Route: Web Push Service Worker
+        if ($requestUriClean === '/sw.js') {
+            header('Content-Type: application/javascript; charset=utf-8');
+            header('Service-Worker-Allowed: /');
+            header('Cache-Control: no-cache, no-store, must-revalidate');
+            $candidates = [
+                dirname(__DIR__, 2) . '/resources/sw.js',
+                dirname(__DIR__, 2) . '/public_html/sw.js',
+            ];
+            foreach ($candidates as $candidate) {
+                if (file_exists($candidate) && is_file($candidate)) {
+                    readfile($candidate);
+                    return;
+                }
+            }
+            echo self::getServiceWorkerScript();
+            return;
+        }
+
         $this->serveStatic();
     }
 
@@ -268,5 +287,64 @@ class WebRouter
     public function getMimeType(string $extension): string
     {
         return $this->fileServer->getMimeType($extension);
+    }
+
+    /**
+     * Fallback inline service worker script for web push notifications.
+     */
+    public static function getServiceWorkerScript(): string
+    {
+        return <<<'JS'
+self.addEventListener('push', (event) => {
+    let data = {
+        title: 'Indieinabox Alert',
+        body: 'New notification received.',
+        url: '/microsub/reader?channel=notifications',
+        tag: 'default'
+    };
+
+    if (event.data) {
+        try {
+            data = Object.assign(data, event.data.json());
+        } catch (e) {
+            data.body = event.data.text();
+        }
+    }
+
+    const options = {
+        body: data.body,
+        icon: '/media/avatar.png',
+        badge: '/media/avatar.png',
+        tag: data.tag || 'notification',
+        data: {
+            url: data.url || '/microsub/reader?channel=notifications'
+        }
+    };
+
+    event.waitUntil(
+        self.registration.showNotification(data.title, options)
+    );
+});
+
+self.addEventListener('notificationclick', (event) => {
+    event.notification.close();
+    const urlToOpen = (event.notification.data && event.notification.data.url)
+        ? event.notification.data.url
+        : '/microsub/reader?channel=notifications';
+
+    event.waitUntil(
+        clients.matchAll({ type: 'window', includeUncontrolled: true }).then((windowClients) => {
+            for (let client of windowClients) {
+                if (client.url.includes(urlToOpen) && 'focus' in client) {
+                    return client.focus();
+                }
+            }
+            if (clients.openWindow) {
+                return clients.openWindow(urlToOpen);
+            }
+        })
+    );
+});
+JS;
     }
 }

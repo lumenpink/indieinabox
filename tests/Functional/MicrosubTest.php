@@ -301,3 +301,83 @@ it('handles filter rules CRUD actions via Microsub API', function () {
     expect($jsonFinal['filters'])->toBeEmpty();
 });
 
+test('MicrosubController handles push_key, push_subscribe, and push_unsubscribe actions', function () {
+    $site = new Site();
+    $router = new TestMicrosubRouter($site);
+
+    // 1. GET action=push_key
+    $_SERVER['REQUEST_METHOD'] = 'GET';
+    $_SERVER['REQUEST_URI'] = '/microsub';
+    $_GET['action'] = 'push_key';
+    $_REQUEST['action'] = 'push_key';
+
+    ob_start();
+    $router->handleRequest();
+    $outputKey = ob_get_clean();
+    $jsonKey = json_decode($outputKey, true);
+
+    expect($jsonKey)->toHaveKey('publicKey');
+    expect($jsonKey['publicKey'])->toBeString();
+    expect($jsonKey['publicKey'])->not->toBeEmpty();
+
+    // 2. POST action=push_subscribe
+    $_SERVER['REQUEST_METHOD'] = 'POST';
+    $_SERVER['REQUEST_URI'] = '/microsub';
+    $_GET = [];
+    $_REQUEST['action'] = 'push_subscribe';
+    $_POST['action'] = 'push_subscribe';
+    $_POST['endpoint'] = 'https://fcm.googleapis.com/fcm/send/test-sub-123';
+    $_POST['p256dh'] = 'BNcRdreALRFXTkOOUHK1EtK2wtaz5Ry4YfYCA_0QT9AcFY3XWM2BgVRWn6h';
+    $_POST['auth'] = 'tBHItJI5svbpez7KI4CCXg';
+    $_SERVER['HTTP_USER_AGENT'] = 'TestBrowser/1.0';
+
+    ob_start();
+    $router->handleRequest();
+    $outputSub = ob_get_clean();
+    $jsonSub = json_decode($outputSub, true);
+
+    expect($jsonSub)->toHaveKey('success');
+    expect($jsonSub['success'])->toBeTrue();
+
+    // 3. POST action=push_unsubscribe
+    $_SERVER['REQUEST_METHOD'] = 'POST';
+    $_REQUEST['action'] = 'push_unsubscribe';
+    $_POST['action'] = 'push_unsubscribe';
+    $_POST['endpoint'] = 'https://fcm.googleapis.com/fcm/send/test-sub-123';
+
+    ob_start();
+    $router->handleRequest();
+    $outputUnsub = ob_get_clean();
+    $jsonUnsub = json_decode($outputUnsub, true);
+
+    expect($jsonUnsub)->toHaveKey('success');
+    expect($jsonUnsub['success'])->toBeTrue();
+});
+
+test('WebRouter serves /sw.js service worker with proper headers', function () {
+    $site = new Site();
+    $router = new TestMicrosubRouter($site);
+
+    $_SERVER['REQUEST_METHOD'] = 'GET';
+    $_SERVER['REQUEST_URI'] = '/sw.js';
+    $_GET = [];
+    $_POST = [];
+    $_REQUEST = [];
+
+    ob_start();
+    $router->handleRequest();
+    $output = ob_get_clean();
+
+    expect($output)->toContain("self.addEventListener('push'");
+    expect($output)->toContain("self.addEventListener('notificationclick'");
+});
+
+test('MicrosubReaderView renders push notification toggle button and JS hooks', function () {
+    $html = \Indieinabox\Views\Admin\MicrosubReaderView::render('https://example.com');
+    expect($html)->toContain('push-toggle-btn');
+    expect($html)->toContain('togglePushNotifications()');
+    expect($html)->toContain('initPushUI()');
+    expect($html)->toContain('urlBase64ToUint8Array');
+});
+
+

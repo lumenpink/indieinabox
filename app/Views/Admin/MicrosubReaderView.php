@@ -370,6 +370,7 @@ class MicrosubReaderView
                     </select>
                 </div>
                 <div style="display: flex; gap: 10px;">
+                    <button class="btn" id="push-toggle-btn" onclick="togglePushNotifications()" style="background: rgba(255,255,255,0.08); border: 1px solid var(--glass-border); color: #fff;">🔔 Push Alerts</button>
                     <button class="btn" onclick="addFeed()">Add Feed</button>
                     <button class="btn" onclick="manageFeeds()">Manage Feeds</button>
                     <button class="btn" onclick="manageFilters()">Filters & Rules</button>
@@ -496,6 +497,7 @@ class MicrosubReaderView
             document.getElementById('reader-view').style.display = 'grid';
             loadChannelTitle();
             loadTimeline();
+            initPushUI();
         };
 
         // Handle unblurring of Content Warning images
@@ -944,6 +946,100 @@ class MicrosubReaderView
             } catch (err) {
                 alert('Failed to mute ' + type);
                 console.error(err);
+            }
+        }
+
+        function urlBase64ToUint8Array(base64String) {
+            const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
+            const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+            const rawData = window.atob(base64);
+            const outputArray = new Uint8Array(rawData.length);
+            for (let i = 0; i < rawData.length; ++i) {
+                outputArray[i] = rawData.charCodeAt(i);
+            }
+            return outputArray;
+        }
+
+        async function initPushUI() {
+            const btn = document.getElementById('push-toggle-btn');
+            if (!btn || !('serviceWorker' in navigator) || !('PushManager' in window)) {
+                if (btn) btn.style.display = 'none';
+                return;
+            }
+
+            try {
+                const reg = await navigator.serviceWorker.register('/sw.js');
+                const sub = await reg.pushManager.getSubscription();
+                updatePushBtnState(sub !== null);
+            } catch (e) {
+                console.warn('Push registration check failed:', e);
+            }
+        }
+
+        function updatePushBtnState(isSubscribed) {
+            const btn = document.getElementById('push-toggle-btn');
+            if (!btn) return;
+            if (isSubscribed) {
+                btn.textContent = '🔕 Push Active';
+                btn.style.background = 'rgba(239, 68, 68, 0.2)';
+                btn.style.borderColor = 'rgba(239, 68, 68, 0.4)';
+            } else {
+                btn.textContent = '🔔 Enable Push';
+                btn.style.background = 'rgba(255, 255, 255, 0.08)';
+                btn.style.borderColor = 'var(--glass-border)';
+            }
+        }
+
+        async function togglePushNotifications() {
+            const btn = document.getElementById('push-toggle-btn');
+            if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
+                alert('Push notifications are not supported by your browser.');
+                return;
+            }
+
+            try {
+                const reg = await navigator.serviceWorker.ready;
+                let sub = await reg.pushManager.getSubscription();
+
+                if (sub) {
+                    const endpoint = sub.endpoint;
+                    await sub.unsubscribe();
+                    await api('push_unsubscribe', 'POST', { endpoint });
+                    updatePushBtnState(false);
+                } else {
+                    const permission = await Notification.requestPermission();
+                    if (permission !== 'granted') {
+                        alert('Notification permission was denied.');
+                        return;
+                    }
+
+                    const keyData = await api('push_key');
+                    if (!keyData || !keyData.publicKey) {
+                        alert('Could not retrieve VAPID public key from server.');
+                        return;
+                    }
+
+                    const convertedVapidKey = urlBase64ToUint8Array(keyData.publicKey);
+                    sub = await reg.pushManager.subscribe({
+                        userVisibleOnly: true,
+                        applicationServerKey: convertedVapidKey
+                    });
+
+                    const subJson = sub.toJSON();
+                    const p256dh = subJson.keys?.p256dh || '';
+                    const auth = subJson.keys?.auth || '';
+
+                    await api('push_subscribe', 'POST', {
+                        endpoint: sub.endpoint,
+                        p256dh: p256dh,
+                        auth: auth
+                    });
+
+                    updatePushBtnState(true);
+                }
+            } catch (err) {
+                console.error('Error toggling push notifications:', err);
+                alert('Failed to update push subscription: ' + (err.message || err));
             }
         }
     </script>

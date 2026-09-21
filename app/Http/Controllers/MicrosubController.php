@@ -5,8 +5,11 @@ declare(strict_types=1);
 namespace Indieinabox\Http\Controllers;
 
 use Exception;
+use Indieinabox\Core\Container;
 use Indieinabox\IndieAuth\TokenManager;
+use Indieinabox\Services\Contracts\WebPushServiceInterface;
 use Indieinabox\Services\MicrosubService;
+use Indieinabox\Services\WebPushService;
 use Indieinabox\Site\Site;
 use Indieinabox\Views\Admin\MicrosubReaderView;
 
@@ -17,11 +20,13 @@ class MicrosubController extends AbstractController
 {
     protected TokenManager $tokenManager;
     protected MicrosubService $service;
+    protected ?WebPushServiceInterface $webPush;
 
     public function __construct(
         Site $site,
         ?TokenManager $tokenManager = null,
-        ?MicrosubService $service = null
+        ?MicrosubService $service = null,
+        ?WebPushServiceInterface $webPush = null
     ) {
         parent::__construct($site);
         $this->tokenManager = $tokenManager ?? new TokenManager();
@@ -43,6 +48,11 @@ class MicrosubController extends AbstractController
                 return $this->controller->getRemoteUrl($url, $context);
             }
         };
+
+        $container = class_exists(Container::class) ? Container::getInstance() : null;
+        $this->webPush = $webPush ?? ($container && $container->has(WebPushServiceInterface::class)
+            ? $container->get(WebPushServiceInterface::class)
+            : (class_exists(WebPushService::class) ? new WebPushService() : null));
     }
 
     public function getService(): MicrosubService
@@ -120,6 +130,11 @@ class MicrosubController extends AbstractController
                 $filterService = $this->service->getFilterService();
                 $filters = $filterService ? $filterService->getFilters($channel) : [];
                 $this->json(['filters' => $filters]);
+                break;
+
+            case 'push_key':
+                $pubKey = $this->webPush !== null ? $this->webPush->getVapidPublicKey() : '';
+                $this->json(['publicKey' => $pubKey]);
                 break;
 
             default:
@@ -275,6 +290,40 @@ class MicrosubController extends AbstractController
             case 'fetch':
                 $this->service->syncFeeds();
                 $this->json(['success' => 'ok']);
+                break;
+
+            case 'push_subscribe':
+                if ($this->webPush === null) {
+                    $this->json(['error' => 'server_error', 'error_description' => 'Web push service unavailable'], 500);
+                    return;
+                }
+                $endpoint = trim((string) ($_POST['endpoint'] ?? ''));
+                $p256dh = (string) ($_POST['p256dh'] ?? ($_POST['keys']['p256dh'] ?? ''));
+                $auth = (string) ($_POST['auth'] ?? ($_POST['keys']['auth'] ?? ''));
+                $userAgent = (string) ($_SERVER['HTTP_USER_AGENT'] ?? '');
+
+                if ($endpoint === '' || $p256dh === '' || $auth === '') {
+                    $this->json(['error' => 'invalid_request', 'error_description' => 'Missing endpoint or encryption keys'], 400);
+                    return;
+                }
+
+                $success = $this->webPush->subscribe($endpoint, $p256dh, $auth, $userAgent !== '' ? $userAgent : null);
+                $this->json(['success' => $success]);
+                break;
+
+            case 'push_unsubscribe':
+                if ($this->webPush === null) {
+                    $this->json(['error' => 'server_error', 'error_description' => 'Web push service unavailable'], 500);
+                    return;
+                }
+                $endpoint = trim((string) ($_POST['endpoint'] ?? ''));
+                if ($endpoint === '') {
+                    $this->json(['error' => 'invalid_request', 'error_description' => 'Missing endpoint'], 400);
+                    return;
+                }
+
+                $success = $this->webPush->unsubscribe($endpoint);
+                $this->json(['success' => $success]);
                 break;
 
             default:

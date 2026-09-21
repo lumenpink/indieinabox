@@ -24,16 +24,18 @@ The primary generator settings are loaded from `config.yml` in the project root:
 | `defaultcategory` | `string` | Category fallback value for pages. |
 | `cron_token` | `string` | Secret token required to trigger `GET /cron?token=...` externally (can also be set via `CRON_TOKEN` env). |
 | `build_token` | `string` | Secret token required to trigger `POST /build?token=...` webhook (can also be set via `BUILD_TOKEN` env). |
-| `lang_display_mode` | `string` | Display format for the public language selector: `"native"` (e.g. `Português (Brasil)`, `English`) or `"short"` (e.g. `PT`, `EN`, `ES`). Default: `"native"`. |
+| `lang_display_mode` | `string` | Display format for the public language selector: `"native_short"` (default, alias: `"native"`), `"native_long"`, `"code_short"` (alias: `"short"`), or `"code_long"`. |
 
 ### Language & Translation Routing
 
 * The first language in the `lang` array is always the **Main (Default)** translation route (`defaultlang`), rendered at the site root (`/`).
 * Secondary languages are rendered under localized prefix directories (e.g. `/es/`, `/pt/`).
 * **Language Menu Display Format (`lang_display_mode`):**
-  * `native` (default): Uses the full native endonym (e.g. `Português (Brasil) • English • Español`).
-  * `short`: Uses the clean 2-letter uppercase ISO code (e.g. `PT • EN • ES`), ideal for minimalist navigation bars.
-  * In both modes, full BCP-47 codes are preserved inside HTML `hreflang="..."` attributes for search engines and accessibility tools.
+  * `native_short` (default, alias `native`): Uses short native endonyms without regional qualifiers in parentheses (e.g. `Português • English • Español`), keeping navigation bars clean and readable.
+  * `native_long`: Uses full native endonyms with regional distinction (e.g. `Português (Brasil) • English (US) • Español (España)`).
+  * `code_short` (alias `short`): Uses clean 2-letter uppercase ISO 639-1 base codes (e.g. `PT • EN • ES`), ideal for minimalist navigation bars.
+  * `code_long`: Uses full uppercase BCP-47 language tags (e.g. `PT-BR • EN-US • ES`), preserving regional precision in code form.
+  * In all modes, full BCP-47 codes are preserved inside HTML `hreflang="..."` attributes for search engines and accessibility tools.
 * In the Web Admin panel (`/admin/config`), languages can be selected from a curated catalog of standard ISO 639-1 and BCP-47 languages with native endonyms and English descriptions, or entered as custom BCP-47 tags. Languages can be reordered at any time using **Move Up (▲)** and **Move Down (▼)**, or promoted to primary directly using the **Make Main** button.
 * **Locale Dictionaries & Auto-Fill:**
   * Bundled locale definitions are provided for `pt` (Português), `es` (Español), and `en` (English) under `resources/locales/`.

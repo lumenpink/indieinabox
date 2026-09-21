@@ -170,7 +170,7 @@ The project follows Domain-Driven Design (DDD) and SOLID principles, structured 
 
 * **Universal Entry Entity:** All feeds, timelines, and federated items share the same domain entity model (`Indieinabox\Entry\Entry`).
 * **Feed Parsers Strategy Pattern:** Swappable, testable strategies (`FeedParserInterface`) handle Twtxt, RSS, Atom, and JSON Feed formats.
-* **Twtxt Yarns Compatibility:** Native support for Yarns extensions including feed metadata headers (`# title`, `# link`, `# author`), subject tokens (`(#subject)`), lightweight Markdown formatting (inline code, links, bold, italic, strikethrough, blockquotes), and media detection/extraction (`![alt](url)` and bare media URLs) into domain attachments.
+* **Twtxt Yarns Compatibility:** Native support for Yarns extensions including feed metadata headers (`# title`, `# link`, `# author`), subject tokens (`(#subject)`), lightweight Markdown formatting (inline code, links, bold, italic, strikethrough, blockquotes), media detection/extraction (`![alt](url)` and bare media URLs) into domain attachments, and moderation filtering (local author/URL/keyword mutes and `MicrosubFilterService` rule integration during timeline and mention ingestion).
 * **Microformats 2 Modernization:** Embedded `mf2/mf2` parser signatures are automatically harmonized for PHP 8.4 during bundle compilation, avoiding deprecation notices on implicit nullable parameters while preserving standard compliance.
 * **Offline-first Admin UI:** The admin panel never makes blocking external network requests during page load. All federation, webmentions, and updates run asynchronously.
 * **Image Dithering:** Embedded photos are automatically processed and dithered into bandwidth-efficient global palette GIFs and thumbnails.

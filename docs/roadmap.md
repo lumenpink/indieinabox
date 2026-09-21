@@ -199,10 +199,10 @@ The following next-generation features are scheduled for development:
 - [ ] **Custom Client - Features**: Integrate rich features (polls, CWs, reactions, galleries) into the custom client while adhering strictly to standards.
 
 ### 🧶 Phase 26: Twtxt Yarns Compatibility
-- [ ] **Yarns Meta-tags & Subjects**: Support reading and writing subject lines and metadata following the Yarns spec.
-- [ ] **Yarns Media & Attachments**: Parse embedded media URLs within twtxt feeds.
-- [ ] **Yarns Markdown**: Support the lightweight markdown flavor adopted by Yarns pods.
-- [ ] **Twtxt Moderation**: Implement a mute and block list specifically for local twtxt-based feeds.
+- [x] **Yarns Meta-tags & Subjects**: Support reading and writing subject lines and metadata following the Yarns spec.
+- [x] **Yarns Media & Attachments**: Parse embedded media URLs within twtxt feeds.
+- [x] **Yarns Markdown**: Support the lightweight markdown flavor adopted by Yarns pods.
+- [x] **Twtxt Moderation**: Implement a mute and block list specifically for local twtxt-based feeds.
 
 ### 🛡️ Phase 27: Privacy, Moderation & Notifications
 - [x] **External Media Proxy/Cache**: `MediaProxyService` signs URLs with HMAC-SHA256, validates SSRF safety, streams cached media via `/media/proxy?url=...&sig=...`, and rewrites `<img>`, `<video>`, `<audio>` elements in Microsub reader timelines to proxied URLs preventing IP leaks and dead links.

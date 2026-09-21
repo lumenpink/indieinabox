@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 ### Features
+  - (backup) implement portable ExportService with checksum manifest
   - (i18n) expand language display modes to native_short, native_long, code_short, and code_long
   - (ui/admin) add ISO language catalog dropdown and display mode selector closes #9
   - (ui) support native and short display formats in language selector

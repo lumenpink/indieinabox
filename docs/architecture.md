@@ -72,6 +72,7 @@ The project follows Domain-Driven Design (DDD) and SOLID principles, structured 
     - `FetchFeedsService.php`: Syndication feed fetching, strategy-based parsing, media caching, and storage.
     - `MicrosubService.php`: Microsub channels, subscriptions, timeline retrieval, read tracking, and social interactions.
     - `BackupService.php`: Automated archive snapshots, rotation, and data integrity backups.
+    - `ExportService.php`: Portable export bundle generation with integrity manifest and checksum verification.
     - `UpdateService.php`: Semantic version updates, remote release checks, and rollbacks.
     - `ShortlinkService.php`: Custom base58 shortlinks, redirection mapping, and permalinks.
     - `LinkCheckerService.php`: External link health checking, broken link reporting, and status tracking.

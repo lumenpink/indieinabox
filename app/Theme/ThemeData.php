@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Indieinabox\Theme;
 
 use Indieinabox\Core\Database;
+use Indieinabox\Localization\IsoLanguages;
 use Indieinabox\Localization\Translator;
 use Indieinabox\Page\Page;
 use Indieinabox\Site\Site;
@@ -209,6 +210,7 @@ class ThemeData
 
         $defaultLang = $site->localization->defaultLang ?? 'en';
         $currentLang = $page->lang ?? 'en';
+        $displayMode = (string) ($site->localization->langDisplayMode ?? 'native');
 
         if ($langLinks === null) {
             $langLinks = [];
@@ -223,7 +225,7 @@ class ThemeData
 
         $linksHTML = [];
         foreach ($langs as $l) {
-            $label = strtoupper($l);
+            $label = IsoLanguages::getLabel($l, $displayMode);
             if ($l === $currentLang) {
                 $linksHTML[] = '<strong aria-current="true">' . htmlspecialchars($label) . '</strong>';
             } else {

@@ -106,6 +106,9 @@ class Site
                 return $this->localization->defaultLang;
             case 'lang':
                 return $this->localization->lang;
+            case 'lang_display_mode':
+            case 'langdisplaymode':
+                return $this->localization->langDisplayMode;
             case 'defaulttitle':
                 return $this->metadata->defaultTitle;
         }

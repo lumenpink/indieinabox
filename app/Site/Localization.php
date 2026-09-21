@@ -11,6 +11,7 @@ namespace Indieinabox\Site;
  *
  * @property array<string> $lang
  * @property string $defaultLang
+ * @property string $langDisplayMode
  */
 class Localization
 {
@@ -20,16 +21,22 @@ class Localization
      * @var string
      */
     private string $defaultLang;
+    /**
+     * @var string
+     */
+    private string $langDisplayMode;
 
     /**
      * Localization constructor.
      *
      * @param array<string>|string|int|float|null $lang
      * @param string $defaultLang
+     * @param string $langDisplayMode
      */
     public function __construct(
         $lang = null,
-        string $defaultLang = "en"
+        string $defaultLang = "en",
+        string $langDisplayMode = "native"
     ) {
         $lang = $this->createArrayFromValue($lang);
         if (empty($lang)) {
@@ -37,6 +44,7 @@ class Localization
         }
         $this->lang = $lang;
         $this->defaultLang = $defaultLang;
+        $this->langDisplayMode = in_array($langDisplayMode, ['short', 'native'], true) ? $langDisplayMode : 'native';
     }
 
     /**
@@ -45,8 +53,12 @@ class Localization
      */
     public function __get(string $name)
     {
-        if (strtolower($name) === 'defaultlang') {
+        $lower = strtolower($name);
+        if ($lower === 'defaultlang') {
             return $this->defaultLang;
+        }
+        if ($lower === 'langdisplaymode' || $lower === 'lang_display_mode') {
+            return $this->langDisplayMode;
         }
         return $this->$name;
     }
@@ -61,7 +73,11 @@ class Localization
                 $this->lang = $this->createArrayFromValue($value);
                 return;
             case 'defaultlang':
-                $this->defaultLang = $value;
+                $this->defaultLang = (string) $value;
+                return;
+            case 'langdisplaymode':
+            case 'lang_display_mode':
+                $this->langDisplayMode = in_array($value, ['short', 'native'], true) ? (string) $value : 'native';
                 return;
             default:
                 throw new \Exception("Property {$name} does not exist");

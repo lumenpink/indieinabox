@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 ### Features
+  - (ui) support native and short display formats in language selector
   - (i18n) create IsoLanguages catalog with ISO 639-1 and BCP-47 support
   - (i18n) auto-fill translations from locale definitions on add closes #3
   - (i18n) allow reordering languages and setting main translation closes #2

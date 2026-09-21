@@ -37,11 +37,13 @@ The primary generator settings are loaded from `config.yml` in the project root:
   * `code_long`: Uses full uppercase BCP-47 language tags (e.g. `PT-BR • EN-US • ES`), preserving regional precision in code form.
   * In all modes, full BCP-47 codes are preserved inside HTML `hreflang="..."` attributes for search engines and accessibility tools.
 * In the Web Admin panel (`/admin/config`), languages can be selected from a curated catalog of standard ISO 639-1 and BCP-47 languages with native endonyms and English descriptions, or entered as custom BCP-47 tags. Languages can be reordered at any time using **Move Up (▲)** and **Move Down (▼)**, or promoted to primary directly using the **Make Main** button.
-* **Locale Dictionaries & Auto-Fill:**
-  * Bundled locale definitions are provided for `pt` (Português), `es` (Español), and `en` (English) under `resources/locales/`.
-  * When a new language is added to the configuration, missing translations and kind titles (e.g. `Artigos`, `Notas`) are automatically populated from the matching locale dictionary.
-  * If a dictionary is not yet available locally, Indieinabox attempts to download it from the official Codeberg repository and caches it in `data/locales/`.
-  * Regional language codes (such as `pt-BR` or `es-ES`) automatically resolve to their primary language dictionary (`pt` or `es`).
+* **Locale Dictionaries & On-Demand Downloads:**
+  * Locale translation dictionaries are maintained in the official repository under `resources/locales/` (`pt.json`, `es.json`, `en.json`, etc.) keeping the executable package minimal and lightweight.
+  * When a new language is added to the site configuration in `/admin/config`:
+    * If cached locally (`data/locales/{code}.json`) or in development (`resources/locales/{code}.json`), it loads immediately.
+    * If not available locally, Indieinabox downloads it on demand from the official Codeberg repository and caches it in `data/locales/{code}.json` for offline reuse.
+  * Regional language codes (such as `pt-BR` or `es-ES`) automatically resolve to their base language dictionary (`pt` or `es`).
+  * Missing translations and kind titles (e.g. `Artigos`, `Notas`) are automatically populated without manual entry.
   * An **Auto-fill from Locales** button in `/admin/config` allows refreshing/filling all empty translations at any time.
 
 ---

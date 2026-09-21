@@ -64,6 +64,10 @@ class DateFormatter
         $settingsRepo = $container && $container->has(SettingsRepositoryInterface::class) ? $container->get(SettingsRepositoryInterface::class) : null;
 
         $intl = self::$intlConfig ?? ($settingsRepo ? $settingsRepo->get('intl', []) : (class_exists(Database::class) && Database::isConnected() ? Database::getSetting('intl', []) : ($GLOBALS['intl'] ?? [])));
+        if (is_string($intl)) {
+            $decoded = json_decode($intl, true);
+            $intl = is_array($decoded) ? $decoded : [];
+        }
         if (empty($intl)) {
             $intl = [
                 'pt-br' => [

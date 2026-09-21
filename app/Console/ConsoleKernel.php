@@ -12,6 +12,7 @@ use Indieinabox\Console\Commands\ExportCommand;
 use Indieinabox\Console\Commands\FetchCommand;
 use Indieinabox\Console\Commands\ImportCommand;
 use Indieinabox\Console\Commands\LinkCheckCommand;
+use Indieinabox\Console\Commands\MigrateCommand;
 use Indieinabox\Console\Commands\PostCommand;
 use Indieinabox\Console\Commands\ProfileCommand;
 use Indieinabox\Console\Commands\SetupCommand;
@@ -57,6 +58,7 @@ class ConsoleKernel
         $this->register(new ConfigCommand($this->site));
         $this->register(new SetupCommand($this->site));
         $this->register(new LinkCheckCommand($this->site));
+        $this->register(new MigrateCommand($this->site));
         $this->register(new BackupCommand($this->site));
         $this->register(new ExportCommand($this->site));
         $this->register(new ImportCommand($this->site));

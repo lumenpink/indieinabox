@@ -237,11 +237,24 @@ class Database
 
     /**
      * Initializes database schema if not already initialized.
+     * Executes native PHP migrations via MigrationRunner, falling back to raw schema SQL if needed.
      */
     public static function initializeSchema(?PDO $db = null, ?string $sql = null): void
     {
         $targetDb = $db ?? self::getDb();
-        $schemaSql = $sql ?? self::getSchemaSql();
+
+        if ($sql !== null && $sql !== '') {
+            $targetDb->exec($sql);
+            return;
+        }
+
+        if (class_exists(\Indieinabox\Database\MigrationRunner::class)) {
+            $runner = new \Indieinabox\Database\MigrationRunner($targetDb);
+            $runner->migrate();
+            return;
+        }
+
+        $schemaSql = self::getSchemaSql();
         if ($schemaSql !== '') {
             $targetDb->exec($schemaSql);
         }

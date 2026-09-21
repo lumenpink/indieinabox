@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 ### Features
+  - (database) introduce PHP database migrations system (#13)
   - (webpush) expose push API endpoints, service worker, and reader UI (#12)
   - (webpush) broadcast alerts on interaction ingestion and approval (#11)
   - (webpush) implement WebPushService with VAPID keys and subscription persistence (#10)

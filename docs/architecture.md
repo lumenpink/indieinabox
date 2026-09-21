@@ -54,7 +54,7 @@ The project follows Domain-Driven Design (DDD) and SOLID principles, structured 
       - `AbstractController.php`: Base HTTP controller with JSON, HTML, and redirect responses.
       - `ActivityPubController.php`: ActivityPub actor, inbox, and outbox endpoints (`/actor`, `/inbox`, `/outbox`).
       - `MicropubController.php`: Micropub server and admin client endpoints (`/micropub`, `/micropub/media`, `/micropub/client`).
-      - `MicrosubController.php`: Microsub server and web reader endpoints (`/microsub`, `/microsub/reader`).
+      - `MicrosubController.php`: Microsub server, web reader, and filtering/moderation rule endpoints (`/microsub`, `/microsub/reader`).
       - `WebmentionController.php`: Webmention receiver and interactive help form page (`/webmention`).
       - `IndieAuthController.php`: IndieAuth/OAuth server endpoints (`/auth`, `/token`, `/.well-known/oauth-authorization-server`).
       - `AdminController.php`: Dashboard panels and webhooks (`/admin/config`, `/admin/micropub`, `/admin/microsub`, `/admin/moderation`, `/build`, `/cron`). See [Webhooks & Integration Guide](file:///home/lumen/indieinabox/docs/webhooks.md).

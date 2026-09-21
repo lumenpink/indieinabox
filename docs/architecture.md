@@ -79,6 +79,7 @@ The project follows Domain-Driven Design (DDD) and SOLID principles, structured 
     - `ShortlinkService.php`: Custom base58 shortlinks, redirection mapping, and permalinks.
     - `LinkCheckerService.php`: External link health checking, broken link reporting, and status tracking.
     - `MediaProxyService.php`: External media proxying, HMAC signature verification, anti-SSRF IP filtering, and privacy caching for federated resources.
+    - `WebPushService.php`: Web Push notifications, VAPID ECDSA P-256 key pair management, ES256 JWT signing, and browser push subscription persistence.
   - **`BackgroundWorker/`**: Periodic queue processing and background workers:
     - `BackgroundWorker.php`: Orchestrator for all background execution pipelines and cron locks.
     - `InboxProcessor.php`: Incoming webmention and ActivityPub queue processor with spam checks.

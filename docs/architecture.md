@@ -77,6 +77,7 @@ The project follows Domain-Driven Design (DDD) and SOLID principles, structured 
     - `UpdateService.php`: Semantic version updates, remote release checks, and rollbacks.
     - `ShortlinkService.php`: Custom base58 shortlinks, redirection mapping, and permalinks.
     - `LinkCheckerService.php`: External link health checking, broken link reporting, and status tracking.
+    - `MediaProxyService.php`: External media proxying, HMAC signature verification, anti-SSRF IP filtering, and privacy caching for federated resources.
   - **`BackgroundWorker/`**: Periodic queue processing and background workers:
     - `BackgroundWorker.php`: Orchestrator for all background execution pipelines and cron locks.
     - `InboxProcessor.php`: Incoming webmention and ActivityPub queue processor with spam checks.

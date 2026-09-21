@@ -91,12 +91,12 @@ The project follows Domain-Driven Design (DDD) and SOLID principles, structured 
     - `ArchiveView.php`: Snapshot explorer toolbar and iframe view presenter.
     - `Webmention/HelpPageView.php`: Interactive webmention endpoint test and documentation page.
     - `IndieAuth/ConsentView.php`: IndieAuth authorization consent prompt view.
-    - `Admin/`: Administrative and reader UI presentation views:
-      - `AdminLayoutView.php`: Base dashboard layout with responsive navigation, styling, and metadata.
-      - `ConfigView.php`: Site setup bootstrap and complete configuration dashboard.
+    - `Admin/`: Administrative and reader UI presentation views styled in a 90's anime cyberpunk neon aesthetic (Ghost in the Shell / Akira / Memories palette with electric pink, wire cyan, and dark cyber decks):
+      - `AdminLayoutView.php`: Base dashboard shell with cyber sidebar navigation, glowing channel accordions, and custom neon scrollbars.
+      - `ConfigView.php`: Site setup bootstrap and 7-tab modular configuration dashboard with deep-linking URL hashes and sticky cyber console action bar.
       - `MicropubClientView.php`: Lightweight client UI for publishing notes, articles, and media uploads.
       - `MicrosubReaderView.php`: Timeline reader UI with multi-channel navigation, preview cards, and interactions.
-      - `ModerationView.php`: Moderation dashboard for inspecting, approving, or discarding incoming mentions and spam.
+      - `ModerationView.php`: Moderation queue with cyber cards, glowing status tags, and one-click approve/delete actions for pending mentions and spam.
   - **`Repositories/`**: Repository Pattern persistence abstractions and contracts:
     - `Contracts/SettingsRepositoryInterface.php`: Storage contract for application settings, kind taxonomies, and translations.
     - `SqliteSettingsRepository.php`: SQLite implementation of settings repository with JSON decoding.

@@ -206,7 +206,7 @@ The following next-generation features are scheduled for development:
 
 ### 🛡️ Phase 27: Privacy, Moderation & Notifications
 - [x] **External Media Proxy/Cache**: `MediaProxyService` signs URLs with HMAC-SHA256, validates SSRF safety, streams cached media via `/media/proxy?url=...&sig=...`, and rewrites `<img>`, `<video>`, `<audio>` elements in Microsub reader timelines to proxied URLs preventing IP leaks and dead links.
-- [ ] **Web Push Notifications**: Implement Push API support in the Microsub client for real-time interaction alerts.
+- [x] **Web Push Notifications**: Native Web Push notifications and VAPID key lifecycle (`WebPushService`), ES256 JWT signing, browser subscription persistence (`push_subscriptions`), interaction ingestion and moderation approval broadcasts, Microsub API actions (`push_key`, `push_subscribe`, `push_unsubscribe`), service worker (`/sw.js`), and reader UI subscription toggle controls.
 - [x] **Microsub Filters & Rules**: Comprehensive filtering rules in the reader (`microsub_filters` persistence, `MicrosubFilterService` for keyword, author, and domain matching with `mute`, `auto_archive`, and `drop` actions, API actions via `MicrosubController`, and interactive reader management UI with quick-mute actions).
 - [x] **Portable Export/Import**: Atomic export bundle generation with SHA-256 integrity manifest and ZIP/tar.gz packaging. Atomic import with pre-import safety backup, WAL checkpoint, and atomic restoration. CLI (`export`/`import`) and Web Admin (`/admin/config#tab-backups`) integration.
 

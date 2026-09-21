@@ -60,6 +60,72 @@ class TwtxtManager
     }
 
     /**
+     * Determines media type based on URL file extension.
+     */
+    public static function detectMediaType(string $url): string
+    {
+        $path = parse_url($url, PHP_URL_PATH);
+        if ($path === null || $path === false) {
+            return 'image';
+        }
+        $ext = strtolower(pathinfo($path, PATHINFO_EXTENSION));
+
+        return match ($ext) {
+            'mp4', 'webm', 'ogv', 'mov' => 'video',
+            'mp3', 'ogg', 'wav', 'm4a', 'flac' => 'audio',
+            default => 'image',
+        };
+    }
+
+    /**
+     * Extracts media attachments (both markdown embeds and bare media URLs) from message.
+     *
+     * @param string $message
+     * @return array<array{type: string, url: string, alt?: string}>
+     */
+    public static function extractMediaAttachments(string $message): array
+    {
+        $attachments = [];
+        $seenUrls = [];
+
+        // 1. Markdown image/media syntax: ![alt](url)
+        if (preg_match_all('/!\[([^\]]*)\]\((https?:\/\/[^\s\)\>]+)\)/i', $message, $matches, PREG_SET_ORDER)) {
+            foreach ($matches as $m) {
+                $alt = trim($m[1]);
+                $url = htmlspecialchars_decode(trim($m[2]));
+                if (!isset($seenUrls[$url])) {
+                    $seenUrls[$url] = true;
+                    $type = self::detectMediaType($url);
+                    $attachments[] = [
+                        'type' => $type,
+                        'url' => $url,
+                        'alt' => $alt,
+                    ];
+                }
+            }
+        }
+
+        // 2. Bare media URLs
+        $bareMediaPattern = '/\b(https?:\/\/[^\s<>"\'\)]+\.(?:png|jpe?g|gif|webp|svg|avif|mp4|webm|ogv|mov|mp3|ogg|wav|m4a|flac)(?:\?[^\s<>"\'\)]*)?(?:#[^\s<>"\'\)]*)?)/i';
+        if (preg_match_all($bareMediaPattern, $message, $matches)) {
+            foreach ($matches[1] as $rawUrl) {
+                $url = htmlspecialchars_decode(trim($rawUrl));
+                if (!isset($seenUrls[$url])) {
+                    $seenUrls[$url] = true;
+                    $type = self::detectMediaType($url);
+                    $attachments[] = [
+                        'type' => $type,
+                        'url' => $url,
+                        'alt' => '',
+                    ];
+                }
+            }
+        }
+
+        return $attachments;
+    }
+
+    /**
      * Converts raw message text into HTML with Yarns markdown, subjects, mentions, hashtags, and links formatted.
      *
      * @param string $message
@@ -89,7 +155,31 @@ class TwtxtManager
             $html
         ) ?? $html;
 
-        // 3. Parse Markdown links: [Label](https://url)
+        // 3. Parse Markdown media embeds: ![alt](url)
+        $mediaPlaceholders = [];
+        $html = preg_replace_callback(
+            '/!\[([^\]]*)\]\((https?:\/\/[^\s\)\>]+)\)/i',
+            function ($matches) use (&$mediaPlaceholders) {
+                $alt = htmlspecialchars(trim($matches[1]), ENT_QUOTES | ENT_HTML5);
+                $url = htmlspecialchars(htmlspecialchars_decode(trim($matches[2])), ENT_QUOTES | ENT_HTML5);
+                $type = self::detectMediaType($url);
+
+                if ($type === 'video') {
+                    $tag = '<figure class="twtxt-media"><video src="' . $url . '" controls preload="metadata"></video></figure>';
+                } elseif ($type === 'audio') {
+                    $tag = '<figure class="twtxt-media"><audio src="' . $url . '" controls preload="metadata"></audio></figure>';
+                } else {
+                    $tag = '<figure class="twtxt-media"><img src="' . $url . '" alt="' . $alt . '" loading="lazy" /></figure>';
+                }
+
+                $key = '___TWTXT_MEDIA_' . count($mediaPlaceholders) . '___';
+                $mediaPlaceholders[$key] = $tag;
+                return $key;
+            },
+            $html
+        ) ?? $html;
+
+        // 4. Parse Markdown links: [Label](https://url)
         $html = preg_replace_callback(
             '/\[([^\]]+)\]\((https?:\/\/[^\s\)\>]+)\)/i',
             function ($matches) {
@@ -100,7 +190,7 @@ class TwtxtManager
             $html
         ) ?? $html;
 
-        // 4. Parse Yarns subject tags: (#hash_or_subject)
+        // 5. Parse Yarns subject tags: (#hash_or_subject)
         $subjectPlaceholders = [];
         $html = preg_replace_callback(
             '/(?<=^|\s)\(#([a-zA-Z0-9_\-\.\/]+)\)/u',
@@ -112,7 +202,7 @@ class TwtxtManager
             $html
         ) ?? $html;
 
-        // 5. Parse Yarns inline markdown:
+        // 6. Parse Yarns inline markdown:
         // Bold: **text**
         $html = preg_replace('/\*\*([^*]+)\*\*/u', '<strong>$1</strong>', $html) ?? $html;
 
@@ -125,14 +215,14 @@ class TwtxtManager
         // Blockquotes: lines starting with >
         $html = preg_replace('/(?:^|\n)&gt;\s*([^\n]+)/u', '<blockquote class="twtxt-quote">$1</blockquote>', $html) ?? $html;
 
-        // 6. Convert raw HTTP/HTTPS URLs to links (not already part of an anchor tag)
+        // 7. Convert raw HTTP/HTTPS URLs to links (not already part of an anchor tag)
         $html = preg_replace(
             '/(?<![="])(https?:\/\/[^\s\)\>]+)/i',
             '<a href="$1" target="_blank" rel="noopener">$1</a>',
             $html
         ) ?? $html;
 
-        // 7. Parse hashtags: #tag
+        // 8. Parse hashtags: #tag
         $html = preg_replace_callback(
             '/(?<!\w)#([a-zA-Z0-9_]+)/u',
             function ($m) {
@@ -141,9 +231,12 @@ class TwtxtManager
             $html
         ) ?? $html;
 
-        // 8. Restore subject tags and inline code blocks
+        // 9. Restore placeholders (subjects, media, inline code)
         if (!empty($subjectPlaceholders)) {
             $html = strtr($html, $subjectPlaceholders);
+        }
+        if (!empty($mediaPlaceholders)) {
+            $html = strtr($html, $mediaPlaceholders);
         }
         if (!empty($codePlaceholders)) {
             $html = strtr($html, $codePlaceholders);
@@ -222,6 +315,7 @@ class TwtxtManager
                 $subject = $subjMatch[1];
             }
 
+            $attachments = self::extractMediaAttachments($message);
             $html = self::formatMessageToHtml($message);
             $entries[] = Entry::fromTwtxt([
                 'timestamp' => $timestamp,
@@ -230,6 +324,7 @@ class TwtxtManager
                 'message' => $message,
                 'html' => $html,
                 'title' => $subject,
+                'attachments' => $attachments,
                 'metadata' => [
                     'subject' => $subject,
                     'feed_title' => $feedTitle,

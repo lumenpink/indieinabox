@@ -126,6 +126,23 @@ class TwtxtFeedGenerator implements FeedGeneratorInterface
             if ($subjectTag !== '' && !str_contains($text, $subjectTag)) {
                 $text = $subjectTag . ' ' . $text;
             }
+
+            // Append attachments not already present in the text
+            $attachments = $entry->getAttachments();
+            if (!empty($attachments)) {
+                $appended = [];
+                foreach ($attachments as $att) {
+                    $mediaUrl = $att['url'] ?? '';
+                    if ($mediaUrl !== '' && !str_contains($text, $mediaUrl)) {
+                        $alt = $att['alt'] ?? '';
+                        $appended[] = '![' . $alt . '](' . $mediaUrl . ')';
+                    }
+                }
+                if (!empty($appended)) {
+                    $text = trim($text . ' ' . implode(' ', $appended));
+                }
+            }
+
             return $text;
         }
 

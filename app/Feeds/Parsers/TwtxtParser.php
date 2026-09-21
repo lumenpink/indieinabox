@@ -60,6 +60,8 @@ class TwtxtParser implements FeedParserInterface
                     $subject = $subjMatch[1];
                 }
 
+                $attachments = \Indieinabox\Twtxt\TwtxtManager::extractMediaAttachments($text);
+
                 $items[] = [
                     'uid' => $id,
                     'url' => $feedUrl,
@@ -67,6 +69,7 @@ class TwtxtParser implements FeedParserInterface
                     'content' => $text,
                     'published_at' => $published,
                     'author' => ['name' => $authorName],
+                    'attachments' => $attachments,
                     'metadata' => [
                         'subject' => $subject,
                         'feed_title' => $feedTitle,

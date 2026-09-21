@@ -165,3 +165,86 @@ it('generates twtxt feed with Yarns headers and subjects', function () {
         ->and($content)->toContain("(#test_subject) Testing note");
 });
 
+it('detects and extracts media attachments from markdown embeds and bare URLs', function () {
+    $msg = "Here is a photo: ![Cute Cat](https://example.com/cat.jpg)\n"
+        . "And a video: ![Video clip](https://example.com/clip.mp4)\n"
+        . "And an audio: ![Podcast](https://example.com/audio.mp3)\n"
+        . "And a bare image link: https://example.com/photo.png";
+
+    $attachments = TwtxtManager::extractMediaAttachments($msg);
+
+    expect($attachments)->toHaveCount(4);
+    expect($attachments[0])->toBe([
+        'type' => 'image',
+        'url' => 'https://example.com/cat.jpg',
+        'alt' => 'Cute Cat',
+    ]);
+    expect($attachments[1])->toBe([
+        'type' => 'video',
+        'url' => 'https://example.com/clip.mp4',
+        'alt' => 'Video clip',
+    ]);
+    expect($attachments[2])->toBe([
+        'type' => 'audio',
+        'url' => 'https://example.com/audio.mp3',
+        'alt' => 'Podcast',
+    ]);
+    expect($attachments[3])->toBe([
+        'type' => 'image',
+        'url' => 'https://example.com/photo.png',
+        'alt' => '',
+    ]);
+});
+
+it('renders markdown media embeds into HTML figure elements', function () {
+    $msg = "Photo: ![Sunset](https://example.com/sunset.jpg)\n"
+        . "Video: ![Movie](https://example.com/movie.mp4)\n"
+        . "Sound: ![Tune](https://example.com/tune.ogg)";
+
+    $html = TwtxtManager::formatMessageToHtml($msg);
+
+    expect($html)->toContain('<figure class="twtxt-media"><img src="https://example.com/sunset.jpg" alt="Sunset" loading="lazy" /></figure>')
+        ->and($html)->toContain('<figure class="twtxt-media"><video src="https://example.com/movie.mp4" controls preload="metadata"></video></figure>')
+        ->and($html)->toContain('<figure class="twtxt-media"><audio src="https://example.com/tune.ogg" controls preload="metadata"></audio></figure>');
+});
+
+it('populates Entry attachments when parsing twtxt feed with media', function () {
+    $rawFeed = "# nick = media_user\n"
+        . "2026-09-21T21:00:00Z\tCheck out this shot ![Landscape](https://example.com/landscape.webp)";
+
+    $entries = TwtxtManager::parseFeedContent($rawFeed, 'media_user');
+
+    expect($entries)->toHaveCount(1);
+    expect($entries[0]->getAttachments())->toHaveCount(1);
+    expect($entries[0]->getAttachments()[0]['url'])->toBe('https://example.com/landscape.webp');
+    expect($entries[0]->getAttachments()[0]['alt'])->toBe('Landscape');
+    expect($entries[0]->getAttachments()[0]['type'])->toBe('image');
+});
+
+it('generates twtxt entries with appended media embeds when attachments exist', function () {
+    $generator = new \Indieinabox\Feeds\Generators\TwtxtFeedGenerator();
+    $site = new Site();
+    $site->metadata->title = 'Test Media Site';
+    $site->twtxt->nick = 'photo_poster';
+
+    $entry = new Entry([
+        'id' => 'photo-1',
+        'kind' => 'note',
+        'rawContent' => 'Beautiful sunset today',
+        'content' => '<p>Beautiful sunset today</p>',
+        'publishedAt' => new \DateTimeImmutable('2026-09-21T15:00:00Z'),
+        'attachments' => [
+            ['type' => 'image', 'url' => 'https://example.com/sunset.jpg', 'alt' => 'Sunset'],
+        ],
+    ]);
+
+    $tempFile = sys_get_temp_dir() . '/twtxt_attachments_test_' . uniqid() . '.txt';
+    $generator->generate([$entry], $tempFile, $site);
+
+    $content = file_get_contents($tempFile);
+    unlink($tempFile);
+
+    expect($content)->toContain("Beautiful sunset today ![Sunset](https://example.com/sunset.jpg)");
+});
+
+

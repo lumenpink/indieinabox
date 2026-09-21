@@ -458,6 +458,11 @@ class Entry
             ? (string) $data['html']
             : \Indieinabox\Twtxt\TwtxtManager::formatMessageToHtml($message);
 
+        $attachments = (array) ($data['attachments'] ?? []);
+        if (empty($attachments)) {
+            $attachments = \Indieinabox\Twtxt\TwtxtManager::extractMediaAttachments($message);
+        }
+
         return new self([
             'id' => (string) ($data['id'] ?? ('twtxt_' . $publishedAt->getTimestamp() . '_' . substr(md5($message), 0, 8))),
             'title' => isset($data['title']) && $data['title'] !== '' ? (string) $data['title'] : null,
@@ -475,6 +480,7 @@ class Entry
             'inReplyTo' => $inReplyTo,
             'tags' => $tags,
             'syndicationTargets' => [],
+            'attachments' => $attachments,
             'metadata' => array_merge([
                 'nick' => $nick,
             ], (array) ($data['metadata'] ?? [])),

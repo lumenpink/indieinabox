@@ -276,89 +276,26 @@ $runnerCode .= <<<'EOT'
 
             if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['data_dir'])) {
                 $dataDir = rtrim($_POST['data_dir'], '/\\');
-                
-                if (!is_dir($dataDir)) {
-                    @mkdir($dataDir, 0755, true);
-                }
-                
-                if (!is_writable($dataDir)) {
-                    $error = "The directory '$dataDir' is not writable or could not be created.";
-                } else {
-                    @mkdir($dataDir . DIRECTORY_SEPARATOR . 'microsub', 0755, true);
-                    @mkdir($dataDir . DIRECTORY_SEPARATOR . 'activitypub', 0755, true);
+                $sitename = $_POST['sitename'] ?? 'My Site Name';
+                $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+                $detectedFqdn = $scheme . '://' . ($_SERVER['HTTP_HOST'] ?? 'localhost:8081');
+                $fqdn = rtrim($_POST['fqdn'] ?? $detectedFqdn, '/');
+                $password = $_POST['password'] ?? '';
 
-                    $dbPath = $dataDir . DIRECTORY_SEPARATOR . '.indieinabox.sqlite';
-                    $configContent = "<?php\n\nreturn [\n    'data_dir' => '" . str_replace("'", "\\'", $dataDir) . "',\n    'db_path' => '" . str_replace("'", "\\'", $dbPath) . "'\n];\n";
-                    
-                    if (file_put_contents($configFile, $configContent) !== false) {
-                        try {
-                            $db = new \PDO('sqlite:' . $dbPath);
-                            $db->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
-                            $db->exec($__SQL_SCHEMA__);
-                            
-                            $sitename = $_POST['sitename'] ?? 'My Site Name';
-                            $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-                            $detectedFqdn = $scheme . '://' . ($_SERVER['HTTP_HOST'] ?? 'localhost:8081');
-                            $fqdn = rtrim($_POST['fqdn'] ?? $detectedFqdn, '/');
-                            $password = $_POST['password'] ?? '';
-                            
-                            $stmt = $db->prepare("INSERT INTO settings (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value=excluded.value");
-                            $stmt->execute(['sitename', $sitename]);
-                            if (!empty($fqdn)) {
-                                $stmt->execute(['fqdn', $fqdn]);
-                            }
-                            if (!empty($password)) {
-                                $stmt->execute(['indieauth_password', password_hash($password, PASSWORD_BCRYPT)]);
-                            }
-                        } catch (\Exception $e) {
-                            die("Database creation failed: " . $e->getMessage());
-                        }
-                        
-                        $contentDir = $base . DIRECTORY_SEPARATOR . 'content';
-                        $articlesDir = $contentDir . DIRECTORY_SEPARATOR . 'articles';
-                        $notesDir = $contentDir . DIRECTORY_SEPARATOR . 'notes';
-                        
-                        if (!is_dir($articlesDir)) {
-                            @mkdir($articlesDir, 0755, true);
-                            $welcomeArticle = "---\ntitle: Welcome to indieinabox\ndate: " . date('Y-m-d H:i:s') . "\n---\n\nWelcome to your new Indieinabox site!\n\nIndieinabox is a lightweight, static-site generator and IndieWeb-compatible server built for individuals who want to own their content. It integrates with the Fediverse and Microsub, allowing you to read, write, and interact with the decentralized web without giving up control of your data.\n\nTo learn more about how to configure your site, change themes, or connect to the Fediverse, please check out the [official documentation](https://github.com/indieinabox/indieinabox).\n";
-                            file_put_contents($articlesDir . DIRECTORY_SEPARATOR . 'welcome-to-indieinabox.md', $welcomeArticle);
-                        }
-                        
-                        if (!is_dir($notesDir)) {
-                            @mkdir($notesDir, 0755, true);
-                            $welcomeNote = "---\ndate: " . date('Y-m-d H:i:s') . "\n---\n\nThere is immense power in having total control over your own data. By hosting your own site, you decide what stays, what goes, and who gets to see it. Welcome to the IndieWeb.\n";
-                            file_put_contents($notesDir . DIRECTORY_SEPARATOR . 'data-ownership.md', $welcomeNote);
-                        }
-                        
-                        if (class_exists('\Indieinabox\SiteBuilder\SiteBuilder')) {
-                            \Indieinabox\Core\Database::$dataDir = $dataDir;
-                            \Indieinabox\Core\Database::connect($dbPath);
-                            $site = new \Indieinabox\Site\Site();
-                            $site->paths->baseDir = $base;
-                            $site->config = \Indieinabox\Core\Database::getAllSettings();
-                            
-                            $baseOut = $site->config['outputdir'] ?? 'public';
-                            $site->paths->outputDirHtml = $baseOut . '_html';
-                            $site->paths->outputDirGemini = $baseOut . '_gemini';
-                            $site->paths->outputDirGopher = $baseOut . '_gopher';
-                            $site->paths->outputDirMedia = $baseOut . '_media';
-                            $site->paths->contentDir = 'content';
-                            
-                            if (isset($site->config['active_theme']) && $site->config['active_theme'] !== 'default') {
-                                $site->paths->themeDir = $dataDir . DIRECTORY_SEPARATOR . 'themes' . DIRECTORY_SEPARATOR . $site->config['active_theme'];
-                            } else {
-                                $site->paths->themeDir = $base . DIRECTORY_SEPARATOR . 'resources'; // compiled bundle defaults to embedded if not found later
-                            }
-                            
-                            $builder = new \Indieinabox\SiteBuilder\SiteBuilder($site);
-                            $builder->build();
-                        }
-                        
-                        header("Location: /admin/microsub");
-                        exit;
-                    } else {
-                        $error = "Failed to write .config.php file. Check permissions on root folder.";
-                    }
+                try {
+                    $installer = new \Indieinabox\Services\InstallService();
+                    $installer->install([
+                        'base_dir' => $base,
+                        'data_dir' => $dataDir,
+                        'sitename' => $sitename,
+                        'fqdn' => $fqdn,
+                        'password' => $password,
+                        'build' => true,
+                    ]);
+                    header("Location: /admin/microsub");
+                    exit;
+                } catch (\Throwable $e) {
+                    $error = "Installation failed: " . $e->getMessage();
                 }
             }
 

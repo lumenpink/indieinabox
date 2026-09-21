@@ -102,3 +102,39 @@ test('SetupCommand auto-generates password when omitted in non-interactive mode'
     $hash = (string) Database::getSetting('indieauth_password');
     expect($hash)->not->toBeEmpty();
 });
+
+test('SetupCommand builds site by default', function () {
+    $cmd = new SetupCommand($this->site);
+
+    $argv = [
+        'indieinabox.php',
+        'setup',
+        '--name', 'Built Site',
+    ];
+
+    ob_start();
+    $code = $cmd->execute($argv);
+    ob_get_clean();
+
+    expect($code)->toBe(0);
+    expect(is_dir($this->tempDir . '/public_html'))->toBeTrue();
+    expect(file_exists($this->tempDir . '/public_html/index.html'))->toBeTrue();
+});
+
+test('SetupCommand skips build when --no-build is specified', function () {
+    $cmd = new SetupCommand($this->site);
+
+    $argv = [
+        'indieinabox.php',
+        'setup',
+        '--name', 'Unbuilt Site',
+        '--no-build',
+    ];
+
+    ob_start();
+    $code = $cmd->execute($argv);
+    ob_get_clean();
+
+    expect($code)->toBe(0);
+    expect(file_exists($this->tempDir . '/public_html/index.html'))->toBeFalse();
+});

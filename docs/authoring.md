@@ -66,3 +66,16 @@ Nas configurações web, você possui controles estritos de "Translation Parity"
 Além disso, a opção **Translation Auto-Generation** define o que ocorre caso falte um arquivo que a paridade exige:
 - `pseudo`: Ele gera um arquivo fantasma apenas copiando a versão base e inserindo o prefixo `[LANG]` no título para sinalizar que não foi traduzido ainda.
 - `disabled`: O sistema lançará um **Erro Fatal** no console e impedirá a geração do site até que você crie o arquivo traduzido manualmente.
+
+## Hashtags e Indexação de Tags
+
+O IndieinaBox indexa automaticamente tanto tags declaradas no frontmatter (`tags: [indieweb, dev]`) quanto `#hashtags` escritas diretamente no corpo do texto (ex: `#indieweb`, `#fediverse`, `#posse`).
+
+### Páginas de Tags Geradas
+
+Durante a compilação do site pelo `SiteBuilder`, as seguintes rotas e páginas estáticas são geradas:
+
+- `/tags/` e `/tag/`: Lista agregadora com todas as tags do site em ordem alfabética e a quantidade de posts associados a cada uma.
+- `/tag/<slug>/` e `/tags/<slug>/`: Página dedicada para cada tag contendo a listagem cronológica reversa de todos os posts marcados com aquela tag ou hashtag.
+- Suporte a múltiplos idiomas: em sites com múltiplos idiomas, os índices são gerados preservando os prefixos correspondentes (ex: `/pt/tags/`, `/pt/tag/<slug>/`).
+

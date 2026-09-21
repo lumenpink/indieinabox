@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 ### Features
+  - (i18n) create IsoLanguages catalog with ISO 639-1 and BCP-47 support
   - (i18n) auto-fill translations from locale definitions on add closes #3
   - (i18n) allow reordering languages and setting main translation closes #2
   - (cli) support setup parameters and headless execution closes #4

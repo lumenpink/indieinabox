@@ -13,12 +13,12 @@ Interactions with a `status: pending` are filtered out of public views by `KindH
 
 Site administrators can access the moderation panel by navigating to `/admin/moderation` while logged in via IndieAuth.
 
-The moderation panel displays a unified layout with other admin pages (Config, Micropub, Microsub) and shows a list of all interactions currently pending moderation.
+The moderation panel displays a unified layout with other admin pages (Config, Micropub, Microsub) styled in a 90's anime cyberpunk neon aesthetic (electric pink, cyan wireframe, dark cyber deck theme) and shows a list of all interactions currently pending moderation.
 
 For each pending interaction, you will see:
-- The type of interaction (like, reply, repost, etc.)
-- The content and author details
-- Options to **Approve** or **Delete** the interaction
+- The type of interaction (like, reply, repost, etc.) with glowing tech tags
+- The content, target post, and author details in high-contrast cyber cards
+- Options to **Approve** (neon green action) or **Delete** (neon rose action) the interaction
 
 ### Approving an Interaction
 

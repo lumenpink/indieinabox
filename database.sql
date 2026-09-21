@@ -18,6 +18,14 @@ CREATE TABLE IF NOT EXISTS microsub_filters (
     channel_uid TEXT DEFAULT '*',
     created_at INTEGER NOT NULL
 );
+CREATE TABLE IF NOT EXISTS push_subscriptions (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    endpoint TEXT NOT NULL UNIQUE,
+    p256dh TEXT NOT NULL,
+    auth TEXT NOT NULL,
+    user_agent TEXT,
+    created_at INTEGER NOT NULL
+);
 
 INSERT OR IGNORE INTO microsub_channels (uid, name) VALUES ('inbox', 'Timeline');
 INSERT OR IGNORE INTO microsub_channels (uid, name) VALUES ('notifications', 'Notifications');

@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 ### Features
+  - (webpush) implement WebPushService with VAPID keys and subscription persistence (#10)
   - (microsub) expose filters API endpoints and integrate rules management in reader UI
   - (microsub) integrate filter rules into timeline retrieval and feed ingestion
   - (microsub) implement MicrosubFilterService with keyword, author, and domain matching

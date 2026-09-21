@@ -645,6 +645,25 @@ class ConfigView
                 </div>
             <?php endif; ?>
 
+            <?php if (isset($_GET['imported'])): ?>
+                <div class="alert-saved">
+                    &check; Portable export bundle imported successfully! Database, content, and media restored, and site rebuilt.
+                </div>
+            <?php endif; ?>
+
+            <?php if (isset($_GET['import_error'])): ?>
+                <div class="alert-saved" style="background: rgba(255, 0, 85, 0.2); border-color: var(--neon-pink); color: var(--neon-pink);">
+                    &cross; Import failed: <?= htmlspecialchars($_SESSION['import_error_message'] ?? 'Archive integrity check failed or invalid archive.') ?>
+                    <?php unset($_SESSION['import_error_message']); ?>
+                </div>
+            <?php endif; ?>
+
+            <?php if (isset($_GET['export_error'])): ?>
+                <div class="alert-saved" style="background: rgba(255, 0, 85, 0.2); border-color: var(--neon-pink); color: var(--neon-pink);">
+                    &cross; Export failed to generate. Please check filesystem write permissions.
+                </div>
+            <?php endif; ?>
+
             <form action="" method="POST" id="configForm" enctype="multipart/form-data">
                 <div class="config-tabs">
                     <button type="button" class="config-tab-btn active" onclick="showTab('tab-general')">
@@ -1269,6 +1288,34 @@ class ConfigView
                             <input type="hidden" name="backup_skip_media" value="0">
                             <input type="checkbox" name="backup_skip_media" id="backup_skip_media" value="1" <?= !empty($config['backup_skip_media']) ? 'checked' : '' ?>>
                             <label for="backup_skip_media">Skip Media Directory (`--no-media`)</label>
+                        </div>
+                    </fieldset>
+
+                    <fieldset style="margin-top: 2rem;">
+                        <legend>Portable Data Export</legend>
+                        <p style="margin-top:0; color: var(--text-muted); font-size: 0.9rem;">
+                            Package your SQLite database, authored markdown content, and uploaded media into a self-contained, portable <code>.tar.gz</code> bundle containing cryptographic SHA-256 integrity checksums.
+                        </p>
+                        <div style="margin-top: 1rem;">
+                            <button type="submit" name="action" value="export_download" class="btn-secondary" style="color: var(--neon-cyan); border-color: rgba(0, 240, 255, 0.5); padding: 10px 18px; font-weight: bold; cursor: pointer;">
+                                &darr; Export &amp; Download Bundle (.tar.gz)
+                            </button>
+                        </div>
+                    </fieldset>
+
+                    <fieldset style="margin-top: 2rem;">
+                        <legend>Portable Data Import &amp; Restore</legend>
+                        <p style="margin-top:0; color: var(--text-muted); font-size: 0.9rem;">
+                            Restore an existing portable export archive (<code>.tar.gz</code>, <code>.tar</code>, or <code>.zip</code>). All files are SHA-256 verified before restoration, and an automated pre-import safety backup is created.
+                        </p>
+                        <div class="form-group" style="margin-top: 1rem;">
+                            <label for="import_file">Select Export Bundle File</label>
+                            <input type="file" name="import_file" id="import_file" accept=".tar.gz,.tgz,.tar,.zip" style="background: rgba(9, 13, 20, 0.7); border: 1px solid rgba(0, 240, 255, 0.3); border-radius: 4px; padding: 8px 12px; color: var(--text-main); width: 100%;">
+                        </div>
+                        <div style="margin-top: 1rem;">
+                            <button type="submit" name="action" value="import_upload" class="btn-secondary" style="color: var(--neon-amber); border-color: rgba(255, 208, 0, 0.5); padding: 10px 18px; font-weight: bold; cursor: pointer;" onclick="return confirm('Restoring an export bundle will replace current site data (a safety backup will be created). Continue?');">
+                                &uarr; Upload &amp; Restore Bundle
+                            </button>
                         </div>
                     </fieldset>
                 </div>

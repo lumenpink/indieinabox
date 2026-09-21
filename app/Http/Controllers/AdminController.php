@@ -10,6 +10,8 @@ use Indieinabox\Core\Database;
 use Indieinabox\Localization\LocaleManager;
 use Indieinabox\Repositories\Contracts\SettingsRepositoryInterface;
 use Indieinabox\Services\ConfigurationService;
+use Indieinabox\Services\ExportService;
+use Indieinabox\Services\ImportService;
 use Indieinabox\Services\MicrosubService;
 use Indieinabox\Services\ModerationService;
 use Indieinabox\Services\UpdateService;
@@ -154,6 +156,60 @@ class AdminController extends AbstractController
                 if ($_POST['action'] === 'rebuild_site') {
                     $this->rebuildSite();
                     $this->redirect('/admin/config?rebuilt=1');
+                    return;
+                }
+                if ($_POST['action'] === 'export_download') {
+                    $exportService = new ExportService($this->site);
+                    $exportDir = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'iiab_web_exports';
+                    if (!is_dir($exportDir)) {
+                        @mkdir($exportDir, 0755, true);
+                    }
+                    $exportFile = $exportDir . DIRECTORY_SEPARATOR . 'indieinabox_export_' . date('Y-m-d_His') . '.tar.gz';
+                    $skipContent = !empty($_POST['backup_skip_content']);
+                    $skipMedia = !empty($_POST['backup_skip_media']);
+
+                    $result = $exportService->export($exportFile, [
+                        'skip_content' => $skipContent,
+                        'skip_media' => $skipMedia,
+                    ]);
+
+                    if ($result['success'] && is_file($result['path'])) {
+                        header('Content-Description: File Transfer');
+                        header('Content-Type: application/gzip');
+                        header('Content-Disposition: attachment; filename="' . basename($result['path']) . '"');
+                        header('Expires: 0');
+                        header('Cache-Control: must-revalidate');
+                        header('Pragma: public');
+                        header('Content-Length: ' . (string) filesize($result['path']));
+                        readfile($result['path']);
+                        @unlink($result['path']);
+                        exit;
+                    }
+
+                    $this->redirect('/admin/config?export_error=1#tab-backups');
+                    return;
+                }
+                if ($_POST['action'] === 'import_upload') {
+                    if (isset($_FILES['import_file']) && is_array($_FILES['import_file']) && (int)($_FILES['import_file']['error'] ?? -1) === UPLOAD_ERR_OK) {
+                        $tmpPath = (string) $_FILES['import_file']['tmp_name'];
+                        if (is_uploaded_file($tmpPath) || is_file($tmpPath)) {
+                            $importService = new ImportService($this->site);
+                            try {
+                                $importService->import($tmpPath, [
+                                    'verify_checksums' => true,
+                                    'safety_backup' => true,
+                                    'rebuild_site' => true,
+                                ]);
+                                $this->redirect('/admin/config?imported=1#tab-backups');
+                                return;
+                            } catch (\Throwable $e) {
+                                $_SESSION['import_error_message'] = $e->getMessage();
+                                $this->redirect('/admin/config?import_error=1#tab-backups');
+                                return;
+                            }
+                        }
+                    }
+                    $this->redirect('/admin/config?import_error=1#tab-backups');
                     return;
                 }
             }

@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 ### Features
+  - (admin) integrate portable export download and import restore in backups tab
   - (cli) add export and import CLI commands with bundle inspection
   - (backup) implement ImportService with integrity verification and safety backup
   - (backup) implement portable ExportService with checksum manifest

@@ -192,7 +192,7 @@ The following next-generation features are scheduled for development:
 - [x] **Content Warnings (CW)**: Add support to the data model for flagging sensitive content and providing summaries.
 - [x] **Content Warnings (CW) - UI**: Implement image blurring and collapsible text summaries in the frontend.
 - [x] **Hashtags - Parser**: Implement automatic extraction of hashtags from post content.
-- [ ] **Hashtags - Indexing**: Create an index interface, search functionality, and a tag cloud.
+- [x] **Hashtags - Indexing**: Create an index interface, search functionality, and a tag cloud.
 - [ ] **Discovery Engine**: Build an aggregator endpoint and page for discovering public posts (Global Timeline).
 - [x] **Async Webmention Discovery**: Integrate domain capability checks into the RSS cron fetcher. Cache whether domains support Webmentions to dynamically alter the UI buttons (e.g., standard 'like' vs 'local_like'). Note: 'repost' remains universally available as it is primarily a local action.
 - [ ] **Custom Client - Core**: Scaffold the routing and foundational architecture for the bespoke Microsub/Micropub client.

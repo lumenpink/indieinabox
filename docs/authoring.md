@@ -93,4 +93,13 @@ echo ThemeData::getTagCloud($pages, $site, $page->lang);
 $tagData = ThemeData::getTagCloudData($pages, $page->lang);
 ```
 
+### Índice de Busca Estático (`search.json`)
+
+A cada compilação estática do site, o `SiteBuilder` gera automaticamente arquivos de índice `search.json` estruturados para busca client-side instantânea (utilizável com Fuse.js, Pagefind ou scripts simples de busca sem necessidade de backend dinâmico):
+
+- `/search.json`: Contém todos os posts públicos com título, URL, slug, kind, idioma, data ISO-8601, tags e resumo/snippet textual.
+- `/<lang>/search.json`: Índice filtrado especificamente para o idioma correspondente (ex: `/pt/search.json`).
+- Rascunhos (`draft`), páginas de introdução (`intro.md`) e a home page são excluídos automaticamente do índice de busca.
+
+
 

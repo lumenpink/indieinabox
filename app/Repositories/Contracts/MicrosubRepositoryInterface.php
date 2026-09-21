@@ -60,4 +60,28 @@ interface MicrosubRepositoryInterface
      * Counts how many channels are subscribed to a given URL.
      */
     public function countSubscriptionsByUrl(string $url): int;
+
+    /**
+     * Retrieves filtering and moderation rules for the reader.
+     *
+     * @param string|null $channelUid Optional channel to filter by (includes global '*' rules).
+     * @return array<int, array{id: int|string, filter_type: string, content: string, action: string, channel_uid: string, created_at: int|string}>
+     */
+    public function getFilters(?string $channelUid = null): array;
+
+    /**
+     * Adds a new filtering rule.
+     *
+     * @param string $filterType Type of filter: 'keyword', 'author', or 'domain'.
+     * @param string $content Target keyword, author name/URL, or domain string.
+     * @param string $action Action to execute: 'mute', 'auto_archive', or 'drop'.
+     * @param string $channelUid Channel scope ('*' for global, or specific channel UID).
+     * @return int The ID of the newly created filter rule.
+     */
+    public function addFilter(string $filterType, string $content, string $action = 'mute', string $channelUid = '*'): int;
+
+    /**
+     * Deletes a filtering rule by ID.
+     */
+    public function deleteFilter(int $id): bool;
 }

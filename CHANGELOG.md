@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 ### Features
+  - (microsub) implement microsub_filters table and repository persistence
   - (media) expose /media/proxy endpoint and integrate proxy rewriting in reader
   - (media) implement MediaProxyService with HMAC URL signing and SSRF protection
   - (search) generate static search.json index files during site build

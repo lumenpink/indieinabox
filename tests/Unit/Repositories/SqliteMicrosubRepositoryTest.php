@@ -89,4 +89,44 @@ describe('SqliteMicrosubRepository', function () {
         expect($repo->getSubscriptionType('reading', 'https://example.com/feed.xml'))->toBeNull();
         expect($repo->countSubscriptionsByUrl('https://example.com/feed.xml'))->toBe(0);
     });
+
+    it('manages filtering and moderation rules lifecycle', function () {
+        $repo = new SqliteMicrosubRepository();
+
+        expect($repo->getFilters())->toBeEmpty();
+
+        // Add global keyword filter
+        $id1 = $repo->addFilter('keyword', 'crypto-spam', 'mute', '*');
+        expect($id1)->toBeGreaterThan(0);
+
+        // Add author filter scoped to inbox channel
+        $id2 = $repo->addFilter('author', 'https://spammer.example/actor', 'drop', 'inbox');
+        expect($id2)->toBeGreaterThan(0);
+
+        // Add domain filter with auto_archive
+        $id3 = $repo->addFilter('domain', 'annoying-news.com', 'auto_archive', '*');
+        expect($id3)->toBeGreaterThan(0);
+
+        // Get all filters
+        $all = $repo->getFilters();
+        expect($all)->toHaveCount(3);
+
+        // Filter by channel: 'inbox' receives global '*' and 'inbox' specific filters (all 3)
+        $inboxFilters = $repo->getFilters('inbox');
+        expect($inboxFilters)->toHaveCount(3);
+
+        // Filter by channel: 'notifications' receives only global '*' filters (id1 and id3)
+        $notifFilters = $repo->getFilters('notifications');
+        expect($notifFilters)->toHaveCount(2);
+        $contents = array_column($notifFilters, 'content');
+        expect($contents)->toContain('crypto-spam');
+        expect($contents)->toContain('annoying-news.com');
+        expect($contents)->not->toContain('https://spammer.example/actor');
+
+        // Delete a filter
+        expect($repo->deleteFilter($id1))->toBeTrue();
+        $remaining = $repo->getFilters();
+        expect($remaining)->toHaveCount(2);
+        expect(array_column($remaining, 'id'))->not->toContain($id1);
+    });
 });

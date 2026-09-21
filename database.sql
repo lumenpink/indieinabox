@@ -10,6 +10,14 @@ CREATE TABLE IF NOT EXISTS microsub_channels (uid TEXT PRIMARY KEY, name TEXT);
 CREATE TABLE IF NOT EXISTS microsub_subscriptions (
     id INTEGER PRIMARY KEY AUTOINCREMENT, channel_uid TEXT, url TEXT, type TEXT, name TEXT, photo TEXT
 );
+CREATE TABLE IF NOT EXISTS microsub_filters (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    filter_type TEXT NOT NULL,
+    content TEXT NOT NULL,
+    action TEXT NOT NULL DEFAULT 'mute',
+    channel_uid TEXT DEFAULT '*',
+    created_at INTEGER NOT NULL
+);
 
 INSERT OR IGNORE INTO microsub_channels (uid, name) VALUES ('inbox', 'Timeline');
 INSERT OR IGNORE INTO microsub_channels (uid, name) VALUES ('notifications', 'Notifications');

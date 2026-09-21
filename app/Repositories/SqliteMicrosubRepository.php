@@ -114,4 +114,73 @@ class SqliteMicrosubRepository implements MicrosubRepositoryInterface
         $stmt->execute();
         return (int) $stmt->fetchColumn();
     }
+
+    private function ensureFiltersTable(): void
+    {
+        $this->getDb()->exec(
+            'CREATE TABLE IF NOT EXISTS microsub_filters (' .
+            'id INTEGER PRIMARY KEY AUTOINCREMENT, ' .
+            'filter_type TEXT NOT NULL, ' .
+            'content TEXT NOT NULL, ' .
+            'action TEXT NOT NULL DEFAULT \'mute\', ' .
+            'channel_uid TEXT DEFAULT \'*\', ' .
+            'created_at INTEGER NOT NULL)'
+        );
+    }
+
+    #[\Override]
+    public function getFilters(?string $channelUid = null): array
+    {
+        $this->ensureFiltersTable();
+
+        if ($channelUid === null) {
+            $stmt = $this->getDb()->query('SELECT * FROM microsub_filters ORDER BY id DESC');
+            return $stmt ? $stmt->fetchAll(PDO::FETCH_ASSOC) : [];
+        }
+
+        $stmt = $this->getDb()->prepare(
+            'SELECT * FROM microsub_filters WHERE channel_uid = :channel OR channel_uid = \'*\' ORDER BY id DESC'
+        );
+        $stmt->bindValue(':channel', $channelUid, PDO::PARAM_STR);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
+    }
+
+    #[\Override]
+    public function addFilter(string $filterType, string $content, string $action = 'mute', string $channelUid = '*'): int
+    {
+        $this->ensureFiltersTable();
+
+        $allowedTypes = ['keyword', 'author', 'domain'];
+        $type = in_array($filterType, $allowedTypes, true) ? $filterType : 'keyword';
+
+        $allowedActions = ['mute', 'auto_archive', 'drop'];
+        $act = in_array($action, $allowedActions, true) ? $action : 'mute';
+
+        $contentTrimmed = trim($content);
+        $channel = trim($channelUid) !== '' ? trim($channelUid) : '*';
+
+        $stmt = $this->getDb()->prepare(
+            'INSERT INTO microsub_filters (filter_type, content, action, channel_uid, created_at) ' .
+            'VALUES (:type, :content, :action, :channel, :created_at)'
+        );
+        $stmt->bindValue(':type', $type, PDO::PARAM_STR);
+        $stmt->bindValue(':content', $contentTrimmed, PDO::PARAM_STR);
+        $stmt->bindValue(':action', $act, PDO::PARAM_STR);
+        $stmt->bindValue(':channel', $channel, PDO::PARAM_STR);
+        $stmt->bindValue(':created_at', time(), PDO::PARAM_INT);
+        $stmt->execute();
+
+        return (int) $this->getDb()->lastInsertId();
+    }
+
+    #[\Override]
+    public function deleteFilter(int $id): bool
+    {
+        $this->ensureFiltersTable();
+
+        $stmt = $this->getDb()->prepare('DELETE FROM microsub_filters WHERE id = :id');
+        $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+        return $stmt->execute();
+    }
 }

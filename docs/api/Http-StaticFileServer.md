@@ -18,6 +18,11 @@ with content negotiation for ActivityPub representations.
 
 Attempts to serve static files from the output directory based on the request URI.
 
+### renderNotFound()
+`protected function renderNotFound(string $filePath, string $base, string $outputDir): void`
+
+Renders a customized, stylish 404 Not Found response.
+
 ### getMimeType()
 `public function getMimeType(string $extension): string`
 

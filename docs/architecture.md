@@ -49,7 +49,7 @@ The project follows Domain-Driven Design (DDD) and SOLID principles, structured 
     - `HttpSignature.php`: Cryptographic HTTP signature creation and verification for ActivityPub requests.
   - **`Http/`**: HTTP transport layer and static asset delivery:
     - `WebRouter.php`: Central HTTP request dispatcher routing paths to transport controllers and static assets.
-    - `StaticFileServer.php`: Dedicated HTTP static asset and media file server with ActivityPub content negotiation and MIME resolution.
+    - `StaticFileServer.php`: Dedicated HTTP static asset and media file server with on-demand root index compilation fallback, styled 404 error page delivery, ActivityPub content negotiation, and MIME resolution.
     - `Controllers/`: Decoupled transport controllers:
       - `AbstractController.php`: Base HTTP controller with JSON, HTML, and redirect responses.
       - `ActivityPubController.php`: ActivityPub actor, inbox, and outbox endpoints (`/actor`, `/inbox`, `/outbox`).

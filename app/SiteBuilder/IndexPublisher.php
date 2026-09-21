@@ -55,6 +55,7 @@ class IndexPublisher
         $this->publishSitemaps();
         $this->publishKindIndexes($pages);
         $this->publishTaxonomies($pages);
+        $this->publishSearchIndex($pages);
     }
 
     /**
@@ -541,6 +542,96 @@ class IndexPublisher
                 $singularPage->slug = $singularSlug;
                 $this->pagePublisher->publish($singularPage);
             }
+        }
+    }
+
+    /**
+     * Publishes static search.json index files for client-side search widgets.
+     *
+     * @param Pages $pages
+     * @return void
+     */
+    public function publishSearchIndex(Pages $pages): void
+    {
+        $baseDir = rtrim($this->site->paths->baseDir ?? '', DIRECTORY_SEPARATOR);
+        $outputHtml = $this->site->paths->outputDirHtml ?? 'public_html';
+        $targetDir = $baseDir . DIRECTORY_SEPARATOR . $outputHtml;
+
+        if (!is_dir($targetDir)) {
+            @mkdir($targetDir, 0755, true);
+        }
+
+        $allEntries = [];
+        $entriesByLang = [];
+
+        foreach ($pages as $p) {
+            if (($p->filepath && basename($p->filepath) === 'intro.md') || in_array('draft', $p->metadata->tags ?? [])) {
+                continue;
+            }
+            if (in_array($p->kind, ['generic', 'home', 'page'], true) && ($p->slug === '/' || $p->slug === 'index/' || $p->slug === '')) {
+                continue;
+            }
+
+            $lang = (string) ($p->lang ?? ($this->site->localization->defaultLang ?? 'en'));
+            $title = (string) ($p->metadata->title ?? 'Untitled');
+            $url = '/' . ltrim((string) $p->slug, '/');
+
+            // Extract tags
+            $tags = $p->metadata->tags ?? [];
+            if (!is_array($tags)) {
+                $tags = [$tags];
+            }
+            $tags = array_values(array_filter($tags, fn($t) => is_string($t) && trim($t) !== '' && $t !== 'No Tag'));
+
+            $rawBody = (string) ($p->rawBody ?? ($p->content->rawBody ?? ''));
+            if ($rawBody === '' && isset($p->content->content)) {
+                $rawBody = (string) $p->content->content;
+            }
+            $extracted = TextParser::extractHashtags($rawBody);
+            if (!empty($extracted)) {
+                $tags = array_values(array_unique(array_merge($tags, $extracted)));
+            }
+
+            // Summary
+            $cleanText = strip_tags($rawBody);
+            $cleanText = preg_replace('/\s+/', ' ', $cleanText);
+            $cleanText = trim((string) $cleanText);
+            $summary = mb_substr($cleanText, 0, 180);
+            if (mb_strlen($cleanText) > 180) {
+                $summary .= '...';
+            }
+
+            $dateIso = $p->date instanceof \DateTimeInterface ? $p->date->format('c') : date('c');
+
+            $entry = [
+                'title' => $title,
+                'url' => $url,
+                'slug' => (string) $p->slug,
+                'kind' => (string) $p->kind,
+                'lang' => $lang,
+                'date' => $dateIso,
+                'tags' => $tags,
+                'summary' => $summary,
+            ];
+
+            $allEntries[] = $entry;
+            $entriesByLang[$lang][] = $entry;
+        }
+
+        // Global search.json
+        $globalPath = $targetDir . DIRECTORY_SEPARATOR . 'search.json';
+        file_put_contents($globalPath, (string) json_encode($allEntries, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
+        SiteBuilder::addManifest($globalPath);
+
+        // Language-specific search.json
+        foreach ($entriesByLang as $lang => $entries) {
+            $langDir = $targetDir . DIRECTORY_SEPARATOR . $lang;
+            if (!is_dir($langDir)) {
+                @mkdir($langDir, 0755, true);
+            }
+            $langPath = $langDir . DIRECTORY_SEPARATOR . 'search.json';
+            file_put_contents($langPath, (string) json_encode($entries, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
+            SiteBuilder::addManifest($langPath);
         }
     }
 

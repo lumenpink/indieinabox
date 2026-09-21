@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 ### Features
+  - (search) generate static search.json index files during site build
   - (theme) add ThemeData::getTagCloud and getTagCloudData helpers
   - (tags) index hashtags from content bodies and generate tags and tag index pages
   - (admin) integrate portable export download and import restore in backups tab

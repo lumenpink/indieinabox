@@ -83,9 +83,7 @@ class NormalizationAdapter
         
         $entry->content['text'] = $text;
         
-        $html = htmlspecialchars($text);
-        $html = preg_replace('/(https?:\/\/[^\s]+)/', '<a href="$1">$1</a>', $html);
-        $entry->content['html'] = $html;
+        $entry->content['html'] = \Indieinabox\Twtxt\TwtxtManager::formatMessageToHtml($text);
 
         $entry->category = TextParser::extractHashtags($text);
 

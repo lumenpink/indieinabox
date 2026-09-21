@@ -93,6 +93,17 @@ class NormalizationAdapterTest extends TestCase
         $text = 'Check this: https://example.com/link';
         $entry = NormalizationAdapter::fromTwtxt('uid-3', 'https://example.com/twtxt.txt', $text, time(), 'Alice');
 
-        $this->assertStringContainsString('<a href="https://example.com/link">', $entry->content['html']);
+        $this->assertStringContainsString('<a href="https://example.com/link"', $entry->content['html']);
+    }
+
+    public function testFromTwtxtFormatsYarnsMarkdown(): void
+    {
+        $text = 'Notice `code` and **bold** with (#subj) and ![Pic](https://example.com/p.jpg)';
+        $entry = NormalizationAdapter::fromTwtxt('uid-4', 'https://example.com/twtxt.txt', $text, time(), 'Bob');
+
+        $this->assertStringContainsString('<code>code</code>', $entry->content['html']);
+        $this->assertStringContainsString('<strong>bold</strong>', $entry->content['html']);
+        $this->assertStringContainsString('<span class="twtxt-subject">(#subj)</span>', $entry->content['html']);
+        $this->assertStringContainsString('<figure class="twtxt-media"><img src="https://example.com/p.jpg"', $entry->content['html']);
     }
 }

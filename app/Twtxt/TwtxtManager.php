@@ -5,13 +5,97 @@ declare(strict_types=1);
 namespace Indieinabox\Twtxt;
 
 use DateTimeImmutable;
+use Indieinabox\Core\Container;
 use Indieinabox\Entry\Entry;
+use Indieinabox\Services\Contracts\MicrosubFilterServiceInterface;
 
 /**
  * Class TwtxtManager
  */
 class TwtxtManager
 {
+    private ?MicrosubFilterServiceInterface $filterService = null;
+    /** @var array<string, bool> */
+    private array $mutedNicks = [];
+    /** @var array<string, bool> */
+    private array $mutedUrls = [];
+    /** @var array<string, bool> */
+    private array $mutedKeywords = [];
+
+    public function __construct(?MicrosubFilterServiceInterface $filterService = null)
+    {
+        if ($filterService !== null) {
+            $this->filterService = $filterService;
+        } elseif (class_exists(Container::class) && Container::getInstance()->has(MicrosubFilterServiceInterface::class)) {
+            $this->filterService = Container::getInstance()->get(MicrosubFilterServiceInterface::class);
+        }
+    }
+
+    public function getFilterService(): ?MicrosubFilterServiceInterface
+    {
+        return $this->filterService;
+    }
+
+    public function setFilterService(?MicrosubFilterServiceInterface $filterService): void
+    {
+        $this->filterService = $filterService;
+    }
+
+    public function muteNick(string $nick): void
+    {
+        $this->mutedNicks[strtolower(trim($nick))] = true;
+    }
+
+    public function muteUrl(string $url): void
+    {
+        $this->mutedUrls[rtrim(strtolower(trim($url)), '/')] = true;
+    }
+
+    public function muteKeyword(string $keyword): void
+    {
+        $this->mutedKeywords[strtolower(trim($keyword))] = true;
+    }
+
+    public function isEntryFiltered(Entry $entry): bool
+    {
+        $authorName = strtolower(trim($entry->getAuthor()['name'] ?? ''));
+        if ($authorName !== '' && isset($this->mutedNicks[$authorName])) {
+            return true;
+        }
+
+        $sourceUrl = rtrim(strtolower(trim($entry->getSourceUrl())), '/');
+        if ($sourceUrl !== '' && isset($this->mutedUrls[$sourceUrl])) {
+            return true;
+        }
+
+        $content = strtolower($entry->getRawContent() . ' ' . $entry->getContent());
+        foreach (array_keys($this->mutedKeywords) as $keyword) {
+            if ($keyword !== '' && str_contains($content, $keyword)) {
+                return true;
+            }
+        }
+
+        if ($this->filterService !== null) {
+            $payload = [
+                'name' => $entry->getTitle() ?? '',
+                'summary' => $entry->getSummary() ?? '',
+                'content' => $entry->getRawContent(),
+                'author' => $entry->getAuthor(),
+                'url' => $entry->getSourceUrl(),
+                '_indieinabox' => [
+                    'feed_url' => $entry->getSourceUrl(),
+                    'source_network' => 'twtxt',
+                ],
+            ];
+
+            $action = $this->filterService->evaluate($payload);
+            if ($action === 'drop' || $action === 'mute') {
+                return true;
+            }
+        }
+
+        return false;
+    }
     /**
      * Cleans a message by stripping Markdown formatting and collapsing it to a single line.
      *
@@ -376,7 +460,11 @@ class TwtxtManager
 
             if ($feedContent) {
                 $entries = self::parseFeedContent($feedContent, $nick, $url);
-                $allEntries = array_merge($allEntries, $entries);
+                foreach ($entries as $entry) {
+                    if (!$this->isEntryFiltered($entry)) {
+                        $allEntries[] = $entry;
+                    }
+                }
             }
         }
 
@@ -427,7 +515,11 @@ class TwtxtManager
 
             if ($content) {
                 $entries = self::parseFeedContent($content, 'hub_mention');
-                $allMentions = array_merge($allMentions, $entries);
+                foreach ($entries as $entry) {
+                    if (!$this->isEntryFiltered($entry)) {
+                        $allMentions[] = $entry;
+                    }
+                }
             }
         }
 

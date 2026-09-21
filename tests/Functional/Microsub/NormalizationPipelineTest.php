@@ -97,7 +97,7 @@ class NormalizationPipelineTest extends TestCase
         $this->assertEquals('twtxt', $jf2['_indieinabox']['network']);
         $this->assertEquals(['reply'], $jf2['_indieinabox']['capabilities']);
         $this->assertContains('twtxt', $jf2['category']);
-        $this->assertStringContainsString('<a href="https://example.com">', $jf2['content']['html']);
+        $this->assertStringContainsString('<a href="https://example.com"', $jf2['content']['html']);
     }
 
     public function testRssFeedPipelineProducesValidJF2(): void

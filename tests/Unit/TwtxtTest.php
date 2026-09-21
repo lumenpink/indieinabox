@@ -247,4 +247,83 @@ it('generates twtxt entries with appended media embeds when attachments exist', 
     expect($content)->toContain("Beautiful sunset today ![Sunset](https://example.com/sunset.jpg)");
 });
 
+it('filters entries via local mute lists for nick, url, and keywords', function () {
+    $manager = new TwtxtManager();
+    $manager->muteNick('spammer');
+    $manager->muteUrl('https://evil.com/twtxt.txt');
+    $manager->muteKeyword('crypto-pump');
+
+    $entryNormal = new Entry([
+        'author' => ['name' => 'alice'],
+        'sourceUrl' => 'https://alice.com/twtxt.txt',
+        'rawContent' => 'Hello everyone!',
+    ]);
+
+    $entryMutedNick = new Entry([
+        'author' => ['name' => 'spammer'],
+        'sourceUrl' => 'https://other.com/twtxt.txt',
+        'rawContent' => 'Buy our stuff',
+    ]);
+
+    $entryMutedUrl = new Entry([
+        'author' => ['name' => 'bob'],
+        'sourceUrl' => 'https://evil.com/twtxt.txt',
+        'rawContent' => 'Normal text',
+    ]);
+
+    $entryMutedKeyword = new Entry([
+        'author' => ['name' => 'charlie'],
+        'sourceUrl' => 'https://charlie.com/twtxt.txt',
+        'rawContent' => 'Check this crazy crypto-pump right now',
+    ]);
+
+    expect($manager->isEntryFiltered($entryNormal))->toBeFalse();
+    expect($manager->isEntryFiltered($entryMutedNick))->toBeTrue();
+    expect($manager->isEntryFiltered($entryMutedUrl))->toBeTrue();
+    expect($manager->isEntryFiltered($entryMutedKeyword))->toBeTrue();
+});
+
+it('filters timeline ingestion when entries match MicrosubFilterService rules', function () {
+    $filterMock = new class implements \Indieinabox\Services\Contracts\MicrosubFilterServiceInterface {
+        public function evaluate(array $entry, string $channelUid = '*'): ?string {
+            if (str_contains($entry['content'] ?? '', 'blocked-token')) {
+                return 'drop';
+            }
+            return null;
+        }
+        public function shouldMute(array $entry, string $channelUid = '*'): bool { return false; }
+        public function shouldAutoArchive(array $entry, string $channelUid = '*'): bool { return false; }
+        public function shouldDrop(array $entry, string $channelUid = '*'): bool { return false; }
+        public function getFilters(?string $channelUid = null): array { return []; }
+        public function addFilter(string $filterType, string $content, string $action = 'mute', string $channelUid = '*'): int { return 1; }
+        public function deleteFilter(int $id): bool { return true; }
+    };
+
+    $manager = new TwtxtManager($filterMock);
+
+    $entryAllowed = new Entry(['rawContent' => 'Great day!']);
+    $entryBlocked = new Entry(['rawContent' => 'Spam with blocked-token here']);
+
+    expect($manager->isEntryFiltered($entryAllowed))->toBeFalse();
+    expect($manager->isEntryFiltered($entryBlocked))->toBeTrue();
+
+    // Verify fetchTimeline filters it out
+    $cacheDir = sys_get_temp_dir() . '/twtxt_mod_cache_' . uniqid();
+    mkdir($cacheDir);
+
+    $url = 'http://localhost:9999/feed.txt';
+    $cacheFile = $cacheDir . DIRECTORY_SEPARATOR . md5($url) . '.txt';
+    file_put_contents($cacheFile, "2026-09-21T10:00:00Z\tGreat day!\n2026-09-21T11:00:00Z\tSpam with blocked-token here");
+
+    $following = [['nick' => 'user', 'url' => $url]];
+    $timeline = $manager->fetchTimeline($following, $cacheDir, false);
+
+    expect($timeline)->toHaveCount(1);
+    expect($timeline[0]->getRawContent())->toBe('Great day!');
+
+    unlink($cacheFile);
+    rmdir($cacheDir);
+});
+
+
 

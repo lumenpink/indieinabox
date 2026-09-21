@@ -101,3 +101,13 @@ php indieinabox.php import /backups/mysite-export.tar.gz
 # Import skipping media restoration or skipping automatic site rebuild
 php indieinabox.php import /backups/mysite-export.tar.gz --no-media --no-build
 ```
+
+## Web Admin Dashboard Integration
+
+The administrative dashboard provides web-based export download and import restore under `/admin/config#tab-backups` (Tab 07 - Backups):
+
+- **Portable Data Export**: One-click download of the complete `.tar.gz` bundle directly via browser HTTP download. Respects content and media inclusion preferences.
+- **Portable Data Import & Restore**: Web file upload supporting `.tar.gz`, `.tar`, and `.zip` archives with interactive confirmation prompt.
+- **Automatic Rollback Safety**: Any web-initiated import automatically triggers a pre-import safety archive before swapping databases or restoring markdown/media assets.
+- **Instant Site Rebuild**: Upon successful import completion, the site builder regenerates all static HTML, Gemini, and Gopher pages immediately.
+

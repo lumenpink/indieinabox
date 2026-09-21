@@ -48,8 +48,8 @@ The project follows Domain-Driven Design (DDD) and SOLID principles, structured 
     - `FederationManager.php`: Pluggable federation manager orchestrating actors, activities, and protocol delivery.
     - `HttpSignature.php`: Cryptographic HTTP signature creation and verification for ActivityPub requests.
   - **`Http/`**: HTTP transport layer and static asset delivery:
-    - `WebRouter.php`: Central HTTP request dispatcher routing paths to transport controllers and static assets.
-    - `StaticFileServer.php`: Dedicated HTTP static asset and media file server with on-demand root index compilation fallback, styled 404 error page delivery, ActivityPub content negotiation, and MIME resolution.
+    - `WebRouter.php`: Central HTTP request dispatcher routing paths to transport controllers and static assets. Includes the HMAC-signed `/media/proxy` endpoint for privacy caching of external media.
+    - `StaticFileServer.php`: Dedicated HTTP static asset and media file server with on-demand root index compilation fallback, styled 404 error page delivery, ActivityPub content negotiation, MIME resolution, and `serveProxiedMedia()` for streaming signed proxy responses.
     - `Controllers/`: Decoupled transport controllers:
       - `AbstractController.php`: Base HTTP controller with JSON, HTML, and redirect responses.
       - `ActivityPubController.php`: ActivityPub actor, inbox, and outbox endpoints (`/actor`, `/inbox`, `/outbox`).

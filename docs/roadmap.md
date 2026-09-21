@@ -205,10 +205,10 @@ The following next-generation features are scheduled for development:
 - [ ] **Twtxt Moderation**: Implement a mute and block list specifically for local twtxt-based feeds.
 
 ### 🛡️ Phase 27: Privacy, Moderation & Notifications
-- [ ] **External Media Proxy/Cache**: Finalize the existing caching mechanism, extending it to proxy external media (Mastodon/Twtxt) granularly to prevent IP leaks and dead links.
+- [x] **External Media Proxy/Cache**: `MediaProxyService` signs URLs with HMAC-SHA256, validates SSRF safety, streams cached media via `/media/proxy?url=...&sig=...`, and rewrites `<img>`, `<video>`, `<audio>` elements in Microsub reader timelines to proxied URLs preventing IP leaks and dead links.
 - [ ] **Web Push Notifications**: Implement Push API support in the Microsub client for real-time interaction alerts.
 - [ ] **Microsub Filters & Rules**: Create comprehensive filtering rules in the reader (mute keywords, authors, entire instances/servers, and auto-archive capabilities).
-- [ ] **Portable Export/Import**: Build atomic export and import tools for the database to ensure absolute data ownership and portability.
+- [x] **Portable Export/Import**: Atomic export bundle generation with SHA-256 integrity manifest and ZIP/tar.gz packaging. Atomic import with pre-import safety backup, WAL checkpoint, and atomic restoration. CLI (`export`/`import`) and Web Admin (`/admin/config#tab-backups`) integration.
 
 ### 🏗️ Phase 28: Architectural Refactoring & Best Practices
 

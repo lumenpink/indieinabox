@@ -113,13 +113,58 @@ it('serves media from content directory fallback when path starts with /media/',
     expect($output)->toBe('fake-png-binary-data');
 });
 
-it('outputs 404 response when file is not found', function () {
+it('renders custom 404 HTML response when non-root file is not found', function () {
     $_SERVER['REQUEST_URI'] = '/non-existent-file.txt';
 
     ob_start();
     $this->server->serve();
     $output = ob_get_clean();
 
-    expect($output)->toContain('404 Not Found')
-        ->toContain('non-existent-file.txt');
+    expect($output)->toContain('404 Not Found');
+});
+
+it('serves static 404.html if present in output directory', function () {
+    file_put_contents($this->tempDir . '/public_html/404.html', '<!DOCTYPE html><h1>Theme 404</h1>');
+    $_SERVER['REQUEST_URI'] = '/missing-page';
+
+    ob_start();
+    $this->server->serve();
+    $output = ob_get_clean();
+
+    expect($output)->toBe('<!DOCTYPE html><h1>Theme 404</h1>');
+});
+
+it('builds site on demand and serves index without error when root index is missing', function () {
+    // Ensure public_html/index.html does not exist
+    if (file_exists($this->tempDir . '/public_html/index.html')) {
+        unlink($this->tempDir . '/public_html/index.html');
+    }
+
+    mkdir($this->tempDir . '/content', 0777, true);
+    file_put_contents($this->tempDir . '/content/hello.md', "---\ntitle: Hello\n---\nWorld");
+
+    $_SERVER['REQUEST_URI'] = '/';
+
+    ob_start();
+    $this->server->serve();
+    $output = ob_get_clean();
+
+    expect(file_exists($this->tempDir . '/public_html/index.html'))->toBeTrue();
+    expect($output)->not->toContain('404 Not Found');
+});
+
+it('does not trigger build on demand for non-root 404 requests', function () {
+    if (file_exists($this->tempDir . '/public_html/index.html')) {
+        unlink($this->tempDir . '/public_html/index.html');
+    }
+
+    $_SERVER['REQUEST_URI'] = '/some/random/missing-page';
+
+    ob_start();
+    $this->server->serve();
+    $output = ob_get_clean();
+
+    // Index should NOT have been built
+    expect(file_exists($this->tempDir . '/public_html/index.html'))->toBeFalse();
+    expect($output)->toContain('404');
 });

@@ -71,6 +71,7 @@ The project follows Domain-Driven Design (DDD) and SOLID principles, structured 
     - `ConfigurationService.php`: Site setup bootstrap, settings persistence, kind taxonomies, translations, and theme installations.
     - `FetchFeedsService.php`: Syndication feed fetching, strategy-based parsing, media caching, and storage.
     - `MicrosubService.php`: Microsub channels, subscriptions, timeline retrieval, read tracking, and social interactions.
+    - `MicrosubFilterService.php`: Filtering and moderation rule evaluation for timeline and feed ingestion (keyword, author, and domain matching with mute, auto-archive, and drop actions).
     - `BackupService.php`: Automated archive snapshots, rotation, and data integrity backups.
     - `ExportService.php`: Portable export bundle generation with integrity manifest and checksum verification.
     - `ImportService.php`: Portable bundle inspection, checksum integrity validation, pre-import safety backups, and atomic restoration.

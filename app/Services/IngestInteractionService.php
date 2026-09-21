@@ -11,6 +11,7 @@ use Indieinabox\Events\WebmentionReceivedEvent;
 use Indieinabox\Repositories\Contracts\InteractionRepositoryInterface;
 use Indieinabox\Repositories\FileInteractionRepository;
 use Indieinabox\Services\Contracts\IngestInteractionServiceInterface;
+use Indieinabox\Services\Contracts\WebPushServiceInterface;
 
 /**
  * Service orchestrating the ingestion, normalization, and persistence of social interactions.
@@ -19,10 +20,12 @@ class IngestInteractionService implements IngestInteractionServiceInterface
 {
     private InteractionRepositoryInterface $interactionRepo;
     private ?EventDispatcherInterface $eventDispatcher;
+    private ?WebPushServiceInterface $webPush;
 
     public function __construct(
         ?InteractionRepositoryInterface $interactionRepo = null,
-        ?EventDispatcherInterface $eventDispatcher = null
+        ?EventDispatcherInterface $eventDispatcher = null,
+        ?WebPushServiceInterface $webPush = null
     ) {
         $container = class_exists(Container::class) ? Container::getInstance() : null;
 
@@ -41,6 +44,10 @@ class IngestInteractionService implements IngestInteractionServiceInterface
         } else {
             $this->eventDispatcher = null;
         }
+
+        $this->webPush = $webPush ?? ($container && $container->has(WebPushServiceInterface::class)
+            ? $container->get(WebPushServiceInterface::class)
+            : null);
     }
 
     /**
@@ -92,6 +99,19 @@ class IngestInteractionService implements IngestInteractionServiceInterface
             $interaction->getContent(),
             $channel
         );
+
+        if ($saved && $channel === "notifications" && $this->webPush !== null) {
+            $author = $interaction->getAuthorName() ?: 'Someone';
+            $type = ucfirst($interaction->getType());
+            $snippet = mb_strimwidth(strip_tags($interaction->getContent()), 0, 120, '...');
+            $body = $snippet !== '' ? $snippet : "New {$type} received.";
+            $this->webPush->broadcast(
+                "{$type} from {$author}",
+                $body,
+                "/microsub/reader?channel=notifications",
+                "interaction-" . $interaction->getId()
+            );
+        }
 
         if ($saved && $this->eventDispatcher !== null && $interaction->getProtocol() === "webmention") {
             $author = [

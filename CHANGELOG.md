@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 ### Features
+  - (webpush) broadcast alerts on interaction ingestion and approval (#11)
   - (webpush) implement WebPushService with VAPID keys and subscription persistence (#10)
   - (microsub) expose filters API endpoints and integrate rules management in reader UI
   - (microsub) integrate filter rules into timeline retrieval and feed ingestion

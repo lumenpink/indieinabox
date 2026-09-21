@@ -58,3 +58,15 @@ Implemented in [`app/Services/ExportService.php`](file:///home/lumen/indieinabox
 - **Deterministic Checksums**: Computes SHA-256 for all exported components.
 - **Selective Bundling**: Supports options such as `skip_media` and `skip_content` for lightweight database-only exports.
 - **Zero-Dependency Archiving**: Uses built-in PHP `PharData` for `.tar.gz` and `.tar` compression, with seamless fallback for environments without `ext-zip`.
+
+## ImportService
+
+Implemented in [`app/Services/ImportService.php`](file:///home/lumen/indieinabox/app/Services/ImportService.php) implementing [`ImportServiceInterface`](file:///home/lumen/indieinabox/app/Services/Contracts/ImportServiceInterface.php).
+
+### Features
+- **Archive Inspection**: `inspect($archivePath)` validates the archive format, manifest validity, and individual file hashes without modifying any system data or database records.
+- **Strict Integrity Verification**: Matches every file against its declared SHA-256 hash. If any file is corrupted or tampered with, the import aborts immediately before altering site state.
+- **Pre-Import Safety Backup**: Automatically creates a timestamped safety backup in `data/backups/pre_import_safety_*.tar.gz` before applying changes, enabling instant rollback in case of an issue.
+- **Atomic Database Swap**: Gracefully disconnects the active PDO database, clears existing SQLite WAL and SHM caches, and reconnects to the newly restored database.
+- **Selective Restoration**: Configurable options allow selective restoration of database, content, or media files, along with optional automatic static site rebuild via `SiteBuilder`.
+

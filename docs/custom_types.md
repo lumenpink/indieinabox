@@ -7,9 +7,8 @@ custom post types (kinds) such as `notes`, `photos`, and `garden`.
 
 To add a new language, you don't need to change any hardcoded logic. Follow these steps:
 
-1. **Update `settings` table:** Add the new language code (e.g., `"es"` for Spanish, `"pt-br"` for Portuguese) to
-the JSON array in the `lang` setting inside your `database.sql` or SQLite database.
-2. **Add Translations:** Insert rows into the `translations` and `url_translations` tables for the new language.
+1. **Add via Admin or `settings`:** In `/admin/config` (Localization tab), choose a language from the ISO 639-1 / BCP-47 catalog dropdown and click **+ Add Selected Language**, or add the language code (e.g., `"es"`, `"pt-BR"`) to the `lang` setting array.
+2. **Add Translations:** Insert rows into the `translations` and `url_translations` tables for the new language (or click **Auto-fill from Locales** in `/admin/config`).
 3. **Folder Structure:** Create a folder at the root of your `content/` directory named after the language code.
 Place translated markdown files inside with identical paths to their default-language counterparts.
 

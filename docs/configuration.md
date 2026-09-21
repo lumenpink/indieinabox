@@ -34,7 +34,7 @@ The primary generator settings are loaded from `config.yml` in the project root:
   * `native` (default): Uses the full native endonym (e.g. `Português (Brasil) • English • Español`).
   * `short`: Uses the clean 2-letter uppercase ISO code (e.g. `PT • EN • ES`), ideal for minimalist navigation bars.
   * In both modes, full BCP-47 codes are preserved inside HTML `hreflang="..."` attributes for search engines and accessibility tools.
-* In the Web Admin panel (`/admin/config`), languages can be reordered at any time using **Move Up (▲)** and **Move Down (▼)**, or promoted to primary directly using the **Make Main** button.
+* In the Web Admin panel (`/admin/config`), languages can be selected from a curated catalog of standard ISO 639-1 and BCP-47 languages with native endonyms and English descriptions, or entered as custom BCP-47 tags. Languages can be reordered at any time using **Move Up (▲)** and **Move Down (▼)**, or promoted to primary directly using the **Make Main** button.
 * **Locale Dictionaries & Auto-Fill:**
   * Bundled locale definitions are provided for `pt` (Português), `es` (Español), and `en` (English) under `resources/locales/`.
   * When a new language is added to the configuration, missing translations and kind titles (e.g. `Artigos`, `Notas`) are automatically populated from the matching locale dictionary.
@@ -52,7 +52,7 @@ Configuration parameters are organized into 7 clearly separated modules:
 
 1. **`01 General`**: Site identity (name, author, FQDN, base path), theme selection and installation, and static site build/publishing options.
 2. **`02 Content Kinds`**: Content kind definitions (articles, notes, bookmarks, etc.), display modes, custom color palettes, and visibility toggles.
-3. **`03 Localization`**: Language routing table (Main / Sub-languages, reordering, promotion), translation parity modes, auto-fill from locale dictionaries, and site-wide string translations.
+3. **`03 Localization`**: Language routing table (Main / Sub-languages, reordering, promotion), ISO 639-1 / BCP-47 catalog dropdown selection, custom BCP-47 code entry, language menu display mode (`native` vs `short`), translation parity modes, auto-fill from locale dictionaries, and site-wide string translations.
 4. **`04 Social & Federation`**: TwTxt microblogging configuration, ActivityPub federation toggles and handle, and Microsub media ingestion limits.
 5. **`05 Services & Security`**: Remote shortlink integration (Nullpointer/Rustypaste), automatic Wayback Machine archiving, Akismet anti-spam API key, automation webhook tokens (`/cron` and `/build`), and admin password management.
 6. **`06 Updates`**: Release channel subscriptions (Stable / Nightly), asynchronous version checks, one-click manual upgrades, and local snapshot rollbacks.

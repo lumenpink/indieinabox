@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 ### Features
+  - (tags) index hashtags from content bodies and generate tags and tag index pages
   - (admin) integrate portable export download and import restore in backups tab
   - (cli) add export and import CLI commands with bundle inspection
   - (backup) implement ImportService with integrity verification and safety backup

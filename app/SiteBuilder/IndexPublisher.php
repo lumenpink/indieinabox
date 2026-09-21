@@ -427,6 +427,23 @@ class IndexPublisher
                 $terms = [$terms];
             }
 
+            // Exclude default placeholder
+            $terms = array_values(array_filter($terms, function ($t) {
+                return is_string($t) && trim($t) !== '' && $t !== 'No Tag' && $t !== 'No Category';
+            }));
+
+            // Auto-extract hashtags from post body if indexing tags
+            if ($taxonomyKey === 'tags') {
+                $rawBody = (string) ($p->rawBody ?? ($p->content->rawBody ?? ''));
+                if ($rawBody === '' && isset($p->content->content)) {
+                    $rawBody = (string) $p->content->content;
+                }
+                $extracted = TextParser::extractHashtags($rawBody);
+                if (!empty($extracted)) {
+                    $terms = array_values(array_unique(array_merge($terms, $extracted)));
+                }
+            }
+
             foreach ($terms as $term) {
                 if (empty(trim($term))) {
                     continue;
@@ -485,13 +502,24 @@ class IndexPublisher
                 $termPage->content->rawBody = $termRaw;
 
                 $this->pagePublisher->publish($termPage);
+
+                // If singular taxonomy (e.g. tag), also publish plural alias (e.g. tags/<slug>/)
+                if ($taxonomyName === 'tag') {
+                    $termSlugPlural = ($lang === $this->site->localization->defaultLang ? '' : $lang . '/')
+                        . 'tags/' . TextParser::slugize($term) . '/';
+                    $termPagePlural = clone $termPage;
+                    $termPagePlural->slug = $termSlugPlural;
+                    $this->pagePublisher->publish($termPagePlural);
+                }
             }
 
             $globalContent .= "</ul>\n";
 
             $globalTitleBase = Translator::translate(ucfirst($taxonomyName) . 's');
+            $pluralTaxonomy = ($taxonomyName === 'tag') ? 'tags' : ($taxonomyName . 's');
             $globalSlug = ($lang === $this->site->localization->defaultLang ? '' : $lang . '/')
-                . $taxonomyName . '/';
+                . $pluralTaxonomy . '/';
+
             $globalPage = Page::fromArray([
                 'title' => $globalTitleBase,
                 'layout' => 'page',
@@ -504,6 +532,15 @@ class IndexPublisher
             ]);
 
             $this->pagePublisher->publish($globalPage);
+
+            // Also publish singular alias (e.g. /tag/) if different from plural
+            if ($pluralTaxonomy !== $taxonomyName) {
+                $singularSlug = ($lang === $this->site->localization->defaultLang ? '' : $lang . '/')
+                    . $taxonomyName . '/';
+                $singularPage = clone $globalPage;
+                $singularPage->slug = $singularSlug;
+                $this->pagePublisher->publish($singularPage);
+            }
         }
     }
 

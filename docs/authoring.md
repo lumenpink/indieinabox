@@ -79,3 +79,18 @@ Durante a compilação do site pelo `SiteBuilder`, as seguintes rotas e páginas
 - `/tag/<slug>/` e `/tags/<slug>/`: Página dedicada para cada tag contendo a listagem cronológica reversa de todos os posts marcados com aquela tag ou hashtag.
 - Suporte a múltiplos idiomas: em sites com múltiplos idiomas, os índices são gerados preservando os prefixos correspondentes (ex: `/pt/tags/`, `/pt/tag/<slug>/`).
 
+### Nuvem de Tags nos Temas (`ThemeData::getTagCloud`)
+
+Temas e views podem renderizar nuvens de tags responsivas e semânticas com tamanhos proporcionais à frequência de uso de cada tag:
+
+```php
+use Indieinabox\Theme\ThemeData;
+
+// Renderiza o markup HTML da nuvem de tags
+echo ThemeData::getTagCloud($pages, $site, $page->lang);
+
+// Ou obtenha os dados brutos com pesos normalizados de 0.0 a 1.0 para renderização customizada
+$tagData = ThemeData::getTagCloudData($pages, $page->lang);
+```
+
+

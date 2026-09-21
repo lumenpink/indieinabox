@@ -210,7 +210,7 @@ class ThemeData
 
         $defaultLang = $site->localization->defaultLang ?? 'en';
         $currentLang = $page->lang ?? 'en';
-        $displayMode = (string) ($site->localization->langDisplayMode ?? 'native');
+        $displayMode = (string) ($site->localization->langDisplayMode ?? 'native_short');
 
         if ($langLinks === null) {
             $langLinks = [];

@@ -880,11 +880,21 @@ class ConfigView
                             The first language in the list is always the <strong>Main (Default)</strong> translation route.
                         </p>
 
+                        <?php
+                        $curDisplayMode = (string) ($config['lang_display_mode'] ?? 'native_short');
+                        if ($curDisplayMode === 'native') {
+                            $curDisplayMode = 'native_short';
+                        } elseif ($curDisplayMode === 'short') {
+                            $curDisplayMode = 'code_short';
+                        }
+                        ?>
                         <div class="form-group" style="margin-bottom: 1.5rem; border-bottom: 1px solid rgba(0, 240, 255, 0.15); padding-bottom: 1.25rem;">
                             <label for="lang_display_mode">Language Menu Display Format</label>
-                            <select name="lang_display_mode" id="lang_display_mode" style="max-width: 420px;">
-                                <option value="native" <?= ($config['lang_display_mode'] ?? 'native') === 'native' ? 'selected' : '' ?>>Native Names (e.g. Português, English, Español)</option>
-                                <option value="short" <?= ($config['lang_display_mode'] ?? '') === 'short' ? 'selected' : '' ?>>Short 2-Letter Codes (e.g. PT, EN, ES)</option>
+                            <select name="lang_display_mode" id="lang_display_mode" style="max-width: 480px;">
+                                <option value="native_short" <?= $curDisplayMode === 'native_short' ? 'selected' : '' ?>>Native Short (e.g. Português, English, Español)</option>
+                                <option value="native_long" <?= $curDisplayMode === 'native_long' ? 'selected' : '' ?>>Native Long (e.g. Português (Brasil), English (US))</option>
+                                <option value="code_short" <?= $curDisplayMode === 'code_short' ? 'selected' : '' ?>>Short Code (e.g. PT, EN, ES)</option>
+                                <option value="code_long" <?= $curDisplayMode === 'code_long' ? 'selected' : '' ?>>Long Code (e.g. PT-BR, EN-US, ES)</option>
                             </select>
                             <small>Controls how the language selector is presented in the website navigation bar.</small>
                         </div>

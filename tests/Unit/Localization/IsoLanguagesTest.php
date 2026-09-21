@@ -38,10 +38,26 @@ test('IsoLanguages falls back cleanly on unknown regional codes', function () {
         ->and(IsoLanguages::getNativeName('xyz-ABC'))->toBe('xyz-ABC');
 });
 
-test('IsoLanguages getLabel respects native and short display modes', function () {
-    expect(IsoLanguages::getLabel('pt-BR', 'native'))->toBe('Português (Brasil)')
+test('IsoLanguages getLabel respects native_short, native_long, code_short, and code_long display modes', function () {
+    // native_short (default, and alias 'native')
+    expect(IsoLanguages::getLabel('pt-BR', 'native_short'))->toBe('Português')
+        ->and(IsoLanguages::getLabel('pt-BR', 'native'))->toBe('Português')
+        ->and(IsoLanguages::getLabel('pt-BR'))->toBe('Português')
+        ->and(IsoLanguages::getLabel('en-US', 'native_short'))->toBe('English')
+        ->and(IsoLanguages::getLabel('zh-CN', 'native_short'))->toBe('中文');
+
+    // native_long
+    expect(IsoLanguages::getLabel('pt-BR', 'native_long'))->toBe('Português (Brasil)')
+        ->and(IsoLanguages::getLabel('en-US', 'native_long'))->toBe('English (US)')
+        ->and(IsoLanguages::getLabel('es', 'native_long'))->toBe('Español');
+
+    // code_short (and alias 'short')
+    expect(IsoLanguages::getLabel('pt-BR', 'code_short'))->toBe('PT')
         ->and(IsoLanguages::getLabel('pt-BR', 'short'))->toBe('PT')
-        ->and(IsoLanguages::getLabel('en', 'native'))->toBe('English')
-        ->and(IsoLanguages::getLabel('en', 'short'))->toBe('EN')
-        ->and(IsoLanguages::getLabel('es', 'short'))->toBe('ES');
+        ->and(IsoLanguages::getLabel('en-US', 'code_short'))->toBe('EN');
+
+    // code_long
+    expect(IsoLanguages::getLabel('pt-BR', 'code_long'))->toBe('PT-BR')
+        ->and(IsoLanguages::getLabel('en-US', 'code_long'))->toBe('EN-US')
+        ->and(IsoLanguages::getLabel('es', 'code_long'))->toBe('ES');
 });

@@ -569,7 +569,8 @@ class AdminController extends AbstractController
 
         $currentConfig['lang'] = $langs;
         $currentConfig['defaultlang'] = $langs[0];
-        $currentConfig['lang_display_mode'] = in_array($_POST['lang_display_mode'] ?? '', ['short', 'native'], true) ? (string) $_POST['lang_display_mode'] : ($currentConfig['lang_display_mode'] ?? 'native');
+        $validModes = ['native_short', 'native', 'native_long', 'code_short', 'short', 'code_long'];
+        $currentConfig['lang_display_mode'] = in_array($_POST['lang_display_mode'] ?? '', $validModes, true) ? (string) $_POST['lang_display_mode'] : ($currentConfig['lang_display_mode'] ?? 'native_short');
 
         $twtxtNick = trim((string) ($_POST['twtxt_nick'] ?? ''));
         $twtxtDesc = trim((string) ($_POST['twtxt_description'] ?? ''));

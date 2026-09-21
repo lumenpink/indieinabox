@@ -36,7 +36,7 @@ class Localization
     public function __construct(
         $lang = null,
         string $defaultLang = "en",
-        string $langDisplayMode = "native"
+        string $langDisplayMode = "native_short"
     ) {
         $lang = $this->createArrayFromValue($lang);
         if (empty($lang)) {
@@ -44,7 +44,8 @@ class Localization
         }
         $this->lang = $lang;
         $this->defaultLang = $defaultLang;
-        $this->langDisplayMode = in_array($langDisplayMode, ['short', 'native'], true) ? $langDisplayMode : 'native';
+        $validModes = ['native_short', 'native', 'native_long', 'code_short', 'short', 'code_long'];
+        $this->langDisplayMode = in_array($langDisplayMode, $validModes, true) ? $langDisplayMode : 'native_short';
     }
 
     /**
@@ -77,7 +78,8 @@ class Localization
                 return;
             case 'langdisplaymode':
             case 'lang_display_mode':
-                $this->langDisplayMode = in_array($value, ['short', 'native'], true) ? (string) $value : 'native';
+                $validModes = ['native_short', 'native', 'native_long', 'code_short', 'short', 'code_long'];
+                $this->langDisplayMode = in_array($value, $validModes, true) ? (string) $value : 'native_short';
                 return;
             default:
                 throw new \Exception("Property {$name} does not exist");

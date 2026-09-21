@@ -175,7 +175,7 @@ test('ConfigView renders ISO language select dropdown and lang_display_mode sele
 
     expect($html)->toContain('id="isoLangSelect"')
         ->toContain('name="lang_display_mode"')
-        ->toContain('value="short" selected')
+        ->toContain('value="code_short" selected')
         ->toContain('Português (Brasil)')
         ->toContain('Custom BCP-47 Code...');
 });

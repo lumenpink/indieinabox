@@ -86,7 +86,10 @@ The project follows Domain-Driven Design (DDD) and SOLID principles, structured 
     - `WebmentionSender.php`: Endpoint discovery and outgoing webmention transmission.
     - `LinkExtractor.php`: Extracts links and interaction targets from content.
     - `PayloadParser.php`: Parses microformats2 and metadata from source documents.
-    - `SourceVerifier.php`: Verifies that source documents link back to target URLs.
+  - **`Localization/`**: Internationalization and translation services:
+    - `IsoLanguages.php`: Standard ISO 639-1 and BCP-47 catalog providing localized names, native endonyms, and short codes.
+    - `LocaleManager.php`: Resolves, downloads, and caches locale dictionaries and taxonomy presets.
+    - `Translator.php`: String translation and locale interpolation service.
   - **`Views/`**: Presentation components cleanly decoupled from transport controllers:
     - `ArchiveView.php`: Snapshot explorer toolbar and iframe view presenter.
     - `Webmention/HelpPageView.php`: Interactive webmention endpoint test and documentation page.

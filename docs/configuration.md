@@ -50,16 +50,17 @@ php indieinabox.php [action]
 ```
 
 *   **`build`** (default): Generates the static site.
-*   **`setup`**: Configures the initial instance interactively or headless via CLI flags:
+*   **`setup`**: Configures the instance atomically in a single command using parameters or defaults (shared with the web installer via `InstallService`):
     *   `--name <sitename>`: Set website / blog name (default: `Indie In A Box`).
-    *   `--db <path>`: SQLite database file path (default: `data/db.sqlite3`).
+    *   `--db <path>`: SQLite database file path (default: `data/indieinabox.sqlite`).
+    *   `--data-dir <dir>`: Directory path for database and inbox feeds (default: parent directory of db).
     *   `--lang <code[,code]>`: Primary / default language or comma-separated languages (default: `en`).
-    *   `--content <dir>`: Source content directory path (default: `content`). Supports relative directory names or absolute filesystem paths without polluting generated page slugs or URLs.
-    *   `--password <pass>`: Web UI / IndieAuth admin password. If omitted in non-interactive mode, a secure 16-character password is automatically generated.
-    *   `--fqdn <url>`: Fully Qualified Domain Name / base site URL (e.g. `https://example.org`).
-    *   `--author <name>`: Author / owner display name.
-    *   `--build`: Automatically trigger the static site build after setup completes.
-    *   `--non-interactive` / `-y`: Run headlessly without terminal interaction.
+    *   `--content <dir>`: Source content directory path (default: `content`). Supports relative directory names or absolute filesystem paths.
+    *   `--password <pass>`: Web UI / IndieAuth admin password. If omitted, a secure 16-character password is automatically generated and displayed in the terminal.
+    *   `--fqdn <url>`: Fully Qualified Domain Name / base site URL (default: `http://localhost:8080`).
+    *   `--author <name>`: Author / owner display name (default: same as site name).
+    *   `--no-build`: Skip the automatic static site build at the end of the installation sequence.
+    *   `--non-interactive` / `-y`: Explicit headless flag.
 *   **`config set/get`**: Sets or retrieves a configuration variable directly to/from the database (e.g. `config set --key <k> --value <v>`).
 *   **`fetch`**: Forces a manual fetch of all followed RSS/Twtxt feeds.
 *   **`cron`**: Runs pending background tasks (such as retrying failed webmentions).

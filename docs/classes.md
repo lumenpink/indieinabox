@@ -367,5 +367,5 @@ Replacing the legacy god-class `Helper`, the codebase utilizes single-responsibi
 ### 7. `Localization\Translator` (`Indieinabox\Localization\Translator`)
 - Internationalization engine: translation dictionary lookup (`translate`), pluralization (`translatePlural`), slugized translations (`translateSlugize`), and SQLite/runtime config synchronizer (`updateTranslations`).
 
-
-
+### 8. `Services\InstallService` (`Indieinabox\Services\InstallService`)
+- Coordinates the atomic 4-step installation workflow across CLI and web installers: database directory configuration, schema migrations, site settings persistence with content seeding, and initial static build.

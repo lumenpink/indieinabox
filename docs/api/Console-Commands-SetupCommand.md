@@ -5,9 +5,14 @@ Command to initialize administrative credentials, domain FQDN, and initial blog 
 
 ## Properties
 
+### `private Indieinabox\Services\Contracts\InstallServiceInterface $installService`
+
 ### `protected Indieinabox\Site\Site $site`
 
 ## Methods
+
+### __construct()
+`public function __construct(Indieinabox\Site\Site $site, ?Indieinabox\Services\Contracts\InstallServiceInterface $installService = null)`
 
 ### getName()
 `public function getName(): string`
@@ -20,9 +25,6 @@ Command to initialize administrative credentials, domain FQDN, and initial blog 
 
 ### execute()
 `public function execute(array $argv): int`
-
-### __construct()
-`public function __construct(Indieinabox\Site\Site $site)`
 
 ### getAliases()
 `public function getAliases(): array`

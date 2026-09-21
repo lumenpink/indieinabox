@@ -293,9 +293,9 @@ class AdminController extends AbstractController
             return;
         }
 
-        $start = microtime(true);
+        $start = (float) microtime(true);
         $this->rebuildSite();
-        $duration = round((microtime(true) - $start) * 1000, 2);
+        $duration = round(((float) microtime(true) - $start) * 1000.0, 2);
 
         $this->json([
             'status' => 200,
@@ -569,6 +569,7 @@ class AdminController extends AbstractController
 
         $currentConfig['lang'] = $langs;
         $currentConfig['defaultlang'] = $langs[0];
+        $currentConfig['lang_display_mode'] = in_array($_POST['lang_display_mode'] ?? '', ['short', 'native'], true) ? (string) $_POST['lang_display_mode'] : ($currentConfig['lang_display_mode'] ?? 'native');
 
         $twtxtNick = trim((string) ($_POST['twtxt_nick'] ?? ''));
         $twtxtDesc = trim((string) ($_POST['twtxt_description'] ?? ''));
@@ -942,6 +943,9 @@ class AdminController extends AbstractController
         if (isset($config['lang'])) {
             $newSite->localization->lang = is_array($config['lang']) ? $config['lang'] : [$config['lang']];
             $newSite->localization->defaultLang = $newSite->localization->lang[0] ?? 'en';
+        }
+        if (isset($config['lang_display_mode'])) {
+            $newSite->localization->langDisplayMode = (string) $config['lang_display_mode'];
         }
 
         $newSite->options->forceRebuild = true;

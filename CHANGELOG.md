@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 ### Features
+  - (ui/admin) add ISO language catalog dropdown and display mode selector closes #9
   - (ui) support native and short display formats in language selector
   - (i18n) create IsoLanguages catalog with ISO 639-1 and BCP-47 support
   - (i18n) auto-fill translations from locale definitions on add closes #3

@@ -876,13 +876,23 @@ class ConfigView
                 <div id="tab-localization" class="tab-content">
                     <fieldset>
                         <legend>Languages &amp; Primary Translation</legend>
-                        <p style="font-size: 0.88em; color: var(--text-muted); margin-top: 2px; margin-bottom: 12px;">
+                        <p style="font-size: 0.88em; color: var(--text-muted); margin-top: 2px; margin-bottom: 14px;">
                             The first language in the list is always the <strong>Main (Default)</strong> translation route.
                         </p>
+
+                        <div class="form-group" style="margin-bottom: 1.5rem; border-bottom: 1px solid rgba(0, 240, 255, 0.15); padding-bottom: 1.25rem;">
+                            <label for="lang_display_mode">Language Menu Display Format</label>
+                            <select name="lang_display_mode" id="lang_display_mode" style="max-width: 420px;">
+                                <option value="native" <?= ($config['lang_display_mode'] ?? 'native') === 'native' ? 'selected' : '' ?>>Native Names (e.g. Português, English, Español)</option>
+                                <option value="short" <?= ($config['lang_display_mode'] ?? '') === 'short' ? 'selected' : '' ?>>Short 2-Letter Codes (e.g. PT, EN, ES)</option>
+                            </select>
+                            <small>Controls how the language selector is presented in the website navigation bar.</small>
+                        </div>
+
                         <table class="tech-table">
                             <thead>
                                 <tr>
-                                    <th>Language Code</th>
+                                    <th>Language</th>
                                     <th style="width: 140px;">Status</th>
                                     <th style="width: 90px; text-align: center;">Order</th>
                                     <th style="width: 190px; text-align: right;">Action</th>
@@ -891,8 +901,9 @@ class ConfigView
                             <tbody>
                                 <?php foreach ($langArr as $idx => $l): ?>
                                 <tr>
-                                    <td style="font-weight: <?= $idx === 0 ? '700' : 'normal' ?>; font-family: 'JetBrains Mono', monospace;">
-                                        <?= htmlspecialchars($l) ?>
+                                    <td style="font-weight: <?= $idx === 0 ? '700' : 'normal' ?>;">
+                                        <span style="font-family: 'JetBrains Mono', monospace; color: var(--neon-cyan);"><?= htmlspecialchars($l) ?></span>
+                                        <span style="color: var(--text-muted); font-size: 0.88em; margin-left: 8px;">&mdash; <?= htmlspecialchars(\Indieinabox\Localization\IsoLanguages::getNativeName($l)) ?></span>
                                         <input type="hidden" name="lang[]" value="<?= htmlspecialchars($l) ?>">
                                     </td>
                                     <td>
@@ -922,7 +933,21 @@ class ConfigView
                                 <?php endforeach; ?>
                             </tbody>
                         </table>
-                        <button type="button" class="btn-secondary" onclick="addLanguage()">+ Add Language</button>
+
+                        <div style="display: flex; gap: 10px; align-items: center; margin-top: 1.25rem; flex-wrap: wrap;">
+                            <select id="isoLangSelect" style="max-width: 360px;">
+                                <option value="">-- Select ISO Language --</option>
+                                <?php foreach (\Indieinabox\Localization\IsoLanguages::getAll() as $isoCode => $isoInfo): ?>
+                                    <?php if (!in_array($isoCode, $langArr, true)): ?>
+                                        <option value="<?= htmlspecialchars($isoCode) ?>">
+                                            <?= htmlspecialchars($isoInfo['native_name']) ?> (<?= htmlspecialchars($isoCode) ?> &bull; <?= htmlspecialchars($isoInfo['name']) ?>)
+                                        </option>
+                                    <?php endif; ?>
+                                <?php endforeach; ?>
+                            </select>
+                            <button type="button" class="btn-secondary" onclick="addSelectedLanguage()">+ Add Selected Language</button>
+                            <button type="button" class="btn-secondary" onclick="addCustomLanguage()" style="opacity: 0.75; font-size: 0.78rem;">Custom BCP-47 Code...</button>
+                        </div>
                     </fieldset>
 
                     <fieldset>
@@ -1270,20 +1295,37 @@ class ConfigView
                     }
                 });
 
-                function addLanguage() {
-                    let langCode = prompt("Enter the new language code (e.g. fr, de):");
-                    if (langCode) {
-                        langCode = langCode.trim();
-                        if (langCode.length > 0) {
-                            let form = document.getElementById('configForm');
-                            let input = document.createElement('input');
-                            input.type = 'hidden';
-                            input.name = 'lang[]';
-                            input.value = langCode;
-                            form.appendChild(input);
-                            form.submit();
-                        }
+                function insertLangAndSubmit(langCode) {
+                    langCode = (langCode || '').trim();
+                    if (langCode.length > 0) {
+                        let form = document.getElementById('configForm');
+                        let input = document.createElement('input');
+                        input.type = 'hidden';
+                        input.name = 'lang[]';
+                        input.value = langCode;
+                        form.appendChild(input);
+                        form.submit();
                     }
+                }
+
+                function addSelectedLanguage() {
+                    let sel = document.getElementById('isoLangSelect');
+                    if (sel && sel.value) {
+                        insertLangAndSubmit(sel.value);
+                    } else {
+                        alert('Please select a language from the dropdown first.');
+                    }
+                }
+
+                function addCustomLanguage() {
+                    let langCode = prompt("Enter the new ISO 639-1 or BCP-47 language code (e.g. fr, de, pt-PT):");
+                    if (langCode) {
+                        insertLangAndSubmit(langCode);
+                    }
+                }
+
+                function addLanguage() {
+                    addCustomLanguage();
                 }
 
                 function submitActionForm(action, paramName, paramValue) {

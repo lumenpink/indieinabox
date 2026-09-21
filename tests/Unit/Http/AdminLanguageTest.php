@@ -162,3 +162,42 @@ test('AdminController auto-fills translations from locale dictionary when a lang
         ->and($translations['Recent posts']['pt'] ?? null)->toBe('Publicações recentes');
 });
 
+test('ConfigView renders ISO language select dropdown and lang_display_mode select', function () {
+    $config = [
+        'lang' => ['pt-BR', 'en'],
+        'defaultlang' => 'pt-BR',
+        'lang_display_mode' => 'short',
+        'sitename' => 'My Site',
+        'fqdn' => 'https://example.org',
+    ];
+
+    $html = ConfigView::renderConfig($this->site, $config);
+
+    expect($html)->toContain('id="isoLangSelect"')
+        ->toContain('name="lang_display_mode"')
+        ->toContain('value="short" selected')
+        ->toContain('Português (Brasil)')
+        ->toContain('Custom BCP-47 Code...');
+});
+
+test('AdminController saves lang_display_mode to repository and site localization', function () {
+    $repo = new SqliteSettingsRepository();
+    $repo->set('lang', ['en']);
+    $repo->set('defaultlang', 'en');
+
+    $admin = new AdminController($this->site, null, null, null, null, $repo);
+
+    $_SERVER['REQUEST_METHOD'] = 'POST';
+    $_POST = [
+        'lang' => ['en', 'pt-BR'],
+        'lang_display_mode' => 'short',
+        'sitename' => 'Test Site',
+    ];
+
+    ob_start();
+    $admin->config();
+    ob_end_clean();
+
+    expect($repo->get('lang_display_mode'))->toBe('short');
+});
+

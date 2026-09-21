@@ -223,3 +223,81 @@ it('queues a poll_vote interaction via ActivityPub outbox', function () use ($fu
     expect($json['error'])->not->toBe('invalid_action');
     expect($json['error'])->toBe('invalid_target');
 });
+
+it('handles filter rules CRUD actions via Microsub API', function () {
+    $site = new Site();
+    TestMicrosubRouter::$mockTokenValid = true;
+    $router = new TestMicrosubRouter($site);
+
+    // 1. Initial GET filters should be empty
+    $_SERVER['REQUEST_METHOD'] = 'GET';
+    $_SERVER['REQUEST_URI'] = '/microsub';
+    $_REQUEST['action'] = 'filters';
+    $_GET['action'] = 'filters';
+
+    ob_start();
+    $router->handleRequest();
+    $output = ob_get_clean();
+    $json = json_decode($output, true);
+    expect($json)->toHaveKey('filters');
+    expect($json['filters'])->toBeEmpty();
+
+    // 2. Create a new filter rule via POST
+    $_SERVER['REQUEST_METHOD'] = 'POST';
+    $_REQUEST['action'] = 'filters';
+    $_POST['action'] = 'filters';
+    $_POST['method'] = 'create';
+    $_POST['filter_type'] = 'keyword';
+    $_POST['content'] = 'spam-keyword';
+    $_POST['filter_action'] = 'mute';
+    $_POST['channel'] = '*';
+
+    ob_start();
+    $router->handleRequest();
+    $outputCreate = ob_get_clean();
+    $jsonCreate = json_decode($outputCreate, true);
+    expect($jsonCreate)->toHaveKey('success');
+    expect($jsonCreate['success'])->toBeTrue();
+    expect($jsonCreate)->toHaveKey('id');
+    $createdId = $jsonCreate['id'];
+
+    // 3. GET filters should now contain the new filter
+    $_SERVER['REQUEST_METHOD'] = 'GET';
+    $_POST = [];
+    $_GET['action'] = 'filters';
+    $_REQUEST['action'] = 'filters';
+
+    ob_start();
+    $router->handleRequest();
+    $outputList = ob_get_clean();
+    $jsonList = json_decode($outputList, true);
+    expect($jsonList['filters'])->toHaveCount(1);
+    expect($jsonList['filters'][0]['content'])->toBe('spam-keyword');
+    expect($jsonList['filters'][0]['action'])->toBe('mute');
+
+    // 4. Delete the filter via POST
+    $_SERVER['REQUEST_METHOD'] = 'POST';
+    $_REQUEST['action'] = 'filters';
+    $_POST['action'] = 'filters';
+    $_POST['method'] = 'delete';
+    $_POST['id'] = $createdId;
+
+    ob_start();
+    $router->handleRequest();
+    $outputDelete = ob_get_clean();
+    $jsonDelete = json_decode($outputDelete, true);
+    expect($jsonDelete['success'])->toBeTrue();
+
+    // 5. GET filters should now be empty again
+    $_SERVER['REQUEST_METHOD'] = 'GET';
+    $_POST = [];
+    $_GET['action'] = 'filters';
+    $_REQUEST['action'] = 'filters';
+
+    ob_start();
+    $router->handleRequest();
+    $outputFinal = ob_get_clean();
+    $jsonFinal = json_decode($outputFinal, true);
+    expect($jsonFinal['filters'])->toBeEmpty();
+});
+

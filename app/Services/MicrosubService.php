@@ -63,7 +63,7 @@ class MicrosubService
 
         $this->filterService = $filterService ?? ($container && $container->has(MicrosubFilterServiceInterface::class)
             ? $container->get(MicrosubFilterServiceInterface::class)
-            : null);
+            : new MicrosubFilterService($this->repository));
     }
 
     public function getFilterService(): ?MicrosubFilterServiceInterface

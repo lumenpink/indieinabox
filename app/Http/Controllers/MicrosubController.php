@@ -115,6 +115,13 @@ class MicrosubController extends AbstractController
                 $this->json(['items' => $items]);
                 break;
 
+            case 'filters':
+                $channel = isset($_GET['channel']) && $_GET['channel'] !== '' ? (string) $_GET['channel'] : null;
+                $filterService = $this->service->getFilterService();
+                $filters = $filterService ? $filterService->getFilters($channel) : [];
+                $this->json(['filters' => $filters]);
+                break;
+
             default:
                 $this->json(['error' => 'invalid_request', 'error_description' => 'Unknown action'], 400);
                 break;
@@ -127,6 +134,40 @@ class MicrosubController extends AbstractController
     protected function handlePost(string $action): void
     {
         switch ($action) {
+            case 'filters':
+                $method = (string) ($_POST['method'] ?? '');
+                $filterService = $this->service->getFilterService();
+                if (!$filterService) {
+                    $this->json(['error' => 'server_error', 'error_description' => 'Filter service unavailable'], 500);
+                    return;
+                }
+
+                if ($method === 'create' || $method === 'add') {
+                    $filterType = (string) ($_POST['filter_type'] ?? ($_POST['type'] ?? 'keyword'));
+                    $content = trim((string) ($_POST['content'] ?? ''));
+                    $act = (string) ($_POST['filter_action'] ?? ($_POST['action_type'] ?? 'mute'));
+                    $channel = (string) ($_POST['channel'] ?? '*');
+
+                    if ($content === '') {
+                        $this->json(['error' => 'invalid_request', 'error_description' => 'Missing filter content'], 400);
+                        return;
+                    }
+
+                    $id = $filterService->addFilter($filterType, $content, $act, $channel);
+                    $this->json(['success' => true, 'id' => $id]);
+                } elseif ($method === 'delete') {
+                    $id = (int) ($_POST['id'] ?? 0);
+                    if ($id <= 0) {
+                        $this->json(['error' => 'invalid_request', 'error_description' => 'Missing or invalid filter id'], 400);
+                        return;
+                    }
+                    $success = $filterService->deleteFilter($id);
+                    $this->json(['success' => $success]);
+                } else {
+                    $this->json(['error' => 'invalid_request', 'error_description' => 'Unknown method for filters action'], 400);
+                }
+                break;
+
             case 'channels':
                 $method = $_POST['method'] ?? '';
                 if ($method === 'create') {

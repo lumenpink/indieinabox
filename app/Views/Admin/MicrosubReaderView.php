@@ -372,6 +372,7 @@ class MicrosubReaderView
                 <div style="display: flex; gap: 10px;">
                     <button class="btn" onclick="addFeed()">Add Feed</button>
                     <button class="btn" onclick="manageFeeds()">Manage Feeds</button>
+                    <button class="btn" onclick="manageFilters()">Filters & Rules</button>
                     <button class="btn" onclick="fetchFeeds()">Sync Feeds</button>
                 </div>
             </div>
@@ -388,6 +389,55 @@ class MicrosubReaderView
                 <button class="btn" style="padding: 0.5rem 1rem;" onclick="closeManageFeeds()">Close</button>
             </div>
             <div id="manage-feeds-list">Loading...</div>
+        </div>
+    </div>
+
+    <div id="manage-filters-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center;">
+        <div style="background: #111827; padding: 2rem; border-radius: 12px; width: 90%; max-width: 650px; max-height: 85vh; overflow-y: auto; border: 1px solid var(--glass-border); box-shadow: 0 25px 50px rgba(0,0,0,0.5);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <h2 style="margin: 0;">Filters & Moderation Rules</h2>
+                <button class="btn" style="padding: 0.5rem 1rem;" onclick="closeManageFilters()">Close</button>
+            </div>
+            
+            <div style="background: rgba(255,255,255,0.05); padding: 1.2rem; border-radius: 8px; margin-bottom: 1.5rem; border: 1px solid var(--glass-border);">
+                <h3 style="margin-top: 0; font-size: 1rem; margin-bottom: 0.8rem; color: var(--accent);">Add New Rule</h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+                    <div>
+                        <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 4px;">Rule Type</label>
+                        <select id="new-filter-type" style="width: 100%; padding: 0.5rem; border-radius: 6px; background: rgba(0,0,0,0.3); color: white; border: 1px solid var(--glass-border);">
+                            <option value="keyword">Keyword (content/title)</option>
+                            <option value="author">Author (name/URL)</option>
+                            <option value="domain">Domain (instance/server)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 4px;">Action</label>
+                        <select id="new-filter-action" style="width: 100%; padding: 0.5rem; border-radius: 6px; background: rgba(0,0,0,0.3); color: white; border: 1px solid var(--glass-border);">
+                            <option value="mute">Mute (Hide from timeline)</option>
+                            <option value="auto_archive">Auto-Archive (Mark as read)</option>
+                            <option value="drop">Drop (Discard on sync)</option>
+                        </select>
+                    </div>
+                </div>
+                <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 10px; margin-bottom: 10px;">
+                    <div>
+                        <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 4px;">Pattern / Keyword / Domain</label>
+                        <input type="text" id="new-filter-content" placeholder="e.g. crypto, troll, spammer.social" style="width: 100%; padding: 0.5rem; border-radius: 6px; background: rgba(0,0,0,0.3); color: white; border: 1px solid var(--glass-border); box-sizing: border-box;">
+                    </div>
+                    <div>
+                        <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 4px;">Scope</label>
+                        <select id="new-filter-channel" style="width: 100%; padding: 0.5rem; border-radius: 6px; background: rgba(0,0,0,0.3); color: white; border: 1px solid var(--glass-border);">
+                            <option value="*">Global (*)</option>
+                            <option value="inbox">Inbox</option>
+                            <option value="notifications">Notifications</option>
+                        </select>
+                    </div>
+                </div>
+                <button class="btn" style="width: 100%; padding: 0.6rem; margin-top: 5px;" onclick="addFilterSubmit()">Add Filter Rule</button>
+            </div>
+
+            <h3 style="font-size: 1rem; margin-bottom: 0.8rem;">Active Rules</h3>
+            <div id="manage-filters-list">Loading...</div>
         </div>
     </div>
 
@@ -577,6 +627,7 @@ class MicrosubReaderView
                         ${pollHtml}
                         <div class="item-actions">
                             ${buttonsHtml}
+                            ${(item.author && item.author.name) ? `<button onclick="quickMute('author', '${item.author.name.replace(/'/g, "\\'")}')" title="Mute this author" style="opacity: 0.7; font-size: 0.8rem; background: transparent; border: 1px solid var(--glass-border); color: #ff6b6b; border-radius: 6px; padding: 4px 8px; margin-left: 6px;">Mute Author</button>` : ''}
                             ${!item._is_read ? `<button onclick="markRead('${item._id}')" style="margin-left: auto;">Mark Read</button>` : ''}
                         </div>
                     `;
@@ -779,6 +830,119 @@ class MicrosubReaderView
                 }
             } catch (err) {
                 alert("Failed to unfollow feed. See console for details.");
+                console.error(err);
+            }
+        }
+
+        async function manageFilters() {
+            document.getElementById('manage-filters-modal').style.display = 'flex';
+            loadFiltersList();
+        }
+
+        function closeManageFilters() {
+            document.getElementById('manage-filters-modal').style.display = 'none';
+        }
+
+        async function loadFiltersList() {
+            const listContainer = document.getElementById('manage-filters-list');
+            listContainer.innerHTML = 'Loading filters...';
+            try {
+                const res = await api('filters', 'GET', {});
+                if (res.filters && res.filters.length > 0) {
+                    let html = '<ul style="list-style: none; padding: 0; margin: 0;">';
+                    res.filters.forEach(f => {
+                        let actionColor = f.action === 'drop' ? '#ff4b4b' : (f.action === 'mute' ? '#ffaa00' : '#38bdf8');
+                        let actionBadge = `<span style="font-size: 0.75rem; padding: 2px 6px; background: ${actionColor}22; color: ${actionColor}; border: 1px solid ${actionColor}66; border-radius: 4px; text-transform: uppercase; font-weight: 600; margin-right: 8px;">${f.action}</span>`;
+                        let typeBadge = `<span style="font-size: 0.7rem; padding: 2px 6px; background: rgba(255,255,255,0.1); border-radius: 4px; margin-right: 8px;">${f.filter_type}</span>`;
+                        let channelBadge = `<span style="font-size: 0.7rem; opacity: 0.6;">[channel: ${f.channel_uid}]</span>`;
+
+                        html += `
+                            <li style="display: flex; justify-content: space-between; align-items: center; padding: 0.8rem 1rem; border-bottom: 1px solid var(--glass-border);">
+                                <div>
+                                    ${actionBadge}${typeBadge}<strong>${f.content}</strong> ${channelBadge}
+                                </div>
+                                <button class="btn" style="padding: 0.3rem 0.7rem; font-size: 0.8rem; background: #ff4b4b; color: white;" onclick="deleteFilterRule(${f.id})">Delete</button>
+                            </li>
+                        `;
+                    });
+                    html += '</ul>';
+                    listContainer.innerHTML = html;
+                } else {
+                    listContainer.innerHTML = '<p style="color: var(--text-muted);">No active filtering rules.</p>';
+                }
+            } catch (err) {
+                listContainer.innerHTML = '<p style="color: #ff6b6b;">Failed to load filters.</p>';
+                console.error(err);
+            }
+        }
+
+        async function addFilterSubmit() {
+            const type = document.getElementById('new-filter-type').value;
+            const action = document.getElementById('new-filter-action').value;
+            const content = document.getElementById('new-filter-content').value.trim();
+            const channel = document.getElementById('new-filter-channel').value;
+
+            if (!content) {
+                alert('Please enter a pattern or keyword to filter.');
+                return;
+            }
+
+            try {
+                const res = await api('filters', 'POST', {
+                    method: 'create',
+                    filter_type: type,
+                    filter_action: action,
+                    content: content,
+                    channel: channel
+                });
+                if (res.error) {
+                    alert('Error: ' + res.error_description);
+                } else {
+                    document.getElementById('new-filter-content').value = '';
+                    loadFiltersList();
+                    loadTimeline();
+                }
+            } catch (err) {
+                alert('Failed to add filter rule.');
+                console.error(err);
+            }
+        }
+
+        async function deleteFilterRule(id) {
+            if (!confirm('Delete this filter rule?')) return;
+            try {
+                const res = await api('filters', 'POST', { method: 'delete', id: id });
+                if (res.error) {
+                    alert('Error: ' + res.error_description);
+                } else {
+                    loadFiltersList();
+                    loadTimeline();
+                }
+            } catch (err) {
+                alert('Failed to delete filter rule.');
+                console.error(err);
+            }
+        }
+
+        async function quickMute(type, target) {
+            if (!target) return;
+            if (!confirm('Mute ' + type + ' "' + target + '" from timeline?')) return;
+            try {
+                const res = await api('filters', 'POST', {
+                    method: 'create',
+                    filter_type: type,
+                    filter_action: 'mute',
+                    content: target,
+                    channel: '*'
+                });
+                if (res.error) {
+                    alert('Error: ' + res.error_description);
+                } else {
+                    alert('Muted "' + target + '"! Refreshing timeline...');
+                    loadTimeline();
+                }
+            } catch (err) {
+                alert('Failed to mute ' + type);
                 console.error(err);
             }
         }

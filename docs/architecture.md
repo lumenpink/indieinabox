@@ -39,9 +39,17 @@ The project follows Domain-Driven Design (DDD) and SOLID principles, structured 
 - **`app/`**: Core application logic and bounded contexts:
   - **`Core/`**: Foundational runtime services:
     - `Container.php`: Lightweight PSR-11 Dependency Injection container.
-    - `Database.php`: Centralized SQLite database connector and settings management.
+    - `Database.php`: Centralized SQLite database connector, settings management, and migration bootstrapping.
     - `Bootstrap.php`: System bootstrapper and environment initialization.
     - `Version.php`: Semantic versioning, build metadata, and commit hash tracking.
+  - **`Database/`**: Native PHP schema migration engine and version tracking:
+    - `Contracts/MigrationInterface.php`: Contract defining `up(PDO $db)` and `down(PDO $db)` methods.
+    - `MigrationRunner.php`: Orchestrator for schema versioning, transaction-wrapped migration execution, batch recording in `migrations` table, and rollbacks.
+    - `MigrationRegistry.php`: Central registry mapping migration identifiers to compiled PHP migration classes without runtime filesystem dependency.
+    - `Migrations/`: Modular domain migration classes (`M20260921000001CreateSettingsTables`, `M20260921000002CreateIndieAuthTables`, `M20260921000003CreateMicrosubTables`, `M20260921000004CreateActivityPubTables`, `M20260921000005CreateArchiveAndQueueTables`, `M20260921000006CreatePushSubscriptionsTable`).
+  - **`Console/`**: Command Line Interface (CLI) kernel and executable commands:
+    - `ConsoleKernel.php`: Command registry, dispatcher, and help generator.
+    - `Commands/MigrateCommand.php`: Database migration management (`migrate`, `migrate:status`, `migrate:rollback`).
   - **`Federation/`**: Protocol adapters and federation abstraction layer:
     - `Contracts/FederationAdapter.php`: Unified adapter interface for fediverse protocols.
     - `ActivityPub/ActivityPubAdapter.php`: Native ActivityPub adapter implementation.

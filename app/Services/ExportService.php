@@ -43,7 +43,7 @@ class ExportService implements ExportServiceInterface
     public function export(?string $outputPath = null, array $options = []): array
     {
         $baseDir = rtrim($this->site->paths->baseDir, DIRECTORY_SEPARATOR);
-        $dataDir = Database::$dataDir !== '' ? Database::$dataDir : ($baseDir . DIRECTORY_SEPARATOR . 'data');
+        $dataDir = !empty(Database::$dataDir) ? Database::$dataDir : ($baseDir . DIRECTORY_SEPARATOR . 'data');
         $skipMedia = !empty($options['skip_media']);
         $skipContent = !empty($options['skip_content']);
 
@@ -68,6 +68,7 @@ class ExportService implements ExportServiceInterface
 
         try {
             $manifest = [
+                'generator' => 'indieinabox',
                 'format' => 'indieinabox_portable_export',
                 'format_version' => 1,
                 'indieinabox_version' => Version::get(),
@@ -80,6 +81,12 @@ class ExportService implements ExportServiceInterface
             // 1. Export SQLite database
             $dbPath = $this->resolveDatabasePath($dataDir);
             if ($dbPath !== null && is_file($dbPath)) {
+                if (Database::isConnected()) {
+                    try {
+                        Database::getDb()->exec('PRAGMA wal_checkpoint(TRUNCATE);');
+                    } catch (\Throwable) {
+                    }
+                }
                 $dbStaging = $tempStaging . DIRECTORY_SEPARATOR . 'database';
                 @mkdir($dbStaging, 0755, true);
                 $destDb = $dbStaging . DIRECTORY_SEPARATOR . 'indieinabox.sqlite';

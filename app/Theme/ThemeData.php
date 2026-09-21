@@ -9,6 +9,7 @@ use Indieinabox\Localization\IsoLanguages;
 use Indieinabox\Localization\Translator;
 use Indieinabox\Page\Page;
 use Indieinabox\Site\Site;
+use Indieinabox\Support\TextParser;
 use Indieinabox\Taxonomy\KindHelper;
 
 /**
@@ -326,6 +327,121 @@ class ThemeData
         $html .= '</div>' . "\n";
 
         return $html;
+    }
+
+    /**
+     * Extracts tag frequencies and weight metadata across pages.
+     *
+     * @param iterable<Page> $pages
+     * @param string|null $currentLang
+     * @return array<string, array{tag: string, count: int, slug: string, weight: float}>
+     */
+    public static function getTagCloudData(iterable $pages, ?string $currentLang = null): array
+    {
+        $frequencies = [];
+
+        foreach ($pages as $p) {
+            if ($currentLang !== null && $p->lang !== null && $p->lang !== $currentLang) {
+                continue;
+            }
+            if (($p->filepath && basename($p->filepath) === 'intro.md') || in_array('draft', $p->metadata->tags ?? [])) {
+                continue;
+            }
+
+            $tags = $p->metadata->tags ?? [];
+            if (!is_array($tags)) {
+                $tags = [$tags];
+            }
+            $tags = array_values(array_filter($tags, fn($t) => is_string($t) && trim($t) !== '' && $t !== 'No Tag'));
+
+            $rawBody = (string) ($p->rawBody ?? ($p->content->rawBody ?? ''));
+            if ($rawBody === '' && isset($p->content->content)) {
+                $rawBody = (string) $p->content->content;
+            }
+            $extracted = TextParser::extractHashtags($rawBody);
+            if (!empty($extracted)) {
+                $tags = array_values(array_unique(array_merge($tags, $extracted)));
+            }
+
+            foreach ($tags as $tag) {
+                $normTag = mb_strtolower(trim($tag));
+                if ($normTag === '') {
+                    continue;
+                }
+                $frequencies[$normTag] = ($frequencies[$normTag] ?? 0) + 1;
+            }
+        }
+
+        if (empty($frequencies)) {
+            return [];
+        }
+
+        uksort($frequencies, 'strcasecmp');
+        $min = min($frequencies);
+        $max = max($frequencies);
+        $range = $max - $min;
+
+        $result = [];
+        foreach ($frequencies as $tag => $count) {
+            $weight = $range > 0 ? (float) (($count - $min) / $range) : 0.5;
+            $result[$tag] = [
+                'tag' => $tag,
+                'count' => $count,
+                'slug' => TextParser::slugize($tag),
+                'weight' => $weight,
+            ];
+        }
+
+        return $result;
+    }
+
+    /**
+     * Generates responsive HTML markup for a visual tag cloud.
+     *
+     * @param iterable<Page> $pages
+     * @param Site $site
+     * @param string|null $currentLang
+     * @param int $minFontSizePercent Minimum font size percentage (default 85)
+     * @param int $maxFontSizePercent Maximum font size percentage (default 180)
+     * @return string HTML tag cloud container
+     */
+    public static function getTagCloud(
+        iterable $pages,
+        Site $site,
+        ?string $currentLang = null,
+        int $minFontSizePercent = 85,
+        int $maxFontSizePercent = 180
+    ): string {
+        $tagData = self::getTagCloudData($pages, $currentLang);
+        if (empty($tagData)) {
+            return '';
+        }
+
+        $defaultLang = $site->localization->defaultLang ?? 'en';
+        $langPrefix = ($currentLang && $currentLang !== $defaultLang) ? $currentLang . '/' : '';
+        $base = '/' . $langPrefix . 'tag/';
+
+        $items = [];
+        foreach ($tagData as $info) {
+            $spread = (float) ($maxFontSizePercent - $minFontSizePercent);
+            $size = (int) round(((float) $minFontSizePercent) + ($info['weight'] * $spread));
+            $url = $base . $info['slug'] . '/';
+            $tagLabel = '#' . htmlspecialchars($info['tag']);
+            $count = $info['count'];
+
+            $items[] = sprintf(
+                '<a href="%s" class="tag-cloud-item" style="font-size: %d%%; text-decoration: none;" title="%d post(s)" data-count="%d">%s</a>',
+                htmlspecialchars($url),
+                $size,
+                $count,
+                $count,
+                $tagLabel
+            );
+        }
+
+        return "<div class=\"tag-cloud\" role=\"navigation\" aria-label=\"Tag Cloud\" style=\"display: flex; flex-wrap: wrap; gap: 0.6rem; align-items: baseline;\">\n    "
+            . implode("\n    ", $items)
+            . "\n</div>\n";
     }
 }
 

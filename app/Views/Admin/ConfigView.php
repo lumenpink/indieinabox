@@ -163,8 +163,8 @@ class ConfigView
         <body>
             <div class="setup-container">
                 <span class="badge">SYS // FIRST-RUN</span>
-                <h1>Initialize Indieinabox</h1>
-                <p class="intro">Configure administrative credentials and site identity to initialize your instance.</p>
+                <h1>Setup Setup Setup!</h1>
+                <p class="intro">Indieinabox is not configured yet. Choose your password and site identity to get started.</p>
 
                 <?php if ($error): ?>
                     <div class="error-message"><?= htmlspecialchars($error) ?></div>

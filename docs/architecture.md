@@ -108,6 +108,10 @@ The project follows Domain-Driven Design (DDD) and SOLID principles, structured 
     - `SqliteSettingsRepository.php`: SQLite implementation of settings repository with JSON decoding.
     - `Contracts/InteractionRepositoryInterface.php`: Contract for incoming social interactions querying and moderation.
     - `FileInteractionRepository.php`: Channel file-backed repository for social interactions and moderation.
+    - `Contracts/MicrosubRepositoryInterface.php`: Storage contract for Microsub channels, feed subscriptions, and moderation/filtering rules (`microsub_filters`).
+    - `SqliteMicrosubRepository.php`: SQLite repository managing channels, subscriptions, and keyword/author/domain filtering rules.
+    - `Contracts/ActivityPubRepositoryInterface.php`: Storage contract for ActivityPub actors, keys, outbox, and followers.
+    - `SqliteActivityPubRepository.php`: SQLite repository managing ActivityPub actors, RSA keys, outbox deliveries, and followers.
   - **`Feeds/`**: Feed generation and consumption:
     - `Contracts/FeedParserInterface.php`: Strategy pattern contract for feed parser implementations.
     - `Parsers/TwtxtParser.php`: Strategy parser for Twtxt flat-text feeds.

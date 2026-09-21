@@ -16,6 +16,7 @@ use Indieinabox\Repositories\Contracts\MicrosubRepositoryInterface;
 use Indieinabox\Repositories\SqliteActivityPubRepository;
 use Indieinabox\Repositories\SqliteMicrosubRepository;
 use Indieinabox\Services\Contracts\MediaProxyServiceInterface;
+use Indieinabox\Services\Contracts\MicrosubFilterServiceInterface;
 use Indieinabox\Site\Site;
 use Indieinabox\Support\Yaml;
 use Indieinabox\Markdown\ContentProcessor;
@@ -32,6 +33,7 @@ class MicrosubService
     private MicrosubRepositoryInterface $repository;
     private ActivityPubRepositoryInterface $activityPubRepo;
     private ?MediaProxyServiceInterface $mediaProxy;
+    private ?MicrosubFilterServiceInterface $filterService;
 
     public function __construct(
         ?PDO $db = null,
@@ -39,7 +41,8 @@ class MicrosubService
         ?Site $site = null,
         ?MicrosubRepositoryInterface $repository = null,
         ?ActivityPubRepositoryInterface $activityPubRepo = null,
-        ?MediaProxyServiceInterface $mediaProxy = null
+        ?MediaProxyServiceInterface $mediaProxy = null,
+        ?MicrosubFilterServiceInterface $filterService = null
     ) {
         $this->db = $db ?? Database::getDb();
         $this->feedFetcher = $feedFetcher ?? new FetchFeedsService($this->db);
@@ -57,6 +60,15 @@ class MicrosubService
         $this->mediaProxy = $mediaProxy ?? ($container && $container->has(MediaProxyServiceInterface::class)
             ? $container->get(MediaProxyServiceInterface::class)
             : null);
+
+        $this->filterService = $filterService ?? ($container && $container->has(MicrosubFilterServiceInterface::class)
+            ? $container->get(MicrosubFilterServiceInterface::class)
+            : null);
+    }
+
+    public function getFilterService(): ?MicrosubFilterServiceInterface
+    {
+        return $this->filterService;
     }
 
     /**
@@ -152,19 +164,43 @@ class MicrosubService
                 $parsedItems = array_slice($parsedItems, 0, $limit);
 
                 foreach ($parsedItems as $p) {
+                    $fm = $p['fm'];
+                    $contentHtml = $p['contentHtml'];
+
+                    if ($this->filterService !== null) {
+                        $evalAction = $this->filterService->evaluate([
+                            'name' => (string) ($fm['name'] ?? ($fm['title'] ?? '')),
+                            'summary' => (string) ($fm['summary'] ?? ''),
+                            'content' => ['html' => $contentHtml],
+                            'author' => [
+                                'name' => (string) ($fm['author_name'] ?? ''),
+                                'url' => (string) ($fm['author_url'] ?? ''),
+                            ],
+                            'url' => (string) ($fm['url'] ?? ''),
+                            '_indieinabox' => is_array($fm['_indieinabox'] ?? null) ? $fm['_indieinabox'] : [],
+                        ], $channel);
+
+                        if ($evalAction === 'mute' || $evalAction === 'drop') {
+                            continue;
+                        }
+
+                        if ($evalAction === 'auto_archive' && empty($fm['is_read'])) {
+                            $fm['is_read'] = 1;
+                            $this->markRead($channel, [(string) ($fm['id'] ?? basename($p['file'], '.md'))]);
+                        }
+                    }
+
                     $pubInt = $p['pubInt'];
                     if ($firstPub === null) {
                         $firstPub = $pubInt;
                     }
                     $lastPub = $pubInt;
 
-                    $fm = $p['fm'];
                     $entry = new ExtendedEntry();
                     $entry->uid = $fm['id'] ?? basename($p['file'], '.md');
                     $entry->url = $fm['url'] ?? '';
                     $entry->published = date('c', $pubInt);
 
-                    $contentHtml = $p['contentHtml'];
                     if ($this->mediaProxy !== null && $contentHtml !== '') {
                         $contentHtml = $this->mediaProxy->rewriteHtmlMedia($contentHtml);
                     }

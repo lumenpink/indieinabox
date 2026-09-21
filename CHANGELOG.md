@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 ### Features
+  - (microsub) integrate filter rules into timeline retrieval and feed ingestion
   - (microsub) implement MicrosubFilterService with keyword, author, and domain matching
   - (microsub) implement microsub_filters table and repository persistence
   - (media) expose /media/proxy endpoint and integrate proxy rewriting in reader

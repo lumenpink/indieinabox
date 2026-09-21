@@ -18,6 +18,7 @@ use Indieinabox\Feeds\Parsers\AtomParser;
 use Indieinabox\Feeds\Parsers\JsonFeedParser;
 use Indieinabox\Microsub\ExtendedEntry;
 use Indieinabox\Microsub\NormalizationAdapter;
+use Indieinabox\Services\Contracts\MicrosubFilterServiceInterface;
 
 /**
  * Domain service responsible for fetching, parsing, and storing external feed subscriptions.
@@ -26,6 +27,7 @@ class FetchFeedsService
 {
     private PDO $db;
     private SettingsRepositoryInterface $settings;
+    private ?MicrosubFilterServiceInterface $filterService = null;
 
     /**
      * @var array<string, FeedParserInterface>
@@ -36,11 +38,13 @@ class FetchFeedsService
      * @param ?PDO $db
      * @param array<int, FeedParserInterface>|null $parsers
      * @param ?SettingsRepositoryInterface $settings
+     * @param ?MicrosubFilterServiceInterface $filterService
      */
     public function __construct(
         ?PDO $db = null,
         ?array $parsers = null,
-        ?SettingsRepositoryInterface $settings = null
+        ?SettingsRepositoryInterface $settings = null,
+        ?MicrosubFilterServiceInterface $filterService = null
     ) {
         $this->db = $db ?? (Container::getInstance()->has(PDO::class) ? Container::getInstance()->get(PDO::class) : Database::getDb());
         if ($settings !== null) {
@@ -52,6 +56,10 @@ class FetchFeedsService
         } else {
             $this->settings = new SqliteSettingsRepository($this->db);
         }
+
+        $this->filterService = $filterService ?? (Container::getInstance()->has(MicrosubFilterServiceInterface::class)
+            ? Container::getInstance()->get(MicrosubFilterServiceInterface::class)
+            : null);
 
         if ($parsers !== null) {
             foreach ($parsers as $parser) {
@@ -296,6 +304,29 @@ class FetchFeedsService
             return false;
         }
 
+        $isRead = 0;
+        if ($this->filterService !== null) {
+            $filterAction = $this->filterService->evaluate([
+                'name' => '',
+                'summary' => '',
+                'content' => $entry->content,
+                'author' => $entry->author,
+                'url' => $entry->url,
+                '_indieinabox' => [
+                    'origin_server' => $entry->originServer,
+                    'feed_url' => $feedUrl,
+                ],
+            ], $channel);
+
+            if ($filterAction === 'drop') {
+                return false;
+            }
+
+            if ($filterAction === 'auto_archive') {
+                $isRead = 1;
+            }
+        }
+
         $frontmatter = [
             'id' => $entry->uid,
             'url' => $entry->url,
@@ -303,7 +334,7 @@ class FetchFeedsService
             'author_name' => $entry->author['name'] ?? 'Unknown',
             'author_photo' => $entry->author['photo'] ?? '',
             'published' => strtotime($entry->published) ?: time(),
-            'is_read' => 0,
+            'is_read' => $isRead,
             'type' => 'feed',
             '_indieinabox' => [
                 'network' => $entry->network,
@@ -321,6 +352,16 @@ class FetchFeedsService
         $fileContent = "---\n" . $yamlStr . "---\n\n" . $content;
 
         return file_put_contents($filepath, $fileContent) !== false;
+    }
+
+    public function getFilterService(): ?MicrosubFilterServiceInterface
+    {
+        return $this->filterService;
+    }
+
+    public function setFilterService(?MicrosubFilterServiceInterface $filterService): void
+    {
+        $this->filterService = $filterService;
     }
 
     public function processHtmlMedia(string $html): string|null

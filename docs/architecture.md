@@ -67,7 +67,8 @@ The project follows Domain-Driven Design (DDD) and SOLID principles, structured 
     - `InboxService.php`: Incoming activity queueing, follow/accept orchestration, and undo-follow processing.
     - `PublishPostService.php`: Note/article creation, markdown persistence, static site compilation, and federation broadcasting.
     - `WebmentionService.php`: Webmention queueing, target validation, verification, and persistence.
-    - `ModerationService.php`: Moderation workflows for incoming interactions, comments, and spam handling.
+    - `IngestInteractionService.php`: Normalization and persistence of social interactions across protocols, triggering real-time Web Push alerts for notifications channel.
+    - `ModerationService.php`: Moderation workflows for incoming interactions, comments, spam handling, and dispatching Web Push approval alerts.
     - `ConfigurationService.php`: Site setup bootstrap, settings persistence, kind taxonomies, translations, and theme installations.
     - `FetchFeedsService.php`: Syndication feed fetching, strategy-based parsing, media caching, storage, and pre-ingestion rule filtering (drop and auto-archive).
     - `MicrosubService.php`: Microsub channels, subscriptions, timeline retrieval with rule-based filtering (mute and auto-archive), read tracking, and social interactions.

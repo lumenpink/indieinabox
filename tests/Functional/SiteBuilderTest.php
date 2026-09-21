@@ -100,3 +100,19 @@ test('SiteBuilder accepts and injects custom TaxonomyServiceInterface into publi
         ->and($builder->getIndexPublisher()->getTaxonomyService())->toBe($customTaxonomy)
         ->and($builder->getTranslationVirtualizer()->getTaxonomyService())->toBe($customTaxonomy);
 });
+
+test('SiteBuilder correctly builds site when contentDir is an absolute path', function () {
+    $absContentDir = sys_get_temp_dir() . '/indie_abs_content_' . uniqid();
+    mkdir($absContentDir . '/articles', 0777, true);
+    file_put_contents($absContentDir . '/articles/first.md', "# First Post\nHello world.");
+
+    $this->site->paths->contentDir = $absContentDir;
+    $builder = new SiteBuilder($this->site);
+    $builder->build();
+
+    $htmlFile = $this->tempDir . '/public_html/articles/first/index.html';
+    expect(file_exists($htmlFile))->toBeTrue();
+    expect(file_get_contents($htmlFile))->toContain('Hello world.');
+
+    \Indieinabox\Support\FileUtils::recursiveRmdir($absContentDir);
+});

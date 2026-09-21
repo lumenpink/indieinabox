@@ -13,9 +13,10 @@
     <main>
 
         <?php
-        $introFile = $site->paths->contentDir . '/' . $page->lang . '/intro.md';
+        $contentPath = method_exists($site->paths, 'getContentPath') ? $site->paths->getContentPath() : $site->paths->contentDir;
+        $introFile = $contentPath . '/' . $page->lang . '/intro.md';
         if (!file_exists($introFile)) {
-            $introFile = $site->paths->contentDir . '/intro.md';
+            $introFile = $contentPath . '/intro.md';
         }
         
         if (file_exists($introFile)) {

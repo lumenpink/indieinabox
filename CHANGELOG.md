@@ -29,6 +29,7 @@
   - (webmention) integrate mf2 parsing, W3C discovery, CLI testing tool and IndieWeb compliance
 
 ### Bug Fixes
+  - (markdown) resolve slug generation when content directory is absolute closes #6
   - (updater) identify and compare nightly version relative to current build fixes #1
   - (psalm) resolve 847 Psalm 6 errors and suppress mf2/mf2 deprecation warning
   - (compiler) harmonize mf2 parser parameter nullability for PHP 8.4

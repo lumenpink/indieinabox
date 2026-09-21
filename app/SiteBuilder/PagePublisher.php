@@ -120,13 +120,15 @@ class PagePublisher
         }
 
         $destination = str_replace('/', DIRECTORY_SEPARATOR, $page->slug);
-        $destination = trim($destination, DIRECTORY_SEPARATOR);
-        $destination = preg_replace(
-            '/^' . preg_quote($this->site->paths->contentDir, '/') . '/',
-            '',
-            $destination
-        );
-        $destination = trim($destination, DIRECTORY_SEPARATOR);
+        $contentDirPrefix = trim(basename($this->site->paths->getContentPath()), DIRECTORY_SEPARATOR);
+        if ($contentDirPrefix !== '') {
+            $destination = preg_replace(
+                '/^' . preg_quote($contentDirPrefix, '/') . '(\/|\\\\' . preg_quote(DIRECTORY_SEPARATOR, '/') . '|$)/',
+                '',
+                $destination
+            );
+        }
+        $destination = trim((string) $destination, DIRECTORY_SEPARATOR);
 
         $outDir = $base . DIRECTORY_SEPARATOR . $this->site->paths->outputDirHtml;
 
@@ -352,13 +354,15 @@ class PagePublisher
 
         $base = $this->site->paths->baseDir;
         $destination = str_replace('/', DIRECTORY_SEPARATOR, $page->slug);
-        $destination = trim($destination, DIRECTORY_SEPARATOR);
-        $destination = preg_replace(
-            '/^' . preg_quote($this->site->paths->contentDir, '/') . '/',
-            '',
-            $destination
-        );
-        $destination = trim($destination, DIRECTORY_SEPARATOR);
+        $contentDirPrefix = trim(basename($this->site->paths->getContentPath()), DIRECTORY_SEPARATOR);
+        if ($contentDirPrefix !== '') {
+            $destination = preg_replace(
+                '/^' . preg_quote($contentDirPrefix, '/') . '(\/|\\\\' . preg_quote(DIRECTORY_SEPARATOR, '/') . '|$)/',
+                '',
+                $destination
+            );
+        }
+        $destination = trim((string) $destination, DIRECTORY_SEPARATOR);
 
         $outDirGemini = $base . DIRECTORY_SEPARATOR . $this->site->paths->outputDirGemini;
         if (str_ends_with($destination, '.html') || str_ends_with($destination, '.htm')) {
@@ -433,13 +437,15 @@ class PagePublisher
 
         $base = $this->site->paths->baseDir;
         $destination = str_replace('/', DIRECTORY_SEPARATOR, $page->slug);
-        $destination = trim($destination, DIRECTORY_SEPARATOR);
-        $destination = preg_replace(
-            '/^' . preg_quote($this->site->paths->contentDir, '/') . '/',
-            '',
-            $destination
-        );
-        $destination = trim($destination, DIRECTORY_SEPARATOR);
+        $contentDirPrefix = trim(basename($this->site->paths->getContentPath()), DIRECTORY_SEPARATOR);
+        if ($contentDirPrefix !== '') {
+            $destination = preg_replace(
+                '/^' . preg_quote($contentDirPrefix, '/') . '(\/|\\\\' . preg_quote(DIRECTORY_SEPARATOR, '/') . '|$)/',
+                '',
+                $destination
+            );
+        }
+        $destination = trim((string) $destination, DIRECTORY_SEPARATOR);
 
         $outDirGopher = $base . DIRECTORY_SEPARATOR . $this->site->paths->outputDirGopher;
         if (str_ends_with($destination, '.html') || str_ends_with($destination, '.htm')) {

@@ -132,3 +132,39 @@ it('parses valid markdown file into populated Page object', function () {
     expect($page->slug)->toBe('articles/welcome/');
     expect($page->relpath)->toBe('../../');
 });
+
+it('generates clean slug without directory prefix when contentDir is an absolute path', function () {
+    $absContentDir = $this->tempDir . '/my_absolute_content';
+    mkdir($absContentDir . '/articles', 0777, true);
+
+    $this->site->paths->contentDir = $absContentDir;
+
+    $postFile = $absContentDir . '/articles/hello-world.md';
+    file_put_contents($postFile, "---\ntitle: Hello World\nkind: article\n---\nHello from absolute content path.");
+
+    $rootPageFile = $absContentDir . '/about.md';
+    file_put_contents($rootPageFile, "---\ntitle: About Me\nkind: page\n---\nAbout me content.");
+
+    $page = $this->parser->parse($postFile);
+    expect($page)->not->toBeNull();
+    expect($page->slug)->toBe('articles/hello-world/');
+    expect($page->slug)->not->toContain('my_absolute_content');
+
+    $aboutPage = $this->parser->parse($rootPageFile);
+    expect($aboutPage)->not->toBeNull();
+    expect($aboutPage->slug)->toBe('about/');
+    expect($aboutPage->slug)->not->toContain('my_absolute_content');
+});
+
+it('generateBaseSlug handles absolute content path cleanly', function () {
+    $absContentDir = $this->tempDir . '/custom_content';
+    mkdir($absContentDir . '/notes', 0777, true);
+    $this->site->paths->contentDir = $absContentDir;
+
+    $noteFile = $absContentDir . '/notes/quick-note.md';
+    file_put_contents($noteFile, "Note content");
+
+    $slug = $this->parser->getFileProcessor()->generateBaseSlug($noteFile);
+    expect($slug)->toBe('notes/quick-note.md');
+    expect($slug)->not->toContain('custom_content');
+});

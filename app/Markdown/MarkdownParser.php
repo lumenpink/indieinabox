@@ -133,9 +133,8 @@ class MarkdownParser implements ParserInterface
         $defaultLang = (string) ($this->site->localization->defaultLang ?? 'en');
 
         // Calculate path relative to the content directory
-        $contentDir = $this->site->paths->contentDir;
-        $baseDir = $this->site->paths->baseDir;
-        $relPath = str_replace($baseDir . DIRECTORY_SEPARATOR . $contentDir, "", $file);
+        $contentPath = rtrim($this->site->paths->getContentPath(), DIRECTORY_SEPARATOR);
+        $relPath = str_replace($contentPath, "", $file);
         $relPath = ltrim($relPath, DIRECTORY_SEPARATOR);
         $relPath = str_replace(DIRECTORY_SEPARATOR, "/", $relPath);
 

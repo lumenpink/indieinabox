@@ -30,11 +30,11 @@ Sets up the CommonMark environment with appropriate extensions
 @return array<string, mixed>
 
 ### removeYamlFrontMatter()
-`public function removeYamlFrontMatter(string $content): string`
+`public function removeYamlFrontMatter(string $content): ?string`
 
 @param string $content
 
-@return string
+@return null|string
 
 ### setDate()
 `public function setDate(array $page, string $file): array`
@@ -72,8 +72,8 @@ Set the date from file modification time if not provided in frontmatter.
 @return string
 
 ### addTrailingSlashesToInternalLinks()
-`private function addTrailingSlashesToInternalLinks(string $content): string`
+`private function addTrailingSlashesToInternalLinks(string $content): ?string`
 
 @param string $content
 
-@return string
+@return null|string

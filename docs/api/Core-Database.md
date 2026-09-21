@@ -104,3 +104,13 @@ Retrieves content kind configurations (e.g., article, note, photo).
 Decodes the JSON configuration column for each kind into an array.
 
 @return array<string, array<string, mixed>> Associative array of kind configs.
+
+### getSchemaSql()
+`public static function getSchemaSql(): string`
+
+Retrieves the database schema SQL.
+
+### initializeSchema()
+`public static function initializeSchema(?PDO $db = null, ?string $sql = null): void`
+
+Initializes database schema if not already initialized.

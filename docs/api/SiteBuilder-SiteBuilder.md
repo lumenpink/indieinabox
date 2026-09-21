@@ -50,7 +50,7 @@ translation virtualization, content rendering, feed generation, and asset publis
 
 Stores absolute paths of all generated files during the build process
 for Garbage Collection.
-@var string[]
+@var array<string, bool>
 
 ## Methods
 

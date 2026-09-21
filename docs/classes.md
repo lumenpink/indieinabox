@@ -89,7 +89,7 @@ The `Page` class represents a parsed input source file (Markdown, text). It is a
 The `Site` class serves as the root configuration settings block loaded from `config.yml`. It aggregates config namespaces:
 
 * **`Site\Metadata`**: High-level details (`$title`, `$sitename`, `$author`, `$defaultTitle`, `$fqdn`).
-* **`Site\Paths`**: Workspace directories (`$baseDir`, `$outputDirHtml`, `$contentDir`, `$themeDir`).  
+* **`Site\Paths`**: Workspace directories (`$baseDir`, `$outputDirHtml`, `$contentDir`, `$themeDir`). Provides `getContentPath()` to resolve the absolute content directory whether `$contentDir` is relative or absolute.
 * **`Site\Options`**: Generation options (`$buildAll`, `$dev`, `$skipStatic`, `$forceStaticOverride`, `$htmlpostprocessing`).
 * **`Site\Localization`**: Locales settings (`$lang` array, `$defaultLang`).
 * **`Site\Support`**: Valid extensions list (`$support` array, `$defaultCategory`).

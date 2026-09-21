@@ -29,7 +29,7 @@ Class GophermapRenderer
 Initializes the GophermapRenderer.
 
 @param string $host The hostname to use for internal Gopher links.
-@param int|string $port The port number to use for internal Gopher links.
+@param int $port The port number to use for internal Gopher links.
 @param \Indieinabox\Page\Page|null $page The page being rendered, used for resolving relative links.
 
 ### render()
@@ -48,8 +48,9 @@ Formats a line of text into a valid Gophermap entry.
 @param string $type The Gopher item type character (e.g., 'i' for info, '1' for directory, 'h' for HTML).
 @param string $display The text to display to the user.
 @param string $selector The path or selector for the resource.
-@param string|null $host The target hostname (defaults to this renderer's host if null).
-@param int|string|null $port The target port (defaults to this renderer's port if null).
+@param string $host The target hostname (defaults to this renderer's host if null).
+@param int $port The target port (defaults to this renderer's port if null).
+
 @return string The formatted Gophermap line, terminated with CRLF.
 
 ### renderNode()

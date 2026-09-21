@@ -41,3 +41,22 @@ Checks if the application is currently running as a single compiled executable.
 Gets the build timestamp if available.
 
 @return string|null
+
+### extractVersionFromRelease()
+`public static function extractVersionFromRelease(array $release): ?string`
+
+Extracts a SemVer version string from release metadata (tag name, release name, or description body).
+
+@param array<string, mixed> $release
+@return string|null
+
+### isNewerVersion()
+`public static function isNewerVersion(string $remoteVersion, ?string $currentVersion = null, ?string $remoteDate = null, ?string $currentDate = null): bool`
+
+Determines whether a remote version/release is strictly newer than the current version/release.
+
+@param string $remoteVersion Remote SemVer version or release tag.
+@param string|null $currentVersion Current SemVer version (defaults to Version::get()).
+@param string|null $remoteDate Remote release published date in ISO 8601 format.
+@param string|null $currentDate Current build/commit date in ISO 8601 format (defaults to Version::getBuildDate()).
+@return bool

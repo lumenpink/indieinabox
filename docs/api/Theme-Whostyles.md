@@ -79,13 +79,14 @@ Searches for a meta tag or specific patterns containing the payload.
 @return string|null The extracted Whostyles string, or null if not found.
 
 ### clean()
-`public static function clean(string $html): string`
+`public static function clean(string $html): ?string`
 
 Cleans HTML string to ensure extracted colors fall within acceptable luminance/contrast bounds
 and guarantees a minimum level of legibility (e.g., text against background).
 
 @param string $html The input HTML string containing whostyles.
-@return string The cleaned and adjusted HTML string.
+
+@return null|string The cleaned and adjusted HTML string.
 
 ### getLuminance()
 `private static function getLuminance(string $hex): float`

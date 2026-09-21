@@ -49,7 +49,9 @@ Set active page context.
 
 Map active layout / kind to appropriate background and foreground colors.
 
-@return array{bg: int[], fg: int[]}
+@return ((float|int|null|string)[]|null)[]
+
+@psalm-return array{bg: list{0?: float|int|null|string, 1?: float|int|null|string, 2?: float|int|null|string,...}|null, fg: list{0?: float|int|null|string, 1?: float|int|null|string, 2?: float|int|null|string,...}|null}
 
 ### render()
 `public function render(Indieinabox\Markdown\Node $node): string`

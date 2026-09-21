@@ -7,6 +7,8 @@ Represents the global site configuration and state for the Indieinabox applicati
 It acts as a central registry for all configuration components such as metadata,
 paths, localization, and feature flags, providing a unified interface to access them.
 
+@property string $defaultlang Shortcut to localization->defaultLang via __get
+
 ## Properties
 
 ### `public array $config`

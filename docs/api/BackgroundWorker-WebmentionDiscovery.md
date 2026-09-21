@@ -33,9 +33,9 @@ Discovers Webmention support for queued domains.
 @return void
 
 ### fetchUrl()
-`public function fetchUrl(string $url)`
+`public function fetchUrl(string $url): string|bool`
 
 Fetches remote content over HTTP.
 
 @param string $url
-@return string|false
+@return string|bool

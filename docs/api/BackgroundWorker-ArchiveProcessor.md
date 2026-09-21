@@ -74,9 +74,9 @@ Fetches a PDF snapshot from the Microlink API.
 @return string|null
 
 ### fetchUrl()
-`public function fetchUrl(string $url)`
+`public function fetchUrl(string $url): string|bool`
 
 Fetches remote content over HTTP.
 
 @param string $url
-@return string|false
+@return string|bool

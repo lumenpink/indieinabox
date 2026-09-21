@@ -67,13 +67,21 @@ Parses an ActivityPub Actor profile and fetches outbox items.
 `public function saveEntry(Indieinabox\Microsub\ExtendedEntry $entry, string $channel, string $feedUrl = ''): bool`
 
 ### processHtmlMedia()
-`public function processHtmlMedia(string $html): string`
+`public function processHtmlMedia(string $html): ?string`
 
 ### downloadMedia()
 `public function downloadMedia(string $url, string $type): string`
 
 ### fetchUrl()
-`protected function fetchUrl(string $url, mixed $context = null)`
+`protected function fetchUrl(string $url, mixed $context = null): string|false`
+
+@param null|resource $context
+
+@return false|string
 
 ### fetchApJson()
-`private function fetchApJson(string $url, mixed $fallbackCtx = null)`
+`private function fetchApJson(string $url, mixed $fallbackCtx = null): string|false`
+
+@param null|resource $fallbackCtx
+
+@return false|string

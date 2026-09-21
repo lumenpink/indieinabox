@@ -138,9 +138,9 @@ Fetches a URL and decodes the JSON response.
 @return array|null
 
 ### fetchUrl()
-`public function fetchUrl(string $url)`
+`public function fetchUrl(string $url): string|bool`
 
 Fetches the content of a remote URL.
 
 @param string $url
-@return string|false
+@return string|bool

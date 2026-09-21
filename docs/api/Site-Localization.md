@@ -25,25 +25,25 @@ Holds language and localization-related configurations.
 
 Localization constructor.
 
-@param array<string>|string|number|null $lang
+@param array<string>|string|int|float|null $lang
 @param string $defaultLang
 
 ### __get()
 `public function __get(string $name)`
 
 @param string $name
-@return array<string>|string|number|null
+@return array<string>|string|int|float|null
 
 ### __set()
 `public function __set(string $name, mixed $value)`
 
 @param string $name
-@param array<string>|string|number|null $value
+@param array<string>|string|int|float|null $value
 
 ### createArrayFromValue()
 `public function createArrayFromValue(mixed $value): array`
 
 Creates an array from a value.
 
-@param array<string>|string|number|null $value
+@param array<string>|string|int|float|null $value
 @return array<string>

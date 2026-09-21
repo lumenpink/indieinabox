@@ -29,4 +29,7 @@ Walks the tree to replace rawText properties with their parsed inline child node
 A linear, single-pass scanner/lexer to tokenize and parse inline formatting.
 
 @param string $text
-@return InlineNode[]
+
+@return (InlineNode|RawHtmlInlineNode)[]
+
+@psalm-return array<InlineNode|RawHtmlInlineNode>

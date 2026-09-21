@@ -96,3 +96,7 @@ Triggers sync of all feeds.
 
 ### fetchUrl()
 `protected function fetchUrl(string $url, mixed $context = null)`
+
+@param null|resource $context
+
+@return false|string

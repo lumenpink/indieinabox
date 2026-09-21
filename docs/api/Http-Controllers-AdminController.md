@@ -59,6 +59,20 @@ Admin interactions and comments moderation panel.
 
 Cron endpoint triggering background processing.
 
+### build()
+`public function build(): void`
+
+Webhook endpoint triggering static site rebuild.
+
+### validateWebhookToken()
+`public function validateWebhookToken(string $configKey, array $envFallbacks = []): bool`
+
+Validates incoming webhook token against configured tokens and environment variables.
+
+@param string $configKey Setting key name (e.g. 'cron_token' or 'build_token')
+@param list<string> $envFallbacks List of environment variable names to check
+@return bool True if authorized, false otherwise.
+
 ### handleBootstrap()
 `private function handleBootstrap(): void`
 
@@ -106,9 +120,12 @@ Emits a redirect header.
 Sets HTTP status code.
 
 ### jsonResponse()
-`protected function jsonResponse(?mixed $data, int $status = 200, array $headers = []): void`
+`protected function jsonResponse(array $data, int $status = 200, array $headers = []): void`
 
 @param array<string, string> $headers
+@param (int|string|string[])[] $data
+
+@psalm-param array{error?: string, error_description?: string, issuer?: string, authorization_endpoint?: string, token_endpoint?: string, response_types_supported?: list{'code'}, grant_types_supported?: list{'authorization_code'}, code_challenge_methods_supported?: list{'S256', 'plain'}, me?: string, scope?: string, access_token?: string, token_type?: string, client_id?: string, status?: int, message?: string} $data
 
 ### htmlResponse()
 `protected function htmlResponse(string $html, int $status = 200, array $headers = []): void`

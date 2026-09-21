@@ -17,14 +17,12 @@ Class ShortlinkService
 @param string|null $cacheDir
 
 ### getShortlink()
-`public function getShortlink(Indieinabox\Page\Page $page, string $fqdn, array $config, bool $isDev = false): ?string`
+`public function getShortlink(Indieinabox\Page\Page $page, string $fqdn, array $config, bool $isDev = false): string|false`
 
 Gets a shortlink for a page, from cache or by requesting the server.
 
 @param Page $page
 @param string $fqdn
 @param array $config
-@return string|null
 
-### generateBoundary()
-`private static function generateBoundary(int $length = 24): string`
+@return false|string

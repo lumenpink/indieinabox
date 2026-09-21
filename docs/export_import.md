@@ -70,3 +70,34 @@ Implemented in [`app/Services/ImportService.php`](file:///home/lumen/indieinabox
 - **Atomic Database Swap**: Gracefully disconnects the active PDO database, clears existing SQLite WAL and SHM caches, and reconnects to the newly restored database.
 - **Selective Restoration**: Configurable options allow selective restoration of database, content, or media files, along with optional automatic static site rebuild via `SiteBuilder`.
 
+## CLI Commands
+
+### Export (`php indieinabox.php export`)
+
+Generate a portable bundle archive from the command line:
+
+```bash
+# Standard export with default timestamped filename in data/exports/
+php indieinabox.php export
+
+# Export to a specific destination path
+php indieinabox.php export /backups/mysite-export.tar.gz
+
+# Lightweight database-only export skipping media files and markdown content
+php indieinabox.php export --no-media --no-content
+```
+
+### Import (`php indieinabox.php import`)
+
+Inspect or restore a portable bundle from the command line:
+
+```bash
+# Inspect bundle integrity and manifest without altering any data
+php indieinabox.php import /backups/mysite-export.tar.gz --inspect
+
+# Import bundle with automatic SHA-256 verification and pre-import safety backup
+php indieinabox.php import /backups/mysite-export.tar.gz
+
+# Import skipping media restoration or skipping automatic site rebuild
+php indieinabox.php import /backups/mysite-export.tar.gz --no-media --no-build
+```

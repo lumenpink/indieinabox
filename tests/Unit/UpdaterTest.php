@@ -22,12 +22,14 @@ beforeEach(function () {
 
     UpdateService::$customExecutablePath = $this->mockExecutable;
     UpdateService::$customVersionsDir = $this->versionsDir;
+    UpdateService::$customApiUrl = 'http://127.0.0.1:9999/fake-releases';
 });
 
 afterEach(function () {
     /** @var \Tests\TestCase $this */
     UpdateService::$customExecutablePath = null;
     UpdateService::$customVersionsDir = null;
+    UpdateService::$customApiUrl = null;
     Database::disconnect();
 
     if (is_dir($this->tempDir)) {

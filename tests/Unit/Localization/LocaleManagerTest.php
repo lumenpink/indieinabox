@@ -75,3 +75,29 @@ test('LocaleManager lists supported locales', function () {
         ->toContain('pt')
         ->toContain('es');
 });
+
+test('LocaleManager loads cached locale from data/locales directory', function () {
+    $cacheDir = LocaleManager::getCacheDir();
+    if (!is_dir($cacheDir)) {
+        @mkdir($cacheDir, 0755, true);
+    }
+    $fakeLocale = [
+        'code' => 'zz',
+        'name' => 'Fake Language',
+        'translations' => ['Home' => 'Casa Falsa'],
+        'kinds' => ['article' => ['title' => 'Falsos', 'content_dir' => 'falsos']],
+    ];
+    $filePath = $cacheDir . '/zz.json';
+    file_put_contents($filePath, (string) json_encode($fakeLocale));
+
+    try {
+        $loaded = LocaleManager::getLocale('zz', false);
+        expect($loaded)->not->toBeNull()
+            ->and($loaded['code'])->toBe('zz')
+            ->and($loaded['translations']['Home'])->toBe('Casa Falsa');
+    } finally {
+        if (is_file($filePath)) {
+            @unlink($filePath);
+        }
+    }
+});

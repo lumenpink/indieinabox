@@ -25,6 +25,11 @@ class UpdateService
      */
     public static ?string $customVersionsDir = null;
 
+    /**
+     * Optional override for API releases URL (used for testing).
+     */
+    public static ?string $customApiUrl = null;
+
     private static function getManager(): UpdateServiceInterface
     {
         if (class_exists(Container::class)) {

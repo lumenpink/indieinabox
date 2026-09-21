@@ -62,8 +62,8 @@ class UpdateManager implements UpdateServiceInterface
                     'timeout' => 10,
                 ]
             ];
-            $context = stream_context_create($options);
-            $response = @file_get_contents(self::API_URL, false, $context);
+            $apiUrl = UpdateService::$customApiUrl ?? self::API_URL;
+            $response = @file_get_contents($apiUrl, false, $context);
 
             if ($response === false) {
                 error_log("Updater: Failed to fetch releases from Codeberg.");

@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 ### Features
+  - (media) expose /media/proxy endpoint and integrate proxy rewriting in reader
   - (media) implement MediaProxyService with HMAC URL signing and SSRF protection
   - (search) generate static search.json index files during site build
   - (theme) add ThemeData::getTagCloud and getTagCloudData helpers

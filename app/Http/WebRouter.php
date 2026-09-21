@@ -207,6 +207,12 @@ class WebRouter
             }
         }
 
+        // Route: External Media Proxy (HMAC-signed privacy proxy)
+        if ($requestUriClean === '/media/proxy') {
+            $this->fileServer->serveProxiedMedia();
+            return;
+        }
+
         $this->serveStatic();
     }
 

@@ -15,6 +15,7 @@ use Indieinabox\Repositories\Contracts\ActivityPubRepositoryInterface;
 use Indieinabox\Repositories\Contracts\MicrosubRepositoryInterface;
 use Indieinabox\Repositories\SqliteActivityPubRepository;
 use Indieinabox\Repositories\SqliteMicrosubRepository;
+use Indieinabox\Services\Contracts\MediaProxyServiceInterface;
 use Indieinabox\Site\Site;
 use Indieinabox\Support\Yaml;
 use Indieinabox\Markdown\ContentProcessor;
@@ -30,13 +31,15 @@ class MicrosubService
     private ?Site $site;
     private MicrosubRepositoryInterface $repository;
     private ActivityPubRepositoryInterface $activityPubRepo;
+    private ?MediaProxyServiceInterface $mediaProxy;
 
     public function __construct(
         ?PDO $db = null,
         ?FetchFeedsService $feedFetcher = null,
         ?Site $site = null,
         ?MicrosubRepositoryInterface $repository = null,
-        ?ActivityPubRepositoryInterface $activityPubRepo = null
+        ?ActivityPubRepositoryInterface $activityPubRepo = null,
+        ?MediaProxyServiceInterface $mediaProxy = null
     ) {
         $this->db = $db ?? Database::getDb();
         $this->feedFetcher = $feedFetcher ?? new FetchFeedsService($this->db);
@@ -50,6 +53,10 @@ class MicrosubService
         $this->activityPubRepo = $activityPubRepo ?? ($container && $container->has(ActivityPubRepositoryInterface::class)
             ? $container->get(ActivityPubRepositoryInterface::class)
             : new SqliteActivityPubRepository($this->db));
+
+        $this->mediaProxy = $mediaProxy ?? ($container && $container->has(MediaProxyServiceInterface::class)
+            ? $container->get(MediaProxyServiceInterface::class)
+            : null);
     }
 
     /**
@@ -156,8 +163,13 @@ class MicrosubService
                     $entry->uid = $fm['id'] ?? basename($p['file'], '.md');
                     $entry->url = $fm['url'] ?? '';
                     $entry->published = date('c', $pubInt);
-                    $entry->content['html'] = $p['contentHtml'];
-                    $entry->content['text'] = strip_tags($p['contentHtml']);
+
+                    $contentHtml = $p['contentHtml'];
+                    if ($this->mediaProxy !== null && $contentHtml !== '') {
+                        $contentHtml = $this->mediaProxy->rewriteHtmlMedia($contentHtml);
+                    }
+                    $entry->content['html'] = $contentHtml;
+                    $entry->content['text'] = strip_tags($contentHtml);
                     $entry->isRead = (bool)($fm['is_read'] ?? false);
 
                     if (!empty($fm['author_name'])) {

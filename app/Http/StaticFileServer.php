@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace Indieinabox\Http;
 
+use Indieinabox\Services\MediaProxyService;
 use Indieinabox\Site\Site;
 
 /**
  * Serves static assets, compiled HTML, and media files from site output directories,
- * with content negotiation for ActivityPub representations.
+ * with content negotiation for ActivityPub representations, and signed media proxy streaming.
  */
 class StaticFileServer
 {
@@ -17,6 +18,60 @@ class StaticFileServer
     public function __construct(Site $site)
     {
         $this->site = $site;
+    }
+
+    /**
+     * Handles a signed `/media/proxy` request.
+     *
+     * Verifies the HMAC signature, fetches and caches the remote media (with SSRF protection),
+     * and streams it with the correct MIME type. Returns 400 for missing params, 403 for
+     * invalid signatures, 404 for failed fetches, and serves on success.
+     */
+    public function serveProxiedMedia(?MediaProxyService $proxyService = null): void
+    {
+        $url = (string) ($_GET['url'] ?? '');
+        $sig = (string) ($_GET['sig'] ?? '');
+
+        if ($url === '' || $sig === '') {
+            http_response_code(400);
+            header('Content-Type: application/json; charset=utf-8');
+            echo json_encode(['error' => 'missing_params', 'message' => 'url and sig parameters are required']);
+            return;
+        }
+
+        $proxy = $proxyService ?? new MediaProxyService(
+            settings: null,
+            cacheDir: null,
+            fqdn: rtrim((string) ($this->site->metadata->fqdn ?? ''), '/')
+        );
+
+        if (!$proxy->verifySignature($url, $sig)) {
+            http_response_code(403);
+            header('Content-Type: application/json; charset=utf-8');
+            echo json_encode(['error' => 'invalid_signature', 'message' => 'Media proxy signature verification failed']);
+            return;
+        }
+
+        $result = $proxy->fetchAndCache($url);
+        if ($result === null) {
+            http_response_code(404);
+            header('Content-Type: application/json; charset=utf-8');
+            echo json_encode(['error' => 'fetch_failed', 'message' => 'Could not fetch or cache the requested media resource']);
+            return;
+        }
+
+        $ext = pathinfo($result['path'], PATHINFO_EXTENSION);
+        $mime = $result['mime'];
+        if ($mime === 'application/octet-stream' && $ext !== '') {
+            $mime = $this->getMimeType($ext);
+        }
+
+        http_response_code(200);
+        header('Content-Type: ' . $mime);
+        header('Cache-Control: public, max-age=86400, immutable');
+        header('X-Content-Type-Options: nosniff');
+        header('Content-Length: ' . $result['size']);
+        readfile($result['path']);
     }
 
     /**

@@ -34,12 +34,23 @@ class TwtxtFeedGenerator implements FeedGeneratorInterface
 
         $content = '';
 
-        // Add standard metadata comments
+        // Add standard and Yarns metadata comments
+        $siteTitle = $site->metadata->title ?? ($site->metadata->defaultTitle ?? null);
+        if (!empty($siteTitle)) {
+            $content .= "# title = {$siteTitle}\n";
+        }
+        $content .= "# link = {$fqdn}/twtxt.txt\n";
+
         if (!empty($twtxtConfig->nick)) {
             $content .= "# nick = {$twtxtConfig->nick}\n";
         }
-        if (!empty($twtxtConfig->description)) {
-            $content .= "# description = {$twtxtConfig->description}\n";
+        $author = $twtxtConfig->nick ?: ($site->metadata->author ?? null);
+        if (!empty($author)) {
+            $content .= "# author = {$author}\n";
+        }
+        $description = $twtxtConfig->description ?: ($site->metadata->description ?? null);
+        if (!empty($description)) {
+            $content .= "# description = {$description}\n";
         }
         if (!empty($twtxtConfig->avatar)) {
             $content .= "# avatar = {$twtxtConfig->avatar}\n";
@@ -103,9 +114,18 @@ class TwtxtFeedGenerator implements FeedGeneratorInterface
         $kind = $entry->getKind();
         $displayMode = $site->config['kinds'][$kind]['display_mode'] ?? (KindHelper::getKindConfig($kind)['display_mode'] ?? 'default');
 
+        $subjectTag = '';
+        $metaSubject = $entry->getMetadata()['subject'] ?? null;
+        if (!empty($metaSubject)) {
+            $subjectTag = '(#' . ltrim($metaSubject, '#') . ')';
+        }
+
         if ($displayMode === 'full_content' || $entry->isNote()) {
             $text = TwtxtManager::cleanMessage($entry->getRawContent() ?: strip_tags($entry->getContent()));
             $text = preg_replace('/^\[[A-Z]{2,}\]\s+/', '', $text) ?? '';
+            if ($subjectTag !== '' && !str_contains($text, $subjectTag)) {
+                $text = $subjectTag . ' ' . $text;
+            }
             return $text;
         }
 
@@ -131,10 +151,11 @@ class TwtxtFeedGenerator implements FeedGeneratorInterface
                 }
             }
 
+            $subjectPrefix = $subjectTag !== '' ? $subjectTag . ' ' : '';
             if ($imageUrl !== '') {
-                return "{$caption} {$imageUrl} - {$postUrl}";
+                return "{$subjectPrefix}{$caption} {$imageUrl} - {$postUrl}";
             }
-            return "{$caption} - {$postUrl}";
+            return "{$subjectPrefix}{$caption} - {$postUrl}";
         }
 
         // Articles / Generic Pages
@@ -148,13 +169,15 @@ class TwtxtFeedGenerator implements FeedGeneratorInterface
             $snippet = mb_substr($snippet, 0, 97) . '...';
         }
 
+        $subjectPrefix = $subjectTag !== '' ? $subjectTag . ' ' : '';
+
         if ($title !== '' && $snippet !== '') {
-            return "{$title}: {$snippet} - {$postUrl}";
+            return "{$subjectPrefix}{$title}: {$snippet} - {$postUrl}";
         }
         if ($title !== '') {
-            return "{$title} - {$postUrl}";
+            return "{$subjectPrefix}{$title} - {$postUrl}";
         }
-        return $snippet !== '' ? "{$snippet} - {$postUrl}" : '';
+        return $snippet !== '' ? "{$subjectPrefix}{$snippet} - {$postUrl}" : '';
     }
 
     private function resolveEntryUrl(Entry $entry, string $fqdn): string

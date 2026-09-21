@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 ### Features
+  - (twtxt) implement Yarns metadata headers, subject tags, and markdown formatting (#14)
   - (database) introduce PHP database migrations system (#13)
   - (webpush) expose push API endpoints, service worker, and reader UI (#12)
   - (webpush) broadcast alerts on interaction ingestion and approval (#11)

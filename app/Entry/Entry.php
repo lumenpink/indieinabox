@@ -460,7 +460,7 @@ class Entry
 
         return new self([
             'id' => (string) ($data['id'] ?? ('twtxt_' . $publishedAt->getTimestamp() . '_' . substr(md5($message), 0, 8))),
-            'title' => null,
+            'title' => isset($data['title']) && $data['title'] !== '' ? (string) $data['title'] : null,
             'content' => $html,
             'rawContent' => $message,
             'publishedAt' => $publishedAt,
@@ -475,9 +475,9 @@ class Entry
             'inReplyTo' => $inReplyTo,
             'tags' => $tags,
             'syndicationTargets' => [],
-            'metadata' => [
+            'metadata' => array_merge([
                 'nick' => $nick,
-            ],
+            ], (array) ($data['metadata'] ?? [])),
         ]);
     }
 

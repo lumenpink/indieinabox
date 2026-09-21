@@ -100,3 +100,68 @@ it('fetches hub mentions and deduplicates them', function () {
     $entries = @$manager->fetchHubMentions($hubs, $fqdn, __DIR__ . '/tmp_twtxt');
     expect($entries)->toBeEmpty();
 });
+
+it('formats Yarns markdown, subjects, and inline code correctly', function () {
+    $msg = "Look at `echo 'hello world'` and **bold text** with *italic text* and ~~strike text~~.\n"
+        . "> This is a quote\n"
+        . "Subject tag: (#pod_launch) and [Blog](https://lumen.pink/blog)";
+
+    $html = TwtxtManager::formatMessageToHtml($msg);
+
+    expect($html)->toContain('<code>echo &apos;hello world&apos;</code>')
+        ->and($html)->toContain('<strong>bold text</strong>')
+        ->and($html)->toContain('<em>italic text</em>')
+        ->and($html)->toContain('<del>strike text</del>')
+        ->and($html)->toContain('<blockquote class="twtxt-quote">This is a quote</blockquote>')
+        ->and($html)->toContain('<span class="twtxt-subject">(#pod_launch)</span>')
+        ->and($html)->toContain('<a href="https://lumen.pink/blog" target="_blank" rel="noopener">Blog</a>');
+});
+
+it('parses Yarns headers and subject tags from twtxt feeds into Entry title and metadata', function () {
+    $rawFeed = "# title = Lumen Pod\n"
+        . "# author = lumen\n"
+        . "# link = https://lumen.pink/twtxt.txt\n"
+        . "2026-09-21T20:00:00Z\t(#yarns_intro) Welcome to Yarns pod!";
+
+    $entries = TwtxtManager::parseFeedContent($rawFeed, 'fallback_nick', 'https://lumen.pink/twtxt.txt');
+
+    expect($entries)->toHaveCount(1);
+    $entry = $entries[0];
+    expect($entry->getTitle())->toBe('yarns_intro')
+        ->and($entry->getMetadata()['subject'])->toBe('yarns_intro')
+        ->and($entry->getMetadata()['feed_title'])->toBe('Lumen Pod')
+        ->and($entry->getAuthor()['name'])->toBe('lumen')
+        ->and($entry->getContent())->toContain('<span class="twtxt-subject">(#yarns_intro)</span>');
+});
+
+it('generates twtxt feed with Yarns headers and subjects', function () {
+    $generator = new \Indieinabox\Feeds\Generators\TwtxtFeedGenerator();
+    $site = new Site();
+    $site->metadata->title = 'Test Site';
+    $site->metadata->fqdn = 'https://example.com';
+    $site->twtxt->nick = 'tester';
+    $site->twtxt->description = 'A test feed';
+
+    $entry = new Entry([
+        'id' => 'test-1',
+        'slug' => 'test-1',
+        'kind' => 'note',
+        'rawContent' => 'Testing note',
+        'content' => '<p>Testing note</p>',
+        'publishedAt' => new \DateTimeImmutable('2026-09-21T12:00:00Z'),
+        'metadata' => ['subject' => 'test_subject'],
+    ]);
+
+    $tempFile = sys_get_temp_dir() . '/twtxt_yarns_test_' . uniqid() . '.txt';
+    $generator->generate([$entry], $tempFile, $site);
+
+    $content = file_get_contents($tempFile);
+    unlink($tempFile);
+
+    expect($content)->toContain("# title = Test Site\n")
+        ->and($content)->toContain("# link = https://example.com/twtxt.txt\n")
+        ->and($content)->toContain("# nick = tester\n")
+        ->and($content)->toContain("# description = A test feed\n")
+        ->and($content)->toContain("(#test_subject) Testing note");
+});
+

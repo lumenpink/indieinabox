@@ -23,6 +23,20 @@ describe('FeedParsers Strategies', function () {
         expect($items[0]['url'])->toBe('https://example.com/twtxt.txt');
     });
 
+    it('parses Yarns headers and subject tags in twtxt parser', function () {
+        $parser = new TwtxtParser();
+        $content = "# title = Yarns Feed\n# author = bob\n2026-09-21T18:00:00Z\t(#yarns_update) An update with subject";
+
+        expect($parser->supports($content))->toBeTrue();
+
+        $items = $parser->parse($content, 'https://example.com/twtxt.txt');
+        expect($items)->toHaveCount(1);
+        expect($items[0]['author']['name'])->toBe('bob');
+        expect($items[0]['title'])->toBe('yarns_update');
+        expect($items[0]['metadata']['subject'])->toBe('yarns_update');
+        expect($items[0]['metadata']['feed_title'])->toBe('Yarns Feed');
+    });
+
     it('parses RSS feeds correctly', function () {
         $parser = new RssParser();
         expect($parser->getFormat())->toBe('rss');

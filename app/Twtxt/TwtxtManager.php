@@ -60,17 +60,25 @@ class TwtxtManager
     }
 
     /**
-     * Converts raw message text into HTML with mentions, hashtags, and links formatted.
+     * Converts raw message text into HTML with Yarns markdown, subjects, mentions, hashtags, and links formatted.
      *
      * @param string $message
      * @return string
      */
     public static function formatMessageToHtml(string $message): string
     {
+        // 1. Pre-process inline code blocks before HTML escaping
+        $codePlaceholders = [];
+        $message = preg_replace_callback('/`([^`]+)`/', function ($m) use (&$codePlaceholders) {
+            $key = '___TWTXT_CODE_' . count($codePlaceholders) . '___';
+            $codePlaceholders[$key] = '<code>' . htmlspecialchars($m[1], ENT_QUOTES | ENT_HTML5) . '</code>';
+            return $key;
+        }, $message) ?? $message;
+
         // Escape HTML first for security
         $html = htmlspecialchars($message, ENT_QUOTES | ENT_HTML5);
 
-        // 1. Parse twtxt mentions: @<nick url> or escaped equivalents
+        // 2. Parse twtxt mentions: @<nick url> or escaped equivalents
         $html = preg_replace_callback(
             '/@(?:&amp;|&)?lt;([^\s&]+)\s+([^\s&]+)(?:&amp;|&)?gt;/',
             function ($matches) {
@@ -79,27 +87,73 @@ class TwtxtManager
                 return '<a href="' . htmlspecialchars($url, ENT_QUOTES) . '" class="mention">@' . $nick . '</a>';
             },
             $html
-        );
+        ) ?? $html;
 
-        // 2. Convert raw HTTP/HTTPS URLs to links
+        // 3. Parse Markdown links: [Label](https://url)
+        $html = preg_replace_callback(
+            '/\[([^\]]+)\]\((https?:\/\/[^\s\)\>]+)\)/i',
+            function ($matches) {
+                $label = $matches[1];
+                $url = htmlspecialchars_decode($matches[2]);
+                return '<a href="' . htmlspecialchars($url, ENT_QUOTES) . '" target="_blank" rel="noopener">' . $label . '</a>';
+            },
+            $html
+        ) ?? $html;
+
+        // 4. Parse Yarns subject tags: (#hash_or_subject)
+        $subjectPlaceholders = [];
+        $html = preg_replace_callback(
+            '/(?<=^|\s)\(#([a-zA-Z0-9_\-\.\/]+)\)/u',
+            function ($m) use (&$subjectPlaceholders) {
+                $key = '___TWTXT_SUBJ_' . count($subjectPlaceholders) . '___';
+                $subjectPlaceholders[$key] = '<span class="twtxt-subject">(#' . $m[1] . ')</span>';
+                return $key;
+            },
+            $html
+        ) ?? $html;
+
+        // 5. Parse Yarns inline markdown:
+        // Bold: **text**
+        $html = preg_replace('/\*\*([^*]+)\*\*/u', '<strong>$1</strong>', $html) ?? $html;
+
+        // Italic: *text*
+        $html = preg_replace('/(?<!\*)\*([^*]+)\*(?!\*)/u', '<em>$1</em>', $html) ?? $html;
+
+        // Strikethrough: ~~text~~
+        $html = preg_replace('/~~([^~]+)~~/u', '<del>$1</del>', $html) ?? $html;
+
+        // Blockquotes: lines starting with >
+        $html = preg_replace('/(?:^|\n)&gt;\s*([^\n]+)/u', '<blockquote class="twtxt-quote">$1</blockquote>', $html) ?? $html;
+
+        // 6. Convert raw HTTP/HTTPS URLs to links (not already part of an anchor tag)
         $html = preg_replace(
             '/(?<![="])(https?:\/\/[^\s\)\>]+)/i',
             '<a href="$1" target="_blank" rel="noopener">$1</a>',
             $html
-        );
+        ) ?? $html;
 
-        // 3. Parse hashtags: #tag
-        $html = preg_replace(
-            '/(?<!\w)#(\w+)/u',
-            '<a href="https://hub.twtxt.org/search?tag=$1" class="hashtag">#$1</a>',
+        // 7. Parse hashtags: #tag
+        $html = preg_replace_callback(
+            '/(?<!\w)#([a-zA-Z0-9_]+)/u',
+            function ($m) {
+                return '<a href="https://hub.twtxt.org/search?tag=' . $m[1] . '" class="hashtag">#' . $m[1] . '</a>';
+            },
             $html
-        ) ?? '';
+        ) ?? $html;
+
+        // 8. Restore subject tags and inline code blocks
+        if (!empty($subjectPlaceholders)) {
+            $html = strtr($html, $subjectPlaceholders);
+        }
+        if (!empty($codePlaceholders)) {
+            $html = strtr($html, $codePlaceholders);
+        }
 
         return $html;
     }
 
     /**
-     * Parses a twtxt feed string into universal Entry objects.
+     * Parses a twtxt feed string into universal Entry objects, supporting Yarns metadata and subjects.
      *
      * @param string $content
      * @param string $defaultNick
@@ -110,10 +164,32 @@ class TwtxtManager
     {
         $entries = [];
         $lines = explode("\n", $content);
+        $feedTitle = null;
+        $feedAuthor = null;
+        $headerNick = $defaultNick;
+        $headerUrl = $sourceUrl;
 
         foreach ($lines as $line) {
             $line = trim($line);
-            if ($line === '' || str_starts_with($line, '#')) {
+            if ($line === '') {
+                continue;
+            }
+
+            if (str_starts_with($line, '#')) {
+                if (preg_match('/^#\s*([a-zA-Z0-9_-]+)\s*=\s*(.*)$/', $line, $headerMatch)) {
+                    $key = strtolower(trim($headerMatch[1]));
+                    $val = trim($headerMatch[2]);
+
+                    if ($key === 'nick') {
+                        $headerNick = $val;
+                    } elseif ($key === 'author') {
+                        $feedAuthor = $val;
+                    } elseif ($key === 'title') {
+                        $feedTitle = $val;
+                    } elseif ($key === 'url' || $key === 'link') {
+                        $headerUrl = $val;
+                    }
+                }
                 continue;
             }
 
@@ -132,12 +208,18 @@ class TwtxtManager
             }
 
             // Detect hub mentions sender info prefix e.g. "alice https://url: message"
-            $nick = $defaultNick;
-            $url = $sourceUrl;
+            $nick = $feedAuthor ?? $headerNick;
+            $url = $headerUrl;
             if (preg_match('/^([^\s:]+)\s+(https?:\/\/[^\s:]+):\s*(.*)$/i', $message, $matches)) {
                 $nick = $matches[1];
                 $url = $matches[2];
                 $message = $matches[3];
+            }
+
+            // Extract Yarns subject token e.g. "(#subject)"
+            $subject = null;
+            if (preg_match('/(?<=^|\s)\(#([a-zA-Z0-9_\-\.\/]+)\)/u', $message, $subjMatch)) {
+                $subject = $subjMatch[1];
             }
 
             $html = self::formatMessageToHtml($message);
@@ -147,6 +229,12 @@ class TwtxtManager
                 'url' => $url,
                 'message' => $message,
                 'html' => $html,
+                'title' => $subject,
+                'metadata' => [
+                    'subject' => $subject,
+                    'feed_title' => $feedTitle,
+                    'feed_author' => $feedAuthor,
+                ],
             ]);
         }
 

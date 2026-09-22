@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Indie in a Box - IndieWeb & 連合宇宙 オールインワン単一ファイルエンジン</title>
+    <meta name="description" content="分散型ウェブのための自己完結型単一ファイルPHPエンジン。ネイティブIndieWeb、ActivityPub、Twtxt、Gemini、Gopher、AI翻訳を2MBに凝縮。">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Bebas+Neue&family=Outfit:wght@400;600;800&family=JetBrains+Mono:wght@400;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='0' fill='%23141518'/><rect x='10' y='10' width='80' height='80' fill='%23ffe600'/><circle cx='50' cy='50' r='24' fill='%23ff007f'/></svg>">
+</head>
+<body>
+    <button class="mobile-nav-toggle" aria-label="Toggle navigation">☰ メニュー</button>
+
+    <!-- Sidebar Navigation matching Admin Shell -->
+    <aside class="admin-sidebar">
+        <div class="sidebar-header">
+            <h1><a href="index.html"><span class="logo-dot"></span>Indieinabox</a></h1>
+            <span class="hud-badge">デジタルの塹壕 // 分散型の自由</span>
+        </div>
+        <div class="lang-selector-strip">
+            <a href="../en/index.html" class="lang-pill" title="English">EN</a>
+            <a href="../pt/index.html" class="lang-pill" title="Português">PT</a>
+            <a href="../es/index.html" class="lang-pill" title="Español">ES</a>
+            <a href="../fr/index.html" class="lang-pill" title="Français">FR</a>
+            <a href="../de/index.html" class="lang-pill" title="Deutsch">DE</a>
+            <a href="../zh/index.html" class="lang-pill" title="中文 (简体)">ZH</a>
+            <a href="../ja/index.html" class="lang-pill active" title="日本語">JA</a>
+            <a href="../ar/index.html" class="lang-pill" title="العربية">AR</a>
+        </div>
+        <nav class="admin-nav">
+            <span class="nav-section-title">ドキュメント</span>
+            <a href="index.html" class="active">
+                <span class="nav-index">01</span> 概要とセットアップ
+            </a>
+            <a href="cli.html">
+                <span class="nav-index">02</span> CLI コマンド
+            </a>
+            <a href="admin.html">
+                <span class="nav-index">03</span> 管理画面と UI
+            </a>
+            <a href="federation.html">
+                <span class="nav-index">04</span> 連合とプロトコル
+            </a>
+            <a href="themes.html">
+                <span class="nav-index">05</span> テーマとデジタルガーデン
+            </a>
+            <a href="twtxt.html">
+                <span class="nav-index">06</span> Twtxt と Yarns 仕様
+            </a>
+
+            <span class="nav-section-title">プロジェクトリンク</span>
+            <a href="https://codeberg.org/indieinabox/indieinabox" target="_blank" rel="noopener">
+                <span class="nav-index">↗</span> Codeberg リポジトリ
+            </a>
+            <a href="https://codeberg.org/indieinabox/indieinabox/releases" target="_blank" rel="noopener">
+                <span class="nav-index">↗</span> 公式リリース
+            </a>
+
+            <div class="version-box">
+                <div>ENGINE: <span style="color: var(--tint-yellow);">v1.0.0</span></div>
+                <div style="margin-top: 4px;">HOST: <a href="https://indieinabox.2lp.in">indieinabox.2lp.in</a></div>
+            </div>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-wrapper">
+        <div class="content-container">
+
+            <!-- Hero Header -->
+            <header class="hero-header">
+                <div class="hud-pill">
+                    <span class="pulse-dot"></span>
+                    <span>単一ファイル PHP 8.2+ 実行環境 // INDIEWEB, ACTIVITYPUB & TWTXT</span>
+                </div>
+                <h1 class="hero-title">Indie in a Box</h1>
+                <p class="hero-subtitle">
+                    IndieWeb、Fediverse、Twtxt、Gemini、Gopher ネットワークを横断して個人サイト、ソーシャルリーダー、パブリッシャー、分散型アイデンティティを駆動するゼロ依存の単一ファイルPHPエンジン。
+                </p>
+                <div class="hero-actions">
+                    <a href="https://codeberg.org/indieinabox/indieinabox/releases/tag/v1.0.0" class="btn-cyber btn-cyber-primary" target="_blank" rel="noopener">
+                        <span>⬇</span> ⬇ v1.0.0 をダウンロード (2MB)
+                    </a>
+                    <a href="cli.html" class="btn-cyber btn-cyber-secondary">
+                        CLI コマンドリファレンス →
+                    </a>
+                    <a href="twtxt.html" class="btn-cyber btn-cyber-ghost">
+                        Twtxt & Yarns ガイド
+                    </a>
+                </div>
+            </header>
+
+            <!-- Quickstart Installation Banner -->
+            <section class="install-banner">
+                <div class="install-banner-header">
+                    <span class="install-banner-badge">外部依存ゼロ</span>
+                    <h3>面倒なインストール手順なし。ファイルを置くだけ。</h3>
+                </div>
+                <p>
+                    Indie in a Box は単一の実行可能 PHP ファイル <code>indieinabox.php</code> にすべてコンパイルされています。複雑なインストーラスクリプト、Composer、Node.js、外部DBデーモンは<strong>一切不要</strong>です。
+                </p>
+                <p>
+                    サーバーや Docker ボリュームに <code>indieinabox.php</code> を配置するだけ。自動的に WAL モードの SQLite データベースが構築され、即座に起動します。
+                </p>
+
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang">BASH / ターミナル（10秒クイックスタート）</span>
+                        <button class="btn-copy" type="button">COPY</button>
+                    </div>
+                    <pre><code># 1. Download the standalone executable
+curl -LO https://codeberg.org/indieinabox/indieinabox/releases/download/v1.0.0/indieinabox.php
+
+# 2. Run the interactive setup (or pass --setup flags)
+php indieinabox.php setup
+
+# 3. Start the built-in development web server
+php indieinabox.php --serve
+# Listening on http://localhost:8080 - Open in browser to access Admin Dashboard!</code></pre>
+                </div>
+            </section>
+
+            <!-- Manifesto Visual & Trincheira DIY -->
+            <section class="manifesto-banner">
+                <div>
+                    <img src="../assets/img/lambe-hero.jpg" alt="デジタルの占領と DIY の塹壕" style="width: 100%;">
+                </div>
+                <div class="manifesto-text">
+                    <span class="tape-tag">対決の美学 // 反ピンクウォッシング（ANTI-PINKWASHING）</span>
+                    <h3>デジタルの占領と DIY の塹壕</h3>
+                    <p>
+                        ラテンアメリカのアスファルトにおいて、小麦粉と水の糊で貼るストリートポスター（Lambe-Lambe）は、巨大広告やアルゴリズムを買う資本を持たない庶民のための唯一のマスメディアです。午前3時にコンクリート壁に張り巡らされ、都市の灰色の風景と戦い続けます。
+                    </p>
+                    <p>
+                        この剥き出しのアイデンティティを <strong>Indie in a Box</strong> に持ち込むことは、フリーソフトウェアが前線の武器であることを視覚的に宣言することです——シリコンバレーの無菌化されたピンクウォッシングを拒絶し、トランスジェンダーや草の根の自治の力を称えます。
+                    </p>
+                    <div style="display: flex; gap: 12px; margin-top: 0.5rem;">
+                        <a href="admin.html" class="btn-cyber btn-cyber-primary" style="font-size: 0.82rem; padding: 0.65rem 1.2rem;">
+                            管理画面を体験する →
+                        </a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Galeria de Resistência: Gato Preto & Molotov com Flores -->
+            <div class="grid-2" style="margin: 2.5rem 0 3.5rem;">
+                <div class="cyber-card" style="padding: 0; overflow: hidden;">
+                    <img src="../assets/img/lambe-cat.jpg" alt="方法としての簡素さ" style="width: 100%; display: block; border-bottom: 2px solid #000;">
+                    <div style="padding: 1.5rem;">
+                        <span class="tape-tag">自治と生き残り</span>
+                        <h3 style="margin-top: 0.5rem;">方法としての簡素さ</h3>
+                        <p>
+                            安価な藁半紙から純粋なPHPへ：肥大化したフレームワークを排したクリーンなコード。自前ノードを動かすユーザーのささやかなハードウェアを最大限に尊重します。
+                        </p>
+                    </div>
+                </div>
+                <div class="cyber-card" style="padding: 0; overflow: hidden;">
+                    <img src="../assets/img/lambe-molotov.jpg" alt="生きている壁とパリンプセスト" style="width: 100%; display: block; border-bottom: 2px solid #000;">
+                    <div style="padding: 1.5rem;">
+                        <span class="tape-tag">抵抗と開花</span>
+                        <h3 style="margin-top: 0.5rem;">生きている壁とパリンプセスト</h3>
+                        <p>
+                            幾重にも重なり合うポスター、鋭利な黒の直線枠、そして乾ききらない生々しいインク。企業に飼いならされたウェブへの追従を拒むユーザーインターフェース。
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Architecture Pillars -->
+            <h2 class="section-heading">
+                <span class="heading-index">01 //</span>  中核となるアーキテクチャ
+            </h2>
+
+            <div class="grid-3">
+                <div class="cyber-card">
+                    <div class="card-icon">⚡</div>
+                    <h3>単一ファイル PHP ランタイム</h3>
+                    <p>
+                        ルーティング、テンプレート描画、Markdownパーサー、microformats2、SQLite ORM、暗号署名を含む全機能が <code>indieinabox.php</code> 1ファイルに内包されています。
+                    </p>
+                </div>
+
+                <div class="cyber-card">
+                    <div class="card-icon">🌐</div>
+                    <h3>トリプルプロトコルの融合</h3>
+                    <p>
+                        <strong>IndieWeb</strong>（Micropub、Microsub、Webmention）、<strong>Fediverse</strong>（ActivityPub C2S/S2S、グループActor FEP-1b12）、<strong>Twtxt & Yarns</strong> をネイティブ統合。
+                    </p>
+                </div>
+
+                <div class="cyber-card">
+                    <div class="card-icon">🪐</div>
+                    <h3>3大ネットワークへの同時配信</h3>
+                    <p>
+                        投稿すると、最新のセマンティックHTML5に加え、Geminiプロトコル（<code>.gmi</code>）とGopherマップ（<code>gophermap</code>）が自動で同時生成されます。
+                    </p>
+                </div>
+
+                <div class="cyber-card">
+                    <div class="card-icon">🤖</div>
+                    <h3>マルチプロバイダー AI 自動翻訳</h3>
+                    <p>
+                        Google Gemini、OpenAI GPT-4o、Anthropic Claude 3.5、xAI Grok、ローカル Ollama モデルに対応した自動多言語翻訳パイプラインを内蔵。
+                    </p>
+                </div>
+
+                <div class="cyber-card">
+                    <div class="card-icon">🛡️</div>
+                    <h3>連合モデレーション＆遮断スイート</h3>
+                    <p>
+                        ドメイン単位や個別Actor単位での <code>SUSPEND</code> や <code>SILENCE</code>、RFC 9457 に準拠した自動スパム遮断機能を備えています。
+                    </p>
+                </div>
+
+                <div class="cyber-card">
+                    <div class="card-icon">📦</div>
+                    <h3>ベンダーロックイン完全排除</h3>
+                    <p>
+                        全データはローカルの SQLite と Markdown に保存されます。CLI または管理画面から1クリックで暗号化バックアップ（<code>.tar.gz</code> / <code>.zip</code>）が可能です。
+                    </p>
+                </div>
+            </div>
+
+            <!-- Deployment Options -->
+            <h2 class="section-heading">
+                <span class="heading-index">02 //</span>  本番環境デプロイ例
+            </h2>
+
+            <div class="tabs-container">
+                <div class="tab-buttons">
+                    <button class="tab-btn active" data-tab="deploy-docker">Docker & Compose</button>
+                    <button class="tab-btn" data-tab="deploy-franken">FrankenPHP</button>
+                    <button class="tab-btn" data-tab="deploy-caddy">Caddy Server</button>
+                    <button class="tab-btn" data-tab="deploy-nginx">Nginx + PHP-FPM</button>
+                </div>
+
+                <div class="tab-panel active" id="deploy-docker">
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang">DOCKER-COMPOSE.YML</span>
+                            <button class="btn-copy" type="button">COPY</button>
+                        </div>
+                        <pre><code>services:
+  indieinabox:
+    image: dunglas/frankenphp:latest-php8.3
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    environment:
+      - SERVER_NAME=https://yourdomain.com
+    volumes:
+      - ./data:/app/data
+      - ./indieinabox.php:/app/public/index.php</code></pre>
+                    </div>
+                    <p style="color: var(--text-muted); font-size: 0.9rem;">
+                        データ保存先を <code>/app/data</code> に、単一ファイルを <code>/app/public/index.php</code> にマウントするだけ。これだけで完結します！
+                    </p>
+                </div>
+
+                <div class="tab-panel" id="deploy-franken">
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang">CLI COMMAND (STANDALONE FRANKENPHP)</span>
+                            <button class="btn-copy" type="button">COPY</button>
+                        </div>
+                        <pre><code># Run FrankenPHP directly in worker mode
+frankenphp run --root /var/www/myblog/public_html</code></pre>
+                    </div>
+                </div>
+
+                <div class="tab-panel" id="deploy-caddy">
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang">CADDYFILE</span>
+                            <button class="btn-copy" type="button">COPY</button>
+                        </div>
+                        <pre><code>yourdomain.com {
+    root * /var/www/myblog
+    php_fastcgi 127.0.0.1:9000
+    file_server
+
+    # Fallback all dynamic requests to single-file app
+    try_files {path} {path}/ /indieinabox.php?{query}
+}</code></pre>
+                    </div>
+                </div>
+
+                <div class="tab-panel" id="deploy-nginx">
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang">NGINX.CONF</span>
+                            <button class="btn-copy" type="button">COPY</button>
+                        </div>
+                        <pre><code>server {
+    server_name yourdomain.com;
+    root /var/www/myblog;
+    index indieinabox.php index.html;
+
+    location / {
+        try_files $uri $uri/ /indieinabox.php?$args;
+    }
+
+    location ~ \.php$ {
+        include fastcgi_params;
+        fastcgi_pass unix:/run/php/php8.2-fpm.sock;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+    }
+}</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Documentation Index Navigation -->
+            <h2 class="section-heading">
+                <span class="heading-index">03 //</span>  ドキュメント目次
+            </h2>
+
+            <div class="grid-2">
+                <a href="cli.html" class="cyber-card" style="text-decoration: none;">
+                    <div class="card-icon">⌨️</div>
+                    <h3>全 CLI コマンドリファレンス</h3>
+                    <p>
+                        全15種類のコンソールコマンド（<code>build</code>、<code>cron</code>、<code>fetch</code>、<code>post</code>、<code>setup</code>、<code>backup</code> 等）の詳細な使い方を解説。
+                    </p>
+                </a>
+
+                <a href="admin.html" class="cyber-card" style="text-decoration: none;">
+                    <div class="card-icon">🖥️</div>
+                    <h3>管理画面と UI ウォークスルー</h3>
+                    <p>
+                        高解像度UIスクリーンショット付きの全10画面解説：タイムライン購読、連合モデレーション、投稿エディタ、設定タブ。
+                    </p>
+                </a>
+
+                <a href="federation.html" class="cyber-card" style="text-decoration: none;">
+                    <div class="card-icon">🔀</div>
+                    <h3>連合とプロトコルアーキテクチャ</h3>
+                    <p>
+                        Indie in a Box がどのように IndieWeb と ActivityPub を統合し、11の連合プラットフォームと相互通信するかを詳解。
+                    </p>
+                </a>
+
+                <a href="themes.html" class="cyber-card" style="text-decoration: none;">
+                    <div class="card-icon">🎨</div>
+                    <h3>テーマ制作とデジタルガーデン</h3>
+                    <p>
+                        レイアウトの自由なカスタマイズ、<code>theme.json</code> マニフェスト管理、花壇・成熟度・確信度による非線形ナレッジ管理。
+                    </p>
+                </a>
+
+                <a href="twtxt.html" class="cyber-card" style="text-decoration: none;">
+                    <div class="card-icon">🧶</div>
+                    <h3>Twtxt & Yarns プロトコル</h3>
+                    <p>
+                        プレーンテキストの分散マイクロブログ仕様、<code>/twtxt.txt</code> の自動生成、話題別スレッドタグ、メディア埋め込み。
+                    </p>
+                </a>
+            </div>
+
+        </div>
+
+        <!-- Footer -->
+        <footer class="site-footer">
+            <div class="footer-content">
+                <div>INDIE IN A BOX // オールインワン・トリプルプロトコル・エンジン</div>
+                <div>
+                    <a href="https://codeberg.org/indieinabox/indieinabox/src/branch/main/LICENSE" target="_blank" rel="noopener">MIT ライセンス</a> に基づき公開 &bull; ホスト: <a href="https://indieinabox.2lp.in">indieinabox.2lp.in</a>
+                </div>
+            </div>
+        </footer>
+    </main>
+
+    <script src="../assets/js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Indie in a Box - All-in-One IndieWeb & Fediverse Engine</title>
+    <meta name="description" content="A self-contained single-file PHP engine for the decentralized web. Native IndieWeb, ActivityPub, Gemini, Gopher, and Multi-Provider AI Translation in one 2MB file.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Bebas+Neue&family=Outfit:wght@400;600;800&family=JetBrains+Mono:wght@400;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='0' fill='%23141518'/><rect x='10' y='10' width='80' height='80' fill='%23ffe600'/><circle cx='50' cy='50' r='24' fill='%23ff007f'/></svg>">
+</head>
+<body>
+    <button class="mobile-nav-toggle" aria-label="Toggle navigation">☰ MENU</button>
+
+    <!-- Sidebar Navigation matching Admin Shell -->
+    <aside class="admin-sidebar">
+        <div class="sidebar-header">
+            <h1><a href="index.html"><span class="logo-dot"></span>Indieinabox</a></h1>
+            <span class="hud-badge">DIGITAL TRENCH // DECENTRALIZED</span>
+        </div>
+        <div class="lang-selector-strip">
+            <a href="../en/index.html" class="lang-pill active" title="English">EN</a>
+            <a href="../pt/index.html" class="lang-pill" title="Português">PT</a>
+            <a href="../es/index.html" class="lang-pill" title="Español">ES</a>
+            <a href="../fr/index.html" class="lang-pill" title="Français">FR</a>
+            <a href="../de/index.html" class="lang-pill" title="Deutsch">DE</a>
+            <a href="../zh/index.html" class="lang-pill" title="中文 (简体)">ZH</a>
+            <a href="../ja/index.html" class="lang-pill" title="日本語">JA</a>
+            <a href="../ar/index.html" class="lang-pill" title="العربية">AR</a>
+        </div>
+        <nav class="admin-nav">
+            <span class="nav-section-title">DOCUMENTATION</span>
+            <a href="index.html" class="active">
+                <span class="nav-index">01</span> Overview & Setup
+            </a>
+            <a href="cli.html">
+                <span class="nav-index">02</span> CLI Commands
+            </a>
+            <a href="admin.html">
+                <span class="nav-index">03</span> Admin Panel & UI
+            </a>
+            <a href="federation.html">
+                <span class="nav-index">04</span> Federation & Protocols
+            </a>
+            <a href="themes.html">
+                <span class="nav-index">05</span> Themes & Garden
+            </a>
+            <a href="twtxt.html">
+                <span class="nav-index">06</span> Twtxt & Yarns
+            </a>
+
+            <span class="nav-section-title">PROJECT LINKS</span>
+            <a href="https://codeberg.org/indieinabox/indieinabox" target="_blank" rel="noopener">
+                <span class="nav-index">↗</span> Codeberg Repository
+            </a>
+            <a href="https://codeberg.org/indieinabox/indieinabox/releases" target="_blank" rel="noopener">
+                <span class="nav-index">↗</span> Official Releases
+            </a>
+
+            <div class="version-box">
+                <div>ENGINE: <span style="color: var(--tint-yellow);">v1.0.0</span></div>
+                <div style="margin-top: 4px;">HOST: <a href="https://indieinabox.2lp.in">indieinabox.2lp.in</a></div>
+            </div>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-wrapper">
+        <div class="content-container">
+
+            <!-- Hero Header -->
+            <header class="hero-header">
+                <div class="hud-pill">
+                    <span class="pulse-dot"></span>
+                    <span>STANDALONE SINGLE-FILE PHP 8.2+ // INDIEWEB, ACTIVITYPUB & TWTXT</span>
+                </div>
+                <h1 class="hero-title">Indie in a Box</h1>
+                <p class="hero-subtitle">
+                    A zero-dependency, self-contained single-file PHP engine powering your personal website, social reader, publisher, and federated identity across the IndieWeb, Fediverse, Twtxt, Gemini, and Gopher networks.
+                </p>
+                <div class="hero-actions">
+                    <a href="https://codeberg.org/indieinabox/indieinabox/releases/tag/v1.0.0" class="btn-cyber btn-cyber-primary" target="_blank" rel="noopener">
+                        <span>⬇</span> ⬇ Download v1.0.0 (2MB)
+                    </a>
+                    <a href="cli.html" class="btn-cyber btn-cyber-secondary">
+                        Explore CLI Reference →
+                    </a>
+                    <a href="twtxt.html" class="btn-cyber btn-cyber-ghost">
+                        Twtxt & Yarns Guide
+                    </a>
+                </div>
+            </header>
+
+            <!-- Quickstart Installation Banner -->
+            <section class="install-banner">
+                <div class="install-banner-header">
+                    <span class="install-banner-badge">ZERO DEPENDENCIES</span>
+                    <h3>Zero Installation Scripts. Just Drop the File.</h3>
+                </div>
+                <p>
+                    Indie in a Box is compiled into a single executable PHP file: <code>indieinabox.php</code>. You do <strong>not</strong> need complex curl-to-bash installers, Composer setups, Node toolchains, or database daemons.
+                </p>
+                <p>
+                    Simply drop <code>indieinabox.php</code> into your server directory, Docker volume, or webroot. It creates its own SQLite database with WAL mode and runs immediately.
+                </p>
+
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang">BASH / TERMINAL (10-SECOND QUICKSTART)</span>
+                        <button class="btn-copy" type="button">COPY</button>
+                    </div>
+                    <pre><code># 1. Download the standalone executable
+curl -LO https://codeberg.org/indieinabox/indieinabox/releases/download/v1.0.0/indieinabox.php
+
+# 2. Run the interactive setup (or pass --setup flags)
+php indieinabox.php setup
+
+# 3. Start the built-in development web server
+php indieinabox.php --serve
+# Listening on http://localhost:8080 - Open in browser to access Admin Dashboard!</code></pre>
+                </div>
+            </section>
+
+            <!-- Manifesto Visual & Trincheira DIY -->
+            <section class="manifesto-banner">
+                <div>
+                    <img src="../assets/img/lambe-hero.jpg" alt="Digital Occupation & DIY Trench" style="width: 100%;">
+                </div>
+                <div class="manifesto-text">
+                    <span class="tape-tag">CONFRONTATIONAL AESTHETIC // ANTI-PINKWASHING</span>
+                    <h3>Digital Occupation & DIY Trench</h3>
+                    <p>
+                        On Latin American asphalt, wheatpaste poster art (lambe-lambe) is the mass media of those who cannot afford corporate billboards or pay Big Tech surveillance algorithms. It is the poster slapped on walls at 3 AM with homemade wheat-and-water paste, fighting for human retinas against urban concrete and sanitized advertising.
+                    </p>
+                    <p>
+                        Bringing this raw identity to <strong>Indie in a Box</strong> firmly asserts that free software is a frontline trench weapon—hostile to Silicon Valley sterile corporate pinkwashing, and rooted in the fearless affirmation of travesti, peripheral, and autonomous dissidence.
+                    </p>
+                    <div style="display: flex; gap: 12px; margin-top: 0.5rem;">
+                        <a href="admin.html" class="btn-cyber btn-cyber-primary" style="font-size: 0.82rem; padding: 0.65rem 1.2rem;">
+                            Explore the Admin Dashboard →
+                        </a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Galeria de Resistência: Gato Preto & Molotov com Flores -->
+            <div class="grid-2" style="margin: 2.5rem 0 3.5rem;">
+                <div class="cyber-card" style="padding: 0; overflow: hidden;">
+                    <img src="../assets/img/lambe-cat.jpg" alt="Precarity as a Method" style="width: 100%; display: block; border-bottom: 2px solid #000;">
+                    <div style="padding: 1.5rem;">
+                        <span class="tape-tag">AUTONOMY & SURVIVAL</span>
+                        <h3 style="margin-top: 0.5rem;">Precarity as a Method</h3>
+                        <p>
+                            From cheap newsprint to pure PHP: clean code, zero bloated frameworks, zero corporate cloud dependencies, and profound respect for the modest hardware of self-hosters running local nodes.
+                        </p>
+                    </div>
+                </div>
+                <div class="cyber-card" style="padding: 0; overflow: hidden;">
+                    <img src="../assets/img/lambe-molotov.jpg" alt="Living Walls & Palimpsests" style="width: 100%; display: block; border-bottom: 2px solid #000;">
+                    <div style="padding: 1.5rem;">
+                        <span class="tape-tag">RESISTANCE & FLOURISHING</span>
+                        <h3 style="margin-top: 0.5rem;">Living Walls & Palimpsests</h3>
+                        <p>
+                            Layered wheatpaste posters, razor-sharp black borders, and freshly stamped ink. An interface that uncompromisingly refuses the sanitized complacency of the corporate web.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Architecture Pillars -->
+            <h2 class="section-heading">
+                <span class="heading-index">01 //</span>  Core Architectural Pillars
+            </h2>
+
+            <div class="grid-3">
+                <div class="cyber-card">
+                    <div class="card-icon">⚡</div>
+                    <h3>Single-File PHP Runtime</h3>
+                    <p>
+                        The entire runtime, including routing, template rendering, Markdown parser, microformats2 engine, SQLite ORM, and cryptography, is compiled into one self-contained <code>indieinabox.php</code> file.
+                    </p>
+                </div>
+
+                <div class="cyber-card">
+                    <div class="card-icon">🌐</div>
+                    <h3>Triple-Protocol Mastery</h3>
+                    <p>
+                        Native support for <strong>IndieWeb</strong> (Micropub, Microsub, Webmention), <strong>Fediverse</strong> (ActivityPub C2S/S2S, Group Actors FEP-1b12), and <strong>Twtxt & Yarns</strong> flat-file microblogging.
+                    </p>
+                </div>
+
+                <div class="cyber-card">
+                    <div class="card-icon">🪐</div>
+                    <h3>Triple-Network Publishing</h3>
+                    <p>
+                        Publishing a post generates modern semantic HTML5, native Gemini protocol capsules (<code>.gmi</code>), and legacy Gopher protocol maps (<code>gophermap</code>) simultaneously.
+                    </p>
+                </div>
+
+                <div class="cyber-card">
+                    <div class="card-icon">🤖</div>
+                    <h3>Multi-Provider AI Translation</h3>
+                    <p>
+                        Built-in automated multilingual translation pipeline supporting Google Gemini, OpenAI GPT-4o, Anthropic Claude 3.5, xAI Grok, and local self-hosted Ollama models with disk caching.
+                    </p>
+                </div>
+
+                <div class="cyber-card">
+                    <div class="card-icon">🛡️</div>
+                    <h3>Federation Moderation Suite</h3>
+                    <p>
+                        Granular defederation control allowing domain-level or actor-level <code>SUSPEND</code>, <code>SILENCE</code>, and automated spam filtering with RFC 9457 structured problem details.
+                    </p>
+                </div>
+
+                <div class="cyber-card">
+                    <div class="card-icon">📦</div>
+                    <h3>Zero-Vendor Portability</h3>
+                    <p>
+                        Everything is stored locally in SQLite and flat markdown files. Create cryptographically hashed <code>.tar.gz</code> or <code>.zip</code> backups with a single CLI command or one-click export.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Deployment Options -->
+            <h2 class="section-heading">
+                <span class="heading-index">02 //</span>  Production Deployment Recipes
+            </h2>
+
+            <div class="tabs-container">
+                <div class="tab-buttons">
+                    <button class="tab-btn active" data-tab="deploy-docker">Docker & Compose</button>
+                    <button class="tab-btn" data-tab="deploy-franken">FrankenPHP</button>
+                    <button class="tab-btn" data-tab="deploy-caddy">Caddy Server</button>
+                    <button class="tab-btn" data-tab="deploy-nginx">Nginx + PHP-FPM</button>
+                </div>
+
+                <div class="tab-panel active" id="deploy-docker">
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang">DOCKER-COMPOSE.YML</span>
+                            <button class="btn-copy" type="button">COPY</button>
+                        </div>
+                        <pre><code>services:
+  indieinabox:
+    image: dunglas/frankenphp:latest-php8.3
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    environment:
+      - SERVER_NAME=https://yourdomain.com
+    volumes:
+      - ./data:/app/data
+      - ./indieinabox.php:/app/public/index.php</code></pre>
+                    </div>
+                    <p style="color: var(--text-muted); font-size: 0.9rem;">
+                        Mount your persistent data directory to <code>/app/data</code> and the single-file binary to <code>/app/public/index.php</code>. That is all you need!
+                    </p>
+                </div>
+
+                <div class="tab-panel" id="deploy-franken">
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang">CLI COMMAND (STANDALONE FRANKENPHP)</span>
+                            <button class="btn-copy" type="button">COPY</button>
+                        </div>
+                        <pre><code># Run FrankenPHP directly in worker mode
+frankenphp run --root /var/www/myblog/public_html</code></pre>
+                    </div>
+                </div>
+
+                <div class="tab-panel" id="deploy-caddy">
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang">CADDYFILE</span>
+                            <button class="btn-copy" type="button">COPY</button>
+                        </div>
+                        <pre><code>yourdomain.com {
+    root * /var/www/myblog
+    php_fastcgi 127.0.0.1:9000
+    file_server
+
+    # Fallback all dynamic requests to single-file app
+    try_files {path} {path}/ /indieinabox.php?{query}
+}</code></pre>
+                    </div>
+                </div>
+
+                <div class="tab-panel" id="deploy-nginx">
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang">NGINX.CONF</span>
+                            <button class="btn-copy" type="button">COPY</button>
+                        </div>
+                        <pre><code>server {
+    server_name yourdomain.com;
+    root /var/www/myblog;
+    index indieinabox.php index.html;
+
+    location / {
+        try_files $uri $uri/ /indieinabox.php?$args;
+    }
+
+    location ~ \.php$ {
+        include fastcgi_params;
+        fastcgi_pass unix:/run/php/php8.2-fpm.sock;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+    }
+}</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Documentation Index Navigation -->
+            <h2 class="section-heading">
+                <span class="heading-index">03 //</span>  Documentation Index
+            </h2>
+
+            <div class="grid-2">
+                <a href="cli.html" class="cyber-card" style="text-decoration: none;">
+                    <div class="card-icon">⌨️</div>
+                    <h3>Complete CLI Command Reference</h3>
+                    <p>
+                        In-depth guide for all 15 console commands (<code>build</code>, <code>cron</code>, <code>fetch</code>, <code>post</code>, <code>profile</code>, <code>config</code>, <code>setup</code>, <code>test-links</code>, <code>migrate</code>, <code>backup</code>, <code>export</code>, <code>import</code>, <code>test-webmention</code>, <code>version</code>, <code>update</code>) and options.
+                    </p>
+                </a>
+
+                <a href="admin.html" class="cyber-card" style="text-decoration: none;">
+                    <div class="card-icon">🖥️</div>
+                    <h3>Admin Panel & UI Walkthrough</h3>
+                    <p>
+                        Detailed inspection of all 10 admin views with high-res UI screenshots: Timeline Reader, Moderation & Defederation, Publisher Composer, and the 7 Configuration Tabs.
+                    </p>
+                </a>
+
+                <a href="federation.html" class="cyber-card" style="text-decoration: none;">
+                    <div class="card-icon">🔀</div>
+                    <h3>Federation & Protocol Architecture</h3>
+                    <p>
+                        How Indie in a Box unifies IndieWeb standards (Micropub, Microsub, Webmention) with ActivityPub C2S/S2S, Group Actors (FEP-1b12), and 11-platform interop.
+                    </p>
+                </a>
+
+                <a href="themes.html" class="cyber-card" style="text-decoration: none;">
+                    <div class="card-icon">🎨</div>
+                    <h3>Theme Authoring & Digital Garden</h3>
+                    <p>
+                        Customize your layout, manage <code>theme.json</code> manifests, and organize non-linear knowledge with Flowerbeds, Maturity, and Confidence metrics.
+                    </p>
+                </a>
+
+                <a href="twtxt.html" class="cyber-card" style="text-decoration: none;">
+                    <div class="card-icon">🧶</div>
+                    <h3>Twtxt & Yarns Protocol</h3>
+                    <p>
+                        Decentralized flat-file microblogging specification, <code>/twtxt.txt</code> generation, subject threading tags, mentions, and media embeds.
+                    </p>
+                </a>
+            </div>
+
+        </div>
+
+        <!-- Footer -->
+        <footer class="site-footer">
+            <div class="footer-content">
+                <div>INDIE IN A BOX // ALL-IN-ONE TRIPLE-PROTOCOL ENGINE</div>
+                <div>
+                    Released under the <a href="https://codeberg.org/indieinabox/indieinabox/src/branch/main/LICENSE" target="_blank" rel="noopener">MIT License</a> &bull; Hosted on <a href="https://indieinabox.2lp.in">indieinabox.2lp.in</a>
+                </div>
+            </div>
+        </footer>
+    </main>
+
+    <script src="../assets/js/main.js"></script>
+</body>
+</html>

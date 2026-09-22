@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Theme Authoring & Digital Garden - Indie in a Box</title>
+    <meta name="description" content="Guide for creating, customizing, and installing custom themes and configuring digital garden taxonomies in Indie in a Box.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Bebas+Neue&family=Outfit:wght@400;600;800&family=JetBrains+Mono:wght@400;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='0' fill='%23141518'/><rect x='10' y='10' width='80' height='80' fill='%23ffe600'/><circle cx='50' cy='50' r='24' fill='%23ff007f'/></svg>">
+</head>
+<body>
+    <button class="mobile-nav-toggle" aria-label="Toggle navigation">☰ MENU</button>
+
+    <aside class="admin-sidebar">
+        <div class="sidebar-header">
+            <h1><a href="index.html"><span class="logo-dot"></span>Indieinabox</a></h1>
+            <span class="hud-badge">TRINCHEIRA // DESCENTRALIZADA</span>
+        </div>
+        <div class="lang-selector-strip">
+            <a href="../en/themes.html" class="lang-pill" title="English">EN</a>
+            <a href="../pt/themes.html" class="lang-pill active" title="Português">PT</a>
+            <a href="../es/themes.html" class="lang-pill" title="Español">ES</a>
+            <a href="../fr/themes.html" class="lang-pill" title="Français">FR</a>
+            <a href="../de/themes.html" class="lang-pill" title="Deutsch">DE</a>
+            <a href="../zh/themes.html" class="lang-pill" title="中文 (简体)">ZH</a>
+            <a href="../ja/themes.html" class="lang-pill" title="日本語">JA</a>
+            <a href="../ar/themes.html" class="lang-pill" title="العربية">AR</a>
+        </div>
+        <nav class="admin-nav">
+            <span class="nav-section-title">DOCUMENTAÇÃO</span>
+            <a href="index.html">
+                <span class="nav-index">01</span> Visão Geral & Instalação</a>
+            <a href="cli.html">
+                <span class="nav-index">02</span> Comandos CLI</a>
+            <a href="admin.html">
+                <span class="nav-index">03</span> Painel Admin & UI</a>
+            <a href="federation.html">
+                <span class="nav-index">04</span> Federação & Protocolos</a>
+            <a href="themes.html" class="active">
+                <span class="nav-index">05</span> Temas & Jardim Digital</a>
+            <a href="twtxt.html">
+                <span class="nav-index">06</span> Twtxt & Yarns</a>
+
+            <span class="nav-section-title">THEME TOPICS</span>
+            <a href="#theme-manifest"><span class="nav-index">01</span> theme.json Spec</a>
+            <a href="#theme-templates"><span class="nav-index">02</span> Template Hierarchy</a>
+            <a href="#theme-install"><span class="nav-index">03</span> Installing Themes</a>
+            <a href="#garden-taxonomy"><span class="nav-index">04</span> Digital Garden Taxonomies</a>
+
+            <div class="version-box">
+                <div>MOTOR: <span style="color: var(--neon-cyan);">v1.0.0</span></div>
+                <div style="margin-top: 4px;">HOST: <a href="https://indieinabox.2lp.in">indieinabox.2lp.in</a></div>
+            </div>
+        </nav>
+    </aside>
+
+    <main class="main-wrapper">
+        <div class="content-container">
+
+            <header class="hero-header">
+                <div class="hud-pill">
+                    <span class="pulse-dot"></span>
+                    <span>MOTOR DE TEMPLATES & JARDIM DIGITAL</span>
+                </div>
+                <h1 class="hero-title">Criação de Temas & Jardim Digital</h1>
+                <p class="hero-subtitle">
+                    Guia para criar, personalizar e instalar temas customizados e estruturar taxonomias de jardim digital (Canteiros, fases de Maturidade e níveis de Confiança) no Indie in a Box.
+                </p>
+            </header>
+
+            <!-- 01: theme.json Manifest -->
+            <section id="theme-manifest" style="margin-bottom: 4rem;">
+                <h2 class="section-heading">
+                    <span class="heading-index">01 //</span> The theme.json Manifest
+                </h2>
+                <p>
+                    Every theme must contain a <code>theme.json</code> file at its root. This defines theme metadata, authors, required capabilities, custom template overrides, and color options:
+                </p>
+
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang">DATA/THEMES/CYBER-DARK/THEME.JSON</span>
+                        <button class="btn-copy" type="button">COPY</button>
+                    </div>
+                    <pre><code>{
+  "name": "Cyber Dark",
+  "version": "1.0.0",
+  "description": "A 90s anime cyberpunk dark theme with neon cyan and pink accents.",
+  "author": {
+    "name": "Lumen Pink",
+    "url": "https://lumen.pink"
+  },
+  "license": "MIT",
+  "min_engine_version": "1.0.0",
+  "supports": [
+    "microformats2",
+    "digital_garden",
+    "webmentions",
+    "camo_proxy",
+    "multilingual"
+  ],
+  "options": {
+    "accent_color": "#ff2a85",
+    "secondary_color": "#00f0ff",
+    "monospace_code": true
+  }
+}</code></pre>
+                </div>
+            </section>
+
+            <!-- 02: Template Hierarchy -->
+            <section id="theme-templates" style="margin-bottom: 4rem;">
+                <h2 class="section-heading">
+                    <span class="heading-index">02 //</span> Template File Hierarchy
+                </h2>
+                <p>
+                    Theme templates use clean, standard HTML5 with embedded token replacements or minimal PHP view components. The engine falls back to default built-in views if a template file is omitted:
+                </p>
+
+                <div class="cyber-table-wrap">
+                    <table class="cyber-table">
+                        <thead>
+                            <tr>
+                                <th>Template File</th>
+                                <th>Purpose</th>
+                                <th>Available Context Variables</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="param-name">layout.html</td>
+                                <td>Master site wrapper (HTML shell, head tags, header, navigation, footer).</td>
+                                <td><code>{{site_name}}</code>, <code>{{fqdn}}</code>, <code>{{content}}</code>, <code>{{hcard}}</code></td>
+                            </tr>
+                            <tr>
+                                <td class="param-name">index.html</td>
+                                <td>Homepage layout rendering recent posts, pinned garden items, and author bio.</td>
+                                <td><code>{{posts}}</code>, <code>{{author_bio}}</code>, <code>{{recent_replies}}</code></td>
+                            </tr>
+                            <tr>
+                                <td class="param-name">post.html</td>
+                                <td>Single post permalink layout with microformats2 <code>h-entry</code> markup.</td>
+                                <td><code>{{post_title}}</code>, <code>{{post_content}}</code>, <code>{{webmentions}}</code>, <code>{{interactions}}</code></td>
+                            </tr>
+                            <tr>
+                                <td class="param-name">garden.html</td>
+                                <td>Digital Garden index grouping notes by flowerbeds, maturity, and confidence.</td>
+                                <td><code>{{flowerbeds}}</code>, <code>{{maturity_tree}}</code>, <code>{{seedlings}}</code></td>
+                            </tr>
+                            <tr>
+                                <td class="param-name">gemini.gmi</td>
+                                <td>Optional theme override for Gemini protocol capsule rendering.</td>
+                                <td>Gemtext formatting tokens</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- 03: Installing Themes -->
+            <section id="theme-install" style="margin-bottom: 4rem;">
+                <h2 class="section-heading">
+                    <span class="heading-index">03 //</span> Installing & Managing Themes
+                </h2>
+                <p>
+                    You can install themes through the Admin panel or by dropping them directly into <code>data/themes/</code>:
+                </p>
+
+                <div class="grid-2">
+                    <div class="cyber-card">
+                        <h3>Via Admin Dashboard</h3>
+                        <p>
+                            Navigate to <strong>Admin → Configuration → General</strong>. Paste a ZIP download URL or select an official repository. The engine extracts the files and validates the <code>theme.json</code> manifest automatically.
+                        </p>
+                    </div>
+
+                    <div class="cyber-card">
+                        <h3>Via Git / File System</h3>
+                        <p>
+                            Clone or extract any theme repository into <code>data/themes/&lt;theme-name&gt;/</code>. Run <code>php indieinabox.php config set --key active_theme --value &lt;theme-name&gt;</code> and rebuild with <code>php indieinabox.php build</code>.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 04: Digital Garden Taxonomies -->
+            <section id="garden-taxonomy" style="margin-bottom: 4rem;">
+                <h2 class="section-heading">
+                    <span class="heading-index">04 //</span> Digital Garden Taxonomies
+                </h2>
+                <p>
+                    Unlike traditional reverse-chronological blogs, Indie in a Box includes first-class support for non-linear knowledge graphs:
+                </p>
+
+                <div class="cyber-table-wrap">
+                    <table class="cyber-table">
+                        <thead>
+                            <tr>
+                                <th>Taxonomy Metric</th>
+                                <th>Allowed Values</th>
+                                <th>Visual Representation & Meaning</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="param-name">Flowerbed (Category)</td>
+                                <td>Any string slug (e.g. <code>tech</code>, <code>philosophy</code>, <code>cyberpunk</code>)</td>
+                                <td>The thematic "plot of soil" where ideas are cultivated together.</td>
+                            </tr>
+                            <tr>
+                                <td class="param-name">Maturity Stage</td>
+                                <td><code>sprout</code>, <code>seedling</code>, <code>tree</code>, <code>wilted</code>, <code>stone</code></td>
+                                <td>Visual plant lifecycle icon indicating whether an essay is an unfinished seed or evergreen resource.</td>
+                            </tr>
+                            <tr>
+                                <td class="param-name">Confidence Level</td>
+                                <td><code>certain</code>, <code>likely</code>, <code>possible</code>, <code>unlikely</code>, <code>impossible</code></td>
+                                <td>Epistemic indicator signaling the author's certainty in the hypothesis presented.</td>
+                            </tr>
+                            <tr>
+                                <td class="param-name">Importance Weight</td>
+                                <td><code>trivial</code>, <code>minor</code>, <code>moderate</code>, <code>major</code>, <code>critical</code></td>
+                                <td>Sort weight determining prominent placement in search results and capsule roots.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+        </div>
+
+        <footer class="site-footer">
+            <div class="footer-content">
+                <div>INDIE IN A BOX // MOTOR UNIFICADO TRIPLO-PROTOCOLO</div>
+                <div>
+                    Distribuído sob a <a href="https://codeberg.org/indieinabox/indieinabox/src/branch/main/LICENSE" target="_blank" rel="noopener">Licença MIT</a> &bull; Hospedado em <a href="https://indieinabox.2lp.in">indieinabox.2lp.in</a>
+                </div>
+            </div>
+        </footer>
+    </main>
+
+    <script src="../assets/js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CLI Reference - Indie in a Box</title>
+    <meta name="description" content="Exhaustive reference for all 15 CLI commands and options in Indie in a Box single-file PHP engine.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Bebas+Neue&family=Outfit:wght@400;600;800&family=JetBrains+Mono:wght@400;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='0' fill='%23141518'/><rect x='10' y='10' width='80' height='80' fill='%23ffe600'/><circle cx='50' cy='50' r='24' fill='%23ff007f'/></svg>">
+</head>
+<body>
+    <button class="mobile-nav-toggle" aria-label="Toggle navigation">☰ MENU</button>
+
+    <aside class="admin-sidebar">
+        <div class="sidebar-header">
+            <h1><a href="index.html"><span class="logo-dot"></span>Indieinabox</a></h1>
+            <span class="hud-badge">TRANCHÉE // DÉCENTRALISÉE</span>
+        </div>
+        <div class="lang-selector-strip">
+            <a href="../en/cli.html" class="lang-pill" title="English">EN</a>
+            <a href="../pt/cli.html" class="lang-pill" title="Português">PT</a>
+            <a href="../es/cli.html" class="lang-pill" title="Español">ES</a>
+            <a href="../fr/cli.html" class="lang-pill active" title="Français">FR</a>
+            <a href="../de/cli.html" class="lang-pill" title="Deutsch">DE</a>
+            <a href="../zh/cli.html" class="lang-pill" title="中文 (简体)">ZH</a>
+            <a href="../ja/cli.html" class="lang-pill" title="日本語">JA</a>
+            <a href="../ar/cli.html" class="lang-pill" title="العربية">AR</a>
+        </div>
+        <nav class="admin-nav">
+            <span class="nav-section-title">DOCUMENTATION</span>
+            <a href="index.html">
+                <span class="nav-index">01</span> Vue d'Ensemble & Setup</a>
+            <a href="cli.html" class="active">
+                <span class="nav-index">02</span> Commandes CLI</a>
+            <a href="admin.html">
+                <span class="nav-index">03</span> Panneau d'Admin & UI</a>
+            <a href="federation.html">
+                <span class="nav-index">04</span> Fédération & Protocoles</a>
+            <a href="themes.html">
+                <span class="nav-index">05</span> Thèmes & Jardin Numérique</a>
+            <a href="twtxt.html">
+                <span class="nav-index">06</span> Twtxt & Yarns</a>
+
+            <span class="nav-section-title">COMMAND JUMP LIST</span>
+            <a href="#cmd-serve"><span class="nav-index">00</span> --serve</a>
+            <a href="#cmd-setup"><span class="nav-index">01</span> setup</a>
+            <a href="#cmd-build"><span class="nav-index">02</span> build</a>
+            <a href="#cmd-cron"><span class="nav-index">03</span> cron</a>
+            <a href="#cmd-fetch"><span class="nav-index">04</span> fetch</a>
+            <a href="#cmd-post"><span class="nav-index">05</span> post</a>
+            <a href="#cmd-profile"><span class="nav-index">06</span> profile</a>
+            <a href="#cmd-config"><span class="nav-index">07</span> config</a>
+            <a href="#cmd-test-links"><span class="nav-index">08</span> test-links</a>
+            <a href="#cmd-migrate"><span class="nav-index">09</span> migrate</a>
+            <a href="#cmd-backup"><span class="nav-index">10</span> backup</a>
+            <a href="#cmd-export"><span class="nav-index">11</span> export</a>
+            <a href="#cmd-import"><span class="nav-index">12</span> import</a>
+            <a href="#cmd-test-webmention"><span class="nav-index">13</span> test-webmention</a>
+            <a href="#cmd-version"><span class="nav-index">14</span> version</a>
+            <a href="#cmd-update"><span class="nav-index">15</span> update</a>
+
+            <div class="version-box">
+                <div>MOTEUR : <span style="color: var(--neon-cyan);">v1.0.0</span></div>
+                <div style="margin-top: 4px;">HOST: <a href="https://indieinabox.2lp.in">indieinabox.2lp.in</a></div>
+            </div>
+        </nav>
+    </aside>
+
+    <main class="main-wrapper">
+        <div class="content-container">
+
+            <header class="hero-header">
+                <div class="hud-pill">
+                    <span class="pulse-dot"></span>
+                    <span>CLI FICHIER UNIQUE // 15 COMMANDES DE PRODUCTION</span>
+                </div>
+                <h1 class="hero-title">Référence des Commandes CLI</h1>
+                <p class="hero-subtitle">
+                    Manuel exhaustif des 15 commandes console disponibles dans <code>indieinabox.php</code>. De l'automatisation cron et l'ingestion de flux RSS/Atom aux sauvegardes chiffrées en une seule commande et mises à jour sans interruption.
+                </p>
+            </header>
+
+            <!-- Global CLI Usage -->
+            <section class="cyber-card" style="margin-bottom: 3rem;">
+                <h3>Global Syntax & Execution</h3>
+                <p>All CLI commands are invoked directly through PHP with the standalone binary:</p>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang">CLI SYNTAX</span>
+                        <button class="btn-copy" type="button">COPY</button>
+                    </div>
+                    <pre><code>php indieinabox.php [command] [options] [arguments]</code></pre>
+                </div>
+                <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.5rem;">
+                    Run <code>php indieinabox.php help</code> at any time to list all registered commands and their descriptions.
+                </p>
+            </section>
+
+            <!-- 00: --serve -->
+            <section id="cmd-serve" style="margin-bottom: 4rem;">
+                <h2 class="section-heading">
+                    <span class="heading-index">00 //</span> php indieinabox.php --serve
+                </h2>
+                <p>Starts PHP's built-in web server with internal routing dispatched to <code>indieinabox.php</code>. Ideal for local development, content authoring, or low-traffic personal sites.</p>
+
+                <div class="cyber-table-wrap">
+                    <table class="cyber-table">
+                        <thead>
+                            <tr>
+                                <th>Option / Flag</th>
+                                <th>Type</th>
+                                <th>Default</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="param-name">--serve</td>
+                                <td><span class="badge-tag badge-tag-pink">FLAG</span></td>
+                                <td>false</td>
+                                <td>Activates the built-in HTTP development server daemon.</td>
+                            </tr>
+                            <tr>
+                                <td class="param-name">--port &lt;int&gt;</td>
+                                <td><span class="badge-tag badge-tag-cyan">PARAM</span></td>
+                                <td>8080</td>
+                                <td>Port to bind the web server (alias: <code>-p</code>).</td>
+                            </tr>
+                            <tr>
+                                <td class="param-name">--host &lt;ip&gt;</td>
+                                <td><span class="badge-tag badge-tag-cyan">PARAM</span></td>
+                                <td>127.0.0.1</td>
+                                <td>Network interface to bind (use <code>0.0.0.0</code> for Docker containers).</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang">TERMINAL OUTPUT</span>
+                        <button class="btn-copy" type="button">COPY</button>
+                    </div>
+                    <pre><code>$ php indieinabox.php --serve --port 8080
+[2026-09-22 10:00:00] PHP 8.3.6 Development Server (http://127.0.0.1:8080) started
+[2026-09-22 10:00:02] 127.0.0.1:54120 [200]: GET /
+[2026-09-22 10:00:04] 127.0.0.1:54124 [200]: GET /admin/config</code></pre>
+                </div>
+            </section>
+
+            <!-- 01: setup -->
+            <section id="cmd-setup" style="margin-bottom: 4rem;">
+                <h2 class="section-heading">
+                    <span class="heading-index">01 //</span> setup
+                </h2>
+                <p>Initializes the site database, author identity, administrative password, and default configuration. Can be run interactively or in unattended headless mode using command flags.</p>
+
+                <div class="cyber-table-wrap">
+                    <table class="cyber-table">
+                        <thead>
+                            <tr>
+                                <th>Option / Flag</th>
+                                <th>Type</th>
+                                <th>Default</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="param-name">--name &lt;str&gt;</td>
+                                <td><span class="badge-tag badge-tag-cyan">PARAM</span></td>
+                                <td>Indie In A Box</td>
+                                <td>Site title / publication name (alias: <code>--sitename</code>).</td>
+                            </tr>
+                            <tr>
+                                <td class="param-name">--fqdn &lt;url&gt;</td>
+                                <td><span class="badge-tag badge-tag-cyan">PARAM</span></td>
+                                <td>http://localhost:8080</td>
+                                <td>Fully Qualified Domain Name / root canonical URL (alias: <code>--url</code>).</td>
+                            </tr>
+                            <tr>
+                                <td class="param-name">--password &lt;str&gt;</td>
+                                <td><span class="badge-tag badge-tag-cyan">PARAM</span></td>
+                                <td>auto-generated</td>
+                                <td>Admin & IndieAuth password. If omitted, a secure 24-character random password is generated and printed.</td>
+                            </tr>
+                            <tr>
+                                <td class="param-name">--author &lt;str&gt;</td>
+                                <td><span class="badge-tag badge-tag-cyan">PARAM</span></td>
+                                <td>Site Author</td>
+                                <td>Display name of the site author for h-card and ActivityPub Actor.</td>
+                            </tr>
+                            <tr>
+                                <td class="param-name">--db &lt;path&gt;</td>
+                                <td><span class="badge-tag badge-tag-cyan">PARAM</span></td>
+                                <td>data/indieinabox.sqlite</td>
+                                <td>SQLite database file path (alias: <code>--database</code>).</td>
+                            </tr>
+                            <tr>
+                                <td class="param-name">--data-dir &lt;dir&gt;</td>
+                                <td><span class="badge-tag badge-tag-cyan">PARAM</span></td>
+                                <td>data</td>
+                                <td>Persistent storage directory for feeds, database, and local caches.</td>
+                            </tr>
+                            <tr>
+                                <td class="param-name">--lang &lt;code&gt;</td>
+                                <td><span class="badge-tag badge-tag-cyan">PARAM</span></td>
+                                <td>en</td>
+                                <td>Primary locale code (e.g. <code>en</code>, <code>pt-BR</code>, <code>es</code>).</td>
+                            </tr>
+                            <tr>
+                                <td class="param-name">--force</td>
+                                <td><span class="badge-tag badge-tag-pink">FLAG</span></td>
+                                <td>false</td>
+                                <td>Overwrites existing configuration and re-runs database setup without confirmation.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang">HEADLESS SETUP EXAMPLE</span>
+                        <button class="btn-copy" type="button">COPY</button>
+                    </div>
+                    <pre><code>$ php indieinabox.php setup \
+    --name "Lumen Cyberdeck" \
+    --fqdn "https://lumen.pink" \
+    --author "Lumen Pink" \
+    --password "SuperSecretPassphrase2026!" \
+    --lang "en"
+
+[OK] SQLite database initialized at data/indieinabox.sqlite
+[OK] Migrations applied: 18/18 up to date
+[OK] Site profile registered: Lumen Pink <https://lumen.pink>
+[OK] Admin password configured successfully!</code></pre>
+                </div>
+            </section>
+
+            <!-- 02: build -->
+            <section id="cmd-build" style="margin-bottom: 4rem;">
+                <h2 class="section-heading">
+                    <span class="heading-index">02 //</span> build
+                </h2>
+                <p>Executes the static compilation pipeline. Scans content, builds HTML pages, compiles Gemini capsules (<code>.gmi</code>), Gophermaps, RSS 2.0, Atom, JSON Feeds, and Twtxt timelines, and runs garbage collection.</p>
+
+                <div class="cyber-table-wrap">
+                    <table class="cyber-table">
+                        <thead>
+                            <tr>
+                                <th>Option / Flag</th>
+                                <th>Type</th>
+                                <th>Default</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="param-name">-s, --site</td>
+                                <td><span class="badge-tag badge-tag-pink">FLAG</span></td>
+                                <td>true</td>
+                                <td>Compiles HTML pages to <code>public_html/</code>.</td>
+                            </tr>
+                            <tr>
+                                <td class="param-name">-f, --feeds</td>
+                                <td><span class="badge-tag badge-tag-pink">FLAG</span></td>
+                                <td>true</td>
+                                <td>Generates syndication feeds (RSS, Atom, JSON, Twtxt).</td>
+                            </tr>
+                            <tr>
+                                <td class="param-name">-a, --assets</td>
+                                <td><span class="badge-tag badge-tag-pink">FLAG</span></td>
+                                <td>true</td>
+                                <td>Copies static CSS, JS, and font assets.</td>
+                            </tr>
+                            <tr>
+                                <td class="param-name">-M, --media</td>
+                                <td><span class="badge-tag badge-tag-pink">FLAG</span></td>
+                                <td>true</td>
+                                <td>Synchronizes uploaded user media and Microsub avatars.</td>
+                            </tr>
+                            <tr>
+                                <td class="param-name">-m, --modern</td>
+                                <td><span class="badge-tag badge-tag-pink">FLAG</span></td>
+                                <td>true</td>
+                                <td>Compiles Gemini capsules (<code>public_gemini/</code>) and Gopher (<code>public_gopher/</code>).</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang">TERMINAL BENCHMARK OUTPUT</span>
+                        <button class="btn-copy" type="button">COPY</button>
+                    </div>
+                    <pre><code>$ php indieinabox.php build
+Scanning content directory...
+Virtualizing posts and taxomies...
+Built 142 HTML documents
+Built 142 Gemini (.gmi) capsules
+Built 142 Gophermaps
+Generating feeds: rss.xml, atom.xml, twtxt.txt, feed.json
+Copying assets and media files...
+Running Garbage Collector...
+
++----------------------------------+-----------------+
+| Task                             | Time (ms)       |
++----------------------------------+-----------------+
+| Scan + Virtualize                |           12.13 |
+| Generate HTML/GMI/Gopher         |          285.36 |
+| Generate Feeds                   |            3.00 |
+| Copy Assets                      |            0.08 |
+| Copy Media                       |            6.66 |
+| Copy Static Files                |            0.02 |
+| Garbage Collect                  |           11.24 |
++----------------------------------+-----------------+
+| TOTAL BUILD TIME                 |          318.49 |
++----------------------------------+-----------------+
+Build complete</code></pre>
+                </div>
+            </section>
+
+            <!-- 03: cron -->
+            <section id="cmd-cron" style="margin-bottom: 4rem;">
+                <h2 class="section-heading">
+                    <span class="heading-index">03 //</span> cron
+                </h2>
+                <p>Executes scheduled asynchronous background pipelines. Handles federated ActivityPub inbox processing, delivery of outbox activities, outgoing Webmention pings, and syndication to Internet Archive.</p>
+
+                <div class="cyber-table-wrap">
+                    <table class="cyber-table">
+                        <thead>
+                            <tr>
+                                <th>Option / Flag</th>
+                                <th>Type</th>
+                                <th>Default</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="param-name">--only &lt;task&gt;</td>
+                                <td><span class="badge-tag badge-tag-cyan">PARAM</span></td>
+                                <td>all</td>
+                                <td>Limits execution to a specific worker: <code>activitypub</code>, <code>webmentions</code>, or <code>archive</code>.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang">SYSTEMD / CRONTAB INTEGRATION</span>
+                        <button class="btn-copy" type="button">COPY</button>
+                    </div>
+                    <pre><code># Run every 5 minutes in server crontab:
+*/5 * * * * cd /var/www/myblog && php indieinabox.php cron >> data/cron.log 2>&1</code></pre>
+                </div>
+            </section>
+
+            <!-- 04: fetch -->
+            <section id="cmd-fetch" style="margin-bottom: 4rem;">
+                <h2 class="section-heading">
+                    <span class="heading-index">04 //</span> fetch
+                </h2>
+                <p>Microsub feed fetcher. Traverses active subscriptions across RSS, Atom, JSON Feed, and Twtxt channels and ingests new entries into the local reader database.</p>
+
+                <div class="cyber-table-wrap">
+                    <table class="cyber-table">
+                        <thead>
+                            <tr>
+                                <th>Alias</th>
+                                <th>Type</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="param-name">microsub:fetch</td>
+                                <td><span class="badge-tag badge-tag-amber">ALIAS</span></td>
+                                <td>Alternative command name registered in the CLI kernel.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang">TERMINAL OUTPUT</span>
+                        <button class="btn-copy" type="button">COPY</button>
+                    </div>
+                    <pre><code>$ php indieinabox.php fetch
+Fetching feeds...
+[POLL] https://aaronparecki.com/feed.xml -> 3 new items
+[POLL] https://werd.io/feed -> 0 new items
+[POLL] https://twtxt.net/user/alice/twtxt.txt -> 1 new item
+[OK] Microsub database updated successfully (4 items ingested).</code></pre>
+                </div>
+            </section>
+
+            <!-- 05: post -->
+            <section id="cmd-post" style="margin-bottom: 4rem;">
+                <h2 class="section-heading">
+                    <span class="heading-index">05 //</span> post
+                </h2>
+                <p>Creates and publishes content directly from the command line. Automatically assigns post kinds (note, article, reply), processes hashtags, and triggers outgoing syndication.</p>
+
+                <div class="cyber-table-wrap">
+                    <table class="cyber-table">
+                        <thead>
+                            <tr>
+                                <th>Subcommand / Option</th>
+                                <th>Type</th>
+                                <th>Default</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="param-name">create</td>
+                                <td><span class="badge-tag badge-tag-pink">SUBCOMMAND</span></td>
+                                <td>required</td>
+                                <td>Creates a new post entry.</td>
+                            </tr>
+                            <tr>
+                                <td class="param-name">--text &lt;content&gt;</td>
+                                <td><span class="badge-tag badge-tag-cyan">PARAM</span></td>
+                                <td>required</td>
+                                <td>Text content or markdown of the post.</td>
+                            </tr>
+                            <tr>
+                                <td class="param-name">--media &lt;file&gt;</td>
+                                <td><span class="badge-tag badge-tag-cyan">PARAM</span></td>
+                                <td>none</td>
+                                <td>Path to image, audio, or file attachment to upload.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang">CLI PUBLISHING EXAMPLE</span>
+                        <button class="btn-copy" type="button">COPY</button>
+                    </div>
+                    <pre><code>$ php indieinabox.php post create \
+    --text "Hacking on the new single-file IndieWeb engine! #indieweb #php" \
+    --media ~/photos/desk.jpg
+
+[OK] Post created: 2026-09-22-hacking-on-the-new-single-file.md
+[OK] Media attached: desk.jpg (processed & signed)
+[OK] Webmentions dispatched: 2 targets pinged
+[OK] ActivityPub outbox updated: Create(Note) announced to 48 followers</code></pre>
+                </div>
+            </section>
+
+            <!-- 06: profile -->
+            <section id="cmd-profile" style="margin-bottom: 4rem;">
+                <h2 class="section-heading">
+                    <span class="heading-index">06 //</span> profile
+                </h2>
+                <p>Updates site identity, bio, social rel-me links, avatar portrait, and profile header banner image.</p>
+
+                <div class="cyber-table-wrap">
+                    <table class="cyber-table">
+                        <thead>
+                            <tr>
+                                <th>Subcommand / Option</th>
+                                <th>Type</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="param-name">edit</td>
+                                <td><span class="badge-tag badge-tag-pink">SUBCOMMAND</span></td>
+                                <td>Modifies profile metadata text fields.</td>
+                            </tr>
+                            <tr>
+                                <td class="param-name">--username &lt;str&gt;</td>
+                                <td><span class="badge-tag badge-tag-cyan">PARAM</span></td>
+                                <td>Fediverse handle username (e.g. <code>@lumen</code>).</td>
+                            </tr>
+                            <tr>
+                                <td class="param-name">--name &lt;str&gt;</td>
+                                <td><span class="badge-tag badge-tag-cyan">PARAM</span></td>
+                                <td>Full display name of author.</td>
+                            </tr>
+                            <tr>
+                                <td class="param-name">--bio &lt;str&gt;</td>
+                                <td><span class="badge-tag badge-tag-cyan">PARAM</span></td>
+                                <td>Short biographical text summary.</td>
+                            </tr>
+                            <tr>
+                                <td class="param-name">media</td>
+                                <td><span class="badge-tag badge-tag-pink">SUBCOMMAND</span></td>
+                                <td>Updates profile images.</td>
+                            </tr>
+                            <tr>
+                                <td class="param-name">--avatar &lt;path&gt;</td>
+                                <td><span class="badge-tag badge-tag-cyan">PARAM</span></td>
+                                <td>Path to portrait avatar image.</td>
+                            </tr>
+                            <tr>
+                                <td class="param-name">--background &lt;path&gt;</td>
+                                <td><span class="badge-tag badge-tag-cyan">PARAM</span></td>
+                                <td>Path to header banner background image.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang">PROFILE UPDATE EXAMPLE</span>
+                        <button class="btn-copy" type="button">COPY</button>
+                    </div>
+                    <pre><code>$ php indieinabox.php profile edit --username "lumen" --name "Lumen Pink" --bio "Cyberpunk hacker & IndieWeb builder"
+$ php indieinabox.php profile media --avatar assets/avatar.png --background assets/banner.jpg
+[OK] Profile updated: @lumen (Lumen Pink)
+[OK] Media assets optimized and copied to public_media/</code></pre>
+                </div>
+            </section>
+
+            <!-- 07: config -->
+            <section id="cmd-config" style="margin-bottom: 4rem;">
+                <h2 class="section-heading">
+                    <span class="heading-index">07 //</span> config
+                </h2>
+                <p>Direct inspection and manipulation of runtime site configuration key-value pairs stored in the SQLite database.</p>
+
+                <div class="cyber-table-wrap">
+                    <table class="cyber-table">
+                        <thead>
+                            <tr>
+                                <th>Subcommand / Option</th>
+                                <th>Type</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="param-name">get --key &lt;str&gt;</td>
+                                <td><span class="badge-tag badge-tag-cyan">PARAM</span></td>
+                                <td>Prints the current stored value for the specified key.</td>
+                            </tr>
+                            <tr>
+                                <td class="param-name">set --key &lt;k&gt; --value &lt;v&gt;</td>
+                                <td><span class="badge-tag badge-tag-cyan">PARAM</span></td>
+                                <td>Persists a new value for the configuration key.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang">CLI USAGE</span>
+                        <button class="btn-copy" type="button">COPY</button>
+                    </div>
+                    <pre><code>$ php indieinabox.php config get --key active_theme
+default
+
+$ php indieinabox.php config set --key active_theme --value cyber-dark
+[OK] Configuration updated: active_theme = 'cyber-dark'</code></pre>
+                </div>
+            </section>
+
+            <!-- 08: test-links -->
+            <section id="cmd-test-links" style="margin-bottom: 4rem;">
+                <h2 class="section-heading">
+                    <span class="heading-index">08 //</span> test-links
+                </h2>
+                <p>Static link crawler. Scans generated HTML documents to detect dead hyperlinks, broken relative paths, and unresolvable external URLs.</p>
+
+                <div class="cyber-table-wrap">
+                    <table class="cyber-table">
+                        <thead>
+                            <tr>
+                                <th>Option / Flag</th>
+                                <th>Type</th>
+                                <th>Default</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="param-name">--skip-external</td>
+                                <td><span class="badge-tag badge-tag-pink">FLAG</span></td>
+                                <td>false</td>
+                                <td>Audits internal links only; avoids issuing outbound HTTP requests.</td>
+                            </tr>
+                            <tr>
+                                <td class="param-name">--internal-only</td>
+                                <td><span class="badge-tag badge-tag-pink">FLAG</span></td>
+                                <td>false</td>
+                                <td>Alias for <code>--skip-external</code>.</td>
+                            </tr>
+                            <tr>
+                                <td class="param-name">--report &lt;path&gt;</td>
+                                <td><span class="badge-tag badge-tag-cyan">PARAM</span></td>
+                                <td>none</td>
+                                <td>Exports an audit report in JSON or Markdown to the specified file path.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang">LINK CHECK OUTPUT</span>
+                        <button class="btn-copy" type="button">COPY</button>
+                    </div>
+                    <pre><code>$ php indieinabox.php test-links --skip-external
+Scanning 142 HTML files in public_html/...
+Crawling 1,280 internal links...
+[OK] 1,280 links verified. 0 broken links detected! (Exit code: 0)</code></pre>
+                </div>
+            </section>
+
+            <!-- 09: migrate -->
+            <section id="cmd-migrate" style="margin-bottom: 4rem;">
+                <h2 class="section-heading">
+                    <span class="heading-index">09 //</span> migrate
+                </h2>
+                <p>Database schema version control. Applies pending SQLite migrations, rolls back recent batches, or inspects current migration states.</p>
+
+                <div class="cyber-table-wrap">
+                    <table class="cyber-table">
+                        <thead>
+                            <tr>
+                                <th>Option / Flag</th>
+                                <th>Type</th>
+                                <th>Default</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="param-name">--status</td>
+                                <td><span class="badge-tag badge-tag-pink">FLAG</span></td>
+                                <td>false</td>
+                                <td>Prints a table of all migrations with execution status and timestamp.</td>
+                            </tr>
+                            <tr>
+                                <td class="param-name">--rollback</td>
+                                <td><span class="badge-tag badge-tag-pink">FLAG</span></td>
+                                <td>false</td>
+                                <td>Rolls back the last executed migration batch.</td>
+                            </tr>
+                            <tr>
+                                <td class="param-name">--steps &lt;int&gt;</td>
+                                <td><span class="badge-tag badge-tag-cyan">PARAM</span></td>
+                                <td>1</td>
+                                <td>Number of migration steps to rollback when <code>--rollback</code> is enabled.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang">MIGRATION STATUS TABLE</span>
+                        <button class="btn-copy" type="button">COPY</button>
+                    </div>
+                    <pre><code>$ php indieinabox.php migrate --status
++-------------------------------------------------------+---------+---------------------+
+| Migration                                             | Status  | Executed At         |
++-------------------------------------------------------+---------+---------------------+
+| 2026_09_01_000001_create_posts_table                  | Ran     | 2026-09-01 12:00:00 |
+| 2026_09_05_000002_create_activitypub_actors_table     | Ran     | 2026-09-05 14:15:30 |
+| 2026_09_12_000003_create_moderation_rules_table       | Ran     | 2026-09-12 18:22:11 |
+| 2026_09_20_000004_create_ai_translation_cache_table   | Ran     | 2026-09-20 09:40:02 |
++-------------------------------------------------------+---------+---------------------+
+All migrations up to date.</code></pre>
+                </div>
+            </section>
+
+            <!-- 10: backup -->
+            <section id="cmd-backup" style="margin-bottom: 4rem;">
+                <h2 class="section-heading">
+                    <span class="heading-index">10 //</span> backup
+                </h2>
+                <p>Creates a full point-in-time ZIP backup containing the SQLite database, markdown contents, and media attachments.</p>
+
+                <div class="cyber-table-wrap">
+                    <table class="cyber-table">
+                        <thead>
+                            <tr>
+                                <th>Option / Flag</th>
+                                <th>Type</th>
+                                <th>Default</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="param-name">--no-content</td>
+                                <td><span class="badge-tag badge-tag-pink">FLAG</span></td>
+                                <td>false</td>
+                                <td>Excludes the markdown <code>content/</code> directory from the archive.</td>
+                            </tr>
+                            <tr>
+                                <td class="param-name">--no-media</td>
+                                <td><span class="badge-tag badge-tag-pink">FLAG</span></td>
+                                <td>false</td>
+                                <td>Excludes the <code>public_media/</code> directory to produce a lightweight backup.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang">BACKUP EXECUTION</span>
+                        <button class="btn-copy" type="button">COPY</button>
+                    </div>
+                    <pre><code>$ php indieinabox.php backup
+[BACKUP] Snapshotting database: data/indieinabox.sqlite...
+[BACKUP] Archiving markdown posts (142 files)...
+[BACKUP] Archiving user media attachments (38 files)...
+[OK] Archive created: data/backups/indieinabox_backup_2026-09-22_10-15-00.zip (14.2 MB)</code></pre>
+                </div>
+            </section>
+
+            <!-- 11: export -->
+            <section id="cmd-export" style="margin-bottom: 4rem;">
+                <h2 class="section-heading">
+                    <span class="heading-index">11 //</span> export
+                </h2>
+                <p>Generates a portable, cryptographically verified export bundle (<code>.tar.gz</code> or <code>.zip</code>) complete with a SHA-256 manifest for migrating between servers.</p>
+
+                <div class="cyber-table-wrap">
+                    <table class="cyber-table">
+                        <thead>
+                            <tr>
+                                <th>Argument / Option</th>
+                                <th>Type</th>
+                                <th>Default</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="param-name">[output-file]</td>
+                                <td><span class="badge-tag badge-tag-cyan">ARG</span></td>
+                                <td>timestamped</td>
+                                <td>Positional filename or <code>--output &lt;path&gt;</code>.</td>
+                            </tr>
+                            <tr>
+                                <td class="param-name">--no-content</td>
+                                <td><span class="badge-tag badge-tag-pink">FLAG</span></td>
+                                <td>false</td>
+                                <td>Omits markdown content folder.</td>
+                            </tr>
+                            <tr>
+                                <td class="param-name">--no-media</td>
+                                <td><span class="badge-tag badge-tag-pink">FLAG</span></td>
+                                <td>false</td>
+                                <td>Omits media folder.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- 12: import -->
+            <section id="cmd-import" style="margin-bottom: 4rem;">
+                <h2 class="section-heading">
+                    <span class="heading-index">12 //</span> import
+                </h2>
+                <p>Restores an export bundle into the running instance. Automatically performs SHA-256 checksum verification, creates an automatic safety rollback snapshot, applies database records, and initiates a rebuild.</p>
+
+                <div class="cyber-table-wrap">
+                    <table class="cyber-table">
+                        <thead>
+                            <tr>
+                                <th>Option / Flag</th>
+                                <th>Type</th>
+                                <th>Default</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="param-name">&lt;archive-file&gt;</td>
+                                <td><span class="badge-tag badge-tag-cyan">ARG</span></td>
+                                <td>required</td>
+                                <td>Path to the <code>.zip</code> or <code>.tar.gz</code> bundle to import.</td>
+                            </tr>
+                            <tr>
+                                <td class="param-name">--inspect</td>
+                                <td><span class="badge-tag badge-tag-pink">FLAG</span></td>
+                                <td>false</td>
+                                <td>Dry-run mode: prints bundle metadata, version compatibility, and contents without modifying disk.</td>
+                            </tr>
+                            <tr>
+                                <td class="param-name">--no-verify</td>
+                                <td><span class="badge-tag badge-tag-pink">FLAG</span></td>
+                                <td>false</td>
+                                <td>Bypasses SHA-256 manifest integrity verification.</td>
+                            </tr>
+                            <tr>
+                                <td class="param-name">--no-safety-backup</td>
+                                <td><span class="badge-tag badge-tag-pink">FLAG</span></td>
+                                <td>false</td>
+                                <td>Skips automatic safety backup generation before overwriting database.</td>
+                            </tr>
+                            <tr>
+                                <td class="param-name">--no-build</td>
+                                <td><span class="badge-tag badge-tag-pink">FLAG</span></td>
+                                <td>false</td>
+                                <td>Prevents triggering <code>build</code> static compilation after successful restore.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- 13: test-webmention -->
+            <section id="cmd-test-webmention" style="margin-bottom: 4rem;">
+                <h2 class="section-heading">
+                    <span class="heading-index">13 //</span> test-webmention
+                </h2>
+                <p>Diagnostics tool for IndieWeb communication. Tests endpoint discovery on remote URLs, simulates ping transmissions, and validates IndieWebify.me Level 1 representative h-card markup.</p>
+
+                <div class="cyber-table-wrap">
+                    <table class="cyber-table">
+                        <thead>
+                            <tr>
+                                <th>Argument / Option</th>
+                                <th>Type</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="param-name">&lt;target-url&gt;</td>
+                                <td><span class="badge-tag badge-tag-cyan">ARG</span></td>
+                                <td>Target URL to discover Webmention endpoint for.</td>
+                            </tr>
+                            <tr>
+                                <td class="param-name">--source &lt;url&gt;</td>
+                                <td><span class="badge-tag badge-tag-cyan">PARAM</span></td>
+                                <td>Source URL on your domain containing the link.</td>
+                            </tr>
+                            <tr>
+                                <td class="param-name">--validate-hcard [url]</td>
+                                <td><span class="badge-tag badge-tag-pink">FLAG</span></td>
+                                <td>Parses local or remote HTML and asserts presence of <code>p-name</code>, <code>u-url</code>, <code>u-photo</code>, and <code>u-email</code> microformats2.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- 14: version -->
+            <section id="cmd-version" style="margin-bottom: 4rem;">
+                <h2 class="section-heading">
+                    <span class="heading-index">14 //</span> version
+                </h2>
+                <p>Displays installed version details, binary compilation status, PHP environment, and build timestamp.</p>
+
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang">VERSION OUTPUT</span>
+                        <button class="btn-copy" type="button">COPY</button>
+                    </div>
+                    <pre><code>$ php indieinabox.php version
+Indie in a Box v1.0.0 (Compiled Standalone Single-File)
+Build Date: 2026-09-22 06:59:00 UTC
+PHP Version: 8.3.6 (cli) (built: Apr 15 2024 10:20:00)
+SQLite Version: 3.45.1 (WAL mode enabled)</code></pre>
+                </div>
+            </section>
+
+            <!-- 15: update -->
+            <section id="cmd-update" style="margin-bottom: 4rem;">
+                <h2 class="section-heading">
+                    <span class="heading-index">15 //</span> update
+                </h2>
+                <p>Integrated in-place self-updater. Communicates with official Codeberg release feeds to verify signatures, download new builds, apply upgrades, and maintain instant rollback backups.</p>
+
+                <div class="cyber-table-wrap">
+                    <table class="cyber-table">
+                        <thead>
+                            <tr>
+                                <th>Option / Flag</th>
+                                <th>Type</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="param-name">--check</td>
+                                <td><span class="badge-tag badge-tag-pink">FLAG</span></td>
+                                <td>Checks Codeberg for available releases without altering files (default behavior).</td>
+                            </tr>
+                            <tr>
+                                <td class="param-name">--apply</td>
+                                <td><span class="badge-tag badge-tag-pink">FLAG</span></td>
+                                <td>Downloads, verifies checksums, creates a pre-update backup, and replaces <code>indieinabox.php</code>.</td>
+                            </tr>
+                            <tr>
+                                <td class="param-name">--backups</td>
+                                <td><span class="badge-tag badge-tag-pink">FLAG</span></td>
+                                <td>Lists local historical version backups stored in <code>data/backups/</code>.</td>
+                            </tr>
+                            <tr>
+                                <td class="param-name">--rollback [--file &lt;f&gt;]</td>
+                                <td><span class="badge-tag badge-tag-pink">FLAG</span></td>
+                                <td>Instantly reverts to the previous binary version.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang">SELF-UPDATE TERMINAL EXAMPLE</span>
+                        <button class="btn-copy" type="button">COPY</button>
+                    </div>
+                    <pre><code>$ php indieinabox.php update --check
+Current Version: v1.0.0
+Latest Available: v1.0.0
+[OK] You are running the latest version!
+
+$ php indieinabox.php update --apply
+Creating safety backup of indieinabox.php...
+Downloading v1.0.0 from Codeberg...
+Verifying SHA-256 signature... OK
+Applying update in-place...
+Running post-update migrations...
+[SUCCESS] Updated to Indie in a Box v1.0.0!</code></pre>
+                </div>
+            </section>
+
+        </div>
+
+        <footer class="site-footer">
+            <div class="footer-content">
+                <div>INDIE IN A BOX // MOTEUR TRIPLE PROTOCOLE DÉCENTRALISÉ</div>
+                <div>
+                    Distribué sous <a href="https://codeberg.org/indieinabox/indieinabox/src/branch/main/LICENSE" target="_blank" rel="noopener">Licence MIT</a> &bull; Hébergé sur <a href="https://indieinabox.2lp.in">indieinabox.2lp.in</a>
+                </div>
+            </div>
+        </footer>
+    </main>
+
+    <script src="../assets/js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Indie in a Box - محرك الويب المستقل وفيديفيرس الشامل في ملف واحد</title>
+    <meta name="description" content="محرك PHP أحادي الملف للويب اللامركزي المستقل. دعم أصيل لـ IndieWeb وActivityPub وTwtxt وGemini وGopher وترجمة الذكاء الاصطناعي بحجم 2 ميغابايت فقط.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Bebas+Neue&family=Outfit:wght@400;600;800&family=JetBrains+Mono:wght@400;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='0' fill='%23141518'/><rect x='10' y='10' width='80' height='80' fill='%23ffe600'/><circle cx='50' cy='50' r='24' fill='%23ff007f'/></svg>">
+</head>
+<body>
+    <button class="mobile-nav-toggle" aria-label="Toggle navigation">☰ القائمة</button>
+
+    <!-- Sidebar Navigation matching Admin Shell -->
+    <aside class="admin-sidebar">
+        <div class="sidebar-header">
+            <h1><a href="index.html"><span class="logo-dot"></span>Indieinabox</a></h1>
+            <span class="hud-badge">خندق رقمي // لامركزية حرة</span>
+        </div>
+        <div class="lang-selector-strip">
+            <a href="../en/index.html" class="lang-pill" title="English">EN</a>
+            <a href="../pt/index.html" class="lang-pill" title="Português">PT</a>
+            <a href="../es/index.html" class="lang-pill" title="Español">ES</a>
+            <a href="../fr/index.html" class="lang-pill" title="Français">FR</a>
+            <a href="../de/index.html" class="lang-pill" title="Deutsch">DE</a>
+            <a href="../zh/index.html" class="lang-pill" title="中文 (简体)">ZH</a>
+            <a href="../ja/index.html" class="lang-pill" title="日本語">JA</a>
+            <a href="../ar/index.html" class="lang-pill active" title="العربية">AR</a>
+        </div>
+        <nav class="admin-nav">
+            <span class="nav-section-title">التوثيق والدليل</span>
+            <a href="index.html" class="active">
+                <span class="nav-index">01</span> نظرة عامة والتثبيت السريع
+            </a>
+            <a href="cli.html">
+                <span class="nav-index">02</span> أوامر سطر الأوامر (CLI)
+            </a>
+            <a href="admin.html">
+                <span class="nav-index">03</span> لوحة الإدارة والواجهة
+            </a>
+            <a href="federation.html">
+                <span class="nav-index">04</span> الفيديرالية والبروتوكولات
+            </a>
+            <a href="themes.html">
+                <span class="nav-index">05</span> القوالب والحديقة الرقمية
+            </a>
+            <a href="twtxt.html">
+                <span class="nav-index">06</span> مواصفات Twtxt وYarns
+            </a>
+
+            <span class="nav-section-title">روابط المشروع المفتوح</span>
+            <a href="https://codeberg.org/indieinabox/indieinabox" target="_blank" rel="noopener">
+                <span class="nav-index">↗</span> مستودع Codeberg
+            </a>
+            <a href="https://codeberg.org/indieinabox/indieinabox/releases" target="_blank" rel="noopener">
+                <span class="nav-index">↗</span> الإصدارات الرسمية
+            </a>
+
+            <div class="version-box">
+                <div>ENGINE: <span style="color: var(--tint-yellow);">v1.0.0</span></div>
+                <div style="margin-top: 4px;">HOST: <a href="https://indieinabox.2lp.in">indieinabox.2lp.in</a></div>
+            </div>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-wrapper">
+        <div class="content-container">
+
+            <!-- Hero Header -->
+            <header class="hero-header">
+                <div class="hud-pill">
+                    <span class="pulse-dot"></span>
+                    <span>ملف تنفيذي أحادي PHP 8.2+ // INDIEWEB و ACTIVITYPUB و TWTXT</span>
+                </div>
+                <h1 class="hero-title">Indie in a Box</h1>
+                <p class="hero-subtitle">
+                    محرك PHP متكامل ومستقل في ملف واحد بدون أي تبعيات خارجية، يشغل موقعك الشخصي، قارئ الخلاصات الاجتماعية، منصة النشر وهويتك اللامركزية عبر شبكات IndieWeb وFediverse وTwtxt وGemini وGopher.
+                </p>
+                <div class="hero-actions">
+                    <a href="https://codeberg.org/indieinabox/indieinabox/releases/tag/v1.0.0" class="btn-cyber btn-cyber-primary" target="_blank" rel="noopener">
+                        <span>⬇</span> ⬇ تحميل الإصدار v1.0.0 (2 ميغابايت)
+                    </a>
+                    <a href="cli.html" class="btn-cyber btn-cyber-secondary">
+                        استكشف أوامر سطر الأوامر CLI ←
+                    </a>
+                    <a href="twtxt.html" class="btn-cyber btn-cyber-ghost">
+                        دليل بروتوكول Twtxt وYarns
+                    </a>
+                </div>
+            </header>
+
+            <!-- Quickstart Installation Banner -->
+            <section class="install-banner">
+                <div class="install-banner-header">
+                    <span class="install-banner-badge">بدون تبعيات خارجية</span>
+                    <h3>بدون أوامر تثبيت معقدة. فقط ضع الملف في الخادم.</h3>
+                </div>
+                <p>
+                    تم تجميع Indie in a Box بالكامل في ملف تنفيذي واحد בלבד: <code>indieinabox.php</code>. <strong>لا تحتاج</strong> إلى سكريبتات تحميل مبهمة، ولا إلى Composer في خادم التشغيل، ولا إلى Node.js أو خوادم قواعد بيانات ثقيلة.
+                </p>
+                <p>
+                    كل ما عليك فعله هو وضع <code>indieinabox.php</code> في مجلد الخادم أو داخل حاوية Docker. يقوم المحرك تلقائياً بإنشاء قاعدة بيانات SQLite سريعة بنمط WAL والعمل فوراً.
+                </p>
+
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang">BASH / الطرفية (تشغيل سريع في 10 ثوانٍ)</span>
+                        <button class="btn-copy" type="button">COPY</button>
+                    </div>
+                    <pre><code># 1. Download the standalone executable
+curl -LO https://codeberg.org/indieinabox/indieinabox/releases/download/v1.0.0/indieinabox.php
+
+# 2. Run the interactive setup (or pass --setup flags)
+php indieinabox.php setup
+
+# 3. Start the built-in development web server
+php indieinabox.php --serve
+# Listening on http://localhost:8080 - Open in browser to access Admin Dashboard!</code></pre>
+                </div>
+            </section>
+
+            <!-- Manifesto Visual & Trincheira DIY -->
+            <section class="manifesto-banner">
+                <div>
+                    <img src="../assets/img/lambe-hero.jpg" alt="احتلال الفضاء الرقمي وخندق المقاومة DIY" style="width: 100%;">
+                </div>
+                <div class="manifesto-text">
+                    <span class="tape-tag">جماليات المواجهة // رفض الغسيل الوردي للشركات (ANTI-PINKWASHING)</span>
+                    <h3>احتلال الفضاء الرقمي وخندق المقاومة DIY</h3>
+                    <p>
+                        على أرصفة أمريكا اللاتينية والجنوب العالمي، ملصقات الشوارع (Lambe-Lambe) هي وسيلة الإعلام الجماهيرية لمن لا يملك أموالاً للوحات الإعلانية الضخمة أو خوارزميات المراقبة لشركات التقنية الكبرى. إنها الملصقات التي تُلصق في الثالثة فجراً بعجينة دقيق وماء منزلية لتنافس رمادية الإسمنت وإعلانات الاستهلاك.
+                    </p>
+                    <p>
+                        إن إحضار هذه الهوية المتمردة إلى <strong>Indie in a Box</strong> هو إعلان واضح بأن البرمجيات الحرة هي سلاح في خندق المواجهة—معادية للتجميل الشركاتي النيوليبرالي (Pinkwashing) في وادي السيليكون، ومبنية على الاعتراف الصريح بحق المقاومة الكويرية والشعبية المستقلة.
+                    </p>
+                    <div style="display: flex; gap: 12px; margin-top: 0.5rem;">
+                        <a href="admin.html" class="btn-cyber btn-cyber-primary" style="font-size: 0.82rem; padding: 0.65rem 1.2rem;">
+                            استكشف لوحة التحكم والإدارة ←
+                        </a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Galeria de Resistência: Gato Preto & Molotov com Flores -->
+            <div class="grid-2" style="margin: 2.5rem 0 3.5rem;">
+                <div class="cyber-card" style="padding: 0; overflow: hidden;">
+                    <img src="../assets/img/lambe-cat.jpg" alt="التقشف كمنهج قوة" style="width: 100%; display: block; border-bottom: 2px solid #000;">
+                    <div style="padding: 1.5rem;">
+                        <span class="tape-tag">الاستقلالية والبقاء</span>
+                        <h3 style="margin-top: 0.5rem;">التقشف كمنهج قوة</h3>
+                        <p>
+                            من ورق الجرائد الرخيص إلى كود PHP نقي: كود نظيف، بدون مكتبات برمجية عملاقة، واحترام عميق للأجهزة المتواضعة التي يشغلها المستضافون ذاتياً.
+                        </p>
+                    </div>
+                </div>
+                <div class="cyber-card" style="padding: 0; overflow: hidden;">
+                    <img src="../assets/img/lambe-molotov.jpg" alt="جدران حية وطبقات ملصقات متعاقبة" style="width: 100%; display: block; border-bottom: 2px solid #000;">
+                    <div style="padding: 1.5rem;">
+                        <span class="tape-tag">المقاومة والازدهار</span>
+                        <h3 style="margin-top: 0.5rem;">جدران حية وطبقات ملصقات متعاقبة</h3>
+                        <p>
+                            طبقات ملصقات متراكمة، حدود سوداء حادة كالمشرط، وأختام حبر طازجة. واجهة استخدام ترفض بشكل قاطع مساومة الويب التجاري.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Architecture Pillars -->
+            <h2 class="section-heading">
+                <span class="heading-index">01 //</span>  ركائز البنية الأساسية
+            </h2>
+
+            <div class="grid-3">
+                <div class="cyber-card">
+                    <div class="card-icon">⚡</div>
+                    <h3>محرك تشغيل PHP في ملف أحادي</h3>
+                    <p>
+                        نظام التشغيل بالكامل بما فيه التوجيه، محرك القوالب، معالج Markdown، microformats2، قاعدة SQLite، والتوقيع الرقمي مدمج في ملف <code>indieinabox.php</code>.
+                    </p>
+                </div>
+
+                <div class="cyber-card">
+                    <div class="card-icon">🌐</div>
+                    <h3>إتقان ثلاثي البروتوكولات</h3>
+                    <p>
+                        دعم أصيل وشامل لـ <strong>IndieWeb</strong> (Micropub, Microsub, Webmention) و <strong>Fediverse</strong> (ActivityPub C2S/S2S, Group Actors) و <strong>Twtxt & Yarns</strong>.
+                    </p>
+                </div>
+
+                <div class="cyber-card">
+                    <div class="card-icon">🪐</div>
+                    <h3>نشر متزامن على ثلاث شبكات</h3>
+                    <p>
+                        نشر أي مقال يولد في نفس اللحظة صفحات HTML5 دلالية حديثة، وكبسولات Gemini أصيلة (<code>.gmi</code>)، وخرائط Gopher التراثية (<code>gophermap</code>).
+                    </p>
+                </div>
+
+                <div class="cyber-card">
+                    <div class="card-icon">🤖</div>
+                    <h3>ترجمة متعددة النماذج بالذكاء الاصطناعي</h3>
+                    <p>
+                        مسار ترجمة آلي متكامل يدعم نماذج Google Gemini و OpenAI GPT-4o و Anthropic Claude 3.5 و xAI Grok ونماذج Ollama المحلية المستضافة ذاتياً.
+                    </p>
+                </div>
+
+                <div class="cyber-card">
+                    <div class="card-icon">🛡️</div>
+                    <h3>أدوات الإشراف الفيديرالي والقطع</h3>
+                    <p>
+                        تحكم دقيق يسمح بإيقاف (<code>SUSPEND</code>) أو إسكات (<code>SILENCE</code>) أي نطاق أو مستخدم، مع تصفية تلقائية للرسائل المزعجة وفق RFC 9457.
+                    </p>
+                </div>
+
+                <div class="cyber-card">
+                    <div class="card-icon">📦</div>
+                    <h3>حرية تامة في نقل البيانات بدون قيود</h3>
+                    <p>
+                        جميع بياناتك محفوظة محلياً في ملفات SQLite و Markdown. قم بإنشاء نسخ احتياطية مشفرة بضغطة زر واحدة (<code>.tar.gz</code> أو <code>.zip</code>).
+                    </p>
+                </div>
+            </div>
+
+            <!-- Deployment Options -->
+            <h2 class="section-heading">
+                <span class="heading-index">02 //</span>  وصفات النشر في بيئة الإنتاج
+            </h2>
+
+            <div class="tabs-container">
+                <div class="tab-buttons">
+                    <button class="tab-btn active" data-tab="deploy-docker">Docker & Compose</button>
+                    <button class="tab-btn" data-tab="deploy-franken">FrankenPHP</button>
+                    <button class="tab-btn" data-tab="deploy-caddy">Caddy Server</button>
+                    <button class="tab-btn" data-tab="deploy-nginx">Nginx + PHP-FPM</button>
+                </div>
+
+                <div class="tab-panel active" id="deploy-docker">
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang">DOCKER-COMPOSE.YML</span>
+                            <button class="btn-copy" type="button">COPY</button>
+                        </div>
+                        <pre><code>services:
+  indieinabox:
+    image: dunglas/frankenphp:latest-php8.3
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    environment:
+      - SERVER_NAME=https://yourdomain.com
+    volumes:
+      - ./data:/app/data
+      - ./indieinabox.php:/app/public/index.php</code></pre>
+                    </div>
+                    <p style="color: var(--text-muted); font-size: 0.9rem;">
+                        قم بربط مجلد البيانات الخاص بك بالمسار <code>/app/data</code> وملف التشغيل بالمسار <code>/app/public/index.php</code>. هذا كل ما تحتاجه!
+                    </p>
+                </div>
+
+                <div class="tab-panel" id="deploy-franken">
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang">CLI COMMAND (STANDALONE FRANKENPHP)</span>
+                            <button class="btn-copy" type="button">COPY</button>
+                        </div>
+                        <pre><code># Run FrankenPHP directly in worker mode
+frankenphp run --root /var/www/myblog/public_html</code></pre>
+                    </div>
+                </div>
+
+                <div class="tab-panel" id="deploy-caddy">
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang">CADDYFILE</span>
+                            <button class="btn-copy" type="button">COPY</button>
+                        </div>
+                        <pre><code>yourdomain.com {
+    root * /var/www/myblog
+    php_fastcgi 127.0.0.1:9000
+    file_server
+
+    # Fallback all dynamic requests to single-file app
+    try_files {path} {path}/ /indieinabox.php?{query}
+}</code></pre>
+                    </div>
+                </div>
+
+                <div class="tab-panel" id="deploy-nginx">
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang">NGINX.CONF</span>
+                            <button class="btn-copy" type="button">COPY</button>
+                        </div>
+                        <pre><code>server {
+    server_name yourdomain.com;
+    root /var/www/myblog;
+    index indieinabox.php index.html;
+
+    location / {
+        try_files $uri $uri/ /indieinabox.php?$args;
+    }
+
+    location ~ \.php$ {
+        include fastcgi_params;
+        fastcgi_pass unix:/run/php/php8.2-fpm.sock;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+    }
+}</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Documentation Index Navigation -->
+            <h2 class="section-heading">
+                <span class="heading-index">03 //</span>  فهرس وثائق الدليل
+            </h2>
+
+            <div class="grid-2">
+                <a href="cli.html" class="cyber-card" style="text-decoration: none;">
+                    <div class="card-icon">⌨️</div>
+                    <h3>دليل أوامر سطر الأوامر CLI الكامل</h3>
+                    <p>
+                        شرح مفصل لكافة أوامر الطرفية الـ 15 (<code>build</code>، <code>cron</code>، <code>fetch</code>، <code>post</code>، <code>setup</code>، <code>backup</code>، وغيرها).
+                    </p>
+                </a>
+
+                <a href="admin.html" class="cyber-card" style="text-decoration: none;">
+                    <div class="card-icon">🖥️</div>
+                    <h3>جولة في لوحة الإدارة وواجهة المستخدم</h3>
+                    <p>
+                        معاينة مرئية لكافة شاشات الإدارة العشر مع لقطات شاشة عالية الدقة: قارئ التايملاين، طاولة الإشراف، المحرر والإعدادات.
+                    </p>
+                </a>
+
+                <a href="federation.html" class="cyber-card" style="text-decoration: none;">
+                    <div class="card-icon">🔀</div>
+                    <h3>بنية الفيديرالية والتوافق الشبكي</h3>
+                    <p>
+                        كيف يجمع Indie in a Box بين معايير IndieWeb وActivityPub ويحقق التوافق الكامل مع 11 منصة في الفيديفيرس.
+                    </p>
+                </a>
+
+                <a href="themes.html" class="cyber-card" style="text-decoration: none;">
+                    <div class="card-icon">🎨</div>
+                    <h3>تصميم القوالب والحديقة الرقمية</h3>
+                    <p>
+                        خصص مظهر موقعك، وأدر ملفات <code>theme.json</code>، ونظم معرفتك غير الخطية باستخدام الأحواض، ومراحل النضوج، ومستوى الثقة.
+                    </p>
+                </a>
+
+                <a href="twtxt.html" class="cyber-card" style="text-decoration: none;">
+                    <div class="card-icon">🧶</div>
+                    <h3>مواصفات بروتوكول Twtxt و Yarns</h3>
+                    <p>
+                        التدوين المصغر اللامركزي في نصوص خام، والتوليد الآلي لملف <code>/twtxt.txt</code>، ومسارات النقاش عبر الوسوم وإرفاق الوسائط.
+                    </p>
+                </a>
+            </div>
+
+        </div>
+
+        <!-- Footer -->
+        <footer class="site-footer">
+            <div class="footer-content">
+                <div>INDIE IN A BOX // محرك الويب المستقل ثلاثي البروتوكولات الشامل</div>
+                <div>
+                    مرخص بموجب <a href="https://codeberg.org/indieinabox/indieinabox/src/branch/main/LICENSE" target="_blank" rel="noopener">رخصة MIT الحرة</a> &bull; مستضاف على <a href="https://indieinabox.2lp.in">indieinabox.2lp.in</a>
+                </div>
+            </div>
+        </footer>
+    </main>
+
+    <script src="../assets/js/main.js"></script>
+</body>
+</html>

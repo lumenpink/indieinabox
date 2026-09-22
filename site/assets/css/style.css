@@ -989,3 +989,93 @@ code {
         grid-template-columns: 1fr;
     }
 }
+
+/* Language Selector Strip (Neo-Brutalist Stamp Style) */
+.lang-selector-strip {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    padding: 0.75rem 1.25rem 0.25rem;
+    border-bottom: 2px dashed #333333;
+}
+
+.lang-pill {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    font-weight: 800;
+    color: var(--text-muted);
+    background: #1e1f25;
+    border: 1px solid #000000;
+    padding: 3px 6px;
+    text-decoration: none;
+    box-shadow: 1px 1px 0 #000000;
+    transition: all 0.1s ease;
+}
+
+.lang-pill:hover {
+    background: var(--tint-yellow);
+    color: #000000;
+    transform: translate(-1px, -1px);
+    box-shadow: 2px 2px 0 #000000;
+}
+
+.lang-pill.active {
+    background: var(--tint-magenta);
+    color: #000000;
+    border: 1px solid #000000;
+    box-shadow: 2px 2px 0 #000000;
+}
+
+/* RTL (Right-to-Left) Support for Arabic */
+html[dir="rtl"] body {
+    direction: rtl;
+    text-align: right;
+}
+
+html[dir="rtl"] .admin-sidebar {
+    left: auto;
+    right: 0;
+    border-right: none;
+    border-left: 3px solid #000000;
+    box-shadow: -5px 0 0 rgba(0, 0, 0, 0.4);
+}
+
+html[dir="rtl"] .main-wrapper {
+    margin-left: 0;
+    margin-right: 280px;
+}
+
+html[dir="rtl"] .mobile-nav-toggle {
+    right: auto;
+    left: 1rem;
+}
+
+html[dir="rtl"] .sidebar-header::after {
+    right: auto;
+    left: 12px;
+    transform: rotate(-2deg);
+}
+
+html[dir="rtl"] .install-banner::before {
+    right: auto;
+    left: 20px;
+    transform: rotate(-1.5deg);
+}
+
+html[dir="rtl"] .manifesto-banner::after {
+    left: auto;
+    right: 24px;
+}
+
+@media (max-width: 960px) {
+    html[dir="rtl"] .admin-sidebar {
+        transform: translateX(100%);
+    }
+    html[dir="rtl"] .admin-sidebar.open {
+        transform: translateX(0);
+    }
+    html[dir="rtl"] .main-wrapper {
+        margin-right: 0;
+    }
+}
+

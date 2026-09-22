@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Indie in a Box - 独立 Web 与联邦宇宙单文件全能引擎</title>
+    <meta name="description" content="自包含单文件 PHP 去中心化引擎。原生支持 IndieWeb、ActivityPub、Twtxt、Gemini、Gopher 及多提供商 AI 翻译，体积仅 2MB。">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Bebas+Neue&family=Outfit:wght@400;600;800&family=JetBrains+Mono:wght@400;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='0' fill='%23141518'/><rect x='10' y='10' width='80' height='80' fill='%23ffe600'/><circle cx='50' cy='50' r='24' fill='%23ff007f'/></svg>">
+</head>
+<body>
+    <button class="mobile-nav-toggle" aria-label="Toggle navigation">☰ 导航菜单</button>
+
+    <!-- Sidebar Navigation matching Admin Shell -->
+    <aside class="admin-sidebar">
+        <div class="sidebar-header">
+            <h1><a href="index.html"><span class="logo-dot"></span>Indieinabox</a></h1>
+            <span class="hud-badge">数字战壕 // 去中心化自由</span>
+        </div>
+        <div class="lang-selector-strip">
+            <a href="../en/index.html" class="lang-pill" title="English">EN</a>
+            <a href="../pt/index.html" class="lang-pill" title="Português">PT</a>
+            <a href="../es/index.html" class="lang-pill" title="Español">ES</a>
+            <a href="../fr/index.html" class="lang-pill" title="Français">FR</a>
+            <a href="../de/index.html" class="lang-pill" title="Deutsch">DE</a>
+            <a href="../zh/index.html" class="lang-pill active" title="中文 (简体)">ZH</a>
+            <a href="../ja/index.html" class="lang-pill" title="日本語">JA</a>
+            <a href="../ar/index.html" class="lang-pill" title="العربية">AR</a>
+        </div>
+        <nav class="admin-nav">
+            <span class="nav-section-title">技术文档</span>
+            <a href="index.html" class="active">
+                <span class="nav-index">01</span> 概览与极速安装
+            </a>
+            <a href="cli.html">
+                <span class="nav-index">02</span> CLI 命令行手册
+            </a>
+            <a href="admin.html">
+                <span class="nav-index">03</span> 管理后台与界面
+            </a>
+            <a href="federation.html">
+                <span class="nav-index">04</span> 联邦与协议架构
+            </a>
+            <a href="themes.html">
+                <span class="nav-index">05</span> 主题与数字花园
+            </a>
+            <a href="twtxt.html">
+                <span class="nav-index">06</span> Twtxt 与 Yarns 协议
+            </a>
+
+            <span class="nav-section-title">开源项目链接</span>
+            <a href="https://codeberg.org/indieinabox/indieinabox" target="_blank" rel="noopener">
+                <span class="nav-index">↗</span> Codeberg 代码仓库
+            </a>
+            <a href="https://codeberg.org/indieinabox/indieinabox/releases" target="_blank" rel="noopener">
+                <span class="nav-index">↗</span> 官方发布版本
+            </a>
+
+            <div class="version-box">
+                <div>ENGINE: <span style="color: var(--tint-yellow);">v1.0.0</span></div>
+                <div style="margin-top: 4px;">HOST: <a href="https://indieinabox.2lp.in">indieinabox.2lp.in</a></div>
+            </div>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-wrapper">
+        <div class="content-container">
+
+            <!-- Hero Header -->
+            <header class="hero-header">
+                <div class="hud-pill">
+                    <span class="pulse-dot"></span>
+                    <span>单文件 PHP 8.2+ 引擎 // INDIEWEB、ACTIVITYPUB 与 TWTXT</span>
+                </div>
+                <h1 class="hero-title">Indie in a Box</h1>
+                <p class="hero-subtitle">
+                    零外部依赖的单文件 PHP 个人网站引擎，跨越 IndieWeb、Fediverse 联邦宇宙、Twtxt、Gemini 与 Gopher 网络，驱动个人阅读器、发布器与数字主权身份。
+                </p>
+                <div class="hero-actions">
+                    <a href="https://codeberg.org/indieinabox/indieinabox/releases/tag/v1.0.0" class="btn-cyber btn-cyber-primary" target="_blank" rel="noopener">
+                        <span>⬇</span> ⬇ 下载 v1.0.0 (2MB)
+                    </a>
+                    <a href="cli.html" class="btn-cyber btn-cyber-secondary">
+                        查阅 CLI 命令行参考 →
+                    </a>
+                    <a href="twtxt.html" class="btn-cyber btn-cyber-ghost">
+                        Twtxt 与 Yarns 使用指南
+                    </a>
+                </div>
+            </header>
+
+            <!-- Quickstart Installation Banner -->
+            <section class="install-banner">
+                <div class="install-banner-header">
+                    <span class="install-banner-badge">零额外依赖</span>
+                    <h3>无需复杂安装脚本。直接拖入文件即可运行。</h3>
+                </div>
+                <p>
+                    Indie in a Box 完全打包编译为一个单一的 PHP 可执行文件：<code>indieinabox.php</code>。你<strong>不需要</strong>复杂的 curl 管道脚本、Composer 编译链、Node 工具流，也不需要笨重的 SQL 守护进程。
+                </p>
+                <p>
+                    只需将 <code>indieinabox.php</code> 放入服务器目录、Docker 卷或静态虚拟主机中，它会自动生成自带 WAL 模式的高性能 SQLite 数据库并即刻启动。
+                </p>
+
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang">BASH / 终端（10 秒极速启动）</span>
+                        <button class="btn-copy" type="button">COPY</button>
+                    </div>
+                    <pre><code># 1. Download the standalone executable
+curl -LO https://codeberg.org/indieinabox/indieinabox/releases/download/v1.0.0/indieinabox.php
+
+# 2. Run the interactive setup (or pass --setup flags)
+php indieinabox.php setup
+
+# 3. Start the built-in development web server
+php indieinabox.php --serve
+# Listening on http://localhost:8080 - Open in browser to access Admin Dashboard!</code></pre>
+                </div>
+            </section>
+
+            <!-- Manifesto Visual & Trincheira DIY -->
+            <section class="manifesto-banner">
+                <div>
+                    <img src="../assets/img/lambe-hero.jpg" alt="数字空间占领与 DIY 战壕" style="width: 100%;">
+                </div>
+                <div class="manifesto-text">
+                    <span class="tape-tag">街头对抗美学 // 拒绝粉饰伪善（ANTI-PINKWASHING）</span>
+                    <h3>数字空间占领与 DIY 战壕</h3>
+                    <p>
+                        在拉丁美洲的街头沥青上，浆糊海报（Lambe-Lambe）是无力购买商业广告牌或向大科技算法付费的大众唯一的发声载体。它是凌晨三点用面粉和水熬制的自制浆糊张贴的海报，在城市灰暗的水泥墙上夺回人们的视线。
+                    </p>
+                    <p>
+                        将这种纯粹而粗犷的街头美学融入 <strong>Indie in a Box</strong>，宣告了自由软件不仅是一套代码，更是数字战壕中的抵抗武器——断然拒绝硅谷冷漠虚伪的商业粉饰，深深扎根于跨性别群体与底层草根的自主生存实践。
+                    </p>
+                    <div style="display: flex; gap: 12px; margin-top: 0.5rem;">
+                        <a href="admin.html" class="btn-cyber btn-cyber-primary" style="font-size: 0.82rem; padding: 0.65rem 1.2rem;">
+                            探索管理后台界面 →
+                        </a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Galeria de Resistência: Gato Preto & Molotov com Flores -->
+            <div class="grid-2" style="margin: 2.5rem 0 3.5rem;">
+                <div class="cyber-card" style="padding: 0; overflow: hidden;">
+                    <img src="../assets/img/lambe-cat.jpg" alt="以简陋与克制为方法" style="width: 100%; display: block; border-bottom: 2px solid #000;">
+                    <div style="padding: 1.5rem;">
+                        <span class="tape-tag">自主权与底层生存</span>
+                        <h3 style="margin-top: 0.5rem;">以简陋与克制为方法</h3>
+                        <p>
+                            从廉价薄纸到纯粹 PHP：干净的代码结构，拒绝任何臃肿的巨型框架，尊重每位自托管者在极简低配硬件上运行个人节点的权利。
+                        </p>
+                    </div>
+                </div>
+                <div class="cyber-card" style="padding: 0; overflow: hidden;">
+                    <img src="../assets/img/lambe-molotov.jpg" alt="层叠海报与鲜活墙面" style="width: 100%; display: block; border-bottom: 2px solid #000;">
+                    <div style="padding: 1.5rem;">
+                        <span class="tape-tag">抗争与生生不息</span>
+                        <h3 style="margin-top: 0.5rem;">层叠海报与鲜活墙面</h3>
+                        <p>
+                            层层覆盖的厚重质感、美工刀切削出的利落黑色边框与手工新鲜印墨。这是一套坚决向商业垄断网络的虚伪妥协说不的视觉系统。
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Architecture Pillars -->
+            <h2 class="section-heading">
+                <span class="heading-index">01 //</span>  核心架构支柱
+            </h2>
+
+            <div class="grid-3">
+                <div class="cyber-card">
+                    <div class="card-icon">⚡</div>
+                    <h3>单文件 PHP 原生运行时</h3>
+                    <p>
+                        完整运行时系统（包含路由、模板引擎、Markdown 解析器、microformats2、SQLite ORM 和加密签名）全部内嵌于单个 <code>indieinabox.php</code> 文件中。
+                    </p>
+                </div>
+
+                <div class="cyber-card">
+                    <div class="card-icon">🌐</div>
+                    <h3>三重协议原生贯通</h3>
+                    <p>
+                        原生支持 <strong>IndieWeb</strong>（Micropub、Microsub、Webmention）、<strong>Fediverse</strong>（ActivityPub C2S/S2S、群组 Actors FEP-1b12）和 <strong>Twtxt & Yarns</strong> 纯文本微博客。
+                    </p>
+                </div>
+
+                <div class="cyber-card">
+                    <div class="card-icon">🪐</div>
+                    <h3>三网同步多维分发</h3>
+                    <p>
+                        发布任意文章时，将同时生成现代语义化 HTML5 网页、原生 Gemini 协议胶囊（<code>.gmi</code>）和经典 Gopher 协议导航图（<code>gophermap</code>）。
+                    </p>
+                </div>
+
+                <div class="cyber-card">
+                    <div class="card-icon">🤖</div>
+                    <h3>多提供商 AI 自动多语言翻译</h3>
+                    <p>
+                        内置自动化多语言翻译流水线，无缝支持 Google Gemini、OpenAI GPT-4o、Anthropic Claude 3.5、xAI Grok 及本地私有部署 Ollama 模型。
+                    </p>
+                </div>
+
+                <div class="cyber-card">
+                    <div class="card-icon">🛡️</div>
+                    <h3>联邦治理与去联邦化套件</h3>
+                    <p>
+                        提供基于域名或 Actor 维度的 <code>SUSPEND</code> 和 <code>SILENCE</code> 细粒度拦截阻断，内置符合 RFC 9457 的自动化防垃圾协议。
+                    </p>
+                </div>
+
+                <div class="cyber-card">
+                    <div class="card-icon">📦</div>
+                    <h3>零厂商锁定与完全可携性</h3>
+                    <p>
+                        所有数据均储存在本地 SQLite 与 Markdown 文件中。一键即可导出包含密码学校验哈希的 <code>.tar.gz</code> 或 <code>.zip</code> 完整备份包。
+                    </p>
+                </div>
+            </div>
+
+            <!-- Deployment Options -->
+            <h2 class="section-heading">
+                <span class="heading-index">02 //</span>  生产环境部署方案
+            </h2>
+
+            <div class="tabs-container">
+                <div class="tab-buttons">
+                    <button class="tab-btn active" data-tab="deploy-docker">Docker & Compose</button>
+                    <button class="tab-btn" data-tab="deploy-franken">FrankenPHP</button>
+                    <button class="tab-btn" data-tab="deploy-caddy">Caddy Server</button>
+                    <button class="tab-btn" data-tab="deploy-nginx">Nginx + PHP-FPM</button>
+                </div>
+
+                <div class="tab-panel active" id="deploy-docker">
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang">DOCKER-COMPOSE.YML</span>
+                            <button class="btn-copy" type="button">COPY</button>
+                        </div>
+                        <pre><code>services:
+  indieinabox:
+    image: dunglas/frankenphp:latest-php8.3
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    environment:
+      - SERVER_NAME=https://yourdomain.com
+    volumes:
+      - ./data:/app/data
+      - ./indieinabox.php:/app/public/index.php</code></pre>
+                    </div>
+                    <p style="color: var(--text-muted); font-size: 0.9rem;">
+                        将持久化数据目录挂载到 <code>/app/data</code>，单文件应用挂载至 <code>/app/public/index.php</code>。仅此而已！
+                    </p>
+                </div>
+
+                <div class="tab-panel" id="deploy-franken">
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang">CLI COMMAND (STANDALONE FRANKENPHP)</span>
+                            <button class="btn-copy" type="button">COPY</button>
+                        </div>
+                        <pre><code># Run FrankenPHP directly in worker mode
+frankenphp run --root /var/www/myblog/public_html</code></pre>
+                    </div>
+                </div>
+
+                <div class="tab-panel" id="deploy-caddy">
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang">CADDYFILE</span>
+                            <button class="btn-copy" type="button">COPY</button>
+                        </div>
+                        <pre><code>yourdomain.com {
+    root * /var/www/myblog
+    php_fastcgi 127.0.0.1:9000
+    file_server
+
+    # Fallback all dynamic requests to single-file app
+    try_files {path} {path}/ /indieinabox.php?{query}
+}</code></pre>
+                    </div>
+                </div>
+
+                <div class="tab-panel" id="deploy-nginx">
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang">NGINX.CONF</span>
+                            <button class="btn-copy" type="button">COPY</button>
+                        </div>
+                        <pre><code>server {
+    server_name yourdomain.com;
+    root /var/www/myblog;
+    index indieinabox.php index.html;
+
+    location / {
+        try_files $uri $uri/ /indieinabox.php?$args;
+    }
+
+    location ~ \.php$ {
+        include fastcgi_params;
+        fastcgi_pass unix:/run/php/php8.2-fpm.sock;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+    }
+}</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Documentation Index Navigation -->
+            <h2 class="section-heading">
+                <span class="heading-index">03 //</span>  技术文档索引
+            </h2>
+
+            <div class="grid-2">
+                <a href="cli.html" class="cyber-card" style="text-decoration: none;">
+                    <div class="card-icon">⌨️</div>
+                    <h3>CLI 控制台命令完整参考</h3>
+                    <p>
+                        详尽讲解全部 15 个控制台命令（<code>build</code>、<code>cron</code>、<code>fetch</code>、<code>post</code>、<code>setup</code>、<code>backup</code>、<code>export</code> 等）及其参数。
+                    </p>
+                </a>
+
+                <a href="admin.html" class="cyber-card" style="text-decoration: none;">
+                    <div class="card-icon">🖥️</div>
+                    <h3>管理后台与控制面板详述</h3>
+                    <p>
+                        带高清界面的 10 个管理模块全览：Timeline 订阅阅读器、联邦审查防御台、文章发布器与 7 个配置选项卡。
+                    </p>
+                </a>
+
+                <a href="federation.html" class="cyber-card" style="text-decoration: none;">
+                    <div class="card-icon">🔀</div>
+                    <h3>联邦架构与跨协议互通</h3>
+                    <p>
+                        详解 Indie in a Box 如何统一 IndieWeb 与 ActivityPub 标准，并与 11 款去中心化联邦平台实现完美互联互通。
+                    </p>
+                </a>
+
+                <a href="themes.html" class="cyber-card" style="text-decoration: none;">
+                    <div class="card-icon">🎨</div>
+                    <h3>主题开发与数字花园知识库</h3>
+                    <p>
+                        定制专属外观，配置 <code>theme.json</code> 清单文件，并使用花坛、成熟度与可信度构建非线性数字花园。
+                    </p>
+                </a>
+
+                <a href="twtxt.html" class="cyber-card" style="text-decoration: none;">
+                    <div class="card-icon">🧶</div>
+                    <h3>Twtxt 与 Yarns 纯文本协议</h3>
+                    <p>
+                        极简纯文本去中心化微博客标准、自动生成 <code>/twtxt.txt</code>、基于话题的主题线索追踪及媒体文件嵌入。
+                    </p>
+                </a>
+            </div>
+
+        </div>
+
+        <!-- Footer -->
+        <footer class="site-footer">
+            <div class="footer-content">
+                <div>INDIE IN A BOX // 全功能三重协议个人数字引擎</div>
+                <div>
+                    基于 <a href="https://codeberg.org/indieinabox/indieinabox/src/branch/main/LICENSE" target="_blank" rel="noopener">MIT 开源许可</a> 发布 &bull; 托管于 <a href="https://indieinabox.2lp.in">indieinabox.2lp.in</a>
+                </div>
+            </div>
+        </footer>
+    </main>
+
+    <script src="../assets/js/main.js"></script>
+</body>
+</html>

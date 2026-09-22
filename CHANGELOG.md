@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 ### Features
+  - (docs) make documentation site fully multilingual (8 languages) and fix consistency (#50)
   - (admin,docs) implement lambe-lambe periferico and DIY resistance theme (#46)
   - (docs) add comprehensive cyberpunk documentation site and cloudflare deployment pipeline
 

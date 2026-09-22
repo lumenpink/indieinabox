@@ -93,4 +93,16 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+
+    // 5. Language Persistence
+    document.querySelectorAll('.lang-pill').forEach(pill => {
+        pill.addEventListener('click', () => {
+            const href = pill.getAttribute('href') || '';
+            const match = href.match(/\/([a-z]{2})\//);
+            if (match && match[1]) {
+                localStorage.setItem('doc_lang', match[1]);
+            }
+        });
+    });
 });
+

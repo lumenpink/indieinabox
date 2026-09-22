@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard & UI Reference - Indie in a Box</title>
+    <meta name="description" content="Visual walkthrough and complete field-by-field reference of the Indie in a Box Cyberpunk Neon Admin Dashboard with UI screenshots.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Bebas+Neue&family=Outfit:wght@400;600;800&family=JetBrains+Mono:wght@400;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='0' fill='%23141518'/><rect x='10' y='10' width='80' height='80' fill='%23ffe600'/><circle cx='50' cy='50' r='24' fill='%23ff007f'/></svg>">
+</head>
+<body>
+    <button class="mobile-nav-toggle" aria-label="Toggle navigation">☰ القائمة</button>
+
+    <aside class="admin-sidebar">
+        <div class="sidebar-header">
+            <h1><a href="index.html"><span class="logo-dot"></span>Indieinabox</a></h1>
+            <span class="hud-badge">خندق رقمي // لامركزية حرة</span>
+        </div>
+        <div class="lang-selector-strip">
+            <a href="../en/admin.html" class="lang-pill" title="English">EN</a>
+            <a href="../pt/admin.html" class="lang-pill" title="Português">PT</a>
+            <a href="../es/admin.html" class="lang-pill" title="Español">ES</a>
+            <a href="../fr/admin.html" class="lang-pill" title="Français">FR</a>
+            <a href="../de/admin.html" class="lang-pill" title="Deutsch">DE</a>
+            <a href="../zh/admin.html" class="lang-pill" title="中文 (简体)">ZH</a>
+            <a href="../ja/admin.html" class="lang-pill" title="日本語">JA</a>
+            <a href="../ar/admin.html" class="lang-pill active" title="العربية">AR</a>
+        </div>
+        <nav class="admin-nav">
+            <span class="nav-section-title">التوثيق والدليل</span>
+            <a href="index.html">
+                <span class="nav-index">01</span> نظرة عامة والتثبيت السريع</a>
+            <a href="cli.html">
+                <span class="nav-index">02</span> أوامر سطر الأوامر (CLI)</a>
+            <a href="admin.html" class="active">
+                <span class="nav-index">03</span> لوحة الإدارة والواجهة</a>
+            <a href="federation.html">
+                <span class="nav-index">04</span> الفيديرالية والبروتوكولات</a>
+            <a href="themes.html">
+                <span class="nav-index">05</span> القوالب والحديقة الرقمية</a>
+            <a href="twtxt.html">
+                <span class="nav-index">06</span> مواصفات Twtxt وYarns</a>
+
+            <span class="nav-section-title">ADMIN MODULES</span>
+            <a href="#admin-microsub"><span class="nav-index">01</span> Timeline (Microsub)</a>
+            <a href="#admin-moderation"><span class="nav-index">02</span> Moderation & Defederation</a>
+            <a href="#admin-micropub"><span class="nav-index">03</span> Publisher (Micropub)</a>
+            <a href="#admin-general"><span class="nav-index">04</span> General Settings</a>
+            <a href="#admin-kinds"><span class="nav-index">05</span> Post Kinds & Garden</a>
+            <a href="#admin-ai"><span class="nav-index">06</span> AI Translation & LLMs</a>
+            <a href="#admin-social"><span class="nav-index">07</span> Social & Federation</a>
+            <a href="#admin-services"><span class="nav-index">08</span> Services & Security</a>
+            <a href="#admin-updates"><span class="nav-index">09</span> Updates & Rollbacks</a>
+            <a href="#admin-backups"><span class="nav-index">10</span> Backups & Portability</a>
+
+            <div class="version-box">
+                <div>المحرك: <span style="color: var(--tint-yellow);">v1.0.0</span></div>
+                <div style="margin-top: 4px;">HOST: <a href="https://indieinabox.2lp.in">indieinabox.2lp.in</a></div>
+            </div>
+        </nav>
+    </aside>
+
+    <main class="main-wrapper">
+        <div class="content-container">
+
+            <header class="hero-header">
+                <div class="hud-pill">
+                    <span class="pulse-dot"></span>
+                    <span>جماليات ملصقات الشوارع // تصميم المواجهة والمقاومة الشعبية</span>
+                </div>
+                <h1 class="hero-title">لوحة الإدارة والواجهة التفاعلية</h1>
+                <p class="hero-subtitle">
+                    صُممت لوحة إدارة Indie in a Box وفق الجماليات الحرة لـ <strong>ملصقات الشوارع المستقلة (Lambe-Lambe) والنيو-بروتاليزم الشعبي</strong>: حدود سوداء حادة بالمشرط (<code>border: 2px solid #000</code>)، بدون أي حواف دائرية، ظلال أختام بارزة (<code>box-shadow: 4px 4px 0 #000</code>)، وشرائط لاصقة مع تداخلات طباعة الشاشة الحريرية (وردي صارخ <code>#ff007f</code> وأصفر تحذيري <code>#ffe600</code>).
+                </p>
+                <div class="hero-actions">
+                    <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: var(--tint-yellow); font-weight: 700;">
+                        💡 انقر على أي لقطة شاشة لفتحها بالدقة الكاملة لمعاينة الطباعة الحريرية!
+                    </span>
+                </div>
+            </header>
+
+            <!-- 01: Timeline / Microsub Reader -->
+            <section id="admin-microsub" style="margin-bottom: 5rem;">
+                <h2 class="section-heading">
+                    <span class="heading-index">01 //</span> Module 01: Timeline (Microsub Reader)
+                </h2>
+                <p>
+                    Indie in a Box includes a full-featured, native <strong>Microsub Server & Web Client</strong>. You can subscribe to RSS, Atom, JSON, and Twtxt feeds, organize them into custom channels, read entries distraction-free, and interact with the decentralized web with single-click interactions.
+                </p>
+
+                <!-- Embedded UI Screenshot -->
+                <div class="screenshot-card">
+                    <div class="screenshot-header">
+                        <span class="screenshot-title"><span class="screenshot-dot"></span>SCREENSHOT // ADMIN TIMELINE & MICROSUB READER</span>
+                        <span class="badge-tag badge-tag-cyan">ACTIVE VIEW: /admin/microsub</span>
+                    </div>
+                    <div class="screenshot-img-wrap">
+                        <img src="../assets/img/admin-microsub.jpg" alt="Indie in a Box Microsub Reader UI Screenshot" loading="lazy">
+                    </div>
+                    <div class="screenshot-caption">
+                        Figure 1.1: Microsub Timeline with channel navigation, unified reading feed, author h-cards, and inline interaction controls (Like, Repost, Reply, Bookmark).
+                    </div>
+                </div>
+
+                <div class="cyber-table-wrap">
+                    <table class="cyber-table">
+                        <thead>
+                            <tr>
+                                <th>UI Component</th>
+                                <th>Function</th>
+                                <th>Specification / Standard</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="param-name">Channels Accordion</td>
+                                <td>Sidebar channels list showing <code>#inbox</code>, <code>#notifications</code>, and custom thematic folders. Allows creating new channels and deleting existing ones.</td>
+                                <td>IndieWeb Microsub Spec (Channels Extension)</td>
+                            </tr>
+                            <tr>
+                                <td class="param-name">Feed Aggregator</td>
+                                <td>Unified chronologically sorted feed ingesting external RSS 2.0, Atom, JSON Feed v1.1, and Twtxt text files.</td>
+                                <td>Microformats2 <code>h-entry</code> parser</td>
+                            </tr>
+                            <tr>
+                                <td class="param-name">Inline Actions Bar</td>
+                                <td>One-click action buttons below every item: <strong>Like</strong> (creates <code>like-of</code>), <strong>Repost</strong> (creates <code>repost-of</code>), <strong>Reply</strong> (opens Composer with <code>in-reply-to</code>), and <strong>Bookmark</strong>.</td>
+                                <td>W3C Micropub / IndieWeb Responses</td>
+                            </tr>
+                            <tr>
+                                <td class="param-name">+ Subscribe Modal</td>
+                                <td>Allows entering any URL or feed address. The engine performs automated rel-alternate feed discovery.</td>
+                                <td>Microsub <code>action=timeline&amp;method=subscribe</code></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- 02: Moderation & Defederation -->
+            <section id="admin-moderation" style="margin-bottom: 5rem;">
+                <h2 class="section-heading">
+                    <span class="heading-index">02 //</span> Module 02: Federation Moderation & Defederation
+                </h2>
+                <p>
+                    Safeguard your instance from bad actors, spammers, harassment campaigns, and unwanted Fediverse traffic. The moderation panel provides surgical domain-level and actor-level isolation controls.
+                </p>
+
+                <!-- Embedded UI Screenshot -->
+                <div class="screenshot-card">
+                    <div class="screenshot-header">
+                        <span class="screenshot-title"><span class="screenshot-dot"></span>SCREENSHOT // FEDERATION MODERATION & DEFEDERATION DECK</span>
+                        <span class="badge-tag badge-tag-pink">ACTIVE VIEW: /admin/moderation</span>
+                    </div>
+                    <div class="screenshot-img-wrap">
+                        <img src="../assets/img/admin-moderation.jpg" alt="Indie in a Box Moderation and Defederation Admin Screenshot" loading="lazy">
+                    </div>
+                    <div class="screenshot-caption">
+                        Figure 2.1: Defederation dashboard displaying live domain blocking metrics, severity rules (SUSPEND, SILENCE, FILTER), search filter, and active blacklist table.
+                    </div>
+                </div>
+
+                <div class="cyber-table-wrap">
+                    <table class="cyber-table">
+                        <thead>
+                            <tr>
+                                <th>Severity Action</th>
+                                <th>Behavior & Protocol Impact</th>
+                                <th>RFC / Protocol Standard</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="param-name"><span class="badge-tag badge-tag-pink">SUSPEND</span></td>
+                                <td>Complete defederation. Inbound ActivityPub payloads and Webmentions from the target domain or actor are rejected immediately with HTTP 403 Forbidden. Outbound activities are never dispatched to this target.</td>
+                                <td>ActivityPub Server-to-Server & RFC 9457</td>
+                            </tr>
+                            <tr>
+                                <td class="param-name"><span class="badge-tag badge-tag-amber">SILENCE</span></td>
+                                <td>Soft block. Incoming interactions and notifications are retained in the database for auditing purposes but are completely hidden from public timeline rendering and notification badges.</td>
+                                <td>W3C ActivityStreams Moderation</td>
+                            </tr>
+                            <tr>
+                                <td class="param-name"><span class="badge-tag badge-tag-cyan">FILTER</span></td>
+                                <td>Automated keyword and spam pattern filtering. Items matching configured heuristics or regex patterns are routed to the spam quarantine queue for manual review.</td>
+                                <td>Spam Prevention Pipeline</td>
+                            </tr>
+                            <tr>
+                                <td class="param-name">Audit Log & Reasons</td>
+                                <td>Every defederation rule records author timestamp, administrative reason, and rule expiration date (or permanent).</td>
+                                <td>Admin Audit Registry</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- 03: Publisher / Micropub Composer -->
+            <section id="admin-micropub" style="margin-bottom: 5rem;">
+                <h2 class="section-heading">
+                    <span class="heading-index">03 //</span> Module 03: Publisher (Micropub Composer)
+                </h2>
+                <p>
+                    Compose, format, and publish multi-format content to the open web. The composer natively supports all IndieWeb post types, drag-and-drop media uploading with Camo-signed proxy support, live markdown rendering, and simultaneous cross-network syndication.
+                </p>
+
+                <!-- Embedded UI Screenshot -->
+                <div class="screenshot-card">
+                    <div class="screenshot-header">
+                        <span class="screenshot-title"><span class="screenshot-dot"></span>SCREENSHOT // MICROPUB COMPOSER & PUBLISHER</span>
+                        <span class="badge-tag badge-tag-green">ACTIVE VIEW: /admin/micropub</span>
+                    </div>
+                    <div class="screenshot-img-wrap">
+                        <img src="../assets/img/admin-micropub.jpg" alt="Indie in a Box Micropub Composer Screenshot" loading="lazy">
+                    </div>
+                    <div class="screenshot-caption">
+                        Figure 3.1: Cyberpunk post publisher featuring post-kind selector pills, split markdown editor, media dropzone, syndication checkboxes, and live HTML/Gemini preview.
+                    </div>
+                </div>
+
+                <div class="cyber-table-wrap">
+                    <table class="cyber-table">
+                        <thead>
+                            <tr>
+                                <th>Composer Field</th>
+                                <th>Type / Allowed Values</th>
+                                <th>Field Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="param-name">Post Kind Selector</td>
+                                <td><code>Note</code>, <code>Article</code>, <code>Reply</code>, <code>Like</code>, <code>Bookmark</code>, <code>Photo</code>, <code>Listen</code>, <code>Watch</code>, <code>Read</code></td>
+                                <td>Sets the microformats2 vocabulary type (e.g. <code>p-name</code> for articles, <code>e-content</code> for notes, <code>u-in-reply-to</code> for replies).</td>
+                            </tr>
+                            <tr>
+                                <td class="param-name">Title (Article only)</td>
+                                <td>Text string</td>
+                                <td>Optional for short notes; required for long-form essays and garden articles. Generates URL slug automatically.</td>
+                            </tr>
+                            <tr>
+                                <td class="param-name">Content Editor</td>
+                                <td>Markdown / Plaintext</td>
+                                <td>Full GitHub Flavored Markdown support with code highlighting, hashtag autolinking (<code>#hashtag</code>), and Fediverse mention autolinking (<code>@user@instance</code>).</td>
+                            </tr>
+                            <tr>
+                                <td class="param-name">In-Reply-To / Like-Of URL</td>
+                                <td>Canonical URL</td>
+                                <td>Target URL being referenced. Indie in a Box automatically issues Webmentions and federated ActivityPub Create/Announce activities to this address.</td>
+                            </tr>
+                            <tr>
+                                <td class="param-name">Media Upload Zone</td>
+                                <td>Drag & Drop images / audio</td>
+                                <td>Uploaded assets are cryptographically hashed, optimized to web-friendly formats, and placed in <code>public_media/</code> with responsive srcset generation.</td>
+                            </tr>
+                            <tr>
+                                <td class="param-name">Syndication Targets</td>
+                                <td>Checkbox toggles</td>
+                                <td>Cross-posts content to Mastodon, Bluesky, Twtxt, or archives permalink to the Internet Archive Wayback Machine.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- 04: General Settings -->
+            <section id="admin-general" style="margin-bottom: 5rem;">
+                <h2 class="section-heading">
+                    <span class="heading-index">04 //</span> Module 04: Configuration Tab 1 &bull; General Settings
+                </h2>
+                <p>
+                    Primary site metadata, domain routing, author h-card identity, pretty URLs, and theme selection.
+                </p>
+
+                <!-- Embedded UI Screenshot -->
+                <div class="screenshot-card">
+                    <div class="screenshot-header">
+                        <span class="screenshot-title"><span class="screenshot-dot"></span>SCREENSHOT // GENERAL CONFIGURATION DECK</span>
+                        <span class="badge-tag badge-tag-cyan">ACTIVE VIEW: /admin/config#tab-general</span>
+                    </div>
+                    <div class="screenshot-img-wrap">
+                        <img src="../assets/img/admin-general.jpg" alt="Indie in a Box General Configuration Screenshot" loading="lazy">
+                    </div>
+                    <div class="screenshot-caption">
+                        Figure 4.1: General Configuration form with Site Title, Canonical FQDN, Author Name, Theme Selector, and Pretty Links toggles.
+                    </div>
+                </div>
+
+                <div class="cyber-table-wrap">
+                    <table class="cyber-table">
+                        <thead>
+                            <tr>
+                                <th>Setting Field</th>
+                                <th>Key in Database</th>
+                                <th>Field Details & Defaults</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="param-name">Site Name / Title</td>
+                                <td><code>sitename</code></td>
+                                <td>The title of your blog/instance. Renders in the header, RSS feed title, and ActivityPub Actor summary. Default: <code>Indie In A Box</code>.</td>
+                            </tr>
+                            <tr>
+                                <td class="param-name">Canonical FQDN URL</td>
+                                <td><code>fqdn</code></td>
+                                <td>Root canonical domain name with scheme (e.g. <code>https://indieinabox.2lp.in</code>). Crucial for ActivityPub key discovery, Webfinger, and Webmention verification.</td>
+                            </tr>
+                            <tr>
+                                <td class="param-name">Author Name</td>
+                                <td><code>author_name</code></td>
+                                <td>Display name of instance owner rendered in representative <code>h-card</code> markup.</td>
+                            </tr>
+                            <tr>
+                                <td class="param-name">Author Email</td>
+                                <td><code>author_email</code></td>
+                                <td>Optional contact email for IndieAuth password resets and WebFinger <code>mailto:</code> aliases.</td>
+                            </tr>
+                            <tr>
+                                <td class="param-name">Pretty Links Toggle</td>
+                                <td><code>prettylinks</code></td>
+                                <td>When enabled (default), outputs human-friendly URLs (<code>/2026/my-post</code>). When disabled, uses query parameter routing (<code>/?p=142</code>).</td>
+                            </tr>
+                            <tr>
+                                <td class="param-name">Active Theme Switcher</td>
+                                <td><code>active_theme</code></td>
+                                <td>Selects installed theme directory (located in <code>data/themes/</code>). Built-in options include <code>default</code>, <code>minimal</code>, and <code>cyber-dark</code>.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- 05: Post Kinds & Garden Schema -->
+            <section id="admin-kinds" style="margin-bottom: 5rem;">
+                <h2 class="section-heading">
+                    <span class="heading-index">05 //</span> Module 04: Configuration Tab 2 &bull; Post Kinds & Garden
+                </h2>
+                <p>
+                    Configure how different content types are structured, URL slugs, and manage your Digital Garden taxonomy metrics:
+                </p>
+
+                <div class="grid-3">
+                    <div class="cyber-card">
+                        <div class="card-icon">🌱</div>
+                        <h3>Maturity Stages</h3>
+                        <p>
+                            Classify evolving garden notes into: <code>sprout</code> (early thought), <code>seedling</code> (growing draft), <code>tree</code> (evergreen reference), <code>wilted</code> (deprecated), or <code>stone</code> (immutable archival).
+                        </p>
+                    </div>
+
+                    <div class="cyber-card">
+                        <div class="card-icon">🎯</div>
+                        <h3>Confidence Levels</h3>
+                        <p>
+                            Indicate epistemic confidence: <code>certain</code> (fact-checked), <code>likely</code> (high certainty), <code>possible</code> (hypothesis), <code>unlikely</code> (skeptical), or <code>impossible</code>.
+                        </p>
+                    </div>
+
+                    <div class="cyber-card">
+                        <div class="card-icon">⚖️</div>
+                        <h3>Importance Weights</h3>
+                        <p>
+                            Prioritize content across reader indices: <code>trivial</code>, <code>minor</code>, <code>moderate</code>, <code>major</code>, or <code>critical</code>.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 06: AI Translation & Localization -->
+            <section id="admin-ai" style="margin-bottom: 5rem;">
+                <h2 class="section-heading">
+                    <span class="heading-index">06 //</span> Module 04: Configuration Tab 3 &bull; AI Translation & LLMs
+                </h2>
+                <p>
+                    Indie in a Box provides a first-of-its-kind automated AI translation pipeline for decentralized publishing. Translate your articles, notes, and digital garden entries into dozens of target languages using your choice of cutting-edge LLM providers.
+                </p>
+
+                <!-- Embedded UI Screenshot -->
+                <div class="screenshot-card">
+                    <div class="screenshot-header">
+                        <span class="screenshot-title"><span class="screenshot-dot"></span>SCREENSHOT // AI TRANSLATION & LOCALIZATION CONFIG</span>
+                        <span class="badge-tag badge-tag-pink">ACTIVE VIEW: /admin/config#tab-localization</span>
+                    </div>
+                    <div class="screenshot-img-wrap">
+                        <img src="../assets/img/admin-ai-translation.jpg" alt="Indie in a Box AI Translation Admin Screenshot" loading="lazy">
+                    </div>
+                    <div class="screenshot-caption">
+                        Figure 6.1: Multi-provider LLM configuration panel with model selector (Gemini 1.5, GPT-4o, Claude 3.5, Grok, Ollama), API key masking, temperature control, and live Japanese translation comparison.
+                    </div>
+                </div>
+
+                <div class="cyber-table-wrap">
+                    <table class="cyber-table">
+                        <thead>
+                            <tr>
+                                <th>Configuration Field</th>
+                                <th>Supported Values</th>
+                                <th>Field Behavior</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="param-name">Target Languages</td>
+                                <td>Multi-tag selector (<code>en</code>, <code>pt</code>, <code>es</code>, <code>ja</code>, <code>fr</code>, <code>de</code>, etc.)</td>
+                                <td>Whenever a post is published, the AI worker translates content into all selected target languages and stores localized variants in <code>public_html/{lang}/</code>.</td>
+                            </tr>
+                            <tr>
+                                <td class="param-name">Multi-Provider LLM</td>
+                                <td>
+                                    <code>Google Gemini Flash 1.5</code><br>
+                                    <code>OpenAI GPT-4o</code><br>
+                                    <code>Anthropic Claude 3.5 Sonnet</code><br>
+                                    <code>xAI Grok 2</code><br>
+                                    <code>Local Ollama (Self-Hosted)</code>
+                                </td>
+                                <td>Selects the translation backend provider. For self-hosted setups requiring total privacy, Ollama runs completely offline on your local GPU/CPU.</td>
+                            </tr>
+                            <tr>
+                                <td class="param-name">API Key / Endpoint</td>
+                                <td>Encrypted credential string</td>
+                                <td>Masked input field stored securely in the database. For Ollama, specifies the local HTTP endpoint (e.g. <code>http://127.0.0.1:11434</code>).</td>
+                            </tr>
+                            <tr>
+                                <td class="param-name">Model Temperature</td>
+                                <td>Slider: 0.0 to 1.0 (Default: 0.3)</td>
+                                <td>Lower temperature (0.2–0.3) produces consistent, accurate translations faithful to the original tone while avoiding hallucinations.</td>
+                            </tr>
+                            <tr>
+                                <td class="param-name">Translation Cache</td>
+                                <td>Toggle Switch (Active / Disabled)</td>
+                                <td>Stores translated markdown snippets by content SHA-256 hash in SQLite table <code>ai_translation_cache</code> to avoid redundant API fees.</td>
+                            </tr>
+                            <tr>
+                                <td class="param-name">Global Strings Dictionary</td>
+                                <td>Key-Value dictionary table</td>
+                                <td>Overrides standard UI labels (e.g. "Recent posts", "Flowerbed", "Confidence", "Replies", "AI translation notice") for customized localized strings.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- 07: Social & Federation Settings -->
+            <section id="admin-social" style="margin-bottom: 5rem;">
+                <h2 class="section-heading">
+                    <span class="heading-index">07 //</span> Module 04: Configuration Tab 4 &bull; Social & Federation
+                </h2>
+                <p>
+                    Manage protocol endpoints for W3C ActivityPub, Webfinger, Webmentions, Micropub, and Microsub.
+                </p>
+
+                <div class="cyber-table-wrap">
+                    <table class="cyber-table">
+                        <thead>
+                            <tr>
+                                <th>Protocol Setting</th>
+                                <th>Endpoint Route</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="param-name">ActivityPub Actor URL</td>
+                                <td><code>/author/{username}</code></td>
+                                <td>Public ActivityStreams Actor document exposing RSA-2048 public key, inbox, outbox, and followers collection.</td>
+                            </tr>
+                            <tr>
+                                <td class="param-name">WebFinger Endpoint</td>
+                                <td><code>/.well-known/webfinger</code></td>
+                                <td>Resolves <code>acct:user@domain</code> queries for Fediverse discovery (Mastodon, Misskey, etc.).</td>
+                            </tr>
+                            <tr>
+                                <td class="param-name">Webmention Ping Server</td>
+                                <td><code>/webmention</code></td>
+                                <td>Receives incoming ping requests, validates source HTML links asynchronously, and attaches verified comments.</td>
+                            </tr>
+                            <tr>
+                                <td class="param-name">IndieAuth Token Endpoint</td>
+                                <td><code>/indieauth/token</code></td>
+                                <td>Issues OAuth 2.0 / IndieAuth bearer access tokens for authorized mobile clients (e.g. Indigenous, Micro.blog).</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- 08: Services & Security -->
+            <section id="admin-services" style="margin-bottom: 5rem;">
+                <h2 class="section-heading">
+                    <span class="heading-index">08 //</span> Module 04: Configuration Tab 5 &bull; Services & Security
+                </h2>
+                <p>
+                    Hardened privacy services and web notification delivery:
+                </p>
+
+                <div class="grid-3">
+                    <div class="cyber-card">
+                        <div class="card-icon">🛡️</div>
+                        <h3>Camo Media Proxy</h3>
+                        <p>
+                            Cryptographically signs external image URLs with HMAC-SHA1 to prevent mixed-content warnings and protect reader IP addresses from third-party tracking.
+                        </p>
+                    </div>
+
+                    <div class="cyber-card">
+                        <div class="card-icon">🔔</div>
+                        <h3>Web Push (VAPID)</h3>
+                        <p>
+                            Browser push notification pipeline. Generate VAPID key pairs with one click to receive instant device notifications when followers reply or mention you.
+                        </p>
+                    </div>
+
+                    <div class="cyber-card">
+                        <div class="card-icon">🏛️</div>
+                        <h3>Wayback Syndication</h3>
+                        <p>
+                            Automatically dispatches archive pings to the Internet Archive Wayback Machine upon publishing, guaranteeing permanent digital preservation.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 09: In-Place Updates -->
+            <section id="admin-updates" style="margin-bottom: 5rem;">
+                <h2 class="section-heading">
+                    <span class="heading-index">09 //</span> Module 04: Configuration Tab 6 &bull; In-Place Updates
+                </h2>
+                <p>
+                    Seamless single-file engine upgrades. Check for new releases directly from Codeberg, inspect release changelogs, perform atomic in-place updates, and keep automated rollback backups with instant recovery buttons.
+                </p>
+
+                <div class="cyber-table-wrap">
+                    <table class="cyber-table">
+                        <thead>
+                            <tr>
+                                <th>Update Control</th>
+                                <th>Function</th>
+                                <th>Safety Guarantees</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="param-name">Release Channel</td>
+                                <td>Switch between <code>Stable</code> (recommended) and <code>Nightly</code> (bleeding-edge builds).</td>
+                                <td>Validates channel signature feeds.</td>
+                            </tr>
+                            <tr>
+                                <td class="param-name">Check Releases Button</td>
+                                <td>Queries Codeberg Releases API and compares against local <code>VERSION</code>.</td>
+                                <td>Zero file system alterations.</td>
+                            </tr>
+                            <tr>
+                                <td class="param-name">Apply Update Button</td>
+                                <td>Downloads new <code>indieinabox.php</code> binary, checks SHA-256 hash, and atomically swaps binary.</td>
+                                <td>Automatic pre-update snapshot saved to <code>data/backups/</code>.</td>
+                            </tr>
+                            <tr>
+                                <td class="param-name">Rollback Archive Selector</td>
+                                <td>Reverts instance to any previous saved binary snapshot.</td>
+                                <td>Restores in less than 100 milliseconds.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- 10: Backups & Portability -->
+            <section id="admin-backups" style="margin-bottom: 5rem;">
+                <h2 class="section-heading">
+                    <span class="heading-index">10 //</span> Module 04: Configuration Tab 7 &bull; Backups & Portability
+                </h2>
+                <p>
+                    Complete data sovereignty. Export and import entire site snapshots with full cryptographic integrity verification.
+                </p>
+
+                <div class="cyber-table-wrap">
+                    <table class="cyber-table">
+                        <thead>
+                            <tr>
+                                <th>Action</th>
+                                <th>Artifact Produced</th>
+                                <th>Features</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="param-name">One-Click Backup / Export</td>
+                                <td><code>.zip</code> or <code>.tar.gz</code> archive</td>
+                                <td>Packages SQLite database (WAL committed), markdown posts, media files, and a <code>manifest.json</code> containing SHA-256 hashes for every file.</td>
+                            </tr>
+                            <tr>
+                                <td class="param-name">Bundle Restore / Import</td>
+                                <td>Uploaded archive file</td>
+                                <td>Verifies SHA-256 manifest integrity, generates a safety snapshot of current instance, uncompresses files, and triggers full static rebuild.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+        </div>
+
+        <footer class="site-footer">
+            <div class="footer-content">
+                <div>INDIE IN A BOX // محرك الويب المستقل ثلاثي البروتوكولات الشامل</div>
+                <div>
+                    مرخص بموجب <a href="https://codeberg.org/indieinabox/indieinabox/src/branch/main/LICENSE" target="_blank" rel="noopener">رخصة MIT الحرة</a> &bull; مستضاف على <a href="https://indieinabox.2lp.in">indieinabox.2lp.in</a>
+                </div>
+            </div>
+        </footer>
+    </main>
+
+    <script src="../assets/js/main.js"></script>
+</body>
+</html>

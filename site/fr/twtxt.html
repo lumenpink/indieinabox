@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Twtxt & Yarns Protocol - Indie in a Box</title>
+    <meta name="description" content="Comprehensive guide to the Twtxt flat-file decentralized microblogging protocol and Yarns extensions natively supported by Indie in a Box.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Bebas+Neue&family=Outfit:wght@400;600;800&family=JetBrains+Mono:wght@400;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='0' fill='%23141518'/><rect x='10' y='10' width='80' height='80' fill='%23ffe600'/><circle cx='50' cy='50' r='24' fill='%23ff007f'/></svg>">
+</head>
+<body>
+    <button class="mobile-nav-toggle" aria-label="Toggle navigation">☰ MENU</button>
+
+    <aside class="admin-sidebar">
+        <div class="sidebar-header">
+            <h1><a href="index.html"><span class="logo-dot"></span>Indieinabox</a></h1>
+            <span class="hud-badge">TRANCHÉE // DÉCENTRALISÉE</span>
+        </div>
+        <div class="lang-selector-strip">
+            <a href="../en/twtxt.html" class="lang-pill" title="English">EN</a>
+            <a href="../pt/twtxt.html" class="lang-pill" title="Português">PT</a>
+            <a href="../es/twtxt.html" class="lang-pill" title="Español">ES</a>
+            <a href="../fr/twtxt.html" class="lang-pill active" title="Français">FR</a>
+            <a href="../de/twtxt.html" class="lang-pill" title="Deutsch">DE</a>
+            <a href="../zh/twtxt.html" class="lang-pill" title="中文 (简体)">ZH</a>
+            <a href="../ja/twtxt.html" class="lang-pill" title="日本語">JA</a>
+            <a href="../ar/twtxt.html" class="lang-pill" title="العربية">AR</a>
+        </div>
+        <nav class="admin-nav">
+            <span class="nav-section-title">DOCUMENTATION</span>
+            <a href="index.html">
+                <span class="nav-index">01</span> Vue d'Ensemble & Setup</a>
+            <a href="cli.html">
+                <span class="nav-index">02</span> Commandes CLI</a>
+            <a href="admin.html">
+                <span class="nav-index">03</span> Panneau d'Admin & UI</a>
+            <a href="federation.html">
+                <span class="nav-index">04</span> Fédération & Protocoles</a>
+            <a href="themes.html">
+                <span class="nav-index">05</span> Thèmes & Jardin Numérique</a>
+            <a href="twtxt.html" class="active">
+                <span class="nav-index">06</span> Twtxt & Yarns</a>
+
+            <span class="nav-section-title">TWTXT TOPICS</span>
+            <a href="#twtxt-overview"><span class="nav-index">01</span> Protocol Overview</a>
+            <a href="#twtxt-generation"><span class="nav-index">02</span> Feed Generation (/twtxt.txt)</a>
+            <a href="#yarns-extensions"><span class="nav-index">03</span> Yarns Extensions</a>
+            <a href="#twtxt-consumption"><span class="nav-index">04</span> Ingestion & Microsub</a>
+            <a href="#twtxt-moderation"><span class="nav-index">05</span> Filters & Moderation</a>
+            <a href="#twtxt-clients"><span class="nav-index">06</span> Client Interoperability</a>
+
+            <div class="version-box">
+                <div>MOTEUR : <span style="color: var(--neon-cyan);">v1.0.0</span></div>
+                <div style="margin-top: 4px;">HOST: <a href="https://indieinabox.2lp.in">indieinabox.2lp.in</a></div>
+            </div>
+        </nav>
+    </aside>
+
+    <main class="main-wrapper">
+        <div class="content-container">
+
+            <header class="hero-header">
+                <div class="hud-pill">
+                    <span class="pulse-dot"></span>
+                    <span>MICROBLOGGING DÉCENTRALISÉ EN TEXTE BRUT // TWTXT & YARNS</span>
+                </div>
+                <h1 class="hero-title">Protocole Twtxt & Yarns</h1>
+                <p class="hero-subtitle">
+                    Guide complet du protocole de microblogging décentralisé en texte brut Twtxt et des extensions Yarns gérées nativement par Indie in a Box : génération de flux /twtxt.txt, fils de discussion et pièces jointes.
+                </p>
+            </header>
+
+            <!-- 01: Protocol Overview -->
+            <section id="twtxt-overview" style="margin-bottom: 4rem;">
+                <h2 class="section-heading">
+                    <span class="heading-index">01 //</span> What is Twtxt?
+                </h2>
+                <p>
+                    <strong>Twtxt</strong> is a minimalist, decentralized microblogging format that operates entirely through static plain-text files served over standard HTTP/HTTPS GET requests. There are no databases to query, no central hubs, and no proprietary APIs.
+                </p>
+                <div class="grid-3">
+                    <div class="cyber-card">
+                        <div class="card-icon">📄</div>
+                        <h3>Zero-Overhead Plain Text</h3>
+                        <p>
+                            Each entry is a single line consisting of an ISO 8601 UTC timestamp, a TAB character separator, and the message content.
+                        </p>
+                    </div>
+
+                    <div class="cyber-card">
+                        <div class="card-icon">⚡</div>
+                        <h3>Static & Edge Cacheable</h3>
+                        <p>
+                            Because <code>twtxt.txt</code> is a static text file, it can be cached indefinitely on Cloudflare edge nodes or served from minimal low-power servers.
+                        </p>
+                    </div>
+
+                    <div class="cyber-card">
+                        <div class="card-icon">🧶</div>
+                        <h3>Modern Yarns Extensions</h3>
+                        <p>
+                            Supports the Yarns metadata specification, including threaded conversation tags, avatars, nicknames, markdown formatting, and media extraction.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 02: Feed Generation -->
+            <section id="twtxt-generation" style="margin-bottom: 4rem;">
+                <h2 class="section-heading">
+                    <span class="heading-index">02 //</span> Automated Feed Generation (<code>/twtxt.txt</code>)
+                </h2>
+                <p>
+                    Whenever a post or short note is published, Indie in a Box compiles your public feed directly to <code>public_html/twtxt.txt</code>. Multi-line markdown notes are automatically collapsed into single-line entries with links and wikilinks cleanly formatted.
+                </p>
+
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang">SPECIFICATION // EXAMPLE PUBLIC TWTXT.TXT FEED</span>
+                        <button class="btn-copy" type="button">COPY</button>
+                    </div>
+                    <pre><code># nick = lumen
+# link = https://indieinabox.2lp.in/twtxt.txt
+# author = Lumen Pink
+# description = Indie in a Box official updates and cyberpunk devlog
+# avatar = https://indieinabox.2lp.in/assets/avatar.png
+
+2026-09-22T06:59:00Z	Indie in a Box v1.0.0 is officially released! https://codeberg.org/indieinabox/indieinabox (#release)
+2026-09-22T07:45:00Z	Documentation live at https://indieinabox.2lp.in with Triple Protocol mastery!
+2026-09-22T08:15:00Z	@&lt;alice https://alice.example.com/twtxt.txt&gt; Welcome to the decentralized web! (#greetings)</code></pre>
+                </div>
+
+                <div class="cyber-table-wrap">
+                    <table class="cyber-table">
+                        <thead>
+                            <tr>
+                                <th>Header Attribute</th>
+                                <th>Specification</th>
+                                <th>Purpose</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="param-name"># nick = &lt;str&gt;</td>
+                                <td>Twtxt Metadata Spec</td>
+                                <td>Short identifier/handle for mentions (e.g. <code>lumen</code>).</td>
+                            </tr>
+                            <tr>
+                                <td class="param-name"># link = &lt;url&gt;</td>
+                                <td>Twtxt Metadata Spec</td>
+                                <td>Canonical URL pointing back to the feed itself.</td>
+                            </tr>
+                            <tr>
+                                <td class="param-name"># author = &lt;str&gt;</td>
+                                <td>Yarns Extension</td>
+                                <td>Full human display name of the feed owner.</td>
+                            </tr>
+                            <tr>
+                                <td class="param-name"># description = &lt;str&gt;</td>
+                                <td>Yarns Extension</td>
+                                <td>Short profile bio or feed description.</td>
+                            </tr>
+                            <tr>
+                                <td class="param-name"># avatar = &lt;url&gt;</td>
+                                <td>Yarns Extension</td>
+                                <td>Direct URL to the author's profile portrait image.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- 03: Yarns Extensions -->
+            <section id="yarns-extensions" style="margin-bottom: 4rem;">
+                <h2 class="section-heading">
+                    <span class="heading-index">03 //</span> Yarns Protocol Extensions
+                </h2>
+                <p>
+                    Indie in a Box implements the complete Yarns specification for extended rich interaction over plain text:
+                </p>
+
+                <div class="cyber-table-wrap">
+                    <table class="cyber-table">
+                        <thead>
+                            <tr>
+                                <th>Feature</th>
+                                <th>Syntax</th>
+                                <th>Rendered HTML Output & Behavior</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="param-name">Mentions</td>
+                                <td><code>@&lt;nick https://url/twtxt.txt&gt;</code></td>
+                                <td>Autolinked anchor tag: <code>&lt;a href="url" class="mention"&gt;@nick&lt;/a&gt;</code>.</td>
+                            </tr>
+                            <tr>
+                                <td class="param-name">Subject / Thread Tags</td>
+                                <td><code>(#subject_name)</code></td>
+                                <td>Categorizes or threads the twt: <code>&lt;span class="twtxt-subject"&gt;(#subject)&lt;/span&gt;</code>.</td>
+                            </tr>
+                            <tr>
+                                <td class="param-name">Inline Formatting</td>
+                                <td><code>**bold**</code>, <code>*italic*</code>, <code>~~strike~~</code>, <code>`code`</code></td>
+                                <td>Standard semantic HTML: <code>&lt;strong&gt;</code>, <code>&lt;em&gt;</code>, <code>&lt;del&gt;</code>, <code>&lt;code&gt;</code>.</td>
+                            </tr>
+                            <tr>
+                                <td class="param-name">Blockquotes</td>
+                                <td><code>&gt; quoted text</code></td>
+                                <td>Rendered as stylized blockquote container: <code>&lt;blockquote class="twtxt-quote"&gt;</code>.</td>
+                            </tr>
+                            <tr>
+                                <td class="param-name">Media Embeds</td>
+                                <td><code>![alt](https://.../photo.jpg)</code></td>
+                                <td>Automatic visual media card: <code>&lt;figure class="twtxt-media"&gt;&lt;img ...&gt;&lt;/figure&gt;</code>.</td>
+                            </tr>
+                            <tr>
+                                <td class="param-name">Audio & Video Detection</td>
+                                <td>Bare audio (<code>.mp3</code>, <code>.ogg</code>) or video (<code>.mp4</code>, <code>.webm</code>) URLs</td>
+                                <td>Automatically converted into interactive native HTML5 <code>&lt;audio controls&gt;</code> or <code>&lt;video controls&gt;</code> players!</td>
+                            </tr>
+                            <tr>
+                                <td class="param-name">Hashtags</td>
+                                <td><code>#hashtag</code></td>
+                                <td>Autolinked to global Twtxt search hubs: <code>&lt;a href="...search?tag=hashtag"&gt;#hashtag&lt;/a&gt;</code>.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- 04: Ingestion & Microsub -->
+            <section id="twtxt-consumption" style="margin-bottom: 4rem;">
+                <h2 class="section-heading">
+                    <span class="heading-index">04 //</span> Ingestion & Microsub Reader Integration
+                </h2>
+                <p>
+                    You don't need a separate app to read Twtxt feeds. Indie in a Box unifies Twtxt directly into its <strong>Microsub Reader</strong>:
+                </p>
+
+                <div class="grid-2">
+                    <div class="cyber-card">
+                        <h3>Subscribing to a Twtxt Feed</h3>
+                        <p>
+                            1. Open <strong>Admin → Timeline</strong>.<br>
+                            2. Select or create a channel (e.g. <code>#twtxt</code> or <code>#inbox</code>).<br>
+                            3. Click <strong>+ Subscribe</strong> and paste the remote <code>twtxt.txt</code> URL.<br>
+                            4. The engine resolves author metadata, avatars, and begins tracking updates.
+                        </p>
+                    </div>
+
+                    <div class="cyber-card">
+                        <h3>CLI Feed Polling</h3>
+                        <p>
+                            Run the feed crawler manually or in your cron tasks:
+                        </p>
+                        <div class="code-block">
+                            <div class="code-header">
+                                <span class="code-lang">BASH</span>
+                                <button class="btn-copy" type="button">COPY</button>
+                            </div>
+                            <pre><code># Fetch all RSS, Atom, and Twtxt subscriptions
+php indieinabox.php fetch
+
+# Alias command:
+php indieinabox.php microsub:fetch</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 05: Filters & Moderation -->
+            <section id="twtxt-moderation" style="margin-bottom: 4rem;">
+                <h2 class="section-heading">
+                    <span class="heading-index">05 //</span> Spam Filters & Moderation
+                </h2>
+                <p>
+                    Twtxt feeds ingested by Indie in a Box pass through the unified <code>MicrosubFilterService</code>:
+                </p>
+                <ul>
+                    <li><strong>Mute Nicknames</strong>: Silences entries from toxic nicknames across all subscribed feeds.</li>
+                    <li><strong>Mute Feed URLs</strong>: Drops malicious or abusive twtxt endpoints permanently.</li>
+                    <li><strong>Keyword Blacklist</strong>: Automatically discards spam messages matching configured regex patterns or blocked keyword lists.</li>
+                </ul>
+            </section>
+
+            <!-- 06: Client Interoperability -->
+            <section id="twtxt-clients" style="margin-bottom: 4rem;">
+                <h2 class="section-heading">
+                    <span class="heading-index">06 //</span> Client Ecosystem & Interoperability
+                </h2>
+                <p>
+                    Because Indie in a Box outputs standard <code>twtxt.txt</code> and parses Yarns specifications cleanly, you can interact with your feed using any client across the Twtxt ecosystem:
+                </p>
+                <div class="grid-3">
+                    <div class="cyber-card">
+                        <div class="card-icon">💻</div>
+                        <h3>twtxt (CLI)</h3>
+                        <p>The original Python CLI client. Follow feeds, read timelines, and post tweets from your terminal.</p>
+                    </div>
+
+                    <div class="cyber-card">
+                        <div class="card-icon">🧵</div>
+                        <h3>Yarn (Golang)</h3>
+                        <p>Full-featured Twtxt/Yarns server and client supporting rich threads, avatars, and media.</p>
+                    </div>
+
+                    <div class="cyber-card">
+                        <div class="card-icon">📱</div>
+                        <h3>Jenny & Goryon</h3>
+                        <p>Modern mobile and desktop graphical readers for reading flat feeds on Android, iOS, and Linux.</p>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+
+        <footer class="site-footer">
+            <div class="footer-content">
+                <div>INDIE IN A BOX // MOTEUR TRIPLE PROTOCOLE DÉCENTRALISÉ</div>
+                <div>
+                    Distribué sous <a href="https://codeberg.org/indieinabox/indieinabox/src/branch/main/LICENSE" target="_blank" rel="noopener">Licence MIT</a> &bull; Hébergé sur <a href="https://indieinabox.2lp.in">indieinabox.2lp.in</a>
+                </div>
+            </div>
+        </footer>
+    </main>
+
+    <script src="../assets/js/main.js"></script>
+</body>
+</html>

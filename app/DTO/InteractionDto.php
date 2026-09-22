@@ -230,6 +230,27 @@ final class InteractionDto
             $published = isset($object["published"]) ? new DateTimeImmutable((string) $object["published"]) : new DateTimeImmutable();
             $type = $target !== "" ? "reply" : "mention";
             $meta["object_id"] = (string) ($object["id"] ?? "");
+            if (isset($object["attachment"])) {
+                $attachments = is_array($object["attachment"]) ? $object["attachment"] : [$object["attachment"]];
+                $mediaItems = [];
+                foreach ($attachments as $att) {
+                    if (is_array($att) && isset($att["url"])) {
+                        $url = is_array($att["url"]) ? ($att["url"]["href"] ?? ($att["url"]["url"] ?? "")) : (string)$att["url"];
+                        if ($url !== "") {
+                            $mediaItems[] = [
+                                "url" => $url,
+                                "type" => (string)($att["type"] ?? "Image"),
+                                "alt" => (string)($att["name"] ?? ($att["summary"] ?? "")),
+                                "blurhash" => (string)($att["blurhash"] ?? ""),
+                                "focal_point" => $att["focalPoint"] ?? ($att["focal_point"] ?? null)
+                            ];
+                        }
+                    }
+                }
+                if (!empty($mediaItems)) {
+                    $meta["attachments"] = $mediaItems;
+                }
+            }
             if (isset($object["inReplyToBook"])) {
                 $meta["read_of"] = $object["inReplyToBook"];
                 if (isset($object["rating"])) {

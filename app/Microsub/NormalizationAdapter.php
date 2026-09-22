@@ -46,6 +46,106 @@ class NormalizationAdapter
             $entry->contentWarning = $json['summary'];
         }
 
+        // Attachments extraction (Pixelfed galleries, images, audio, video)
+        $rawAttachments = $json['attachment'] ?? [];
+        if (!is_array($rawAttachments)) {
+            $rawAttachments = [$rawAttachments];
+        }
+        // Also support orderedItems collection or item if present
+        if (isset($json['attachment']['orderedItems']) && is_array($json['attachment']['orderedItems'])) {
+            $rawAttachments = $json['attachment']['orderedItems'];
+        }
+
+        $photos = [];
+        $reel = null;
+
+        foreach ($rawAttachments as $att) {
+            if (!is_array($att)) {
+                if (is_string($att) && filter_var($att, FILTER_VALIDATE_URL)) {
+                    $photos[] = [
+                        'url' => $att,
+                        'alt' => '',
+                    ];
+                }
+                continue;
+            }
+
+            $type = (string)($att['type'] ?? '');
+            $mediaType = (string)($att['mediaType'] ?? ($att['mimeType'] ?? ''));
+            $url = (string)($att['url'] ?? '');
+            if (is_array($att['url'] ?? null)) {
+                $url = (string)($att['url']['href'] ?? ($att['url']['url'] ?? ''));
+            }
+
+            if ($url === '') {
+                continue;
+            }
+
+            $name = (string)($att['name'] ?? ($att['summary'] ?? ''));
+            $blurhash = (string)($att['blurhash'] ?? '');
+            $focalPoint = null;
+            if (isset($att['focalPoint']) && is_array($att['focalPoint'])) {
+                $focalPoint = array_values(array_map('floatval', $att['focalPoint']));
+            } elseif (isset($att['focal_point']) && is_array($att['focal_point'])) {
+                $focalPoint = array_values(array_map('floatval', $att['focal_point']));
+            }
+
+            $width = isset($att['width']) ? (int)$att['width'] : null;
+            $height = isset($att['height']) ? (int)$att['height'] : null;
+
+            $isImage = str_starts_with($mediaType, 'image/') || in_array($type, ['Image', 'Document'], true) || preg_match('/\.(jpe?g|png|gif|webp|avif)$/i', $url);
+            $isVideo = str_starts_with($mediaType, 'video/') || in_array($type, ['Video'], true) || preg_match('/\.(mp4|webm|mov)$/i', $url);
+
+            if ($isImage) {
+                $photoItem = [
+                    'url' => $url,
+                    'alt' => $name,
+                ];
+                if ($blurhash !== '') {
+                    $photoItem['blurhash'] = $blurhash;
+                }
+                if ($focalPoint !== null && count($focalPoint) >= 2) {
+                    $photoItem['focal_point'] = $focalPoint;
+                }
+                if ($width !== null && $height !== null) {
+                    $photoItem['width'] = $width;
+                    $photoItem['height'] = $height;
+                    $photoItem['aspect_ratio'] = $height > 0 ? round($width / $height, 4) : 1.0;
+                }
+                $photos[] = $photoItem;
+            } elseif ($isVideo && $reel === null) {
+                // Check if marked as reel / short loop / story or portrait aspect ratio
+                $isReel = (!empty($att['is_reel']) || !empty($json['is_reel']) || !empty($json['pixelfed:reel'])
+                    || (is_array($json['tag'] ?? null) && in_array('reel', array_column($json['tag'], 'name'), true))
+                    || ($width !== null && $height !== null && $height > $width));
+
+                $poster = null;
+                if (isset($att['icon']['url'])) {
+                    $poster = (string)$att['icon']['url'];
+                } elseif (isset($att['preview']['url'])) {
+                    $poster = (string)$att['preview']['url'];
+                }
+
+                $reel = [
+                    'url' => $url,
+                    'media_type' => $mediaType ?: 'video/mp4',
+                    'poster' => $poster,
+                    'is_reel' => $isReel,
+                    'alt' => $name,
+                    'width' => $width,
+                    'height' => $height,
+                ];
+            }
+        }
+
+        if (!empty($photos)) {
+            $entry->photos = $photos;
+        }
+
+        if ($reel !== null) {
+            $entry->reels = $reel;
+        }
+
         // Poll extraction
         if (!empty($json['oneOf']) || !empty($json['anyOf'])) {
             $entry->capabilities[] = 'poll_vote';

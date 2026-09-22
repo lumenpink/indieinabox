@@ -29,6 +29,7 @@ class ExtendedEntry
     public ?string $contentWarning = null;
     public ?array $poll = null;
     public ?array $reels = null;
+    public ?array $photos = null; // List of photos: [['url' => '...', 'alt' => '...', 'focal_point' => [x,y], 'blurhash' => '...']]
     
     // Internal state
     public bool $isRead = false;
@@ -57,6 +58,17 @@ class ExtendedEntry
             $payload['category'] = $this->category;
         }
 
+        // Standard JF2 photo property if available
+        if (!empty($this->photos)) {
+            $photoUrls = array_map(function ($p) {
+                return is_array($p) ? ($p['url'] ?? '') : (string)$p;
+            }, $this->photos);
+            $photoUrls = array_values(array_filter($photoUrls));
+            if (!empty($photoUrls)) {
+                $payload['photo'] = count($photoUrls) === 1 ? $photoUrls[0] : $photoUrls;
+            }
+        }
+
         // --- Graceful Degradation / Fallback rendering ---
         $htmlOut = $this->content['html'] ?? '';
         $textOut = $this->content['text'] ?? '';
@@ -68,6 +80,37 @@ class ExtendedEntry
                 $htmlOut
             );
             $textOut = sprintf('CW: %s. %s', $this->contentWarning, $textOut);
+        }
+
+        // Fallback for Photo Galleries
+        if (!empty($this->photos)) {
+            $galleryHtml = "\n<div class=\"photo-gallery-fallback\">\n";
+            $galleryText = "\n\nPhotos:\n";
+            foreach ($this->photos as $photo) {
+                $url = is_array($photo) ? ($photo['url'] ?? '') : (string)$photo;
+                $alt = is_array($photo) ? ($photo['alt'] ?? ($photo['name'] ?? '')) : '';
+                if ($url !== '') {
+                    $galleryHtml .= sprintf('<figure><img src="%s" alt="%s" /></figure>' . "\n", htmlspecialchars($url), htmlspecialchars($alt));
+                    $galleryText .= sprintf('- %s %s' . "\n", $url, $alt !== '' ? '(' . $alt . ')' : '');
+                }
+            }
+            $galleryHtml .= "</div>\n";
+            // Append gallery only if not already present in HTML
+            if (strpos($htmlOut, '<img') === false && strpos($htmlOut, '<figure') === false) {
+                $htmlOut .= $galleryHtml;
+                $textOut .= $galleryText;
+            }
+        }
+
+        // Fallback for Reels/Stories
+        if (!empty($this->reels) && isset($this->reels['url'])) {
+            $videoUrl = htmlspecialchars($this->reels['url']);
+            $videoPoster = !empty($this->reels['poster']) ? sprintf(' poster="%s"', htmlspecialchars($this->reels['poster'])) : '';
+            $reelHtml = sprintf("\n<div class=\"reel-fallback\"><video src=\"%s\"%s controls playsinline loop></video></div>\n", $videoUrl, $videoPoster);
+            if (strpos($htmlOut, '<video') === false) {
+                $htmlOut .= $reelHtml;
+                $textOut .= "\n\nReel/Video: " . $this->reels['url'] . "\n";
+            }
         }
 
         // Fallback for Polls (render as list)
@@ -95,7 +138,8 @@ class ExtendedEntry
             'capabilities' => $this->capabilities,
             'content_warning' => $this->contentWarning,
             'poll' => $this->poll,
-            'reels' => $this->reels
+            'reels' => $this->reels,
+            'photos' => $this->photos
         ];
 
         return array_filter($payload, function($val) {

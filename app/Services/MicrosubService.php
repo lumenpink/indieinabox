@@ -224,6 +224,7 @@ class MicrosubService
                         $entry->contentWarning = $ext['content_warning'] ?? null;
                         $entry->poll = $ext['poll'] ?? null;
                         $entry->reels = $ext['reels'] ?? null;
+                        $entry->photos = $ext['photos'] ?? null;
                     }
 
                     $item = $entry->toJF2Array();

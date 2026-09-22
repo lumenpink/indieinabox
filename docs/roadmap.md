@@ -143,7 +143,7 @@ The following next-generation features are scheduled for development:
 - [x] **Outbox & Publishing**: Publish new site posts automatically to followers' inboxes.
 - [x] **Microsub Hub Integration**: Bridge incoming ActivityPub feed items into the local Microsub endpoint.
 - [x] **Mastodon Compatibility Layer**: Support Mastodon-specific extensions (CWs, Polls, custom emojis, thread contexts).
-- [ ] **Pixelfed Compatibility Layer**: Support Pixelfed-specific extensions (Image collections, gallery metadata, short loops/Reels).
+- [x] **Pixelfed Compatibility Layer**: Support Pixelfed-specific extensions (Image collections, gallery metadata, short loops/Reels).
 - [ ] **Misskey Compatibility Layer**: Support Misskey-specific extensions (Quote posts/Renotes, rich reactions).
 - [ ] **Extended Protocols**: Investigate possibilities of supporting forum protocols and BookWyrm alongside ActivityPub.
 

@@ -74,15 +74,37 @@ class ActivityBuilder
         $to = ['https://www.w3.org/ns/activitystreams#Public'];
         $cc = [$fqdn . '/followers'];
 
-        // Add Image Attachments for Pixelfed/Mastodon
+        // Add Attachments for Pixelfed/Mastodon (Images, Galleries, Reels/Videos)
         $attachments = [];
-        $photos = $metadata['photo'] ?? [];
+        $photos = $metadata['photo'] ?? $metadata['photos'] ?? [];
         if (!is_array($photos)) {
             $photos = [$photos];
         }
         foreach ($photos as $photo) {
-            $photoUrl = filter_var($photo, FILTER_VALIDATE_URL) ? (string)$photo : rtrim($fqdn, '/') . '/' . ltrim((string)$photo, '/');
-            $ext = strtolower(pathinfo((string)parse_url($photoUrl, PHP_URL_PATH), PATHINFO_EXTENSION));
+            $photoUrl = '';
+            $altName = 'Image';
+            $focalPoint = null;
+            $blurhash = null;
+            $width = null;
+            $height = null;
+
+            if (is_array($photo)) {
+                $photoUrl = (string)($photo['url'] ?? $photo['value'] ?? '');
+                $altName = (string)($photo['alt'] ?? $photo['name'] ?? 'Image');
+                $focalPoint = $photo['focal_point'] ?? $photo['focalPoint'] ?? null;
+                $blurhash = isset($photo['blurhash']) ? (string)$photo['blurhash'] : null;
+                $width = isset($photo['width']) ? (int)$photo['width'] : null;
+                $height = isset($photo['height']) ? (int)$photo['height'] : null;
+            } else {
+                $photoUrl = (string)$photo;
+            }
+
+            if ($photoUrl === '') {
+                continue;
+            }
+
+            $resolvedUrl = filter_var($photoUrl, FILTER_VALIDATE_URL) ? $photoUrl : rtrim($fqdn, '/') . '/' . ltrim($photoUrl, '/');
+            $ext = strtolower(pathinfo((string)parse_url($resolvedUrl, PHP_URL_PATH), PATHINFO_EXTENSION));
             $mediaType = 'image/jpeg';
             if ($ext === 'png') {
                 $mediaType = 'image/png';
@@ -90,15 +112,63 @@ class ActivityBuilder
                 $mediaType = 'image/gif';
             } elseif ($ext === 'webp') {
                 $mediaType = 'image/webp';
+            } elseif ($ext === 'avif') {
+                $mediaType = 'image/avif';
             }
 
-            $attachments[] = [
-                'type' => 'Document',
+            $attachment = [
+                'type' => 'Image',
                 'mediaType' => $mediaType,
-                'url' => $photoUrl,
-                'name' => 'Image'
+                'url' => $resolvedUrl,
+                'name' => $altName
             ];
+
+            if ($blurhash !== null && $blurhash !== '') {
+                $attachment['blurhash'] = $blurhash;
+            }
+
+            if (is_array($focalPoint) && count($focalPoint) >= 2) {
+                $attachment['focalPoint'] = array_values(array_map('floatval', $focalPoint));
+            }
+
+            if ($width !== null && $height !== null) {
+                $attachment['width'] = $width;
+                $attachment['height'] = $height;
+            }
+
+            $attachments[] = $attachment;
         }
+
+        // Support video / reel attachments (Pixelfed Reels / Mastodon Videos)
+        $videoMedia = $metadata['video'] ?? $metadata['reel'] ?? $metadata['reels'] ?? null;
+        if ($videoMedia) {
+            $videos = is_array($videoMedia) && !isset($videoMedia['url']) ? $videoMedia : [$videoMedia];
+            foreach ($videos as $vid) {
+                $vidUrl = is_array($vid) ? (string)($vid['url'] ?? '') : (string)$vid;
+                if ($vidUrl === '') {
+                    continue;
+                }
+                $resolvedVidUrl = filter_var($vidUrl, FILTER_VALIDATE_URL) ? $vidUrl : rtrim($fqdn, '/') . '/' . ltrim($vidUrl, '/');
+                $ext = strtolower(pathinfo((string)parse_url($resolvedVidUrl, PHP_URL_PATH), PATHINFO_EXTENSION));
+                $mediaType = $ext === 'webm' ? 'video/webm' : 'video/mp4';
+                $vidAttachment = [
+                    'type' => 'Video',
+                    'mediaType' => is_array($vid) && !empty($vid['media_type']) ? (string)$vid['media_type'] : $mediaType,
+                    'url' => $resolvedVidUrl,
+                    'name' => is_array($vid) ? (string)($vid['alt'] ?? 'Video') : 'Video'
+                ];
+                if (is_array($vid) && !empty($vid['poster'])) {
+                    $posterUrl = (string)$vid['poster'];
+                    $resolvedPoster = filter_var($posterUrl, FILTER_VALIDATE_URL) ? $posterUrl : rtrim($fqdn, '/') . '/' . ltrim($posterUrl, '/');
+                    $vidAttachment['icon'] = [
+                        'type' => 'Image',
+                        'url' => $resolvedPoster
+                    ];
+                }
+                $attachments[] = $vidAttachment;
+            }
+        }
+
         if (!empty($attachments)) {
             $object['attachment'] = $attachments;
         }

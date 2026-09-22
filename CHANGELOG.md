@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 ### Features
+  - (federation) implement full Pixelfed compatibility layer (fixes #17)
   - (twtxt) integrate twtxt feed ingestion with Microsub moderation and rule filtering (#16)
   - (twtxt) implement Yarns media detection and attachments extraction (#15)
   - (twtxt) implement Yarns metadata headers, subject tags, and markdown formatting (#14)

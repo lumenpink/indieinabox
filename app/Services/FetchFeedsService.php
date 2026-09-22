@@ -343,6 +343,7 @@ class FetchFeedsService
                 'content_warning' => $entry->contentWarning,
                 'poll' => $entry->poll,
                 'reels' => $entry->reels,
+                'photos' => $entry->photos,
             ],
         ];
 

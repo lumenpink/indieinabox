@@ -148,3 +148,57 @@ test('Integration: Outbox delivery signs with RSA keys and verifies via HttpSign
     );
     expect($isValid)->toBeTrue();
 });
+
+test('Integration: Pixelfed gallery and reel objects are syndicated, queued, and ingested correctly', function () {
+    $object = \Indieinabox\ActivityPub\ActivityBuilder::buildObjectForPageArray(
+        'https://fed-node.org/photos/gallery-test',
+        'https://fed-node.org/@sysop',
+        'https://fed-node.org',
+        '<p>Stunning sunset over the bay</p>',
+        'Sunset Bay',
+        [
+            'photo' => [
+                [
+                    'url' => 'https://fed-node.org/media/sunset.jpg',
+                    'alt' => 'Sunset over water',
+                    'blurhash' => 'U35;5*00_200~qIU%M%M00_2?b%M_3?b_3t7',
+                    'focal_point' => [0.1, -0.2],
+                    'width' => 1920,
+                    'height' => 1080,
+                ]
+            ],
+            'reel' => [
+                'url' => 'https://fed-node.org/media/clip.mp4',
+                'alt' => 'Short clip',
+                'poster' => 'https://fed-node.org/media/clip_poster.jpg'
+            ]
+        ]
+    );
+
+    expect($object['type'])->toBe('Article');
+    expect($object['attachment'])->toHaveCount(2);
+    expect($object['attachment'][0]['type'])->toBe('Image');
+    expect($object['attachment'][0]['focalPoint'])->toBe([0.1, -0.2]);
+    expect($object['attachment'][1]['type'])->toBe('Video');
+
+    // Simulate incoming federation ingest of this object
+    $entry = \Indieinabox\Microsub\NormalizationAdapter::fromActivityPub($object, $object['content']);
+    expect($entry->photos)->toHaveCount(1);
+    expect($entry->photos[0]['blurhash'])->toBe('U35;5*00_200~qIU%M%M00_2?b%M_3?b_3t7');
+    expect($entry->reels)->not->toBeNull();
+    expect($entry->reels['url'])->toBe('https://fed-node.org/media/clip.mp4');
+
+    // Save entry to channel via FetchFeedsService
+    $fetchService = new \Indieinabox\Services\FetchFeedsService(Database::getDb());
+    $saved = $fetchService->saveEntry($entry, 'photos');
+    expect($saved)->toBeTrue();
+
+    // Verify persisted frontmatter contains _indieinabox photos and reels
+    $channelDir = Database::$dataDir . '/microsub/inbox/photos';
+    $files = glob($channelDir . '/*.md');
+    expect($files)->not->toBeEmpty();
+    $savedContent = file_get_contents($files[0]);
+    expect($savedContent)->toContain('blurhash');
+    expect($savedContent)->toContain('clip.mp4');
+});
+

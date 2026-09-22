@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+- Routine maintenance, documentation updates, and operational improvements.
+
+## Previous Releases
+
+### [v1.0.0] - Full Federation, Theme Ecosystem & Moderation
+
 ### Features
   - Phase 29 advanced federation, theme ecosystem, defederation panel, and release v1.0.0
   - (client) build bespoke unified client for Microsub reading and Micropub publishing (fixes #24)
@@ -58,6 +64,45 @@
   - (version) integrate cccp.sh predictive versioning support and hardcoded compiled build
   - (updater) implement unified Updater with 2-backup rotation, auto-versioning, CLI, and CRON integration
   - (webmention) integrate mf2 parsing, W3C discovery, CLI testing tool and IndieWeb compliance
+  - (builder) extract PagePublisher from SiteBuilder and clean legacy delegators
+  - (feeds) implement pluggable FeedGenerators and FeedPublisher consuming Entry
+  - (entry) introduce universal Entry domain entity with federation and poll support
+  - (database) add support for listen, watch, and read content kinds
+  - (ci) add reports dashboard workflow and summary generation script
+  - (ci) introduce custom CI Docker image and optimize CI workflows
+  - (microsub) add webmention discovery and hashtag extraction support
+  - (microsub) add ExtendedEntry and NormalizationAdapter classes
+  - (federation) add yarnd, twtd, and webmention services to test environment
+  - add pixelfed-worker to docker-compose and update federation test scripts for compatibility with updated API calls
+  - implement setup and config CLI commands for instance initialization and variable management
+  - add Caddy configuration for federation testing and automate database initialization in setup script
+  - (cli) add CLI handler for profile management and post creation
+  - automate local SSL certificate injection and stabilize cross-platform federation initialization scripts
+  - update federation setup to create admin user and authenticate notes with API token
+  - add feed URL tracking to items and implement ActivityPub follow/undo functionality during subscription changes
+  - implement ActivityPub remote interaction handler and support user authentication redirects
+  - add Fediverse interaction button and route to facilitate remote post engagement
+  - configure Misskey template with dynamic env vars and update federation test suite account and seeding logic
+  - add port configuration to Misskey federation test environment
+  - add Misskey configuration file and set restart policy for mastodon-sidekiq container
+  - replace mock stubs with full Mastodon, Misskey, and Pixelfed service configurations and automation scripts
+  - add federation test environment with Caddy proxy, Docker Compose stubs, and setup script
+  - (feat: add ActivityPub custom emoji caching and image attachment support (for Pixelfed), and update Fetcher user-agent.) feat: add ActivityPub custom emoji caching and image attachment support (for Pixelfed), and update Fetcher user-agent.
+  - include public_media directory during site media copy process
+  - improve user feedback during feed subscription and redirect to new channel upon creation
+  - prevent duplicate feed items by checking existence in the local store before processing
+  - implement remote media caching for feeds with configurable local download settings and size limits
+  - add UI sync feedback, improve Atom feed parsing reliability
+  - add Atom feed fallback for Pixelfed outbox and include integration test script
+  - add robust fallbacks for resolving parent author names when fetching actor data fails
+  - add thread link to nested quote blocks in FeedFetcher
+  - add quote-post rendering and attachments support, include "Next" navigation button, and fix PDO class references
+  - add ActivityPub support for fetching feeds and interacting with posts via WebFinger lookup.
+  - add functionality to delete custom Microsub channels with confirmation UI
+  - implement automated daily backup system with configurable rotation and directory settings
+  - implement containerized multi-service architecture with automated Docker publishing and entrypoint volume initialization
+  - implement local shortlink redirect file generation in SiteBuilder
+  - implement link checker and add CLI command to validate internal and external links
 
 ### Bug Fixes
   - (ui/admin) preserve bootstrap setup headings in cyber theme closes #5
@@ -70,8 +115,8 @@
   - (compiler) harmonize mf2 parser parameter nullability for PHP 8.4
   - (ci) prevent premature headers sent in test suite and improve socket readiness check
   - (core) declare Metadata::$title and remove obsolete global in build.php
-
-## Previous Releases
+  - adjust directory permissions for Mastodon and Misskey containers during federation setup
+  - add db:prepare step to mastodon container startup in federation tests
 
 ### [nightly-20260905-151719] - update workflow configuration to optimize build steps
 

@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 ### Features
+  - Phase 29 advanced federation, theme ecosystem, defederation panel, and release v1.0.0
   - (client) build bespoke unified client for Microsub reading and Micropub publishing (fixes #24)
   - (discovery) implement Discovery Engine and public Global Timeline aggregator (fixes #23)
   - (localization) implement automated machine & AI translation engine with LLM providers (fixes #36)

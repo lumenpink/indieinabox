@@ -60,6 +60,13 @@ class WebmentionController extends AbstractController
             return;
         }
 
+        $sourceHost = parse_url($source, PHP_URL_HOST);
+        $moderation = new \Indieinabox\Moderation\ModerationService();
+        if ($moderation->isBlocked($sourceHost, $source)) {
+            $this->sendResponse(403, 'Source domain or URL is blocked by site moderation policy.');
+            return;
+        }
+
         if (!$this->service->isValidTarget($target, $this->site)) {
             $this->sendResponse(400, 'Target page not found on this site.');
             return;

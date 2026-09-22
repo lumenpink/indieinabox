@@ -14,7 +14,7 @@ class Version
     /**
      * Semantic version string of the current release.
      */
-    public const VERSION = '0.2.0';
+    public const VERSION = '1.0.0';
 
     /**
      * Gets the full version string including build metadata.

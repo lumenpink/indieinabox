@@ -224,3 +224,30 @@ CREATE TABLE IF NOT EXISTS archive_aliases (
     original_url TEXT PRIMARY KEY,
     final_url TEXT NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS activitypub_activities (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    activity_id TEXT UNIQUE NOT NULL,
+    type TEXT NOT NULL,
+    actor TEXT NOT NULL,
+    payload_json TEXT NOT NULL,
+    created_at INTEGER NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS flowerbed_followers (
+    flowerbed_slug TEXT NOT NULL,
+    actor_url TEXT NOT NULL,
+    inbox_url TEXT NOT NULL,
+    shared_inbox_url TEXT,
+    created_at INTEGER NOT NULL,
+    PRIMARY KEY (flowerbed_slug, actor_url)
+);
+
+CREATE TABLE IF NOT EXISTS federation_blocks (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    domain TEXT,
+    actor_url TEXT,
+    action TEXT NOT NULL DEFAULT 'block',
+    reason TEXT,
+    created_at INTEGER NOT NULL
+);

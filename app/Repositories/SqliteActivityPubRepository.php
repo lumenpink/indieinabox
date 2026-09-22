@@ -115,4 +115,78 @@ class SqliteActivityPubRepository implements ActivityPubRepositoryInterface
         $stmt->execute([$olderThanTimestamp]);
         return $stmt->rowCount();
     }
+
+    #[\Override]
+    public function recordActivity(string $activityId, string $type, string $actor, string $payloadJson, ?int $createdAt = null): bool
+    {
+        $stmt = $this->getDb()->prepare(
+            'INSERT OR REPLACE INTO activitypub_activities (activity_id, type, actor, payload_json, created_at) ' .
+            'VALUES (?, ?, ?, ?, ?)'
+        );
+        return $stmt->execute([$activityId, $type, $actor, $payloadJson, $createdAt ?? time()]);
+    }
+
+    #[\Override]
+    public function getActivities(int $limit = 50, int $offset = 0): array
+    {
+        try {
+            $stmt = $this->getDb()->prepare(
+                'SELECT id, activity_id, type, actor, payload_json, created_at FROM activitypub_activities ' .
+                'ORDER BY created_at DESC, id DESC LIMIT ? OFFSET ?'
+            );
+            $stmt->bindValue(1, $limit, PDO::PARAM_INT);
+            $stmt->bindValue(2, $offset, PDO::PARAM_INT);
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
+        } catch (\Throwable) {
+            return [];
+        }
+    }
+
+    #[\Override]
+    public function getActivityCount(): int
+    {
+        try {
+            $stmt = $this->getDb()->query('SELECT COUNT(*) FROM activitypub_activities');
+            return $stmt ? (int) $stmt->fetchColumn() : 0;
+        } catch (\Throwable) {
+            return 0;
+        }
+    }
+
+    #[\Override]
+    public function addFlowerbedFollower(string $flowerbedSlug, string $actorUrl, string $inboxUrl, ?string $sharedInboxUrl = null): bool
+    {
+        $stmt = $this->getDb()->prepare(
+            'INSERT OR REPLACE INTO flowerbed_followers (flowerbed_slug, actor_url, inbox_url, shared_inbox_url, created_at) ' .
+            'VALUES (?, ?, ?, ?, ?)'
+        );
+        return $stmt->execute([$flowerbedSlug, $actorUrl, $inboxUrl, $sharedInboxUrl, time()]);
+    }
+
+    #[\Override]
+    public function removeFlowerbedFollower(string $flowerbedSlug, string $actorUrl): bool
+    {
+        $stmt = $this->getDb()->prepare(
+            'DELETE FROM flowerbed_followers WHERE flowerbed_slug = ? AND actor_url = ?'
+        );
+        return $stmt->execute([$flowerbedSlug, $actorUrl]);
+    }
+
+    #[\Override]
+    public function getFlowerbedFollowerInboxes(string $flowerbedSlug): array
+    {
+        $stmt = $this->getDb()->prepare(
+            'SELECT DISTINCT COALESCE(NULLIF(shared_inbox_url, ""), inbox_url) as inbox ' .
+            'FROM flowerbed_followers WHERE flowerbed_slug = ? AND inbox_url != ""'
+        );
+        $stmt->execute([$flowerbedSlug]);
+        $inboxes = [];
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            if (!empty($row['inbox'])) {
+                $inboxes[] = (string) $row['inbox'];
+            }
+        }
+        return $inboxes;
+    }
 }

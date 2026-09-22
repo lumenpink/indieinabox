@@ -288,6 +288,17 @@ class AdminController extends AbstractController
                 $this->moderationService->approveInteraction($id, $type);
             } elseif ($action === 'delete') {
                 $this->moderationService->deleteInteraction($id, $type);
+            } elseif ($action === 'add_block') {
+                $domain = !empty($_POST['domain']) ? (string) $_POST['domain'] : null;
+                $actorUrl = !empty($_POST['actor_url']) ? (string) $_POST['actor_url'] : null;
+                $blockAction = !empty($_POST['block_action']) ? (string) $_POST['block_action'] : 'block';
+                $reason = !empty($_POST['reason']) ? (string) $_POST['reason'] : '';
+                $fedMod = new \Indieinabox\Moderation\ModerationService($this->db);
+                $fedMod->addBlock($domain, $actorUrl, $blockAction, $reason);
+            } elseif ($action === 'remove_block') {
+                $blockId = (int) ($_POST['id'] ?? 0);
+                $fedMod = new \Indieinabox\Moderation\ModerationService($this->db);
+                $fedMod->removeBlock($blockId);
             }
 
             $fqdn = rtrim($this->site->metadata->fqdn ?? '', '/');
@@ -306,8 +317,11 @@ class AdminController extends AbstractController
             $s['id_filename'] = $s['id'];
         }
 
+        $fedMod = new \Indieinabox\Moderation\ModerationService($this->db);
+        $blocks = $fedMod->getBlocks();
+
         $fqdn = rtrim($this->site->metadata->fqdn ?? '', '/');
-        $this->html(ModerationView::render($pending, $spam, $fqdn));
+        $this->html(ModerationView::render($pending, $spam, $fqdn, $blocks));
     }
 
     /**

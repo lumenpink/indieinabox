@@ -71,6 +71,8 @@ class WebRouter
      */
     public function handleRequest(): void
     {
+        SecurityHeaders::apply();
+
         $requestUri = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?? '/';
         $requestUriClean = rtrim($requestUri, '/');
 
@@ -157,6 +159,37 @@ class WebRouter
 
             if ($requestUriClean === '/outbox') {
                 $ap->outbox();
+                return;
+            }
+
+            // Route: Flowerbed Group Actor (FEP-1b12)
+            if (preg_match('#^/@flowerbed/([a-zA-Z0-9_\-]+)(?:/(actor|inbox|outbox|followers))?$#', $requestUriClean, $matches)) {
+                $slug = $matches[1];
+                $action = $matches[2] ?? 'actor';
+                if ($action === 'actor' || $action === '') {
+                    $ap->flowerbedActor($slug);
+                } elseif ($action === 'inbox') {
+                    $ap->flowerbedInbox($slug);
+                } elseif ($action === 'outbox') {
+                    $ap->flowerbedOutbox($slug);
+                } elseif ($action === 'followers') {
+                    $ap->flowerbedFollowers($slug);
+                }
+                return;
+            }
+
+            if (preg_match('#^/flowerbed/([a-zA-Z0-9_\-]+)/(actor|inbox|outbox|followers)$#', $requestUriClean, $matches)) {
+                $slug = $matches[1];
+                $action = $matches[2];
+                if ($action === 'actor') {
+                    $ap->flowerbedActor($slug);
+                } elseif ($action === 'inbox') {
+                    $ap->flowerbedInbox($slug);
+                } elseif ($action === 'outbox') {
+                    $ap->flowerbedOutbox($slug);
+                } elseif ($action === 'followers') {
+                    $ap->flowerbedFollowers($slug);
+                }
                 return;
             }
         }

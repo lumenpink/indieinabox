@@ -15,9 +15,10 @@ class ModerationView
      * @param array<int, array<string, mixed>> $pending List of pending interaction records.
      * @param array<int, array<string, mixed>> $spam List of flagged spam interaction records.
      * @param string $fqdn Fully qualified domain name.
+     * @param array<int, array<string, mixed>> $blocks List of federation defederation block rules.
      * @return string Rendered HTML.
      */
-    public static function render(array $pending, array $spam, string $fqdn): string
+    public static function render(array $pending, array $spam, string $fqdn, array $blocks = []): string
     {
         $fqdnClean = rtrim($fqdn, '/');
         ob_start();
@@ -254,6 +255,80 @@ class ModerationView
                         </div>
                     </div>
                 <?php endforeach; ?>
+            <?php endif; ?>
+
+            <div class="mod-section-title" style="color: #ff9800; margin-top: 3rem;">
+                <span>[FEDERATION & DOMAIN BLOCKS]</span>
+            </div>
+
+            <div class="mod-card" style="border-left: 3px solid #ff9800; margin-bottom: 2rem;">
+                <form method="POST" action="<?= $fqdnClean ?>/admin/moderation" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; align-items: end;">
+                    <input type="hidden" name="action" value="add_block">
+                    <div>
+                        <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 4px;">Target Domain</label>
+                        <input type="text" name="domain" placeholder="bad-instance.social" style="width: 100%; background: rgba(0,0,0,0.5); border: 1px solid rgba(0,240,255,0.3); color: #fff; padding: 6px 10px; border-radius: 4px; box-sizing: border-box;">
+                    </div>
+                    <div>
+                        <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 4px;">Or Actor URL</label>
+                        <input type="url" name="actor_url" placeholder="https://instance.social/users/spammer" style="width: 100%; background: rgba(0,0,0,0.5); border: 1px solid rgba(0,240,255,0.3); color: #fff; padding: 6px 10px; border-radius: 4px; box-sizing: border-box;">
+                    </div>
+                    <div>
+                        <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 4px;">Action</label>
+                        <select name="block_action" style="width: 100%; background: rgba(0,0,0,0.5); border: 1px solid rgba(0,240,255,0.3); color: #fff; padding: 6px 10px; border-radius: 4px; box-sizing: border-box;">
+                            <option value="block">Block (Reject All)</option>
+                            <option value="silence">Silence (Hide from feeds)</option>
+                            <option value="reject_media">Reject Media</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 4px;">Reason / Audit Note</label>
+                        <input type="text" name="reason" placeholder="Spam bot network" style="width: 100%; background: rgba(0,0,0,0.5); border: 1px solid rgba(0,240,255,0.3); color: #fff; padding: 6px 10px; border-radius: 4px; box-sizing: border-box;">
+                    </div>
+                    <div>
+                        <button type="submit" class="mod-btn" style="background: #ff9800; color: #000; font-weight: 700; width: 100%; height: 34px;">Add Block Rule</button>
+                    </div>
+                </form>
+            </div>
+
+            <?php if (empty($blocks)): ?>
+                <div class="mod-empty">No domain or actor blocks active. Federation ingress is fully open.</div>
+            <?php else: ?>
+                <div style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem; text-align: left;">
+                        <thead>
+                            <tr style="border-bottom: 1px solid rgba(0,240,255,0.2); color: var(--text-muted);">
+                                <th style="padding: 8px;">Target</th>
+                                <th style="padding: 8px;">Action</th>
+                                <th style="padding: 8px;">Reason</th>
+                                <th style="padding: 8px;">Date</th>
+                                <th style="padding: 8px; text-align: right;">Manage</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($blocks as $blk): ?>
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                                    <td style="padding: 8px; font-family: monospace;">
+                                        <?= htmlspecialchars((string) ($blk['domain'] ?: $blk['actor_url'] ?: 'All')) ?>
+                                    </td>
+                                    <td style="padding: 8px;">
+                                        <span class="mod-badge" style="background: <?= $blk['action'] === 'block' ? '#f44336' : ($blk['action'] === 'silence' ? '#ff9800' : '#2196f3') ?>; color: #fff;">
+                                            <?= strtoupper(htmlspecialchars((string) $blk['action'])) ?>
+                                        </span>
+                                    </td>
+                                    <td style="padding: 8px; color: var(--text-muted);"><?= htmlspecialchars((string) ($blk['reason'] ?? '')) ?></td>
+                                    <td style="padding: 8px; font-size: 0.8rem; color: var(--text-muted);"><?= date('Y-m-d H:i', (int) ($blk['created_at'] ?? time())) ?></td>
+                                    <td style="padding: 8px; text-align: right;">
+                                        <form method="POST" action="<?= $fqdnClean ?>/admin/moderation" style="display: inline;" onsubmit="return confirm('Remove this moderation block?');">
+                                            <input type="hidden" name="action" value="remove_block">
+                                            <input type="hidden" name="id" value="<?= (int) $blk['id'] ?>">
+                                            <button type="submit" class="mod-btn mod-btn-delete" style="padding: 2px 8px; font-size: 0.75rem;">Remove</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
             <?php endif; ?>
         </div>
         <?php

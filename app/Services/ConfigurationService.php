@@ -197,44 +197,14 @@ class ConfigurationService
             throw new InvalidArgumentException('No valid theme archive uploaded.');
         }
 
-        if (!class_exists('ZipArchive')) {
-            throw new RuntimeException('PHP ZipArchive extension is required for theme installation.');
+        $themeManager = new \Indieinabox\Theme\ThemeManager();
+        $result = $themeManager->installFromZip($file['tmp_name'], $themesDir);
+
+        if (!$result['success']) {
+            throw new RuntimeException($result['error'] ?? 'Failed to install theme archive.');
         }
 
-        $zip = new ZipArchive();
-        if ($zip->open($file['tmp_name']) !== true) {
-            throw new RuntimeException('Failed to open uploaded ZIP file.');
-        }
-
-        $themeName = '';
-        for ($i = 0; $i < $zip->numFiles; $i++) {
-            $filename = $zip->getNameIndex($i);
-            if ($filename !== false) {
-                $parts = explode('/', trim($filename, '/'));
-                if (!empty($parts[0])) {
-                    $themeName = $parts[0];
-                    break;
-                }
-            }
-        }
-
-        if (empty($themeName)) {
-            $zip->close();
-            throw new RuntimeException('Could not determine theme name from archive structure.');
-        }
-
-        if (!is_dir($themesDir)) {
-            @mkdir($themesDir, 0755, true);
-        }
-
-        $extracted = $zip->extractTo($themesDir);
-        $zip->close();
-
-        if (!$extracted) {
-            throw new RuntimeException('Failed to extract theme archive to themes directory.');
-        }
-
-        return $themeName;
+        return (string) ($result['slug'] ?? 'custom-theme');
     }
 
     /**

@@ -472,4 +472,12 @@ app/
     - Configured `docker/Caddyfile` with `auto_https off` and clean `:80` listening for environments operating behind external reverse proxies.
     - Implemented unified build and publish tool: `scripts/docker-build-push.sh` supporting `app`, `ci`, and `all` targets with `--push` and custom tags.
 
+### 🌐 Phase 29: Advanced Federation, Theme Ecosystem & Moderation
+
+- [x] **ActivityPub W3C Client-to-Server (C2S) API**: Native Section 6 C2S implementation (`ActivityPubC2SService`, `ActivityPubC2SInterface`). Authenticated outbox submission via Bearer tokens (IndieAuth/OAuth2), automatic object wrapping into `Create` activities, recipient fan-out, activity persistence in `activitypub_activities`, and `OrderedCollection` outbox retrieval.
+- [x] **Group Actors & Federated Flowerbeds (FEP-1b12)**: First-class Group Actor support for digital garden flowerbeds (`FlowerbedGroupService`, `FlowerbedGroupInterface`). Endpoints at `/@flowerbed/{slug}` (`actor`, `inbox`, `outbox`, `followers`), WebFinger discovery, automatic `Follow` handling with `Accept` reply, `Undo` un-follow, and post publication `Announce` fan-out to community subscribers (Lemmy/Kbin/Guppe compatibility).
+- [x] **Theme & Extension Ecosystem**: Manifest validation (`theme.json`), directory traversal defense, theme discovery and listing (`ThemeManager`, `ThemeEcosystemInterface`), installation from ZIP packages and Git shallow clones, and runtime active theme switching.
+- [x] **Federation & IndieWeb Defederation Panel**: SQLite `federation_blocks` persistence, domain and actor level blocking, recursive subdomain matching, silent filtering, ingress rejection (HTTP 403) on ActivityPub inboxes and incoming Webmentions, and administrative block management panel (`/admin/moderation`).
+
+
 

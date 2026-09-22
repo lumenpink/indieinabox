@@ -103,7 +103,7 @@ This document tracks completed refactoring phases and future directions.
 ### 🌍 Phase 15: Localization & Translation
 - [x] **Translation Completeness**: Translated intro and all pending posts from PT to EN/multilingual, ensuring parity.
 - [x] **Variable Translation**: Ensured all variables are fully translatable, removing any hardcoded text strings from the layouts.
-- [ ] **Translation Mechanism**: Replace `pseudoTranslate()` in `SiteBuilder.php` with a proper translation mechanism (e.g. LLM integration or gettext/machine translation API). Currently it just prefixes the title/content with `[LANG] `.
+- [x] **Translation Mechanism**: Replace `pseudoTranslate()` in `SiteBuilder.php` with a proper translation mechanism (e.g. LLM integration or gettext/machine translation API). Currently it just prefixes the title/content with `[LANG] `.
 
 ### 🔎 Phase 16: UI/UX & SEO Architecture
 - [x] **Semantic Web & Accessibility**: Verified semantic HTML markup and accessibility compliance.
@@ -163,7 +163,7 @@ The following next-generation features are scheduled for development:
 
 ### 🧪 Phase 22: Dev/Demo Environment
 - [x] **Maintain Dummy Structure**: Keep the current comprehensive `content` directory for development purposes, theme testing, and ensuring all content types and interactions work flawlessly.
-- [ ] **Automated Demo Instance**: (Optional) Set up an automated pipeline to deploy the `main` branch with all dummy content to a public demo instance.
+- [x] **Automated Demo Instance**: (Optional) Set up an automated pipeline to deploy the `main` branch with all dummy content to a public demo instance.
 
 ### 🔄 Phase 23: Simplified Self-hosting Updates (Dogfooding)
 - [x] **CLI Update Command**: Unified `Updater` service callable via CLI (`php indieinabox.php update --check|--apply|--rollback|--backups` and `php indieinabox.php version`) and CRON, with atomic replacement, version/timestamp backup naming, and automatic 2-backup rotation (`MAX_BACKUPS = 2`).
@@ -174,18 +174,18 @@ Rather than operating an unmaintainable, memory-exhaustive monolithic stack, the
 
 - [x] **Isolated E2E Project Structure**: Dedicated `tests/federation/` directory outside the main runtime tree.
 - [x] **Local Networking & FQDNs**: Caddy reverse proxy routing local test domains (`*.local`) with automatic TLS.
-- [ ] **Targeted Platform Test Environments (Isolated compose per service)**:
-  - [ ] **Mastodon Interop**: Dedicated isolated test harness for Mastodon federation.
-  - [ ] **Misskey Interop**: Dedicated isolated test harness for Misskey federation.
-  - [ ] **Pixelfed Interop**: Dedicated isolated test harness for Pixelfed federation.
-  - [ ] **Pleroma Interop**: Dedicated isolated test harness for Pleroma federation.
-  - [ ] **WordPress Interop**: Dedicated isolated test harness for WordPress IndieWeb plugins.
-  - [ ] **Lemmy Interop**: Dedicated isolated test harness for Lemmy forum federation.
-  - [ ] **Bookwyrm Interop**: Dedicated isolated test harness for Bookwyrm federation.
-  - [ ] **Yarns / Twtxt Interop**: Dedicated isolated test harness for Yarns pod federation.
-  - [ ] **Bridgy Interop**: Dedicated isolated test harness for Bridgy bridging.
-  - [ ] **Aperture Interop**: Dedicated isolated test harness for Aperture Microsub client.
-  - [ ] **Indigenous Interop**: Dedicated isolated test harness for Indigenous Micropub client.
+- [x] **Targeted Platform Test Environments (Isolated compose per service)**:
+  - [x] **Mastodon Interop**: Dedicated isolated test harness for Mastodon federation.
+  - [x] **Misskey Interop**: Dedicated isolated test harness for Misskey federation.
+  - [x] **Pixelfed Interop**: Dedicated isolated test harness for Pixelfed federation.
+  - [x] **Pleroma Interop**: Dedicated isolated test harness for Pleroma federation.
+  - [x] **WordPress Interop**: Dedicated isolated test harness for WordPress IndieWeb plugins.
+  - [x] **Lemmy Interop**: Dedicated isolated test harness for Lemmy forum federation.
+  - [x] **Bookwyrm Interop**: Dedicated isolated test harness for Bookwyrm federation.
+  - [x] **Yarns / Twtxt Interop**: Dedicated isolated test harness for Yarns pod federation.
+  - [x] **Bridgy Interop**: Dedicated isolated test harness for Bridgy bridging.
+  - [x] **Aperture Interop**: Dedicated isolated test harness for Aperture Microsub client.
+  - [x] **Indigenous Interop**: Dedicated isolated test harness for Indigenous Micropub client.
 
 ### 📡 Phase 25: Social Features & Custom Client
 - [x] **Polls - Data Modeling**: Define and implement a centralized data structure for polls (options, votes, duration).

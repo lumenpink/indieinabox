@@ -1,0 +1,11 @@
+{
+    local_certs
+}
+
+aperture.local {
+    reverse_proxy aperture-client:8080
+}
+
+indieinabox.local {
+    reverse_proxy indieinabox:80
+}

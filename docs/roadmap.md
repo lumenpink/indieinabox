@@ -137,12 +137,12 @@ The following next-generation features are scheduled for development:
 - [x] **Normalization Adapters**: Build specific parser classes to read incoming data from any source and normalize it into the Universal Post Object before saving it to the local Microsub storage.
 
 ### 🌐 Phase 14: ActivityPub Federated Protocol (Publishing & Reading)
-- [ ] **Actor Profiles & WebFinger**: Implement WebFinger query routing (`/.well-known/webfinger`) and JSON-LD ActivityPub Actor profiles.
-- [ ] **HTTP Signatures**: Create verification middleware for incoming HTTP Signatures.
-- [ ] **Inbox Handling**: Create ActivityPub Inbox system to receive and parse incoming activities.
-- [ ] **Outbox & Publishing**: Publish new site posts automatically to followers' inboxes.
-- [ ] **Microsub Hub Integration**: Bridge incoming ActivityPub feed items into the local Microsub endpoint.
-- [ ] **Mastodon Compatibility Layer**: Support Mastodon-specific extensions (CWs, Polls, custom emojis, thread contexts).
+- [x] **Actor Profiles & WebFinger**: Implement WebFinger query routing (`/.well-known/webfinger`) and JSON-LD ActivityPub Actor profiles.
+- [x] **HTTP Signatures**: Create verification middleware for incoming HTTP Signatures.
+- [x] **Inbox Handling**: Create ActivityPub Inbox system to receive and parse incoming activities.
+- [x] **Outbox & Publishing**: Publish new site posts automatically to followers' inboxes.
+- [x] **Microsub Hub Integration**: Bridge incoming ActivityPub feed items into the local Microsub endpoint.
+- [x] **Mastodon Compatibility Layer**: Support Mastodon-specific extensions (CWs, Polls, custom emojis, thread contexts).
 - [ ] **Pixelfed Compatibility Layer**: Support Pixelfed-specific extensions (Image collections, gallery metadata, short loops/Reels).
 - [ ] **Misskey Compatibility Layer**: Support Misskey-specific extensions (Quote posts/Renotes, rich reactions).
 - [ ] **Extended Protocols**: Investigate possibilities of supporting forum protocols and BookWyrm alongside ActivityPub.
@@ -161,29 +161,30 @@ The following next-generation features are scheduled for development:
 - [ ] **i18n Out-of-the-box (Backlog)**: Future implementation of translations ready for the end-user.
 
 ### 🧪 Phase 22: Dev/Demo Environment
-- [ ] **Maintain Dummy Structure**: Keep the current comprehensive `content` directory for development purposes, theme testing, and ensuring all content types and interactions work flawlessly.
+- [x] **Maintain Dummy Structure**: Keep the current comprehensive `content` directory for development purposes, theme testing, and ensuring all content types and interactions work flawlessly.
 - [ ] **Automated Demo Instance**: (Optional) Set up an automated pipeline to deploy the `main` branch with all dummy content to a public demo instance.
 
 ### 🔄 Phase 23: Simplified Self-hosting Updates (Dogfooding)
 - [x] **CLI Update Command**: Unified `Updater` service callable via CLI (`php indieinabox.php update --check|--apply|--rollback|--backups` and `php indieinabox.php version`) and CRON, with atomic replacement, version/timestamp backup naming, and automatic 2-backup rotation (`MAX_BACKUPS = 2`).
 - [x] **UI Update Button**: Settings/Config UI (`/settings`) enables checks, one-click upgrades from Codeberg releases, and rollback to previous version backups.
 
-### 🌐 Phase 24: Full Integration Testing Ecosystem (Docker)
-- [ ] **Isolated E2E Project**: Create a separate repository or dedicated directory outside the main tree for end-to-end integration testing, preventing clutter in the main codebase.
-- [ ] **Docker Compose Network**: Configure a comprehensive `docker-compose.yml` to spin up essential fediverse/indieweb platforms for real-world integration testing:
-    - [ ] Mastodon
-    - [ ] Misskey
-    - [ ] Pleroma
-    - [ ] Pixelfed
-    - [ ] WordPress (with Indieweb plugins)
-    - [ ] Lemmy
-    - [ ] Bookwyrm
-    - [ ] Yarns (Microsub server)
-    - [ ] Bridgy (for testing bridging capabilities)
-    - [ ] Aperture (another Microsub client)
-    - [ ] Indigenous (or similar generic Micropub clients)
-- [ ] **Networking & FQDNs**: Set up a reverse proxy (e.g., Traefik/Nginx) or Cloudflare Tunnels to provide valid FQDNs for each local container.
-- [ ] **Automated Setup Scripts**: Create scripts to automatically provision test users, generate necessary tokens, and configure instances upon container startup.
+### 🌐 Phase 24: Targeted Interop Testing Ecosystem (Modular Docker)
+Rather than operating an unmaintainable, memory-exhaustive monolithic stack, the interop test harness is modularized: each federated platform has its own focused, isolated test harness (`docker-compose.yml` + setup script) to verify bidirectional interoperability independently and deterministically.
+
+- [x] **Isolated E2E Project Structure**: Dedicated `tests/federation/` directory outside the main runtime tree.
+- [x] **Local Networking & FQDNs**: Caddy reverse proxy routing local test domains (`*.local`) with automatic TLS.
+- [ ] **Targeted Platform Test Environments (Isolated compose per service)**:
+  - [ ] **Mastodon Interop**: Dedicated isolated test harness for Mastodon federation.
+  - [ ] **Misskey Interop**: Dedicated isolated test harness for Misskey federation.
+  - [ ] **Pixelfed Interop**: Dedicated isolated test harness for Pixelfed federation.
+  - [ ] **Pleroma Interop**: Dedicated isolated test harness for Pleroma federation.
+  - [ ] **WordPress Interop**: Dedicated isolated test harness for WordPress IndieWeb plugins.
+  - [ ] **Lemmy Interop**: Dedicated isolated test harness for Lemmy forum federation.
+  - [ ] **Bookwyrm Interop**: Dedicated isolated test harness for Bookwyrm federation.
+  - [ ] **Yarns / Twtxt Interop**: Dedicated isolated test harness for Yarns pod federation.
+  - [ ] **Bridgy Interop**: Dedicated isolated test harness for Bridgy bridging.
+  - [ ] **Aperture Interop**: Dedicated isolated test harness for Aperture Microsub client.
+  - [ ] **Indigenous Interop**: Dedicated isolated test harness for Indigenous Micropub client.
 
 ### 📡 Phase 25: Social Features & Custom Client
 - [x] **Polls - Data Modeling**: Define and implement a centralized data structure for polls (options, votes, duration).

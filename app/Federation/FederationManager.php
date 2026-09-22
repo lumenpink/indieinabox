@@ -33,6 +33,8 @@ class FederationManager
     private function registerDefaultAdapters(): void
     {
         $this->register(new ActivityPubAdapter($this->site));
+        $this->register(new \Indieinabox\Federation\Adapters\LemmyAdapter($this->site));
+        $this->register(new \Indieinabox\Federation\Adapters\BookwyrmAdapter($this->site));
     }
 
     /**

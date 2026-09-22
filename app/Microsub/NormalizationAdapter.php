@@ -146,6 +146,28 @@ class NormalizationAdapter
             $entry->reels = $reel;
         }
 
+        // Misskey Quote Post / Renote with commentary (_misskey_quote, quoteUrl, or quoting object)
+        $quoteUrl = $json['_misskey_quote'] ?? $json['quoteUrl'] ?? $json['quote_url'] ?? null;
+        if ($quoteUrl !== null && is_string($quoteUrl) && filter_var($quoteUrl, FILTER_VALIDATE_URL)) {
+            $quoteContent = '';
+            $quoteAuthor = '';
+            if (isset($json['_misskey_quote_object']) && is_array($json['_misskey_quote_object'])) {
+                $quoteContent = (string)($json['_misskey_quote_object']['content'] ?? '');
+                $quoteAuthor = (string)($json['_misskey_quote_object']['attributedTo'] ?? '');
+            }
+            $entry->quote = [
+                'url' => $quoteUrl,
+                'content' => $quoteContent,
+                'author' => $quoteAuthor,
+            ];
+            $entry->capabilities[] = 'quote';
+        }
+
+        // Misskey Custom Emoji Reaction (_misskey_reaction or reaction tag)
+        if (!empty($json['_misskey_reaction'])) {
+            $entry->reaction = (string)$json['_misskey_reaction'];
+        }
+
         // Poll extraction
         if (!empty($json['oneOf']) || !empty($json['anyOf'])) {
             $entry->capabilities[] = 'poll_vote';

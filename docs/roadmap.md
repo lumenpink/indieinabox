@@ -144,8 +144,8 @@ The following next-generation features are scheduled for development:
 - [x] **Microsub Hub Integration**: Bridge incoming ActivityPub feed items into the local Microsub endpoint.
 - [x] **Mastodon Compatibility Layer**: Support Mastodon-specific extensions (CWs, Polls, custom emojis, thread contexts).
 - [x] **Pixelfed Compatibility Layer**: Support Pixelfed-specific extensions (Image collections, gallery metadata, short loops/Reels).
-- [ ] **Misskey Compatibility Layer**: Support Misskey-specific extensions (Quote posts/Renotes, rich reactions).
-- [ ] **Extended Protocols**: Investigate possibilities of supporting forum protocols and BookWyrm alongside ActivityPub.
+- [x] **Misskey Compatibility Layer**: Support Misskey-specific extensions (Quote posts/Renotes, rich reactions).
+- [x] **Extended Protocols**: Investigate possibilities of supporting forum protocols and BookWyrm alongside ActivityPub.
 
 ### 🧩 Phase 19: Theme Data Abstraction Layer
 - [x] **Autonomous Data Methods**: Refactor the generation of template data (e.g., footer links, page titles, OpenGraph/meta tags) into autonomous helper methods or a dedicated abstraction layer. This will decouple low-level data logic from the presentation layer, allowing future theme designers to build themes easily without writing complex PHP logic.

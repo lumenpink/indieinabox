@@ -30,6 +30,8 @@ class ExtendedEntry
     public ?array $poll = null;
     public ?array $reels = null;
     public ?array $photos = null; // List of photos: [['url' => '...', 'alt' => '...', 'focal_point' => [x,y], 'blurhash' => '...']]
+    public ?array $quote = null; // Misskey quote renote: ['url' => '...', 'content' => '...', 'author' => '...']
+    public ?string $reaction = null; // Misskey emoji reaction
     
     // Internal state
     public bool $isRead = false;
@@ -113,6 +115,25 @@ class ExtendedEntry
             }
         }
 
+        // Fallback for Misskey Quote Posts (Renote with commentary)
+        if (!empty($this->quote) && !empty($this->quote['url'])) {
+            $quoteUrl = htmlspecialchars($this->quote['url']);
+            $quoteContent = !empty($this->quote['content']) ? $this->quote['content'] : '';
+            $quoteAuthor = !empty($this->quote['author']) ? htmlspecialchars($this->quote['author']) : $quoteUrl;
+            $quoteHtml = sprintf(
+                "\n<blockquote class=\"misskey-quote-fallback\" cite=\"%s\">\n<p><strong>Quoting <a href=\"%s\">%s</a>:</strong></p>\n<div>%s</div>\n</blockquote>\n",
+                $quoteUrl,
+                $quoteUrl,
+                $quoteAuthor,
+                $quoteContent
+            );
+            $quoteText = sprintf("\n\nQuoting %s:\n%s\n", $quoteUrl, strip_tags($quoteContent));
+            if (strpos($htmlOut, 'misskey-quote-fallback') === false) {
+                $htmlOut .= $quoteHtml;
+                $textOut .= $quoteText;
+            }
+        }
+
         // Fallback for Polls (render as list)
         if (!empty($this->poll) && isset($this->poll['options'])) {
             $htmlOut .= "\n<div class=\"poll-fallback\"><p><strong>Poll:</strong></p>\n<ul>\n";
@@ -139,7 +160,9 @@ class ExtendedEntry
             'content_warning' => $this->contentWarning,
             'poll' => $this->poll,
             'reels' => $this->reels,
-            'photos' => $this->photos
+            'photos' => $this->photos,
+            'quote' => $this->quote,
+            'reaction' => $this->reaction
         ];
 
         return array_filter($payload, function($val) {

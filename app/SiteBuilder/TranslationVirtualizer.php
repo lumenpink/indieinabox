@@ -24,11 +24,13 @@ class TranslationVirtualizer
     private Site $site;
     private ?SettingsRepositoryInterface $settingsRepo;
     private TaxonomyServiceInterface $taxonomyService;
+    private \Indieinabox\Localization\Contracts\TranslationEngineInterface $translationEngine;
 
     public function __construct(
         Site $site,
         ?SettingsRepositoryInterface $settingsRepo = null,
-        ?TaxonomyServiceInterface $taxonomyService = null
+        ?TaxonomyServiceInterface $taxonomyService = null,
+        ?\Indieinabox\Localization\Contracts\TranslationEngineInterface $translationEngine = null
     ) {
         $this->site = $site;
         $container = class_exists(Container::class) ? Container::getInstance() : null;
@@ -42,6 +44,27 @@ class TranslationVirtualizer
             $this->taxonomyService = $container->get(TaxonomyServiceInterface::class);
         } else {
             $this->taxonomyService = new TaxonomyService($this->site);
+        }
+
+        if ($translationEngine !== null) {
+            $this->translationEngine = $translationEngine;
+        } elseif ($container && $container->has(\Indieinabox\Localization\Contracts\TranslationEngineInterface::class)) {
+            $this->translationEngine = $container->get(\Indieinabox\Localization\Contracts\TranslationEngineInterface::class);
+        } else {
+            $engine = new \Indieinabox\Localization\Engines\DictionaryTranslationEngine();
+            // Auto-load project locales if available
+            $dataDir = Database::$dataDir !== '' ? Database::$dataDir : dirname(__DIR__, 2) . '/data';
+            $localesDir = $dataDir . '/locales';
+            if (is_dir($localesDir)) {
+                $files = glob($localesDir . '/*.json');
+                if (is_array($files)) {
+                    foreach ($files as $f) {
+                        $l = pathinfo($f, PATHINFO_FILENAME);
+                        $engine->loadDictionaryFile($l, $f);
+                    }
+                }
+            }
+            $this->translationEngine = $engine;
         }
     }
 
@@ -231,9 +254,17 @@ class TranslationVirtualizer
      * @param string $targetLang The target language code used as the prefix.
      * @return void
      */
-    public function pseudoTranslate(Page $page, string $targetLang): void
+    /**
+     * Translates a page in place using the configured TranslationEngine.
+     * Preserves frontmatter, code blocks, and HTML tags while translating title and content.
+     *
+     * @param Page $page The page to translate in place.
+     * @param string $targetLang The target language code.
+     * @param string $sourceLang The source language code.
+     * @return void
+     */
+    public function pseudoTranslate(Page $page, string $targetLang, string $sourceLang = 'en'): void
     {
-        $prefix = '[' . strtoupper($targetLang) . '] ';
         $hasTitle = !empty($page->title)
             && $page->title !== 'Untitled'
             && $page->title !== 'untitled';
@@ -244,11 +275,27 @@ class TranslationVirtualizer
         }
 
         if ($hasTitle) {
-            $page->title = $prefix . $page->title;
+            $page->title = $this->translationEngine->translateText($page->title, $targetLang, $sourceLang);
         } else {
-            $page->content->content = $prefix . $page->content->content;
-            $page->content->rawBody = $prefix . $page->content->rawBody;
+            $page->content->content = $this->translationEngine->translateContent($page->content->content, $targetLang, $sourceLang);
+            $page->content->rawBody = $this->translationEngine->translateContent($page->content->rawBody, $targetLang, $sourceLang);
         }
+    }
+
+    /**
+     * Returns the underlying translation engine.
+     */
+    public function getTranslationEngine(): \Indieinabox\Localization\Contracts\TranslationEngineInterface
+    {
+        return $this->translationEngine;
+    }
+
+    /**
+     * Sets a custom translation engine.
+     */
+    public function setTranslationEngine(\Indieinabox\Localization\Contracts\TranslationEngineInterface $engine): void
+    {
+        $this->translationEngine = $engine;
     }
 
     /**

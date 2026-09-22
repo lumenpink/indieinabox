@@ -129,13 +129,13 @@ class ActivityPubAdapter implements FederationAdapter
         }
     }
 
-    private function getFqdn(): string
+    protected function getFqdn(): string
     {
         $fqdn = $this->site->metadata->fqdn ?? (string) Database::getSetting('fqdn');
         return rtrim($fqdn ?: 'http://localhost:8080', '/');
     }
 
-    private function getActorUri(): string
+    protected function getActorUri(): string
     {
         $handle = (string) (Database::getSetting('activitypub_handle') ?: 'author');
         return $this->getFqdn() . '/@' . $handle;

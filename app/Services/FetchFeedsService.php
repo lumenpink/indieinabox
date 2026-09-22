@@ -344,6 +344,8 @@ class FetchFeedsService
                 'poll' => $entry->poll,
                 'reels' => $entry->reels,
                 'photos' => $entry->photos,
+                'quote' => $entry->quote,
+                'reaction' => $entry->reaction,
             ],
         ];
 

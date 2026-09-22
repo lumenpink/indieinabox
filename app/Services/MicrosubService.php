@@ -225,6 +225,8 @@ class MicrosubService
                         $entry->poll = $ext['poll'] ?? null;
                         $entry->reels = $ext['reels'] ?? null;
                         $entry->photos = $ext['photos'] ?? null;
+                        $entry->quote = $ext['quote'] ?? null;
+                        $entry->reaction = $ext['reaction'] ?? null;
                     }
 
                     $item = $entry->toJF2Array();

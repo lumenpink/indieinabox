@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 ### Features
+  - (federation, localization) complete Misskey layer, extended protocol adapters and pluggable translation engine (fixes #18, fixes #19, fixes #20)
   - (federation) implement full Pixelfed compatibility layer (fixes #17)
   - (twtxt) integrate twtxt feed ingestion with Microsub moderation and rule filtering (#16)
   - (twtxt) implement Yarns media detection and attachments extraction (#15)

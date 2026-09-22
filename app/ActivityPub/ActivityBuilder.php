@@ -71,6 +71,15 @@ class ActivityBuilder
             $object['inReplyTo'] = $metadata['reply'];
         }
 
+        // Support Misskey Quote Renotes (_misskey_quote / quoteUrl)
+        if (isset($metadata['quote']) || isset($metadata['repost_of']) || isset($metadata['_misskey_quote']) || isset($metadata['quoteUrl'])) {
+            $quoteTarget = (string)($metadata['quote'] ?? ($metadata['_misskey_quote'] ?? ($metadata['quoteUrl'] ?? ($metadata['repost_of'] ?? ''))));
+            if ($quoteTarget !== '') {
+                $object['_misskey_quote'] = $quoteTarget;
+                $object['quoteUrl'] = $quoteTarget;
+            }
+        }
+
         $to = ['https://www.w3.org/ns/activitystreams#Public'];
         $cc = [$fqdn . '/followers'];
 

@@ -218,14 +218,26 @@ final class InteractionDto
         $published = new DateTimeImmutable();
         $meta = ["activity_id" => $activityId];
 
-        if ($activityType === "Like") {
+        if ($activityType === "Like" || $activityType === "EmojiReact") {
             $target = is_string($object) ? $object : (string) ($object["id"] ?? "");
             $type = "like";
+            // Misskey reaction: content or _misskey_reaction
+            $reaction = (string)($activity["content"] ?? ($activity["_misskey_reaction"] ?? ""));
+            if ($reaction !== "") {
+                $meta["reaction"] = $reaction;
+            }
         } elseif ($activityType === "Announce") {
             $target = is_string($object) ? $object : (string) ($object["id"] ?? "");
             $type = "repost";
         } elseif ($activityType === "Create" && is_array($object)) {
             $target = (string) ($object["inReplyTo"] ?? "");
+            $quoteTarget = (string) ($object["_misskey_quote"] ?? ($object["quoteUrl"] ?? ""));
+            if ($target === "" && $quoteTarget !== "") {
+                $target = $quoteTarget;
+                $meta["quote"] = $quoteTarget;
+            } elseif ($quoteTarget !== "") {
+                $meta["quote"] = $quoteTarget;
+            }
             $content = (string) ($object["content"] ?? ($object["summary"] ?? ""));
             $published = isset($object["published"]) ? new DateTimeImmutable((string) $object["published"]) : new DateTimeImmutable();
             $type = $target !== "" ? "reply" : "mention";

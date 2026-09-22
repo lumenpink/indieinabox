@@ -8,6 +8,7 @@ use Indieinabox\Core\Container;
 use Indieinabox\Http\Controllers\ActivityPubController;
 use Indieinabox\Http\Controllers\AdminController;
 use Indieinabox\Http\Controllers\ArchiveController;
+use Indieinabox\Http\Controllers\DiscoveryController;
 use Indieinabox\Http\Controllers\IndieAuthController;
 use Indieinabox\Http\Controllers\MicropubController;
 use Indieinabox\Http\Controllers\MicrosubController;
@@ -182,6 +183,12 @@ class WebRouter
             return;
         }
 
+        // Route: Discovery Engine & Global Timeline
+        if ($requestUriClean === '/discover' || $requestUriClean === '/global') {
+            $this->getDiscoveryController()->handle();
+            return;
+        }
+
         // Admin Routes
         if (str_starts_with($requestUriClean, '/admin')) {
             $admin = $this->getAdminController();
@@ -263,6 +270,11 @@ class WebRouter
     public function getArchiveController(): ArchiveController
     {
         return $this->container->make(ArchiveController::class, ['site' => $this->site]);
+    }
+
+    public function getDiscoveryController(): DiscoveryController
+    {
+        return $this->container->make(DiscoveryController::class, ['site' => $this->site]);
     }
 
     public function getAdminController(): AdminController

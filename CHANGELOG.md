@@ -2,7 +2,8 @@
 
 ## [Unreleased]
 
-- Routine maintenance, documentation updates, and operational improvements.
+### Features
+  - (docs) add comprehensive cyberpunk documentation site and cloudflare deployment pipeline
 
 ## Previous Releases
 

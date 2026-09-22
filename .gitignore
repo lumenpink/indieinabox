@@ -37,3 +37,4 @@ public_reports/
 .phpcs-cache
 .phpcscache
 .phpcs*
+.wrangler/

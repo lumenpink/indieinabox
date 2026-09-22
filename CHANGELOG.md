@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 ### Features
+  - (admin,docs) implement lambe-lambe periferico and DIY resistance theme (#46)
   - (docs) add comprehensive cyberpunk documentation site and cloudflare deployment pipeline
 
 ## Previous Releases

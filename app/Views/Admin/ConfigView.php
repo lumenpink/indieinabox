@@ -28,24 +28,24 @@ class ConfigView
             <title>Bootstrap Setup - Indieinabox</title>
             <link rel="preconnect" href="https://fonts.googleapis.com">
             <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-            <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+            <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Bebas+Neue&family=Outfit:wght@400;600;800&family=JetBrains+Mono:wght@400;700;800&display=swap" rel="stylesheet">
             <style>
                 :root {
-                    --cyber-bg: #090b10;
-                    --cyber-surface: #0f141f;
-                    --neon-pink: #ff2a85;
-                    --neon-cyan: #00f0ff;
-                    --text-primary: #f8fafc;
-                    --text-muted: #94a3b8;
-                    --border: rgba(0, 240, 255, 0.25);
+                    --lambe-bg: #141518;
+                    --lambe-surface: #1e1f25;
+                    --tint-magenta: #ff007f;
+                    --tint-yellow: #ffe600;
+                    --tint-cyan: #00e5ff;
+                    --tape-cream: #f6ecbe;
+                    --text-primary: #f4efe6;
+                    --text-muted: #a0a4b0;
                 }
                 * {
                     box-sizing: border-box;
+                    border-radius: 0 !important;
                 }
                 body {
-                    background: radial-gradient(circle at 15% 20%, rgba(255, 42, 133, 0.08) 0%, transparent 45%),
-                                radial-gradient(circle at 85% 80%, rgba(0, 240, 255, 0.08) 0%, transparent 50%),
-                                linear-gradient(145deg, #090b10 0%, #0d121c 60%, #121826 100%);
+                    background: var(--lambe-bg);
                     color: var(--text-primary);
                     font-family: 'Outfit', sans-serif;
                     line-height: 1.6;
@@ -57,44 +57,50 @@ class ConfigView
                     padding: 24px;
                 }
                 .setup-container {
-                    background: rgba(15, 20, 31, 0.9);
-                    border: 1px solid var(--border);
-                    border-radius: 8px;
+                    background: var(--lambe-surface);
+                    border: 3px solid #000000;
+                    box-shadow: 6px 6px 0 #000000;
                     max-width: 520px;
                     width: 100%;
                     padding: 2.5rem;
-                    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6), 0 0 20px rgba(0, 240, 255, 0.1);
                     position: relative;
                 }
                 .setup-container::before {
-                    content: '';
+                    content: 'PRIMEIRA INSTALAÇÃO';
                     position: absolute;
-                    top: 0;
-                    left: 0;
-                    right: 0;
-                    height: 2px;
-                    background: linear-gradient(90deg, var(--neon-pink) 0%, var(--neon-cyan) 100%);
+                    top: -12px;
+                    right: 16px;
+                    background: var(--tape-cream);
+                    color: #000;
+                    font-family: 'JetBrains Mono', monospace;
+                    font-size: 0.7rem;
+                    font-weight: 800;
+                    padding: 2px 10px;
+                    border: 1px solid rgba(0,0,0,0.4);
+                    box-shadow: 2px 2px 0 rgba(0,0,0,0.3);
+                    transform: rotate(2deg);
                 }
                 .badge {
                     font-family: 'JetBrains Mono', monospace;
                     font-size: 0.72rem;
-                    color: var(--neon-cyan);
-                    border: 1px solid rgba(0, 240, 255, 0.3);
-                    background: rgba(0, 240, 255, 0.08);
-                    padding: 2px 8px;
-                    border-radius: 3px;
+                    font-weight: 800;
+                    color: #000;
+                    background: var(--tint-yellow);
+                    border: 2px solid #000;
+                    padding: 3px 10px;
+                    box-shadow: 2px 2px 0 #000;
                     text-transform: uppercase;
                     letter-spacing: 0.1em;
                     display: inline-block;
                     margin-bottom: 0.75rem;
                 }
                 h1 {
-                    color: #ffffff;
+                    font-family: 'Bebas Neue', 'Archivo Black', sans-serif;
+                    color: #f4efe6;
                     margin: 0 0 0.5rem;
-                    font-size: 1.75rem;
-                    font-weight: 800;
+                    font-size: 2.2rem;
                     letter-spacing: 0.04em;
-                    text-shadow: 0 0 12px rgba(255, 42, 133, 0.4);
+                    text-transform: uppercase;
                 }
                 p.intro {
                     color: var(--text-muted);
@@ -102,67 +108,75 @@ class ConfigView
                     margin: 0 0 1.75rem;
                 }
                 .error-message {
-                    color: #fda4af;
-                    background: rgba(244, 63, 94, 0.15);
-                    border: 1px solid rgba(244, 63, 94, 0.4);
+                    color: #000;
+                    background: var(--tint-yellow);
+                    border: 2px solid #000;
+                    box-shadow: 3px 3px 0 #000;
                     padding: 0.75rem 1rem;
-                    border-radius: 4px;
                     margin-bottom: 1.25rem;
                     font-family: 'JetBrains Mono', monospace;
                     font-size: 0.85rem;
+                    font-weight: 700;
                 }
                 .form-group {
                     margin-bottom: 1.25rem;
                 }
                 label {
                     display: block;
-                    font-weight: 600;
-                    font-size: 0.88rem;
+                    font-family: 'JetBrains Mono', monospace;
+                    font-weight: 700;
+                    font-size: 0.82rem;
                     margin-bottom: 0.4rem;
-                    color: #e2e8f0;
+                    color: #f4efe6;
+                    text-transform: uppercase;
+                    letter-spacing: 0.05em;
                 }
                 input {
-                    background: #090c13;
-                    border: 1px solid var(--border);
+                    background: #0f1013;
+                    border: 2px solid #000000;
                     color: #ffffff;
                     padding: 10px 14px;
                     font-family: 'JetBrains Mono', monospace;
                     font-size: 0.9rem;
                     width: 100%;
-                    border-radius: 4px;
-                    transition: border-color 0.2s, box-shadow 0.2s;
+                    box-sizing: border-box;
+                    transition: border-color 0.15s, box-shadow 0.15s;
                 }
                 input:focus {
-                    border-color: var(--neon-cyan);
-                    box-shadow: 0 0 12px rgba(0, 240, 255, 0.35);
+                    border-color: var(--tint-magenta);
+                    box-shadow: 3px 3px 0 var(--tint-magenta);
                     outline: none;
                 }
                 button {
-                    background: var(--neon-pink);
-                    color: #ffffff;
-                    border: none;
-                    padding: 12px 20px;
-                    font-family: 'JetBrains Mono', monospace;
-                    font-size: 0.95rem;
-                    font-weight: 700;
+                    background: var(--tint-magenta);
+                    color: #000000;
+                    border: 2px solid #000000;
+                    padding: 14px 20px;
+                    font-family: 'Archivo Black', sans-serif;
+                    font-size: 1rem;
+                    font-weight: 800;
                     cursor: pointer;
                     width: 100%;
-                    border-radius: 4px;
                     margin-top: 1rem;
                     text-transform: uppercase;
                     letter-spacing: 0.08em;
-                    box-shadow: 0 0 16px rgba(255, 42, 133, 0.4);
-                    transition: all 0.2s;
+                    box-shadow: 4px 4px 0 #000000;
+                    transition: all 0.15s;
                 }
                 button:hover {
-                    box-shadow: 0 0 24px rgba(255, 42, 133, 0.7);
-                    transform: translateY(-1px);
+                    background: var(--tint-yellow);
+                    transform: translate(-1px, -1px);
+                    box-shadow: 5px 5px 0 #000000;
+                }
+                button:active {
+                    transform: translate(2px, 2px);
+                    box-shadow: 2px 2px 0 #000000;
                 }
             </style>
         </head>
         <body>
             <div class="setup-container">
-                <span class="badge">SYS // FIRST-RUN</span>
+                <span class="badge">SYS // PRIMEIRA EXECUÇÃO</span>
                 <h1>Setup Setup Setup!</h1>
                 <p class="intro">Indieinabox is not configured yet. Choose your password and site identity to get started.</p>
 
@@ -292,143 +306,151 @@ class ConfigView
             .config-wrapper {
                 max-width: 1100px;
                 margin: 0 auto;
-                padding: 2.5rem 2rem 5rem;
+                padding: 2rem 2rem 5rem;
                 font-family: 'Outfit', sans-serif;
-                color: var(--text-light, #f8fafc);
+                color: var(--text-light, #f4efe6);
             }
             .config-header {
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
                 margin-bottom: 2rem;
-                border-bottom: 1px solid var(--cyber-border, rgba(0, 240, 255, 0.22));
+                border-bottom: 3px solid #000000;
                 padding-bottom: 1.25rem;
+                position: relative;
             }
             .config-header h1 {
                 margin: 0;
-                font-size: 1.75rem;
+                font-family: 'Bebas Neue', 'Archivo Black', sans-serif;
+                font-size: 2.2rem;
                 font-weight: 800;
-                color: #ffffff;
+                color: #f4efe6;
                 letter-spacing: 0.04em;
-                text-shadow: 0 0 12px var(--neon-pink-glow, rgba(255, 42, 133, 0.4));
+                text-transform: uppercase;
             }
             .config-header .config-subtitle {
                 font-family: 'JetBrains Mono', monospace;
-                font-size: 0.72rem;
-                color: var(--neon-cyan, #00f0ff);
+                font-size: 0.75rem;
+                color: var(--tint-yellow, #ffe600);
                 margin-top: 4px;
-                letter-spacing: 0.1em;
+                letter-spacing: 0.08em;
+                font-weight: 700;
             }
             .config-header .logout-btn {
                 font-family: 'JetBrains Mono', monospace;
                 font-size: 0.8rem;
-                color: #f43f5e;
-                border: 1px solid rgba(244, 63, 94, 0.5);
-                padding: 6px 14px;
-                border-radius: 4px;
+                font-weight: 800;
+                color: #000;
+                background: var(--tint-red, #ff2244);
+                border: 2px solid #000;
+                box-shadow: 3px 3px 0 #000;
+                padding: 8px 16px;
                 text-decoration: none;
-                transition: all 0.2s;
+                text-transform: uppercase;
+                transition: all 0.15s;
             }
             .config-header .logout-btn:hover {
-                background: rgba(244, 63, 94, 0.15);
-                color: #fff;
-                border-color: #f43f5e;
+                background: #ff4466;
+                transform: translate(-1px, -1px);
+                box-shadow: 4px 4px 0 #000;
+            }
+            .config-header .logout-btn:active {
+                transform: translate(2px, 2px);
+                box-shadow: 1px 1px 0 #000;
             }
             .alert-saved {
-                background: rgba(0, 255, 159, 0.12);
-                border: 1px solid var(--neon-green, #00ff9f);
-                color: var(--neon-green, #00ff9f);
+                background: var(--tint-yellow, #ffe600);
+                border: 2px solid #000000;
+                color: #000000;
                 padding: 0.85rem 1.25rem;
-                border-radius: 4px;
                 margin-bottom: 1.5rem;
                 font-family: 'JetBrains Mono', monospace;
                 font-size: 0.88rem;
-                box-shadow: 0 0 14px rgba(0, 255, 159, 0.25);
+                font-weight: 700;
+                box-shadow: 4px 4px 0 #000000;
             }
-            /* Cyber Tab Strip */
+            /* Lambe Tab Strip */
             .config-tabs {
                 display: flex;
                 flex-wrap: wrap;
                 gap: 6px;
                 margin-bottom: 2rem;
-                border-bottom: 1px solid rgba(0, 240, 255, 0.25);
+                border-bottom: 3px solid #000000;
                 padding-bottom: 0;
             }
             .config-tab-btn {
-                background: rgba(13, 18, 28, 0.7);
-                border: 1px solid rgba(0, 240, 255, 0.2);
+                background: #1c1d22;
+                border: 2px solid #000000;
                 border-bottom: none;
-                color: var(--text-muted, #94a3b8);
+                color: var(--text-muted, #a0a4b0);
                 padding: 10px 18px;
-                font-family: 'Outfit', sans-serif;
-                font-size: 0.92rem;
-                font-weight: 600;
+                font-family: 'JetBrains Mono', monospace;
+                font-size: 0.88rem;
+                font-weight: 700;
                 cursor: pointer;
-                border-radius: 6px 6px 0 0;
-                transition: all 0.2s;
+                text-transform: uppercase;
+                transition: all 0.15s;
                 display: flex;
                 align-items: center;
                 gap: 8px;
                 position: relative;
             }
             .config-tab-btn .tab-num {
-                font-family: 'JetBrains Mono', monospace;
-                font-size: 0.7rem;
-                color: var(--text-dim, #64748b);
+                font-family: 'Bebas Neue', monospace;
+                font-size: 1.1rem;
+                color: var(--tint-cyan, #00e5ff);
             }
             .config-tab-btn:hover {
-                color: var(--neon-cyan, #00f0ff);
-                background: rgba(0, 240, 255, 0.08);
-                border-color: rgba(0, 240, 255, 0.45);
+                color: #000;
+                background: var(--tint-yellow, #ffe600);
+                border-color: #000;
             }
             .config-tab-btn:hover .tab-num {
-                color: var(--neon-cyan, #00f0ff);
+                color: #000;
             }
             .config-tab-btn.active {
-                background: linear-gradient(180deg, rgba(255, 42, 133, 0.18) 0%, rgba(15, 20, 31, 0.95) 100%);
-                border-color: var(--neon-pink, #ff2a85);
-                color: #ffffff;
-                text-shadow: 0 0 8px rgba(255, 42, 133, 0.4);
-                border-bottom: 2px solid var(--neon-pink, #ff2a85);
+                background: var(--tint-magenta, #ff007f);
+                border-color: #000000;
+                color: #000000;
+                font-weight: 800;
+                border-bottom: 2px solid var(--tint-magenta, #ff007f);
+                box-shadow: 3px -3px 0 #000000;
                 margin-bottom: -1px;
             }
             .config-tab-btn.active .tab-num {
-                color: var(--neon-pink, #ff2a85);
-                text-shadow: 0 0 6px var(--neon-pink-glow, rgba(255, 42, 133, 0.4));
+                color: #000;
             }
-            /* Tab Content Hiding & Animation */
+            /* Tab Content Hiding */
             .tab-content {
                 display: none;
             }
             .tab-content.active {
                 display: block;
-                animation: cyberTabFade 0.2s ease-in-out;
+                animation: lambeTabFade 0.15s ease-in-out;
             }
-            @keyframes cyberTabFade {
-                from { opacity: 0; transform: translateY(4px); }
+            @keyframes lambeTabFade {
+                from { opacity: 0; transform: translateY(3px); }
                 to { opacity: 1; transform: translateY(0); }
             }
             /* Fieldsets / Cards */
             fieldset {
-                background: rgba(15, 20, 31, 0.85);
-                border: 1px solid rgba(0, 240, 255, 0.22);
-                border-radius: 6px;
+                background: #1e1f25;
+                border: 2px solid #000000;
+                box-shadow: 4px 4px 0 #000000;
                 padding: 1.75rem;
                 margin-bottom: 1.75rem;
-                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
             }
             legend {
-                font-family: 'Outfit', sans-serif;
-                font-size: 1rem;
-                font-weight: 700;
-                color: #ffffff;
+                font-family: 'Archivo Black', sans-serif;
+                font-size: 0.95rem;
+                font-weight: 800;
+                color: #000000;
                 letter-spacing: 0.06em;
                 text-transform: uppercase;
-                padding: 4px 12px;
-                background: #0d121c;
-                border: 1px solid rgba(0, 240, 255, 0.35);
-                border-radius: 4px;
-                text-shadow: 0 0 8px rgba(0, 240, 255, 0.35);
+                padding: 4px 14px;
+                background: var(--tint-yellow, #ffe600);
+                border: 2px solid #000000;
+                box-shadow: 2px 2px 0 #000000;
             }
             .grid-2 {
                 display: grid;
@@ -440,16 +462,18 @@ class ConfigView
             }
             .form-group label {
                 display: block;
-                font-weight: 600;
-                font-size: 0.88rem;
+                font-family: 'JetBrains Mono', monospace;
+                font-weight: 700;
+                font-size: 0.82rem;
                 margin-bottom: 0.4rem;
-                color: #e2e8f0;
-                letter-spacing: 0.02em;
+                color: #f4efe6;
+                letter-spacing: 0.04em;
+                text-transform: uppercase;
             }
             .form-group small, .form-group .help {
                 display: block;
                 font-size: 0.8rem;
-                color: var(--text-muted, #94a3b8);
+                color: var(--text-muted, #a0a4b0);
                 margin-top: 0.35rem;
             }
             input[type="text"],
@@ -459,19 +483,18 @@ class ConfigView
             select,
             textarea {
                 width: 100%;
-                background: #090c13;
-                border: 1px solid rgba(0, 240, 255, 0.25);
+                background: #0f1013;
+                border: 2px solid #000000;
                 color: #ffffff;
-                padding: 9px 12px;
-                border-radius: 4px;
+                padding: 10px 12px;
                 font-family: 'JetBrains Mono', monospace;
                 font-size: 0.88rem;
                 box-sizing: border-box;
-                transition: border-color 0.2s, box-shadow 0.2s;
+                transition: border-color 0.15s, box-shadow 0.15s;
             }
             input:focus, select:focus, textarea:focus {
-                border-color: var(--neon-cyan, #00f0ff);
-                box-shadow: 0 0 10px rgba(0, 240, 255, 0.35);
+                border-color: var(--tint-magenta, #ff007f);
+                box-shadow: 3px 3px 0 var(--tint-magenta, #ff007f);
                 outline: none;
             }
             textarea {
@@ -485,17 +508,17 @@ class ConfigView
                 margin-bottom: 0.75rem;
             }
             .checkbox-group input[type="checkbox"] {
-                accent-color: var(--neon-pink, #ff2a85);
-                width: 16px;
-                height: 16px;
+                accent-color: var(--tint-magenta, #ff007f);
+                width: 18px;
+                height: 18px;
                 cursor: pointer;
             }
             .checkbox-group label {
                 margin: 0;
                 cursor: pointer;
-                font-weight: 500;
-                font-size: 0.9rem;
-                color: #e2e8f0;
+                font-weight: 600;
+                font-size: 0.88rem;
+                color: #f4efe6;
             }
             .color-picker {
                 display: flex;
@@ -504,43 +527,45 @@ class ConfigView
             }
             .color-picker input[type="color"] {
                 background: transparent;
-                border: 1px solid rgba(0, 240, 255, 0.3);
-                border-radius: 4px;
+                border: 2px solid #000;
                 width: 36px;
                 height: 36px;
                 cursor: pointer;
                 padding: 2px;
             }
             .kind-card {
-                background: rgba(9, 13, 20, 0.7);
-                border: 1px solid rgba(0, 240, 255, 0.2);
-                border-radius: 6px;
+                background: #141518;
+                border: 2px solid #000000;
+                box-shadow: 3px 3px 0 #000000;
                 padding: 1.25rem;
                 margin-bottom: 1.25rem;
             }
             .kind-card h3 {
                 margin: 0 0 1rem;
-                font-size: 1.1rem;
-                color: var(--neon-cyan, #00f0ff);
+                font-family: 'Archivo Black', sans-serif;
+                font-size: 1rem;
+                color: var(--tint-cyan, #00e5ff);
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
+                text-transform: uppercase;
             }
             .btn-secondary {
-                background: transparent;
-                border: 1px solid rgba(0, 240, 255, 0.4);
-                color: var(--neon-cyan, #00f0ff);
-                padding: 5px 12px;
-                border-radius: 4px;
+                background: #1e1f25;
+                border: 2px solid #000000;
+                color: var(--tint-yellow, #ffe600);
+                box-shadow: 2px 2px 0 #000000;
+                padding: 6px 14px;
                 font-family: 'JetBrains Mono', monospace;
                 font-size: 0.8rem;
+                font-weight: 700;
                 cursor: pointer;
-                transition: all 0.2s;
+                text-transform: uppercase;
+                transition: all 0.15s;
             }
             .btn-secondary:hover:not(:disabled) {
-                background: rgba(0, 240, 255, 0.15);
-                border-color: var(--neon-cyan, #00f0ff);
-                color: #ffffff;
+                background: var(--tint-yellow, #ffe600);
+                color: #000000;
             }
             .btn-secondary:disabled {
                 opacity: 0.35;
@@ -550,87 +575,95 @@ class ConfigView
                 width: 100%;
                 border-collapse: collapse;
                 margin-bottom: 1rem;
-                border: 1px solid rgba(0, 240, 255, 0.2);
+                border: 2px solid #000000;
                 font-size: 0.88rem;
             }
             .tech-table th {
-                background: rgba(0, 240, 255, 0.08);
-                color: var(--neon-cyan, #00f0ff);
-                padding: 9px 12px;
+                background: #282a32;
+                color: var(--tint-yellow, #ffe600);
+                padding: 10px 14px;
                 text-align: left;
                 font-family: 'JetBrains Mono', monospace;
-                font-size: 0.78rem;
+                font-size: 0.8rem;
+                font-weight: 800;
                 text-transform: uppercase;
                 letter-spacing: 0.06em;
-                border-bottom: 1px solid rgba(0, 240, 255, 0.25);
+                border-bottom: 2px solid #000000;
             }
             .tech-table td {
-                padding: 9px 12px;
-                border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+                padding: 10px 14px;
+                border-bottom: 1px solid #333333;
+                background: #1e1f25;
             }
             .submit-group {
                 position: sticky;
                 bottom: 0;
-                background: rgba(9, 13, 20, 0.95);
-                backdrop-filter: blur(16px);
-                -webkit-backdrop-filter: blur(16px);
+                background: #141518;
                 padding: 1.25rem 1.5rem;
-                border-top: 1px solid rgba(0, 240, 255, 0.3);
-                box-shadow: 0 -8px 25px rgba(0, 0, 0, 0.6);
+                border-top: 3px solid #000000;
+                box-shadow: 0 -4px 0 rgba(0, 0, 0, 0.4);
                 z-index: 100;
                 margin-top: 2.5rem;
-                border-radius: 6px;
                 display: flex;
                 gap: 12px;
             }
             .btn-action-rebuild {
                 flex: 1;
-                font-family: 'JetBrains Mono', monospace;
-                font-size: 0.92rem;
-                font-weight: 700;
+                font-family: 'Archivo Black', sans-serif;
+                font-size: 0.95rem;
+                font-weight: 800;
                 padding: 14px;
-                background: transparent;
-                border: 1px solid var(--neon-cyan, #00f0ff);
-                color: var(--neon-cyan, #00f0ff);
-                border-radius: 4px;
+                background: var(--tint-yellow, #ffe600);
+                border: 2px solid #000000;
+                color: #000000;
+                box-shadow: 4px 4px 0 #000000;
                 cursor: pointer;
                 text-transform: uppercase;
                 letter-spacing: 0.06em;
-                transition: all 0.2s;
+                transition: all 0.15s;
             }
             .btn-action-rebuild:hover {
-                background: rgba(0, 240, 255, 0.15);
-                box-shadow: 0 0 14px rgba(0, 240, 255, 0.35);
+                background: #fff;
+                transform: translate(-1px, -1px);
+                box-shadow: 5px 5px 0 #000000;
+            }
+            .btn-action-rebuild:active {
+                transform: translate(2px, 2px);
+                box-shadow: 2px 2px 0 #000000;
             }
             .btn-action-save {
                 flex: 2;
-                font-family: 'JetBrains Mono', monospace;
-                font-size: 0.95rem;
-                font-weight: 700;
+                font-family: 'Archivo Black', sans-serif;
+                font-size: 1rem;
+                font-weight: 800;
                 padding: 14px;
-                background: var(--neon-pink, #ff2a85);
-                color: #ffffff;
-                border: none;
-                border-radius: 4px;
+                background: var(--tint-magenta, #ff007f);
+                color: #000000;
+                border: 2px solid #000000;
+                box-shadow: 4px 4px 0 #000000;
                 cursor: pointer;
                 text-transform: uppercase;
                 letter-spacing: 0.08em;
-                box-shadow: 0 0 16px var(--neon-pink-glow, rgba(255, 42, 133, 0.4));
-                transition: all 0.2s;
+                transition: all 0.15s;
             }
             .btn-action-save:hover {
-                box-shadow: 0 0 24px rgba(255, 42, 133, 0.7);
-                transform: translateY(-1px);
+                background: #ff3399;
+                transform: translate(-1px, -1px);
+                box-shadow: 5px 5px 0 #000000;
+            }
+            .btn-action-save:active {
+                transform: translate(2px, 2px);
+                box-shadow: 2px 2px 0 #000000;
             }
         </style>
 
         <div class="config-wrapper">
             <div class="config-header">
                 <div>
-                    <h1>// CONFIGURATION MATRIX</h1>
-                    <div class="config-subtitle">CORE SYSTEM PARAMETERS &bull; CYBER DECK v<?= htmlspecialchars(\Indieinabox\Core\Version::VERSION) ?></div>
+                    <h1>// PARÂMETROS DA TRINCHEIRA</h1>
+                    <div class="config-subtitle">CARTAZ DE CONFIGURAÇÃO &bull; INDIE IN A BOX v<?= htmlspecialchars(\Indieinabox\Core\Version::VERSION) ?></div>
                 </div>
-                <a href="?action=logout" class="logout-btn">DISCONNECT</a>
+                <a href="?action=logout" class="logout-btn">DESCONECTAR</a>
             </div>
 
             <?php if (isset($_GET['saved'])): ?>

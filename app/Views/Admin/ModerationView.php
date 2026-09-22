@@ -27,57 +27,55 @@ class ModerationView
             .mod-container {
                 max-width: 960px;
                 margin: 0 auto;
-                padding: 2.5rem 2rem;
+                padding: 2rem;
                 font-family: 'Outfit', sans-serif;
-                color: var(--text-light, #f8fafc);
+                color: var(--text-light, #f4efe6);
             }
             .mod-header {
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
                 margin-bottom: 2rem;
-                border-bottom: 1px solid var(--cyber-border, rgba(0, 240, 255, 0.25));
+                border-bottom: 3px solid #000000;
                 padding-bottom: 1rem;
             }
             .mod-header h2 {
                 margin: 0;
-                font-size: 1.6rem;
+                font-family: 'Bebas Neue', 'Archivo Black', sans-serif;
+                font-size: 2.2rem;
                 font-weight: 800;
-                color: #fff;
+                color: #f4efe6;
                 letter-spacing: 0.04em;
-                text-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
+                text-transform: uppercase;
             }
             .mod-section-title {
-                font-size: 1.1rem;
-                font-weight: 700;
+                font-family: 'Archivo Black', sans-serif;
+                font-size: 1rem;
+                font-weight: 800;
                 letter-spacing: 0.06em;
-                color: var(--neon-cyan, #00f0ff);
+                color: var(--tint-yellow, #ffe600);
                 margin: 2rem 0 1rem;
                 display: flex;
                 align-items: center;
                 gap: 8px;
+                text-transform: uppercase;
             }
             .mod-card {
-                background: rgba(15, 20, 31, 0.85);
-                border: 1px solid rgba(0, 240, 255, 0.2);
-                border-left: 3px solid var(--neon-cyan, #00f0ff);
-                border-radius: 6px;
+                background: #1e1f25;
+                border: 2px solid #000000;
+                border-left: 6px solid var(--tint-yellow, #ffe600);
+                box-shadow: 4px 4px 0 #000000;
                 padding: 1.25rem;
                 margin-bottom: 1.25rem;
-                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-                transition: transform 0.2s, border-color 0.2s;
+                transition: transform 0.15s;
             }
             .mod-card:hover {
-                border-color: rgba(0, 240, 255, 0.5);
-                box-shadow: 0 6px 24px rgba(0, 240, 255, 0.12);
+                transform: translate(-1px, -1px);
+                box-shadow: 5px 5px 0 #000000;
             }
             .mod-card.spam {
-                border-color: rgba(255, 42, 133, 0.35);
-                border-left: 3px solid var(--neon-pink, #ff2a85);
-            }
-            .mod-card.spam:hover {
-                border-color: var(--neon-pink, #ff2a85);
-                box-shadow: 0 6px 24px rgba(255, 42, 133, 0.15);
+                border-color: #000000;
+                border-left: 6px solid var(--tint-magenta, #ff007f);
             }
             .mod-card-meta {
                 display: flex;
@@ -90,31 +88,31 @@ class ModerationView
             .mod-badge {
                 font-family: 'JetBrains Mono', monospace;
                 font-size: 0.72rem;
+                font-weight: 800;
                 padding: 2px 8px;
-                border-radius: 3px;
                 text-transform: uppercase;
                 letter-spacing: 0.05em;
+                border: 1px solid #000000;
+                box-shadow: 1px 1px 0 #000000;
             }
             .badge-cyan {
-                background: rgba(0, 240, 255, 0.12);
-                border: 1px solid rgba(0, 240, 255, 0.35);
-                color: var(--neon-cyan, #00f0ff);
+                background: var(--tint-cyan, #00e5ff);
+                color: #000000;
             }
             .badge-pink {
-                background: rgba(255, 42, 133, 0.15);
-                border: 1px solid rgba(255, 42, 133, 0.4);
-                color: var(--neon-pink, #ff2a85);
+                background: var(--tint-magenta, #ff007f);
+                color: #000000;
             }
             .mod-body {
-                background: rgba(8, 11, 16, 0.7);
-                border: 1px solid rgba(255, 255, 255, 0.08);
-                border-radius: 4px;
+                background: #0f1013;
+                border: 2px solid #000000;
                 padding: 1rem;
                 margin: 0.75rem 0;
-                font-size: 0.92rem;
+                font-family: 'JetBrains Mono', monospace;
+                font-size: 0.9rem;
                 line-height: 1.6;
                 white-space: pre-wrap;
-                color: #e2e8f0;
+                color: #f4efe6;
             }
             .mod-actions {
                 display: flex;
@@ -122,47 +120,42 @@ class ModerationView
                 margin-top: 1rem;
             }
             .mod-btn {
-                font-family: 'JetBrains Mono', monospace;
+                font-family: 'Archivo Black', sans-serif;
                 font-size: 0.8rem;
-                font-weight: 700;
+                font-weight: 800;
                 padding: 8px 16px;
-                border-radius: 4px;
                 cursor: pointer;
-                border: none;
-                transition: all 0.2s;
+                border: 2px solid #000000;
+                box-shadow: 3px 3px 0 #000000;
+                transition: all 0.15s;
                 text-transform: uppercase;
                 letter-spacing: 0.06em;
             }
-            .mod-btn-approve {
-                background: var(--neon-green, #00ff9f);
-                color: #06110a;
-                box-shadow: 0 0 10px rgba(0, 255, 159, 0.25);
+            .mod-btn:hover {
+                transform: translate(-1px, -1px);
+                box-shadow: 4px 4px 0 #000000;
             }
-            .mod-btn-approve:hover {
-                box-shadow: 0 0 16px rgba(0, 255, 159, 0.5);
-                transform: translateY(-1px);
+            .mod-btn:active {
+                transform: translate(2px, 2px);
+                box-shadow: 1px 1px 0 #000000;
+            }
+            .mod-btn-approve {
+                background: var(--tint-yellow, #ffe600);
+                color: #000000;
             }
             .mod-btn-delete {
-                background: transparent;
-                border: 1px solid rgba(244, 63, 94, 0.6);
-                color: #fda4af;
-            }
-            .mod-btn-delete:hover {
-                background: rgba(244, 63, 94, 0.2);
-                border-color: #f43f5e;
-                color: #fff;
+                background: var(--tint-red, #ff2244);
+                color: #ffffff;
             }
             .mod-btn-unspam {
-                background: var(--neon-amber, #ffd000);
-                color: #1a1300;
-                box-shadow: 0 0 10px rgba(255, 208, 0, 0.25);
+                background: var(--tint-cyan, #00e5ff);
+                color: #000000;
             }
             .mod-empty {
                 padding: 2rem;
-                background: rgba(15, 20, 31, 0.5);
-                border: 1px dashed rgba(0, 240, 255, 0.2);
-                border-radius: 6px;
-                color: var(--text-muted, #94a3b8);
+                background: #141518;
+                border: 2px dashed #444444;
+                color: var(--text-muted, #a0a4b0);
                 text-align: center;
                 font-family: 'JetBrains Mono', monospace;
                 font-size: 0.9rem;
@@ -170,8 +163,8 @@ class ModerationView
         </style>
         <div class="mod-container">
             <div class="mod-header">
-                <h2>// MODERATION QUEUE &mdash; Comment Moderation</h2>
-                <span class="mod-badge badge-cyan">SYS.MOD</span>
+                <h2>// MESA DE MODERAÇÃO &mdash; Comment Moderation</h2>
+                <span class="mod-badge badge-cyan">TRINCHEIRA.MOD</span>
             </div>
             
             <div class="mod-section-title">

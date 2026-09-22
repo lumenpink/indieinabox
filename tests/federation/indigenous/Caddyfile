@@ -1,0 +1,11 @@
+{
+    local_certs
+}
+
+indigenous.local {
+    reverse_proxy indigenous-client:8080
+}
+
+indieinabox.local {
+    reverse_proxy indieinabox:80
+}

@@ -1,0 +1,36 @@
+services:
+  caddy:
+    image: caddy:alpine
+    container_name: indigenous_caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+    networks:
+      default:
+        aliases:
+          - indigenous.local
+          - indieinabox.local
+
+  indieinabox:
+    image: lumenpink/indieinabox:latest
+    container_name: indigenous_indieinabox
+    restart: unless-stopped
+    environment:
+      - APP_DOMAIN=https://indieinabox.local
+    volumes:
+      - ./data/indieinabox:/app
+
+  indigenous-client:
+    image: php:8.4-cli-alpine
+    container_name: indigenous_client
+    restart: unless-stopped
+    command: php -S 0.0.0.0:8080 -t /var/www
+    volumes:
+      - ./mock_indigenous.php:/var/www/index.php
+
+volumes:
+  caddy_data:

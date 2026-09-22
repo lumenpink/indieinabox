@@ -6,6 +6,7 @@ namespace Indieinabox\Views\Admin;
 
 /**
  * Presentation view component that renders the Micropub web publishing client.
+ * Estética: Lambe-Lambe Periférico, Dissidência Travesti & Resistência DIY.
  */
 class MicropubClientView
 {
@@ -21,208 +22,227 @@ class MicropubClientView
         ob_start();
         ?>
         <style>
-            :root {
-                --bg-gradient: transparent;
-                --card-bg: rgba(17, 24, 39, 0.7);
-                --accent: #eccb00;
-                --accent-glow: rgba(236, 203, 0, 0.35);
-                --text-primary: #f9fafb;
-                --text-secondary: #9ca3af;
-                --border: rgba(255, 255, 255, 0.08);
-                --input-bg: rgba(3, 7, 18, 0.6);
-                --input-focus: rgba(236, 203, 0, 0.15);
-                --error-color: #ef4444;
-                --success-color: #10b981;
-            }
-
             .micropub-wrapper {
+                max-width: 820px;
+                margin: 0 auto;
+                padding: 2.5rem 1.5rem;
                 font-family: 'Outfit', sans-serif;
-                background: transparent;
-                color: var(--text-primary);
-                padding: 2rem 1.5rem;
-                box-sizing: border-box;
-                display: flex;
-                justify-content: center;
+                color: var(--text-light, #f4efe6);
             }
 
-            .micropub-wrapper .container {
-                backdrop-filter: blur(20px);
-                -webkit-backdrop-filter: blur(20px);
-                background: var(--card-bg);
-                border: 1px solid var(--border);
-                border-radius: 28px;
-                padding: 3rem;
-                max-width: 640px;
-                width: 100%;
-                box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7),
-                            0 0 50px rgba(236, 203, 0, 0.03);
+            .pasteboard-card {
+                background: var(--lambe-surface, #1e1f25);
+                border: 3px solid #000000;
+                box-shadow: 6px 6px 0px #000000;
+                padding: 2.5rem;
                 position: relative;
-                overflow: hidden;
-                transition: transform 0.3s ease, box-shadow 0.3s ease;
             }
 
-            .micropub-wrapper .container::before {
+            .pasteboard-card::before {
                 content: '';
+                display: block;
+                height: 6px;
+                width: 100%;
+                background: repeating-linear-gradient(45deg, #ffe600, #ffe600 10px, #000000 10px, #000000 20px);
                 position: absolute;
                 top: 0;
                 left: 0;
                 right: 0;
-                height: 4px;
-                background: linear-gradient(90deg, #eccb00, #f59e0b);
             }
 
-            .micropub-wrapper h1 {
-                font-size: 2.2rem;
-                font-weight: 800;
-                margin: 0 0 0.5rem 0;
-                background: linear-gradient(to right, #ffffff, #d1d5db);
-                background-clip: text;
-                -webkit-background-clip: text;
-                -webkit-text-fill-color: transparent;
-                letter-spacing: -0.02em;
+            .pasteboard-header {
+                border-bottom: 2px solid #000000;
+                padding-bottom: 1.25rem;
+                margin-bottom: 2rem;
             }
 
-            .micropub-wrapper .subtitle {
-                color: var(--text-secondary);
-                font-size: 1.05rem;
-                margin: 0 0 2rem 0;
-                line-height: 1.6;
-            }
-
-            .micropub-wrapper .form-group {
-                margin-bottom: 1.5rem;
-            }
-
-            .micropub-wrapper label {
-                display: block;
-                font-weight: 600;
-                margin-bottom: 0.6rem;
-                color: #d1d5db;
-                font-size: 0.95rem;
-                letter-spacing: 0.01em;
-            }
-
-            .micropub-wrapper input[type="text"],
-            .micropub-wrapper input[type="file"],
-            .micropub-wrapper select,
-            .micropub-wrapper textarea {
-                width: 100%;
-                background: var(--input-bg);
-                border: 1px solid var(--border);
-                color: var(--text-primary);
-                padding: 14px 16px;
-                border-radius: 12px;
-                font-family: inherit;
-                font-size: 1rem;
-                box-sizing: border-box;
-                transition: all 0.2s ease;
-            }
-
-            .micropub-wrapper textarea {
-                min-height: 150px;
-                resize: vertical;
-                line-height: 1.5;
-            }
-
-            .micropub-wrapper input:focus,
-            .micropub-wrapper select:focus,
-            .micropub-wrapper textarea:focus {
-                outline: none;
-                border-color: var(--accent);
-                background: var(--input-focus);
-                box-shadow: 0 0 0 4px rgba(236, 203, 0, 0.1);
-            }
-
-            .micropub-wrapper button {
-                background: var(--accent);
-                color: #000;
-                border: none;
-                padding: 16px 24px;
-                border-radius: 12px;
-                font-family: inherit;
-                font-weight: 700;
-                font-size: 1.05rem;
-                cursor: pointer;
-                width: 100%;
-                margin-top: 1rem;
-                transition: all 0.2s ease;
+            .pasteboard-header h1 {
+                margin: 0;
+                font-family: 'Bebas Neue', 'Archivo Black', sans-serif;
+                font-size: 2.4rem;
+                letter-spacing: 0.05em;
+                color: var(--lambe-paper);
                 text-transform: uppercase;
+            }
+
+            .pasteboard-header .subtitle {
+                font-family: 'JetBrains Mono', monospace;
+                font-size: 0.82rem;
+                color: var(--tint-yellow, #ffe600);
+                margin: 6px 0 0 0;
                 letter-spacing: 0.05em;
             }
 
-            .micropub-wrapper button:hover {
-                background: #f59e0b;
-                transform: translateY(-2px);
-                box-shadow: 0 10px 20px -10px var(--accent-glow);
+            .form-group {
+                margin-bottom: 1.5rem;
             }
 
-            .micropub-wrapper button:active {
-                transform: translateY(0);
+            .form-group label {
+                display: block;
+                font-family: 'JetBrains Mono', monospace;
+                font-size: 0.8rem;
+                font-weight: 800;
+                color: var(--text-muted);
+                text-transform: uppercase;
+                letter-spacing: 0.08em;
+                margin-bottom: 6px;
             }
 
-            .micropub-wrapper #status {
+            .type-pill-group {
+                display: flex;
+                gap: 8px;
+                margin-bottom: 1.5rem;
+                flex-wrap: wrap;
+            }
+
+            .type-pill {
+                padding: 8px 16px;
+                font-family: 'JetBrains Mono', monospace;
+                font-size: 0.85rem;
+                font-weight: 800;
+                text-transform: uppercase;
+                border: 2px solid #000;
+                background: #141518;
+                color: var(--text-muted);
+                cursor: pointer;
+                box-shadow: 2px 2px 0 #000;
+                transition: all 0.1s;
+            }
+
+            .type-pill:hover {
+                background: var(--lambe-paper);
+                color: #000;
+            }
+
+            .type-pill.active {
+                background: var(--tint-yellow);
+                color: #000;
+                border-color: #000;
+                box-shadow: 3px 3px 0 #000;
+                transform: translate(-1px, -1px);
+            }
+
+            #photo-gallery {
+                display: flex;
+                flex-direction: column;
+                gap: 0.75rem;
+                margin-bottom: 1.5rem;
+            }
+
+            .photo-item {
+                display: flex;
+                flex-direction: column;
+                background: #141518;
+                border: 2px solid #000;
+                padding: 0.75rem;
+                box-shadow: 2px 2px 0 #000;
+            }
+
+            .btn-publish {
+                width: 100%;
+                padding: 16px;
+                font-family: 'Archivo Black', sans-serif;
+                font-size: 1.1rem;
+                letter-spacing: 0.08em;
+                text-transform: uppercase;
+                background: var(--tint-magenta, #ff007f);
+                color: #000000;
+                border: 2px solid #000000;
+                box-shadow: 5px 5px 0px #000000;
+                cursor: pointer;
+                transition: all 0.1s ease;
+                margin-top: 1rem;
+            }
+
+            .btn-publish:hover {
+                background: #ff2a93;
+                transform: translate(-2px, -2px);
+                box-shadow: 7px 7px 0px #000000;
+            }
+
+            .btn-publish:active {
+                transform: translate(3px, 3px);
+                box-shadow: 1px 1px 0px #000000;
+            }
+
+            .btn-publish:disabled {
+                opacity: 0.6;
+                cursor: wait;
+                transform: none;
+            }
+
+            #status {
                 margin-top: 1.5rem;
-                padding: 14px;
-                border-radius: 12px;
-                font-weight: 600;
-                text-align: center;
+                padding: 14px 18px;
+                font-family: 'JetBrains Mono', monospace;
+                font-size: 0.9rem;
+                font-weight: 700;
+                border: 2px solid #000;
+                box-shadow: 3px 3px 0 #000;
                 display: none;
-                animation: fadeIn 0.3s ease;
             }
 
-            .micropub-wrapper .status-success {
-                background: rgba(16, 185, 129, 0.1);
-                color: var(--success-color);
-                border: 1px solid rgba(16, 185, 129, 0.2);
+            .status-success {
+                background: var(--tint-green, #00ff66);
+                color: #000;
             }
 
-            .micropub-wrapper .status-error {
-                background: rgba(239, 68, 68, 0.1);
-                color: var(--error-color);
-                border: 1px solid rgba(239, 68, 68, 0.2);
-            }
-
-            @keyframes fadeIn {
-                from { opacity: 0; transform: translateY(-5px); }
-                to { opacity: 1; transform: translateY(0); }
+            .status-error {
+                background: var(--tint-red, #ff2244);
+                color: #fff;
             }
         </style>
 
         <div class="micropub-wrapper">
-            <div class="container">
-                <h1>Indieinabox Publisher</h1>
-                <div id="compose-section" style="display:block;">
-                    <p class="subtitle">Compose a new post to <strong><?= htmlspecialchars($fqdnClean) ?></strong></p>
+            <div class="pasteboard-card">
+                <span class="tape-label">PRANCHETA DE SERIGRAFIA</span>
+
+                <header class="pasteboard-header">
+                    <h1>Indieinabox Publisher</h1>
+                    <p class="subtitle">// DISPARAR POST PARA: <strong><?= htmlspecialchars($fqdnClean) ?></strong></p>
+                </header>
+
+                <div id="compose-section">
+                    <div class="type-pill-group">
+                        <button type="button" class="type-pill active" onclick="selectPostType('note')">📝 NOTA RÁPIDA</button>
+                        <button type="button" class="type-pill" onclick="selectPostType('article')">📰 ARTIGO COMPLETO</button>
+                        <button type="button" class="type-pill" onclick="selectPostType('photo')">📷 FOTO / MÍDIA</button>
+                    </div>
+
                     <form id="post-form">
-                        <div class="form-group">
-                            <label for="post-type">Post Type</label>
-                            <select id="post-type" name="post-type">
-                                <option value="article">Article</option>
-                                <option value="note">Note</option>
-                                <option value="photo">Photo</option>
-                            </select>
+                        <select id="post-type" name="post-type" style="display: none;">
+                            <option value="note">Note</option>
+                            <option value="article">Article</option>
+                            <option value="photo">Photo</option>
+                        </select>
+
+                        <div class="form-group" id="group-title" style="display: none;">
+                            <label for="post-title">TÍTULO DO ARTIGO</label>
+                            <input type="text" id="post-title" name="name" placeholder="Digite o título da publicação..." style="width: 100%;">
                         </div>
-                        <div class="form-group" id="group-title">
-                            <label for="post-title">Title (Optional)</label>
-                            <input type="text" id="post-title" name="name" placeholder="Leave blank for a quick note">
-                        </div>
+
                         <div class="form-group" id="group-content">
-                            <label for="post-content" id="label-content">Content (Markdown)</label>
-                            <textarea id="post-content" name="content" placeholder="What's on your mind?"></textarea>
+                            <label for="post-content" id="label-content">CONTEÚDO (MARKDOWN)</label>
+                            <textarea id="post-content" name="content" placeholder="O que está acontecendo na trincheira?" style="width: 100%; min-height: 160px; line-height: 1.6;"></textarea>
                         </div>
+
                         <div class="form-group" id="group-tags">
-                            <label for="post-tags">Tags (Comma separated)</label>
-                            <input type="text" id="post-tags" name="category" placeholder="tech, thoughts">
+                            <label for="post-tags">CATEGORIAS / TAGS (SEPARADAS POR VÍRGULA)</label>
+                            <input type="text" id="post-tags" name="category" placeholder="resistencia, fanzine, indieweb" style="width: 100%;">
                         </div>
+
                         <div class="form-group" id="group-photo">
-                            <label for="post-photo">Photos (Optional)</label>
-                            <input type="file" id="post-photo" accept="image/*" multiple>
+                            <label for="post-photo">FOTOS & ANEXOS DE MÍDIA</label>
+                            <input type="file" id="post-photo" accept="image/*" multiple style="width: 100%;">
                         </div>
+
                         <div class="form-group" style="display:none;" id="upload-progress">
-                            <small style="color:var(--accent);">Uploading photo...</small>
+                            <span class="badge-stamp badge-yellow">ENVIANDO IMAGEM PARA SERVIDOR... ⏳</span>
                         </div>
-                        <div id="photo-gallery" style="display:flex; flex-direction:column; gap:0.5rem; margin-bottom:1.5rem;"></div>
-                        <button type="submit" id="btn-publish">Publish Post</button>
+
+                        <div id="photo-gallery"></div>
+
+                        <button type="submit" id="btn-publish" class="btn-publish">ESTAMPAR POST // PUBLICAR</button>
                         <div id="status"></div>
                     </form>
                 </div>
@@ -243,20 +263,31 @@ class MicropubClientView
             const labelContent = document.getElementById('label-content');
             const groupPhoto = document.getElementById('group-photo');
 
+            function selectPostType(type) {
+                postTypeSelect.value = type;
+                document.querySelectorAll('.type-pill').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                if (type === 'note') document.querySelectorAll('.type-pill')[0].classList.add('active');
+                if (type === 'article') document.querySelectorAll('.type-pill')[1].classList.add('active');
+                if (type === 'photo') document.querySelectorAll('.type-pill')[2].classList.add('active');
+                updateUIForPostType();
+            }
+
             function updateUIForPostType() {
                 const type = postTypeSelect.value;
                 if (type === 'article') {
                     groupTitle.style.display = 'block';
                     groupPhoto.style.display = 'block';
-                    labelContent.textContent = 'Content (Markdown)';
+                    labelContent.textContent = 'CONTEÚDO (MARKDOWN / HTML)';
                 } else if (type === 'note') {
                     groupTitle.style.display = 'none';
                     groupPhoto.style.display = 'none';
-                    labelContent.textContent = 'Note Content';
+                    labelContent.textContent = 'CONTEÚDO DA NOTA';
                 } else if (type === 'photo') {
                     groupTitle.style.display = 'none';
                     groupPhoto.style.display = 'block';
-                    labelContent.textContent = 'Caption (Optional)';
+                    labelContent.textContent = 'LEGENDA DA FOTO (OPCIONAL)';
                 }
                 renderGallery();
             }
@@ -277,36 +308,39 @@ class MicropubClientView
                 
                 uploadedPhotos.forEach((url, index) => {
                     const itemDiv = document.createElement('div');
-                    itemDiv.style.cssText = 'display:flex; flex-direction:column; background:rgba(0,0,0,0.2); padding:0.5rem; border-radius:8px; border:1px solid var(--border);';
+                    itemDiv.className = 'photo-item';
                     
                     const topRow = document.createElement('div');
                     topRow.style.cssText = 'display:flex; align-items:center; gap:1rem;';
                     
                     const img = document.createElement('img');
                     img.src = url;
-                    img.style.cssText = 'width:60px; height:60px; object-fit:cover; border-radius:4px;';
+                    img.style.cssText = 'width:60px; height:60px; object-fit:cover; border:2px solid #000;';
                     
                     const controls = document.createElement('div');
                     controls.style.cssText = 'display:flex; gap:0.5rem; margin-left:auto;';
                     
                     const btnUp = document.createElement('button');
                     btnUp.type = 'button';
-                    btnUp.innerHTML = '⬆️';
-                    btnUp.style.cssText = 'padding:0.25rem 0.5rem; font-size:0.8rem; background:rgba(255,255,255,0.1); flex:none;';
+                    btnUp.className = 'btn-stamp';
+                    btnUp.innerHTML = '↑';
+                    btnUp.style.cssText = 'padding:4px 8px; font-size:0.8rem;';
                     btnUp.disabled = index === 0;
                     btnUp.onclick = () => movePhoto(index, -1);
                     
                     const btnDown = document.createElement('button');
                     btnDown.type = 'button';
-                    btnDown.innerHTML = '⬇️';
-                    btnDown.style.cssText = 'padding:0.25rem 0.5rem; font-size:0.8rem; background:rgba(255,255,255,0.1); flex:none;';
+                    btnDown.className = 'btn-stamp';
+                    btnDown.innerHTML = '↓';
+                    btnDown.style.cssText = 'padding:4px 8px; font-size:0.8rem;';
                     btnDown.disabled = index === uploadedPhotos.length - 1;
                     btnDown.onclick = () => movePhoto(index, 1);
 
                     const btnRemove = document.createElement('button');
                     btnRemove.type = 'button';
-                    btnRemove.innerHTML = '❌';
-                    btnRemove.style.cssText = 'padding:0.25rem 0.5rem; font-size:0.8rem; background:rgba(239,68,68,0.2); color:#ef4444; flex:none;';
+                    btnRemove.className = 'btn-stamp btn-stamp-red';
+                    btnRemove.innerHTML = '✕';
+                    btnRemove.style.cssText = 'padding:4px 8px; font-size:0.8rem;';
                     btnRemove.onclick = () => removePhoto(index);
 
                     controls.appendChild(btnUp);
@@ -319,17 +353,18 @@ class MicropubClientView
 
                     if (type === 'article') {
                         const snippetRow = document.createElement('div');
-                        snippetRow.style.cssText = 'margin-top:0.5rem; font-size:0.8rem; color:var(--text-secondary); display:flex; gap:0.5rem; align-items:center;';
-                        const snippet = '![image](' + url + ')';
-                        snippetRow.innerHTML = '<span>Markdown: <code>' + snippet + '</code></span>';
+                        snippetRow.style.cssText = 'margin-top:0.6rem; font-family:"JetBrains Mono", monospace; font-size:0.78rem; color:var(--text-muted); display:flex; gap:0.5rem; align-items:center;';
+                        const snippet = '![imagem](' + url + ')';
+                        snippetRow.innerHTML = '<span>Markdown: <code style="color:var(--tint-yellow);">' + snippet + '</code></span>';
                         const btnCopy = document.createElement('button');
                         btnCopy.type = 'button';
-                        btnCopy.innerText = 'Copy';
-                        btnCopy.style.cssText = 'padding:0.1rem 0.4rem; font-size:0.75rem; background:rgba(255,255,255,0.1); width:auto; margin:0;';
+                        btnCopy.className = 'btn-stamp';
+                        btnCopy.innerText = 'Copiar';
+                        btnCopy.style.cssText = 'padding:2px 8px; font-size:0.7rem;';
                         btnCopy.onclick = () => {
                             navigator.clipboard.writeText(snippet);
-                            btnCopy.innerText = 'Copied!';
-                            setTimeout(() => btnCopy.innerText = 'Copy', 2000);
+                            btnCopy.innerText = 'Copiado!';
+                            setTimeout(() => btnCopy.innerText = 'Copiar', 2000);
                         };
                         snippetRow.appendChild(btnCopy);
                         itemDiv.appendChild(snippetRow);
@@ -378,10 +413,10 @@ class MicropubClientView
                             }
                         } else {
                             const err = await response.json().catch(() => ({}));
-                            alert('Upload failed for ' + file.name + ': ' + (err.error_description || err.error || 'Server error'));
+                            alert('Falha no upload de ' + file.name + ': ' + (err.error_description || err.error || 'Erro no servidor'));
                         }
                     } catch (e) {
-                        alert('Network error uploading ' + file.name);
+                        alert('Erro de conexão ao enviar ' + file.name);
                     }
                 }
                 
@@ -418,8 +453,9 @@ class MicropubClientView
                     payload.properties.photo = uploadedPhotos;
                 }
 
-                statusDiv.textContent = 'Publishing...';
-                statusDiv.className = '';
+                statusDiv.textContent = 'ESTAMPANDO POST NO FEED...';
+                statusDiv.className = 'status-success';
+                statusDiv.style.display = 'block';
                 document.getElementById('btn-publish').disabled = true;
 
                 try {
@@ -434,7 +470,7 @@ class MicropubClientView
 
                     if (response.status === 201 || response.status === 202) {
                         const location = response.headers.get('Location');
-                        statusDiv.innerHTML = 'Post published successfully! <a href="' + location + '" target="_blank">View Post</a>';
+                        statusDiv.innerHTML = '✓ POST PUBLICADO COM SUCESSO! <a href="' + location + '" target="_blank" style="color:#000; text-decoration:underline; font-weight:800; margin-left:10px;">[VER POST ↗]</a>';
                         statusDiv.className = 'status-success';
                         statusDiv.style.display = 'block';
                         document.getElementById('post-form').reset();
@@ -443,12 +479,12 @@ class MicropubClientView
                         updateUIForPostType();
                     } else {
                         const err = await response.json().catch(() => ({}));
-                        statusDiv.textContent = 'Error: ' + (err.error_description || err.error || 'Failed to publish');
+                        statusDiv.textContent = 'Erro: ' + (err.error_description || err.error || 'Falha ao publicar');
                         statusDiv.className = 'status-error';
                         statusDiv.style.display = 'block';
                     }
                 } catch (e) {
-                    statusDiv.textContent = 'Network error during publish.';
+                    statusDiv.textContent = 'Erro de rede durante publicação.';
                     statusDiv.className = 'status-error';
                     statusDiv.style.display = 'block';
                 }

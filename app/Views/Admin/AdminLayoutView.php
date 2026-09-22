@@ -9,7 +9,7 @@ use PDO;
 
 /**
  * Presentation view component that renders the administrative shell layout and navigation sidebar.
- * Estética: Lambe-Lambe Periférico, Dissidência & Resistência DIY (Neo-Brutalismo Urbano).
+ * Estética: Lambe-Lambe Periférico, Dissidência Travesti & Resistência DIY (Neo-Brutalismo Urbano).
  */
 class AdminLayoutView
 {
@@ -46,7 +46,7 @@ class AdminLayoutView
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Indieinabox Admin // Trincheira DIY</title>
+    <title>Indieinabox Admin // Trincheira DIY & Lambe-Lambe</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Bebas+Neue&family=Outfit:wght@400;600;800&family=JetBrains+Mono:wght@400;700;800&display=swap" rel="stylesheet">
@@ -61,12 +61,14 @@ class AdminLayoutView
             --tint-magenta: #ff007f;        /* Rosa Choque / Travesti / Resistência */
             --tint-yellow: #ffe600;         /* Amarelo Alerta de Rua */
             --tint-cyan: #00e5ff;           /* Ciano Estêncil */
-            --tint-red: #ff2244;
+            --tint-red: #ff2244;            /* Vermelho Rebeldia / Alerta */
+            --tint-green: #00ff66;          /* Verde Spray */
             --tape-cream: #f6ecbe;          /* Fita Crepe */
             --border-hard: 2px solid #000000;
             --border-hard-thick: 3px solid #000000;
             --stamp-shadow: 4px 4px 0px #000000;
             --stamp-shadow-sm: 2px 2px 0px #000000;
+            --stamp-shadow-lg: 6px 6px 0px #000000;
             --text-light: #f4efe6;
             --text-muted: #a0a4b0;
             --text-dim: #727684;
@@ -87,6 +89,7 @@ class AdminLayoutView
             background: var(--lambe-bg);
             color: var(--text-light);
             overflow-x: hidden;
+            line-height: 1.6;
         }
 
         /* Scrollbar estilo xerox industrial */
@@ -116,10 +119,12 @@ class AdminLayoutView
             border-right: 3px solid #000000;
             box-shadow: 5px 0 0 rgba(0, 0, 0, 0.4);
             position: relative;
-            z-index: 20;
+            z-index: 100;
+            flex-shrink: 0;
+            min-height: 100vh;
         }
 
-        /* Tarja de advertência no topo */
+        /* Tarja de advertência no topo da sidebar */
         .admin-sidebar::before {
             content: '';
             display: block;
@@ -165,6 +170,14 @@ class AdminLayoutView
             gap: 10px;
         }
 
+        .sidebar-header h1 a {
+            color: inherit;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
         .sidebar-header h1 .logo-dot {
             width: 12px;
             height: 12px;
@@ -186,6 +199,21 @@ class AdminLayoutView
             padding: 2px 8px;
             box-shadow: 2px 2px 0 #000;
             text-transform: uppercase;
+        }
+
+        .sidebar-header .doc-link {
+            display: inline-block;
+            margin-top: 6px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--tint-cyan);
+            text-decoration: none;
+            letter-spacing: 0.05em;
+        }
+        .sidebar-header .doc-link:hover {
+            color: var(--tint-yellow);
+            text-decoration: underline;
         }
 
         .admin-nav {
@@ -213,7 +241,7 @@ class AdminLayoutView
             display: flex;
             align-items: center;
             gap: 12px;
-            font-size: 0.95rem;
+            font-size: 0.92rem;
             font-weight: 600;
             letter-spacing: 0.04em;
             text-transform: uppercase;
@@ -285,18 +313,239 @@ class AdminLayoutView
             min-height: 100vh;
         }
 
-        .admin-content > iframe {
+        /* Componentes Globais Neo-Brutalistas / Lambe-Lambe */
+        .card-lambe {
+            background: var(--lambe-surface);
+            border: var(--border-hard);
+            box-shadow: var(--stamp-shadow);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+            transition: transform 0.15s, box-shadow 0.15s;
+        }
+        .card-lambe:hover {
+            transform: translate(-1px, -1px);
+            box-shadow: var(--stamp-shadow-lg);
+        }
+
+        /* Botões Carimbo */
+        .btn-stamp {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 10px 18px;
+            border: 2px solid #000000;
+            box-shadow: var(--stamp-shadow);
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 0.85rem;
+            background: var(--lambe-paper);
+            color: #000000;
+            transition: all 0.1s ease;
+        }
+        .btn-stamp:hover {
+            transform: translate(-1px, -1px);
+            box-shadow: 5px 5px 0 #000;
+        }
+        .btn-stamp:active {
+            transform: translate(2px, 2px);
+            box-shadow: 1px 1px 0 #000;
+        }
+        .btn-stamp-primary, .btn-stamp-magenta {
+            background: var(--tint-magenta);
+            color: #000000;
+        }
+        .btn-stamp-yellow {
+            background: var(--tint-yellow);
+            color: #000000;
+        }
+        .btn-stamp-cyan {
+            background: var(--tint-cyan);
+            color: #000000;
+        }
+        .btn-stamp-red {
+            background: var(--tint-red);
+            color: #ffffff;
+        }
+        .btn-stamp-dark {
+            background: #0a0a0c;
+            color: #f4efe6;
+            border-color: #000;
+        }
+
+        /* Badges & Selos */
+        .badge-stamp {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.72rem;
+            font-weight: 800;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            padding: 3px 8px;
+            border: 1px solid #000;
+            box-shadow: 2px 2px 0 #000;
+            display: inline-block;
+            background: var(--lambe-paper);
+            color: #000;
+        }
+        .badge-magenta {
+            background: var(--tint-magenta);
+            color: #000;
+        }
+        .badge-yellow {
+            background: var(--tint-yellow);
+            color: #000;
+        }
+        .badge-cyan {
+            background: var(--tint-cyan);
+            color: #000;
+        }
+        .badge-red {
+            background: var(--tint-red);
+            color: #fff;
+        }
+
+        /* Inputs, Textareas, Selects Brutalistas */
+        input[type="text"],
+        input[type="url"],
+        input[type="password"],
+        input[type="email"],
+        textarea,
+        select {
+            background: #0a0a0c !important;
+            border: 2px solid #000000 !important;
+            color: #f4efe6 !important;
+            font-family: 'JetBrains Mono', monospace !important;
+            padding: 10px 14px !important;
+            box-shadow: inset 2px 2px 0 rgba(0,0,0,0.6) !important;
+            outline: none !important;
+            font-size: 0.9rem !important;
+            transition: border-color 0.15s, box-shadow 0.15s !important;
+        }
+        input[type="text"]:focus,
+        input[type="url"]:focus,
+        input[type="password"]:focus,
+        input[type="email"]:focus,
+        textarea:focus,
+        select:focus {
+            border-color: var(--tint-yellow) !important;
+            background: #121318 !important;
+            box-shadow: 3px 3px 0 #000 !important;
+        }
+
+        /* Cyber Table */
+        .cyber-table-wrap {
+            overflow-x: auto;
+            border: var(--border-hard);
+            box-shadow: var(--stamp-shadow);
+            margin: 1.5rem 0;
+            background: #1a1b22;
+        }
+        .cyber-table {
             width: 100%;
-            height: 100%;
-            border: none;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+            text-align: left;
+        }
+        .cyber-table th {
+            background: #000000;
+            color: var(--tint-yellow);
+            font-family: 'Archivo Black', sans-serif;
+            font-size: 0.8rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            padding: 12px 16px;
+            border-bottom: 2px solid #333;
+        }
+        .cyber-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid #2a2b34;
+            color: var(--text-light);
+        }
+        .cyber-table tr:hover td {
+            background: #232530;
+        }
+
+        /* Tarja de Advertência */
+        .warning-stripe {
+            height: 6px;
+            width: 100%;
+            background: repeating-linear-gradient(45deg, #ffe600, #ffe600 10px, #000000 10px, #000000 20px);
+            margin: 1rem 0;
+        }
+
+        /* Fita Crepe Tag */
+        .tape-label {
+            position: absolute;
+            top: -10px;
+            right: 14px;
+            background: var(--tape-cream);
+            color: #000;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.68rem;
+            font-weight: 800;
+            padding: 2px 10px;
+            border: 1px solid rgba(0,0,0,0.4);
+            box-shadow: 2px 2px 0 rgba(0,0,0,0.3);
+            transform: rotate(2deg);
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        /* Mobile Drawer */
+        .mobile-nav-toggle {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: var(--tint-yellow);
+            color: #000;
+            font-family: 'Archivo Black', sans-serif;
+            font-size: 0.9rem;
+            padding: 12px 20px;
+            border: 2px solid #000;
+            box-shadow: 4px 4px 0 #000;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+
+        @media (max-width: 900px) {
+            .mobile-nav-toggle {
+                display: block;
+            }
+            .admin-sidebar {
+                position: fixed;
+                top: 0;
+                bottom: 0;
+                left: 0;
+                transform: translateX(-100%);
+                transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            }
+            .admin-sidebar.open {
+                transform: translateX(0);
+            }
+            .admin-content {
+                width: 100%;
+                margin-left: 0;
+            }
         }
     </style>
 </head>
 <body>
+    <button class="mobile-nav-toggle" onclick="document.querySelector('.admin-sidebar').classList.toggle('open')" aria-label="Toggle navigation">☰ PAINEL</button>
+
     <div class="admin-sidebar">
         <div class="sidebar-header">
-            <h1><span class="logo-dot"></span>Indieinabox</h1>
+            <h1><a href="/"><span class="logo-dot"></span>Indieinabox</a></h1>
             <span class="hud-badge">TRINCHEIRA // DESCENTRALIZADA</span>
+            <div>
+                <a href="https://indieinabox.2lp.in" target="_blank" rel="noopener" class="doc-link">📖 DOCUMENTAÇÃO ↗</a>
+            </div>
         </div>
         <nav class="admin-nav">
             <span class="nav-section-title">MÓDULOS DE COMBATE</span>

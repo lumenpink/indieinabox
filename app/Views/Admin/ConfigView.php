@@ -685,14 +685,14 @@ class ConfigView
             <?php endif; ?>
 
             <?php if (isset($_GET['import_error'])): ?>
-                <div class="alert-saved" style="background: rgba(255, 0, 85, 0.2); border-color: var(--neon-pink); color: var(--neon-pink);">
+                <div class="alert-saved" style="background: var(--tint-red, #ff2244); border: 2px solid #000; color: #fff; box-shadow: 4px 4px 0 #000;">
                     &cross; Import failed: <?= htmlspecialchars($_SESSION['import_error_message'] ?? 'Archive integrity check failed or invalid archive.') ?>
                     <?php unset($_SESSION['import_error_message']); ?>
                 </div>
             <?php endif; ?>
 
             <?php if (isset($_GET['export_error'])): ?>
-                <div class="alert-saved" style="background: rgba(255, 0, 85, 0.2); border-color: var(--neon-pink); color: var(--neon-pink);">
+                <div class="alert-saved" style="background: var(--tint-red, #ff2244); border: 2px solid #000; color: #fff; box-shadow: 4px 4px 0 #000;">
                     &cross; Export failed to generate. Please check filesystem write permissions.
                 </div>
             <?php endif; ?>
@@ -872,8 +872,8 @@ class ConfigView
                             </div>
                         <?php endforeach; ?>
                         
-                        <div class="kind-card" style="border: 2px dashed rgba(0, 240, 255, 0.4); background: rgba(0, 240, 255, 0.03);">
-                            <h3 style="color: var(--neon-cyan);">+ Add New Content Kind</h3>
+                        <div class="kind-card" style="border: 2px dashed var(--tint-cyan, #00e5ff); background: #141518;">
+                            <h3 style="color: var(--tint-cyan, #00e5ff);">+ Add New Content Kind</h3>
                             <div class="grid-2">
                                 <div class="form-group">
                                     <label>Kind ID (e.g. video)</label>
@@ -964,15 +964,15 @@ class ConfigView
                                 <?php foreach ($langArr as $idx => $l): ?>
                                 <tr>
                                     <td style="font-weight: <?= $idx === 0 ? '700' : 'normal' ?>;">
-                                        <span style="font-family: 'JetBrains Mono', monospace; color: var(--neon-cyan);"><?= htmlspecialchars($l) ?></span>
+                                        <span style="font-family: 'JetBrains Mono', monospace; font-weight: 800; color: var(--tint-yellow);"><?= htmlspecialchars($l) ?></span>
                                         <span style="color: var(--text-muted); font-size: 0.88em; margin-left: 8px;">&mdash; <?= htmlspecialchars(\Indieinabox\Localization\IsoLanguages::getNativeName($l)) ?></span>
                                         <input type="hidden" name="lang[]" value="<?= htmlspecialchars($l) ?>">
                                     </td>
                                     <td>
                                         <?php if ($idx === 0): ?>
-                                            <span style="background: rgba(0, 255, 159, 0.15); color: var(--neon-green); border: 1px solid rgba(0, 255, 159, 0.4); padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 700; font-family: 'JetBrains Mono', monospace;">Main (Default)</span>
+                                            <span class="badge-stamp badge-yellow">Main (Default)</span>
                                         <?php else: ?>
-                                            <span style="color: var(--text-muted); font-size: 0.8rem; font-family: 'JetBrains Mono', monospace;">Sub-language</span>
+                                            <span class="badge-stamp">Sub-language</span>
                                         <?php endif; ?>
                                     </td>
                                     <td style="text-align: center;">
@@ -1081,7 +1081,7 @@ class ConfigView
                                 <div class="grid-2" style="margin-top: 0.5rem;">
                                     <?php foreach ($langArr as $l): ?>
                                         <div class="color-picker" style="margin-bottom: 5px;">
-                                            <span style="width: 50px; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: var(--neon-cyan);"><?= htmlspecialchars($l) ?></span>
+                                            <span style="width: 50px; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; font-weight: 800; color: var(--tint-yellow);"><?= htmlspecialchars($l) ?></span>
                                             <input type="text" name="translations[<?= htmlspecialchars($origText) ?>][<?= htmlspecialchars($l) ?>]" value="<?= htmlspecialchars($config['translations'][$origText][$l] ?? '') ?>">
                                         </div>
                                     <?php endforeach; ?>
@@ -1094,11 +1094,11 @@ class ConfigView
                         <legend>Content Kinds Translations</legend>
                         <?php foreach ($kinds as $k => $data): ?>
                             <div class="form-group" style="margin-bottom: 1.5rem;">
-                                <label style="color: var(--neon-cyan); font-size: 0.95rem;"><?= htmlspecialchars(ucfirst($k)) ?> Translations</label>
+                                <label style="color: var(--tint-yellow); font-size: 0.95rem; font-weight: 800;"><?= htmlspecialchars(ucfirst($k)) ?> Translations</label>
                                 <div class="grid-2">
                                     <?php foreach ($langArr as $l): ?>
-                                    <div class="color-picker" style="margin-bottom: 10px; flex-direction: column; align-items: flex-start; background: rgba(0,0,0,0.3); padding: 8px; border-radius: 4px;">
-                                        <strong style="font-family: 'JetBrains Mono', monospace; color: var(--neon-pink);"><?= htmlspecialchars($l) ?></strong>
+                                    <div class="color-picker" style="margin-bottom: 10px; flex-direction: column; align-items: flex-start; background: #141518; border: 2px solid #000; padding: 10px; box-shadow: 2px 2px 0 #000;">
+                                        <strong style="font-family: 'JetBrains Mono', monospace; font-weight: 800; color: var(--tint-magenta);"><?= htmlspecialchars($l) ?></strong>
                                         <label style="font-size: 0.8rem; margin-top: 4px;">Title:</label>
                                         <input type="text" name="kinds[<?= htmlspecialchars($k) ?>][title][<?= htmlspecialchars($l) ?>]" value="<?= htmlspecialchars($data['title'][$l] ?? '') ?>">
                                         <label style="font-size: 0.8rem; margin-top: 4px;">Directory Path:</label>
@@ -1252,8 +1252,8 @@ class ConfigView
                         </div>
                     </fieldset>
 
-                    <fieldset style="border-color: var(--neon-pink);">
-                        <legend style="border-color: var(--neon-pink); color: var(--neon-pink);">Security</legend>
+                    <fieldset style="border-left: 6px solid var(--tint-magenta, #ff007f);">
+                        <legend style="background: var(--tint-magenta, #ff007f); color: #000;">Security</legend>
                         <div class="form-group">
                             <label>Change Admin Password (Optional)</label>
                             <input type="password" name="new_password" placeholder="Leave blank to keep current password">
@@ -1291,14 +1291,14 @@ class ConfigView
                         if (empty($availableUpdates)) {
                             echo '<p style="color: var(--text-muted); font-size: 0.9rem;">No updates available or checking hasn\'t run yet. (Last check: ' . ($lastCheck ? date('Y-m-d H:i:s', $lastCheck) : 'Never') . ')</p>';
                         } else {
-                            echo '<h4 style="color: var(--neon-cyan); margin: 1.5rem 0 0.75rem;">Available Versions</h4><ul style="list-style: none; padding: 0;">';
+                            echo '<h4 style="color: var(--tint-yellow); font-family: \'Archivo Black\', sans-serif; text-transform: uppercase; margin: 1.5rem 0 0.75rem;">VERSÕES DISPONÍVEIS // AVAILABLE VERSIONS</h4><ul style="list-style: none; padding: 0;">';
                             foreach (array_slice($availableUpdates, 0, 5) as $update) {
-                                $badge = $update['prerelease'] ? '<span style="background: var(--neon-amber); color: #000; padding: 2px 6px; border-radius: 4px; font-size: 0.75em; font-weight: 700;">Nightly</span>' : '<span style="background: var(--neon-green); color: #000; padding: 2px 6px; border-radius: 4px; font-size: 0.75em; font-weight: 700;">Stable</span>';
-                                echo '<li style="margin-bottom: 12px; background: rgba(9, 13, 20, 0.7); border: 1px solid rgba(0, 240, 255, 0.2); border-radius: 4px; padding: 12px;">';
-                                echo '<strong>' . htmlspecialchars($update['name']) . '</strong> ' . $badge;
-                                echo '<br><small style="color: var(--text-muted);">Published: ' . htmlspecialchars($update['published_at']) . '</small>';
-                                echo '<div style="margin-top: 8px;">';
-                                echo '<button type="button" class="btn-secondary" onclick="submitActionForm(\'manual_update\', \'download_url\', \'' . htmlspecialchars($update['download_url']) . '\')">Update to this version</button>';
+                                $badge = $update['prerelease'] ? '<span class="badge-stamp badge-yellow">Nightly</span>' : '<span class="badge-stamp badge-cyan">Stable</span>';
+                                echo '<li style="margin-bottom: 12px; background: #141518; border: 2px solid #000; box-shadow: 2px 2px 0 #000; padding: 14px;">';
+                                echo '<strong style="font-family: \'JetBrains Mono\', monospace;">' . htmlspecialchars($update['name']) . '</strong> ' . $badge;
+                                echo '<br><small style="color: var(--text-muted); font-family: \'JetBrains Mono\';">Publicado: ' . htmlspecialchars($update['published_at']) . '</small>';
+                                echo '<div style="margin-top: 10px;">';
+                                echo '<button type="button" class="btn-stamp btn-stamp-cyan" style="font-size: 0.78rem; padding: 6px 14px;" onclick="submitActionForm(\'manual_update\', \'download_url\', \'' . htmlspecialchars($update['download_url']) . '\')">Atualizar para esta versão</button>';
                                 echo '</div>';
                                 echo '</li>';
                             }
@@ -1309,11 +1309,11 @@ class ConfigView
                         <?php
                         $backups = \Indieinabox\Services\UpdateService::getLocalBackups();
                         if (!empty($backups)) {
-                            echo '<h4 style="color: var(--neon-cyan); margin: 1.5rem 0 0.75rem;">Local Backups (Rollback)</h4><ul style="list-style: none; padding: 0;">';
+                            echo '<h4 style="color: var(--tint-yellow); font-family: \'Archivo Black\', sans-serif; text-transform: uppercase; margin: 1.5rem 0 0.75rem;">BACKUPS LOCAIS (ROLLBACK)</h4><ul style="list-style: none; padding: 0;">';
                             foreach ($backups as $bkp) {
-                                echo '<li style="margin-bottom: 10px; background: rgba(9, 13, 20, 0.7); border: 1px solid rgba(0, 240, 255, 0.2); border-radius: 4px; padding: 10px 14px; display: flex; justify-content: space-between; align-items: center;">';
-                                echo '<div><strong style="font-family: \'JetBrains Mono\', monospace;">' . htmlspecialchars($bkp['filename']) . '</strong> <small style="color: var(--text-muted);">(' . date('Y-m-d H:i:s', $bkp['date']) . ', ' . (string) round($bkp['size'] / 1024, 2) . ' KB)</small></div>';
-                                echo '<button type="button" class="btn-secondary" style="color: var(--neon-amber); border-color: rgba(255, 208, 0, 0.5);" onclick="submitActionForm(\'rollback_update\', \'backup_filename\', \'' . htmlspecialchars($bkp['filename']) . '\')">Rollback</button>';
+                                echo '<li style="margin-bottom: 10px; background: #141518; border: 2px solid #000; box-shadow: 2px 2px 0 #000; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center;">';
+                                echo '<div><strong style="font-family: \'JetBrains Mono\', monospace;">' . htmlspecialchars($bkp['filename']) . '</strong> <small style="color: var(--text-muted); font-family: \'JetBrains Mono\';">(' . date('Y-m-d H:i:s', $bkp['date']) . ', ' . (string) round($bkp['size'] / 1024, 2) . ' KB)</small></div>';
+                                echo '<button type="button" class="btn-stamp btn-stamp-yellow" style="font-size: 0.78rem; padding: 6px 14px;" onclick="submitActionForm(\'rollback_update\', \'backup_filename\', \'' . htmlspecialchars($bkp['filename']) . '\')">ROLLBACK</button>';
                                 echo '</li>';
                             }
                             echo '</ul>';
@@ -1364,7 +1364,7 @@ class ConfigView
                             Package your SQLite database, authored markdown content, and uploaded media into a self-contained, portable <code>.tar.gz</code> bundle containing cryptographic SHA-256 integrity checksums.
                         </p>
                         <div style="margin-top: 1rem;">
-                            <button type="submit" name="action" value="export_download" class="btn-secondary" style="color: var(--neon-cyan); border-color: rgba(0, 240, 255, 0.5); padding: 10px 18px; font-weight: bold; cursor: pointer;">
+                            <button type="submit" name="action" value="export_download" class="btn-stamp btn-stamp-cyan">
                                 &darr; Export &amp; Download Bundle (.tar.gz)
                             </button>
                         </div>
@@ -1377,10 +1377,10 @@ class ConfigView
                         </p>
                         <div class="form-group" style="margin-top: 1rem;">
                             <label for="import_file">Select Export Bundle File</label>
-                            <input type="file" name="import_file" id="import_file" accept=".tar.gz,.tgz,.tar,.zip" style="background: rgba(9, 13, 20, 0.7); border: 1px solid rgba(0, 240, 255, 0.3); border-radius: 4px; padding: 8px 12px; color: var(--text-main); width: 100%;">
+                            <input type="file" name="import_file" id="import_file" accept=".tar.gz,.tgz,.tar,.zip" style="background: #141518; border: 2px solid #000; box-shadow: 2px 2px 0 #000; padding: 10px; color: var(--text-light); width: 100%;">
                         </div>
                         <div style="margin-top: 1rem;">
-                            <button type="submit" name="action" value="import_upload" class="btn-secondary" style="color: var(--neon-amber); border-color: rgba(255, 208, 0, 0.5); padding: 10px 18px; font-weight: bold; cursor: pointer;" onclick="return confirm('Restoring an export bundle will replace current site data (a safety backup will be created). Continue?');">
+                            <button type="submit" name="action" value="import_upload" class="btn-stamp btn-stamp-yellow" onclick="return confirm('Restoring an export bundle will replace current site data (a safety backup will be created). Continue?');">
                                 &uarr; Upload &amp; Restore Bundle
                             </button>
                         </div>

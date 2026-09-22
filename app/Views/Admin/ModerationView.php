@@ -6,6 +6,7 @@ namespace Indieinabox\Views\Admin;
 
 /**
  * Presentation view component that renders the administrative interaction moderation interface.
+ * Estética: Lambe-Lambe Periférico, Dissidência Travesti & Resistência DIY.
  */
 class ModerationView
 {
@@ -25,7 +26,7 @@ class ModerationView
         ?>
         <style>
             .mod-container {
-                max-width: 960px;
+                max-width: 1050px;
                 margin: 0 auto;
                 padding: 2rem;
                 font-family: 'Outfit', sans-serif;
@@ -37,7 +38,7 @@ class ModerationView
                 justify-content: space-between;
                 margin-bottom: 2rem;
                 border-bottom: 3px solid #000000;
-                padding-bottom: 1rem;
+                padding-bottom: 1.25rem;
             }
             .mod-header h2 {
                 margin: 0;
@@ -54,7 +55,7 @@ class ModerationView
                 font-weight: 800;
                 letter-spacing: 0.06em;
                 color: var(--tint-yellow, #ffe600);
-                margin: 2rem 0 1rem;
+                margin: 2.5rem 0 1rem;
                 display: flex;
                 align-items: center;
                 gap: 8px;
@@ -65,94 +66,46 @@ class ModerationView
                 border: 2px solid #000000;
                 border-left: 6px solid var(--tint-yellow, #ffe600);
                 box-shadow: 4px 4px 0 #000000;
-                padding: 1.25rem;
-                margin-bottom: 1.25rem;
-                transition: transform 0.15s;
+                padding: 1.5rem;
+                margin-bottom: 1.5rem;
+                transition: transform 0.15s, box-shadow 0.15s;
+                position: relative;
             }
             .mod-card:hover {
                 transform: translate(-1px, -1px);
-                box-shadow: 5px 5px 0 #000000;
+                box-shadow: 6px 6px 0 #000000;
             }
             .mod-card.spam {
-                border-color: #000000;
                 border-left: 6px solid var(--tint-magenta, #ff007f);
             }
             .mod-card-meta {
                 display: flex;
                 flex-wrap: wrap;
                 align-items: center;
-                gap: 8px;
+                gap: 10px;
                 margin-bottom: 0.75rem;
                 font-size: 0.95rem;
             }
-            .mod-badge {
-                font-family: 'JetBrains Mono', monospace;
-                font-size: 0.72rem;
-                font-weight: 800;
-                padding: 2px 8px;
-                text-transform: uppercase;
-                letter-spacing: 0.05em;
-                border: 1px solid #000000;
-                box-shadow: 1px 1px 0 #000000;
-            }
-            .badge-cyan {
-                background: var(--tint-cyan, #00e5ff);
-                color: #000000;
-            }
-            .badge-pink {
-                background: var(--tint-magenta, #ff007f);
-                color: #000000;
-            }
             .mod-body {
-                background: #0f1013;
+                background: #0a0a0c;
                 border: 2px solid #000000;
-                padding: 1rem;
-                margin: 0.75rem 0;
+                padding: 1rem 1.25rem;
+                margin: 0.75rem 0 1rem;
                 font-family: 'JetBrains Mono', monospace;
                 font-size: 0.9rem;
                 line-height: 1.6;
                 white-space: pre-wrap;
                 color: #f4efe6;
+                box-shadow: inset 2px 2px 0 rgba(0,0,0,0.6);
             }
             .mod-actions {
                 display: flex;
+                flex-wrap: wrap;
                 gap: 10px;
                 margin-top: 1rem;
             }
-            .mod-btn {
-                font-family: 'Archivo Black', sans-serif;
-                font-size: 0.8rem;
-                font-weight: 800;
-                padding: 8px 16px;
-                cursor: pointer;
-                border: 2px solid #000000;
-                box-shadow: 3px 3px 0 #000000;
-                transition: all 0.15s;
-                text-transform: uppercase;
-                letter-spacing: 0.06em;
-            }
-            .mod-btn:hover {
-                transform: translate(-1px, -1px);
-                box-shadow: 4px 4px 0 #000000;
-            }
-            .mod-btn:active {
-                transform: translate(2px, 2px);
-                box-shadow: 1px 1px 0 #000000;
-            }
-            .mod-btn-approve {
-                background: var(--tint-yellow, #ffe600);
-                color: #000000;
-            }
-            .mod-btn-delete {
-                background: var(--tint-red, #ff2244);
-                color: #ffffff;
-            }
-            .mod-btn-unspam {
-                background: var(--tint-cyan, #00e5ff);
-                color: #000000;
-            }
             .mod-empty {
-                padding: 2rem;
+                padding: 2.5rem;
                 background: #141518;
                 border: 2px dashed #444444;
                 color: var(--text-muted, #a0a4b0);
@@ -163,25 +116,28 @@ class ModerationView
         </style>
         <div class="mod-container">
             <div class="mod-header">
-                <h2>// MESA DE MODERAÇÃO &mdash; Comment Moderation</h2>
-                <span class="mod-badge badge-cyan">TRINCHEIRA.MOD</span>
+                <div>
+                    <h2>MESA DE MODERAÇÃO &mdash; Comment Moderation</h2>
+                    <span class="badge-stamp badge-cyan">MODERAÇÃO WEBMENTION & ATIVIDADE FEDERADA</span>
+                </div>
+                <span class="badge-stamp badge-yellow">AUTO-DEFESA</span>
             </div>
             
             <div class="mod-section-title">
-                <span>[PENDING INTERACTIONS]</span>
+                <span>[INTERAÇÕES PENDENTES DE APROVAÇÃO]</span>
             </div>
             <?php if (empty($pending)): ?>
-                <div class="mod-empty">No pending comments or interactions to moderate.</div>
+                <div class="mod-empty">Nenhum comentário ou interação pendente no momento.</div>
             <?php else: ?>
                 <?php foreach ($pending as $item): ?>
                     <div class="mod-card">
                         <div class="mod-card-meta">
-                            <strong><?= htmlspecialchars((string) ($item['author_name'] ?? 'Anonymous')) ?></strong> 
-                            <span class="mod-badge badge-cyan"><?= htmlspecialchars((string) ($item['interaction_type'] ?? 'interaction')) ?></span>
-                            <span>on <a href="<?= htmlspecialchars((string) ($item['target'] ?? '#')) ?>" style="color: var(--neon-cyan); text-decoration: none;"><?= htmlspecialchars((string) ($item['target_hash'] ?? 'Target')) ?></a></span>
+                            <strong style="font-size: 1.05rem;"><?= htmlspecialchars((string) ($item['author_name'] ?? 'Anônimo')) ?></strong> 
+                            <span class="badge-stamp badge-yellow"><?= htmlspecialchars((string) ($item['interaction_type'] ?? 'interaction')) ?></span>
+                            <span style="font-family: 'JetBrains Mono'; font-size: 0.85rem;">em <a href="<?= htmlspecialchars((string) ($item['target'] ?? '#')) ?>" style="color: var(--tint-cyan); text-decoration: underline;"><?= htmlspecialchars((string) ($item['target_hash'] ?? 'Target')) ?></a></span>
                         </div>
                         <?php if (!empty($item['url'])): ?>
-                            <div style="font-size: 0.85rem; margin-bottom: 0.5rem; font-family: 'JetBrains Mono', monospace;">
+                            <div style="font-size: 0.82rem; margin-bottom: 0.5rem; font-family: 'JetBrains Mono', monospace;">
                                 <a href="<?= htmlspecialchars((string) $item['url']) ?>" target="_blank" style="color: var(--text-muted);"><?= htmlspecialchars((string) $item['url']) ?></a>
                             </div>
                         <?php endif; ?>
@@ -191,39 +147,39 @@ class ModerationView
                         <?php endif; ?>
                         
                         <div class="mod-actions">
-                            <form method="POST" action="<?= $fqdnClean ?>/admin/moderation">
+                            <form method="POST" action="<?= $fqdnClean ?>/admin/moderation" style="margin: 0;">
                                 <input type="hidden" name="action" value="approve">
                                 <input type="hidden" name="type" value="pending">
                                 <input type="hidden" name="id" value="<?= htmlspecialchars((string) ($item['id_filename'] ?? '')) ?>">
-                                <button type="submit" class="mod-btn mod-btn-approve">Approve</button>
+                                <button type="submit" class="btn-stamp btn-stamp-yellow">✓ APROVAR & PUBLICAR</button>
                             </form>
-                            <form method="POST" action="<?= $fqdnClean ?>/admin/moderation" onsubmit="return confirm('Are you sure you want to delete this interaction?');">
+                            <form method="POST" action="<?= $fqdnClean ?>/admin/moderation" onsubmit="return confirm('Deseja realmente excluir esta interação?');" style="margin: 0;">
                                 <input type="hidden" name="action" value="delete">
                                 <input type="hidden" name="type" value="pending">
                                 <input type="hidden" name="id" value="<?= htmlspecialchars((string) ($item['id_filename'] ?? '')) ?>">
-                                <button type="submit" class="mod-btn mod-btn-delete">Delete</button>
+                                <button type="submit" class="btn-stamp btn-stamp-red">✕ EXCLUIR</button>
                             </form>
                         </div>
                     </div>
                 <?php endforeach; ?>
             <?php endif; ?>
 
-            <div class="mod-section-title" style="color: var(--neon-pink);">
-                <span>[FLAGGED SPAM QUEUE]</span>
+            <div class="mod-section-title" style="color: var(--tint-magenta);">
+                <span>[FILA DE QUARENTENA // SPAM IDENTIFICADO]</span>
             </div>
             <?php if (empty($spam)): ?>
-                <div class="mod-empty">No spam detected in holding queue.</div>
+                <div class="mod-empty">Nenhum registro de spam em quarentena.</div>
             <?php else: ?>
                 <?php foreach ($spam as $item): ?>
                     <div class="mod-card spam">
                         <div class="mod-card-meta">
-                            <span class="mod-badge badge-pink">SPAM DETECTED</span>
-                            <strong><?= htmlspecialchars((string) ($item['author_name'] ?? 'Anonymous')) ?></strong> 
-                            <span class="mod-badge badge-cyan"><?= htmlspecialchars((string) ($item['interaction_type'] ?? 'interaction')) ?></span>
-                            <span>on <a href="<?= htmlspecialchars((string) ($item['target'] ?? '#')) ?>" style="color: var(--neon-cyan); text-decoration: none;"><?= htmlspecialchars((string) ($item['target_hash'] ?? 'Target')) ?></a></span>
+                            <span class="badge-stamp badge-magenta">SPAM BLOQUEADO</span>
+                            <strong style="font-size: 1.05rem;"><?= htmlspecialchars((string) ($item['author_name'] ?? 'Anônimo')) ?></strong> 
+                            <span class="badge-stamp badge-cyan"><?= htmlspecialchars((string) ($item['interaction_type'] ?? 'interaction')) ?></span>
+                            <span style="font-family: 'JetBrains Mono'; font-size: 0.85rem;">em <a href="<?= htmlspecialchars((string) ($item['target'] ?? '#')) ?>" style="color: var(--tint-cyan); text-decoration: underline;"><?= htmlspecialchars((string) ($item['target_hash'] ?? 'Target')) ?></a></span>
                         </div>
                         <?php if (!empty($item['url'])): ?>
-                            <div style="font-size: 0.85rem; margin-bottom: 0.5rem; font-family: 'JetBrains Mono', monospace;">
+                            <div style="font-size: 0.82rem; margin-bottom: 0.5rem; font-family: 'JetBrains Mono', monospace;">
                                 <a href="<?= htmlspecialchars((string) $item['url']) ?>" target="_blank" style="color: var(--text-muted);"><?= htmlspecialchars((string) $item['url']) ?></a>
                             </div>
                         <?php endif; ?>
@@ -233,88 +189,89 @@ class ModerationView
                         <?php endif; ?>
                         
                         <div class="mod-actions">
-                            <form method="POST" action="<?= $fqdnClean ?>/admin/moderation" onsubmit="return confirm('Are you sure you want to approve this spam?');">
+                            <form method="POST" action="<?= $fqdnClean ?>/admin/moderation" onsubmit="return confirm('Deseja realmente marcar como legítimo e aprovar?');" style="margin: 0;">
                                 <input type="hidden" name="action" value="approve">
                                 <input type="hidden" name="type" value="spam">
                                 <input type="hidden" name="id" value="<?= htmlspecialchars((string) ($item['id_filename'] ?? '')) ?>">
-                                <button type="submit" class="mod-btn mod-btn-unspam">Not Spam (Approve)</button>
+                                <button type="submit" class="btn-stamp btn-stamp-cyan">✓ NÃO É SPAM (APROVAR)</button>
                             </form>
-                            <form method="POST" action="<?= $fqdnClean ?>/admin/moderation" onsubmit="return confirm('Are you sure you want to delete this spam?');">
+                            <form method="POST" action="<?= $fqdnClean ?>/admin/moderation" onsubmit="return confirm('Deseja apagar definitivamente este spam?');" style="margin: 0;">
                                 <input type="hidden" name="action" value="delete">
                                 <input type="hidden" name="type" value="spam">
                                 <input type="hidden" name="id" value="<?= htmlspecialchars((string) ($item['id_filename'] ?? '')) ?>">
-                                <button type="submit" class="mod-btn mod-btn-delete">Delete Permanently</button>
+                                <button type="submit" class="btn-stamp btn-stamp-red">✕ EXCLUIR DEFINITIVAMENTE</button>
                             </form>
                         </div>
                     </div>
                 <?php endforeach; ?>
             <?php endif; ?>
 
-            <div class="mod-section-title" style="color: #ff9800; margin-top: 3rem;">
-                <span>[FEDERATION & DOMAIN BLOCKS]</span>
+            <div class="mod-section-title" style="color: var(--tint-yellow); margin-top: 3.5rem;">
+                <span>[DEFEDERAÇÃO & BLOQUEIOS DE DOMÍNIO / ATOR]</span>
             </div>
 
-            <div class="mod-card" style="border-left: 3px solid #ff9800; margin-bottom: 2rem;">
+            <div class="mod-card" style="border-left: 6px solid var(--tint-yellow); margin-bottom: 2rem;">
+                <span class="tape-label">DEFESA DE MALHA</span>
                 <form method="POST" action="<?= $fqdnClean ?>/admin/moderation" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; align-items: end;">
                     <input type="hidden" name="action" value="add_block">
                     <div>
-                        <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 4px;">Target Domain</label>
-                        <input type="text" name="domain" placeholder="bad-instance.social" style="width: 100%; background: rgba(0,0,0,0.5); border: 1px solid rgba(0,240,255,0.3); color: #fff; padding: 6px 10px; border-radius: 4px; box-sizing: border-box;">
+                        <label style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; font-weight: 800; color: var(--text-muted); display: block; margin-bottom: 4px;">DOMÍNIO ALVO</label>
+                        <input type="text" name="domain" placeholder="instancia-troll.xyz" style="width: 100%;">
                     </div>
                     <div>
-                        <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 4px;">Or Actor URL</label>
-                        <input type="url" name="actor_url" placeholder="https://instance.social/users/spammer" style="width: 100%; background: rgba(0,0,0,0.5); border: 1px solid rgba(0,240,255,0.3); color: #fff; padding: 6px 10px; border-radius: 4px; box-sizing: border-box;">
+                        <label style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; font-weight: 800; color: var(--text-muted); display: block; margin-bottom: 4px;">OU URL DO ATOR ESPECÍFICO</label>
+                        <input type="url" name="actor_url" placeholder="https://instancia.xyz/users/spammer" style="width: 100%;">
                     </div>
                     <div>
-                        <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 4px;">Action</label>
-                        <select name="block_action" style="width: 100%; background: rgba(0,0,0,0.5); border: 1px solid rgba(0,240,255,0.3); color: #fff; padding: 6px 10px; border-radius: 4px; box-sizing: border-box;">
-                            <option value="block">Block (Reject All)</option>
-                            <option value="silence">Silence (Hide from feeds)</option>
-                            <option value="reject_media">Reject Media</option>
+                        <label style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; font-weight: 800; color: var(--text-muted); display: block; margin-bottom: 4px;">AÇÃO DE INTERDIÇÃO</label>
+                        <select name="block_action" style="width: 100%;">
+                            <option value="block">Bloquear (Rejeitar tudo)</option>
+                            <option value="silence">Silenciar (Ocultar da timeline pública)</option>
+                            <option value="reject_media">Rejeitar anexos de mídia</option>
                         </select>
                     </div>
                     <div>
-                        <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 4px;">Reason / Audit Note</label>
-                        <input type="text" name="reason" placeholder="Spam bot network" style="width: 100%; background: rgba(0,0,0,0.5); border: 1px solid rgba(0,240,255,0.3); color: #fff; padding: 6px 10px; border-radius: 4px; box-sizing: border-box;">
+                        <label style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; font-weight: 800; color: var(--text-muted); display: block; margin-bottom: 4px;">MOTIVO / AUDITORIA</label>
+                        <input type="text" name="reason" placeholder="Rede de bots de spam" style="width: 100%;">
                     </div>
                     <div>
-                        <button type="submit" class="mod-btn" style="background: #ff9800; color: #000; font-weight: 700; width: 100%; height: 34px;">Add Block Rule</button>
+                        <button type="submit" class="btn-stamp btn-stamp-magenta" style="width: 100%; height: 42px;">+ APLICAR BLOQUEIO</button>
                     </div>
                 </form>
             </div>
 
             <?php if (empty($blocks)): ?>
-                <div class="mod-empty">No domain or actor blocks active. Federation ingress is fully open.</div>
+                <div class="mod-empty">Nenhum domínio ou ator bloqueado. A malha federada está operando aberta.</div>
             <?php else: ?>
-                <div style="overflow-x: auto;">
-                    <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem; text-align: left;">
+                <div class="cyber-table-wrap">
+                    <table class="cyber-table">
                         <thead>
-                            <tr style="border-bottom: 1px solid rgba(0,240,255,0.2); color: var(--text-muted);">
-                                <th style="padding: 8px;">Target</th>
-                                <th style="padding: 8px;">Action</th>
-                                <th style="padding: 8px;">Reason</th>
-                                <th style="padding: 8px;">Date</th>
-                                <th style="padding: 8px; text-align: right;">Manage</th>
+                            <tr>
+                                <th>ALVO DE BLOQUEIO</th>
+                                <th>AÇÃO APLICADA</th>
+                                <th>MOTIVO AUDITADO</th>
+                                <th>DATA</th>
+                                <th style="text-align: right;">AÇÕES</th>
                             </tr>
                         </thead>
                         <tbody>
                             <?php foreach ($blocks as $blk): ?>
-                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
-                                    <td style="padding: 8px; font-family: monospace;">
-                                        <?= htmlspecialchars((string) ($blk['domain'] ?: $blk['actor_url'] ?: 'All')) ?>
+                                <tr>
+                                    <td style="font-family: 'JetBrains Mono', monospace; font-weight: 700;">
+                                        <?= htmlspecialchars((string) ($blk['domain'] ?: $blk['actor_url'] ?: 'Todos')) ?>
                                     </td>
-                                    <td style="padding: 8px;">
-                                        <span class="mod-badge" style="background: <?= $blk['action'] === 'block' ? '#f44336' : ($blk['action'] === 'silence' ? '#ff9800' : '#2196f3') ?>; color: #fff;">
+                                    <td>
+                                        <span class="badge-stamp <?= $blk['action'] === 'block' ? 'badge-red' : ($blk['action'] === 'silence' ? 'badge-yellow' : 'badge-cyan') ?>">
                                             <?= strtoupper(htmlspecialchars((string) $blk['action'])) ?>
                                         </span>
                                     </td>
-                                    <td style="padding: 8px; color: var(--text-muted);"><?= htmlspecialchars((string) ($blk['reason'] ?? '')) ?></td>
-                                    <td style="padding: 8px; font-size: 0.8rem; color: var(--text-muted);"><?= date('Y-m-d H:i', (int) ($blk['created_at'] ?? time())) ?></td>
-                                    <td style="padding: 8px; text-align: right;">
-                                        <form method="POST" action="<?= $fqdnClean ?>/admin/moderation" style="display: inline;" onsubmit="return confirm('Remove this moderation block?');">
+                                    <td style="color: var(--text-muted); font-size: 0.85rem;"><?= htmlspecialchars((string) ($blk['reason'] ?? '')) ?></td>
+                                    <td style="font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; color: var(--text-muted);"><?= date('Y-m-d H:i', (int) ($blk['created_at'] ?? time())) ?></td>
+                                    <td style="text-align: right;">
+                                        <form method="POST" action="<?= $fqdnClean ?>/admin/moderation" style="display: inline; margin: 0;" onsubmit="return confirm('Deseja realmente remover este bloqueio?');">
                                             <input type="hidden" name="action" value="remove_block">
                                             <input type="hidden" name="id" value="<?= (int) $blk['id'] ?>">
-                                            <button type="submit" class="mod-btn mod-btn-delete" style="padding: 2px 8px; font-size: 0.75rem;">Remove</button>
+                                            <button type="submit" class="btn-stamp btn-stamp-red" style="padding: 4px 10px; font-size: 0.72rem;">DESBLOQUEAR</button>
                                         </form>
                                     </td>
                                 </tr>

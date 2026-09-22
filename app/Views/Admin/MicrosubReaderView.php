@@ -6,6 +6,7 @@ namespace Indieinabox\Views\Admin;
 
 /**
  * Presentation view component that renders the Microsub web reader interface.
+ * Estética: Lambe-Lambe Periférico, Dissidência Travesti & Resistência DIY.
  */
 class MicrosubReaderView
 {
@@ -22,423 +23,331 @@ class MicrosubReaderView
         ob_start();
         ?>
     <style>
-        :root {
-            --glass-bg: rgba(17, 24, 39, 0.7);
-            --glass-border: rgba(255, 255, 255, 0.08);
-            --glass-blur: blur(20px);
-            --accent: #eccb00;
-            --accent-glow: rgba(236, 203, 0, 0.35);
-            --accent-gradient: var(--accent);
-            --text-main: #f9fafb;
-            --text-muted: #9ca3af;
-            --bg-gradient: transparent;
-        }
-
-        .microsub-wrapper {
-            font-family: 'Outfit', system-ui, sans-serif;
-            background: var(--bg-gradient);
-            color: var(--text-main);
-            margin: 0;
-            padding: 0;
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .microsub-wrapper .glass {
-            background: var(--glass-bg);
-            backdrop-filter: var(--glass-blur);
-            -webkit-backdrop-filter: var(--glass-blur);
-            border: 1px solid var(--glass-border);
-            border-radius: 28px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7),
-                        0 0 50px rgba(236, 203, 0, 0.03);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        /* Login View */
-        .login-prompt {
-            text-align: center;
-            padding: 4rem;
-            max-width: 400px;
-            width: 90%;
-        }
-
-        .login-prompt h1 {
-            background: var(--accent-gradient);
-            background-clip: text;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-top: 0;
-        }
-
-        .login-prompt input {
-            width: 100%;
-            padding: 1rem;
-            margin: 1.5rem 0;
-            background: rgba(0, 0, 0, 0.2);
-            border: 1px solid var(--glass-border);
-            border-radius: 8px;
-            color: #fff;
-            font-family: inherit;
-            box-sizing: border-box;
-            outline: none;
-            transition: border-color 0.3s ease;
-        }
-
-        .login-prompt input:focus {
-            border-color: var(--accent);
-        }
-
-        .btn {
-            background: linear-gradient(135deg, #eccb00 0%, #d8b600 100%);
-            color: #030712;
-            border: none;
-            padding: 0.75rem 1.5rem;
-            border-radius: 12px;
-            font-size: 1.05rem;
-            font-weight: 600;
-            font-family: inherit;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            box-shadow: 0 4px 12px var(--accent-glow);
-        }
-
-        .btn:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 6px 20px var(--accent-glow);
-            background: linear-gradient(135deg, #fce029 0%, #eccb00 100%);
-        }
-
-        #error-msg {
-            color: #ff6b6b;
-            margin-top: 1rem;
-            font-size: 0.9rem;
-        }
-
-        /* App View */
-        #reader-view {
-            width: 95%;
-            max-width: 1200px;
-            height: 90vh;
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 2rem;
-        }
-
-        .sidebar {
-            display: none;
-        }
-
-        .sidebar-header {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            margin-bottom: 3rem;
-        }
-
-        .sidebar-header h2 {
-            margin: 0;
-            font-weight: 600;
-            background: var(--accent-gradient);
-            background-clip: text;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .channels-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            flex-grow: 1;
-        }
-
-        .channel-item {
-            padding: 0.75rem 1rem;
-            margin-bottom: 0.5rem;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background 0.2s ease, padding-left 0.2s ease;
-            color: var(--text-muted);
-            font-weight: 600;
-        }
-
-        .channel-item:hover, .channel-item.active {
-            background: rgba(255, 255, 255, 0.1);
-            color: var(--text-main);
-            padding-left: 1.5rem;
-        }
-
-        .sidebar-footer {
-            margin-top: auto;
-            padding-top: 2rem;
-            border-top: 1px solid var(--glass-border);
-        }
-
-        .sidebar-footer button {
-            background: transparent;
-            color: var(--text-muted);
-            border: 1px solid var(--glass-border);
-            width: 100%;
-        }
-        .sidebar-footer button:hover {
-            color: #fff;
-            border-color: #fff;
-        }
-
-        .main-content {
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            position: relative;
+        .reader-container {
+            max-width: 1050px;
+            margin: 0 auto;
+            padding: 2rem;
+            font-family: 'Outfit', sans-serif;
+            color: var(--text-light, #f4efe6);
         }
 
         .timeline-header {
             display: flex;
-            justify-content: space-between;
+            flex-wrap: wrap;
             align-items: center;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid var(--glass-border);
+            justify-content: space-between;
+            gap: 1rem;
+            padding-bottom: 1.25rem;
             margin-bottom: 2rem;
+            border-bottom: 3px solid #000000;
+            position: relative;
         }
 
         .timeline-header h1 {
             margin: 0;
-            font-size: 1.5rem;
+            font-family: 'Bebas Neue', 'Archivo Black', sans-serif;
+            font-size: 2.2rem;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            color: var(--lambe-paper);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .timeline-controls {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .timeline-search-box {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+            min-width: 260px;
+        }
+
+        .timeline-actions {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 8px;
         }
 
         #timeline {
-            flex-grow: 1;
-            overflow-y: auto;
-            padding-right: 1rem;
-            scrollbar-width: thin;
-            scrollbar-color: var(--glass-border) transparent;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
         }
 
-        #timeline::-webkit-scrollbar {
-            width: 6px;
-        }
-        #timeline::-webkit-scrollbar-thumb {
-            background-color: var(--glass-border);
-            border-radius: 3px;
-        }
-
-        .item {
+        /* Card de Post Estilo Cartaz Colado */
+        .item-post {
+            background: var(--lambe-surface, #1e1f25);
+            border: 2px solid #000000;
+            border-left: 6px solid var(--tint-yellow, #ffe600);
+            box-shadow: 4px 4px 0px #000000;
             padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            transition: transform 0.2s ease, border-color 0.2s ease;
-            animation: fadeIn 0.4s ease-out forwards;
+            position: relative;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
         }
 
-        .item:hover {
-            border-color: rgba(255, 255, 255, 0.25);
-            transform: translateY(-2px);
+        .item-post:hover {
+            transform: translate(-1px, -1px);
+            box-shadow: 6px 6px 0px #000000;
         }
 
-        .item.read {
-            opacity: 0.5;
+        .item-post.read {
+            border-left-color: var(--text-dim, #727684);
+            opacity: 0.75;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+        .item-post-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+            border-bottom: 1px dashed rgba(255,255,255,0.15);
+            padding-bottom: 0.75rem;
         }
 
-        .item-author {
+        .item-author-info {
             display: flex;
             align-items: center;
-            gap: 1rem;
-            margin-bottom: 1rem;
+            gap: 12px;
         }
 
-        .item-author img {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            border: 2px solid var(--glass-border);
+        .item-author-avatar {
+            width: 44px;
+            height: 44px;
+            object-fit: cover;
+            border: 2px solid #000000;
+            box-shadow: 2px 2px 0 #000000;
+            background: #000;
         }
 
-        .item-author .name {
-            font-weight: 600;
-            font-size: 1.1rem;
+        .item-author-name {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 1.05rem;
+            color: var(--lambe-paper);
         }
 
-        .item-author .date {
-            font-size: 0.85rem;
+        .item-date {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.78rem;
             color: var(--text-muted);
         }
 
         .item-content {
+            font-size: 1.02rem;
             line-height: 1.7;
-            font-size: 1rem;
-            color: #dcdcdc;
+            color: #f4efe6;
+            margin-bottom: 1.25rem;
+            word-break: break-word;
         }
 
         .item-content a {
-            color: #cf8bf3;
-            text-decoration: none;
+            color: var(--tint-cyan, #00e5ff);
+            text-decoration: underline;
+            text-underline-offset: 3px;
         }
         .item-content a:hover {
-            text-decoration: underline;
+            color: var(--tint-yellow, #ffe600);
+            background: #000;
         }
 
         .item-content img {
             max-width: 100%;
-            border-radius: 8px;
+            border: 2px solid #000000;
+            box-shadow: 3px 3px 0 #000000;
             margin-top: 1rem;
+            display: block;
         }
 
-        .item-actions {
-            margin-top: 1.5rem;
+        .item-actions-bar {
             display: flex;
-            gap: 1rem;
-            border-top: 1px solid var(--glass-border);
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 8px;
             padding-top: 1rem;
+            border-top: 2px solid #000000;
         }
 
-        .item-actions a, .item-actions button {
-            background: none;
-            border: none;
-            color: var(--text-muted);
-            cursor: pointer;
-            font-size: 0.9rem;
-            font-weight: 600;
-            font-family: inherit;
-            text-decoration: none;
-            transition: color 0.2s ease;
-            padding: 0;
-        }
-
-        .item-actions button:hover, .item-actions a:hover {
-            color: #cf8bf3;
-        }
-
+        /* Fallback Content Warning */
         .cw-fallback details {
-            background: rgba(255, 107, 107, 0.1);
-            border: 1px solid rgba(255, 107, 107, 0.3);
-            border-radius: 8px;
-            padding: 0.5rem;
+            background: rgba(255, 34, 68, 0.1);
+            border: 2px solid var(--tint-red);
+            padding: 0.75rem;
             margin-bottom: 1rem;
         }
         .cw-fallback summary {
             cursor: pointer;
-            font-weight: 600;
-            color: #ff6b6b;
-            padding: 0.5rem;
-            outline: none;
-            user-select: none;
-        }
-        .cw-fallback details[open] summary {
-            border-bottom: 1px solid rgba(255, 107, 107, 0.3);
-            margin-bottom: 0.5rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 800;
+            color: var(--tint-red);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
         .cw-fallback img {
-            filter: blur(35px);
+            filter: blur(25px);
             cursor: pointer;
-            transition: filter 0.4s ease;
+            transition: filter 0.3s ease;
         }
         .cw-fallback img.revealed {
             filter: none;
         }
 
-        @media (max-width: 768px) {
-            #reader-view {
-                grid-template-columns: 1fr;
-                height: 100vh;
-                width: 100%;
-                border-radius: 0;
-            }
-            .sidebar {
-                display: none; /* In a real app, we'd add a hamburger menu */
-            }
+        /* Modais Brutalistas */
+        .brutalist-modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .brutalist-modal {
+            background: var(--lambe-surface);
+            border: 3px solid #000000;
+            box-shadow: 8px 8px 0 #000000;
+            width: 100%;
+            max-width: 680px;
+            max-height: 88vh;
+            overflow-y: auto;
+            padding: 2rem;
+            position: relative;
+        }
+
+        .brutalist-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #000000;
+            padding-bottom: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .brutalist-modal-header h2 {
+            margin: 0;
+            font-family: 'Bebas Neue', 'Archivo Black', sans-serif;
+            font-size: 1.8rem;
+            letter-spacing: 0.05em;
+            color: var(--lambe-paper);
+            text-transform: uppercase;
         }
     </style>
-    <div class="microsub-wrapper">
-    <div id="reader-view" style="display: none;">
 
+    <div class="reader-container">
+        <div id="reader-view">
+            <header class="timeline-header">
+                <div>
+                    <h1 id="current-channel-title">INBOX</h1>
+                    <span class="badge-stamp badge-yellow">TIMELINE & FEDERATION READER</span>
+                </div>
 
-        <main class="main-content">
-            <div class="timeline-header">
-                <h1 id="current-channel-title">Inbox</h1>
-                <div style="display: flex; gap: 10px; align-items: center; flex: 1; margin: 0 20px;">
-                    <input type="text" id="article-search" placeholder="Search / Filtrar..." style="flex: 1; padding: 0.5rem 1rem; border-radius: 8px; border: 1px solid var(--glass-border); background: rgba(0,0,0,0.2); color: white; outline: none;" oninput="filterTimeline()">
-                    <select id="article-filter" style="padding: 0.5rem; border-radius: 8px; border: 1px solid var(--glass-border); background: rgba(0,0,0,0.2); color: white; outline: none;" onchange="filterTimeline()">
-                        <option value="all">Todos</option>
-                        <option value="unread">Não lidos</option>
-                        <option value="read">Lidos</option>
+                <div class="timeline-actions">
+                    <button class="btn-stamp" id="push-toggle-btn" onclick="togglePushNotifications()">🔔 ALERTAS PUSH</button>
+                    <button class="btn-stamp btn-stamp-cyan" onclick="addFeed()">+ ASSINAR FEED</button>
+                    <button class="btn-stamp" onclick="manageFeeds()">FEEDS</button>
+                    <button class="btn-stamp" onclick="manageFilters()">REGRAS & FILTROS</button>
+                    <button class="btn-stamp btn-stamp-yellow" onclick="fetchFeeds()">⚡ SINCRONIZAR</button>
+                </div>
+            </header>
+
+            <div class="timeline-controls" style="margin-bottom: 1.5rem; background: var(--lambe-surface); border: 2px solid #000; padding: 1rem; box-shadow: 3px 3px 0 #000;">
+                <div class="timeline-search-box">
+                    <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; font-weight: 800; color: var(--tint-yellow);">BUSCAR:</span>
+                    <input type="text" id="article-search" placeholder="Filtrar por texto, autor ou termo..." style="flex: 1;" oninput="filterTimeline()">
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; font-weight: 800; color: var(--tint-yellow);">ESTADO:</span>
+                    <select id="article-filter" onchange="filterTimeline()">
+                        <option value="all">TODOS OS POSTS</option>
+                        <option value="unread">APENAS NÃO LIDOS</option>
+                        <option value="read">APENAS JÁ LIDOS</option>
                     </select>
                 </div>
-                <div style="display: flex; gap: 10px;">
-                    <button class="btn" id="push-toggle-btn" onclick="togglePushNotifications()" style="background: rgba(255,255,255,0.08); border: 1px solid var(--glass-border); color: #fff;">🔔 Push Alerts</button>
-                    <button class="btn" onclick="addFeed()">Add Feed</button>
-                    <button class="btn" onclick="manageFeeds()">Manage Feeds</button>
-                    <button class="btn" onclick="manageFilters()">Filters & Rules</button>
-                    <button class="btn" onclick="fetchFeeds()">Sync Feeds</button>
-                </div>
             </div>
-            <div id="timeline">
-                <p style="text-align: center; color: var(--text-muted); margin-top: 2rem;">Loading...</p>
-            </div>
-        </main>
-    </div>
 
-    <div id="manage-feeds-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center;">
-        <div style="background: #111827; padding: 2rem; border-radius: 12px; width: 90%; max-width: 600px; max-height: 80vh; overflow-y: auto; border: 1px solid var(--glass-border); box-shadow: 0 25px 50px rgba(0,0,0,0.5);">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-                <h2 style="margin: 0;">Manage Feeds</h2>
-                <button class="btn" style="padding: 0.5rem 1rem;" onclick="closeManageFeeds()">Close</button>
-            </div>
-            <div id="manage-feeds-list">Loading...</div>
+            <main id="timeline">
+                <p style="text-align: center; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; padding: 3rem;">CARREGANDO TIMELINE DO MURO...</p>
+            </main>
         </div>
     </div>
 
-    <div id="manage-filters-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center;">
-        <div style="background: #111827; padding: 2rem; border-radius: 12px; width: 90%; max-width: 650px; max-height: 85vh; overflow-y: auto; border: 1px solid var(--glass-border); box-shadow: 0 25px 50px rgba(0,0,0,0.5);">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-                <h2 style="margin: 0;">Filters & Moderation Rules</h2>
-                <button class="btn" style="padding: 0.5rem 1rem;" onclick="closeManageFilters()">Close</button>
+    <!-- Modal Gerenciador de Feeds -->
+    <div id="manage-feeds-modal" class="brutalist-modal-overlay">
+        <div class="brutalist-modal">
+            <span class="tape-label">ASSINATURAS DO CANAL</span>
+            <div class="brutalist-modal-header">
+                <h2>GERENCIAR FEEDS</h2>
+                <button class="btn-stamp btn-stamp-red" onclick="closeManageFeeds()">FECHAR [X]</button>
+            </div>
+            <div id="manage-feeds-list">Carregando lista de fontes...</div>
+        </div>
+    </div>
+
+    <!-- Modal Filtros & Moderação -->
+    <div id="manage-filters-modal" class="brutalist-modal-overlay">
+        <div class="brutalist-modal">
+            <span class="tape-label">REGRAS DE RETENÇÃO</span>
+            <div class="brutalist-modal-header">
+                <h2>FILTROS & MODERAÇÃO DA TIMELINE</h2>
+                <button class="btn-stamp btn-stamp-red" onclick="closeManageFilters()">FECHAR [X]</button>
             </div>
             
-            <div style="background: rgba(255,255,255,0.05); padding: 1.2rem; border-radius: 8px; margin-bottom: 1.5rem; border: 1px solid var(--glass-border);">
-                <h3 style="margin-top: 0; font-size: 1rem; margin-bottom: 0.8rem; color: var(--accent);">Add New Rule</h3>
+            <div style="background: #141518; border: 2px solid #000; padding: 1.25rem; margin-bottom: 1.5rem; box-shadow: 3px 3px 0 #000;">
+                <h3 style="margin-top: 0; font-family: 'Archivo Black', sans-serif; font-size: 0.95rem; color: var(--tint-yellow); text-transform: uppercase;">
+                    + ADICIONAR NOVA REGRA
+                </h3>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
                     <div>
-                        <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 4px;">Rule Type</label>
-                        <select id="new-filter-type" style="width: 100%; padding: 0.5rem; border-radius: 6px; background: rgba(0,0,0,0.3); color: white; border: 1px solid var(--glass-border);">
-                            <option value="keyword">Keyword (content/title)</option>
-                            <option value="author">Author (name/URL)</option>
-                            <option value="domain">Domain (instance/server)</option>
+                        <label style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; font-weight: 800; color: var(--text-muted); display: block; margin-bottom: 4px;">TIPO DE REGRA</label>
+                        <select id="new-filter-type" style="width: 100%;">
+                            <option value="keyword">Palavra-chave (conteúdo/título)</option>
+                            <option value="author">Autor (nome/URL)</option>
+                            <option value="domain">Domínio / Instância</option>
                         </select>
                     </div>
                     <div>
-                        <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 4px;">Action</label>
-                        <select id="new-filter-action" style="width: 100%; padding: 0.5rem; border-radius: 6px; background: rgba(0,0,0,0.3); color: white; border: 1px solid var(--glass-border);">
-                            <option value="mute">Mute (Hide from timeline)</option>
-                            <option value="auto_archive">Auto-Archive (Mark as read)</option>
-                            <option value="drop">Drop (Discard on sync)</option>
+                        <label style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; font-weight: 800; color: var(--text-muted); display: block; margin-bottom: 4px;">AÇÃO</label>
+                        <select id="new-filter-action" style="width: 100%;">
+                            <option value="mute">Silenciar (Ocultar da timeline)</option>
+                            <option value="auto_archive">Auto-Arquivar (Marcar como lido)</option>
+                            <option value="drop">Descartar no sync</option>
                         </select>
                     </div>
                 </div>
-                <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 10px; margin-bottom: 10px;">
+                <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 10px; margin-bottom: 12px;">
                     <div>
-                        <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 4px;">Pattern / Keyword / Domain</label>
-                        <input type="text" id="new-filter-content" placeholder="e.g. crypto, troll, spammer.social" style="width: 100%; padding: 0.5rem; border-radius: 6px; background: rgba(0,0,0,0.3); color: white; border: 1px solid var(--glass-border); box-sizing: border-box;">
+                        <label style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; font-weight: 800; color: var(--text-muted); display: block; margin-bottom: 4px;">PADRÃO / TERMO / DOMÍNIO</label>
+                        <input type="text" id="new-filter-content" placeholder="ex: spammer.xyz, bot, crypto" style="width: 100%; box-sizing: border-box;">
                     </div>
                     <div>
-                        <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 4px;">Scope</label>
-                        <select id="new-filter-channel" style="width: 100%; padding: 0.5rem; border-radius: 6px; background: rgba(0,0,0,0.3); color: white; border: 1px solid var(--glass-border);">
+                        <label style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; font-weight: 800; color: var(--text-muted); display: block; margin-bottom: 4px;">ESCOPO</label>
+                        <select id="new-filter-channel" style="width: 100%;">
                             <option value="*">Global (*)</option>
                             <option value="inbox">Inbox</option>
                             <option value="notifications">Notifications</option>
                         </select>
                     </div>
                 </div>
-                <button class="btn" style="width: 100%; padding: 0.6rem; margin-top: 5px;" onclick="addFilterSubmit()">Add Filter Rule</button>
+                <button class="btn-stamp btn-stamp-magenta" style="width: 100%;" onclick="addFilterSubmit()">CADASTRAR REGRA DE FILTRO</button>
             </div>
 
-            <h3 style="font-size: 1rem; margin-bottom: 0.8rem;">Active Rules</h3>
-            <div id="manage-filters-list">Loading...</div>
+            <h3 style="font-family: 'Archivo Black', sans-serif; font-size: 0.95rem; text-transform: uppercase; color: var(--lambe-paper); margin-bottom: 0.8rem;">
+                REGRAS ATIVAS
+            </h3>
+            <div id="manage-filters-list">Carregando filtros...</div>
         </div>
     </div>
 
@@ -446,7 +355,7 @@ class MicrosubReaderView
         function filterTimeline() {
             const query = document.getElementById('article-search').value.toLowerCase();
             const filterType = document.getElementById('article-filter').value;
-            const items = document.querySelectorAll('#timeline .item');
+            const items = document.querySelectorAll('#timeline .item-post');
             
             items.forEach(item => {
                 const text = item.textContent.toLowerCase();
@@ -494,13 +403,12 @@ class MicrosubReaderView
         }
 
         window.onload = () => {
-            document.getElementById('reader-view').style.display = 'grid';
             loadChannelTitle();
             loadTimeline();
             initPushUI();
         };
 
-        // Handle unblurring of Content Warning images
+        // Unblurring de Content Warning
         document.addEventListener('click', function(e) {
             if (e.target.tagName === 'IMG' && e.target.closest('.cw-fallback')) {
                 e.target.classList.toggle('revealed');
@@ -512,7 +420,7 @@ class MicrosubReaderView
                 const data = await api('channels');
                 const ch = data.channels.find(c => c.uid === currentChannel);
                 if (ch) {
-                    document.getElementById('current-channel-title').textContent = ch.name;
+                    document.getElementById('current-channel-title').textContent = ch.name.toUpperCase();
                 }
             } catch (err) {
                 console.error(err);
@@ -521,7 +429,7 @@ class MicrosubReaderView
 
         async function loadTimeline() {
             const container = document.getElementById('timeline');
-            container.innerHTML = '<p style="text-align: center; color: var(--text-muted); margin-top: 2rem;">Loading...</p>';
+            container.innerHTML = '<p style="text-align: center; color: var(--text-muted); font-family: \'JetBrains Mono\', monospace; padding: 3rem;">CARREGANDO TIMELINE...</p>';
 
             try {
                 const data = await api('timeline', 'GET', { channel: currentChannel });
@@ -530,32 +438,29 @@ class MicrosubReaderView
                 window.timelineItems = data.items || [];
 
                 if (!window.timelineItems || window.timelineItems.length === 0) {
-                    container.innerHTML = '<p style="text-align: center; color: var(--text-muted); margin-top: 2rem;">No items found.</p>';
+                    container.innerHTML = '<div class="card-lambe" style="text-align: center; padding: 3rem;"><p style="font-family: \'JetBrains Mono\', monospace; color: var(--text-muted); margin: 0;">NENHUM POST ENCONTRADO NESTE CANAL.</p></div>';
                     return;
                 }
 
                 window.timelineItems.forEach(item => {
                     const div = document.createElement('div');
-                    div.className = 'item glass' + (item._is_read ? ' read' : '');
+                    div.className = 'item-post' + (item._is_read ? ' read' : '');
                     
                     let authorHtml = '';
                     if (item.author) {
                         authorHtml = `
-                            <div class="item-author" style="display: flex; justify-content: space-between; align-items: flex-start;">
-                                <div style="display: flex; align-items: center; gap: 1rem;">
-                                    ${item.author.photo ? `<img src="${item.author.photo}">` : ''}
-                                    <div>
-                                        <div class="name">${item.author.name}</div>
-                                        <div class="date">${new Date(item.published).toLocaleString()}</div>
-                                    </div>
+                            <div class="item-author-info">
+                                ${item.author.photo ? `<img src="${item.author.photo}" class="item-author-avatar" alt="Avatar">` : ''}
+                                <div>
+                                    <div class="item-author-name">${item.author.name}</div>
+                                    <div class="item-date">${new Date(item.published).toLocaleString()}</div>
                                 </div>
-                                <button onclick="this.closest('.item').nextElementSibling?.scrollIntoView({behavior: 'smooth', block: 'start'})" class="btn" style="padding: 4px 8px; font-size: 0.8rem; background: transparent; border: 1px solid var(--glass-border); color: var(--text-muted);" title="Skip to next post">Next ↓</button>
                             </div>
                         `;
                     } else {
                         authorHtml = `
-                            <div class="item-author" style="display: flex; justify-content: flex-end;">
-                                <button onclick="this.closest('.item').nextElementSibling?.scrollIntoView({behavior: 'smooth', block: 'start'})" class="btn" style="padding: 4px 8px; font-size: 0.8rem; background: transparent; border: 1px solid var(--glass-border); color: var(--text-muted);" title="Skip to next post">Next ↓</button>
+                            <div class="item-author-info">
+                                <div class="item-date">${new Date(item.published || Date.now()).toLocaleString()}</div>
                             </div>
                         `;
                     }
@@ -563,80 +468,77 @@ class MicrosubReaderView
                     let ext = item._indieinabox || {};
                     let capabilities = ext.capabilities || ['reply', 'like', 'repost'];
                     let network = ext.network || 'rss';
-                    let serverName = ext.origin_server || new URL(item.url || 'http://localhost').hostname;
+                    let serverName = ext.origin_server || (item.url ? new URL(item.url).hostname : 'local');
 
-                    let networkBadge = `<span style="font-size: 0.7rem; padding: 2px 6px; background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border); border-radius: 4px; margin-left: auto;">${network.toUpperCase()} • ${serverName}</span>`;
+                    let networkBadge = `<span class="badge-stamp badge-cyan">${network.toUpperCase()} // ${serverName}</span>`;
 
-                    let buttonsHtml = `<a href="${item.url}" target="_blank">View Original</a>`;
+                    let buttonsHtml = `<a href="${item.url}" target="_blank" class="btn-stamp" style="font-size: 0.75rem; padding: 6px 12px;">↗ ORIGINAL</a>`;
 
-                    // Generate native AP interaction buttons if supported
+                    // Interações nativas ActivityPub / Micropub
                     if (capabilities.includes('like')) {
-                        buttonsHtml += `<button onclick="interactPostAP('like', '${item.url}')" title="Like">Like</button>`;
+                        buttonsHtml += `<button onclick="interactPostAP('like', '${item.url}')" class="btn-stamp btn-stamp-magenta" style="font-size: 0.75rem; padding: 6px 12px;" title="Like via ActivityPub">♥ LIKE</button>`;
                     } else if (capabilities.includes('local_like')) {
-                        buttonsHtml += `<button onclick="interactPostMicropub('like', '${item.url}')" title="Like on your blog only" style="color: #99ccff;">Like*</button>`;
+                        buttonsHtml += `<button onclick="interactPostMicropub('like', '${item.url}')" class="btn-stamp btn-stamp-cyan" style="font-size: 0.75rem; padding: 6px 12px;" title="Curtir no meu blog">♥ LIKE*</button>`;
                     }
 
                     if (capabilities.includes('repost')) {
-                        buttonsHtml += `<button onclick="interactPostAP('repost', '${item.url}')" title="Repost">Repost</button>`;
+                        buttonsHtml += `<button onclick="interactPostAP('repost', '${item.url}')" class="btn-stamp btn-stamp-cyan" style="font-size: 0.75rem; padding: 6px 12px;" title="Repost via ActivityPub">↻ REPOST</button>`;
                     }
 
                     if (capabilities.includes('reply')) {
-                        buttonsHtml += `<button onclick="interactPostAP('reply', '${item.url}')" title="Reply">Reply</button>`;
+                        buttonsHtml += `<button onclick="interactPostAP('reply', '${item.url}')" class="btn-stamp btn-stamp-yellow" style="font-size: 0.75rem; padding: 6px 12px;" title="Reply via ActivityPub">💬 REPLY</button>`;
                     }
 
-                    if (capabilities.includes('poll_vote')) {
-                        buttonsHtml += `<button onclick="alert('Poll voting UI coming soon!')" title="Vote in poll" style="color: var(--accent);">Vote</button>`;
-                    }
-
-                    // Always allow local blog shares
+                    // Compartilhar local no blog
                     buttonsHtml += `
-                        <span style="border-left: 1px solid var(--glass-border); margin: 0 8px; height: 16px; display: inline-block; vertical-align: middle;"></span>
-                        <button onclick="interactPostMicropub('repost', '${item.url}')" title="Create a local post on your blog">Share on Blog</button>
+                        <button onclick="interactPostMicropub('repost', '${item.url}')" class="btn-stamp" style="font-size: 0.75rem; padding: 6px 12px;" title="Publicar citação no próprio blog">✍ NO BLOG</button>
                     `;
 
-                    // Generate Poll UI
+                    // Enquete / Poll UI
                     let pollHtml = '';
                     if (ext.poll && ext.poll.options) {
                         let totalVotes = ext.poll.options.reduce((sum, opt) => sum + (opt.votes || 0), 0);
-                        pollHtml = '<div class="native-poll" style="margin-top: 1rem; background: rgba(0,0,0,0.2); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--glass-border);">';
+                        pollHtml = '<div style="margin: 1.25rem 0; background: #121316; border: 2px solid #000; padding: 1.25rem; box-shadow: 3px 3px 0 #000;">';
+                        pollHtml += '<div style="font-family: \'JetBrains Mono\', monospace; font-size: 0.8rem; font-weight: 800; color: var(--tint-yellow); margin-bottom: 10px; text-transform: uppercase;">📊 ENQUETE INTERATIVA:</div>';
                         ext.poll.options.forEach(opt => {
                             let pct = totalVotes > 0 ? Math.round(((opt.votes || 0) / totalVotes) * 100) : 0;
-                            // Escape single quotes for JS onClick
                             let safeTitle = opt.title.replace(/'/g, "\\'");
                             pollHtml += `
-                                <div style="margin-bottom: 1rem; cursor: pointer; position: relative;" onclick="interactPostAP('poll_vote', '${item.url}', '${safeTitle}')" title="Click to vote for '${opt.title}'">
-                                    <div style="display: flex; justify-content: space-between; font-size: 0.95rem; margin-bottom: 0.4rem; font-weight: 500;">
-                                        <span style="z-index: 2; text-shadow: 1px 1px 2px rgba(0,0,0,0.8);">${opt.title}</span>
-                                        <span style="z-index: 2; color: #ddd;">${pct}%</span>
+                                <div style="margin-bottom: 10px; cursor: pointer;" onclick="interactPostAP('poll_vote', '${item.url}', '${safeTitle}')" title="Votar em '${opt.title}'">
+                                    <div style="display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; margin-bottom: 4px;">
+                                        <span>${opt.title}</span>
+                                        <span style="font-weight: 800; color: var(--tint-yellow);">${pct}% (${opt.votes || 0})</span>
                                     </div>
-                                    <div style="width: 100%; background: rgba(255,255,255,0.05); height: 28px; border-radius: 6px; overflow: hidden; position: relative; border: 1px solid rgba(255,255,255,0.1);">
-                                        <div style="width: ${pct}%; background: rgba(236, 203, 0, 0.3); height: 100%; transition: width 0.8s ease-out;"></div>
+                                    <div style="width: 100%; background: #000; height: 18px; border: 1px solid #333; overflow: hidden;">
+                                        <div style="width: ${pct}%; background: var(--tint-magenta); height: 100%; transition: width 0.5s ease-out;"></div>
                                     </div>
                                 </div>
                             `;
                         });
-                        pollHtml += `<div style="font-size: 0.85rem; color: var(--text-muted); text-align: right; margin-top: 0.5rem;">Total votes: ${totalVotes}</div></div>`;
-                        // Inject CSS to hide the fallback for this specific item
+                        pollHtml += `<div style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--text-muted); text-align: right; margin-top: 8px;">Total de votos: ${totalVotes}</div></div>`;
                         pollHtml += '<style>.poll-fallback { display: none !important; }</style>';
                     }
 
                     div.innerHTML = `
-                        <div style="display: flex; align-items: center; margin-bottom: 0.5rem;">
-                            ${networkBadge}
+                        <div class="item-post-header">
+                            ${authorHtml}
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                ${networkBadge}
+                                <button onclick="this.closest('.item-post').nextElementSibling?.scrollIntoView({behavior: 'smooth', block: 'start'})" class="btn-stamp" style="font-size: 0.7rem; padding: 4px 8px;" title="Próximo post">↓</button>
+                            </div>
                         </div>
-                        ${authorHtml}
                         <div class="item-content">${item.content.html || item.content.text || ''}</div>
                         ${pollHtml}
-                        <div class="item-actions">
+                        <div class="item-actions-bar">
                             ${buttonsHtml}
-                            ${(item.author && item.author.name) ? `<button onclick="quickMute('author', '${item.author.name.replace(/'/g, "\\'")}')" title="Mute this author" style="opacity: 0.7; font-size: 0.8rem; background: transparent; border: 1px solid var(--glass-border); color: #ff6b6b; border-radius: 6px; padding: 4px 8px; margin-left: 6px;">Mute Author</button>` : ''}
-                            ${!item._is_read ? `<button onclick="markRead('${item._id}')" style="margin-left: auto;">Mark Read</button>` : ''}
+                            ${(item.author && item.author.name) ? `<button onclick="quickMute('author', '${item.author.name.replace(/'/g, "\\'")}')" class="btn-stamp btn-stamp-red" style="font-size: 0.75rem; padding: 6px 12px; margin-left: 6px;">⊘ SILENCIAR AUTOR</button>` : ''}
+                            ${!item._is_read ? `<button onclick="markRead('${item._id}')" class="btn-stamp" style="margin-left: auto; font-size: 0.75rem; padding: 6px 12px; background: var(--tint-green); color: #000;">✓ MARCAR LIDO</button>` : ''}
                         </div>
                     `;
                     container.appendChild(div);
                 });
             } catch (err) {
-                container.innerHTML = '<p style="text-align: center; color: #ff6b6b; margin-top: 2rem;">Failed to load timeline.</p>';
+                container.innerHTML = '<div class="card-lambe" style="text-align: center; border-color: var(--tint-red);"><p style="color: var(--tint-red); font-family: \'JetBrains Mono\';">FALHA AO CARREGAR TIMELINE.</p></div>';
             }
         }
 
@@ -645,14 +547,14 @@ class MicrosubReaderView
                 await api('timeline', 'POST', { method: 'mark_read', channel: currentChannel, entry: id });
                 loadTimeline();
             } catch (err) {
-                alert("Failed to mark as read");
+                alert("Falha ao marcar como lido");
             }
         }
         
         async function interactPostAP(action, targetUrl, prefilledContent = null) {
             let content = prefilledContent || '';
             if (action === 'reply' && !content) {
-                content = prompt("Enter your native ActivityPub reply:");
+                content = prompt("Digite sua resposta nativa via ActivityPub:");
                 if (!content) return;
             }
 
@@ -663,13 +565,13 @@ class MicrosubReaderView
                     content: content
                 });
                 if (res.success || res.activity_id) {
-                    alert(action.charAt(0).toUpperCase() + action.slice(1) + " queued via ActivityPub!");
+                    alert(action.toUpperCase() + " enfileirado com sucesso via ActivityPub!");
                 } else {
-                    alert("Failed to " + action + ": " + (res.error_description || "Unknown error"));
+                    alert("Falha ao interagir: " + (res.error_description || "Erro desconhecido"));
                 }
             } catch (err) {
                 console.error(err);
-                alert("Failed to send interaction");
+                alert("Falha ao enviar interação.");
             }
         }
 
@@ -681,21 +583,17 @@ class MicrosubReaderView
             };
             
             if (action === 'reply') {
-                content = prompt("Enter your reply:");
+                content = prompt("Digite sua resposta para publicar no seu blog:");
                 if (!content) return;
                 
-                // Find item context
                 const item = window.timelineItems.find(i => i.url === targetUrl);
                 if (item) {
                     let originalText = item.content.text || item.content.html || '';
-                    // Strip HTML if it's HTML
                     originalText = originalText.replace(/<[^>]+>/g, '').trim();
-                    // Truncate to 150 chars
                     if (originalText.length > 150) {
                         originalText = originalText.substring(0, 150) + '...';
                     }
-                    
-                    content += "\n\n> " + originalText + "\n>\n> -- [" + (item.author ? item.author.name : "Original Post") + "](" + item.url + ")";
+                    content += "\n\n> " + originalText + "\n>\n> -- [" + (item.author ? item.author.name : "Post Original") + "](" + item.url + ")";
                 }
 
                 payload['in-reply-to'] = targetUrl;
@@ -721,14 +619,14 @@ class MicrosubReaderView
                 });
                 
                 if (res.ok || res.status === 202) {
-                    alert(action.charAt(0).toUpperCase() + action.slice(1) + " sent successfully!");
+                    alert(action.toUpperCase() + " publicado com sucesso no seu blog!");
                 } else {
                     const text = await res.text();
-                    alert("Failed to " + action + ": " + text);
+                    alert("Falha ao publicar " + action + ": " + text);
                 }
             } catch (err) {
                 console.error(err);
-                alert("Failed to send interaction");
+                alert("Falha ao enviar interação.");
             }
         }
 
@@ -736,7 +634,7 @@ class MicrosubReaderView
             const btn = document.querySelector('button[onclick="fetchFeeds()"]');
             if (btn) {
                 btn.disabled = true;
-                btn.innerHTML = 'Syncing... ⏳';
+                btn.innerHTML = 'SINCRONIZANDO... ⏳';
                 btn.style.opacity = '0.7';
                 btn.style.cursor = 'wait';
             }
@@ -746,7 +644,7 @@ class MicrosubReaderView
                     await loadTimeline();
                     if (btn) {
                         btn.disabled = false;
-                        btn.innerHTML = 'Sync Feeds';
+                        btn.innerHTML = '⚡ SINCRONIZAR';
                         btn.style.opacity = '1';
                         btn.style.cursor = 'pointer';
                     }
@@ -755,29 +653,29 @@ class MicrosubReaderView
                 console.error(err);
                 if (btn) {
                     btn.disabled = false;
-                    btn.innerHTML = 'Sync Feeds';
+                    btn.innerHTML = '⚡ SINCRONIZAR';
                     btn.style.opacity = '1';
                     btn.style.cursor = 'pointer';
                 }
-                alert('Error syncing feeds: ' + err.message);
+                alert('Erro ao sincronizar feeds: ' + err.message);
             }
         }
 
         async function addFeed() {
             if (!currentChannel) return;
-            const url = prompt("Enter feed URL (RSS, Atom, JSON, Twtxt, or Fediverse account):");
+            const url = prompt("Digite a URL do feed (RSS, Atom, JSON, Twtxt ou perfil Fediverse/ActivityPub):");
             if (!url) return;
             
             try {
                 const res = await api('follow', 'POST', { channel: currentChannel, url: url });
                 if (res.error) {
-                    alert("Error: " + res.error_description);
+                    alert("Erro: " + res.error_description);
                 } else {
-                    alert("Subscribed successfully! Syncing feeds in the background...");
+                    alert("Assinatura confirmada! Sincronizando feeds em segundo plano...");
                     fetchFeeds();
                 }
             } catch (err) {
-                alert("Failed to subscribe to feed. See console for details.");
+                alert("Falha ao assinar feed. Consulte o console para detalhes.");
                 console.error(err);
             }
         }
@@ -786,33 +684,33 @@ class MicrosubReaderView
             if (!currentChannel) return;
             document.getElementById('manage-feeds-modal').style.display = 'flex';
             const listContainer = document.getElementById('manage-feeds-list');
-            listContainer.innerHTML = 'Loading...';
+            listContainer.innerHTML = '<p style="font-family: \'JetBrains Mono\';">Carregando fontes...</p>';
             try {
                 const res = await api('follow', 'GET', { channel: currentChannel });
                 if (res.items && res.items.length > 0) {
-                    let html = '<ul style="list-style: none; padding: 0; margin: 0;">';
+                    let html = '<ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px;">';
                     res.items.forEach(feed => {
-                        let typeBadge = `<span style="font-size: 0.7rem; padding: 2px 6px; background: var(--primary); color: white; border-radius: 4px; margin-right: 8px;">${feed.feed_type ? feed.feed_type.toUpperCase() : 'RSS'}</span>`;
-                        let photoHtml = feed.photo ? `<img src="${feed.photo}" style="width: 24px; height: 24px; border-radius: 50%; margin-right: 8px; vertical-align: middle;">` : '';
-                        let displayName = feed.name ? `<strong>${feed.name}</strong><br><small style="opacity: 0.7;">${feed.url}</small>` : feed.url;
+                        let typeBadge = `<span class="badge-stamp badge-yellow">${feed.feed_type ? feed.feed_type.toUpperCase() : 'RSS'}</span>`;
+                        let photoHtml = feed.photo ? `<img src="${feed.photo}" style="width: 28px; height: 28px; border: 1px solid #000; margin-right: 8px; vertical-align: middle;">` : '';
+                        let displayName = feed.name ? `<strong>${feed.name}</strong><br><small style="font-family: 'JetBrains Mono'; opacity: 0.7;">${feed.url}</small>` : `<span style="font-family: 'JetBrains Mono';">${feed.url}</span>`;
                         
                         html += `
-                            <li style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; border-bottom: 1px solid var(--glass-border);">
+                            <li style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; background: #141518; border: 2px solid #000; box-shadow: 2px 2px 0 #000;">
                                 <div style="word-break: break-all; margin-right: 1rem;">
-                                    <div>${photoHtml}${typeBadge}</div>
-                                    <div style="margin-top: 4px;">${displayName}</div>
+                                    <div style="margin-bottom: 4px;">${photoHtml}${typeBadge}</div>
+                                    <div>${displayName}</div>
                                 </div>
-                                <button class="btn" style="padding: 0.5rem 1rem; font-size: 0.9rem; background: #ff4b4b; color: white;" onclick="unfollowFeed('${feed.url}')">Unfollow</button>
+                                <button class="btn-stamp btn-stamp-red" style="font-size: 0.75rem; padding: 6px 12px;" onclick="unfollowFeed('${feed.url}')">DESASSINAR</button>
                             </li>
                         `;
                     });
                     html += '</ul>';
                     listContainer.innerHTML = html;
                 } else {
-                    listContainer.innerHTML = '<p>No feeds subscribed in this channel.</p>';
+                    listContainer.innerHTML = '<p style="font-family: \'JetBrains Mono\';">Nenhum feed assinado neste canal.</p>';
                 }
             } catch (err) {
-                listContainer.innerHTML = '<p style="color: red;">Failed to load feeds.</p>';
+                listContainer.innerHTML = '<p style="color: var(--tint-red); font-family: \'JetBrains Mono\';">Falha ao carregar lista de feeds.</p>';
                 console.error(err);
             }
         }
@@ -822,16 +720,16 @@ class MicrosubReaderView
         }
 
         async function unfollowFeed(url) {
-            if (!confirm('Are you sure you want to unfollow this feed?')) return;
+            if (!confirm('Deseja realmente remover esta assinatura?')) return;
             try {
                 const res = await api('unfollow', 'POST', { channel: currentChannel, url: url });
                 if (res.error) {
-                    alert("Error: " + res.error_description);
+                    alert("Erro: " + res.error_description);
                 } else {
-                    manageFeeds(); // refresh list
+                    manageFeeds();
                 }
             } catch (err) {
-                alert("Failed to unfollow feed. See console for details.");
+                alert("Falha ao desassinar feed.");
                 console.error(err);
             }
         }
@@ -847,33 +745,33 @@ class MicrosubReaderView
 
         async function loadFiltersList() {
             const listContainer = document.getElementById('manage-filters-list');
-            listContainer.innerHTML = 'Loading filters...';
+            listContainer.innerHTML = '<p style="font-family: \'JetBrains Mono\';">Carregando regras ativas...</p>';
             try {
                 const res = await api('filters', 'GET', {});
                 if (res.filters && res.filters.length > 0) {
-                    let html = '<ul style="list-style: none; padding: 0; margin: 0;">';
+                    let html = '<ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px;">';
                     res.filters.forEach(f => {
-                        let actionColor = f.action === 'drop' ? '#ff4b4b' : (f.action === 'mute' ? '#ffaa00' : '#38bdf8');
-                        let actionBadge = `<span style="font-size: 0.75rem; padding: 2px 6px; background: ${actionColor}22; color: ${actionColor}; border: 1px solid ${actionColor}66; border-radius: 4px; text-transform: uppercase; font-weight: 600; margin-right: 8px;">${f.action}</span>`;
-                        let typeBadge = `<span style="font-size: 0.7rem; padding: 2px 6px; background: rgba(255,255,255,0.1); border-radius: 4px; margin-right: 8px;">${f.filter_type}</span>`;
-                        let channelBadge = `<span style="font-size: 0.7rem; opacity: 0.6;">[channel: ${f.channel_uid}]</span>`;
+                        let actionBadgeClass = f.action === 'drop' ? 'badge-red' : (f.action === 'mute' ? 'badge-yellow' : 'badge-cyan');
+                        let actionBadge = `<span class="badge-stamp ${actionBadgeClass}">${f.action.toUpperCase()}</span>`;
+                        let typeBadge = `<span class="badge-stamp">${f.filter_type}</span>`;
+                        let channelBadge = `<span style="font-family: 'JetBrains Mono'; font-size: 0.72rem; opacity: 0.6;">[canal: ${f.channel_uid}]</span>`;
 
                         html += `
-                            <li style="display: flex; justify-content: space-between; align-items: center; padding: 0.8rem 1rem; border-bottom: 1px solid var(--glass-border);">
+                            <li style="display: flex; justify-content: space-between; align-items: center; padding: 0.8rem 1rem; background: #141518; border: 2px solid #000; box-shadow: 2px 2px 0 #000;">
                                 <div>
-                                    ${actionBadge}${typeBadge}<strong>${f.content}</strong> ${channelBadge}
+                                    ${actionBadge} ${typeBadge} <strong style="font-family: 'JetBrains Mono';">${f.content}</strong> ${channelBadge}
                                 </div>
-                                <button class="btn" style="padding: 0.3rem 0.7rem; font-size: 0.8rem; background: #ff4b4b; color: white;" onclick="deleteFilterRule(${f.id})">Delete</button>
+                                <button class="btn-stamp btn-stamp-red" style="font-size: 0.7rem; padding: 4px 8px;" onclick="deleteFilterRule(${f.id})">EXCLUIR</button>
                             </li>
                         `;
                     });
                     html += '</ul>';
                     listContainer.innerHTML = html;
                 } else {
-                    listContainer.innerHTML = '<p style="color: var(--text-muted);">No active filtering rules.</p>';
+                    listContainer.innerHTML = '<p style="color: var(--text-muted); font-family: \'JetBrains Mono\';">Nenhuma regra de moderação ativa.</p>';
                 }
             } catch (err) {
-                listContainer.innerHTML = '<p style="color: #ff6b6b;">Failed to load filters.</p>';
+                listContainer.innerHTML = '<p style="color: var(--tint-red); font-family: \'JetBrains Mono\';">Falha ao carregar regras.</p>';
                 console.error(err);
             }
         }
@@ -885,7 +783,7 @@ class MicrosubReaderView
             const channel = document.getElementById('new-filter-channel').value;
 
             if (!content) {
-                alert('Please enter a pattern or keyword to filter.');
+                alert('Informe um padrão ou termo para filtrar.');
                 return;
             }
 
@@ -898,37 +796,37 @@ class MicrosubReaderView
                     channel: channel
                 });
                 if (res.error) {
-                    alert('Error: ' + res.error_description);
+                    alert('Erro: ' + res.error_description);
                 } else {
                     document.getElementById('new-filter-content').value = '';
                     loadFiltersList();
                     loadTimeline();
                 }
             } catch (err) {
-                alert('Failed to add filter rule.');
+                alert('Falha ao adicionar regra de filtro.');
                 console.error(err);
             }
         }
 
         async function deleteFilterRule(id) {
-            if (!confirm('Delete this filter rule?')) return;
+            if (!confirm('Deseja excluir esta regra de moderação?')) return;
             try {
                 const res = await api('filters', 'POST', { method: 'delete', id: id });
                 if (res.error) {
-                    alert('Error: ' + res.error_description);
+                    alert('Erro: ' + res.error_description);
                 } else {
                     loadFiltersList();
                     loadTimeline();
                 }
             } catch (err) {
-                alert('Failed to delete filter rule.');
+                alert('Falha ao excluir regra de filtro.');
                 console.error(err);
             }
         }
 
         async function quickMute(type, target) {
             if (!target) return;
-            if (!confirm('Mute ' + type + ' "' + target + '" from timeline?')) return;
+            if (!confirm('Silenciar ' + type + ' "' + target + '" da timeline?')) return;
             try {
                 const res = await api('filters', 'POST', {
                     method: 'create',
@@ -938,13 +836,13 @@ class MicrosubReaderView
                     channel: '*'
                 });
                 if (res.error) {
-                    alert('Error: ' + res.error_description);
+                    alert('Erro: ' + res.error_description);
                 } else {
-                    alert('Muted "' + target + '"! Refreshing timeline...');
+                    alert('Silenciado "' + target + '"! Atualizando timeline...');
                     loadTimeline();
                 }
             } catch (err) {
-                alert('Failed to mute ' + type);
+                alert('Falha ao silenciar ' + type);
                 console.error(err);
             }
         }
@@ -980,20 +878,18 @@ class MicrosubReaderView
             const btn = document.getElementById('push-toggle-btn');
             if (!btn) return;
             if (isSubscribed) {
-                btn.textContent = '🔕 Push Active';
-                btn.style.background = 'rgba(239, 68, 68, 0.2)';
-                btn.style.borderColor = 'rgba(239, 68, 68, 0.4)';
+                btn.textContent = '🔕 PUSH ATIVO';
+                btn.className = 'btn-stamp btn-stamp-red';
             } else {
-                btn.textContent = '🔔 Enable Push';
-                btn.style.background = 'rgba(255, 255, 255, 0.08)';
-                btn.style.borderColor = 'var(--glass-border)';
+                btn.textContent = '🔔 ATIVAR PUSH';
+                btn.className = 'btn-stamp';
             }
         }
 
         async function togglePushNotifications() {
             const btn = document.getElementById('push-toggle-btn');
             if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
-                alert('Push notifications are not supported by your browser.');
+                alert('Notificações push não são suportadas neste navegador.');
                 return;
             }
 
@@ -1009,13 +905,13 @@ class MicrosubReaderView
                 } else {
                     const permission = await Notification.requestPermission();
                     if (permission !== 'granted') {
-                        alert('Notification permission was denied.');
+                        alert('Permissão de notificação negada.');
                         return;
                     }
 
                     const keyData = await api('push_key');
                     if (!keyData || !keyData.publicKey) {
-                        alert('Could not retrieve VAPID public key from server.');
+                        alert('Chave pública VAPID não encontrada no servidor.');
                         return;
                     }
 
@@ -1038,12 +934,11 @@ class MicrosubReaderView
                     updatePushBtnState(true);
                 }
             } catch (err) {
-                console.error('Error toggling push notifications:', err);
-                alert('Failed to update push subscription: ' + (err.message || err));
+                console.error('Erro ao alternar push notifications:', err);
+                alert('Falha na inscrição push: ' + (err.message || err));
             }
         }
     </script>
-</div>
         <?php
         $inner = (string) ob_get_clean();
         return AdminLayoutView::render($inner, 'microsub', $fqdnClean);

@@ -1,0 +1,66 @@
+services:
+  caddy:
+    image: caddy:alpine
+    container_name: bookwyrm_caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+    networks:
+      default:
+        aliases:
+          - bookwyrm.local
+          - indieinabox.local
+
+  indieinabox:
+    image: lumenpink/indieinabox:latest
+    container_name: bookwyrm_indieinabox
+    restart: unless-stopped
+    environment:
+      - APP_DOMAIN=https://indieinabox.local
+    volumes:
+      - ./data/indieinabox:/app
+
+  postgres:
+    image: postgres:15-alpine
+    container_name: bookwyrm_postgres
+    restart: unless-stopped
+    environment:
+      - POSTGRES_DB=bookwyrm
+      - POSTGRES_USER=bookwyrm
+      - POSTGRES_PASSWORD=bookwyrm_pass
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7-alpine
+    container_name: bookwyrm_redis
+    restart: unless-stopped
+    volumes:
+      - ./data/redis:/data
+
+  bookwyrm:
+    image: bookwyrm/bookwyrm:latest
+    container_name: bookwyrm_web
+    restart: unless-stopped
+    depends_on:
+      - postgres
+      - redis
+    environment:
+      - DOMAIN=bookwyrm.local
+      - DB_NAME=bookwyrm
+      - DB_USER=bookwyrm
+      - DB_PASSWORD=bookwyrm_pass
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - REDIS_URL=redis://redis:6379/0
+      - SECRET_KEY=bookwyrm_testing_secret_key_1234567890abcdef
+    volumes:
+      - ./data/media:/app/images
+      - caddy_data:/caddy-data
+
+volumes:
+  caddy_data:

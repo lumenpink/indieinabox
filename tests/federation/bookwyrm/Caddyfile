@@ -1,0 +1,11 @@
+{
+    local_certs
+}
+
+bookwyrm.local {
+    reverse_proxy bookwyrm:8000
+}
+
+indieinabox.local {
+    reverse_proxy indieinabox:80
+}

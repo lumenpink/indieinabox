@@ -1,0 +1,11 @@
+{
+    local_certs
+}
+
+bridgy.local {
+    reverse_proxy bridgy-mock:8080
+}
+
+indieinabox.local {
+    reverse_proxy indieinabox:80
+}

@@ -159,6 +159,7 @@ The following next-generation features are scheduled for development:
 - [x] **Default Production Content**: Define a minimal, out-of-the-box content set for the official distribution (English only, default theme). This should include a "Welcome to indieinabox" article (explaining the Indieweb and app with a link to docs) and one note (highlighting data ownership).
 - [x] **Remove Dummy Content**: Ensure the robust dummy content (currently in the `content` folder) is excluded from the final release build, leaving only the default production content.
 - [x] **i18n Out-of-the-box**: Ready-to-use distribution language packs for Brazilian Portuguese, Spanish, French, and German.
+- [ ] **Automated Post Machine & AI Translation**: Implement pluggable AI & MT translation engine (Google Gemini, OpenAI, Anthropic Claude, xAI Grok, Ollama, DeepL, LibreTranslate) to automatically translate full blog posts and articles for missing language routes with token-saving content caching and frontmatter attribution (`translated_by: ai`).
 
 ### 🧪 Phase 22: Dev/Demo Environment
 - [x] **Maintain Dummy Structure**: Keep the current comprehensive `content` directory for development purposes, theme testing, and ensuring all content types and interactions work flawlessly.

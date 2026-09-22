@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 ### Features
+  - (client) build bespoke unified client for Microsub reading and Micropub publishing (fixes #24)
   - (discovery) implement Discovery Engine and public Global Timeline aggregator (fixes #23)
   - (localization) implement automated machine & AI translation engine with LLM providers (fixes #36)
   - (i18n) provide ready-to-use default language packs for distribution (fixes #21)

@@ -197,8 +197,8 @@ Rather than operating an unmaintainable, memory-exhaustive monolithic stack, the
 - [x] **Hashtags - Indexing**: Create an index interface, search functionality, and a tag cloud.
 - [x] **Discovery Engine**: Build an aggregator endpoint and page for discovering public posts (Global Timeline).
 - [x] **Async Webmention Discovery**: Integrate domain capability checks into the RSS cron fetcher. Cache whether domains support Webmentions to dynamically alter the UI buttons (e.g., standard 'like' vs 'local_like'). Note: 'repost' remains universally available as it is primarily a local action.
-- [ ] **Custom Client - Core**: Scaffold the routing and foundational architecture for the bespoke Microsub/Micropub client.
-- [ ] **Custom Client - Features**: Integrate rich features (polls, CWs, reactions, galleries) into the custom client while adhering strictly to standards.
+- [x] **Custom Client - Core**: Scaffold the routing and foundational architecture for the bespoke Microsub/Micropub client.
+- [x] **Custom Client - Features**: Integrate rich features (polls, CWs, reactions, galleries) into the custom client while adhering strictly to standards.
 
 ### 🧶 Phase 26: Twtxt Yarns Compatibility
 - [x] **Yarns Meta-tags & Subjects**: Support reading and writing subject lines and metadata following the Yarns spec.

@@ -8,6 +8,7 @@ use Indieinabox\Core\Container;
 use Indieinabox\Http\Controllers\ActivityPubController;
 use Indieinabox\Http\Controllers\AdminController;
 use Indieinabox\Http\Controllers\ArchiveController;
+use Indieinabox\Http\Controllers\ClientController;
 use Indieinabox\Http\Controllers\DiscoveryController;
 use Indieinabox\Http\Controllers\IndieAuthController;
 use Indieinabox\Http\Controllers\MicropubController;
@@ -189,6 +190,12 @@ class WebRouter
             return;
         }
 
+        // Route: Unified Client (/client or /reader)
+        if ($requestUriClean === '/client' || $requestUriClean === '/reader') {
+            $this->getClientController()->handle();
+            return;
+        }
+
         // Admin Routes
         if (str_starts_with($requestUriClean, '/admin')) {
             $admin = $this->getAdminController();
@@ -275,6 +282,11 @@ class WebRouter
     public function getDiscoveryController(): DiscoveryController
     {
         return $this->container->make(DiscoveryController::class, ['site' => $this->site]);
+    }
+
+    public function getClientController(): ClientController
+    {
+        return $this->container->make(ClientController::class, ['site' => $this->site]);
     }
 
     public function getAdminController(): AdminController

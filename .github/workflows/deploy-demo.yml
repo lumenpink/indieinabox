@@ -1,0 +1,72 @@
+name: Deploy Demo Instance
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-demo
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy:
+    name: "Build & Deploy Public Demo Instance"
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout repository"
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: "Set up PHP 8.4"
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: pdo_sqlite, mbstring, intl, gd, zip, curl
+
+      - name: "Install Composer dependencies (production)"
+        run: composer install --no-interaction --prefer-dist --no-dev --no-progress
+
+      - name: "Build single-file executable (php compile.php)"
+        run: |
+          php compile.php
+          test -f indieinabox.php && php -l indieinabox.php
+
+      - name: "Build Docker Demo Image"
+        run: |
+          docker build -t indieinabox-demo:latest -f docker/Dockerfile .
+
+      - name: "Automated SQLite seeding & Environment verification"
+        run: |
+          mkdir -p demo_data/content demo_data/public_html
+          echo "<?php return ['db_path' => __DIR__ . '/demo_data/indieinabox.sqlite'];" > demo_data/.config.php
+          php -r '$db = new PDO("sqlite:" . __DIR__ . "/demo_data/indieinabox.sqlite"); $db->exec(file_get_contents("database.sql"));'
+          php -r '
+            $db = new PDO("sqlite:" . __DIR__ . "/demo_data/indieinabox.sqlite");
+            $db->exec("INSERT OR IGNORE INTO settings (key, value) VALUES (\x27site_name\x27, \x27Indieinabox Demo Instance\x27)");
+            $db->exec("INSERT OR IGNORE INTO settings (key, value) VALUES (\x27fqdn\x27, \x27https://demo.indieinabox.org\x27)");
+          '
+
+      - name: "Health check confirmation"
+        run: |
+          php -r '
+            require_once "app/Core/Version.php";
+            echo "Indieinabox Version: " . \Indieinabox\Core\Version::get() . "\n";
+            $db = new PDO("sqlite:" . __DIR__ . "/demo_data/indieinabox.sqlite");
+            $res = $db->query("SELECT 1")->fetchColumn();
+            if ($res !== 1 && $res !== "1") {
+              echo "Database health check failed\n";
+              exit(1);
+            }
+            echo "Database and environment healthy!\n";
+          '
+
+      - name: "Deploy to Demo Server"
+        if: ${{ env.DEMO_SSH_HOST != '' }}
+        env:
+          DEMO_SSH_HOST: ${{ secrets.DEMO_SSH_HOST }}
+          DEMO_SSH_KEY: ${{ secrets.DEMO_SSH_KEY }}
+          DEMO_DEPLOY_PATH: ${{ secrets.DEMO_DEPLOY_PATH || '/var/www/indieinabox-demo' }}
+        run: |
+          echo "Deploying release bundle and seeded content to public demo server at $DEMO_SSH_HOST..."

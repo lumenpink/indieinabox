@@ -196,6 +196,29 @@ class WebRouter
             return;
         }
 
+        // Route: System Health Check
+        if ($requestUriClean === '/health' || $requestUriClean === '/healthz') {
+            header('Content-Type: application/json; charset=utf-8');
+            $dbOk = true;
+            try {
+                $db = \Indieinabox\Core\Database::getDb();
+                $stmt = $db->query('SELECT 1');
+                $dbOk = ($stmt && $stmt->fetchColumn() !== false);
+            } catch (\Throwable) {
+                $dbOk = false;
+            }
+
+            $status = $dbOk ? 'ok' : 'degraded';
+            http_response_code($dbOk ? 200 : 503);
+            echo json_encode([
+                'status' => $status,
+                'version' => \Indieinabox\Core\Version::get(),
+                'database' => $dbOk ? 'connected' : 'error',
+                'timestamp' => time(),
+            ], JSON_PRETTY_PRINT);
+            return;
+        }
+
         // Admin Routes
         if (str_starts_with($requestUriClean, '/admin')) {
             $admin = $this->getAdminController();

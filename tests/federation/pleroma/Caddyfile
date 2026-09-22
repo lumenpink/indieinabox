@@ -1,0 +1,11 @@
+{
+    local_certs
+}
+
+pleroma.local {
+    reverse_proxy pleroma:4000
+}
+
+indieinabox.local {
+    reverse_proxy indieinabox:80
+}

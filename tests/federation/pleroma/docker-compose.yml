@@ -1,0 +1,59 @@
+services:
+  caddy:
+    image: caddy:alpine
+    container_name: pleroma_caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+    networks:
+      default:
+        aliases:
+          - pleroma.local
+          - indieinabox.local
+
+  indieinabox:
+    image: lumenpink/indieinabox:latest
+    container_name: pleroma_indieinabox
+    restart: unless-stopped
+    environment:
+      - APP_DOMAIN=https://indieinabox.local
+    volumes:
+      - ./data/indieinabox:/app
+
+  postgres:
+    image: postgres:15-alpine
+    container_name: pleroma_postgres
+    restart: unless-stopped
+    environment:
+      - POSTGRES_DB=pleroma
+      - POSTGRES_USER=pleroma
+      - POSTGRES_PASSWORD=pleroma_pass
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
+
+  pleroma:
+    image: badgateway/pleroma:latest
+    container_name: pleroma_web
+    restart: unless-stopped
+    depends_on:
+      - postgres
+    environment:
+      - DOMAIN=pleroma.local
+      - INSTANCE_NAME="Pleroma Local Test"
+      - ADMIN_EMAIL=admin@pleroma.local
+      - DB_USER=pleroma
+      - DB_PASS=pleroma_pass
+      - DB_HOST=postgres
+      - DB_NAME=pleroma
+    volumes:
+      - ./data/uploads:/var/lib/pleroma/uploads
+      - ./data/static:/var/lib/pleroma/static
+      - ./data/config:/etc/pleroma
+      - caddy_data:/caddy-data
+
+volumes:
+  caddy_data:

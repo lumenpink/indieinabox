@@ -1,0 +1,11 @@
+{
+    local_certs
+}
+
+misskey.local {
+    reverse_proxy misskey-web:3000
+}
+
+indieinabox.local {
+    reverse_proxy indieinabox:80
+}

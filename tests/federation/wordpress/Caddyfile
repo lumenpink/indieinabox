@@ -1,0 +1,11 @@
+{
+    local_certs
+}
+
+wordpress.local {
+    reverse_proxy wordpress:80
+}
+
+indieinabox.local {
+    reverse_proxy indieinabox:80
+}

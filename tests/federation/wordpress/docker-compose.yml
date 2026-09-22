@@ -1,0 +1,69 @@
+services:
+  caddy:
+    image: caddy:alpine
+    container_name: wp_caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+    networks:
+      default:
+        aliases:
+          - wordpress.local
+          - indieinabox.local
+
+  indieinabox:
+    image: lumenpink/indieinabox:latest
+    container_name: wp_indieinabox
+    restart: unless-stopped
+    environment:
+      - APP_DOMAIN=https://indieinabox.local
+    volumes:
+      - ./data/indieinabox:/app
+
+  db:
+    image: mariadb:10.11
+    container_name: wp_db
+    restart: unless-stopped
+    environment:
+      - MYSQL_ROOT_PASSWORD=root_pass_123
+      - MYSQL_DATABASE=wordpress
+      - MYSQL_USER=wordpress
+      - MYSQL_PASSWORD=wordpress_pass
+    volumes:
+      - ./data/mysql:/var/lib/mysql
+
+  wordpress:
+    image: wordpress:6-apache
+    container_name: wp_web
+    restart: unless-stopped
+    depends_on:
+      - db
+    environment:
+      - WORDPRESS_DB_HOST=db
+      - WORDPRESS_DB_USER=wordpress
+      - WORDPRESS_DB_PASSWORD=wordpress_pass
+      - WORDPRESS_DB_NAME=wordpress
+    volumes:
+      - ./data/wp-content:/var/www/html/wp-content
+
+  wp-cli:
+    image: wordpress:cli
+    container_name: wp_cli
+    depends_on:
+      - db
+      - wordpress
+    user: "33:33"
+    environment:
+      - WORDPRESS_DB_HOST=db
+      - WORDPRESS_DB_USER=wordpress
+      - WORDPRESS_DB_PASSWORD=wordpress_pass
+      - WORDPRESS_DB_NAME=wordpress
+    volumes:
+      - ./data/wp-content:/var/www/html/wp-content
+
+volumes:
+  caddy_data:

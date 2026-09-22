@@ -1,0 +1,15 @@
+{
+    local_certs
+}
+
+yarnd.local {
+    reverse_proxy yarnd-web:8000
+}
+
+twtd.local {
+    reverse_proxy twtd-web:8000
+}
+
+indieinabox.local {
+    reverse_proxy indieinabox:80
+}

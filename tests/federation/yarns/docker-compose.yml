@@ -1,0 +1,47 @@
+services:
+  caddy:
+    image: caddy:alpine
+    container_name: yarns_caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+    networks:
+      default:
+        aliases:
+          - yarnd.local
+          - twtd.local
+          - indieinabox.local
+
+  indieinabox:
+    image: lumenpink/indieinabox:latest
+    container_name: yarns_indieinabox
+    restart: unless-stopped
+    environment:
+      - APP_DOMAIN=https://indieinabox.local
+    volumes:
+      - ./data/indieinabox:/app
+
+  yarnd-web:
+    image: prologic/yarnd:latest
+    container_name: yarnd_backend
+    restart: unless-stopped
+    command: yarnd --skip-setup
+    volumes:
+      - ./data/yarnd:/data
+    environment:
+      - DOMAIN=yarnd.local
+
+  twtd-web:
+    image: prologic/twtd:latest
+    container_name: twtd_backend
+    restart: unless-stopped
+    volumes:
+      - ./data/twtd:/data
+    command: -n twtxtsearch -u https://twtd.local
+
+volumes:
+  caddy_data:

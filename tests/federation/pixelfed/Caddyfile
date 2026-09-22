@@ -1,0 +1,11 @@
+{
+    local_certs
+}
+
+pixelfed.local {
+    reverse_proxy pixelfed-web:80
+}
+
+indieinabox.local {
+    reverse_proxy indieinabox:80
+}

@@ -1,0 +1,117 @@
+services:
+  caddy:
+    image: caddy:alpine
+    container_name: pixelfed_caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+    networks:
+      default:
+        aliases:
+          - pixelfed.local
+          - indieinabox.local
+
+  indieinabox:
+    image: lumenpink/indieinabox:latest
+    container_name: pixelfed_indieinabox
+    restart: unless-stopped
+    environment:
+      - APP_DOMAIN=https://indieinabox.local
+    volumes:
+      - ./data/indieinabox:/app
+
+  postgres:
+    image: postgres:15-alpine
+    container_name: pixelfed_postgres
+    restart: unless-stopped
+    environment:
+      - POSTGRES_DB=pixelfed
+      - POSTGRES_USER=pixelfed
+      - POSTGRES_PASSWORD=pixelfed_pass
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7-alpine
+    container_name: pixelfed_redis
+    restart: unless-stopped
+    volumes:
+      - ./data/redis:/data
+
+  pixelfed-web:
+    image: ghcr.io/pixelfed/pixelfed:latest
+    container_name: pixelfed_web
+    restart: unless-stopped
+    depends_on:
+      - postgres
+      - redis
+    environment:
+      - APP_NAME=PixelfedLocal
+      - APP_ENV=production
+      - APP_KEY=base64:RRjoo5T0EywRLsGh7LENJQ3MsI0NU7tlkkMn4j/wmiI=
+      - APP_DEBUG=false
+      - APP_URL=https://pixelfed.local
+      - APP_DOMAIN=pixelfed.local
+      - INDIEINABOX_DOMAIN=indieinabox.local
+      - TRUST_PROXIES=*
+      - ACTIVITY_PUB=true
+      - DB_CONNECTION=pgsql
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_DATABASE=pixelfed
+      - DB_USERNAME=pixelfed
+      - DB_PASSWORD=pixelfed_pass
+      - REDIS_HOST=redis
+      - REDIS_DATABASE=2
+      - REDIS_PASSWORD=null
+      - REDIS_PORT=6379
+      - BROADCAST_DRIVER=redis
+      - CACHE_DRIVER=redis
+      - QUEUE_DRIVER=redis
+      - SESSION_DRIVER=redis
+    volumes:
+      - ./data/storage:/var/www/html/storage
+      - caddy_data:/caddy-data
+
+  pixelfed-worker:
+    image: ghcr.io/pixelfed/pixelfed:latest
+    container_name: pixelfed_worker
+    restart: unless-stopped
+    depends_on:
+      - postgres
+      - redis
+    environment:
+      - APP_NAME=PixelfedLocal
+      - APP_ENV=production
+      - APP_KEY=base64:RRjoo5T0EywRLsGh7LENJQ3MsI0NU7tlkkMn4j/wmiI=
+      - APP_DEBUG=false
+      - APP_URL=https://pixelfed.local
+      - APP_DOMAIN=pixelfed.local
+      - INDIEINABOX_DOMAIN=indieinabox.local
+      - TRUST_PROXIES=*
+      - ACTIVITY_PUB=true
+      - DB_CONNECTION=pgsql
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_DATABASE=pixelfed
+      - DB_USERNAME=pixelfed
+      - DB_PASSWORD=pixelfed_pass
+      - REDIS_HOST=redis
+      - REDIS_DATABASE=2
+      - REDIS_PASSWORD=null
+      - REDIS_PORT=6379
+      - BROADCAST_DRIVER=redis
+      - CACHE_DRIVER=redis
+      - QUEUE_DRIVER=redis
+      - SESSION_DRIVER=redis
+    command: php artisan horizon
+    volumes:
+      - ./data/storage:/var/www/html/storage
+      - caddy_data:/caddy-data
+
+volumes:
+  caddy_data:

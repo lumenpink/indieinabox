@@ -1,0 +1,11 @@
+{
+    local_certs
+}
+
+mastodon.local {
+    reverse_proxy mastodon-web:3000
+}
+
+indieinabox.local {
+    reverse_proxy indieinabox:80
+}

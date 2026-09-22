@@ -1,0 +1,18 @@
+{
+  database: {
+    host: "postgres"
+    port: 5432
+    user: "lemmy"
+    password: "lemmy_pass"
+    database: "lemmy"
+    pool_size: 5
+  }
+  hostname: "lemmy.local"
+  bind: "0.0.0.0"
+  port: 8536
+  tls_enabled: true
+  federation: {
+    enabled: true
+    strict_merge: false
+  }
+}

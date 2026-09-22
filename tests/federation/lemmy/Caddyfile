@@ -1,0 +1,16 @@
+{
+    local_certs
+}
+
+lemmy.local {
+    @activitypub {
+        header Accept "*application/activity+json*"
+        header Accept "*application/ld+json*"
+    }
+    reverse_proxy @activitypub lemmy:8536
+    reverse_proxy lemmy-ui:1234
+}
+
+indieinabox.local {
+    reverse_proxy indieinabox:80
+}

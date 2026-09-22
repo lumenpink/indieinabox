@@ -1,0 +1,61 @@
+services:
+  caddy:
+    image: caddy:alpine
+    container_name: lemmy_caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+    networks:
+      default:
+        aliases:
+          - lemmy.local
+          - indieinabox.local
+
+  indieinabox:
+    image: lumenpink/indieinabox:latest
+    container_name: lemmy_indieinabox
+    restart: unless-stopped
+    environment:
+      - APP_DOMAIN=https://indieinabox.local
+    volumes:
+      - ./data/indieinabox:/app
+
+  postgres:
+    image: postgres:15-alpine
+    container_name: lemmy_postgres
+    restart: unless-stopped
+    environment:
+      - POSTGRES_DB=lemmy
+      - POSTGRES_USER=lemmy
+      - POSTGRES_PASSWORD=lemmy_pass
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
+
+  lemmy:
+    image: dessalines/lemmy:latest
+    container_name: lemmy_backend
+    restart: unless-stopped
+    depends_on:
+      - postgres
+    environment:
+      - RUST_LOG="warn,lemmy_server=info"
+    volumes:
+      - ./lemmy.hjson:/config/config.hjson
+
+  lemmy-ui:
+    image: dessalines/lemmy-ui:latest
+    container_name: lemmy_ui
+    restart: unless-stopped
+    depends_on:
+      - lemmy
+    environment:
+      - LEMMY_UI_LEMMY_INTERNAL_HOST=lemmy:8536
+      - LEMMY_UI_LEMMY_EXTERNAL_HOST=lemmy.local
+      - LEMMY_UI_HTTPS=true
+
+volumes:
+  caddy_data:

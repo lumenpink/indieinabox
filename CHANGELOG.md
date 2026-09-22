@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 ### Features
+  - (localization) implement automated machine & AI translation engine with LLM providers (fixes #36)
   - (i18n) provide ready-to-use default language packs for distribution (fixes #21)
   - (federation, localization) complete Misskey layer, extended protocol adapters and pluggable translation engine (fixes #18, fixes #19, fixes #20)
   - (federation) implement full Pixelfed compatibility layer (fixes #17)

@@ -993,11 +993,45 @@ class ConfigView
                             <small>Controls which pages are required to have translations in other languages.</small>
                         </div>
                         <div class="form-group">
-                            <label>Translation Auto-Generation</label>
+                            <label>Translation Auto-Generation Mode</label>
                             <select name="translation_auto">
-                                <option value="pseudo" <?= ($config['translation_auto'] ?? 'pseudo') === 'pseudo' ? 'selected' : '' ?>>Pseudo (Virtualizes translations with [LANG] prefix)</option>
+                                <option value="ai" <?= ($config['translation_auto'] ?? '') === 'ai' ? 'selected' : '' ?>>AI &amp; Machine Translation (Translate full post content)</option>
+                                <option value="pseudo" <?= ($config['translation_auto'] ?? 'pseudo') === 'pseudo' ? 'selected' : '' ?>>Dictionary / Pseudo (Fallback prefixes &amp; dictionaries)</option>
                                 <option value="disabled" <?= ($config['translation_auto'] ?? '') === 'disabled' ? 'selected' : '' ?>>Disabled (Fails build if required parity is not met)</option>
                             </select>
+                        </div>
+                    </fieldset>
+
+                    <fieldset>
+                        <legend>AI &amp; Machine Translation Engine (LLM Providers)</legend>
+                        <p style="font-size: 0.88em; color: var(--text-muted); margin-top: 2px; margin-bottom: 14px;">
+                            Configure automated literary translation for blog posts and articles. Markdown headers, code fences, and HTML tags are preserved intact.
+                        </p>
+                        <div class="form-group">
+                            <label for="ai_translation_provider">AI Translation Provider</label>
+                            <select name="ai_translation_provider" id="ai_translation_provider">
+                                <option value="" <?= empty($config['ai_translation_provider']) ? 'selected' : '' ?>>-- None (Disabled) --</option>
+                                <option value="gemini" <?= ($config['ai_translation_provider'] ?? '') === 'gemini' ? 'selected' : '' ?>>Google Gemini (Gemini 1.5 Flash / Pro)</option>
+                                <option value="openai" <?= ($config['ai_translation_provider'] ?? '') === 'openai' ? 'selected' : '' ?>>OpenAI (GPT-4o, GPT-4o-mini)</option>
+                                <option value="claude" <?= ($config['ai_translation_provider'] ?? '') === 'claude' ? 'selected' : '' ?>>Anthropic Claude (Claude 3.5 Sonnet / Haiku)</option>
+                                <option value="grok" <?= ($config['ai_translation_provider'] ?? '') === 'grok' ? 'selected' : '' ?>>xAI Grok</option>
+                                <option value="ollama" <?= ($config['ai_translation_provider'] ?? '') === 'ollama' ? 'selected' : '' ?>>Ollama (Local / Offline models)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="ai_translation_api_key">API Key</label>
+                            <input type="password" name="ai_translation_api_key" id="ai_translation_api_key" value="<?= htmlspecialchars($config['ai_translation_api_key'] ?? '') ?>" placeholder="AI Service API Key (kept secret)">
+                            <small>Not required for local Ollama.</small>
+                        </div>
+                        <div class="grid-2">
+                            <div class="form-group">
+                                <label for="ai_translation_model">Model Override (Optional)</label>
+                                <input type="text" name="ai_translation_model" id="ai_translation_model" value="<?= htmlspecialchars($config['ai_translation_model'] ?? '') ?>" placeholder="e.g. gemini-1.5-flash, gpt-4o-mini, llama3.2">
+                            </div>
+                            <div class="form-group">
+                                <label for="ai_translation_endpoint">Custom API Endpoint (Optional)</label>
+                                <input type="text" name="ai_translation_endpoint" id="ai_translation_endpoint" value="<?= htmlspecialchars($config['ai_translation_endpoint'] ?? '') ?>" placeholder="e.g. http://localhost:11434/v1/chat/completions">
+                            </div>
                         </div>
                     </fieldset>
 

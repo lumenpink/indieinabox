@@ -51,7 +51,44 @@ class TranslationVirtualizer
         } elseif ($container && $container->has(\Indieinabox\Localization\Contracts\TranslationEngineInterface::class)) {
             $this->translationEngine = $container->get(\Indieinabox\Localization\Contracts\TranslationEngineInterface::class);
         } else {
-            $engine = new \Indieinabox\Localization\Engines\DictionaryTranslationEngine();
+            $config = Database::getAllSettings();
+            $aiProviderName = strtolower(trim((string)($config['ai_translation_provider'] ?? '')));
+            $aiApiKey = trim((string)($config['ai_translation_api_key'] ?? ''));
+            $aiModel = trim((string)($config['ai_translation_model'] ?? ''));
+            $aiEndpoint = trim((string)($config['ai_translation_endpoint'] ?? ''));
+
+            $aiProvider = null;
+            if ($aiProviderName === 'gemini') {
+                $aiProvider = new \Indieinabox\Localization\Providers\GeminiProvider($aiApiKey, $aiModel ?: 'gemini-1.5-flash');
+            } elseif ($aiProviderName === 'openai') {
+                $aiProvider = new \Indieinabox\Localization\Providers\OpenAiCompatibleProvider(
+                    'openai',
+                    'OpenAI GPT',
+                    $aiEndpoint ?: 'https://api.openai.com/v1/chat/completions',
+                    $aiApiKey,
+                    $aiModel ?: 'gpt-4o-mini'
+                );
+            } elseif ($aiProviderName === 'grok') {
+                $aiProvider = new \Indieinabox\Localization\Providers\OpenAiCompatibleProvider(
+                    'grok',
+                    'xAI Grok',
+                    $aiEndpoint ?: 'https://api.x.ai/v1/chat/completions',
+                    $aiApiKey,
+                    $aiModel ?: 'grok-beta'
+                );
+            } elseif ($aiProviderName === 'claude') {
+                $aiProvider = new \Indieinabox\Localization\Providers\ClaudeProvider($aiApiKey, $aiModel ?: 'claude-3-5-haiku-20241022');
+            } elseif ($aiProviderName === 'ollama') {
+                $aiProvider = new \Indieinabox\Localization\Providers\OpenAiCompatibleProvider(
+                    'ollama',
+                    'Ollama (Local)',
+                    $aiEndpoint ?: 'http://localhost:11434/v1/chat/completions',
+                    '',
+                    $aiModel ?: 'llama3.2'
+                );
+            }
+
+            $dictEngine = new \Indieinabox\Localization\Engines\DictionaryTranslationEngine();
             // Auto-load project locales if available
             $dataDir = Database::$dataDir !== '' ? Database::$dataDir : dirname(__DIR__, 2) . '/data';
             $localesDir = $dataDir . '/locales';
@@ -60,11 +97,16 @@ class TranslationVirtualizer
                 if (is_array($files)) {
                     foreach ($files as $f) {
                         $l = pathinfo($f, PATHINFO_FILENAME);
-                        $engine->loadDictionaryFile($l, $f);
+                        $dictEngine->loadDictionaryFile($l, $f);
                     }
                 }
             }
-            $this->translationEngine = $engine;
+
+            if ($aiProvider !== null && $aiProvider->isAvailable()) {
+                $this->translationEngine = new \Indieinabox\Localization\Engines\AiTranslationEngine($aiProvider, null, $dictEngine);
+            } else {
+                $this->translationEngine = $dictEngine;
+            }
         }
     }
 
@@ -177,7 +219,13 @@ class TranslationVirtualizer
                     $cloned->lang = $targetLang;
                     $cloned->nick = $targetNick;
 
-                    $this->pseudoTranslate($cloned, $targetLang);
+                    // Set automated AI translation attribution flag on virtualized pages
+                    if (is_object($cloned->metadata)) {
+                        $cloned->metadata->translated_by = 'ai';
+                        $cloned->metadata->translation_source_lang = $sourceLang;
+                    }
+
+                    $this->pseudoTranslate($cloned, $targetLang, $sourceLang);
 
                     $kindFolder = $this->taxonomyService->getKindFolder($cloned->kind, $targetLang);
                     $sourceKindFolder = $this->taxonomyService->getKindFolder($page->kind, $sourceLang);
@@ -276,6 +324,11 @@ class TranslationVirtualizer
 
         if ($hasTitle) {
             $page->title = $this->translationEngine->translateText($page->title, $targetLang, $sourceLang);
+            // When translating with AI/MT, translate full post body as well as title
+            if ($this->translationEngine instanceof \Indieinabox\Localization\Engines\AiTranslationEngine) {
+                $page->content->content = $this->translationEngine->translateContent($page->content->content, $targetLang, $sourceLang);
+                $page->content->rawBody = $this->translationEngine->translateContent($page->content->rawBody, $targetLang, $sourceLang);
+            }
         } else {
             $page->content->content = $this->translationEngine->translateContent($page->content->content, $targetLang, $sourceLang);
             $page->content->rawBody = $this->translationEngine->translateContent($page->content->rawBody, $targetLang, $sourceLang);

@@ -540,6 +540,12 @@ class AdminController extends AbstractController
         $currentConfig['htmlpostprocessing'] = (string) ($_POST['htmlpostprocessing'] ?? 'minify');
         $currentConfig['translation_parity'] = (string) ($_POST['translation_parity'] ?? 'full');
         $currentConfig['translation_auto'] = (string) ($_POST['translation_auto'] ?? 'pseudo');
+        $currentConfig['ai_translation_provider'] = trim((string) ($_POST['ai_translation_provider'] ?? ''));
+        if (isset($_POST['ai_translation_api_key']) && trim((string)$_POST['ai_translation_api_key']) !== '') {
+            $currentConfig['ai_translation_api_key'] = trim((string) $_POST['ai_translation_api_key']);
+        }
+        $currentConfig['ai_translation_model'] = trim((string) ($_POST['ai_translation_model'] ?? ''));
+        $currentConfig['ai_translation_endpoint'] = trim((string) ($_POST['ai_translation_endpoint'] ?? ''));
         $currentConfig['akismet_api_key'] = trim((string) ($_POST['akismet_api_key'] ?? ''));
         $currentConfig['active_theme'] = trim((string) ($_POST['active_theme'] ?? 'default'));
 

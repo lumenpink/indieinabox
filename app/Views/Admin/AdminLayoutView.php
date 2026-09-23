@@ -53,26 +53,28 @@ class AdminLayoutView
     <style>
         :root {
             /* Estética Lambe-Lambe Periférico & Neo-Brutalismo DIY */
-            --lambe-bg: #141518;            /* Asfalto / Muro Noturno */
+            --lambe-bg: #121316;            /* Asfalto / Muro Noturno */
             --lambe-paper: #f4efe6;         /* Papel Sulfite Cru */
+            --lambe-paper-dark: #e8dfcf;    /* Papel Kraft / Sulfite Envelhecido */
             --lambe-surface: #1e1f25;       /* Camada de cartaz escuro */
             --lambe-surface-2: #282a32;
-            --lambe-ink-black: #0a0a0c;     /* Tinta preta pura */
+            --lambe-ink-black: #0a0a0c;     /* Tinta preta pura / carimbo */
             --tint-magenta: #ff007f;        /* Rosa Choque / Travesti / Resistência */
             --tint-yellow: #ffe600;         /* Amarelo Alerta de Rua */
             --tint-cyan: #00e5ff;           /* Ciano Estêncil */
             --tint-red: #ff2244;            /* Vermelho Rebeldia / Alerta */
             --tint-green: #00ff66;          /* Verde Spray */
-            --tape-cream: #f6ecbe;          /* Fita Crepe */
+            --tape-cream: rgba(246, 236, 190, 0.9); /* Fita Crepe Translúcida */
             --border-hard: 2px solid #000000;
             --border-hard-thick: 3px solid #000000;
             --stamp-shadow: 4px 4px 0px #000000;
             --stamp-shadow-sm: 2px 2px 0px #000000;
             --stamp-shadow-lg: 6px 6px 0px #000000;
             --text-light: #f4efe6;
+            --text-dark: #0a0a0c;
             --text-muted: #a0a4b0;
             --text-dim: #727684;
-            --sidebar-bg: #141518;
+            --sidebar-bg: #121316;
         }
 
         * {
@@ -135,7 +137,7 @@ class AdminLayoutView
 
         .sidebar-header {
             padding: 1.5rem 1.25rem 1.25rem;
-            background: var(--lambe-surface);
+            background: #18191f;
             border-bottom: 2px solid #000000;
             position: relative;
         }
@@ -289,8 +291,42 @@ class AdminLayoutView
         .channels-accordion {
             background: #0d0e11;
             margin: 0.25rem 10px 0.75rem;
-            padding: 0.5rem 0;
+            padding: 0.75rem 0.25rem;
             border: 2px dashed #333;
+        }
+
+        /* Fitas adesivas de canais */
+        .tape-channel {
+            display: block;
+            background: var(--tape-cream);
+            color: #000000 !important;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 800;
+            font-size: 0.82rem;
+            padding: 7px 12px;
+            margin: 5px 8px;
+            border: 1px solid rgba(0,0,0,0.25);
+            box-shadow: 2px 2px 0 rgba(0,0,0,0.25);
+            transform: rotate(-1deg);
+            text-decoration: none;
+            transition: all 0.1s ease;
+        }
+        .tape-channel:nth-child(even) {
+            transform: rotate(1.5deg);
+        }
+        .tape-channel:hover {
+            background: #ffffff;
+            transform: translate(-1px, -1px) scale(1.02);
+            box-shadow: 3px 3px 0 #000000;
+            color: #000 !important;
+        }
+        .tape-channel.active {
+            background: var(--tint-yellow);
+            font-weight: 900;
+            border: 2px solid #000000;
+            box-shadow: 3px 3px 0 #000000;
+            transform: rotate(0deg) scale(1.03);
+            color: #000 !important;
         }
 
         .admin-nav a.logout-link {
@@ -313,19 +349,107 @@ class AdminLayoutView
             min-height: 100vh;
         }
 
-        /* Componentes Globais Neo-Brutalistas / Lambe-Lambe */
-        .card-lambe {
-            background: var(--lambe-surface);
+        /* =========================================================
+           Componentes Globais Neo-Brutalistas / Lambe-Lambe Periférico
+           ========================================================= */
+
+        /* Cartaz de Parede (Wheatpaste Poster) */
+        .card-lambe, .lambe-poster {
+            background: var(--lambe-paper);
+            color: var(--lambe-ink-black);
             border: var(--border-hard);
             box-shadow: var(--stamp-shadow);
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
+            padding: 1.75rem;
+            margin-bottom: 2rem;
             position: relative;
             transition: transform 0.15s, box-shadow 0.15s;
         }
-        .card-lambe:hover {
+        .card-lambe:hover, .lambe-poster:hover {
             transform: translate(-1px, -1px);
             box-shadow: var(--stamp-shadow-lg);
+        }
+
+        /* Fitas adesivas nos cantos dos cartazes */
+        .has-tape::before,
+        .tape-corner-tl {
+            content: '';
+            position: absolute;
+            top: -9px;
+            left: -12px;
+            width: 52px;
+            height: 20px;
+            background: var(--tape-cream);
+            border: 1px solid rgba(0,0,0,0.18);
+            box-shadow: 1px 1px 2px rgba(0,0,0,0.15);
+            transform: rotate(-18deg);
+            z-index: 5;
+            pointer-events: none;
+        }
+        .has-tape::after,
+        .tape-corner-tr {
+            content: '';
+            position: absolute;
+            top: -9px;
+            right: -12px;
+            width: 52px;
+            height: 20px;
+            background: var(--tape-cream);
+            border: 1px solid rgba(0,0,0,0.18);
+            box-shadow: 1px 1px 2px rgba(0,0,0,0.15);
+            transform: rotate(18deg);
+            z-index: 5;
+            pointer-events: none;
+        }
+        .tape-corner-bl {
+            position: absolute;
+            bottom: -9px;
+            left: -12px;
+            width: 52px;
+            height: 20px;
+            background: var(--tape-cream);
+            border: 1px solid rgba(0,0,0,0.18);
+            box-shadow: 1px 1px 2px rgba(0,0,0,0.15);
+            transform: rotate(18deg);
+            z-index: 5;
+            pointer-events: none;
+        }
+        .tape-corner-br {
+            position: absolute;
+            bottom: -9px;
+            right: -12px;
+            width: 52px;
+            height: 20px;
+            background: var(--tape-cream);
+            border: 1px solid rgba(0,0,0,0.18);
+            box-shadow: 1px 1px 2px rgba(0,0,0,0.15);
+            transform: rotate(-18deg);
+            z-index: 5;
+            pointer-events: none;
+        }
+        .tape-top-center {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            width: 75px;
+            height: 22px;
+            margin-left: -37px;
+            background: var(--tape-cream);
+            border: 1px solid rgba(0,0,0,0.2);
+            box-shadow: 1px 1px 2px rgba(0,0,0,0.15);
+            transform: rotate(-1.5deg);
+            z-index: 5;
+            pointer-events: none;
+        }
+
+        /* Tarja de Advertência Zebrada (Hazard Stripes) */
+        .hazard-stripes, .warning-stripe {
+            height: 14px;
+            width: 100%;
+            background: repeating-linear-gradient(-45deg, #ffe600, #ffe600 10px, #000000 10px, #000000 20px);
+            border-top: 2px solid #000000;
+            border-bottom: 2px solid #000000;
+            margin: 0.75rem 0 1.25rem;
+            display: block;
         }
 
         /* Botões Carimbo */
@@ -357,25 +481,63 @@ class AdminLayoutView
             box-shadow: 1px 1px 0 #000;
         }
         .btn-stamp-primary, .btn-stamp-magenta {
-            background: var(--tint-magenta);
-            color: #000000;
+            background: var(--tint-magenta) !important;
+            color: #000000 !important;
         }
         .btn-stamp-yellow {
-            background: var(--tint-yellow);
-            color: #000000;
+            background: var(--tint-yellow) !important;
+            color: #000000 !important;
         }
         .btn-stamp-cyan {
-            background: var(--tint-cyan);
-            color: #000000;
+            background: var(--tint-cyan) !important;
+            color: #000000 !important;
         }
         .btn-stamp-red {
-            background: var(--tint-red);
-            color: #ffffff;
+            background: var(--tint-red) !important;
+            color: #ffffff !important;
         }
         .btn-stamp-dark {
-            background: #0a0a0c;
-            color: #f4efe6;
-            border-color: #000;
+            background: #0a0a0c !important;
+            color: #f4efe6 !important;
+            border-color: #000 !important;
+        }
+
+        /* Carimbos de Borracha Serigráficos (Rubber Stamps) */
+        .stamp-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 900;
+            font-size: 0.8rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            padding: 3px 8px;
+            border: 2px solid currentColor;
+            box-shadow: 2px 2px 0 rgba(0,0,0,0.3);
+            background: #ffffff;
+            line-height: 1.2;
+            cursor: default;
+        }
+        .stamp-suspend, .stamp-red {
+            color: #ff0055;
+            border-color: #ff0055;
+            background: #fff0f5;
+        }
+        .stamp-silence, .stamp-yellow {
+            color: #000000;
+            border-color: #000000;
+            background: #ffe600;
+        }
+        .stamp-filter, .stamp-cyan {
+            color: #007799;
+            border-color: #007799;
+            background: #e6faff;
+        }
+        .stamp-approve, .stamp-green {
+            color: #008833;
+            border-color: #008833;
+            background: #e8faed;
         }
 
         /* Badges & Selos */
@@ -409,65 +571,70 @@ class AdminLayoutView
             color: #fff;
         }
 
-        /* Inputs, Textareas, Selects Brutalistas */
+        /* Inputs, Textareas, Selects - Estilo Formulário de Papel / Xerox */
         input[type="text"],
         input[type="url"],
         input[type="password"],
         input[type="email"],
+        input[type="number"],
         textarea,
         select {
-            background: #0a0a0c !important;
+            background: var(--lambe-paper-dark) !important;
             border: 2px solid #000000 !important;
-            color: #f4efe6 !important;
+            color: #000000 !important;
             font-family: 'JetBrains Mono', monospace !important;
             padding: 10px 14px !important;
-            box-shadow: inset 2px 2px 0 rgba(0,0,0,0.6) !important;
+            box-shadow: inset 1px 1px 0 rgba(0,0,0,0.2) !important;
             outline: none !important;
             font-size: 0.9rem !important;
-            transition: border-color 0.15s, box-shadow 0.15s !important;
+            font-weight: 600 !important;
+            transition: border-color 0.15s, box-shadow 0.15s, background-color 0.15s !important;
         }
         input[type="text"]:focus,
         input[type="url"]:focus,
         input[type="password"]:focus,
         input[type="email"]:focus,
+        input[type="number"]:focus,
         textarea:focus,
         select:focus {
-            border-color: var(--tint-yellow) !important;
-            background: #121318 !important;
-            box-shadow: 3px 3px 0 #000 !important;
+            border-color: #000000 !important;
+            background: #ffffff !important;
+            box-shadow: 3px 3px 0 #000000 !important;
         }
 
-        /* Cyber Table */
+        /* Tabelas Serigráficas / Cyber Table */
         .cyber-table-wrap {
             overflow-x: auto;
-            border: var(--border-hard);
-            box-shadow: var(--stamp-shadow);
+            border: 2px solid #000000;
+            box-shadow: 4px 4px 0 #000000;
             margin: 1.5rem 0;
-            background: #1a1b22;
+            background: var(--lambe-paper);
         }
         .cyber-table {
             width: 100%;
             border-collapse: collapse;
             font-size: 0.9rem;
             text-align: left;
+            color: #000000;
         }
         .cyber-table th {
             background: #000000;
             color: var(--tint-yellow);
-            font-family: 'Archivo Black', sans-serif;
-            font-size: 0.8rem;
+            font-family: 'Bebas Neue', 'Archivo Black', sans-serif;
+            font-size: 1.15rem;
             letter-spacing: 0.08em;
             text-transform: uppercase;
-            padding: 12px 16px;
-            border-bottom: 2px solid #333;
+            padding: 10px 14px;
+            border-bottom: 2px solid #000000;
         }
         .cyber-table td {
-            padding: 12px 16px;
-            border-bottom: 1px solid #2a2b34;
-            color: var(--text-light);
+            padding: 12px 14px;
+            border-bottom: 1px solid #cfc6b4;
+            color: #000000;
+            background: var(--lambe-paper);
         }
         .cyber-table tr:hover td {
-            background: #232530;
+            background: #ece4d4;
         }
 
         /* Tarja de Advertência */
@@ -555,16 +722,16 @@ class AdminLayoutView
             <?php if ($activeTab === 'microsub'): ?>
                 <div class="channels-accordion">
                     <?php foreach ($channels as $ch): ?>
-                        <div style="display: flex; justify-content: space-between; align-items: center; padding-right: 0.75rem;">
-                            <a href="/admin/microsub?channel=<?= urlencode($ch['uid']) ?>" style="flex: 1; padding: 0.45rem 1rem 0.45rem 1.5rem; font-size: 0.82rem; <?= $currentChannel === $ch['uid'] ? 'color: #000; background: var(--tint-cyan); border: 2px solid #000; font-weight: 800; box-shadow: 2px 2px 0 #000;' : 'border: 2px solid transparent;' ?>">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin: 2px 4px;">
+                            <a href="/admin/microsub?channel=<?= urlencode($ch['uid']) ?>" class="tape-channel <?= $currentChannel === $ch['uid'] ? 'active' : '' ?>" style="flex: 1;">
                                 # <?= htmlspecialchars($ch['name']) ?>
                             </a>
                             <?php if ($ch['uid'] !== 'inbox' && $ch['uid'] !== 'notifications'): ?>
-                                <button onclick="deleteChannel('<?= htmlspecialchars($ch['uid']) ?>', '<?= htmlspecialchars(addslashes($ch['name'])) ?>')" style="background: none; border: none; color: var(--tint-red); cursor: pointer; padding: 0 0.5rem; font-size: 1.1em; font-weight: bold;" title="Remover canal">&times;</button>
+                                <button onclick="deleteChannel('<?= htmlspecialchars($ch['uid']) ?>', '<?= htmlspecialchars(addslashes($ch['name'])) ?>')" style="background: none; border: none; color: var(--tint-red); cursor: pointer; padding: 0 0.4rem; font-size: 1.1em; font-weight: bold;" title="Remover canal">&times;</button>
                             <?php endif; ?>
                         </div>
                     <?php endforeach; ?>
-                    <a href="#" onclick="createChannel(event)" style="padding: 0.45rem 1rem 0.45rem 1.5rem; font-size: 0.82rem; color: var(--tint-magenta); border: 2px dashed var(--tint-magenta); margin: 6px 10px 2px; text-align: center; font-weight: 800;">
+                    <a href="#" onclick="createChannel(event)" style="display: block; padding: 0.45rem 1rem; font-size: 0.78rem; color: var(--tint-magenta); border: 2px dashed var(--tint-magenta); margin: 8px 12px 4px; text-align: center; font-weight: 800; font-family: 'JetBrains Mono', monospace; text-transform: uppercase;">
                         + NOVO CANAL
                     </a>
                 </div>

@@ -308,7 +308,7 @@ class ConfigView
                 margin: 0 auto;
                 padding: 2rem 2rem 5rem;
                 font-family: 'Outfit', sans-serif;
-                color: var(--text-light, #f4efe6);
+                color: var(--lambe-ink-black, #000000);
             }
             .config-header {
                 display: flex;
@@ -324,7 +324,7 @@ class ConfigView
                 font-family: 'Bebas Neue', 'Archivo Black', sans-serif;
                 font-size: 2.2rem;
                 font-weight: 800;
-                color: #f4efe6;
+                color: #000000;
                 letter-spacing: 0.04em;
                 text-transform: uppercase;
             }
@@ -379,10 +379,10 @@ class ConfigView
                 padding-bottom: 0;
             }
             .config-tab-btn {
-                background: #1c1d22;
+                background: var(--lambe-paper, #f4efe6);
                 border: 2px solid #000000;
                 border-bottom: none;
-                color: var(--text-muted, #a0a4b0);
+                color: #444;
                 padding: 10px 18px;
                 font-family: 'JetBrains Mono', monospace;
                 font-size: 0.88rem;
@@ -394,16 +394,18 @@ class ConfigView
                 align-items: center;
                 gap: 8px;
                 position: relative;
+                box-shadow: 3px -3px 0 rgba(0,0,0,0.2);
             }
             .config-tab-btn .tab-num {
                 font-family: 'Bebas Neue', monospace;
                 font-size: 1.1rem;
-                color: var(--tint-cyan, #00e5ff);
+                color: #888;
             }
             .config-tab-btn:hover {
                 color: #000;
                 background: var(--tint-yellow, #ffe600);
                 border-color: #000;
+                box-shadow: 3px -3px 0 #000;
             }
             .config-tab-btn:hover .tab-num {
                 color: #000;
@@ -413,14 +415,14 @@ class ConfigView
                 border-color: #000000;
                 color: #000000;
                 font-weight: 800;
-                border-bottom: 2px solid var(--tint-magenta, #ff007f);
+                border-bottom: 3px solid var(--tint-magenta, #ff007f);
                 box-shadow: 3px -3px 0 #000000;
-                margin-bottom: -1px;
+                margin-bottom: -3px;
             }
             .config-tab-btn.active .tab-num {
                 color: #000;
             }
-            /* Tab Content Hiding */
+            /* Tab Content */
             .tab-content {
                 display: none;
             }
@@ -432,22 +434,23 @@ class ConfigView
                 from { opacity: 0; transform: translateY(3px); }
                 to { opacity: 1; transform: translateY(0); }
             }
-            /* Fieldsets / Cards */
+            /* Cartazes de Configuração: Papel Cru Colado na Parede */
             fieldset {
-                background: #1e1f25;
+                background: var(--lambe-paper, #f4efe6);
                 border: 2px solid #000000;
                 box-shadow: 4px 4px 0 #000000;
                 padding: 1.75rem;
-                margin-bottom: 1.75rem;
+                margin-bottom: 2rem;
+                position: relative;
             }
             legend {
-                font-family: 'Archivo Black', sans-serif;
-                font-size: 0.95rem;
+                font-family: 'Bebas Neue', 'Archivo Black', sans-serif;
+                font-size: 1.1rem;
                 font-weight: 800;
                 color: #000000;
                 letter-spacing: 0.06em;
                 text-transform: uppercase;
-                padding: 4px 14px;
+                padding: 4px 16px;
                 background: var(--tint-yellow, #ffe600);
                 border: 2px solid #000000;
                 box-shadow: 2px 2px 0 #000000;
@@ -463,39 +466,39 @@ class ConfigView
             .form-group label {
                 display: block;
                 font-family: 'JetBrains Mono', monospace;
-                font-weight: 700;
-                font-size: 0.82rem;
+                font-weight: 800;
+                font-size: 0.8rem;
                 margin-bottom: 0.4rem;
-                color: #f4efe6;
-                letter-spacing: 0.04em;
+                color: #000000;
+                letter-spacing: 0.06em;
                 text-transform: uppercase;
             }
             .form-group small, .form-group .help {
                 display: block;
                 font-size: 0.8rem;
-                color: var(--text-muted, #a0a4b0);
+                color: #555555;
                 margin-top: 0.35rem;
-            }
-            input[type="text"],
-            input[type="password"],
-            input[type="url"],
-            input[type="number"],
-            select,
-            textarea {
-                width: 100%;
-                background: #0f1013;
-                border: 2px solid #000000;
-                color: #ffffff;
-                padding: 10px 12px;
                 font-family: 'JetBrains Mono', monospace;
-                font-size: 0.88rem;
-                box-sizing: border-box;
-                transition: border-color 0.15s, box-shadow 0.15s;
             }
-            input:focus, select:focus, textarea:focus {
-                border-color: var(--tint-magenta, #ff007f);
-                box-shadow: 3px 3px 0 var(--tint-magenta, #ff007f);
-                outline: none;
+            /* Inputs dentro de fieldsets usam o estilo claro global */
+            fieldset input[type="text"],
+            fieldset input[type="password"],
+            fieldset input[type="url"],
+            fieldset input[type="number"],
+            fieldset select,
+            fieldset textarea {
+                width: 100%;
+                background: #ffffff !important;
+                border: 2px solid #000000 !important;
+                color: #000000 !important;
+                font-weight: 600 !important;
+                box-sizing: border-box;
+            }
+            fieldset input:focus,
+            fieldset select:focus,
+            fieldset textarea:focus {
+                background: #ffffff !important;
+                box-shadow: 3px 3px 0 #000000 !important;
             }
             textarea {
                 min-height: 100px;
@@ -516,9 +519,9 @@ class ConfigView
             .checkbox-group label {
                 margin: 0;
                 cursor: pointer;
-                font-weight: 600;
+                font-weight: 700;
                 font-size: 0.88rem;
-                color: #f4efe6;
+                color: #000000;
             }
             .color-picker {
                 display: flex;
@@ -534,7 +537,7 @@ class ConfigView
                 padding: 2px;
             }
             .kind-card {
-                background: #141518;
+                background: var(--lambe-paper, #f4efe6);
                 border: 2px solid #000000;
                 box-shadow: 3px 3px 0 #000000;
                 padding: 1.25rem;
@@ -544,16 +547,16 @@ class ConfigView
                 margin: 0 0 1rem;
                 font-family: 'Archivo Black', sans-serif;
                 font-size: 1rem;
-                color: var(--tint-cyan, #00e5ff);
+                color: #000000;
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
                 text-transform: uppercase;
             }
             .btn-secondary {
-                background: #1e1f25;
+                background: var(--lambe-paper, #f4efe6);
                 border: 2px solid #000000;
-                color: var(--tint-yellow, #ffe600);
+                color: #000000;
                 box-shadow: 2px 2px 0 #000000;
                 padding: 6px 14px;
                 font-family: 'JetBrains Mono', monospace;
@@ -579,7 +582,7 @@ class ConfigView
                 font-size: 0.88rem;
             }
             .tech-table th {
-                background: #282a32;
+                background: #000000;
                 color: var(--tint-yellow, #ffe600);
                 padding: 10px 14px;
                 text-align: left;
@@ -592,16 +595,17 @@ class ConfigView
             }
             .tech-table td {
                 padding: 10px 14px;
-                border-bottom: 1px solid #333333;
-                background: #1e1f25;
+                border-bottom: 1px solid #cccccc;
+                background: #ffffff;
+                color: #000000;
             }
             .submit-group {
                 position: sticky;
                 bottom: 0;
-                background: #141518;
+                background: var(--lambe-paper, #f4efe6);
                 padding: 1.25rem 1.5rem;
                 border-top: 3px solid #000000;
-                box-shadow: 0 -4px 0 rgba(0, 0, 0, 0.4);
+                box-shadow: 0 -4px 0 rgba(0, 0, 0, 0.25);
                 z-index: 100;
                 margin-top: 2.5rem;
                 display: flex;
@@ -872,8 +876,8 @@ class ConfigView
                             </div>
                         <?php endforeach; ?>
                         
-                        <div class="kind-card" style="border: 2px dashed var(--tint-cyan, #00e5ff); background: #141518;">
-                            <h3 style="color: var(--tint-cyan, #00e5ff);">+ Add New Content Kind</h3>
+                        <div class="kind-card" style="border: 2px dashed #000000; background: var(--lambe-paper, #f4efe6);">
+                            <h3 style="color: #000000;">+ Add New Content Kind</h3>
                             <div class="grid-2">
                                 <div class="form-group">
                                     <label>Kind ID (e.g. video)</label>
@@ -1097,9 +1101,9 @@ class ConfigView
                                 <label style="color: var(--tint-yellow); font-size: 0.95rem; font-weight: 800;"><?= htmlspecialchars(ucfirst($k)) ?> Translations</label>
                                 <div class="grid-2">
                                     <?php foreach ($langArr as $l): ?>
-                                    <div class="color-picker" style="margin-bottom: 10px; flex-direction: column; align-items: flex-start; background: #141518; border: 2px solid #000; padding: 10px; box-shadow: 2px 2px 0 #000;">
+                                    <div class="color-picker" style="margin-bottom: 10px; flex-direction: column; align-items: flex-start; background: #ffffff; border: 2px solid #000; padding: 10px; box-shadow: 2px 2px 0 #000;">
                                         <strong style="font-family: 'JetBrains Mono', monospace; font-weight: 800; color: var(--tint-magenta);"><?= htmlspecialchars($l) ?></strong>
-                                        <label style="font-size: 0.8rem; margin-top: 4px;">Title:</label>
+                                        <label style="font-size: 0.8rem; margin-top: 4px; color: #000000;">Title:</label>
                                         <input type="text" name="kinds[<?= htmlspecialchars($k) ?>][title][<?= htmlspecialchars($l) ?>]" value="<?= htmlspecialchars($data['title'][$l] ?? '') ?>">
                                         <label style="font-size: 0.8rem; margin-top: 4px;">Directory Path:</label>
                                         <input type="text" name="kinds[<?= htmlspecialchars($k) ?>][content_dir][<?= htmlspecialchars($l) ?>]" value="<?= htmlspecialchars(is_array($data['content_dir'] ?? null) ? ($data['content_dir'][$l] ?? '') : ($data['content_dir'] ?? '')) ?>">
@@ -1294,9 +1298,9 @@ class ConfigView
                             echo '<h4 style="color: var(--tint-yellow); font-family: \'Archivo Black\', sans-serif; text-transform: uppercase; margin: 1.5rem 0 0.75rem;">VERSÕES DISPONÍVEIS // AVAILABLE VERSIONS</h4><ul style="list-style: none; padding: 0;">';
                             foreach (array_slice($availableUpdates, 0, 5) as $update) {
                                 $badge = $update['prerelease'] ? '<span class="badge-stamp badge-yellow">Nightly</span>' : '<span class="badge-stamp badge-cyan">Stable</span>';
-                                echo '<li style="margin-bottom: 12px; background: #141518; border: 2px solid #000; box-shadow: 2px 2px 0 #000; padding: 14px;">';
-                                echo '<strong style="font-family: \'JetBrains Mono\', monospace;">' . htmlspecialchars($update['name']) . '</strong> ' . $badge;
-                                echo '<br><small style="color: var(--text-muted); font-family: \'JetBrains Mono\';">Publicado: ' . htmlspecialchars($update['published_at']) . '</small>';
+                                echo '<li style="margin-bottom: 12px; background: var(--lambe-paper, #f4efe6); border: 2px solid #000; box-shadow: 2px 2px 0 #000; padding: 14px;">';
+                                echo '<strong style="font-family: \'JetBrains Mono\', monospace; color: #000;">' . htmlspecialchars($update['name']) . '</strong> ' . $badge;
+                                echo '<br><small style="color: #555555; font-family: \'JetBrains Mono\';">Publicado: ' . htmlspecialchars($update['published_at']) . '</small>';
                                 echo '<div style="margin-top: 10px;">';
                                 echo '<button type="button" class="btn-stamp btn-stamp-cyan" style="font-size: 0.78rem; padding: 6px 14px;" onclick="submitActionForm(\'manual_update\', \'download_url\', \'' . htmlspecialchars($update['download_url']) . '\')">Atualizar para esta versão</button>';
                                 echo '</div>';
@@ -1309,10 +1313,10 @@ class ConfigView
                         <?php
                         $backups = \Indieinabox\Services\UpdateService::getLocalBackups();
                         if (!empty($backups)) {
-                            echo '<h4 style="color: var(--tint-yellow); font-family: \'Archivo Black\', sans-serif; text-transform: uppercase; margin: 1.5rem 0 0.75rem;">BACKUPS LOCAIS (ROLLBACK)</h4><ul style="list-style: none; padding: 0;">';
+                            echo '<h4 style="color: #000000; font-family: \'Archivo Black\', sans-serif; text-transform: uppercase; margin: 1.5rem 0 0.75rem;">BACKUPS LOCAIS (ROLLBACK)</h4><ul style="list-style: none; padding: 0;">';
                             foreach ($backups as $bkp) {
-                                echo '<li style="margin-bottom: 10px; background: #141518; border: 2px solid #000; box-shadow: 2px 2px 0 #000; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center;">';
-                                echo '<div><strong style="font-family: \'JetBrains Mono\', monospace;">' . htmlspecialchars($bkp['filename']) . '</strong> <small style="color: var(--text-muted); font-family: \'JetBrains Mono\';">(' . date('Y-m-d H:i:s', $bkp['date']) . ', ' . (string) round($bkp['size'] / 1024, 2) . ' KB)</small></div>';
+                                echo '<li style="margin-bottom: 10px; background: var(--lambe-paper, #f4efe6); border: 2px solid #000; box-shadow: 2px 2px 0 #000; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center;">';
+                                echo '<div><strong style="font-family: \'JetBrains Mono\', monospace; color: #000;">' . htmlspecialchars($bkp['filename']) . '</strong> <small style="color: #555555; font-family: \'JetBrains Mono\';">(' . date('Y-m-d H:i:s', $bkp['date']) . ', ' . (string) round($bkp['size'] / 1024, 2) . ' KB)</small></div>';
                                 echo '<button type="button" class="btn-stamp btn-stamp-yellow" style="font-size: 0.78rem; padding: 6px 14px;" onclick="submitActionForm(\'rollback_update\', \'backup_filename\', \'' . htmlspecialchars($bkp['filename']) . '\')">ROLLBACK</button>';
                                 echo '</li>';
                             }
@@ -1377,7 +1381,7 @@ class ConfigView
                         </p>
                         <div class="form-group" style="margin-top: 1rem;">
                             <label for="import_file">Select Export Bundle File</label>
-                            <input type="file" name="import_file" id="import_file" accept=".tar.gz,.tgz,.tar,.zip" style="background: #141518; border: 2px solid #000; box-shadow: 2px 2px 0 #000; padding: 10px; color: var(--text-light); width: 100%;">
+                            <input type="file" name="import_file" id="import_file" accept=".tar.gz,.tgz,.tar,.zip" style="background: #ffffff; border: 2px solid #000; box-shadow: 2px 2px 0 #000; padding: 10px; color: #000000; width: 100%;">
                         </div>
                         <div style="margin-top: 1rem;">
                             <button type="submit" name="action" value="import_upload" class="btn-stamp btn-stamp-yellow" onclick="return confirm('Restoring an export bundle will replace current site data (a safety backup will be created). Continue?');">

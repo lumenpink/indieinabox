@@ -28,7 +28,7 @@ class MicrosubReaderView
             margin: 0 auto;
             padding: 2rem;
             font-family: 'Outfit', sans-serif;
-            color: var(--text-light, #f4efe6);
+            color: var(--lambe-ink-black, #000000);
         }
 
         .timeline-header {
@@ -49,7 +49,7 @@ class MicrosubReaderView
             font-size: 2.2rem;
             letter-spacing: 0.05em;
             text-transform: uppercase;
-            color: var(--lambe-paper);
+            color: var(--lambe-ink-black, #000000);
             display: flex;
             align-items: center;
             gap: 10px;
@@ -85,7 +85,7 @@ class MicrosubReaderView
 
         /* Card de Post Estilo Cartaz Colado */
         .item-post {
-            background: var(--lambe-surface, #1e1f25);
+            background: var(--lambe-paper, #f4efe6);
             border: 2px solid #000000;
             border-left: 6px solid var(--tint-yellow, #ffe600);
             box-shadow: 4px 4px 0px #000000;
@@ -100,7 +100,7 @@ class MicrosubReaderView
         }
 
         .item-post.read {
-            border-left-color: var(--text-dim, #727684);
+            border-left-color: #aaaaaa;
             opacity: 0.75;
         }
 
@@ -109,7 +109,7 @@ class MicrosubReaderView
             justify-content: space-between;
             align-items: flex-start;
             margin-bottom: 1rem;
-            border-bottom: 1px dashed rgba(255,255,255,0.15);
+            border-bottom: 1px dashed #bbbbbb;
             padding-bottom: 0.75rem;
         }
 
@@ -132,31 +132,31 @@ class MicrosubReaderView
             font-family: 'Outfit', sans-serif;
             font-weight: 800;
             font-size: 1.05rem;
-            color: var(--lambe-paper);
+            color: #000000;
         }
 
         .item-date {
             font-family: 'JetBrains Mono', monospace;
             font-size: 0.78rem;
-            color: var(--text-muted);
+            color: #666666;
         }
 
         .item-content {
             font-size: 1.02rem;
             line-height: 1.7;
-            color: #f4efe6;
+            color: #000000;
             margin-bottom: 1.25rem;
             word-break: break-word;
         }
 
         .item-content a {
-            color: var(--tint-cyan, #00e5ff);
+            color: var(--tint-magenta, #ff007f);
             text-decoration: underline;
             text-underline-offset: 3px;
         }
         .item-content a:hover {
-            color: var(--tint-yellow, #ffe600);
-            background: #000;
+            color: #000000;
+            background: var(--tint-yellow, #ffe600);
         }
 
         .item-content img {
@@ -178,7 +178,7 @@ class MicrosubReaderView
 
         /* Fallback Content Warning */
         .cw-fallback details {
-            background: rgba(255, 34, 68, 0.1);
+            background: rgba(255, 34, 68, 0.08);
             border: 2px solid var(--tint-red);
             padding: 0.75rem;
             margin-bottom: 1rem;
@@ -216,7 +216,7 @@ class MicrosubReaderView
         }
 
         .brutalist-modal {
-            background: var(--lambe-surface);
+            background: var(--lambe-paper, #f4efe6);
             border: 3px solid #000000;
             box-shadow: 8px 8px 0 #000000;
             width: 100%;
@@ -241,7 +241,7 @@ class MicrosubReaderView
             font-family: 'Bebas Neue', 'Archivo Black', sans-serif;
             font-size: 1.8rem;
             letter-spacing: 0.05em;
-            color: var(--lambe-paper);
+            color: #000000;
             text-transform: uppercase;
         }
     </style>
@@ -263,13 +263,13 @@ class MicrosubReaderView
                 </div>
             </header>
 
-            <div class="timeline-controls" style="margin-bottom: 1.5rem; background: var(--lambe-surface); border: 2px solid #000; padding: 1rem; box-shadow: 3px 3px 0 #000;">
+            <div class="timeline-controls" style="margin-bottom: 1.5rem; background: var(--lambe-paper, #f4efe6); border: 2px solid #000; padding: 1rem; box-shadow: 3px 3px 0 #000;">
                 <div class="timeline-search-box">
-                    <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; font-weight: 800; color: var(--tint-yellow);">BUSCAR:</span>
+                    <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; font-weight: 800; color: #000000;">BUSCAR:</span>
                     <input type="text" id="article-search" placeholder="Filtrar por texto, autor ou termo..." style="flex: 1;" oninput="filterTimeline()">
                 </div>
                 <div style="display: flex; align-items: center; gap: 8px;">
-                    <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; font-weight: 800; color: var(--tint-yellow);">ESTADO:</span>
+                    <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; font-weight: 800; color: #000000;">ESTADO:</span>
                     <select id="article-filter" onchange="filterTimeline()">
                         <option value="all">TODOS OS POSTS</option>
                         <option value="unread">APENAS NÃO LIDOS</option>
@@ -305,13 +305,13 @@ class MicrosubReaderView
                 <button class="btn-stamp btn-stamp-red" onclick="closeManageFilters()">FECHAR [X]</button>
             </div>
             
-            <div style="background: #141518; border: 2px solid #000; padding: 1.25rem; margin-bottom: 1.5rem; box-shadow: 3px 3px 0 #000;">
-                <h3 style="margin-top: 0; font-family: 'Archivo Black', sans-serif; font-size: 0.95rem; color: var(--tint-yellow); text-transform: uppercase;">
+            <div style="background: var(--lambe-paper, #f4efe6); border: 2px solid #000; padding: 1.25rem; margin-bottom: 1.5rem; box-shadow: 3px 3px 0 #000;">
+                <h3 style="margin-top: 0; font-family: 'Archivo Black', sans-serif; font-size: 0.95rem; color: #000000; text-transform: uppercase;">
                     + ADICIONAR NOVA REGRA
                 </h3>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
                     <div>
-                        <label style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; font-weight: 800; color: var(--text-muted); display: block; margin-bottom: 4px;">TIPO DE REGRA</label>
+                        <label style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; font-weight: 800; color: #000000; display: block; margin-bottom: 4px;">TIPO DE REGRA</label>
                         <select id="new-filter-type" style="width: 100%;">
                             <option value="keyword">Palavra-chave (conteúdo/título)</option>
                             <option value="author">Autor (nome/URL)</option>
@@ -319,7 +319,7 @@ class MicrosubReaderView
                         </select>
                     </div>
                     <div>
-                        <label style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; font-weight: 800; color: var(--text-muted); display: block; margin-bottom: 4px;">AÇÃO</label>
+                        <label style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; font-weight: 800; color: #000000; display: block; margin-bottom: 4px;">AÇÃO</label>
                         <select id="new-filter-action" style="width: 100%;">
                             <option value="mute">Silenciar (Ocultar da timeline)</option>
                             <option value="auto_archive">Auto-Arquivar (Marcar como lido)</option>
@@ -329,11 +329,11 @@ class MicrosubReaderView
                 </div>
                 <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 10px; margin-bottom: 12px;">
                     <div>
-                        <label style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; font-weight: 800; color: var(--text-muted); display: block; margin-bottom: 4px;">PADRÃO / TERMO / DOMÍNIO</label>
+                        <label style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; font-weight: 800; color: #000000; display: block; margin-bottom: 4px;">PADRÃO / TERMO / DOMÍNIO</label>
                         <input type="text" id="new-filter-content" placeholder="ex: spammer.xyz, bot, crypto" style="width: 100%; box-sizing: border-box;">
                     </div>
                     <div>
-                        <label style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; font-weight: 800; color: var(--text-muted); display: block; margin-bottom: 4px;">ESCOPO</label>
+                        <label style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; font-weight: 800; color: #000000; display: block; margin-bottom: 4px;">ESCOPO</label>
                         <select id="new-filter-channel" style="width: 100%;">
                             <option value="*">Global (*)</option>
                             <option value="inbox">Inbox</option>
@@ -344,7 +344,7 @@ class MicrosubReaderView
                 <button class="btn-stamp btn-stamp-magenta" style="width: 100%;" onclick="addFilterSubmit()">CADASTRAR REGRA DE FILTRO</button>
             </div>
 
-            <h3 style="font-family: 'Archivo Black', sans-serif; font-size: 0.95rem; text-transform: uppercase; color: var(--lambe-paper); margin-bottom: 0.8rem;">
+            <h3 style="font-family: 'Archivo Black', sans-serif; font-size: 0.95rem; text-transform: uppercase; color: #000000; margin-bottom: 0.8rem;">
                 REGRAS ATIVAS
             </h3>
             <div id="manage-filters-list">Carregando filtros...</div>
@@ -695,7 +695,7 @@ class MicrosubReaderView
                         let displayName = feed.name ? `<strong>${feed.name}</strong><br><small style="font-family: 'JetBrains Mono'; opacity: 0.7;">${feed.url}</small>` : `<span style="font-family: 'JetBrains Mono';">${feed.url}</span>`;
                         
                         html += `
-                            <li style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; background: #141518; border: 2px solid #000; box-shadow: 2px 2px 0 #000;">
+                            <li style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; background: var(--lambe-paper, #f4efe6); border: 2px solid #000; box-shadow: 2px 2px 0 #000; color: #000;">
                                 <div style="word-break: break-all; margin-right: 1rem;">
                                     <div style="margin-bottom: 4px;">${photoHtml}${typeBadge}</div>
                                     <div>${displayName}</div>
@@ -757,7 +757,7 @@ class MicrosubReaderView
                         let channelBadge = `<span style="font-family: 'JetBrains Mono'; font-size: 0.72rem; opacity: 0.6;">[canal: ${f.channel_uid}]</span>`;
 
                         html += `
-                            <li style="display: flex; justify-content: space-between; align-items: center; padding: 0.8rem 1rem; background: #141518; border: 2px solid #000; box-shadow: 2px 2px 0 #000;">
+                            <li style="display: flex; justify-content: space-between; align-items: center; padding: 0.8rem 1rem; background: var(--lambe-paper, #f4efe6); border: 2px solid #000; box-shadow: 2px 2px 0 #000; color: #000;">
                                 <div>
                                     ${actionBadge} ${typeBadge} <strong style="font-family: 'JetBrains Mono';">${f.content}</strong> ${channelBadge}
                                 </div>

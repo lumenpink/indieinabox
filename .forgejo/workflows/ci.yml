@@ -13,7 +13,7 @@ concurrency:
   cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 env:
-  CI_IMAGE: lumenpink/indieinabox-ci:latest
+  CI_IMAGE: codeberg.org/lumenpink/gost-ci-php:latest
 
 jobs:
   # ─────────────────────────────────────────────────────────────────────────────

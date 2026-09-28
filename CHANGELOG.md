@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 ### Features
+  - (meta) gerar card oficial de opengraph e banner social (closes #54)
   - (admin) complete lambe-lambe theme redesign across admin views
   - (admin) redesign admin dashboard views to strictly match documentation lambe-lambe aesthetic (#51)
   - (docs) make documentation site fully multilingual (8 languages) and fix consistency (#50)

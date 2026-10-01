@@ -202,7 +202,7 @@ test('AdminController dispatches sub-actions', function () {
     ob_start();
     $admin->moderation();
     $modHtml = ob_get_clean();
-    expect($modHtml)->toContain('Comment Moderation');
+    expect($modHtml)->toContain('MODERAÇÃO');
 
     ob_start();
     $admin->cron();

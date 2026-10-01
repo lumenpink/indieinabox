@@ -52,7 +52,21 @@
     "unknown": "unbekannt",
     "Tag": "Schlagwort",
     "Tags": "Schlagwörter",
-    "Flowerbeds": "Beete"
+    "Flowerbeds": "Beete",
+    "Articles": "Artikel",
+    "Notes": "Notizen",
+    "Digital Garden": "Digitaler Garten",
+    "Replies": "Antworten",
+    "Likes": "Gefällt mir",
+    "Reposts": "Geteilte Beiträge",
+    "Bookmarks": "Lesezeichen",
+    "Photos": "Fotos",
+    "Videos": "Videos",
+    "Checkins": "Check-ins",
+    "RSVPs": "Rückmeldungen",
+    "Listens": "Hörbeiträge",
+    "Watches": "Sehbeiträge",
+    "Reads": "Lesebeiträge"
   },
   "kinds": {
     "article": {
@@ -62,6 +76,55 @@
     "note": {
       "title": "Notizen",
       "content_dir": "notizen"
+    },
+    "garden": {
+      "title": "Digitaler Garten",
+      "content_dir": "garten"
+    },
+    "reply": {
+      "title": "Antworten",
+      "content_dir": "antworten"
+    },
+    "like": {
+      "title": "Gefällt mir",
+      "content_dir": "likes"
+    },
+    "repost": {
+      "title": "Geteilte Beiträge",
+      "content_dir": "reposts"
+    },
+    "bookmark": {
+      "title": "Lesezeichen",
+      "content_dir": "lesezeichen"
+    },
+    "photo": {
+      "title": "Fotos",
+      "content_dir": "fotos"
+    },
+    "video": {
+      "title": "Videos",
+      "content_dir": "videos"
+    },
+    "checkin": {
+      "title": "Check-ins",
+      "content_dir": "checkins"
+    },
+    "rsvp": {
+      "title": "Rückmeldungen",
+      "content_dir": "rsvps"
+    },
+    "listen": {
+      "title": "Hörbeiträge",
+      "content_dir": "listens"
+    },
+    "watch": {
+      "title": "Sehbeiträge",
+      "content_dir": "watches"
+    },
+    "read": {
+      "title": "Lesebeiträge",
+      "content_dir": "reads"
     }
   }
 }
+

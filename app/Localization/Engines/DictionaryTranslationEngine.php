@@ -48,13 +48,48 @@ class DictionaryTranslationEngine implements TranslationEngineInterface
         if ($ext === 'json') {
             $data = json_decode((string)file_get_contents($filePath), true);
             if (is_array($data)) {
-                $this->dictionaries[$lang] = array_merge($this->dictionaries[$lang] ?? [], $data);
+                $pairs = [];
+                // 1. Translations map
+                if (isset($data['translations']) && is_array($data['translations'])) {
+                    foreach ($data['translations'] as $k => $v) {
+                        if (is_string($v)) {
+                            $pairs[(string)$k] = $v;
+                        }
+                    }
+                }
+                // 2. Kinds map
+                if (isset($data['kinds']) && is_array($data['kinds'])) {
+                    foreach ($data['kinds'] as $kindKey => $kindInfo) {
+                        if (is_array($kindInfo)) {
+                            if (!empty($kindInfo['title']) && is_string($kindInfo['title'])) {
+                                $pairs[(string)$kindKey] = $kindInfo['title'];
+                                $pairs[ucfirst((string)$kindKey)] = $kindInfo['title'];
+                            }
+                        } elseif (is_string($kindInfo)) {
+                            $pairs[(string)$kindKey] = $kindInfo;
+                            $pairs[ucfirst((string)$kindKey)] = ucfirst($kindInfo);
+                        }
+                    }
+                }
+                // 3. Fallback for flat key-value pairs (excluding metadata like 'code' and 'name')
+                foreach ($data as $k => $v) {
+                    if (is_string($v) && $k !== 'code' && $k !== 'name' && $k !== 'translations' && $k !== 'kinds') {
+                        $pairs[(string)$k] = $v;
+                    }
+                }
+                $this->dictionaries[$lang] = array_merge($this->dictionaries[$lang] ?? [], $pairs);
                 return true;
             }
         } elseif ($ext === 'php') {
             $data = require $filePath;
             if (is_array($data)) {
-                $this->dictionaries[$lang] = array_merge($this->dictionaries[$lang] ?? [], $data);
+                $pairs = [];
+                foreach ($data as $k => $v) {
+                    if (is_string($v)) {
+                        $pairs[(string)$k] = $v;
+                    }
+                }
+                $this->dictionaries[$lang] = array_merge($this->dictionaries[$lang] ?? [], $pairs);
                 return true;
             }
         }
@@ -82,13 +117,13 @@ class DictionaryTranslationEngine implements TranslationEngineInterface
         }
 
         $catalog = $this->dictionaries[$targetLang] ?? [];
-        if (isset($catalog[$trimmed])) {
+        if (isset($catalog[$trimmed]) && is_string($catalog[$trimmed])) {
             return str_replace($trimmed, $catalog[$trimmed], $text);
         }
 
         // Case-insensitive lookup
         foreach ($catalog as $key => $val) {
-            if (strcasecmp($key, $trimmed) === 0) {
+            if (is_string($val) && strcasecmp((string)$key, $trimmed) === 0) {
                 return str_replace($trimmed, $val, $text);
             }
         }
@@ -137,12 +172,12 @@ class DictionaryTranslationEngine implements TranslationEngineInterface
         if (!empty($catalog)) {
             // Sort by descending string length to avoid partial replacements
             uksort($catalog, function ($a, $b) {
-                return strlen($b) <=> strlen($a);
+                return strlen((string)$b) <=> strlen((string)$a);
             });
 
             foreach ($catalog as $sourcePhrase => $transPhrase) {
-                if ($sourcePhrase !== '') {
-                    $pattern = '/(?<![a-zA-Z0-9_])' . preg_quote($sourcePhrase, '/') . '(?![a-zA-Z0-9_])/ui';
+                if ($sourcePhrase !== '' && is_string($transPhrase)) {
+                    $pattern = '/(?<![a-zA-Z0-9_])' . preg_quote((string)$sourcePhrase, '/') . '(?![a-zA-Z0-9_])/ui';
                     $masked = preg_replace($pattern, $transPhrase, (string)$masked);
                 }
             }

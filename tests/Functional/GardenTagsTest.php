@@ -60,7 +60,10 @@ test('garden tags are rendered and translatable in the HTML output', function ()
     expect($htmlEn)->toContain('sprout');
     expect($htmlEn)->toContain('trivial');
 
-    $htmlPt = file_get_contents($this->tempDir . '/public_html/pt/garden/test/index.html');
+    $ptPath = file_exists($this->tempDir . '/public_html/pt/jardins/test/index.html')
+        ? $this->tempDir . '/public_html/pt/jardins/test/index.html'
+        : $this->tempDir . '/public_html/pt/garden/test/index.html';
+    $htmlPt = file_get_contents($ptPath);
     
     expect($htmlPt)->toContain('Canteiro');
     expect($htmlPt)->toContain('Confiança');

@@ -52,7 +52,21 @@
     "unknown": "unknown",
     "Tag": "Tag",
     "Tags": "Tags",
-    "Flowerbeds": "Flowerbeds"
+    "Flowerbeds": "Flowerbeds",
+    "Articles": "Articles",
+    "Notes": "Notes",
+    "Digital Garden": "Digital Garden",
+    "Replies": "Replies",
+    "Likes": "Likes",
+    "Reposts": "Reposts",
+    "Bookmarks": "Bookmarks",
+    "Photos": "Photos",
+    "Videos": "Videos",
+    "Checkins": "Checkins",
+    "RSVPs": "RSVPs",
+    "Listens": "Listens",
+    "Watches": "Watches",
+    "Reads": "Reads"
   },
   "kinds": {
     "article": {
@@ -62,6 +76,55 @@
     "note": {
       "title": "Notes",
       "content_dir": "notes"
+    },
+    "garden": {
+      "title": "Digital Garden",
+      "content_dir": "garden"
+    },
+    "reply": {
+      "title": "Replies",
+      "content_dir": "replies"
+    },
+    "like": {
+      "title": "Likes",
+      "content_dir": "likes"
+    },
+    "repost": {
+      "title": "Reposts",
+      "content_dir": "reposts"
+    },
+    "bookmark": {
+      "title": "Bookmarks",
+      "content_dir": "bookmarks"
+    },
+    "photo": {
+      "title": "Photos",
+      "content_dir": "photos"
+    },
+    "video": {
+      "title": "Videos",
+      "content_dir": "videos"
+    },
+    "checkin": {
+      "title": "Checkins",
+      "content_dir": "checkins"
+    },
+    "rsvp": {
+      "title": "RSVPs",
+      "content_dir": "rsvps"
+    },
+    "listen": {
+      "title": "Listens",
+      "content_dir": "listens"
+    },
+    "watch": {
+      "title": "Watches",
+      "content_dir": "watches"
+    },
+    "read": {
+      "title": "Reads",
+      "content_dir": "reads"
     }
   }
 }
+

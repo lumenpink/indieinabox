@@ -84,3 +84,39 @@ it('integrates TranslationEngine with TranslationVirtualizer seamlessly', functi
 
     expect($page->title)->toBe('Translated: Original Article');
 });
+
+it('loads dictionary with translations and kinds without type errors during translateContent', function () {
+    $tempFile = tempnam(sys_get_temp_dir(), 'locale_') . '.json';
+    file_put_contents($tempFile, json_encode([
+        'code' => 'pt',
+        'name' => 'Português',
+        'translations' => [
+            'Hello' => 'Olá',
+            'Read more' => 'Leia mais'
+        ],
+        'kinds' => [
+            'article' => [
+                'title' => 'Artigos',
+                'content_dir' => 'artigos'
+            ],
+            'note' => [
+                'title' => 'Notas',
+                'content_dir' => 'notas'
+            ]
+        ]
+    ]));
+
+    $engine = new DictionaryTranslationEngine();
+    expect($engine->loadDictionaryFile('pt', $tempFile))->toBeTrue();
+
+    // Verify translations and kinds are mapped
+    expect($engine->translateText('Hello', 'pt'))->toBe('Olá');
+    expect($engine->translateText('article', 'pt'))->toBe('Artigos');
+
+    // Verify translateContent doesn't throw TypeError on preg_replace
+    $content = 'Hello article, here is a note.';
+    $result = $engine->translateContent($content, 'pt');
+    expect($result)->toContain('Olá');
+
+    @unlink($tempFile);
+});

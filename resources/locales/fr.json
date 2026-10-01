@@ -52,7 +52,21 @@
     "unknown": "inconnu",
     "Tag": "Étiquette",
     "Tags": "Étiquettes",
-    "Flowerbeds": "Platebandes"
+    "Flowerbeds": "Platebandes",
+    "Articles": "Articles",
+    "Notes": "Notes",
+    "Digital Garden": "Jardin numérique",
+    "Replies": "Réponses",
+    "Likes": "J'aime",
+    "Reposts": "Republications",
+    "Bookmarks": "Marque-pages",
+    "Photos": "Photos",
+    "Videos": "Vidéos",
+    "Checkins": "Visites",
+    "RSVPs": "RSVPs",
+    "Listens": "Écoutes",
+    "Watches": "Visionnages",
+    "Reads": "Lectures"
   },
   "kinds": {
     "article": {
@@ -62,6 +76,55 @@
     "note": {
       "title": "Notes",
       "content_dir": "notes"
+    },
+    "garden": {
+      "title": "Jardin numérique",
+      "content_dir": "jardins"
+    },
+    "reply": {
+      "title": "Réponses",
+      "content_dir": "reponses"
+    },
+    "like": {
+      "title": "J'aime",
+      "content_dir": "likes"
+    },
+    "repost": {
+      "title": "Republications",
+      "content_dir": "reposts"
+    },
+    "bookmark": {
+      "title": "Marque-pages",
+      "content_dir": "marquepages"
+    },
+    "photo": {
+      "title": "Photos",
+      "content_dir": "photos"
+    },
+    "video": {
+      "title": "Vidéos",
+      "content_dir": "videos"
+    },
+    "checkin": {
+      "title": "Visites",
+      "content_dir": "visites"
+    },
+    "rsvp": {
+      "title": "RSVPs",
+      "content_dir": "rsvps"
+    },
+    "listen": {
+      "title": "Écoutes",
+      "content_dir": "ecoutes"
+    },
+    "watch": {
+      "title": "Visionnages",
+      "content_dir": "visionnages"
+    },
+    "read": {
+      "title": "Lectures",
+      "content_dir": "lectures"
     }
   }
 }
+

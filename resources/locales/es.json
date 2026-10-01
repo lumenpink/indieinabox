@@ -52,7 +52,21 @@
     "unknown": "desconocido",
     "Tag": "Etiqueta",
     "Tags": "Etiquetas",
-    "Flowerbeds": "Semilleros"
+    "Flowerbeds": "Semilleros",
+    "Articles": "Artículos",
+    "Notes": "Notas",
+    "Digital Garden": "Jardín Digital",
+    "Replies": "Respuestas",
+    "Likes": "Me gusta",
+    "Reposts": "Republicaciones",
+    "Bookmarks": "Marcadores",
+    "Photos": "Fotos",
+    "Videos": "Vídeos",
+    "Checkins": "Visitas",
+    "RSVPs": "Confirmaciones",
+    "Listens": "Escuchas",
+    "Watches": "Vistos",
+    "Reads": "Lecturas"
   },
   "kinds": {
     "article": {
@@ -62,6 +76,55 @@
     "note": {
       "title": "Notas",
       "content_dir": "notas"
+    },
+    "garden": {
+      "title": "Jardín Digital",
+      "content_dir": "jardines"
+    },
+    "reply": {
+      "title": "Respuestas",
+      "content_dir": "respuestas"
+    },
+    "like": {
+      "title": "Me gusta",
+      "content_dir": "likes"
+    },
+    "repost": {
+      "title": "Republicaciones",
+      "content_dir": "reposts"
+    },
+    "bookmark": {
+      "title": "Marcadores",
+      "content_dir": "marcadores"
+    },
+    "photo": {
+      "title": "Fotos",
+      "content_dir": "fotos"
+    },
+    "video": {
+      "title": "Vídeos",
+      "content_dir": "videos"
+    },
+    "checkin": {
+      "title": "Visitas",
+      "content_dir": "visitas"
+    },
+    "rsvp": {
+      "title": "Confirmaciones",
+      "content_dir": "confirmaciones"
+    },
+    "listen": {
+      "title": "Escuchas",
+      "content_dir": "escuchas"
+    },
+    "watch": {
+      "title": "Vistos",
+      "content_dir": "vistos"
+    },
+    "read": {
+      "title": "Lecturas",
+      "content_dir": "lecturas"
     }
   }
 }
+

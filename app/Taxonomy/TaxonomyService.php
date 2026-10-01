@@ -217,10 +217,27 @@ class TaxonomyService implements TaxonomyServiceInterface
             return $kind;
         }
 
-        // Use content_dir if defined
+        // 1. Use explicitly configured content_dir for this language
         if (isset($config['content_dir'])) {
             if (is_array($config['content_dir'])) {
-                $folder = $config['content_dir'][$lang] ?? reset($config['content_dir']);
+                if (!empty($config['content_dir'][$lang])) {
+                    return TextParser::slugize((string) $config['content_dir'][$lang]);
+                }
+            }
+        }
+
+        // 2. Lookup in bundled LocaleManager locale definitions
+        if (class_exists(\Indieinabox\Localization\LocaleManager::class)) {
+            $locale = \Indieinabox\Localization\LocaleManager::getLocale($lang);
+            if (!empty($locale['kinds'][$kind]['content_dir'])) {
+                return TextParser::slugize((string) $locale['kinds'][$kind]['content_dir']);
+            }
+        }
+
+        // 3. Fallback to default configured content_dir
+        if (isset($config['content_dir'])) {
+            if (is_array($config['content_dir'])) {
+                $folder = reset($config['content_dir']);
                 if ($folder) {
                     return TextParser::slugize((string) $folder);
                 }
@@ -245,14 +262,44 @@ class TaxonomyService implements TaxonomyServiceInterface
     {
         $site = $this->getSite();
         $config = $this->getKindConfig($kind);
-        $targetLang = $lang ?? $site->localization->defaultLang ?? 'en';
+        $defaultLang = $site ? ($site->localization->defaultLang ?? 'en') : 'en';
+        $targetLang = $lang ?? $defaultLang;
 
+        // 1. Explicitly configured title for target language
         if (!empty($config['title']) && is_array($config['title'])) {
-            if (isset($config['title'][$targetLang])) {
-                return $config['title'][$targetLang];
+            if (!empty($config['title'][$targetLang])) {
+                return (string) $config['title'][$targetLang];
             }
-            if (isset($config['title']['en'])) {
-                return $config['title']['en'];
+        }
+
+        // 2. Lookup in bundled LocaleManager locale definitions
+        if (class_exists(\Indieinabox\Localization\LocaleManager::class)) {
+            $locale = \Indieinabox\Localization\LocaleManager::getLocale($targetLang);
+            if (!empty($locale['kinds'][$kind]['title'])) {
+                return (string) $locale['kinds'][$kind]['title'];
+            }
+        }
+
+        // 3. Lookup in Translator service for the base title or kind name
+        $baseTitle = !empty($config['title'][$defaultLang])
+            ? (string) $config['title'][$defaultLang]
+            : (!empty($config['title']) && is_array($config['title']) ? (string) reset($config['title']) : ucfirst($kind));
+
+        if (class_exists(\Indieinabox\Localization\Translator::class)) {
+            $translated = \Indieinabox\Localization\Translator::translate($baseTitle, $targetLang);
+            if ($translated !== $baseTitle && $translated !== '') {
+                return $translated;
+            }
+            $translatedKind = \Indieinabox\Localization\Translator::translate(ucfirst($kind), $targetLang);
+            if ($translatedKind !== ucfirst($kind) && $translatedKind !== '') {
+                return $translatedKind;
+            }
+        }
+
+        // 4. Fallback to English or reset of configured titles
+        if (!empty($config['title']) && is_array($config['title'])) {
+            if (!empty($config['title']['en'])) {
+                return (string) $config['title']['en'];
             }
             return (string) reset($config['title']);
         }

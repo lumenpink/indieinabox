@@ -297,7 +297,21 @@ class ConfigView
             'unknown' => 'Fallback term',
             'Tag' => 'Tag singular label',
             'Tags' => 'Tag plural label',
-            'Flowerbeds' => 'Flowerbed plural label'
+            'Flowerbeds' => 'Flowerbed plural label',
+            'Articles' => 'Articles kind title',
+            'Notes' => 'Notes kind title',
+            'Digital Garden' => 'Digital Garden kind title',
+            'Replies' => 'Replies kind title',
+            'Likes' => 'Likes kind title',
+            'Reposts' => 'Reposts kind title',
+            'Bookmarks' => 'Bookmarks kind title',
+            'Photos' => 'Photos kind title',
+            'Videos' => 'Videos kind title',
+            'Checkins' => 'Checkins kind title',
+            'RSVPs' => 'RSVPs kind title',
+            'Listens' => 'Listens kind title',
+            'Watches' => 'Watches kind title',
+            'Reads' => 'Reads kind title'
         ];
 
         ob_start();

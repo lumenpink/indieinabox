@@ -168,3 +168,19 @@ it('generateBaseSlug handles absolute content path cleanly', function () {
     expect($slug)->toBe('notes/quick-note.md');
     expect($slug)->not->toContain('custom_content');
 });
+
+it('preserves markdown body containing multiple horizontal rules', function () {
+    $content = "---\ntitle: Multi Section Article\nkind: article\n---\nSection 1 text\n\n---\n\nSection 2 text\n\n---\n\nSection 3 text\n\n---\n\nSection 4 text";
+
+    $file = $this->tempDir . '/content/articles/multi-section.md';
+    mkdir(dirname($file), 0777, true);
+    file_put_contents($file, $content);
+
+    $page = $this->parser->parse($file);
+    expect($page)->not->toBeNull()
+        ->and($page->title)->toBe('Multi Section Article')
+        ->and($page->rawBody)->toContain('Section 1 text')
+        ->and($page->rawBody)->toContain('Section 2 text')
+        ->and($page->rawBody)->toContain('Section 3 text')
+        ->and($page->rawBody)->toContain('Section 4 text');
+});

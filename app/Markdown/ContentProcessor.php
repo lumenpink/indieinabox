@@ -40,7 +40,7 @@ class ContentProcessor
     public function extractFrontMatter(string &$content): array
     {
         $frontMatter = [];
-        if (preg_match('/^---\s*\n((?:[^\n]*+\n)*)---\s*\n/sm', $content, $matches)) {
+        if (preg_match('/\A---\s*\r?\n(.*?)\r?\n---\s*(?:\r?\n|$)/s', $content, $matches)) {
             $yaml = new Yaml();
             $frontMatter = $yaml->loadString($matches[1]);
         }
@@ -54,7 +54,7 @@ class ContentProcessor
      */
     public function removeYamlFrontMatter(string $content): string|null
     {
-        return preg_replace('/^---\s*\n((?:[^\n]*+\n)*)---\s*\n/sm', '', $content);
+        return preg_replace('/\A---\s*\r?\n(.*?)\r?\n---\s*(?:\r?\n|$)/s', '', $content, 1);
     }
 
     /**

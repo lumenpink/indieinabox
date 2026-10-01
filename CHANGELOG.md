@@ -11,6 +11,7 @@
   - (docs) add comprehensive cyberpunk documentation site and cloudflare deployment pipeline
 
 ### Fixes
+  - (parser) evitar consumo guloso de separadores horizontais como frontmatter (closes #58)
   - (i18n) auto-fill de post kinds a partir dos pacotes de idiomas (closes #57)
   - (builder) corrigir listposts na home e padronizar suporte a pretty links (closes #56)
   - (i18n) incluir content kinds nos pacotes de idioma (closes #55)

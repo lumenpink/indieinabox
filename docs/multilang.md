@@ -29,3 +29,13 @@ If a post exists in one language but lacks a translation in another, the `SiteBu
 It uses `pseudoTranslate` to duplicate the content and prepend a language tag (e.g., `[EN]`) to the title and body, allowing the site to maintain structure while indicating that a manual translation is still required.
 
 By explicitly providing translated Markdown files and correlating them via `url_translations`, you bypass virtualization entirely, resulting in 100% isolated menus and proper native localization.
+
+## Bundled Locales & Auto-fill
+
+IndieInABox bundles locale packages (`resources/locales/*.json`) for official languages (`pt`, `es`, `en`, `fr`, `de`, etc.), which are compiled directly into the binary (`EmbeddedLocales`).
+
+Each locale package contains:
+- **`translations`**: Global UI strings (e.g. `Recent posts`, `Flowerbed`, `Maturity`, `Confidence`).
+- **`kinds`**: Localized titles and content directory folder slugs for all supported content kinds (e.g. `Articles`/`artigos`, `Notes`/`notas`, `Digital Garden`/`jardins`, `Replies`/`respostas`, `Photos`/`fotos`, `Videos`/`videos`, etc.).
+
+In the Admin Panel (**Settings → Localization**), clicking **"Auto-fill from Locales"** automatically populates missing translations as well as default/fallback English kind labels and folder paths into the target languages without overwriting custom user-defined taxonomies.

@@ -101,3 +101,59 @@ test('LocaleManager loads cached locale from data/locales directory', function (
         }
     }
 });
+
+test('LocaleManager auto-fills default English kind fallbacks but preserves custom titles', function () {
+    $config = [
+        'lang' => ['en', 'pt-BR'],
+        'kinds' => [
+            'garden' => [
+                'title' => [
+                    'en' => 'Digital Garden',
+                    'pt-BR' => 'Digital Garden', // English fallback copied on lang add
+                ],
+                'content_dir' => [
+                    'en' => 'garden',
+                    'pt-BR' => 'garden',
+                ],
+            ],
+            'reply' => [
+                'title' => [
+                    'en' => 'Replies',
+                    'pt-BR' => 'reply', // Kind key default
+                ],
+                'content_dir' => [
+                    'en' => 'replies',
+                    'pt-BR' => 'replies',
+                ],
+            ],
+            'article' => [
+                'title' => [
+                    'en' => 'Articles',
+                    'pt-BR' => 'Meus Artigos Customizados', // Custom title
+                ],
+                'content_dir' => [
+                    'en' => 'articles',
+                    'pt-BR' => 'artigos-custom',
+                ],
+            ],
+        ],
+    ];
+
+    $applied = LocaleManager::applyLocale($config, 'pt-BR', false);
+    expect($applied)->toBeTrue();
+
+    // Default English fallbacks should be replaced with localized Portuguese
+    expect($config['kinds']['garden']['title']['pt-BR'])->toBe('Jardim Digital')
+        ->and($config['kinds']['garden']['content_dir']['pt-BR'])->toBe('jardins')
+        ->and($config['kinds']['reply']['title']['pt-BR'])->toBe('Respostas')
+        ->and($config['kinds']['reply']['content_dir']['pt-BR'])->toBe('respostas');
+
+    // Custom titles and paths should be preserved when overwrite is false
+    expect($config['kinds']['article']['title']['pt-BR'])->toBe('Meus Artigos Customizados')
+        ->and($config['kinds']['article']['content_dir']['pt-BR'])->toBe('artigos-custom');
+
+    // When overwrite is true, even custom titles are reset to locale standard
+    LocaleManager::applyLocale($config, 'pt-BR', true);
+    expect($config['kinds']['article']['title']['pt-BR'])->toBe('Artigos')
+        ->and($config['kinds']['article']['content_dir']['pt-BR'])->toBe('artigos');
+});

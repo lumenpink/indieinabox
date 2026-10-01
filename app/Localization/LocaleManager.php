@@ -89,13 +89,20 @@ class LocaleManager
         }
 
         if (!empty($locale['kinds']) && isset($config['kinds']) && is_array($config['kinds'])) {
+            $enLocale = ($lang !== 'en') ? self::getLocale('en') : null;
             foreach ($locale['kinds'] as $kindKey => $kindInfo) {
                 if (isset($config['kinds'][$kindKey]) && is_array($config['kinds'][$kindKey])) {
                     if (isset($kindInfo['title'])) {
                         if (!isset($config['kinds'][$kindKey]['title']) || !is_array($config['kinds'][$kindKey]['title'])) {
                             $config['kinds'][$kindKey]['title'] = [];
                         }
-                        if ($overwriteExisting || empty($config['kinds'][$kindKey]['title'][$lang])) {
+                        $currentTitle = $config['kinds'][$kindKey]['title'][$lang] ?? '';
+                        $isTitleDefault = empty($currentTitle)
+                            || strcasecmp((string) $currentTitle, (string) $kindKey) === 0
+                            || (isset($config['kinds'][$kindKey]['title']['en']) && $currentTitle === $config['kinds'][$kindKey]['title']['en'])
+                            || (!empty($enLocale['kinds'][$kindKey]['title']) && $currentTitle === $enLocale['kinds'][$kindKey]['title']);
+
+                        if ($overwriteExisting || $isTitleDefault) {
                             $config['kinds'][$kindKey]['title'][$lang] = $kindInfo['title'];
                         }
                     }
@@ -103,7 +110,13 @@ class LocaleManager
                         if (!isset($config['kinds'][$kindKey]['content_dir']) || !is_array($config['kinds'][$kindKey]['content_dir'])) {
                             $config['kinds'][$kindKey]['content_dir'] = [];
                         }
-                        if ($overwriteExisting || empty($config['kinds'][$kindKey]['content_dir'][$lang])) {
+                        $currentDir = $config['kinds'][$kindKey]['content_dir'][$lang] ?? '';
+                        $isDirDefault = empty($currentDir)
+                            || strcasecmp((string) $currentDir, (string) $kindKey) === 0
+                            || (isset($config['kinds'][$kindKey]['content_dir']['en']) && $currentDir === $config['kinds'][$kindKey]['content_dir']['en'])
+                            || (!empty($enLocale['kinds'][$kindKey]['content_dir']) && $currentDir === $enLocale['kinds'][$kindKey]['content_dir']);
+
+                        if ($overwriteExisting || $isDirDefault) {
                             $config['kinds'][$kindKey]['content_dir'][$lang] = $kindInfo['content_dir'];
                         }
                     }
@@ -122,10 +135,14 @@ class LocaleManager
     public static function getSupportedLocales(): array
     {
         $locales = [];
+        if (class_exists('\\EmbeddedLocales')) {
+            $locales = array_merge($locales, \EmbeddedLocales::getSupportedCodes());
+        }
+
         $baseDir = dirname(__DIR__, 2);
         $directories = [
-            self::getCacheDir(),
             $baseDir . '/resources/locales',
+            self::getCacheDir(),
         ];
 
         foreach ($directories as $dir) {
@@ -155,16 +172,23 @@ class LocaleManager
     }
 
     /**
-     * Checks local files (data/locales/ or resources/locales/).
+     * Checks local files (EmbeddedLocales, resources/locales/, or data/locales/).
      *
      * @return array{code: string, name: string, translations: array<string, string>, kinds?: array<string, array{title: string, content_dir: string}>}|null
      */
     private static function loadLocal(string $code): ?array
     {
+        if (class_exists('\\EmbeddedLocales')) {
+            $embedded = \EmbeddedLocales::getLocale($code);
+            if ($embedded !== null) {
+                return $embedded;
+            }
+        }
+
         $baseDir = dirname(__DIR__, 2);
         $paths = [
-            self::getCacheDir() . '/' . $code . '.json',
             $baseDir . '/resources/locales/' . $code . '.json',
+            self::getCacheDir() . '/' . $code . '.json',
         ];
 
         foreach ($paths as $path) {

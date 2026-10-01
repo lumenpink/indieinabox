@@ -806,12 +806,13 @@ class AdminController extends AbstractController
 
         if (isset($_POST['autofill_locale'])) {
             $targetLocale = trim((string) $_POST['autofill_locale']);
+            $forceOverwrite = !empty($_POST['autofill_overwrite']);
             if ($targetLocale === 'all') {
                 foreach ($currentConfig['lang'] as $l) {
-                    LocaleManager::applyLocale($currentConfig, $l, false);
+                    LocaleManager::applyLocale($currentConfig, $l, $forceOverwrite);
                 }
             } else {
-                LocaleManager::applyLocale($currentConfig, $targetLocale, false);
+                LocaleManager::applyLocale($currentConfig, $targetLocale, $forceOverwrite);
             }
         }
 

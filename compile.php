@@ -258,7 +258,28 @@ $themeCode .= "            return \$files;\n";
 $themeCode .= "        }\n";
 $themeCode .= "    }\n\n";
 
-$compiled .= $themeCode;
+$localeFiles = (array) glob($base . '/resources/locales/*.json');
+$localesCode = "    class EmbeddedLocales {\n";
+$localesCode .= "        private static array \$locales = [\n";
+foreach ($localeFiles as $locPath) {
+    if (is_file((string) $locPath)) {
+        $locCode = basename((string) $locPath, '.json');
+        $content = (string) file_get_contents((string) $locPath);
+        $localesCode .= "            '" . addslashes($locCode) . "' => '" . base64_encode($content) . "',\n";
+    }
+}
+$localesCode .= "        ];\n";
+$localesCode .= "        public static function getLocale(string \$code): ?array {\n";
+$localesCode .= "            if (!isset(self::\$locales[\$code])) return null;\n";
+$localesCode .= "            \$decoded = json_decode(base64_decode(self::\$locales[\$code]), true);\n";
+$localesCode .= "            return is_array(\$decoded) ? \$decoded : null;\n";
+$localesCode .= "        }\n";
+$localesCode .= "        public static function getSupportedCodes(): array {\n";
+$localesCode .= "            return array_keys(self::\$locales);\n";
+$localesCode .= "        }\n";
+$localesCode .= "    }\n\n";
+
+$compiled .= $themeCode . $localesCode;
 
 // Inject install.php logic adapted for the single file
 $runnerCode .= <<<'EOT'

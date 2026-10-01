@@ -855,10 +855,6 @@ class ConfigView
                                     <button type="submit" name="remove_kind" value="<?= htmlspecialchars($k) ?>" class="btn-secondary" style="color: #f43f5e; border-color: rgba(244, 63, 94, 0.5);">Remove</button>
                                 </h3>
                                 <div class="grid-2">
-                                    <div class="form-group" style="display:none;">
-                                        <label>Content Directory</label>
-                                        <input type="hidden" name="kinds[<?= htmlspecialchars($k) ?>][content_dir]" value="<?= htmlspecialchars(is_array($data['content_dir'] ?? '') ? json_encode($data['content_dir'], JSON_UNESCAPED_UNICODE) : (is_string($data['content_dir'] ?? '') ? $data['content_dir'] : '')) ?>">
-                                    </div>
                                     <div class="form-group">
                                         <label>Display Mode</label>
                                         <select name="kinds[<?= htmlspecialchars($k) ?>][display_mode]">
@@ -1110,6 +1106,10 @@ class ConfigView
 
                     <fieldset>
                         <legend>Content Kinds Translations</legend>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; padding: 0.75rem 1rem; background: rgba(0, 240, 255, 0.05); border: 1px solid rgba(0, 240, 255, 0.2); border-radius: 4px;">
+                            <span style="font-size: 0.85rem; color: var(--text-muted);">Auto-populate missing or default kind titles and directories using bundled locale dictionaries (<code>pt</code>, <code>es</code>, <code>en</code>, etc.).</span>
+                            <button type="submit" name="autofill_locale" value="all" class="btn-secondary" style="padding: 4px 10px; font-size: 0.8rem;">Auto-fill from Locales</button>
+                        </div>
                         <?php foreach ($kinds as $k => $data): ?>
                             <div class="form-group" style="margin-bottom: 1.5rem;">
                                 <label style="color: var(--tint-yellow); font-size: 0.95rem; font-weight: 800;"><?= htmlspecialchars(ucfirst($k)) ?> Translations</label>

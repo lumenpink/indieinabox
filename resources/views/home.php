@@ -34,7 +34,7 @@
 
         <h2><?= \Indieinabox\Localization\Translator::translate('Recent posts') ?></h2>
         <div class="catalogue h-feed">
-            <?= \Indieinabox\Taxonomy\KindHelper::listposts() ?>
+            <?= \Indieinabox\Taxonomy\KindHelper::listposts($pages ?? null, $site ?? null, $page ?? null) ?>
         </div>
     </main>
     

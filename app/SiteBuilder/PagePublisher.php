@@ -184,6 +184,16 @@ class PagePublisher
                 echo 'Built ' . $page->slug . "index.html\n";
             }
             ob_start();
+            $container = class_exists(\Indieinabox\Core\Container::class) ? \Indieinabox\Core\Container::getInstance() : null;
+            if ($container !== null) {
+                $container->instance(\Indieinabox\Page\Pages::class, $this->pages);
+                $container->instance(\Indieinabox\Page\Page::class, $page);
+                $container->instance(\Indieinabox\Site\Site::class, $this->site);
+            }
+            $GLOBALS['site'] = $this->site;
+            $GLOBALS['pages'] = $this->pages;
+            $GLOBALS['page'] = $page;
+
             $viewVars = array_merge(get_defined_vars(), $additionalViewVars);
             // phpcs:ignore Generic.PHP.ForbiddenFunctions.FoundWithAlternative
             ThemeManager::loadView(

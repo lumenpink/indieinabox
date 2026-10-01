@@ -10,6 +10,10 @@
   - (admin,docs) implement lambe-lambe periferico and DIY resistance theme (#46)
   - (docs) add comprehensive cyberpunk documentation site and cloudflare deployment pipeline
 
+### Fixes
+  - (builder) corrigir listposts na home e padronizar suporte a pretty links (closes #56)
+  - (i18n) incluir content kinds nos pacotes de idioma (closes #55)
+
 ## Previous Releases
 
 ### [v1.0.0] - Full Federation, Theme Ecosystem & Moderation

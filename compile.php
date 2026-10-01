@@ -226,37 +226,39 @@ function getThemeFiles(string $dir): array {
 $themeViews = getThemeFiles($base . '/resources/views');
 $themeStatic = getThemeFiles($base . '/resources/static');
 
-$runnerCode .= "class DefaultTheme {\n";
-$runnerCode .= "    private static \$views = [\n";
+$themeCode = "    class DefaultTheme {\n";
+$themeCode .= "        private static \$views = [\n";
 foreach ($themeViews as $path => $content) {
     $rel = str_replace($base . '/resources/', '', $path);
-    $runnerCode .= "        '" . addslashes(str_replace('\\', '/', $rel)) . "' => '" . base64_encode($content) . "',\n";
+    $themeCode .= "            '" . addslashes(str_replace('\\', '/', $rel)) . "' => '" . base64_encode($content) . "',\n";
 }
-$runnerCode .= "    ];\n";
-$runnerCode .= "    private static \$staticFiles = [\n";
+$themeCode .= "        ];\n";
+$themeCode .= "        private static \$staticFiles = [\n";
 foreach ($themeStatic as $path => $content) {
     $rel = str_replace($base . '/resources/', '', $path);
-    $runnerCode .= "        '" . addslashes(str_replace('\\', '/', $rel)) . "' => '" . base64_encode($content) . "',\n";
+    $themeCode .= "            '" . addslashes(str_replace('\\', '/', $rel)) . "' => '" . base64_encode($content) . "',\n";
 }
-$runnerCode .= "    ];\n";
-$runnerCode .= "    public static function getView(string \$path): ?string {
-        return isset(self::\$views[\$path]) ? base64_decode(self::\$views[\$path]) : null;
-    }
-    public static function getViews(): array {
-        \$files = [];
-        foreach (self::\$views as \$path => \$b64) {
-            \$files[\$path] = base64_decode(\$b64);
-        }
-        return \$files;
-    }\n";
-$runnerCode .= "    public static function getStaticFiles(): array {\n";
-$runnerCode .= "        \$files = [];\n";
-$runnerCode .= "        foreach (self::\$staticFiles as \$path => \$b64) {\n";
-$runnerCode .= "            \$files[\$path] = base64_decode(\$b64);\n";
-$runnerCode .= "        }\n";
-$runnerCode .= "        return \$files;\n";
-$runnerCode .= "    }\n";
-$runnerCode .= "}\n\n";
+$themeCode .= "        ];\n";
+$themeCode .= "        public static function getView(string \$path): ?string {\n";
+$themeCode .= "            return isset(self::\$views[\$path]) ? base64_decode(self::\$views[\$path]) : null;\n";
+$themeCode .= "        }\n";
+$themeCode .= "        public static function getViews(): array {\n";
+$themeCode .= "            \$files = [];\n";
+$themeCode .= "            foreach (self::\$views as \$path => \$b64) {\n";
+$themeCode .= "                \$files[\$path] = base64_decode(\$b64);\n";
+$themeCode .= "            }\n";
+$themeCode .= "            return \$files;\n";
+$themeCode .= "        }\n";
+$themeCode .= "        public static function getStaticFiles(): array {\n";
+$themeCode .= "            \$files = [];\n";
+$themeCode .= "            foreach (self::\$staticFiles as \$path => \$b64) {\n";
+$themeCode .= "                \$files[\$path] = base64_decode(\$b64);\n";
+$themeCode .= "            }\n";
+$themeCode .= "            return \$files;\n";
+$themeCode .= "        }\n";
+$themeCode .= "    }\n\n";
+
+$compiled .= $themeCode;
 
 // Inject install.php logic adapted for the single file
 $runnerCode .= <<<'EOT'

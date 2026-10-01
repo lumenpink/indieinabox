@@ -150,7 +150,8 @@ if (isset($config['htmlpostprocessing'])) {
     $site->options->htmlpostprocessing = $config['htmlpostprocessing'];
 }
 if (isset($config['prettylinks'])) {
-    $site->options->prettylinks = (bool)$config['prettylinks'];
+    $val = $config['prettylinks'];
+    $site->options->prettylinks = ($val !== '' && $val !== '0' && $val !== false && $val !== 0);
 }
 
 if (isset($config['skipstatic'])) {

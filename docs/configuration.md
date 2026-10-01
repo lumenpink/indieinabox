@@ -21,6 +21,7 @@ The primary generator settings are loaded from `config.yml` in the project root:
 | `lang` | `array` | Supported language locales list (e.g. `[pt-br, en, es]`). |
 | `defaultlang` | `string` | The default language translation route. |
 | `support` | `array` | Extensions list processed by generator (e.g. `[md, txt, html]`). |
+| `prettylinks` | `bool` | Enables clean folder URLs (`/slug/index.html` rendered as `/slug/`) without trailing `.html` extension (default: `true`). |
 | `defaultcategory` | `string` | Category fallback value for pages. |
 | `cron_token` | `string` | Secret token required to trigger `GET /cron?token=...` externally (can also be set via `CRON_TOKEN` env). |
 | `build_token` | `string` | Secret token required to trigger `POST /build?token=...` webhook (can also be set via `BUILD_TOKEN` env). |

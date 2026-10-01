@@ -73,7 +73,7 @@ class IndexPublisher
             if ($prettylinks) {
                 $sitemapSlug = ($lang === $defaultLang ? '' : $lang . '/') . $indexSlugConfig . '/';
             } else {
-                $sitemapSlug = ($lang === $defaultLang ? '' : $lang . '/') . $indexSlugConfig . '.html';
+                $sitemapSlug = ($lang === $defaultLang ? '' : $lang . '/') . ($indexSlugConfig === 'index' ? 'sitemap' : $indexSlugConfig) . '.html';
             }
 
             $sitemapPage = Page::fromArray([

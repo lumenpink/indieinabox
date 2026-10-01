@@ -90,3 +90,22 @@ it('filters generic pages with removeGeneric', function () {
     $articlePage->kind = 'article';
     expect(KindHelper::removeGeneric($articlePage))->toBeTrue();
 });
+
+it('renders recent posts via listposts using container pages', function () {
+    $pages = new \Indieinabox\Page\Pages();
+    $page1 = Page::fromArray([
+        'kind' => 'note',
+        'slug' => 'notes/2026/test-note/',
+        'title' => 'Test Note',
+        'lang' => 'en',
+        'date' => time(),
+        'content' => 'Hello test note'
+    ]);
+    $pages->add($page1);
+
+    Container::getInstance()->instance(\Indieinabox\Page\Pages::class, $pages);
+
+    $html = KindHelper::listposts();
+    expect($html)->toContain('h-entry')
+        ->and($html)->toContain('notes/2026/test-note/');
+});

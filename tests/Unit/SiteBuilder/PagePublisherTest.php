@@ -223,3 +223,31 @@ it('calculates menu links categorized into header and footer', function () {
     expect($headerLabels)->toContain('About Page');
     expect($footerLabels)->toContain('Privacy Policy');
 });
+
+it('binds Pages, Page and Site into Container during publishHtml', function () {
+    $themeViewDir = $this->tempDir . '/theme/views';
+    file_put_contents(
+        $themeViewDir . '/container_check.php',
+        '<?php
+        $container = \Indieinabox\Core\Container::getInstance();
+        echo "pages:" . ($container->has(\Indieinabox\Page\Pages::class) ? "yes" : "no");
+        echo " page:" . ($container->has(\Indieinabox\Page\Page::class) ? "yes" : "no");
+        echo " site:" . ($container->has(\Indieinabox\Site\Site::class) ? "yes" : "no");
+        ?>'
+    );
+
+    $page = Page::fromArray([
+        'title' => 'Check Page',
+        'slug' => 'check/',
+        'layout' => 'container_check',
+        'lang' => 'en',
+    ]);
+    $this->pages->add($page);
+
+    $this->publisher->publishHtml($page);
+
+    $outputFile = $this->tempDir . '/public_html/check/index.html';
+    expect(file_exists($outputFile))->toBeTrue();
+    $content = file_get_contents($outputFile);
+    expect($content)->toContain('pages:yes page:yes site:yes');
+});

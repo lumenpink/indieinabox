@@ -148,7 +148,6 @@ class KindHelper
 
         $count = 0;
         ob_start();
-        $themeDir = $site?->paths->themeDir ?? 'theme';
         foreach ($recentPages as $originalPage) {
             $page = clone $originalPage;
             if ($mainPage instanceof Page) {
@@ -157,8 +156,8 @@ class KindHelper
             if ($count > 0) {
                 echo "<hr class=\"divisor-bloco\">\n";
             }
-            ThemeManager::loadView(
-                $base . DIRECTORY_SEPARATOR . $themeDir . DIRECTORY_SEPARATOR . 'views/includes/summary.php',
+            ThemeManager::includeView(
+                'includes/summary.php',
                 get_defined_vars()
             );
             $count++;

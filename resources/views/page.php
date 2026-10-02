@@ -20,6 +20,7 @@
             <?= \Indieinabox\Theme\ThemeHelper::getIndieWebContext($page) ?>
 
             <div class="e-content" style="margin-left: 2em;">
+                <?= \Indieinabox\Theme\ThemeHelper::getOldVersionNotice($page) ?>
                 <?= \Indieinabox\Theme\ThemeHelper::getAITranslationNotice($page) ?>
                 <?= $page->content ?>
             </div>

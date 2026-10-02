@@ -132,4 +132,92 @@ $colors = ThemeData::getThemeColors($page);
         font-size: 0.85em;
         opacity: 0.8;
     }
+    /* MediaWiki style diffs & versioning */
+    .wiki-history-wrapper {
+        margin: 1.5em 0;
+    }
+    .wiki-history-list {
+        margin: 1em 0;
+        padding-left: 0;
+        list-style: none;
+    }
+    .wiki-history-item {
+        padding: 0.4em 0;
+        border-bottom: 1px dotted var(--border-color, rgba(128,128,128,0.3));
+        font-family: inherit;
+        font-size: 0.95em;
+    }
+    .mw-history-radios {
+        margin-right: 0.5em;
+    }
+    .bytes-positive {
+        color: #28a745;
+        font-weight: 600;
+    }
+    .bytes-negative {
+        color: #d73a49;
+        font-weight: 600;
+    }
+    .bytes-neutral {
+        opacity: 0.7;
+    }
+    table.diff {
+        width: 100%;
+        border-collapse: collapse;
+        font-family: monospace;
+        font-size: 0.88em;
+        margin: 1.5em 0;
+        border: 1px solid var(--border-color, rgba(128,128,128,0.3));
+    }
+    table.diff th {
+        padding: 0.6em;
+        text-align: left;
+        background: rgba(128, 128, 128, 0.1);
+        border-bottom: 2px solid var(--border-color, rgba(128,128,128,0.3));
+    }
+    table.diff td {
+        padding: 0.25em 0.5em;
+        vertical-align: top;
+        white-space: pre-wrap;
+        word-break: break-word;
+    }
+    .diff-marker {
+        width: 1.5em;
+        text-align: center;
+        font-weight: bold;
+        user-select: none;
+    }
+    .diff-marker-del {
+        color: #d73a49;
+    }
+    .diff-marker-add {
+        color: #28a745;
+    }
+    .diff-deletedline {
+        background-color: rgba(215, 58, 73, 0.15);
+    }
+    .diff-deletedline del {
+        text-decoration: none;
+        background-color: rgba(215, 58, 73, 0.25);
+        border-radius: 2px;
+    }
+    .diff-addedline {
+        background-color: rgba(40, 167, 69, 0.15);
+    }
+    .diff-addedline ins {
+        text-decoration: none;
+        background-color: rgba(40, 167, 69, 0.25);
+        border-radius: 2px;
+    }
+    .diff-context {
+        background-color: transparent;
+        opacity: 0.8;
+    }
+    .wiki-revision-notice {
+        margin-bottom: 1.5em;
+        padding: 1em;
+        border-left: 4px solid var(--accent, #e36209);
+        background: rgba(227, 98, 9, 0.1);
+        border-radius: 4px;
+    }
 </style>

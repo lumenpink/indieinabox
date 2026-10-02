@@ -206,6 +206,56 @@ Se a opção **"Enable automatic WebArchive submissions"** estiver ativa nas con
 - Todos os links externos citados em suas postagens e notas são enfileirados em segundo plano.
 - O worker de cron despacha periodicamente os links para o *Internet Archive (Wayback Machine)* e baixa um snapshot em PDF via Microlink, salvaguardando suas referências bibliográficas contra o apodrecimento de links (*link rot*).
 
+---
+
+### 7. Posts Versionados e Histórico Estático Estilo MediaWiki (#52)
+
+O IndieInABox suporta controle de versão granular por post, gerando histórico de alterações e páginas de snapshots no estilo MediaWiki, **100% estático e com zero atrito no Obsidian**.
+
+#### Como ativar o versionamento em um post
+
+Basta incluir `versioned: true` no frontmatter do seu arquivo Markdown:
+
+```yaml
+---
+title: Manifesto Cambirela
+kind: garden # ou article, note, zine
+versioned: true
+version_note: "Revisão da seção de infraestrutura autônoma" # opcional
+---
+
+Seu conteúdo em Markdown aqui...
+```
+
+#### Como funciona com o Obsidian (Zero Atrito)
+- **O IIAB nunca modifica o seu arquivo `.md` original**: você pode editar, salvar ou renomear no Obsidian normalmente sem sofrer recarregamento de buffer nem conflitos de sincronização (Syncthing/Git).
+- **Arquivo Companion `{post}.history.json`**: O IIAB grava os metadados de histórico, snapshots e diffs em um arquivo de apoio ao lado do markdown (ex: `manifesto.history.json`). O Obsidian ignora arquivos `.json` no explorador de notas, mantendo seu vault limpo.
+
+#### Numeração e Detecção de Mudanças
+- O IIAB calcula o hash `sha256` do corpo do Markdown a cada `build`.
+- Se o conteúdo não mudou, nenhuma versão nova é criada.
+- Se o conteúdo mudou, uma nova versão é gerada no formato **`v{rev}.{YYYYMMDD}.{subrev}`**:
+  - `v1.20261002.1`: Primeira versão.
+  - `v2.20261002.2`: Segunda alteração no mesmo dia.
+  - `v3.20261005.1`: Terceira versão em outro dia.
+- O resumo da alteração é extraído do campo `version_note` (ou gerado automaticamente).
+
+#### O que é publicado no site estático (Zero PHP em runtime)
+1. **Badge no Post Atual**:
+   - Exibe a versão atual e o link para o histórico: `🏷️ Versão: v2.20261002.2 · 📜 Histórico (2)`.
+2. **Página de Histórico (`/{slug}/history/index.html`)**:
+   - Lista cronológica reversa de versões estilo MediaWiki.
+   - Mostra data/hora, tamanho em bytes com variação (`+150 bytes` em verde / `-40 bytes` em vermelho) e notas de edição.
+   - **Visualizador de Diffs em 2 Colunas**: Tabela comparativa pré-renderizada e suporte a comparação dinâmica entre quaisquer duas revisões via rádio buttons e JavaScript vanilla autônomo (100% offline e client-side).
+3. **Páginas de Versões Históricas (`/{slug}/v/{version}/index.html`)**:
+   - Renderização estática do documento no estado exato daquela época.
+   - Caixa de aviso superior estilo MediaWiki:
+     > ⚠️ **Esta é uma versão antiga desta página** (editada em `YYYY-MM-DD` — `v1.20261002.1`). Ela pode diferir significativamente da versão mais recente atual.
+4. **Canais Gemini e Gopher**:
+   - Totalmente segregados em suas respectivas pastas (`public_gemini/` e `public_gopher/`).
+   - Geram `/{slug}/history/index.gmi` e snapshots de gemtext, além de menus `gophermap` compatíveis com o RFC 1436.
+
+
 
 
 

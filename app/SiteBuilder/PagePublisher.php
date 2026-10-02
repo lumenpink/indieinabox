@@ -68,9 +68,18 @@ class PagePublisher
      */
     public function publish(Page $page): void
     {
+        $versionHistory = null;
+        if (class_exists(\Indieinabox\Versioning\VersionManager::class) && \Indieinabox\Versioning\VersionManager::isVersioned($page)) {
+            $versionHistory = \Indieinabox\Versioning\VersionManager::processPage($page);
+        }
+
         $this->publishHtml($page);
         $this->publishGemini($page);
         $this->publishGopher($page);
+
+        if ($versionHistory !== null && class_exists(\Indieinabox\Versioning\VersionPublisher::class)) {
+            \Indieinabox\Versioning\VersionPublisher::publishAll($page, $this->site, $this->pages, $versionHistory);
+        }
     }
 
     /**
@@ -195,9 +204,11 @@ class PagePublisher
             $GLOBALS['page'] = $page;
 
             $viewVars = array_merge(get_defined_vars(), $additionalViewVars);
-            // phpcs:ignore Generic.PHP.ForbiddenFunctions.FoundWithAlternative
+            $fullThemeDir = str_starts_with($themeDir, DIRECTORY_SEPARATOR)
+                ? $themeDir
+                : ($base . DIRECTORY_SEPARATOR . $themeDir);
             ThemeManager::loadView(
-                $base . DIRECTORY_SEPARATOR . $themeDir . '/views/' . $page->metadata->layout . '.php',
+                $fullThemeDir . '/views/' . $page->metadata->layout . '.php',
                 $viewVars
             );
             $fileContent = ob_get_clean();
@@ -422,6 +433,10 @@ class PagePublisher
                 }
                 $gmiContent .= "\n";
             }
+            if (!empty($page->metadata->version)) {
+                $gmiContent .= "Version: " . $page->metadata->version . "\n";
+                $gmiContent .= "=> history/ Revision History (" . ($page->metadata->version_count ?? 1) . ")\n";
+            }
             $gmiContent .= "\n";
 
             $gmiContent .= $gemtextRenderer->render($ast);
@@ -515,6 +530,10 @@ class PagePublisher
                     $meta .= " by {$author}";
                 }
                 $gopherContent .= $formatInfo($meta);
+            }
+            if (!empty($page->metadata->version)) {
+                $gopherContent .= $formatInfo("Version: " . $page->metadata->version);
+                $gopherContent .= "1[Revision History]\t" . rtrim($page->slug, '/') . "/history/\t{$host}\t70\r\n";
             }
             $gopherContent .= $formatInfo('');
 

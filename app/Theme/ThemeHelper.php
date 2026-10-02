@@ -29,50 +29,9 @@ class ThemeHelper
             && !empty($page->isodate)
             && $page->localizeddate !== 'Saturday, January 1 of 2001, 00:00 UTC';
 
-        if (!$showMetadata) {
+        if (!$showMetadata && empty($page->metadata->version)) {
             return '';
         }
-
-        $html = '<div class="post-metadata">';
-        
-        // Line 1: [TIPO] - Data
-        $html .= '<div class="meta-line-1">';
-        $html .= KindHelper::kindLink($page, $page->kind);
-        $formattedDate = $page->kind === 'photo' ? date('Y-m-d', strtotime($page->isodate)) : $page->localizeddate;
-        $html .= ' - <a href="' . $page->relpath . ltrim($page->slug, '/') . '" class="u-url"><time class="dt-published" datetime="' . $page->isodate . '">' . $formattedDate . '</time></a>';
-        $html .= '</div>';
-
-        // Line 2: Shortlink - Likes / Reposts / Replies
-        $html .= '<div class="meta-line-2" style="margin-left: 0.6em;">';
-        if (!empty($page->shortlink)) {
-            $html .= '<a href="' . htmlspecialchars($page->shortlink) . '" style="color: inherit; text-decoration: none; opacity: 0.8;">🔗</a> - ';
-        }
-
-        $likes = KindHelper::getInteractions($page, 'like');
-        $reposts = KindHelper::getInteractions($page, 'repost');
-        $replies = KindHelper::getInteractions($page, 'reply');
-
-        if (count($likes) > 0) {
-            $html .= '<a href="' . $page->relpath . ltrim($page->slug, '/') . '/interactions#likes" style="color: inherit; text-decoration: none;">' . count($likes) . ' ' . Translator::translatePlural('Like', 'Likes', count($likes)) . '</a>';
-        } else {
-            $html .= '<span style="opacity: 0.8; font-size: 0.9em;">0 ' . Translator::translatePlural('Like', 'Likes', 0) . '</span>';
-        }
-        $html .= ' / ';
-
-        if (count($reposts) > 0) {
-            $html .= '<a href="' . $page->relpath . ltrim($page->slug, '/') . '/interactions#reposts" style="color: inherit; text-decoration: none;">' . count($reposts) . ' ' . Translator::translatePlural('Repost', 'Reposts', count($reposts)) . '</a>';
-        } else {
-            $html .= '<span style="opacity: 0.8; font-size: 0.9em;">0 ' . Translator::translatePlural('Repost', 'Reposts', 0) . '</span>';
-        }
-        $html .= ' / ';
-
-        if (count($replies) > 0) {
-            $html .= '<a href="' . $page->relpath . ltrim($page->slug, '/') . '#interactions" style="color: inherit; text-decoration: none;">' . count($replies) . ' ' . Translator::translatePlural('Reply', 'Replies', count($replies)) . '</a>';
-        } else {
-            $html .= '<span style="opacity: 0.8; font-size: 0.9em;">0 ' . Translator::translatePlural('Reply', 'Replies', 0) . '</span>';
-        }
-
-        $html .= '</div>';
 
         $container = \Indieinabox\Core\Container::getInstance();
         $site = $container->has(\Indieinabox\Site\Site::class) ? $container->get(\Indieinabox\Site\Site::class) : ($GLOBALS['site'] ?? null);
@@ -80,48 +39,125 @@ class ThemeHelper
         $pageLang = $page->lang ?? $defaultLang;
         $langPrefix = ($pageLang === $defaultLang) ? '' : $pageLang . '/';
 
-        // Line 3: Tags
-        if (!empty($page->tags)) {
-            $html .= '<div class="meta-line-3" style="margin-left: 0.6em;">';
-            foreach ($page->tags as $tag) {
-                $html .= '<a href="' . $page->relpath . $langPrefix . 'tag/' . TextParser::slugize($tag) . '/" class="p-category">#' . htmlspecialchars($tag) . '</a>&#32;';
-            }
+        $html = '<div class="post-metadata">';
+
+        if ($showMetadata) {
+            // Line 1: [TIPO] - Data
+            $html .= '<div class="meta-line-1">';
+            $html .= KindHelper::kindLink($page, $page->kind);
+            $formattedDate = $page->kind === 'photo' ? date('Y-m-d', strtotime($page->isodate)) : $page->localizeddate;
+            $html .= ' - <a href="' . $page->relpath . ltrim($page->slug, '/') . '" class="u-url"><time class="dt-published" datetime="' . $page->isodate . '">' . $formattedDate . '</time></a>';
             $html .= '</div>';
+
+            // Line 2: Shortlink - Likes / Reposts / Replies
+            $html .= '<div class="meta-line-2" style="margin-left: 0.6em;">';
+            if (!empty($page->shortlink)) {
+                $html .= '<a href="' . htmlspecialchars($page->shortlink) . '" style="color: inherit; text-decoration: none; opacity: 0.8;">🔗</a> - ';
+            }
+
+            $likes = KindHelper::getInteractions($page, 'like');
+            $reposts = KindHelper::getInteractions($page, 'repost');
+            $replies = KindHelper::getInteractions($page, 'reply');
+
+            if (count($likes) > 0) {
+                $html .= '<a href="' . $page->relpath . ltrim($page->slug, '/') . '/interactions#likes" style="color: inherit; text-decoration: none;">' . count($likes) . ' ' . Translator::translatePlural('Like', 'Likes', count($likes)) . '</a>';
+            } else {
+                $html .= '<span style="opacity: 0.8; font-size: 0.9em;">0 ' . Translator::translatePlural('Like', 'Likes', 0) . '</span>';
+            }
+            $html .= ' / ';
+
+            if (count($reposts) > 0) {
+                $html .= '<a href="' . $page->relpath . ltrim($page->slug, '/') . '/interactions#reposts" style="color: inherit; text-decoration: none;">' . count($reposts) . ' ' . Translator::translatePlural('Repost', 'Reposts', count($reposts)) . '</a>';
+            } else {
+                $html .= '<span style="opacity: 0.8; font-size: 0.9em;">0 ' . Translator::translatePlural('Repost', 'Reposts', 0) . '</span>';
+            }
+            $html .= ' / ';
+
+            if (count($replies) > 0) {
+                $html .= '<a href="' . $page->relpath . ltrim($page->slug, '/') . '#interactions" style="color: inherit; text-decoration: none;">' . count($replies) . ' ' . Translator::translatePlural('Reply', 'Replies', count($replies)) . '</a>';
+            } else {
+                $html .= '<span style="opacity: 0.8; font-size: 0.9em;">0 ' . Translator::translatePlural('Reply', 'Replies', 0) . '</span>';
+            }
+
+            $html .= '</div>';
+
+            // Line 3: Tags
+            if (!empty($page->tags)) {
+                $html .= '<div class="meta-line-3" style="margin-left: 0.6em;">';
+                foreach ($page->tags as $tag) {
+                    $html .= '<a href="' . $page->relpath . $langPrefix . 'tag/' . TextParser::slugize($tag) . '/" class="p-category">#' . htmlspecialchars($tag) . '</a>&#32;';
+                }
+                $html .= '</div>';
+            }
+
+            // Custom Garden Fields (if any, append to line 2 or create new block)
+            if ($page->kind === 'garden' || $page->kind === 'jardim') {
+                $flowerbed = isset($page->metadata->flowerbed) && is_array($page->metadata->flowerbed) ? $page->metadata->flowerbed : [Translator::translate('general', $page->lang ?? null)];
+                $confidence = $page->metadata->confidence ?? 'possible';
+                if (!in_array($confidence, ['certain', 'likely', 'possible', 'unlikely', 'impossible'])) {
+                    $confidence = 'unknown';
+                }
+                
+                $maturity = $page->metadata->maturity ?? 'sprout';
+                if (!in_array($maturity, ['sprout', 'seedling', 'tree', 'wilted', 'stone'])) {
+                    $maturity = 'unknown';
+                }
+                
+                $importance = $page->metadata->importance ?? 'trivial';
+                if (!in_array($importance, ['trivial', 'minor', 'moderate', 'major', 'critical'])) {
+                    $importance = 'unknown';
+                }
+                
+                $flowerbedLinks = [];
+                foreach ($flowerbed as $fb) {
+                    $flowerbedLinks[] = '<a href="' . $page->relpath . $langPrefix . 'flowerbed/' . TextParser::slugize($fb) . '/">' . htmlspecialchars(Translator::translate($fb, $pageLang)) . '</a>';
+                }
+                $html .= '<div class="meta-garden-fields" style="margin-left: 0.6em;">';
+                $html .= ' • ' . Translator::translate('Flowerbed', $pageLang) . ': ' . implode(', ', $flowerbedLinks) . '<br>';
+                $html .= ' • ' . Translator::translate('Confidence', $pageLang) . ': ' . htmlspecialchars(Translator::translate($confidence, $pageLang)) . '<br>';
+                $html .= ' • ' . Translator::translate('Maturity', $pageLang) . ': ' . htmlspecialchars(Translator::translate($maturity, $pageLang)) . '<br>';
+                $html .= ' • ' . Translator::translate('Importance', $pageLang) . ': ' . htmlspecialchars(Translator::translate($importance, $pageLang));
+                $html .= '</div>';
+            }
         }
 
-        // Custom Garden Fields (if any, append to line 2 or create new block)
-        if ($page->kind === 'garden' || $page->kind === 'jardim') {
-            $flowerbed = isset($page->metadata->flowerbed) && is_array($page->metadata->flowerbed) ? $page->metadata->flowerbed : [Translator::translate('general', $page->lang ?? null)];
-            $confidence = $page->metadata->confidence ?? 'possible';
-            if (!in_array($confidence, ['certain', 'likely', 'possible', 'unlikely', 'impossible'])) {
-                $confidence = 'unknown';
-            }
-            
-            $maturity = $page->metadata->maturity ?? 'sprout';
-            if (!in_array($maturity, ['sprout', 'seedling', 'tree', 'wilted', 'stone'])) {
-                $maturity = 'unknown';
-            }
-            
-            $importance = $page->metadata->importance ?? 'trivial';
-            if (!in_array($importance, ['trivial', 'minor', 'moderate', 'major', 'critical'])) {
-                $importance = 'unknown';
-            }
-            
-            $flowerbedLinks = [];
-            foreach ($flowerbed as $fb) {
-                $flowerbedLinks[] = '<a href="' . $page->relpath . $langPrefix . 'flowerbed/' . TextParser::slugize($fb) . '/">' . htmlspecialchars(Translator::translate($fb, $pageLang)) . '</a>';
-            }
-            $html .= '<div class="meta-garden-fields" style="margin-left: 0.6em;">';
-            $html .= ' • ' . Translator::translate('Flowerbed', $pageLang) . ': ' . implode(', ', $flowerbedLinks) . '<br>';
-            $html .= ' • ' . Translator::translate('Confidence', $pageLang) . ': ' . htmlspecialchars(Translator::translate($confidence, $pageLang)) . '<br>';
-            $html .= ' • ' . Translator::translate('Maturity', $pageLang) . ': ' . htmlspecialchars(Translator::translate($maturity, $pageLang)) . '<br>';
-            $html .= ' • ' . Translator::translate('Importance', $pageLang) . ': ' . htmlspecialchars(Translator::translate($importance, $pageLang));
+        // Versioning badge and link to history
+        if (!empty($page->metadata->version)) {
+            $versionTag = htmlspecialchars((string) $page->metadata->version);
+            $historyCount = isset($page->metadata->version_count) ? ' (' . (int) $page->metadata->version_count . ')' : '';
+            $historyUrl = $page->relpath . ltrim($page->slug, '/') . '/history/';
+            $html .= '<div class="meta-version" style="margin-left: 0.6em; margin-top: 0.3em; font-size: 0.9em; opacity: 0.9;">';
+            $html .= '🏷️ <strong>' . Translator::translate('Version', $pageLang) . ':</strong> <code>' . $versionTag . '</code> · <a href="' . $historyUrl . '" class="version-history-link">📜 ' . Translator::translate('History', $pageLang) . $historyCount . '</a>';
             $html .= '</div>';
         }
 
         $html .= '</div>';
 
         return $html;
+    }
+
+    /**
+     * Renders a MediaWiki-style warning banner when viewing an old historical snapshot.
+     */
+    public static function getOldVersionNotice(Page $page): string
+    {
+        if (empty($page->metadata->is_old_version)) {
+            return '';
+        }
+
+        $versionTag = htmlspecialchars((string) ($page->metadata->version ?? 'antiga'));
+        $date = htmlspecialchars((string) ($page->metadata->old_version_date ?? ''));
+        $pageLang = $page->lang ?? 'pt';
+
+        $notice = '<div class="wiki-revision-notice" role="alert" style="margin-bottom: 1.5em; padding: 1em; border-left: 4px solid var(--accent, #e36209); background: var(--notice-bg, rgba(227, 98, 9, 0.08)); border-radius: 4px;">';
+        $notice .= '<strong>⚠️ ' . Translator::translate('This is an old version of this page', $pageLang) . '</strong>';
+        if ($date !== '') {
+            $notice .= ' (' . Translator::translate('edited on', $pageLang) . ' <code>' . $date . '</code> — <code>' . $versionTag . '</code>).';
+        }
+        $notice .= '<br><a href="../../">← ' . Translator::translate('Go to the most recent version', $pageLang) . '</a> · <a href="../../history/">' . Translator::translate('View revision history', $pageLang) . '</a>';
+        $notice .= '</div>';
+
+        return $notice;
     }
 
     /**

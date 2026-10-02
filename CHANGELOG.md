@@ -3,6 +3,9 @@
 ## [Unreleased]
 
 ### Features
+  - (ui) reorganizar pagina de internacionalizacao em categorias e busca em tempo real (closes #68)
+  - (test) validar fluxo de traducao automatica via IA (closes #63)
+  - (core) permitir selecao e recomendacao de modelos de IA para traducao (closes #62)
   - (markdown) implementar sistema de tirinhas estilo comic chat via marcacao (closes #75)
   - (markdown) implementar componente interativo de balao de fala estilo cowsay (closes #74)
   - (markdown) implementar sistema de dialogos com avatares de personagens e emojis (closes #73)
@@ -19,6 +22,7 @@
   - (docs) add comprehensive cyberpunk documentation site and cloudflare deployment pipeline
 
 ### Fixes
+  - (ui) corrigir exibicao do rodape na interface publica e cockpit administrativo (closes #61)
   - (ui) centralizar e limitar altura maxima das imagens (closes #71)
   - (theme) aumentar variacao e contraste das cores base por kind page (closes #70)
   - (media) resolver anexos do vault e unificar publicacao em pasta media (closes #59)

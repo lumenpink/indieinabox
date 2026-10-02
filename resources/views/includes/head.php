@@ -111,4 +111,25 @@ $colors = ThemeData::getThemeColors($page);
         background: rgba(0, 0, 0, 0.1);
         text-decoration: none;
     }
+    footer[role="contentinfo"] {
+        margin-top: 3em;
+        padding-top: 1.5em;
+        text-align: center;
+        font-size: 0.9em;
+        opacity: 0.85;
+        clear: both;
+    }
+    footer[role="contentinfo"] nav.footer-links {
+        margin-bottom: 0.8em;
+    }
+    footer[role="contentinfo"] nav.footer-links a {
+        color: var(--accent);
+        text-decoration: underline;
+        margin: 0 0.4em;
+    }
+    footer[role="contentinfo"] .footer-credit {
+        margin-top: 0.5em;
+        font-size: 0.85em;
+        opacity: 0.8;
+    }
 </style>

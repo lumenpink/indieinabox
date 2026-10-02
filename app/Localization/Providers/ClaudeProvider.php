@@ -103,9 +103,10 @@ class ClaudeProvider implements AiTranslationProviderInterface
         curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         curl_setopt($ch, CURLOPT_TIMEOUT, 30);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         $result = curl_exec($ch);
-        curl_close($ch);
+        if (\PHP_VERSION_ID < 80000) {
+            curl_close($ch);
+        }
         return is_string($result) ? $result : '';
     }
 }

@@ -59,14 +59,17 @@ class TranslationVirtualizer
 
             $aiProvider = null;
             if ($aiProviderName === 'gemini') {
-                $aiProvider = new \Indieinabox\Localization\Providers\GeminiProvider($aiApiKey, $aiModel ?: 'gemini-1.5-flash');
+                $aiProvider = new \Indieinabox\Localization\Providers\GeminiProvider(
+                    $aiApiKey,
+                    $aiModel ?: \Indieinabox\Localization\AiModels::getDefaultModel('gemini')
+                );
             } elseif ($aiProviderName === 'openai') {
                 $aiProvider = new \Indieinabox\Localization\Providers\OpenAiCompatibleProvider(
                     'openai',
                     'OpenAI GPT',
                     $aiEndpoint ?: 'https://api.openai.com/v1/chat/completions',
                     $aiApiKey,
-                    $aiModel ?: 'gpt-4o-mini'
+                    $aiModel ?: \Indieinabox\Localization\AiModels::getDefaultModel('openai')
                 );
             } elseif ($aiProviderName === 'grok') {
                 $aiProvider = new \Indieinabox\Localization\Providers\OpenAiCompatibleProvider(
@@ -74,17 +77,20 @@ class TranslationVirtualizer
                     'xAI Grok',
                     $aiEndpoint ?: 'https://api.x.ai/v1/chat/completions',
                     $aiApiKey,
-                    $aiModel ?: 'grok-beta'
+                    $aiModel ?: \Indieinabox\Localization\AiModels::getDefaultModel('grok')
                 );
             } elseif ($aiProviderName === 'claude') {
-                $aiProvider = new \Indieinabox\Localization\Providers\ClaudeProvider($aiApiKey, $aiModel ?: 'claude-3-5-haiku-20241022');
+                $aiProvider = new \Indieinabox\Localization\Providers\ClaudeProvider(
+                    $aiApiKey,
+                    $aiModel ?: \Indieinabox\Localization\AiModels::getDefaultModel('claude')
+                );
             } elseif ($aiProviderName === 'ollama') {
                 $aiProvider = new \Indieinabox\Localization\Providers\OpenAiCompatibleProvider(
                     'ollama',
                     'Ollama (Local)',
                     $aiEndpoint ?: 'http://localhost:11434/v1/chat/completions',
                     '',
-                    $aiModel ?: 'llama3.2'
+                    $aiModel ?: \Indieinabox\Localization\AiModels::getDefaultModel('ollama')
                 );
             }
 

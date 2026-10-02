@@ -101,5 +101,111 @@ A cada compilação estática do site, o `SiteBuilder` gera automaticamente arqu
 - `/<lang>/search.json`: Índice filtrado especificamente para o idioma correspondente (ex: `/pt/search.json`).
 - Rascunhos (`draft`), páginas de introdução (`intro.md`) e a home page são excluídos automaticamente do índice de busca.
 
+---
+
+## Recursos Visuais, Mídia e Formatação Especial
+
+### 1. Imagens, Redimensionamento Dinâmico e Dithering (#71, #72)
+
+O IndieInABox suporta sintaxe padrão Markdown e wikilinks do Obsidian para inclusão de imagens, com processamento automático de dithering retrô e layout responsivo.
+
+- **Sintaxe básica (wikilink do Obsidian ou Markdown)**:
+  ```markdown
+  ![[foto.png]]
+  ![Foto do pôr do sol](foto.png)
+  ```
+- **Redimensionamento por largura (com dithering proporcional)**:
+  Para definir a largura desejada da imagem gerada, basta informar o número após a barra vertical `|`:
+  ```markdown
+  ![[esquema.png|400]]
+  ![Diagrama da arquitetura|600](esquema.png)
+  ```
+  O sistema automaticamente redimensiona a imagem para a largura solicitada (dentro da faixa de segurança de 64px a 1920px, padrão 512px) e gera uma versão otimizada com paleta reduzida e algoritmo de dithering (`esquema_400.gif`), espelhada em `/media/`.
+- **Layout e Centralização Semântica**:
+  Todas as imagens no corpo do texto são automaticamente envelopadas em tags semânticas `<figure class="content-media">` com centralização automática e limite de altura de `75vh`, garantindo que imagens verticais não quebrem a rolagem da página. Se houver texto alternativo/legenda, ele será exibido em um `<figcaption>`.
+
+---
+
+### 2. Diálogos com Avatares de Personagens e Emoções (#73)
+
+Você pode enriquecer artigos, ensaios e histórias com caixas de diálogo ilustradas usando blocos `[dialog]` ou a tag compacta `[say]`:
+
+- **Bloco de Diálogo Completo**:
+  ```markdown
+  [dialog char="sh0rk" emote="happy"]
+  Olá! Eu sou a Sh0rk, mascote oficial das águas profundas do ciberespaço.
+  [/dialog]
+
+  [dialog char="mara" emote="thinking"]
+  Interessante... como esse sistema processa expressões faciais?
+  [/dialog]
+  ```
+- **Atalho Rápido (Inline)**:
+  ```markdown
+  [say:sh0rk:excited]Isso aqui funciona até no meio de parágrafos normais![/say]
+  [say:mara:neutral]Basta usar a sintaxe compacta.[/say]
+  ```
+- **Personagens e Expressões Homologados**:
+  - `sh0rk` ou `blahaj`: O tubarão mascote (emoções: `neutral`, `happy`, `excited`, `thinking`, `sad`).
+  - `mara`: A ciberpunk rebelde (emoções: `neutral`, `happy`, `smirk`, `thinking`, `angry`).
+  - Personagens arbitrários: Se informar um nome customizado (ex: `char="alice"`), o sistema renderiza um avatar minimalista estilizado com base nas iniciais.
+
+---
+
+### 3. Balão de Fala ASCII estilo Cowsay (#74)
+
+Para notas descontraídas, citações nostálgicas ou anúncios em estilo terminal retrô:
+
+```markdown
+[cowsay char="cow"]
+A simplicidade é o último grau da sofisticação.
+[/cowsay]
+```
+
+- **Personagens ASCII disponíveis**:
+  - `char="cow"`: A vaquinha clássica do terminal UNIX.
+  - `char="blahaj"` ou `char="sh0rk"`: O tubarão ASCII nadando no terminal.
+  - `char="tux"`: O pinguim do Linux.
+- O texto dentro do bloco é quebrado automaticamente e posicionado dentro do balão de fala ASCII (`< ... >`).
+
+---
+
+### 4. Gerador de Tirinhas estilo Comic Chat (#75)
+
+Inspirado no clássico Microsoft Comic Chat dos anos 90, você pode criar tirinhas completas de quadrinhos a partir de pura marcação textual:
+
+```markdown
+[comic title="Debate no Terminal"]
+Mara (sorrindo): Você viu as novidades do IndieInABox?
+Sh0rk (pensativo): Disseram que agora tem tirinhas via marcação pura.
+Mara (animada): Sim! Basta escrever nome, emoção entre parênteses e a fala.
+Sh0rk (animado): Que demais! Parece mágica de terminal!
+[/comic]
+```
+
+- **Como funciona**:
+  - Cada linha no formato `Nome (emoção): Mensagem` vira um quadro sequencial.
+  - O sistema gera automaticamente um painel responsivo em CSS Grid com cartucho de personagem, balão de fala direcional e badge da emoção correspondente.
+
+---
+
+### 5. Shortlinks e URLs Curtas (#64, #65)
+
+Todas as publicações geram automaticamente um link curto para compartilhamento simplificado em redes sociais e cabeçalhos de metadados:
+
+- **Rota Curta Local**: Cada post ganha a rota `https://seusite.com/s/<hash8>`, apontando com redirecionamento canônico estático (`meta refresh` e `window.location.replace`) para o post original.
+- **Encurtadores Remotos (Opcional)**: Se ativado em `Configuração -> Shortlinks`, o sistema pode gerar URLs curtas no 0x0.st, 2lp.in ou instâncias privadas de Rustypaste, armazenando em cache persistente local.
+- **Uso nos Artigos**: Na barra de metadados de cada postagem, o ícone 🔗 contém o link curto pronto para copiar e colar.
+
+---
+
+### 6. Preservação Automática no Archive.org (#66, #67)
+
+Se a opção **"Enable automatic WebArchive submissions"** estiver ativa nas configurações:
+
+- Todos os links externos citados em suas postagens e notas são enfileirados em segundo plano.
+- O worker de cron despacha periodicamente os links para o *Internet Archive (Wayback Machine)* e baixa um snapshot em PDF via Microlink, salvaguardando suas referências bibliográficas contra o apodrecimento de links (*link rot*).
+
+
 
 

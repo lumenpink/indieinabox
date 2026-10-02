@@ -23,10 +23,10 @@ class GeminiProvider implements AiTranslationProviderInterface
      * @param string $model
      * @param callable|null $transport Optional HTTP client callback: fn(string $url, array $headers, string $body): array{code: int, body: string, error: string}
      */
-    public function __construct(string $apiKey = '', string $model = 'gemini-1.5-flash', ?callable $transport = null)
+    public function __construct(string $apiKey = '', string $model = 'gemini-2.5-flash', ?callable $transport = null)
     {
         $this->apiKey = trim($apiKey);
-        $this->model = trim($model) ?: 'gemini-1.5-flash';
+        $this->model = trim($model) ?: 'gemini-2.5-flash';
         $this->transport = $transport;
     }
 
@@ -111,9 +111,10 @@ class GeminiProvider implements AiTranslationProviderInterface
         curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         curl_setopt($ch, CURLOPT_TIMEOUT, 30);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         $result = curl_exec($ch);
-        curl_close($ch);
+        if (\PHP_VERSION_ID < 80000) {
+            curl_close($ch);
+        }
         return is_string($result) ? $result : '';
     }
 }

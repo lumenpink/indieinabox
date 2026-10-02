@@ -314,9 +314,75 @@ class ConfigView
             'Reads' => 'Reads kind title'
         ];
 
+        $stringCategories = [
+            'nav' => [
+                'label' => 'Navegação & Cabeçalhos',
+                'icon' => '🧭',
+                'keys' => [
+                    'Home', 'Index', 'Now', 'About', 'Recent posts',
+                    'Browse the sections of the site in Gopher style:', 'Read more', 'Tag', 'Tags'
+                ],
+            ],
+            'interactions' => [
+                'label' => 'Interações & Federação',
+                'icon' => '💬',
+                'keys' => [
+                    'Like', 'Likes', 'Repost', 'Reposts', 'Reply', 'Replies',
+                    'Interactions on', 'Permalink', 'Shortlink', 'Also on',
+                    'In reply to', 'Liked', 'Reposted', 'Bookmarked', 'Watched', 'Read', 'Listened to'
+                ],
+            ],
+            'taxonomy' => [
+                'label' => 'Taxonomia & Níveis',
+                'icon' => '🏷️',
+                'keys' => [
+                    'Maturity', 'Reliability', 'Confidence', 'Importance', 'Flowerbed', 'Flowerbeds',
+                    'general', 'certain', 'likely', 'possible', 'unlikely', 'impossible',
+                    'sprout', 'seedling', 'tree', 'wilted', 'stone',
+                    'trivial', 'minor', 'moderate', 'major', 'critical'
+                ],
+            ],
+            'notices' => [
+                'label' => 'Avisos & Mensagens',
+                'icon' => '⚠️',
+                'keys' => [
+                    'This page was automatically translated by AI.',
+                    'This page was automatically translated by AI and revised by a human.',
+                    'unknown'
+                ],
+            ],
+            'kinds' => [
+                'label' => 'Tipos de Post (Kinds)',
+                'icon' => '📑',
+                'keys' => [
+                    'Articles', 'Notes', 'Digital Garden', 'Replies', 'Likes', 'Reposts',
+                    'Bookmarks', 'Photos', 'Videos', 'Checkins', 'RSVPs', 'Listens', 'Watches', 'Reads'
+                ],
+            ],
+        ];
+
         ob_start();
         ?>
         <style>
+            .btn-i18n-cat {
+                background: #ffffff;
+                border: 2px solid #000000;
+                box-shadow: 2px 2px 0 #000000;
+                color: #000000;
+                padding: 6px 14px;
+                font-size: 0.85rem;
+                font-weight: 700;
+                cursor: pointer;
+                border-radius: 4px;
+                transition: all 0.1s ease;
+            }
+            .btn-i18n-cat:hover {
+                background: var(--tint-yellow, #fff01f);
+            }
+            .btn-i18n-cat.active {
+                background: #000000;
+                color: var(--tint-yellow, #fff01f);
+            }
             .config-wrapper {
                 max-width: 1100px;
                 margin: 0 auto;
@@ -1056,12 +1122,12 @@ class ConfigView
                         </p>
                         <div class="form-group">
                             <label for="ai_translation_provider">AI Translation Provider</label>
-                            <select name="ai_translation_provider" id="ai_translation_provider">
+                            <select name="ai_translation_provider" id="ai_translation_provider" onchange="syncAiModelDropdown()">
                                 <option value="" <?= empty($config['ai_translation_provider']) ? 'selected' : '' ?>>-- None (Disabled) --</option>
-                                <option value="gemini" <?= ($config['ai_translation_provider'] ?? '') === 'gemini' ? 'selected' : '' ?>>Google Gemini (Gemini 1.5 Flash / Pro)</option>
-                                <option value="openai" <?= ($config['ai_translation_provider'] ?? '') === 'openai' ? 'selected' : '' ?>>OpenAI (GPT-4o, GPT-4o-mini)</option>
-                                <option value="claude" <?= ($config['ai_translation_provider'] ?? '') === 'claude' ? 'selected' : '' ?>>Anthropic Claude (Claude 3.5 Sonnet / Haiku)</option>
-                                <option value="grok" <?= ($config['ai_translation_provider'] ?? '') === 'grok' ? 'selected' : '' ?>>xAI Grok</option>
+                                <option value="gemini" <?= ($config['ai_translation_provider'] ?? '') === 'gemini' ? 'selected' : '' ?>>Google Gemini (Flash 2.5 / Pro 2.5)</option>
+                                <option value="openai" <?= ($config['ai_translation_provider'] ?? '') === 'openai' ? 'selected' : '' ?>>OpenAI GPT (GPT-4o, GPT-4o-mini)</option>
+                                <option value="claude" <?= ($config['ai_translation_provider'] ?? '') === 'claude' ? 'selected' : '' ?>>Anthropic Claude (Haiku 3.5 / Sonnet 3.7)</option>
+                                <option value="grok" <?= ($config['ai_translation_provider'] ?? '') === 'grok' ? 'selected' : '' ?>>xAI Grok (Grok 2)</option>
                                 <option value="ollama" <?= ($config['ai_translation_provider'] ?? '') === 'ollama' ? 'selected' : '' ?>>Ollama (Local / Offline models)</option>
                             </select>
                         </div>
@@ -1072,30 +1138,62 @@ class ConfigView
                         </div>
                         <div class="grid-2">
                             <div class="form-group">
-                                <label for="ai_translation_model">Model Override (Optional)</label>
-                                <input type="text" name="ai_translation_model" id="ai_translation_model" value="<?= htmlspecialchars($config['ai_translation_model'] ?? '') ?>" placeholder="e.g. gemini-1.5-flash, gpt-4o-mini, llama3.2">
+                                <label for="ai_model_recommended_select">Model Selection (Recommended)</label>
+                                <select id="ai_model_recommended_select" onchange="handleModelSelectChange(this.value)">
+                                    <!-- Populated dynamically via JS from AiModels catalog -->
+                                </select>
                             </div>
                             <div class="form-group">
-                                <label for="ai_translation_endpoint">Custom API Endpoint (Optional)</label>
-                                <input type="text" name="ai_translation_endpoint" id="ai_translation_endpoint" value="<?= htmlspecialchars($config['ai_translation_endpoint'] ?? '') ?>" placeholder="e.g. http://localhost:11434/v1/chat/completions">
+                                <label for="ai_translation_model">Custom Model Identifier / Override</label>
+                                <input type="text" name="ai_translation_model" id="ai_translation_model" value="<?= htmlspecialchars($config['ai_translation_model'] ?? '') ?>" placeholder="e.g. gemini-2.5-flash, claude-3-5-haiku-20241022, gpt-4o-mini">
+                                <small>Select a recommended model above or enter an arbitrary custom model identifier.</small>
                             </div>
+                        </div>
+                        <div class="form-group" style="margin-top: 10px;">
+                            <label for="ai_translation_endpoint">Custom API Endpoint (Optional)</label>
+                            <input type="text" name="ai_translation_endpoint" id="ai_translation_endpoint" value="<?= htmlspecialchars($config['ai_translation_endpoint'] ?? '') ?>" placeholder="e.g. http://localhost:11434/v1/chat/completions">
                         </div>
                     </fieldset>
 
                     <fieldset>
                         <legend>Global UI Translations</legend>
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; padding: 0.75rem 1rem; background: rgba(0, 240, 255, 0.05); border: 1px solid rgba(0, 240, 255, 0.2); border-radius: 4px;">
-                            <span style="font-size: 0.85rem; color: var(--text-muted);">Auto-populate missing translations using bundled locale dictionaries (<code>pt</code>, <code>es</code>, <code>en</code>, etc.).</span>
-                            <button type="submit" name="autofill_locale" value="all" class="btn-secondary" style="padding: 4px 10px; font-size: 0.8rem;">Auto-fill from Locales</button>
+                        <div style="display: flex; gap: 12px; margin-bottom: 1.25rem; align-items: center; flex-wrap: wrap;">
+                            <input type="text" id="i18n_filter_search" placeholder="🔍 Filtrar chaves, termos originais ou traduções..." style="flex: 1; min-width: 250px; padding: 10px 14px; font-size: 0.95rem; border: 2px solid #000; box-shadow: 2px 2px 0 #000; background: #fff;" oninput="applyI18nFilter()">
+                            <button type="submit" name="autofill_locale" value="all" class="btn-secondary" style="padding: 10px 16px; font-size: 0.85rem; font-weight: 700;">Auto-fill from Locales</button>
                         </div>
-                        <?php foreach ($globalStrings as $origText => $desc): ?>
-                            <div style="margin-bottom: 1.25rem; border-bottom: 1px dashed rgba(0, 240, 255, 0.15); padding-bottom: 1rem;">
-                                <strong style="color: #ffffff;"><?= htmlspecialchars($origText) ?></strong> 
-                                <span style="font-size: 0.85em; color: var(--text-muted);">(<?= htmlspecialchars($desc) ?>)</span>
+
+                        <div class="i18n-category-pills" style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 1.25rem;">
+                            <button type="button" class="btn-i18n-cat active" onclick="setI18nCategory('all', this)">Todas (<?= count($globalStrings) ?>)</button>
+                            <?php foreach ($stringCategories as $cKey => $cData): ?>
+                                <button type="button" class="btn-i18n-cat" onclick="setI18nCategory('<?= $cKey ?>', this)"><?= $cData['icon'] ?> <?= htmlspecialchars($cData['label']) ?></button>
+                            <?php endforeach; ?>
+                        </div>
+
+                        <div id="i18n-filter-status" style="font-size: 0.85rem; color: #555555; margin-bottom: 1.25rem; font-family: 'JetBrains Mono', monospace;">
+                            Mostrando todos os termos.
+                        </div>
+
+                        <?php foreach ($globalStrings as $origText => $desc): 
+                            $catKey = 'other';
+                            foreach ($stringCategories as $k => $cData) {
+                                if (in_array($origText, $cData['keys'], true)) {
+                                    $catKey = $k;
+                                    break;
+                                }
+                            }
+                        ?>
+                            <div class="i18n-term-card" data-category="<?= $catKey ?>" data-key="<?= htmlspecialchars(strtolower($origText)) ?>" style="margin-bottom: 1.25rem; border-bottom: 1px dashed rgba(0, 0, 0, 0.25); padding-bottom: 1rem;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem;">
+                                    <div>
+                                        <strong style="color: #000000; font-size: 1rem;"><?= htmlspecialchars($origText) ?></strong> 
+                                        <span style="font-size: 0.85em; color: #555555;">(<?= htmlspecialchars($desc) ?>)</span>
+                                    </div>
+                                    <span style="font-size: 0.75rem; background: #e0d8c3; border: 1px solid #000; padding: 2px 6px; font-weight: 700; color: #000;"><?= $stringCategories[$catKey]['icon'] ?? '' ?> <?= htmlspecialchars($stringCategories[$catKey]['label'] ?? 'Geral') ?></span>
+                                </div>
                                 <div class="grid-2" style="margin-top: 0.5rem;">
                                     <?php foreach ($langArr as $l): ?>
                                         <div class="color-picker" style="margin-bottom: 5px;">
-                                            <span style="width: 50px; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; font-weight: 800; color: var(--tint-yellow);"><?= htmlspecialchars($l) ?></span>
+                                            <span style="width: 50px; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; font-weight: 800; color: var(--tint-magenta);"><?= htmlspecialchars($l) ?></span>
                                             <input type="text" name="translations[<?= htmlspecialchars($origText) ?>][<?= htmlspecialchars($l) ?>]" value="<?= htmlspecialchars($config['translations'][$origText][$l] ?? '') ?>">
                                         </div>
                                     <?php endforeach; ?>
@@ -1492,6 +1590,107 @@ class ConfigView
                     document.body.appendChild(form);
                     form.submit();
                 }
+
+                const aiCatalog = <?= json_encode(\Indieinabox\Localization\AiModels::getCatalog(), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?>;
+
+                function syncAiModelDropdown() {
+                    const providerSelect = document.getElementById('ai_translation_provider');
+                    const modelSelect = document.getElementById('ai_model_recommended_select');
+                    const customInput = document.getElementById('ai_translation_model');
+                    if (!providerSelect || !modelSelect || !customInput) return;
+
+                    const provider = providerSelect.value;
+                    const currentModel = customInput.value.trim();
+                    modelSelect.innerHTML = '';
+
+                    if (!provider || !aiCatalog[provider]) {
+                        const opt = document.createElement('option');
+                        opt.value = '';
+                        opt.textContent = '-- Selecione um provedor primeiro --';
+                        modelSelect.appendChild(opt);
+                        return;
+                    }
+
+                    const models = aiCatalog[provider];
+                    let matched = false;
+
+                    for (const [id, info] of Object.entries(models)) {
+                        const opt = document.createElement('option');
+                        opt.value = id;
+                        opt.textContent = (info.recommended ? '⭐ ' : '') + info.label + ' (' + info.tag + ')';
+                        if (id === currentModel) {
+                            opt.selected = true;
+                            matched = true;
+                        }
+                        modelSelect.appendChild(opt);
+                    }
+
+                    const customOpt = document.createElement('option');
+                    customOpt.value = '__custom__';
+                    customOpt.textContent = '✍️ Personalizado / Outro modelo...';
+                    if (!matched && currentModel !== '') {
+                        customOpt.selected = true;
+                    }
+                    modelSelect.appendChild(customOpt);
+
+                    if (currentModel === '' && modelSelect.options.length > 0) {
+                        modelSelect.selectedIndex = 0;
+                        customInput.value = modelSelect.value;
+                    }
+                }
+
+                function handleModelSelectChange(val) {
+                    const customInput = document.getElementById('ai_translation_model');
+                    if (!customInput) return;
+                    if (val === '__custom__') {
+                        customInput.value = '';
+                        customInput.focus();
+                    } else {
+                        customInput.value = val;
+                    }
+                }
+
+                let activeI18nCategory = 'all';
+
+                function setI18nCategory(cat, btn) {
+                    activeI18nCategory = cat;
+                    document.querySelectorAll('.btn-i18n-cat').forEach(b => b.classList.remove('active'));
+                    if (btn) btn.classList.add('active');
+                    applyI18nFilter();
+                }
+
+                function applyI18nFilter() {
+                    const searchInput = document.getElementById('i18n_filter_search');
+                    const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
+                    const items = document.querySelectorAll('.i18n-term-card');
+                    let visibleCount = 0;
+
+                    items.forEach(item => {
+                        const itemCat = item.getAttribute('data-category');
+                        const itemKey = item.getAttribute('data-key') || '';
+                        const inputs = Array.from(item.querySelectorAll('input')).map(i => i.value.toLowerCase()).join(' ');
+
+                        const matchesCat = (activeI18nCategory === 'all' || itemCat === activeI18nCategory);
+                        const matchesQuery = (query === '' || itemKey.includes(query) || inputs.includes(query));
+
+                        if (matchesCat && matchesQuery) {
+                            item.style.display = '';
+                            visibleCount++;
+                        } else {
+                            item.style.display = 'none';
+                        }
+                    });
+
+                    const statusEl = document.getElementById('i18n-filter-status');
+                    if (statusEl) {
+                        statusEl.textContent = `Exibindo ${visibleCount} de ${items.length} termos.`;
+                    }
+                }
+
+                document.addEventListener('DOMContentLoaded', function() {
+                    syncAiModelDropdown();
+                    applyI18nFilter();
+                });
             </script>
         </div>
         <?php

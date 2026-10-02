@@ -202,21 +202,13 @@ class GophermapRenderer implements RendererInterface
         }
 
         if ($node instanceof ImageNode) {
-            $alt = $node->label;
+            $alt = $node->label ?: $node->target;
             $target = $node->target;
 
-            // Resolve selector path to the generated GIF
+            // Resolve selector path to the generated GIF in /media/
             $pathInfo = pathinfo($target);
             $gifName = $pathInfo['filename'] . '.gif';
-
-            $slug = $this->page ? trim($this->page->slug, '/') : '';
-            if (str_ends_with($slug, '.html')) {
-                $dir = dirname($slug);
-                $gifPath = ($dir === '.' || $dir === '') ? '/' . $gifName : '/' . $dir . '/' . $gifName;
-            } else {
-                $gifPath = '/' . $slug . '/' . $gifName;
-            }
-            $gifPath = preg_replace('#/+#', '/', $gifPath);
+            $gifPath = '/media/' . $gifName;
 
             return $this->formatLine('I', "[Foto: {$alt}]", $gifPath, $this->host, $this->port);
         }

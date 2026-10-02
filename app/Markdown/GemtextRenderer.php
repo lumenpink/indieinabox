@@ -135,22 +135,13 @@ class GemtextRenderer implements RendererInterface
         }
 
         if ($node instanceof ImageNode) {
-            $alt = $node->label;
+            $alt = $node->label ?: $node->target;
             $target = $node->target;
 
-            // Resolve target path to the generated GIF
+            // Resolve target path to the generated GIF in /media/
             $pathInfo = pathinfo($target);
             $gifName = $pathInfo['filename'] . '.gif';
-
-            // Get absolute GIF path from slug
-            $slug = $this->page ? trim($this->page->slug, '/') : '';
-            if (str_ends_with($slug, '.html')) {
-                $dir = dirname($slug);
-                $gifPath = ($dir === '.' || $dir === '') ? '/' . $gifName : '/' . $dir . '/' . $gifName;
-            } else {
-                $gifPath = '/' . $slug . '/' . $gifName;
-            }
-            $gifPath = preg_replace('#/+#', '/', $gifPath);
+            $gifPath = '/media/' . $gifName;
 
             return "\n=> {$gifPath} [Foto: {$alt}]\n";
         }

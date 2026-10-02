@@ -92,10 +92,18 @@ class StaticFileServer
         $filePath = $base . DIRECTORY_SEPARATOR . $outputDir . $path;
 
         if (str_starts_with($path, '/media/')) {
-            $contentMediaPath = rtrim($this->site->paths->getContentPath(), DIRECTORY_SEPARATOR);
-            $contentMediaPath .= str_replace('/', DIRECTORY_SEPARATOR, $path);
-            if (file_exists($contentMediaPath) && is_file($contentMediaPath)) {
-                $filePath = $contentMediaPath;
+            $relMedia = substr($path, 7);
+            $outputMedia = $this->site->paths->outputDirMedia ?: 'public_media';
+            $mediaCandidates = [
+                $base . DIRECTORY_SEPARATOR . $outputMedia . DIRECTORY_SEPARATOR . $relMedia,
+                $base . DIRECTORY_SEPARATOR . $outputDir . DIRECTORY_SEPARATOR . 'media' . DIRECTORY_SEPARATOR . $relMedia,
+                rtrim($this->site->paths->getContentPath(), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . 'media' . DIRECTORY_SEPARATOR . $relMedia,
+            ];
+            foreach ($mediaCandidates as $cand) {
+                if (file_exists($cand) && is_file($cand)) {
+                    $filePath = $cand;
+                    break;
+                }
             }
         }
 

@@ -101,7 +101,9 @@ class ImageNode extends InlineNode
 {
     public function __construct(
         public string $target,
-        public string $label
+        public string $label = '',
+        public ?string $width = null,
+        public ?string $height = null
     ) {
     }
 }
@@ -300,11 +302,22 @@ class ASTParser
                             $nodes[] = new TextNode(substr($text, $plainStart, $i - $plainStart));
                         }
                         $inner = substr($text, $i + 3, $closePos - ($i + 3));
-                        $parts = explode('|', $inner, 2);
-                        $target = trim($parts[0]);
-                        $label = count($parts) === 2 ? trim($parts[1]) : $target;
-                        
-                        $nodes[] = new ImageNode($label, $target);
+                        $parts = array_map('trim', explode('|', $inner));
+                        $target = array_shift($parts) ?? '';
+                        $label = $target;
+                        $width = null;
+                        $height = null;
+
+                        foreach ($parts as $part) {
+                            if (preg_match('/^(\d+)(?:x(\d+))?$/', $part, $matches)) {
+                                $width = $matches[1];
+                                $height = $matches[2] ?? null;
+                            } else {
+                                $label = $part;
+                            }
+                        }
+
+                        $nodes[] = new ImageNode($target, $label, $width, $height);
                         $i = $closePos + 2;
                         $plainStart = $i;
                         continue;

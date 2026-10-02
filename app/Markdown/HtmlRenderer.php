@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Indieinabox\Markdown;
 
 use Indieinabox\Localization\Translator;
+use Indieinabox\Media\AttachmentResolver;
 use Indieinabox\Media\ImageProcessor;
 use Indieinabox\Page\Page;
 use Indieinabox\Support\TextParser;
@@ -356,111 +357,29 @@ class HtmlRenderer implements RendererInterface
         if ($node instanceof ImageNode) {
             $target = $node->target;
             $alt = $node->label;
+            $site = $this->getSite();
 
-            if ($this->page && $this->page->filepath && !preg_match('#^(https?:)?//#i', $target)) {
-                $markdownFileDir = dirname($this->page->filepath);
-                
-                if (str_starts_with($target, '/')) {
-                    $site = $this->getSite();
-                    $base = $site?->paths?->baseDir ?? dirname(dirname(__DIR__));
-                    $contentDir = $site?->paths?->contentDir ?? 'content';
-                    $caminhoOriginal = $base . DIRECTORY_SEPARATOR . $contentDir . DIRECTORY_SEPARATOR . ltrim($target, '/');
-                } else {
-                    $caminhoOriginal = $markdownFileDir . DIRECTORY_SEPARATOR . $target;
-                }
+            if ($site && !preg_match('#^(https?:)?//#i', $target)) {
+                $referencingFile = ($this->page && $this->page->filepath) ? $this->page->filepath : '';
+                $caminhoOriginal = AttachmentResolver::resolve($target, $referencingFile, $site);
 
-                if (file_exists($caminhoOriginal)) {
-                    $site = $this->getSite();
-                    $base = $site?->paths?->baseDir ?? dirname(dirname(__DIR__));
-                    $outputDirHtml = $site?->paths?->outputDirHtml ?? 'public_html';
-
-                    $pathInfo = pathinfo($target);
-                    $gifName = $pathInfo['filename'] . '.gif';
-
-                    $slug = $this->page->slug;
-                    if (str_ends_with($slug, '.html')) {
-                        $outputHtmlDir = dirname($base . DIRECTORY_SEPARATOR . $outputDirHtml . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, trim($slug, '/')));
-                    } else {
-                        $outputHtmlDir = $base . DIRECTORY_SEPARATOR . $outputDirHtml . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, trim($slug, '/'));
-                    }
-
-                    if (!is_dir($outputHtmlDir)) {
-                        @mkdir($outputHtmlDir, 0777, true);
-                    }
-
-                    $caminhoDestino = $outputHtmlDir . DIRECTORY_SEPARATOR . $gifName;
-
-                    $colors = $this->getColors();
-                    $corBG = $colors['bg'];
-                    $corFG = $colors['fg'];
-
-                    $globalColors = [
-                        'bg' => [244, 241, 234], // #F4F1EA
-                        'fg' => [44, 46, 47],    // #2C2E2F
-                    ];
-
-                    $gifNameGlobal = $pathInfo['filename'] . '_global.gif';
-                    $caminhoDestinoGlobal = $outputHtmlDir . DIRECTORY_SEPARATOR . $gifNameGlobal;
-
-                    ImageProcessor::ditherImageToGif(
-                        $caminhoOriginal,
-                        $caminhoDestinoGlobal,
-                        512,
-                        $globalColors['bg'],
-                        $globalColors['fg'],
-                        true
-                    );
-                    \Indieinabox\SiteBuilder\SiteBuilder::addManifest($caminhoDestinoGlobal);
-
-                    $gifNameThumb = $pathInfo['filename'] . '_thumb.gif';
-                    $caminhoDestinoThumb = $outputHtmlDir . DIRECTORY_SEPARATOR . $gifNameThumb;
-
-                    ImageProcessor::createThumbnail(
-                        $caminhoOriginal,
-                        $caminhoDestinoThumb,
-                        96,
-                        $globalColors['bg'],
-                        $globalColors['fg']
-                    );
-                    \Indieinabox\SiteBuilder\SiteBuilder::addManifest($caminhoDestinoThumb);
-
-                    $success = ImageProcessor::ditherImageToGif(
-                        $caminhoOriginal,
-                        $caminhoDestino,
-                        512,
-                        $corBG,
-                        $corFG,
-                        true
-                    );
-                    \Indieinabox\SiteBuilder\SiteBuilder::addManifest($caminhoDestino);
-
-                    if ($success) {
-                        // Build a root-relative src so the image loads correctly
-                        // from any page that embeds this content (e.g. home summary).
-                        // e.g. slug = photos/my-first-photo.html → dir = photos/
-                        //      slug = photos/my-first-photo/      → dir = photos/my-first-photo/
-                        $slugTrimmed = trim($slug, '/');
-                        if (str_ends_with($slug, '.html')) {
-                            $slugDir = dirname($slugTrimmed);   // "photos"
-                        } else {
-                            $slugDir = $slugTrimmed;            // "photos/my-first-photo"
-                        }
-                        $target = '/' . ltrim($slugDir . '/' . $gifName, '/');
-
-                        // Copy the original image to the public directory so we can link to it
-                        $originalDestino = $outputHtmlDir . DIRECTORY_SEPARATOR . basename($caminhoOriginal);
-                        if (!file_exists($originalDestino)) {
-                            copy($caminhoOriginal, $originalDestino);
-                        }
-                        \Indieinabox\SiteBuilder\SiteBuilder::addManifest($originalDestino);
-                        $originalTarget = '/' . ltrim($slugDir . '/' . basename($caminhoOriginal), '/');
-                    }
+                if ($caminhoOriginal && file_exists($caminhoOriginal)) {
+                    $mediaInfo = AttachmentResolver::publishImage($caminhoOriginal, $site);
+                    $target = $mediaInfo['webPath'];
+                    $originalTarget = $mediaInfo['originalWebPath'];
                 }
             }
 
             $targetEsc = htmlspecialchars($target, ENT_QUOTES | ENT_HTML5);
             $altEsc = htmlspecialchars($alt, ENT_QUOTES | ENT_HTML5);
-            $imgTag = "<img src=\"{$targetEsc}\" alt=\"{$altEsc}\">";
+            $dimAttrs = '';
+            if (!empty($node->width)) {
+                $dimAttrs .= ' width="' . htmlspecialchars($node->width, ENT_QUOTES | ENT_HTML5) . '"';
+            }
+            if (!empty($node->height)) {
+                $dimAttrs .= ' height="' . htmlspecialchars($node->height, ENT_QUOTES | ENT_HTML5) . '"';
+            }
+            $imgTag = "<img src=\"{$targetEsc}\" alt=\"{$altEsc}\"{$dimAttrs}>";
             
             if (isset($originalTarget)) {
                 $origEsc = htmlspecialchars($originalTarget, ENT_QUOTES | ENT_HTML5);

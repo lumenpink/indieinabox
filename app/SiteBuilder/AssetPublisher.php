@@ -63,17 +63,60 @@ class AssetPublisher
     public function publishMedia(): void
     {
         $base = $this->site->paths->baseDir;
-        $contentMediaDir = rtrim($this->site->paths->getContentPath(), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . 'media';
+        $contentPath = rtrim($this->site->paths->getContentPath(), DIRECTORY_SEPARATOR);
         $destMedia = $this->site->paths->outputDirMedia;
+
+        // 1. Content media directory
+        $contentMediaDir = $contentPath . DIRECTORY_SEPARATOR . 'media';
         if (is_dir($contentMediaDir)) {
             echo "Copying media files\n";
             $this->copyStaticFiles($contentMediaDir, $base, $destMedia);
         }
 
+        // 2. Obsidian vault attachment folders (e.g. 99_anexo)
+        $vaultRoot = \Indieinabox\Media\AttachmentResolver::getVaultRoot($this->site);
+        $attachmentFolders = \Indieinabox\Media\AttachmentResolver::getAttachmentFolders($vaultRoot);
+        foreach ($attachmentFolders as $folder) {
+            $vaultAttachmentDir = $vaultRoot . DIRECTORY_SEPARATOR . $folder;
+            if (is_dir($vaultAttachmentDir)) {
+                $this->copyStaticFiles($vaultAttachmentDir, $base, $destMedia);
+            }
+            $contentAttachmentDir = $contentPath . DIRECTORY_SEPARATOR . $folder;
+            if ($contentAttachmentDir !== $vaultAttachmentDir && is_dir($contentAttachmentDir)) {
+                $this->copyStaticFiles($contentAttachmentDir, $base, $destMedia);
+            }
+        }
+
+        // 3. Microsub media directory
         $microsubMediaDir = $base . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'microsub' . DIRECTORY_SEPARATOR . 'media';
         if (is_dir($microsubMediaDir)) {
             echo "Copying microsub media files\n";
             $this->copyStaticFiles($microsubMediaDir, $base, $destMedia . DIRECTORY_SEPARATOR . 'microsub');
+        }
+
+        // 4. Mirror media to HTML, Gemini, and Gopher output directories
+        $this->mirrorMedia();
+    }
+
+    /**
+     * Mirrors all files from the shared public media directory to HTML, Gemini, and Gopher media directories.
+     */
+    public function mirrorMedia(): void
+    {
+        $base = $this->site->paths->baseDir;
+        $sourceMediaDir = $base . DIRECTORY_SEPARATOR . $this->site->paths->outputDirMedia;
+        if (!is_dir($sourceMediaDir)) {
+            return;
+        }
+
+        $targets = [
+            $this->site->paths->outputDirHtml . DIRECTORY_SEPARATOR . 'media',
+            $this->site->paths->outputDirGemini . DIRECTORY_SEPARATOR . 'media',
+            $this->site->paths->outputDirGopher . DIRECTORY_SEPARATOR . 'media',
+        ];
+
+        foreach ($targets as $target) {
+            $this->copyStaticFiles($sourceMediaDir, $base, $target);
         }
     }
 

@@ -166,13 +166,14 @@ it('renders ImageNode with dimensions, /media/ path, and mirrors across protocol
     $renderer = new HtmlRenderer($page, $site);
     $html = $renderer->render($ast);
 
-    expect($html)->toContain('<img src="/media/sample.gif" alt="Alt text for sample" width="500" height="300">')
+    expect($html)->toContain('<figure class="content-media"')
+        ->and($html)->toContain('<img src="/media/sample_500.gif" alt="Alt text for sample" width="500" height="300"')
         ->and($html)->toContain('<a href="/media/sample.png" class="dithered-image-link"')
-        ->and(file_exists($tempApp . '/public_media/sample.gif'))->toBeTrue()
+        ->and(file_exists($tempApp . '/public_media/sample_500.gif'))->toBeTrue()
         ->and(file_exists($tempApp . '/public_media/sample.png'))->toBeTrue()
-        ->and(file_exists($tempApp . '/public_html/media/sample.gif'))->toBeTrue()
-        ->and(file_exists($tempApp . '/public_gemini/media/sample.gif'))->toBeTrue()
-        ->and(file_exists($tempApp . '/public_gopher/media/sample.gif'))->toBeTrue();
+        ->and(file_exists($tempApp . '/public_html/media/sample_500.gif'))->toBeTrue()
+        ->and(file_exists($tempApp . '/public_gemini/media/sample_500.gif'))->toBeTrue()
+        ->and(file_exists($tempApp . '/public_gopher/media/sample_500.gif'))->toBeTrue();
 
     // Gemtext rendering check
     $gemtextRenderer = new GemtextRenderer($page);
@@ -196,20 +197,20 @@ it('renders ImageNode with dimensions, /media/ path, and mirrors across protocol
         $contentDir,
         $anexoDir,
     ];
-    @unlink($tempApp . '/public_media/sample.gif');
-    @unlink($tempApp . '/public_media/sample_global.gif');
+    @unlink($tempApp . '/public_media/sample_500.gif');
+    @unlink($tempApp . '/public_media/sample_500_global.gif');
     @unlink($tempApp . '/public_media/sample_thumb.gif');
     @unlink($tempApp . '/public_media/sample.png');
-    @unlink($tempApp . '/public_html/media/sample.gif');
-    @unlink($tempApp . '/public_html/media/sample_global.gif');
+    @unlink($tempApp . '/public_html/media/sample_500.gif');
+    @unlink($tempApp . '/public_html/media/sample_500_global.gif');
     @unlink($tempApp . '/public_html/media/sample_thumb.gif');
     @unlink($tempApp . '/public_html/media/sample.png');
-    @unlink($tempApp . '/public_gemini/media/sample.gif');
-    @unlink($tempApp . '/public_gemini/media/sample_global.gif');
+    @unlink($tempApp . '/public_gemini/media/sample_500.gif');
+    @unlink($tempApp . '/public_gemini/media/sample_500_global.gif');
     @unlink($tempApp . '/public_gemini/media/sample_thumb.gif');
     @unlink($tempApp . '/public_gemini/media/sample.png');
-    @unlink($tempApp . '/public_gopher/media/sample.gif');
-    @unlink($tempApp . '/public_gopher/media/sample_global.gif');
+    @unlink($tempApp . '/public_gopher/media/sample_500.gif');
+    @unlink($tempApp . '/public_gopher/media/sample_500_global.gif');
     @unlink($tempApp . '/public_gopher/media/sample_thumb.gif');
     @unlink($tempApp . '/public_gopher/media/sample.png');
     @unlink($testImgPath);

@@ -84,11 +84,38 @@ class TaxonomyService implements TaxonomyServiceInterface
         return array_merge([
             'content_dir' => $kind,
             'title' => [],
-            'palette' => null,
+            'palette' => self::getDefaultPalette($kind),
             'has_title' => true,
             'show_on_home' => false,
             'display_mode' => 'default',
         ], $config);
+    }
+
+    /**
+     * Calibrated, chromatically distinct high-contrast palette matrix for each post kind.
+     * Complies strictly with WCAG AAA contrast ratio standards (> 7:1).
+     *
+     * @return array{bg: string, fg: string}
+     */
+    public static function getDefaultPalette(string $kind): array
+    {
+        $palettes = [
+            'article' => ['bg' => '#FAF0D7', 'fg' => '#261C14'], // Papiro / Editorial
+            'note' => ['bg' => '#E6ECF0', 'fg' => '#16222F'],    // Ardósia / Caderno
+            'garden' => ['bg' => '#D8F3DC', 'fg' => '#083D1A'],  // Verde Jardim Botânico
+            'reply' => ['bg' => '#CFEBF7', 'fg' => '#053B55'],   // Azul Céu / Comunicação
+            'like' => ['bg' => '#FCE0E8', 'fg' => '#5C0926'],    // Carmim / Afeto
+            'repost' => ['bg' => '#EDE0FA', 'fg' => '#370A5E'],  // Violeta / Eco
+            'bookmark' => ['bg' => '#FEF0C7', 'fg' => '#533202'],// Ouro / Guardados
+            'photo' => ['bg' => '#FEE4D6', 'fg' => '#5E1F00'],   // Terracota / Fotografia
+            'video' => ['bg' => '#E0E4FC', 'fg' => '#11165A'],   // Índigo / Cinema
+            'checkin' => ['bg' => '#CCFBF1', 'fg' => '#00473E'], // Turquesa Esmeralda / Lugar
+            'rsvp' => ['bg' => '#FFE3DC', 'fg' => '#611B0B'],    // Coral / Presença
+            'listen' => ['bg' => '#FADBF8', 'fg' => '#4D0A49'],  // Orquídea / Áudio
+            'watch' => ['bg' => '#D8E2FD', 'fg' => '#0B2868'],   // Cobalto / Vídeo
+            'read' => ['bg' => '#F1E9DA', 'fg' => '#362A1A'],    // Linho Pergaminho / Leitura
+        ];
+        return $palettes[strtolower($kind)] ?? ['bg' => '#F4F1EA', 'fg' => '#2C2E2F'];
     }
 
     /**

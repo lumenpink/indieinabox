@@ -266,7 +266,7 @@ class Whostyles {
      * @param string $hex The hex color string.
      * @return float The relative luminance (0.0 to 1.0).
      */
-    private static function getLuminance(string $hex): float {
+    public static function getLuminance(string $hex): float {
         $r = (float) intval(hexdec(substr($hex, 1, 2))) / 255.0;
         $g = (float) intval(hexdec(substr($hex, 3, 2))) / 255.0;
         $b = (float) intval(hexdec(substr($hex, 5, 2))) / 255.0;
@@ -285,7 +285,7 @@ class Whostyles {
      * @param string $hex2 The second hex color.
      * @return float The contrast ratio (1.0 to 21.0).
      */
-    private static function getContrast(string $hex1, string $hex2): float {
+    public static function getContrast(string $hex1, string $hex2): float {
         $l1 = self::getLuminance($hex1);
         $l2 = self::getLuminance($hex2);
         return (max($l1, $l2) + 0.05) / (min($l1, $l2) + 0.05);

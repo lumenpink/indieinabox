@@ -45,13 +45,14 @@ class ThemeData
     public static function getThemeColors(Page $page): array
     {
         $kind = strtolower($page->kind ?? 'generic');
-        $bg = '#F4F1EA';
-        $fg = '#2C2E2F';
+        $default = \Indieinabox\Taxonomy\TaxonomyService::getDefaultPalette($kind);
+        $bg = $default['bg'];
+        $fg = $default['fg'];
 
         $kindConfig = KindHelper::getKindConfig($kind);
-        if (!empty($kindConfig['palette'])) {
-            $bg = $kindConfig['palette']['bg'] ?? $bg;
-            $fg = $kindConfig['palette']['fg'] ?? $fg;
+        if (!empty($kindConfig['palette']) && !empty($kindConfig['palette']['bg']) && !empty($kindConfig['palette']['fg'])) {
+            $bg = $kindConfig['palette']['bg'];
+            $fg = $kindConfig['palette']['fg'];
         }
 
         return ['bg' => $bg, 'fg' => $fg];

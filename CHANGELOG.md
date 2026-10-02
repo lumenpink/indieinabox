@@ -3,6 +3,14 @@
 ## [Unreleased]
 
 ### Features
+  - (markdown) implementar sistema de tirinhas estilo comic chat via marcacao (closes #75)
+  - (markdown) implementar componente interativo de balao de fala estilo cowsay (closes #74)
+  - (markdown) implementar sistema de dialogos com avatares de personagens e emojis (closes #73)
+  - (media) redimensionar imagens utilizando algoritmo de dithering (closes #72)
+  - (test) implementar testes de integracao e validacao para submissao ao Archive.org (closes #67)
+  - (docs) documentar o fluxo de despacho de links para o Archive.org (closes #66)
+  - (test) validar e testar geracao de shortlinks contra 0x0.st e 2lp.in (closes #65)
+  - (docs) documentar funcionamento e ciclo de vida do gerador de shortlinks (closes #64)
   - (meta) gerar card oficial de opengraph e banner social (closes #54)
   - (admin) complete lambe-lambe theme redesign across admin views
   - (admin) redesign admin dashboard views to strictly match documentation lambe-lambe aesthetic (#51)
@@ -11,6 +19,8 @@
   - (docs) add comprehensive cyberpunk documentation site and cloudflare deployment pipeline
 
 ### Fixes
+  - (ui) centralizar e limitar altura maxima das imagens (closes #71)
+  - (theme) aumentar variacao e contraste das cores base por kind page (closes #70)
   - (media) resolver anexos do vault e unificar publicacao em pasta media (closes #59)
   - (parser) evitar consumo guloso de separadores horizontais como frontmatter (closes #58)
   - (i18n) auto-fill de post kinds a partir dos pacotes de idiomas (closes #57)

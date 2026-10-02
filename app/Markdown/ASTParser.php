@@ -139,6 +139,7 @@ class ASTParser
      */
     public function parse(string $markdown): RootNode
     {
+        $markdown = DialogueSystem::process($markdown);
         $root = new RootNode();
         $lines = explode("\n", $markdown);
 

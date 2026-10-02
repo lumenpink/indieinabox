@@ -61,9 +61,21 @@ $colors = ThemeData::getThemeColors($page);
     }
     img {
         max-width: 100%;
+        max-height: 75vh;
+        width: auto;
         height: auto;
+        object-fit: contain;
         display: block;
-        margin: 1.5em 0;
+        margin: 1.5em auto;
+    }
+    .content-media {
+        margin: 1.5em auto;
+        text-align: center;
+        max-width: 100%;
+    }
+    .content-media figcaption {
+        text-align: center;
+        margin-top: 0.5em;
     }
     .post-meta {
         font-size: 0.8em;

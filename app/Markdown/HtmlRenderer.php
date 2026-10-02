@@ -359,12 +359,13 @@ class HtmlRenderer implements RendererInterface
             $alt = $node->label;
             $site = $this->getSite();
 
+            $width = !empty($node->width) ? (int)$node->width : null;
             if ($site && !preg_match('#^(https?:)?//#i', $target)) {
                 $referencingFile = ($this->page && $this->page->filepath) ? $this->page->filepath : '';
                 $caminhoOriginal = AttachmentResolver::resolve($target, $referencingFile, $site);
 
                 if ($caminhoOriginal && file_exists($caminhoOriginal)) {
-                    $mediaInfo = AttachmentResolver::publishImage($caminhoOriginal, $site);
+                    $mediaInfo = AttachmentResolver::publishImage($caminhoOriginal, $site, $width);
                     $target = $mediaInfo['webPath'];
                     $originalTarget = $mediaInfo['originalWebPath'];
                 }
@@ -379,14 +380,14 @@ class HtmlRenderer implements RendererInterface
             if (!empty($node->height)) {
                 $dimAttrs .= ' height="' . htmlspecialchars($node->height, ENT_QUOTES | ENT_HTML5) . '"';
             }
-            $imgTag = "<img src=\"{$targetEsc}\" alt=\"{$altEsc}\"{$dimAttrs}>";
+            $imgTag = "<img src=\"{$targetEsc}\" alt=\"{$altEsc}\"{$dimAttrs} loading=\"lazy\" style=\"max-height: 75vh; max-width: 100%; width: auto; height: auto; object-fit: contain; display: block; margin: 0 auto;\">";
             
             if (isset($originalTarget)) {
                 $origEsc = htmlspecialchars($originalTarget, ENT_QUOTES | ENT_HTML5);
                 $linkText = Translator::translate('Original image');
-                return "{$imgTag}<br><a href=\"{$origEsc}\" class=\"dithered-image-link\" style=\"font-size: 0.85em; opacity: 0.8;\">[ {$linkText} ]</a>\n";
+                return "<figure class=\"content-media\" style=\"text-align: center; margin: 1.5rem auto; display: block; max-width: 100%;\">\n{$imgTag}\n<figcaption style=\"text-align: center;\"><a href=\"{$origEsc}\" class=\"dithered-image-link\" style=\"font-size: 0.85em; opacity: 0.8;\">[ {$linkText} ]</a></figcaption>\n</figure>\n";
             }
-            return $imgTag . "\n";
+            return "<figure class=\"content-media\" style=\"text-align: center; margin: 1.5rem auto; display: block; max-width: 100%;\">\n{$imgTag}\n</figure>\n";
         }
         return '';
     }

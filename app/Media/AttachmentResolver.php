@@ -240,7 +240,7 @@ class AttachmentResolver
      * @param Site $site
      * @return array{webPath: string, originalWebPath: string, gifName: string, originalName: string}
      */
-    public static function publishImage(string $sourceFile, Site $site): array
+    public static function publishImage(string $sourceFile, Site $site, ?int $desiredWidth = null): array
     {
         $base = rtrim($site->paths->baseDir, DIRECTORY_SEPARATOR);
         $outputMedia = $site->paths->outputDirMedia ?: 'public_media';
@@ -248,11 +248,15 @@ class AttachmentResolver
         $outputGemini = $site->paths->outputDirGemini ?: 'public_gemini';
         $outputGopher = $site->paths->outputDirGopher ?: 'public_gopher';
 
-        // Check if already published for this source path
-        if (isset(self::$sourceToPublished[$sourceFile])) {
-            $assigned = self::$sourceToPublished[$sourceFile];
+        $focalWidth = ($desiredWidth !== null && $desiredWidth >= 64 && $desiredWidth <= 1920) ? $desiredWidth : 512;
+        $cacheKey = $sourceFile . '@' . $focalWidth;
+
+        // Check if already published for this source path and width
+        if (isset(self::$sourceToPublished[$cacheKey])) {
+            $assigned = self::$sourceToPublished[$cacheKey];
             $pathInfo = pathinfo($assigned);
-            $gifName = $pathInfo['filename'] . '.gif';
+            $suffix = $focalWidth !== 512 ? '_' . $focalWidth : '';
+            $gifName = $pathInfo['filename'] . $suffix . '.gif';
             return [
                 'webPath' => '/media/' . $gifName,
                 'originalWebPath' => '/media/' . $assigned,
@@ -281,10 +285,11 @@ class AttachmentResolver
             $finalOriginalName = $cleanBasename;
         }
 
-        self::$sourceToPublished[$sourceFile] = $finalOriginalName;
+        self::$sourceToPublished[$cacheKey] = $finalOriginalName;
         $finalInfo = pathinfo($finalOriginalName);
-        $gifName = $finalInfo['filename'] . '.gif';
-        $gifNameGlobal = $finalInfo['filename'] . '_global.gif';
+        $suffix = $focalWidth !== 512 ? '_' . $focalWidth : '';
+        $gifName = $finalInfo['filename'] . $suffix . '.gif';
+        $gifNameGlobal = $finalInfo['filename'] . $suffix . '_global.gif';
         $gifNameThumb = $finalInfo['filename'] . '_thumb.gif';
 
         // Destination directories
@@ -307,12 +312,12 @@ class AttachmentResolver
         $canonicalThumb = $canonicalMediaDir . DIRECTORY_SEPARATOR . $gifNameThumb;
         $canonicalOriginal = $canonicalMediaDir . DIRECTORY_SEPARATOR . $finalOriginalName;
 
-        // 1. Atkinson dithered GIF (theme colors)
+        // 1. Atkinson dithered GIF (theme colors, custom width)
         $colors = self::getThemeColors();
         ImageProcessor::ditherImageToGif(
             $sourceFile,
             $canonicalGif,
-            512,
+            $focalWidth,
             $colors['bg'],
             $colors['fg'],
             true
@@ -327,7 +332,7 @@ class AttachmentResolver
         ImageProcessor::ditherImageToGif(
             $sourceFile,
             $canonicalGlobal,
-            512,
+            $focalWidth,
             $globalColors['bg'],
             $globalColors['fg'],
             true

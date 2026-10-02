@@ -117,11 +117,23 @@ class ArchiveProcessor
                 }
             }
 
-            // 1. Send to Archive.org (fire and forget)
-            $this->sendToArchiveOrg($url);
+            // 1. Send to Archive.org
+            $archiveResult = $this->sendToArchiveOrg($url);
+
+            if (!$archiveResult['success']) {
+                $statusCode = $archiveResult['status_code'] ?? 0;
+                // If 429 rate limit or 5xx temporary failure or network failure, re-queue for retry
+                if ($statusCode === 429 || $statusCode >= 500 || $statusCode === 0) {
+                    echo "Archive.org dispatch failed (HTTP $statusCode) for $url. Re-queueing for retry.\n";
+                    $this->db->prepare("UPDATE archive_queue SET status = 'pending' WHERE id = ?")->execute([$id]);
+                    continue;
+                }
+            }
 
             // 2. Generate PDF via Microlink API
             $localPdfPath = $this->fetchPdfFromMicrolink($url, $normUrl, $pdfDir);
+
+            $archiveOrgUrl = $archiveResult['archive_url'] ?? ("https://web.archive.org/web/" . gmdate('YmdHis') . "/" . $url);
 
             // Insert into archived_links
             $stmtInsert = $this->db->prepare(
@@ -131,7 +143,7 @@ class ArchiveProcessor
                 $normUrl,
                 time(),
                 $localPdfPath,
-                "https://web.archive.org/web/" . gmdate('YmdHis') . "/" . $url
+                $archiveOrgUrl
             ]);
 
             // Mark as done
@@ -166,33 +178,107 @@ class ArchiveProcessor
         curl_setopt($ch, CURLOPT_USERAGENT, 'Indieinabox ArchiveBot/1.0 (+https://indieinabox.org)');
         curl_exec($ch);
         $finalUrl = curl_getinfo($ch, CURLINFO_EFFECTIVE_URL);
-        curl_close($ch);
+        if (\PHP_VERSION_ID < 80000) {
+            curl_close($ch);
+        }
 
         return $finalUrl ?: $url;
     }
 
     /**
-     * Submits a URL to the Wayback Machine save endpoint.
+     * Submits a URL to the Wayback Machine save endpoint (SPN v1 or SPN v2).
      *
      * @param string $url
-     * @return void
+     * @return array{success: bool, status_code: int, job_id: ?string, archive_url: ?string, error: ?string}
      */
-    public function sendToArchiveOrg(string $url): void
+    public function sendToArchiveOrg(string $url): array
     {
         if ($this->archiveOrgSender !== null) {
-            ($this->archiveOrgSender)($url);
-            return;
+            $customResult = ($this->archiveOrgSender)($url);
+            if (is_array($customResult)) {
+                return [
+                    'success' => !empty($customResult['success']),
+                    'status_code' => (int) ($customResult['status_code'] ?? 200),
+                    'job_id' => $customResult['job_id'] ?? null,
+                    'archive_url' => $customResult['archive_url'] ?? ('https://web.archive.org/web/' . gmdate('YmdHis') . '/' . $url),
+                    'error' => $customResult['error'] ?? null,
+                ];
+            }
+            return [
+                'success' => $customResult !== false,
+                'status_code' => $customResult !== false ? 200 : 500,
+                'job_id' => null,
+                'archive_url' => 'https://web.archive.org/web/' . gmdate('YmdHis') . '/' . $url,
+                'error' => $customResult === false ? 'Execution failed' : null,
+            ];
         }
 
-        $saveEndpoint = 'https://web.archive.org/save/' . $url;
-        $ch = curl_init($saveEndpoint);
+        $config = $this->site->config['archive_org'] ?? [];
+        $accessKey = (string) ($config['access_key'] ?? '');
+        $secretKey = (string) ($config['secret_key'] ?? '');
+
+        $headers = [
+            'User-Agent: Indieinabox ArchiveBot/1.0 (+https://indieinabox.org)',
+            'Accept: application/json',
+        ];
+
+        // If S3 API keys are configured, use authenticated SPN v2 endpoint
+        if (!empty($accessKey) && !empty($secretKey)) {
+            $saveEndpoint = 'https://web.archive.org/save/';
+            $headers[] = 'Authorization: LOW ' . $accessKey . ':' . $secretKey;
+            $postFields = http_build_query([
+                'url' => $url,
+                'capture_all' => '1',
+                'capture_outlinks' => '0',
+            ]);
+            $ch = curl_init($saveEndpoint);
+            curl_setopt($ch, CURLOPT_POST, true);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $postFields);
+        } else {
+            // Anonymous SPN v1 endpoint
+            $saveEndpoint = 'https://web.archive.org/save/' . $url;
+            $ch = curl_init($saveEndpoint);
+        }
+
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         curl_setopt($ch, CURLOPT_TIMEOUT, 15);
-        curl_setopt($ch, CURLOPT_USERAGENT, 'Indieinabox ArchiveBot/1.0 (+https://indieinabox.org)');
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-        curl_exec($ch);
-        curl_close($ch);
+        $res = curl_exec($ch);
+        $httpCode = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        if (\PHP_VERSION_ID < 80000) {
+            curl_close($ch);
+        }
+
+        $jobId = null;
+        $archiveUrl = null;
+
+        if ($res && is_string($res)) {
+            $data = json_decode($res, true);
+            if (is_array($data)) {
+                $jobId = $data['job_id'] ?? null;
+                $archiveUrl = $data['url'] ?? null;
+            }
+        }
+
+        if ($httpCode >= 200 && $httpCode < 300) {
+            return [
+                'success' => true,
+                'status_code' => $httpCode,
+                'job_id' => $jobId,
+                'archive_url' => $archiveUrl ?: ('https://web.archive.org/web/' . gmdate('YmdHis') . '/' . $url),
+                'error' => null,
+            ];
+        }
+
+        return [
+            'success' => false,
+            'status_code' => $httpCode,
+            'job_id' => $jobId,
+            'archive_url' => null,
+            'error' => $httpCode === 429 ? 'Rate limit exceeded' : 'HTTP error ' . $httpCode,
+        ];
     }
 
     /**
@@ -217,7 +303,9 @@ class ArchiveProcessor
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
         $res = curl_exec($ch);
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        curl_close($ch);
+        if (\PHP_VERSION_ID < 80000) {
+            curl_close($ch);
+        }
 
         if ($httpCode >= 200 && $httpCode < 300 && $res) {
             $data = json_decode($res, true);
@@ -254,7 +342,9 @@ class ArchiveProcessor
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
         $res = curl_exec($ch);
-        curl_close($ch);
+        if (\PHP_VERSION_ID < 80000) {
+            curl_close($ch);
+        }
         return $res;
     }
 }

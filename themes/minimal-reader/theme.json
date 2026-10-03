@@ -1,0 +1,17 @@
+{
+  "name": "Minimal Reader",
+  "slug": "minimal-reader",
+  "version": "1.0.0",
+  "description": "Distraction-free editorial reading experience with elegant typography, generous whitespace, and serene readability.",
+  "author": "IndieInABox Core",
+  "license": "GPL-3.0-or-later",
+  "homepage": "https://indieinabox.net/themes/minimal-reader",
+  "templates": [
+    "views/home.php",
+    "views/page.php",
+    "views/index_page.php"
+  ],
+  "styles": [
+    "static/css/style.css"
+  ]
+}

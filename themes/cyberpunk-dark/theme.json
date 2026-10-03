@@ -1,0 +1,20 @@
+{
+  "name": "Cyberpunk Dark",
+  "slug": "cyberpunk-dark",
+  "version": "1.0.0",
+  "description": "Retro-futuristic dark terminal aesthetic with neon phosphor accents, monospaced typography, and high contrast WCAG AAA compliance.",
+  "author": "IndieInABox Core",
+  "license": "GPL-3.0-or-later",
+  "homepage": "https://indieinabox.net/themes/cyberpunk-dark",
+  "templates": [
+    "views/home.php",
+    "views/page.php",
+    "views/index_page.php",
+    "views/timeline.php",
+    "views/interactions_page.php",
+    "views/interaction_reply.php"
+  ],
+  "styles": [
+    "static/css/style.css"
+  ]
+}

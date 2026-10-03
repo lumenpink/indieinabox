@@ -1,0 +1,17 @@
+{
+  "name": "Digital Garden",
+  "slug": "digital-garden",
+  "version": "1.0.0",
+  "description": "Botanical and interconnected knowledge garden theme emphasizing flowerbeds, plant maturity badges, and bi-directional thinking.",
+  "author": "IndieInABox Core",
+  "license": "GPL-3.0-or-later",
+  "homepage": "https://indieinabox.net/themes/digital-garden",
+  "templates": [
+    "views/home.php",
+    "views/page.php",
+    "views/index_page.php"
+  ],
+  "styles": [
+    "static/css/style.css"
+  ]
+}

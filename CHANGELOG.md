@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 ### Features
+  - (themes) disponibilizar pacotes de temas oficiais com theme.json (closes #41)
   - (core) permitir criacao de posts versionados com historico estatico mediawiki (closes #52)
   - (ui) reorganizar pagina de internacionalizacao em categorias e busca em tempo real (closes #68)
   - (test) validar fluxo de traducao automatica via IA (closes #63)

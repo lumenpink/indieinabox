@@ -275,6 +275,10 @@ class WebRouter
                 $admin->moderation();
                 return;
             }
+            if (str_starts_with($requestUriClean, '/admin/theme-download')) {
+                $admin->downloadTheme();
+                return;
+            }
         }
 
         // Route: External Media Proxy (HMAC-signed privacy proxy)

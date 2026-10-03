@@ -240,11 +240,7 @@ class ConfigView
         }
         $activeTheme = $config['active_theme'] ?? 'default';
 
-        $officialThemes = [
-            '' => '-- Select Theme --',
-            'https://github.com/lumen/theme-minimal/archive/refs/heads/main.zip' => 'Minimal Theme',
-            'https://github.com/lumen/theme-dark/archive/refs/heads/main.zip' => 'Dark Theme'
-        ];
+        $officialThemes = \Indieinabox\Theme\ThemeStarterService::getOfficialThemes();
 
         $globalStrings = [
             'Home' => 'Home link',
@@ -843,23 +839,55 @@ class ConfigView
                             </select>
                         </div>
                         
-                        <div class="grid-2">
-                            <div class="form-group" style="border: 1px solid rgba(0, 240, 255, 0.2); padding: 1em; border-radius: 4px;">
-                                <label>Install Official Theme</label>
-                                <p style="font-size: 0.85em; color: var(--text-muted); margin-top: 0;">Select a theme to download and install.</p>
-                                <select name="install_official_theme">
-                                    <?php foreach ($officialThemes as $url => $name): ?>
-                                        <option value="<?= htmlspecialchars($url) ?>"><?= htmlspecialchars($name) ?></option>
-                                    <?php endforeach; ?>
-                                </select>
-                            </div>
-                            <div class="form-group" style="border: 1px solid rgba(0, 240, 255, 0.2); padding: 1em; border-radius: 4px;">
-                                <label>Upload Custom Theme (.zip)</label>
-                                <p style="font-size: 0.85em; color: var(--text-muted); margin-top: 0;">Upload your own theme zip file.</p>
-                                <input type="file" name="custom_theme_zip" accept=".zip">
+                        <div style="margin-top: 1.5em; margin-bottom: 1.5em;">
+                            <label style="font-weight: 600; font-size: 1.05em; display: block; margin-bottom: 0.5em;">Official Starter Themes (1-Click Install)</label>
+                            <p style="font-size: 0.85em; color: var(--text-muted); margin-top: 0; margin-bottom: 1em;">
+                                Ready-to-use official themes with theme.json manifests. Install and activate with 1-click or download standalone ZIP packages.
+                            </p>
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1em;">
+                                <?php foreach ($officialThemes as $oSlug => $oData): ?>
+                                    <?php $isInstalled = in_array($oSlug, $availableThemes, true); ?>
+                                    <?php $isActive = ($activeTheme === $oSlug); ?>
+                                    <div style="border: 1px solid var(--border-color, rgba(128,128,128,0.3)); padding: 1.2em; border-radius: 6px; background: rgba(0,0,0,0.03); display: flex; flex-direction: column; justify-content: space-between;">
+                                        <div>
+                                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5em;">
+                                                <strong style="font-size: 1.05em;"><?= htmlspecialchars($oData['name']) ?></strong>
+                                                <span style="font-size: 0.75em; padding: 2px 6px; border-radius: 4px; background: rgba(0,0,0,0.08); font-family: monospace;">v<?= htmlspecialchars($oData['version']) ?></span>
+                                            </div>
+                                            <div style="font-size: 0.8em; margin-bottom: 0.7em; color: var(--accent); font-weight: 500;">
+                                                <?= htmlspecialchars($oData['badge'] ?? 'Official Theme') ?>
+                                            </div>
+                                            <div style="display: flex; gap: 6px; margin-bottom: 0.8em;">
+                                                <?php foreach (($oData['preview_colors'] ?? []) as $hex): ?>
+                                                    <span style="display: inline-block; width: 18px; height: 18px; border-radius: 50%; background: <?= htmlspecialchars($hex) ?>; border: 1px solid rgba(128,128,128,0.4);" title="<?= htmlspecialchars($hex) ?>"></span>
+                                                <?php endforeach; ?>
+                                            </div>
+                                            <p style="font-size: 0.85em; color: var(--text-muted); margin-bottom: 1em; line-height: 1.4;">
+                                                <?= htmlspecialchars($oData['description']) ?>
+                                            </p>
+                                        </div>
+                                        <div style="display: flex; gap: 0.5em; flex-wrap: wrap; align-items: center; border-top: 1px solid rgba(128,128,128,0.2); padding-top: 0.8em;">
+                                            <?php if ($isActive): ?>
+                                                <span style="font-size: 0.85em; color: #28a745; font-weight: bold;">✔ Ativo no momento</span>
+                                            <?php else: ?>
+                                                <button type="submit" name="install_official_theme_slug" value="<?= htmlspecialchars($oSlug) ?>" class="button button-primary" style="font-size: 0.85em; padding: 5px 12px; cursor: pointer;">
+                                                    <?= $isInstalled ? 'Ativar' : '⚡ Instalar e Ativar' ?>
+                                                </button>
+                                            <?php endif; ?>
+                                            <a href="/admin/theme-download?slug=<?= urlencode($oSlug) ?>" class="button button-outline" style="font-size: 0.85em; padding: 5px 10px; text-decoration: none; border: 1px solid var(--border-color, #ccc); border-radius: 4px;" title="Baixar pacote ZIP">
+                                                📦 ZIP
+                                            </a>
+                                        </div>
+                                    </div>
+                                <?php endforeach; ?>
                             </div>
                         </div>
-                        <small>Note: Installing or uploading a new theme will automatically extract it to your themes directory. You still need to set it as Active Theme above to use it.</small>
+
+                        <div class="form-group" style="border: 1px dashed rgba(128, 128, 128, 0.4); padding: 1.2em; border-radius: 6px; margin-top: 1em;">
+                            <label style="font-weight: 600;">Upload Custom Theme (.zip)</label>
+                            <p style="font-size: 0.85em; color: var(--text-muted); margin-top: 0;">Upload your own community theme archive containing theme.json.</p>
+                            <input type="file" name="custom_theme_zip" accept=".zip">
+                        </div>
                     </fieldset>
 
                     <fieldset>

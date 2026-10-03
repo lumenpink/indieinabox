@@ -1,0 +1,14 @@
+<?php
+/** @var \Indieinabox\Page\Page $page */
+/** @var \Indieinabox\Site\Site $site */
+global $footerLinks;
+use Indieinabox\Theme\ThemeData;
+?>
+<footer role="contentinfo">
+    <?= ThemeData::getFooterLinks($page, $footerLinks ?? []) ?>
+    
+    <div class="footer-credit">
+        🌿 Cultivado com carinho por <?= htmlspecialchars($site->metadata->author ?? 'Jardineiro') ?> &bull;
+        Desenvolvido com <a href="https://codeberg.org/indieinabox/indieinabox" target="_blank" rel="noopener">IndieInABox</a>
+    </div>
+</footer>

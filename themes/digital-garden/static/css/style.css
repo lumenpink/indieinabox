@@ -1,0 +1,227 @@
+/* ==========================================================================
+   Digital Garden Theme - IndieInABox
+   Botanical, interconnected knowledge garden, flowerbeds & plant maturity badges
+   ========================================================================== */
+
+:root {
+    --bg: #f9f8f3;
+    --fg: #2c352e;
+    --accent: #2e6930;
+    --accent-terracotta: #b85433;
+    --border-color: #dcd9cc;
+    --surface: #ffffff;
+    --surface-card: #f0eee4;
+    --text-muted: #5e6860;
+    --code-bg: #eae8dd;
+    --sprout-color: #3b82f6;
+    --seedling-color: #10b981;
+    --tree-color: #059669;
+    --font-main: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --font-serif: "Iowan Old Style", "Apple Garamond", Baskerville, "Times New Roman", serif;
+    --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg: #141a15;
+        --fg: #e2e8e3;
+        --accent: #52a758;
+        --accent-terracotta: #e07a5f;
+        --border-color: #273529;
+        --surface: #1b241c;
+        --surface-card: #202c22;
+        --text-muted: #95a397;
+        --code-bg: #111712;
+    }
+}
+
+body {
+    background-color: var(--bg);
+    color: var(--fg);
+    font-family: var(--font-main);
+    line-height: 1.7;
+    margin: 0;
+    padding: 2rem 1.25rem;
+    max-width: 820px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+a {
+    color: var(--accent);
+    text-decoration: underline;
+    text-decoration-style: dotted;
+    text-underline-offset: 3px;
+    transition: color 0.15s ease;
+}
+
+a:hover {
+    color: var(--accent-terracotta);
+    text-decoration-style: solid;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-serif);
+    font-weight: 600;
+    color: var(--fg);
+    letter-spacing: -0.01em;
+}
+
+h1 {
+    font-size: 2.2rem;
+    border-bottom: 2px dashed var(--border-color);
+    padding-bottom: 0.4em;
+    margin-top: 0.5em;
+}
+
+header {
+    background: var(--surface-card);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 2.5rem;
+}
+
+.garden-banner {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-serif);
+    font-size: 1.4rem;
+    font-weight: bold;
+    color: var(--accent);
+    margin-bottom: 0.5rem;
+}
+
+nav.header-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 0.75rem;
+}
+
+nav.header-nav a {
+    background: var(--surface);
+    color: var(--fg);
+    border: 1px solid var(--border-color);
+    padding: 0.25rem 0.65rem;
+    border-radius: 20px;
+    font-size: 0.88rem;
+    text-decoration: none;
+}
+
+nav.header-nav a:hover {
+    background: var(--accent);
+    color: #ffffff;
+    border-color: var(--accent);
+}
+
+.post-metadata {
+    background: var(--surface-card);
+    border-left: 4px solid var(--accent);
+    padding: 0.85rem 1.15rem;
+    border-radius: 0 6px 6px 0;
+    margin-bottom: 2rem;
+    font-size: 0.9rem;
+}
+
+.meta-garden-fields {
+    margin-top: 0.5rem;
+    padding-top: 0.5rem;
+    border-top: 1px dotted var(--border-color);
+    font-size: 0.88rem;
+    color: var(--text-muted);
+}
+
+pre, code {
+    font-family: var(--font-mono);
+}
+
+code {
+    background: var(--code-bg);
+    padding: 0.15em 0.35em;
+    border-radius: 4px;
+}
+
+pre {
+    background: var(--code-bg);
+    border: 1px solid var(--border-color);
+    padding: 1rem;
+    border-radius: 6px;
+    overflow-x: auto;
+}
+
+blockquote {
+    border-left: 3px solid var(--accent-terracotta);
+    background: rgba(184, 84, 51, 0.05);
+    margin: 1.5rem 0;
+    padding: 0.75rem 1.25rem;
+    border-radius: 0 6px 6px 0;
+}
+
+/* MediaWiki Diff styling in Digital Garden */
+table.diff {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    margin: 1.5rem 0;
+    background: var(--surface);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+table.diff th {
+    background: var(--surface-card);
+    padding: 0.6em;
+    text-align: left;
+    border-bottom: 2px solid var(--border-color);
+}
+
+table.diff td {
+    padding: 0.3em 0.6em;
+    vertical-align: top;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.diff-marker-del { color: #b91c1c; }
+.diff-marker-add { color: #15803d; }
+
+.diff-deletedline {
+    background-color: rgba(185, 28, 28, 0.1);
+}
+
+.diff-deletedline del {
+    background-color: rgba(185, 28, 28, 0.22);
+    text-decoration: none;
+    border-radius: 2px;
+}
+
+.diff-addedline {
+    background-color: rgba(21, 128, 61, 0.1);
+}
+
+.diff-addedline ins {
+    background-color: rgba(21, 128, 61, 0.22);
+    text-decoration: none;
+    border-radius: 2px;
+}
+
+.wiki-revision-notice {
+    background: var(--surface-card);
+    border-left: 4px solid var(--accent-terracotta);
+    padding: 1rem;
+    margin-bottom: 2rem;
+    border-radius: 0 6px 6px 0;
+}
+
+footer[role="contentinfo"] {
+    border-top: 1px solid var(--border-color);
+    margin-top: 3.5rem;
+    padding-top: 1.75rem;
+    text-align: center;
+    font-size: 0.88rem;
+    color: var(--text-muted);
+}

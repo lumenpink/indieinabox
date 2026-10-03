@@ -560,8 +560,26 @@ class AdminController extends AbstractController
         }
         $currentConfig['ai_translation_model'] = trim((string) ($_POST['ai_translation_model'] ?? ''));
         $currentConfig['ai_translation_endpoint'] = trim((string) ($_POST['ai_translation_endpoint'] ?? ''));
-        $currentConfig['akismet_api_key'] = trim((string) ($_POST['akismet_api_key'] ?? ''));
-        $currentConfig['active_theme'] = trim((string) ($_POST['active_theme'] ?? 'default'));
+        if (!empty($_POST['install_official_theme_slug'])) {
+            $starterSlug = trim((string) $_POST['install_official_theme_slug']);
+            $themesDir = (Database::$dataDir ? Database::$dataDir . DIRECTORY_SEPARATOR . 'themes' : 'themes');
+            $res = \Indieinabox\Theme\ThemeStarterService::installOfficialTheme($starterSlug, $themesDir);
+            if ($res['success']) {
+                $currentConfig['active_theme'] = $starterSlug;
+            }
+        } elseif (isset($_POST['active_theme'])) {
+            $currentConfig['active_theme'] = trim((string) $_POST['active_theme']);
+        }
+
+        if (isset($_FILES['custom_theme_zip']) && !empty($_FILES['custom_theme_zip']['tmp_name'])) {
+            $themesDir = (Database::$dataDir ? Database::$dataDir . DIRECTORY_SEPARATOR . 'themes' : 'themes');
+            try {
+                $installedSlug = $this->configService->installTheme($_FILES['custom_theme_zip'], $themesDir);
+                $currentConfig['active_theme'] = $installedSlug;
+            } catch (\Throwable $e) {
+                // Graceful fallback on invalid zip
+            }
+        }
 
         $currentConfig['buildall'] = isset($_POST['buildall']);
         $currentConfig['prettylinks'] = isset($_POST['prettylinks']);
@@ -1034,5 +1052,29 @@ class AdminController extends AbstractController
         ob_end_clean();
 
         $this->site = $newSite;
+    }
+
+    public function downloadTheme(): void
+    {
+        $this->ensureAuthenticated();
+        $slug = trim((string) ($_GET['slug'] ?? ''));
+        if ($slug === '') {
+            $this->redirect('/admin/config');
+            return;
+        }
+
+        $zipPath = \Indieinabox\Theme\ThemeStarterService::createZipPackage($slug);
+        if ($zipPath === null || !file_exists($zipPath)) {
+            http_response_code(404);
+            echo "Theme package not found: " . htmlspecialchars($slug);
+            return;
+        }
+
+        header('Content-Type: application/zip');
+        header('Content-Disposition: attachment; filename="theme-' . basename($slug) . '.zip"');
+        header('Content-Length: ' . (string) filesize($zipPath));
+        readfile($zipPath);
+        @unlink($zipPath);
+        exit;
     }
 }

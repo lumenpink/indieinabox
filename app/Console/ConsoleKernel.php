@@ -15,6 +15,7 @@ use Indieinabox\Console\Commands\LinkCheckCommand;
 use Indieinabox\Console\Commands\MigrateCommand;
 use Indieinabox\Console\Commands\PostCommand;
 use Indieinabox\Console\Commands\ProfileCommand;
+use Indieinabox\Console\Commands\SearchCommand;
 use Indieinabox\Console\Commands\SetupCommand;
 use Indieinabox\Console\Commands\TestWebmentionCommand;
 use Indieinabox\Console\Commands\UpdateCommand;
@@ -65,6 +66,7 @@ class ConsoleKernel
         $this->register(new TestWebmentionCommand($this->site));
         $this->register(new VersionCommand($this->site));
         $this->register(new UpdateCommand($this->site));
+        $this->register(new SearchCommand($this->site));
     }
 
     /**

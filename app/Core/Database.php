@@ -69,6 +69,25 @@ class Database
                 last_checked INTEGER NOT NULL
             )');
 
+            // Ensure search_index FTS5 virtual table exists
+            try {
+                self::$db->exec('CREATE VIRTUAL TABLE IF NOT EXISTS search_index USING fts5(
+                    doc_id UNINDEXED,
+                    doc_type,
+                    title,
+                    content,
+                    tags,
+                    url UNINDEXED,
+                    published_at UNINDEXED,
+                    author UNINDEXED,
+                    lang UNINDEXED,
+                    tokenize=\'porter unicode61 remove_diacritics 2\'
+                )');
+            } catch (\Throwable $e) {
+                // Ignore if FTS5 is compiled with different flags or already created
+            }
+
+
             if (class_exists(Container::class)) {
                 Container::getInstance()->instance(PDO::class, self::$db);
             }

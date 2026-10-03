@@ -282,3 +282,38 @@ it('dispatches admin requests to AdminController', function () {
     $router->handleRequest();
     expect($state->called)->toBeTrue();
 });
+
+it('dispatches search requests to SearchController', function () {
+    $_SERVER['REQUEST_URI'] = '/search?q=test';
+
+    $state = new stdClass();
+    $state->called = false;
+
+    $router = new class($this->site, $state) extends WebRouter {
+        private stdClass $state;
+        public function __construct(Site $site, stdClass $state)
+        {
+            parent::__construct($site);
+            $this->state = $state;
+        }
+        public function getSearchController(): \Indieinabox\Http\Controllers\SearchController
+        {
+            return new class($this->site, $this->state) extends \Indieinabox\Http\Controllers\SearchController {
+                private stdClass $state;
+                public function __construct(Site $site, stdClass $state)
+                {
+                    parent::__construct($site);
+                    $this->state = $state;
+                }
+                public function handle(): void
+                {
+                    $this->state->called = true;
+                }
+            };
+        }
+    };
+
+    $router->handleRequest();
+    expect($state->called)->toBeTrue();
+});
+

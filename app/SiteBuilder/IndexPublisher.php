@@ -633,6 +633,16 @@ class IndexPublisher
             file_put_contents($langPath, (string) json_encode($entries, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
             SiteBuilder::addManifest($langPath);
         }
+
+        // Synchronize SQLite FTS5 search index if database is connected
+        if (\Indieinabox\Core\Database::isConnected()) {
+            try {
+                $searchService = new \Indieinabox\Search\SearchService(null, $this->site);
+                $searchService->indexAllPages($pages);
+            } catch (\Throwable $e) {
+                // Non-fatal if FTS5 indexing fails during static build
+            }
+        }
     }
 
     /**

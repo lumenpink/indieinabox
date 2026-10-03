@@ -354,7 +354,24 @@ class FetchFeedsService
         $content = $entry->content['html'] ?: $entry->content['text'];
         $fileContent = "---\n" . $yamlStr . "---\n\n" . $content;
 
-        return file_put_contents($filepath, $fileContent) !== false;
+        $saved = file_put_contents($filepath, $fileContent) !== false;
+        if ($saved && class_exists(\Indieinabox\Search\SearchService::class)) {
+            try {
+                $search = new \Indieinabox\Search\SearchService($this->db);
+                $search->indexFeedEntry([
+                    'uid' => $entry->uid,
+                    'url' => $entry->url,
+                    'published' => $entry->published,
+                    'name' => $entry->name,
+                    'author' => $entry->author,
+                    'content' => $entry->content,
+                ], $channel);
+            } catch (\Throwable $e) {
+                // Non-fatal
+            }
+        }
+
+        return $saved;
     }
 
     public function getFilterService(): ?MicrosubFilterServiceInterface

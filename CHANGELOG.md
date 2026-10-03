@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 ### Features
+  - (search) implementar indexacao e busca full-text com SQLite FTS5 (closes #44)
   - (themes) disponibilizar pacotes de temas oficiais com theme.json (closes #41)
   - (core) permitir criacao de posts versionados com historico estatico mediawiki (closes #52)
   - (ui) reorganizar pagina de internacionalizacao em categorias e busca em tempo real (closes #68)

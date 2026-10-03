@@ -251,3 +251,17 @@ CREATE TABLE IF NOT EXISTS federation_blocks (
     reason TEXT,
     created_at INTEGER NOT NULL
 );
+
+CREATE VIRTUAL TABLE IF NOT EXISTS search_index USING fts5(
+    doc_id UNINDEXED,
+    doc_type,
+    title,
+    content,
+    tags,
+    url UNINDEXED,
+    published_at UNINDEXED,
+    author UNINDEXED,
+    lang UNINDEXED,
+    tokenize='porter unicode61 remove_diacritics 2'
+);
+

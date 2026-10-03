@@ -13,6 +13,7 @@ use Indieinabox\Http\Controllers\DiscoveryController;
 use Indieinabox\Http\Controllers\IndieAuthController;
 use Indieinabox\Http\Controllers\MicropubController;
 use Indieinabox\Http\Controllers\MicrosubController;
+use Indieinabox\Http\Controllers\SearchController;
 use Indieinabox\Http\Controllers\WebmentionController;
 use Indieinabox\Http\StaticFileServer;
 use Indieinabox\Site\Site;
@@ -223,6 +224,12 @@ class WebRouter
             return;
         }
 
+        // Route: Full-Text Search (HTML and JSON API)
+        if ($requestUriClean === '/search' || $requestUriClean === '/api/search') {
+            $this->getSearchController()->handle();
+            return;
+        }
+
         // Route: Unified Client (/client or /reader)
         if ($requestUriClean === '/client' || $requestUriClean === '/reader') {
             $this->getClientController()->handle();
@@ -352,6 +359,11 @@ class WebRouter
     public function getAdminController(): AdminController
     {
         return $this->container->make(AdminController::class, ['site' => $this->site]);
+    }
+
+    public function getSearchController(): SearchController
+    {
+        return $this->container->make(SearchController::class, ['site' => $this->site]);
     }
 
     /**

@@ -186,6 +186,14 @@ class Database
     }
 
     /**
+     * Alias for saveSetting.
+     */
+    public static function setSetting(string $key, mixed $value): bool
+    {
+        return self::saveSetting($key, $value);
+    }
+
+    /**
      * Retrieves all rows from the settings table as an associative array.
      * JSON values are automatically decoded into PHP arrays.
      *

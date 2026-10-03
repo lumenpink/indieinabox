@@ -55,6 +55,12 @@ The project follows Domain-Driven Design (DDD) and SOLID principles, structured 
     - `ActivityPub/ActivityPubAdapter.php`: Native ActivityPub adapter implementation.
     - `FederationManager.php`: Pluggable federation manager orchestrating actors, activities, and protocol delivery.
     - `HttpSignature.php`: Cryptographic HTTP signature creation and verification for ActivityPub requests.
+  - **`AtProto/`**: Native AT Protocol (Bluesky) federation and cross-posting bridge:
+    - `Contracts/AtProtoClientInterface.php`: Contract for AT Protocol PDS communication.
+    - `AtProtoClient.php`: XRPC client communicating with Personal Data Servers (`createSession`, `createRecord`, `uploadBlob`, `resolveHandle`).
+    - `AtProtoFacetParser.php`: Rich text facet extractor computing raw UTF-8 byte slices for links, hashtags, and mentions.
+    - `AtProtoCardBuilder.php`: Builder for external link cards (`app.bsky.embed.external`) using Google Gemini AI for concise teasers with fallback to excerpts.
+    - `BskySyndicationService.php`: Syndication orchestrator managing authentication, short note and article syndication, and frontmatter POSSE tracking (`syndication: [...]`).
   - **`Http/`**: HTTP transport layer and static asset delivery:
     - `WebRouter.php`: Central HTTP request dispatcher routing paths to transport controllers and static assets. Includes the HMAC-signed `/media/proxy` endpoint for privacy caching of external media.
     - `StaticFileServer.php`: Dedicated HTTP static asset and media file server with on-demand root index compilation fallback, styled 404 error page delivery, ActivityPub content negotiation, MIME resolution, and `serveProxiedMedia()` for streaming signed proxy responses.

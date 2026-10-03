@@ -23,6 +23,8 @@ All detailed technical documentation has been separated into dedicated markdown 
     upcoming refactoring steps.
 * **[Custom Types & Languages](file:///home/lumen/indieinabox/docs/custom_types.md)**: Instructions on how to
     add new languages and post kinds (`notes`, `photos`, `garden`) to the blog.
+* **[Bluesky & AT Protocol Federation](file:///home/lumen/indieinabox/docs/atproto.md)**: Native AT Protocol bridge, XRPC client, rich link card embeds with Gemini AI descriptions, exact UTF-8 byte slice facets, and POSSE frontmatter syndication.
+* **[Full-Text Search (SQLite FTS5)](file:///home/lumen/indieinabox/docs/search.md)**: SQLite FTS5 search engine indexing posts and feeds with BM25 ranking and multi-language support.
 
 ---
 

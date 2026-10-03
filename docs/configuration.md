@@ -58,7 +58,7 @@ Configuration parameters are organized into 7 clearly separated modules:
 1. **`01 General`**: Site identity (name, author, FQDN, base path), theme selection and installation, and static site build/publishing options.
 2. **`02 Content Kinds`**: Content kind definitions (articles, notes, bookmarks, etc.), display modes, custom color palettes, and visibility toggles.
 3. **`03 Localization`**: Language routing table (Main / Sub-languages, reordering, promotion), ISO 639-1 / BCP-47 catalog dropdown selection, custom BCP-47 code entry, language menu display mode (`native` vs `short`), translation parity modes, auto-fill from locale dictionaries, and site-wide string translations.
-4. **`04 Social & Federation`**: TwTxt microblogging configuration, ActivityPub federation toggles and handle, Microsub media ingestion limits, and Media Proxy & Privacy Cache settings.
+4. **`04 Social & Federation`**: TwTxt microblogging configuration, ActivityPub federation toggles and handle, Bluesky / AT Protocol federation bridge (handle, app password, PDS URL, auto-syndication, and real-time connection tester), Microsub media ingestion limits, and Media Proxy & Privacy Cache settings.
 5. **`05 Services & Security`**: Remote shortlink integration (Nullpointer/Rustypaste), automatic Wayback Machine archiving, Akismet anti-spam API key, automation webhook tokens (`/cron` and `/build`), and admin password management.
 6. **`06 Updates`**: Release channel subscriptions (Stable / Nightly), asynchronous version checks, one-click manual upgrades, and local snapshot rollbacks.
 7. **`07 Backups`**: Backup storage destinations, retention limits, automatic daily cron backups, and media/content skipping options.
@@ -92,6 +92,8 @@ php indieinabox.php [action]
 *   **`config set/get`**: Sets or retrieves a configuration variable directly to/from the database (e.g. `config set --key <k> --value <v>`).
 *   **`fetch`**: Forces a manual fetch of all followed RSS/Twtxt feeds.
 *   **`cron`**: Runs pending background tasks (such as retrying failed webmentions).
+*   **`search`**: Full-text search across posts, digital garden, and feeds using SQLite FTS5 (e.g. `search <query> [--type=post|garden|feed] [--lang=<code>] [--json] [--reindex]`). See [Full-Text Search](file:///home/lumen/indieinabox/docs/search.md).
+*   **`bsky`**: Manages Bluesky / AT Protocol federation, status posting, connection tests, and POSSE syndication (e.g. `bsky test`, `bsky did`, `bsky syndicate <file>`, `bsky post "<text>"`). See [Bluesky & AT Protocol Federation](file:///home/lumen/indieinabox/docs/atproto.md).
 
 ### Compilation Flags
 

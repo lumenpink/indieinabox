@@ -128,6 +128,15 @@ class PublishPostService
             $this->outboxService->broadcastActivity($createActivity);
         }
 
+        // Bluesky AT Protocol auto-syndication
+        try {
+            $bsky = new \Indieinabox\AtProto\BskySyndicationService($this->site);
+            if ($bsky->isConfigured() && $bsky->getConfig()['autoSyndicate']) {
+                $bsky->syndicateFile($postPath);
+            }
+        } catch (\Throwable) {
+        }
+
         return [
             'slug' => $slug,
             'filepath' => $postPath,

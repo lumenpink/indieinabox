@@ -1307,6 +1307,42 @@ class ConfigView
                     </fieldset>
 
                     <fieldset>
+                        <legend>Bluesky / AT Protocol Federation</legend>
+                        <div class="checkbox-group" style="margin-bottom: 1em;">
+                            <input type="checkbox" name="atproto_auto_syndicate" id="atproto_auto_syndicate" <?= (!empty($config['atproto_auto_syndicate']) && $config['atproto_auto_syndicate'] === '1') ? 'checked' : '' ?>>
+                            <label for="atproto_auto_syndicate">Auto-syndicate new notes and articles to Bluesky (POSSE)</label>
+                        </div>
+                        <div class="grid-2">
+                            <div class="form-group">
+                                <label for="atproto_handle">Bluesky / ATProto Handle</label>
+                                <input type="text" name="atproto_handle" id="atproto_handle" value="<?= htmlspecialchars($config['atproto_handle'] ?? '') ?>" placeholder="e.g. yourdomain.com or user.bsky.social">
+                                <small>Custom domain handles or standard Bluesky handles.</small>
+                            </div>
+                            <div class="form-group">
+                                <label for="atproto_app_password">App Password</label>
+                                <input type="password" name="atproto_app_password" id="atproto_app_password" value="<?= !empty($config['atproto_app_password']) ? '••••••••' : '' ?>" placeholder="xxxx-xxxx-xxxx-xxxx">
+                                <small>Create an App Password in Bluesky Settings &gt; App Passwords.</small>
+                            </div>
+                        </div>
+                        <div class="grid-2">
+                            <div class="form-group">
+                                <label for="atproto_pds_url">PDS Host URL</label>
+                                <input type="url" name="atproto_pds_url" id="atproto_pds_url" value="<?= htmlspecialchars($config['atproto_pds_url'] ?? 'https://bsky.social') ?>" placeholder="https://bsky.social">
+                                <small>Defaults to <code>https://bsky.social</code> or your custom Personal Data Server.</small>
+                            </div>
+                            <div class="form-group">
+                                <label for="atproto_did">Account DID (Decentralized Identifier)</label>
+                                <input type="text" name="atproto_did" id="atproto_did" value="<?= htmlspecialchars($config['atproto_did'] ?? '') ?>" placeholder="did:plc:... or did:web:..." readonly>
+                                <small>Populated automatically upon test/session. Served at <code>/.well-known/atproto-did</code>.</small>
+                            </div>
+                        </div>
+                        <div style="margin-top: 1em; display: flex; align-items: center; gap: 1em;">
+                            <button type="button" class="btn" id="btn-test-bsky" onclick="testBskyConnection()" style="cursor: pointer; padding: 0.5em 1em;">Test Connection</button>
+                            <span id="bsky-test-result" style="font-weight: 500;"></span>
+                        </div>
+                    </fieldset>
+
+                    <fieldset>
                         <legend>Microsub Feeds &amp; Media</legend>
                         <div class="checkbox-group">
                             <input type="checkbox" name="download_media_image" id="download_media_image" <?= ($config['download_media_image'] ?? true) ? 'checked' : '' ?>>
@@ -1713,6 +1749,64 @@ class ConfigView
                     if (statusEl) {
                         statusEl.textContent = `Exibindo ${visibleCount} de ${items.length} termos.`;
                     }
+                }
+
+                function testBskyConnection() {
+                    const btn = document.getElementById('btn-test-bsky');
+                    const resSpan = document.getElementById('bsky-test-result');
+                    const handleEl = document.getElementById('atproto_handle');
+                    const passEl = document.getElementById('atproto_app_password');
+                    const pdsEl = document.getElementById('atproto_pds_url');
+
+                    const handle = handleEl ? handleEl.value : '';
+                    const password = passEl ? passEl.value : '';
+                    const pds = pdsEl ? pdsEl.value : '';
+
+                    if (!handle) {
+                        resSpan.style.color = '#ef4444';
+                        resSpan.textContent = '✘ Please enter a handle first.';
+                        return;
+                    }
+
+                    btn.disabled = true;
+                    btn.textContent = 'Testing...';
+                    resSpan.textContent = '';
+                    resSpan.style.color = '';
+
+                    const formData = new FormData();
+                    formData.append('action', 'bsky_test');
+                    formData.append('atproto_handle', handle);
+                    if (password && password !== '••••••••') {
+                        formData.append('atproto_app_password', password);
+                    }
+                    formData.append('atproto_pds_url', pds);
+
+                    fetch('/admin/config', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(r => r.json())
+                    .then(data => {
+                        btn.disabled = false;
+                        btn.textContent = 'Test Connection';
+                        if (data.success) {
+                            resSpan.style.color = '#10b981';
+                            resSpan.textContent = '✔ Connected! DID: ' + data.did;
+                            const didInput = document.getElementById('atproto_did');
+                            if (didInput && data.did) {
+                                didInput.value = data.did;
+                            }
+                        } else {
+                            resSpan.style.color = '#ef4444';
+                            resSpan.textContent = '✘ ' + (data.error || 'Connection failed');
+                        }
+                    })
+                    .catch(err => {
+                        btn.disabled = false;
+                        btn.textContent = 'Test Connection';
+                        resSpan.style.color = '#ef4444';
+                        resSpan.textContent = '✘ Error: ' + err.message;
+                    });
                 }
 
                 document.addEventListener('DOMContentLoaded', function() {

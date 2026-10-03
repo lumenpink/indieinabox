@@ -143,6 +143,16 @@ class AdminController extends AbstractController
 
         if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
             if (isset($_POST['action'])) {
+                if ($_POST['action'] === 'bsky_test') {
+                    header('Content-Type: application/json');
+                    $handle = trim((string) ($_POST['atproto_handle'] ?? Database::getSetting('atproto_handle') ?? ''));
+                    $password = trim((string) ($_POST['atproto_app_password'] ?? Database::getSetting('atproto_app_password') ?? ''));
+                    $pds = trim((string) ($_POST['atproto_pds_url'] ?? Database::getSetting('atproto_pds_url') ?? 'https://bsky.social'));
+                    $service = new \Indieinabox\AtProto\BskySyndicationService($this->site);
+                    $result = $service->testCredentials($handle, $password, $pds);
+                    echo json_encode($result);
+                    exit;
+                }
                 if ($_POST['action'] === 'manual_update' && !empty($_POST['download_url'])) {
                     UpdateService::downloadAndInstall((string) $_POST['download_url']);
                     $this->redirect('/admin/config?saved=1');
@@ -605,6 +615,20 @@ class AdminController extends AbstractController
         $currentConfig['activitypub_handle'] = trim((string) ($_POST['activitypub_handle'] ?? 'schwartz'));
         $currentConfig['activitypub_cache_remote_emojis'] = isset($_POST['activitypub_cache_remote_emojis']);
         $currentConfig['feed_limit'] = isset($_POST['feed_limit']) ? (int) $_POST['feed_limit'] : 20;
+
+        if (isset($_POST['atproto_handle'])) {
+            $currentConfig['atproto_handle'] = trim((string) $_POST['atproto_handle']);
+        }
+        if (isset($_POST['atproto_app_password']) && trim((string) $_POST['atproto_app_password']) !== '') {
+            $currentConfig['atproto_app_password'] = trim((string) $_POST['atproto_app_password']);
+        }
+        if (isset($_POST['atproto_pds_url'])) {
+            $currentConfig['atproto_pds_url'] = trim((string) $_POST['atproto_pds_url']) ?: 'https://bsky.social';
+        }
+        if (isset($_POST['atproto_did'])) {
+            $currentConfig['atproto_did'] = trim((string) $_POST['atproto_did']);
+        }
+        $currentConfig['atproto_auto_syndicate'] = isset($_POST['atproto_auto_syndicate']) ? '1' : '0';
 
         $currentConfig['cron_token'] = trim((string) ($_POST['cron_token'] ?? ''));
         $currentConfig['build_token'] = trim((string) ($_POST['build_token'] ?? ''));

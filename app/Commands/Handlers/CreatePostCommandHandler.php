@@ -173,6 +173,15 @@ class CreatePostCommandHandler
             \Indieinabox\Webmention\WebmentionSender::queueOutgoingWebmentions($postUrl, $frontmatter, $content);
         }
 
+        // Bluesky AT Protocol auto-syndication
+        try {
+            $bsky = new \Indieinabox\AtProto\BskySyndicationService($site);
+            if ($bsky->isConfigured() && $bsky->getConfig()['autoSyndicate']) {
+                $bsky->syndicateFile($filePath);
+            }
+        } catch (\Throwable) {
+        }
+
         // Dispatch domain event
         if ($this->eventDispatcher !== null) {
             $this->eventDispatcher->dispatch(new PostPublishedEvent(

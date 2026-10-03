@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Indieinabox\Console;
 
 use Indieinabox\Console\Commands\BackupCommand;
+use Indieinabox\Console\Commands\BskyCommand;
 use Indieinabox\Console\Commands\BuildCommand;
 use Indieinabox\Console\Commands\ConfigCommand;
 use Indieinabox\Console\Commands\CronCommand;
@@ -67,6 +68,7 @@ class ConsoleKernel
         $this->register(new VersionCommand($this->site));
         $this->register(new UpdateCommand($this->site));
         $this->register(new SearchCommand($this->site));
+        $this->register(new BskyCommand($this->site));
     }
 
     /**

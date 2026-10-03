@@ -85,6 +85,18 @@ class PostCommand extends AbstractCommand
             file_put_contents($postPath, $content);
             echo "Post created at $postPath\n";
 
+            try {
+                $bsky = new \Indieinabox\AtProto\BskySyndicationService($this->site);
+                if ($bsky->isConfigured() && $bsky->getConfig()['autoSyndicate']) {
+                    $bskyUrl = $bsky->syndicateFile($postPath);
+                    if ($bskyUrl) {
+                        echo "Syndicated to Bluesky: {$bskyUrl}\n";
+                    }
+                }
+            } catch (\Throwable $e) {
+                echo "Bluesky auto-syndication notice: " . $e->getMessage() . "\n";
+            }
+
             $builder = new SiteBuilder($this->site);
             $builder->build();
             echo "Site rebuilt.\n";

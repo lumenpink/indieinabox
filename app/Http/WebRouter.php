@@ -99,6 +99,20 @@ class WebRouter
             return;
         }
 
+        // Route: AT Protocol Domain Verification
+        if ($requestUriClean === '/.well-known/atproto-did') {
+            $did = \Indieinabox\Core\Database::getSetting('atproto_did') ?? '';
+            if (!empty($did)) {
+                header('Content-Type: text/plain; charset=utf-8');
+                echo trim((string) $did);
+                return;
+            }
+            http_response_code(404);
+            header('Content-Type: text/plain; charset=utf-8');
+            echo "ATProto DID not configured\n";
+            return;
+        }
+
         // Route: Micropub Discovery Redirect
         if ($requestUriClean === '/.well-known/micropub') {
             header('HTTP/1.1 302 Found');

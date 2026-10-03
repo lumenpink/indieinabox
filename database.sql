@@ -196,6 +196,10 @@ CREATE TABLE IF NOT EXISTS activitypub_actors (
 );
 
 INSERT OR REPLACE INTO settings (key, value) VALUES ('activitypub_handle', 'author');
+INSERT OR REPLACE INTO settings (key, value) VALUES ('atproto_handle', '');
+INSERT OR REPLACE INTO settings (key, value) VALUES ('atproto_pds_url', 'https://bsky.social');
+INSERT OR REPLACE INTO settings (key, value) VALUES ('atproto_did', '');
+INSERT OR REPLACE INTO settings (key, value) VALUES ('atproto_auto_syndicate', '0');
 
 CREATE TABLE IF NOT EXISTS inbox_queue (
     id INTEGER PRIMARY KEY AUTOINCREMENT,

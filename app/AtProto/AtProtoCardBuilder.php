@@ -23,11 +23,11 @@ class AtProtoCardBuilder
 
     public function __construct(
         ?string $geminiApiKey = null,
-        string $geminiModel = 'gemini-2.5-flash',
+        string $geminiModel = 'gemini-3.5-flash',
         ?callable $geminiTransport = null
     ) {
         $this->geminiApiKey = $geminiApiKey ? trim($geminiApiKey) : null;
-        $this->geminiModel = trim($geminiModel) ?: 'gemini-2.5-flash';
+        $this->geminiModel = trim($geminiModel) ?: 'gemini-3.5-flash';
         $this->geminiTransport = $geminiTransport;
     }
 
@@ -41,6 +41,7 @@ class AtProtoCardBuilder
      * @param AtProtoClientInterface|null $client Optional ATProto client for thumbnail upload.
      * @param string|null $accessJwt Access JWT token for thumbnail upload.
      * @param string|null $pdsUrl PDS URL for thumbnail upload.
+     * @param string|null $customDescription Optional pre-computed description/summary.
      * @return array{'$type': string, external: array{uri: string, title: string, description: string, thumb?: array<string, mixed>}}
      */
     public function build(
@@ -50,9 +51,12 @@ class AtProtoCardBuilder
         ?string $localImagePath = null,
         ?AtProtoClientInterface $client = null,
         ?string $accessJwt = null,
-        ?string $pdsUrl = null
+        ?string $pdsUrl = null,
+        ?string $customDescription = null
     ): array {
-        $description = $this->generateDescription($title, $content);
+        $description = ($customDescription !== null && $customDescription !== '')
+            ? $customDescription
+            : $this->generateDescription($title, $content);
 
         $external = [
             'uri' => $uri,

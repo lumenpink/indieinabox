@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 ### Features
+  - (i18n,garden) sincronizacao de resumos com content-hashing (summary, summary_hash, summary_origin), linhagem original (translation_source, translation_source_hash) e adocao do Gemini 3.5 Flash como padrao
   - (i18n) implementar arquitetura de traducao IA em dois passos com mascaramento posicional e persistencia SQLite
   - (federation) implementar ponte nativa de federacao AT Protocol Bluesky (closes #43)
   - (search) implementar indexacao e busca full-text com SQLite FTS5 (closes #44)

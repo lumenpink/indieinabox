@@ -14,9 +14,10 @@ it('catalogues recommended and available AI models correctly', function () {
     expect($catalog)->toHaveKeys(['gemini', 'claude', 'openai', 'grok', 'ollama']);
 
     // Check Gemini defaults and recommendations
-    expect(AiModels::getDefaultModel('gemini'))->toBe('gemini-2.5-flash');
-    expect(AiModels::isRecommended('gemini', 'gemini-2.5-flash'))->toBeTrue();
-    expect(AiModels::isRecommended('gemini', 'gemini-1.5-flash'))->toBeFalse();
+    expect(AiModels::getDefaultModel('gemini'))->toBe('gemini-3.5-flash');
+    expect(AiModels::isRecommended('gemini', 'gemini-3.5-flash'))->toBeTrue();
+    expect(AiModels::isRecommended('gemini', 'gemini-3.5-flash-lite'))->toBeFalse();
+    expect(AiModels::isRecommended('gemini', 'gemini-2.5-flash'))->toBeFalse();
 
     // Check Claude defaults
     expect(AiModels::getDefaultModel('claude'))->toBe('claude-3-5-haiku-20241022');

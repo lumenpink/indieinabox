@@ -46,7 +46,7 @@ class SeoMetadataResolver implements SeoMetadataResolverInterface
     public function resolve(Page $page): array
     {
         // 1. Description Fallback (always truncated to 150 chars max for safety)
-        $description = $page->metadata->description ?? '';
+        $description = (string) ($page->metadata->description ?? $page->metadata->summary ?? '');
         if (empty($description)) {
             $description = strip_tags((string) ($page->content ?? ''));
         }

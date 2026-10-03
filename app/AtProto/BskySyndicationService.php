@@ -45,7 +45,7 @@ class BskySyndicationService
     {
         if ($this->cardBuilder === null) {
             $apiKey = (string) (Database::getSetting('ai_translation_api_key') ?? Database::getSetting('gemini_api_key') ?? '');
-            $model = (string) (Database::getSetting('ai_translation_model') ?: 'gemini-2.5-flash');
+            $model = (string) (Database::getSetting('ai_translation_model') ?: 'gemini-3.5-flash');
             $this->cardBuilder = new AtProtoCardBuilder($apiKey !== '' ? $apiKey : null, $model);
         }
         return $this->cardBuilder;
@@ -242,7 +242,17 @@ class BskySyndicationService
         }
         $images = array_values(array_filter($images));
 
-        $result = $this->syndicatePost($body, $kind, $title, $canonicalUrl, $images);
+        // Sync and persist summary with content hash if stale or missing
+        $summaryService = new \Indieinabox\Services\AiSummaryService(null, null, $this->site);
+        if ($summaryService->syncFile($filePath)) {
+            $raw = (string) file_get_contents($filePath);
+            $parsed = $contentRepo->parseFrontmatterMarkdown($raw);
+            $frontmatter = $parsed['frontmatter'];
+            $body = $parsed['body'];
+        }
+        $customSummary = (string) ($frontmatter['summary'] ?? $frontmatter['description'] ?? '');
+
+        $result = $this->syndicatePost($body, $kind, $title, $canonicalUrl, $images, $customSummary !== '' ? $customSummary : null);
 
         // Record syndication URL
         $this->recordSyndicationUrl($filePath, $result['url']);
@@ -258,6 +268,7 @@ class BskySyndicationService
      * @param string $title Post title (if article)
      * @param string|null $canonicalUrl Local post URL
      * @param array<int, string> $localImagePaths Local files to attach
+     * @param string|null $customSummary Pre-computed summary
      * @return array{uri: string, cid: string, url: string}
      */
     public function syndicatePost(
@@ -265,7 +276,8 @@ class BskySyndicationService
         string $kind = 'note',
         string $title = '',
         ?string $canonicalUrl = null,
-        array $localImagePaths = []
+        array $localImagePaths = [],
+        ?string $customSummary = null
     ): array {
         $session = $this->ensureSession();
         $cardBuilder = $this->getCardBuilder();
@@ -286,7 +298,8 @@ class BskySyndicationService
                 $firstImage,
                 $this->client,
                 $session['accessJwt'],
-                $session['pdsUrl']
+                $session['pdsUrl'],
+                $customSummary
             );
 
             // Post text

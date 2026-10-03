@@ -40,6 +40,9 @@ it('executes two-pass AI translation architecture end-to-end', function () {
             if ($text === 'plants') {
                 return 'plantas';
             }
+            if ($text === 'A guide to welcoming new visitors.') {
+                return 'Um guia para receber novos visitantes.';
+            }
             // Markdown content with preamble and closing
             return "Here is the translated article:\n"
                 . "# Guia de Boas-Vindas\n\n"
@@ -64,6 +67,7 @@ it('executes two-pass AI translation architecture end-to-end', function () {
         'rawBody' => "# Welcome Guide\n\nRead more in [our guide](/welcome-guide/) to learn.",
         'flowerbed' => ['Gardening'],
         'tags' => ['plants', 'draft'],
+        'summary' => 'A guide to welcoming new visitors.',
     ]);
     $pages->add($page);
 
@@ -87,12 +91,16 @@ it('executes two-pass AI translation architecture end-to-end', function () {
     expect($ptPage->metadata->flowerbed)->toBe(['Jardinagem']);
     expect($ptPage->metadata->tags)->toBe(['plantas', 'draft']);
 
-    // 2. Pass 2 verification: AI frontmatter metadata present
+    // 2. Pass 2 verification: AI frontmatter metadata and origin tracking present
     expect($ptPage->metadata->translated_by)->toBe('ai');
     expect($ptPage->metadata->translated_by_ia)->toBeTrue();
+    expect($ptPage->metadata->translation_source)->toBe('welcome-guide/');
+    expect($ptPage->metadata->translation_source_lang)->toBe('en');
+    expect($ptPage->metadata->translation_source_hash)->not->toBeEmpty();
     expect($ptPage->metadata->translation_ai_provider)->toBe('Google Gemini');
     expect($ptPage->metadata->translation_ai_model)->toBe('gemini-2.5-flash');
-    expect($ptPage->metadata->translation_source_lang)->toBe('en');
+    expect($ptPage->metadata->summary)->toBe('Um guia para receber novos visitantes.');
+    expect($ptPage->metadata->summary_origin)->toBe('ai');
 
     // 3. Sanitizer verification: Preambles and closings stripped
     expect($ptPage->content->content)->not->toContain('Here is the translated article:');

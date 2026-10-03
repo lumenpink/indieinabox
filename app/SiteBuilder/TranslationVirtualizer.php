@@ -182,6 +182,11 @@ class TranslationVirtualizer
         }
 
         // =========================================================================
+        // PASS 0: Synchronize & Validate Summaries Across All Physical Source Files
+        // =========================================================================
+        $this->pass0SyncOriginSummaries($pagesToProcess);
+
+        // =========================================================================
         // PASS 1: Pre-translate & Persist Titles, Slugs, Flowerbeds, Tags, Categories
         // =========================================================================
         $this->pass1PretranslateTaxonomiesAndSlugs(
@@ -222,7 +227,6 @@ class TranslationVirtualizer
                 }
 
                 $targetIsMain = ($targetLang === $defaultLang);
-
                 if ($parity === 'from-main-only' && !$sourceIsMain) {
                     continue;
                 }
@@ -264,6 +268,10 @@ class TranslationVirtualizer
                     if (is_object($cloned->metadata)) {
                         $cloned->metadata->translated_by = 'ai';
                         $cloned->metadata->translated_by_ia = true;
+                        $cloned->metadata->translation_source = $page->slug;
+                        $cloned->metadata->translation_source_lang = $sourceLang;
+                        $rawSourceBody = (string) ($page->content->rawBody ?? $page->content->content ?? '');
+                        $cloned->metadata->translation_source_hash = \Indieinabox\Services\AiSummaryService::computeBodyHash($rawSourceBody);
 
                         $providerLabel = $this->getAiProviderLabel();
                         $modelName = $this->aiModelName;
@@ -276,9 +284,18 @@ class TranslationVirtualizer
                         }
 
                         $cloned->metadata->translation_ai_provider = $providerLabel;
-                        $cloned->metadata->translation_ai_model = $modelName ?: 'gemini-2.5-flash';
-                        $cloned->metadata->translation_source_lang = $sourceLang;
+                        $cloned->metadata->translation_ai_model = $modelName ?: 'gemini-3.5-flash';
                         $cloned->metadata->translation_date = date('Y-m-d');
+
+                        // Translate summary if available
+                        if (!empty($page->metadata->summary) && is_string($page->metadata->summary)) {
+                            $cloned->metadata->summary = $this->translationEngine->translateText(
+                                $page->metadata->summary,
+                                $targetLang,
+                                $sourceLang
+                            );
+                            $cloned->metadata->summary_origin = 'ai';
+                        }
                     }
 
                     // Apply pre-translated taxonomies (flowerbeds, tags, categories)
@@ -351,6 +368,59 @@ class TranslationVirtualizer
                     $cloned = $languageProcessor->processLanguage($cloned);
 
                     $pages->add($cloned);
+                }
+            }
+        }
+    }
+
+    /**
+     * Pass 0: Synchronize and persist summaries & content hashes for all physical source files.
+     * Ensures all source notes in any language are 100% updated before virtualization begins.
+     *
+     * @param Page[] $pagesToProcess
+     */
+    private function pass0SyncOriginSummaries(array $pagesToProcess): void
+    {
+        // Only run when AI translation engine is active
+        if (!($this->translationEngine instanceof AiTranslationEngine)) {
+            return;
+        }
+
+        $summaryService = new \Indieinabox\Services\AiSummaryService(null, $this->aiModelName, $this->site);
+
+        foreach ($pagesToProcess as $page) {
+            $filePath = $page->filepath ?? null;
+            if ($filePath && file_exists($filePath) && is_file($filePath)) {
+                $contentRepo = new \Indieinabox\Repositories\FileSystemContentRepository(null, $this->site);
+                $raw = (string) file_get_contents($filePath);
+                $parsed = $contentRepo->parseFrontmatterMarkdown($raw);
+                $frontmatter = $parsed['frontmatter'];
+                $body = $parsed['body'];
+
+                if (\Indieinabox\Services\AiSummaryService::isSummaryStale($frontmatter, $body)) {
+                    if ($summaryService->syncFile($filePath)) {
+                        $reloaded = (string) file_get_contents($filePath);
+                        $reparsed = $contentRepo->parseFrontmatterMarkdown($reloaded);
+                        if (isset($reparsed['frontmatter']['summary'])) {
+                            $page->metadata->summary = $reparsed['frontmatter']['summary'];
+                        }
+                        if (isset($reparsed['frontmatter']['summary_hash'])) {
+                            $page->metadata->summary_hash = $reparsed['frontmatter']['summary_hash'];
+                        }
+                        if (isset($reparsed['frontmatter']['summary_origin'])) {
+                            $page->metadata->summary_origin = $reparsed['frontmatter']['summary_origin'];
+                        }
+                    }
+                } else {
+                    if (isset($frontmatter['summary'])) {
+                        $page->metadata->summary = $frontmatter['summary'];
+                    }
+                    if (isset($frontmatter['summary_hash'])) {
+                        $page->metadata->summary_hash = $frontmatter['summary_hash'];
+                    }
+                    if (isset($frontmatter['summary_origin'])) {
+                        $page->metadata->summary_origin = $frontmatter['summary_origin'];
+                    }
                 }
             }
         }

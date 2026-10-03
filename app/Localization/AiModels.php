@@ -18,23 +18,28 @@ class AiModels
     {
         return [
             'gemini' => [
+                'gemini-3.5-flash' => [
+                    'label' => 'Gemini 3.5 Flash',
+                    'recommended' => true,
+                    'tag' => 'Recomendado (Fluidez Literária & Equilíbrio)',
+                ],
+                'gemini-3.5-flash-lite' => [
+                    'label' => 'Gemini 3.5 Flash-Lite',
+                    'recommended' => false,
+                    'tag' => 'Econômico (Alto Volume & Micro-notas)',
+                ],
+                'gemini-3.8-flash' => [
+                    'label' => 'Gemini 3.8 Flash',
+                    'recommended' => false,
+                    'tag' => 'Alta Precisão (Artigos Técnicos & Raciocínio)',
+                ],
                 'gemini-2.5-flash' => [
                     'label' => 'Gemini 2.5 Flash',
-                    'recommended' => true,
-                    'tag' => 'Recomendado (Custo-Benefício & Velocidade)',
+                    'recommended' => false,
+                    'tag' => 'Legado Estável',
                 ],
                 'gemini-2.5-pro' => [
                     'label' => 'Gemini 2.5 Pro',
-                    'recommended' => false,
-                    'tag' => 'Alta Precisão Literária',
-                ],
-                'gemini-1.5-flash' => [
-                    'label' => 'Gemini 1.5 Flash',
-                    'recommended' => false,
-                    'tag' => 'Legado Rápido',
-                ],
-                'gemini-1.5-pro' => [
-                    'label' => 'Gemini 1.5 Pro',
                     'recommended' => false,
                     'tag' => 'Legado Pro',
                 ],

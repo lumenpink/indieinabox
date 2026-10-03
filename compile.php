@@ -279,7 +279,38 @@ $localesCode .= "            return array_keys(self::\$locales);\n";
 $localesCode .= "        }\n";
 $localesCode .= "    }\n\n";
 
-$compiled .= $themeCode . $localesCode;
+$starterThemesDir = $base . '/themes';
+$starterThemesCode = "    class EmbeddedStarterThemes {\n";
+$starterThemesCode .= "        private static array \$themes = [\n";
+if (is_dir($starterThemesDir)) {
+    $dirs = (array) glob($starterThemesDir . '/*', GLOB_ONLYDIR);
+    foreach ($dirs as $tdir) {
+        $slug = basename((string) $tdir);
+        $themeFiles = getThemeFiles((string) $tdir);
+        $starterThemesCode .= "            '" . addslashes($slug) . "' => [\n";
+        foreach ($themeFiles as $path => $content) {
+            $rel = str_replace((string) $tdir . '/', '', $path);
+            $starterThemesCode .= "                '" . addslashes(str_replace('\\', '/', $rel)) . "' => '" . base64_encode($content) . "',\n";
+        }
+        $starterThemesCode .= "            ],\n";
+    }
+}
+$starterThemesCode .= "        ];\n";
+$starterThemesCode .= "        public static function getThemes(): array {\n";
+$starterThemesCode .= "            return array_keys(self::\$themes);\n";
+$starterThemesCode .= "        }\n";
+$starterThemesCode .= "        public static function getThemeFiles(string \$slug): ?array {\n";
+$starterThemesCode .= "            if (!isset(self::\$themes[\$slug])) return null;\n";
+$starterThemesCode .= "            \$files = [];\n";
+$starterThemesCode .= "            foreach (self::\$themes[\$slug] as \$path => \$b64) {\n";
+$starterThemesCode .= "                \$files[\$path] = base64_decode(\$b64);\n";
+$starterThemesCode .= "            }\n";
+$starterThemesCode .= "            return \$files;\n";
+$starterThemesCode .= "        }\n";
+$starterThemesCode .= "    }\n\n";
+
+$compiled .= $themeCode . $localesCode . $starterThemesCode;
+
 
 // Inject install.php logic adapted for the single file
 $runnerCode .= <<<'EOT'

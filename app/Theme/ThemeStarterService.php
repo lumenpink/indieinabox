@@ -73,6 +73,14 @@ class ThemeStarterService
                 if (is_array($decoded)) {
                     $info = array_merge($info, $decoded);
                 }
+            } elseif (class_exists('EmbeddedStarterThemes') && method_exists('EmbeddedStarterThemes', 'getThemeFiles')) {
+                $files = \EmbeddedStarterThemes::getThemeFiles($slug);
+                if (isset($files['theme.json'])) {
+                    $decoded = json_decode((string) $files['theme.json'], true);
+                    if (is_array($decoded)) {
+                        $info = array_merge($info, $decoded);
+                    }
+                }
             }
         }
         unset($info);
@@ -95,23 +103,36 @@ class ThemeStarterService
     ): array {
         $slug = strtolower(trim($slug));
         $sourceDir = self::getStartersSourceDir($baseDir) . DIRECTORY_SEPARATOR . $slug;
+        $embeddedFiles = (class_exists('EmbeddedStarterThemes') && method_exists('EmbeddedStarterThemes', 'getThemeFiles'))
+            ? \EmbeddedStarterThemes::getThemeFiles($slug)
+            : null;
 
-        if (!is_dir($sourceDir)) {
+        if (!is_dir($sourceDir) && $embeddedFiles === null) {
             return [
                 'success' => false,
-                'error' => "Starter theme '{$slug}' does not exist in {$sourceDir}.",
+                'error' => "Starter theme '{$slug}' does not exist.",
             ];
         }
 
-        $manifestFile = $sourceDir . DIRECTORY_SEPARATOR . 'theme.json';
-        if (!file_exists($manifestFile)) {
+        $manifest = [];
+        if (is_dir($sourceDir)) {
+            $manifestFile = $sourceDir . DIRECTORY_SEPARATOR . 'theme.json';
+            if (!file_exists($manifestFile)) {
+                return [
+                    'success' => false,
+                    'error' => "Theme manifest theme.json missing in {$sourceDir}.",
+                ];
+            }
+            $manifest = json_decode((string) file_get_contents($manifestFile), true) ?: [];
+        } elseif ($embeddedFiles !== null && isset($embeddedFiles['theme.json'])) {
+            $manifest = json_decode((string) $embeddedFiles['theme.json'], true) ?: [];
+        } else {
             return [
                 'success' => false,
-                'error' => "Theme manifest theme.json missing in {$sourceDir}.",
+                'error' => "Theme manifest theme.json missing for {$slug}.",
             ];
         }
 
-        $manifest = json_decode((string) file_get_contents($manifestFile), true) ?: [];
         $check = ThemeManager::checkManifest($manifest);
         if (!$check['valid']) {
             return [
@@ -134,8 +155,15 @@ class ThemeStarterService
         }
         @mkdir($destDir, 0755, true);
 
-        // Copy all files recursively
-        self::copyRecursive($sourceDir, $destDir);
+        if (is_dir($sourceDir)) {
+            self::copyRecursive($sourceDir, $destDir);
+        } elseif ($embeddedFiles !== null) {
+            foreach ($embeddedFiles as $relPath => $fileContent) {
+                $targetFile = $destDir . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $relPath);
+                @mkdir(dirname($targetFile), 0755, true);
+                file_put_contents($targetFile, $fileContent);
+            }
+        }
 
         return [
             'success' => true,
@@ -159,8 +187,11 @@ class ThemeStarterService
     ): ?string {
         $slug = strtolower(trim($slug));
         $sourceDir = self::getStartersSourceDir($baseDir) . DIRECTORY_SEPARATOR . $slug;
+        $embeddedFiles = (class_exists('EmbeddedStarterThemes') && method_exists('EmbeddedStarterThemes', 'getThemeFiles'))
+            ? \EmbeddedStarterThemes::getThemeFiles($slug)
+            : null;
 
-        if (!is_dir($sourceDir)) {
+        if (!is_dir($sourceDir) && $embeddedFiles === null) {
             return null;
         }
 
@@ -172,19 +203,25 @@ class ThemeStarterService
         if (class_exists(\ZipArchive::class)) {
             $zip = new \ZipArchive();
             if ($zip->open($destZip, \ZipArchive::CREATE | \ZipArchive::OVERWRITE) === true) {
-                $files = new \RecursiveIteratorIterator(
-                    new \RecursiveDirectoryIterator($sourceDir, \RecursiveDirectoryIterator::SKIP_DOTS),
-                    \RecursiveIteratorIterator::SELF_FIRST
-                );
+                if (is_dir($sourceDir)) {
+                    $files = new \RecursiveIteratorIterator(
+                        new \RecursiveDirectoryIterator($sourceDir, \RecursiveDirectoryIterator::SKIP_DOTS),
+                        \RecursiveIteratorIterator::SELF_FIRST
+                    );
 
-                foreach ($files as $file) {
-                    $filePath = $file->getRealPath();
-                    $relativePath = $slug . '/' . substr($filePath, strlen($sourceDir) + 1);
+                    foreach ($files as $file) {
+                        $filePath = $file->getRealPath();
+                        $relativePath = $slug . '/' . substr($filePath, strlen($sourceDir) + 1);
 
-                    if ($file->isDir()) {
-                        $zip->addEmptyDir($relativePath);
-                    } elseif ($file->isFile()) {
-                        $zip->addFile($filePath, $relativePath);
+                        if ($file->isDir()) {
+                            $zip->addEmptyDir($relativePath);
+                        } elseif ($file->isFile()) {
+                            $zip->addFile($filePath, $relativePath);
+                        }
+                    }
+                } elseif ($embeddedFiles !== null) {
+                    foreach ($embeddedFiles as $relPath => $fileContent) {
+                        $zip->addFromString($slug . '/' . $relPath, $fileContent);
                     }
                 }
                 $zip->close();
@@ -193,16 +230,20 @@ class ThemeStarterService
         }
 
         // Fallback using system zip command
-        $parentDir = dirname($sourceDir);
-        $cmd = sprintf(
-            'cd %s && zip -q -r %s %s 2>&1',
-            escapeshellarg($parentDir),
-            escapeshellarg($destZip),
-            escapeshellarg($slug)
-        );
-        exec($cmd, $out, $ret);
+        if (is_dir($sourceDir)) {
+            $parentDir = dirname($sourceDir);
+            $cmd = sprintf(
+                'cd %s && zip -q -r %s %s 2>&1',
+                escapeshellarg($parentDir),
+                escapeshellarg($destZip),
+                escapeshellarg($slug)
+            );
+            exec($cmd, $out, $ret);
 
-        return ($ret === 0 && file_exists($destZip)) ? $destZip : null;
+            return ($ret === 0 && file_exists($destZip)) ? $destZip : null;
+        }
+
+        return null;
     }
 
     /**

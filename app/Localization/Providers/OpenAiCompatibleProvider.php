@@ -97,7 +97,7 @@ class OpenAiCompatibleProvider implements AiTranslationProviderInterface
                 $decoded = json_decode($body, true);
                 $msg = $decoded['choices'][0]['message']['content'] ?? null;
                 if ($msg !== null && is_string($msg)) {
-                    return trim($msg);
+                    return \Indieinabox\Localization\Services\AiResponseSanitizer::sanitize($msg);
                 }
             }
         } catch (Throwable) {

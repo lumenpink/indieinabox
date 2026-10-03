@@ -4,20 +4,35 @@ declare(strict_types=1);
 
 namespace Indieinabox\SiteBuilder;
 
+use Indieinabox\Core\Container;
+use Indieinabox\Core\Database;
+use Indieinabox\Localization\AiModels;
+use Indieinabox\Localization\Engines\AiTranslationEngine;
+use Indieinabox\Localization\Engines\DictionaryTranslationEngine;
+use Indieinabox\Localization\Providers\ClaudeProvider;
+use Indieinabox\Localization\Providers\GeminiProvider;
+use Indieinabox\Localization\Providers\OpenAiCompatibleProvider;
+use Indieinabox\Localization\Repositories\PersistentTaxonomyTranslationRepository;
+use Indieinabox\Localization\Services\AiResponseSanitizer;
+use Indieinabox\Localization\Services\PositionalLinkMasker;
 use Indieinabox\Markdown\LanguageProcessor;
 use Indieinabox\Page\Page;
 use Indieinabox\Page\Pages;
-use Indieinabox\Site\Site;
-use Indieinabox\Core\Container;
-use Indieinabox\Core\Database;
 use Indieinabox\Repositories\Contracts\SettingsRepositoryInterface;
+use Indieinabox\Site\Site;
+use Indieinabox\Support\TextParser;
 use Indieinabox\Taxonomy\Contracts\TaxonomyServiceInterface;
 use Indieinabox\Taxonomy\TaxonomyService;
 use Indieinabox\Translations\UrlTranslations;
 use RuntimeException;
+use Throwable;
 
 /**
  * Handles translation parity and virtualization of missing pages across languages.
+ * Implements a robust Two-Pass pipeline:
+ *  - Pass 1: Translates and persists titles, slugs, flowerbeds (canteiros), tags, and categories in SQLite.
+ *  - Pass 2: Masks content links (rewriting internal cross-links), translates pure Markdown body without frontmatter,
+ *    sanitizes outputs, and restores links strictly by position.
  */
 class TranslationVirtualizer
 {
@@ -25,18 +40,24 @@ class TranslationVirtualizer
     private ?SettingsRepositoryInterface $settingsRepo;
     private TaxonomyServiceInterface $taxonomyService;
     private \Indieinabox\Localization\Contracts\TranslationEngineInterface $translationEngine;
+    private PersistentTaxonomyTranslationRepository $taxonomyRepo;
+    private ?string $aiProviderName = null;
+    private ?string $aiModelName = null;
 
     public function __construct(
         Site $site,
         ?SettingsRepositoryInterface $settingsRepo = null,
         ?TaxonomyServiceInterface $taxonomyService = null,
-        ?\Indieinabox\Localization\Contracts\TranslationEngineInterface $translationEngine = null
+        ?\Indieinabox\Localization\Contracts\TranslationEngineInterface $translationEngine = null,
+        ?PersistentTaxonomyTranslationRepository $taxonomyRepo = null
     ) {
         $this->site = $site;
         $container = class_exists(Container::class) ? Container::getInstance() : null;
         $this->settingsRepo = $settingsRepo ?? (($container && $container->has(SettingsRepositoryInterface::class))
             ? $container->get(SettingsRepositoryInterface::class)
             : null);
+
+        $this->taxonomyRepo = $taxonomyRepo ?? new PersistentTaxonomyTranslationRepository();
 
         if ($taxonomyService !== null) {
             $this->taxonomyService = $taxonomyService;
@@ -46,56 +67,56 @@ class TranslationVirtualizer
             $this->taxonomyService = new TaxonomyService($this->site);
         }
 
+        $config = Database::getAllSettings();
+        $this->aiProviderName = strtolower(trim((string)($config['ai_translation_provider'] ?? '')));
+        $this->aiModelName = trim((string)($config['ai_translation_model'] ?? ''));
+
         if ($translationEngine !== null) {
             $this->translationEngine = $translationEngine;
         } elseif ($container && $container->has(\Indieinabox\Localization\Contracts\TranslationEngineInterface::class)) {
             $this->translationEngine = $container->get(\Indieinabox\Localization\Contracts\TranslationEngineInterface::class);
         } else {
-            $config = Database::getAllSettings();
-            $aiProviderName = strtolower(trim((string)($config['ai_translation_provider'] ?? '')));
             $aiApiKey = trim((string)($config['ai_translation_api_key'] ?? ''));
-            $aiModel = trim((string)($config['ai_translation_model'] ?? ''));
             $aiEndpoint = trim((string)($config['ai_translation_endpoint'] ?? ''));
 
             $aiProvider = null;
-            if ($aiProviderName === 'gemini') {
-                $aiProvider = new \Indieinabox\Localization\Providers\GeminiProvider(
+            if ($this->aiProviderName === 'gemini') {
+                $aiProvider = new GeminiProvider(
                     $aiApiKey,
-                    $aiModel ?: \Indieinabox\Localization\AiModels::getDefaultModel('gemini')
+                    $this->aiModelName ?: AiModels::getDefaultModel('gemini')
                 );
-            } elseif ($aiProviderName === 'openai') {
-                $aiProvider = new \Indieinabox\Localization\Providers\OpenAiCompatibleProvider(
+            } elseif ($this->aiProviderName === 'openai') {
+                $aiProvider = new OpenAiCompatibleProvider(
                     'openai',
                     'OpenAI GPT',
                     $aiEndpoint ?: 'https://api.openai.com/v1/chat/completions',
                     $aiApiKey,
-                    $aiModel ?: \Indieinabox\Localization\AiModels::getDefaultModel('openai')
+                    $this->aiModelName ?: AiModels::getDefaultModel('openai')
                 );
-            } elseif ($aiProviderName === 'grok') {
-                $aiProvider = new \Indieinabox\Localization\Providers\OpenAiCompatibleProvider(
+            } elseif ($this->aiProviderName === 'grok') {
+                $aiProvider = new OpenAiCompatibleProvider(
                     'grok',
                     'xAI Grok',
                     $aiEndpoint ?: 'https://api.x.ai/v1/chat/completions',
                     $aiApiKey,
-                    $aiModel ?: \Indieinabox\Localization\AiModels::getDefaultModel('grok')
+                    $this->aiModelName ?: AiModels::getDefaultModel('grok')
                 );
-            } elseif ($aiProviderName === 'claude') {
-                $aiProvider = new \Indieinabox\Localization\Providers\ClaudeProvider(
+            } elseif ($this->aiProviderName === 'claude') {
+                $aiProvider = new ClaudeProvider(
                     $aiApiKey,
-                    $aiModel ?: \Indieinabox\Localization\AiModels::getDefaultModel('claude')
+                    $this->aiModelName ?: AiModels::getDefaultModel('claude')
                 );
-            } elseif ($aiProviderName === 'ollama') {
-                $aiProvider = new \Indieinabox\Localization\Providers\OpenAiCompatibleProvider(
+            } elseif ($this->aiProviderName === 'ollama') {
+                $aiProvider = new OpenAiCompatibleProvider(
                     'ollama',
                     'Ollama (Local)',
                     $aiEndpoint ?: 'http://localhost:11434/v1/chat/completions',
                     '',
-                    $aiModel ?: \Indieinabox\Localization\AiModels::getDefaultModel('ollama')
+                    $this->aiModelName ?: AiModels::getDefaultModel('ollama')
                 );
             }
 
-            $dictEngine = new \Indieinabox\Localization\Engines\DictionaryTranslationEngine();
-            // Auto-load project locales if available
+            $dictEngine = new DictionaryTranslationEngine();
             $dataDir = Database::$dataDir !== '' ? Database::$dataDir : dirname(__DIR__, 2) . '/data';
             $localesDir = $dataDir . '/locales';
             if (is_dir($localesDir)) {
@@ -109,7 +130,7 @@ class TranslationVirtualizer
             }
 
             if ($aiProvider !== null && $aiProvider->isAvailable()) {
-                $this->translationEngine = new \Indieinabox\Localization\Engines\AiTranslationEngine($aiProvider, null, $dictEngine);
+                $this->translationEngine = new AiTranslationEngine($aiProvider, null, $dictEngine);
             } else {
                 $this->translationEngine = $dictEngine;
             }
@@ -117,9 +138,7 @@ class TranslationVirtualizer
     }
 
     /**
-     * Generates pseudo-translated pages for missing languages to maintain parity.
-     * Uses configured rules (e.g., full parity, from-main-only) and translates
-     * missing slugs according to URL translation mappings.
+     * Generates translated virtualized pages across languages.
      *
      * @param Pages $pages
      * @return void
@@ -162,6 +181,22 @@ class TranslationVirtualizer
             $pagesToProcess[] = $page;
         }
 
+        // =========================================================================
+        // PASS 1: Pre-translate & Persist Titles, Slugs, Flowerbeds, Tags, Categories
+        // =========================================================================
+        $this->pass1PretranslateTaxonomiesAndSlugs(
+            $pagesToProcess,
+            $langs,
+            $defaultLang,
+            $parity,
+            $existing,
+            $urlTranslationsArr,
+            $reverseTranslations
+        );
+
+        // =========================================================================
+        // PASS 2: Page Virtualization, Cross-link Rewriting & Content Translation
+        // =========================================================================
         foreach ($pagesToProcess as $page) {
             if (in_array($page->kind, ['generic'], true)) {
                 if ($page->slug !== '' && $page->slug !== 'index.html' && $page->slug !== '/') {
@@ -225,13 +260,32 @@ class TranslationVirtualizer
                     $cloned->lang = $targetLang;
                     $cloned->nick = $targetNick;
 
-                    // Set automated AI translation attribution flag on virtualized pages
+                    // Set automated AI translation attribution tags in frontmatter metadata
                     if (is_object($cloned->metadata)) {
                         $cloned->metadata->translated_by = 'ai';
+                        $cloned->metadata->translated_by_ia = true;
+
+                        $providerLabel = $this->getAiProviderLabel();
+                        $modelName = $this->aiModelName;
+                        if ($this->translationEngine instanceof AiTranslationEngine) {
+                            $provider = $this->translationEngine->getProvider();
+                            $providerLabel = $provider->getLabel();
+                            if (method_exists($provider, 'getModelName')) {
+                                $modelName = $provider->getModelName();
+                            }
+                        }
+
+                        $cloned->metadata->translation_ai_provider = $providerLabel;
+                        $cloned->metadata->translation_ai_model = $modelName ?: 'gemini-2.5-flash';
                         $cloned->metadata->translation_source_lang = $sourceLang;
+                        $cloned->metadata->translation_date = date('Y-m-d');
                     }
 
-                    $this->pseudoTranslate($cloned, $targetLang, $sourceLang);
+                    // Apply pre-translated taxonomies (flowerbeds, tags, categories)
+                    $this->applyTranslatedTaxonomies($cloned, $targetLang, $sourceLang);
+
+                    // Translate content with positional link masking
+                    $this->pseudoTranslate($cloned, $targetLang, $sourceLang, $urlTranslationsArr);
 
                     $kindFolder = $this->taxonomyService->getKindFolder($cloned->kind, $targetLang);
                     $sourceKindFolder = $this->taxonomyService->getKindFolder($page->kind, $sourceLang);
@@ -262,13 +316,15 @@ class TranslationVirtualizer
                             $targetPrefix .= $kindFolder . '/';
                         }
 
+                        $slugSegment = ($targetNick !== $baseNick) ? $targetNick : $cleanSlug;
+
                         if ($prettylinks) {
-                            $cloned->slug = $targetPrefix . $cleanSlug . '/';
+                            $cloned->slug = $targetPrefix . $slugSegment . '/';
                         } else {
-                            if (str_ends_with($cleanSlug, '.html')) {
-                                $cleanSlug = substr($cleanSlug, 0, -5);
+                            if (str_ends_with($slugSegment, '.html')) {
+                                $slugSegment = substr($slugSegment, 0, -5);
                             }
-                            $cloned->slug = $targetPrefix . $cleanSlug . '.html';
+                            $cloned->slug = $targetPrefix . $slugSegment . '.html';
                         }
                     }
 
@@ -301,24 +357,166 @@ class TranslationVirtualizer
     }
 
     /**
-     * Applies a pseudo-translation prefix to a page's title or content.
-     * Used visually to flag that a page was automatically virtualized.
-     *
-     * @param Page $page The page to translate in place.
-     * @param string $targetLang The target language code used as the prefix.
-     * @return void
+     * Pass 1: Translates and persists all structural metadata (Titles, Slugs, Flowerbeds, Tags, Categories).
      */
+    private function pass1PretranslateTaxonomiesAndSlugs(
+        array $pagesToProcess,
+        array $langs,
+        string $defaultLang,
+        string $parity,
+        array $existing,
+        array &$urlTranslationsArr,
+        array &$reverseTranslations
+    ): void {
+        if (!($this->translationEngine instanceof AiTranslationEngine)) {
+            return;
+        }
+        foreach ($pagesToProcess as $page) {
+            $sourceLang = $page->lang ?? $defaultLang;
+            $sourceIsMain = ($sourceLang === $defaultLang);
+
+            $baseNick = $page->nick;
+            if ($sourceLang !== $defaultLang && isset($reverseTranslations[$sourceLang][$page->nick])) {
+                $baseNick = $reverseTranslations[$sourceLang][$page->nick];
+            }
+
+            foreach ($langs as $targetLang) {
+                if ($targetLang === $sourceLang) {
+                    continue;
+                }
+
+                $targetIsMain = ($targetLang === $defaultLang);
+                if ($parity === 'from-main-only' && !$sourceIsMain) continue;
+                if ($parity === 'from-sublang-only' && $sourceIsMain) continue;
+                if ($parity === 'inter-sublang-only' && ($sourceIsMain || $targetIsMain)) continue;
+
+                // 1. Translate Title & Slug if missing
+                if (!isset($urlTranslationsArr[$baseNick][$targetLang])) {
+                    $cachedSlug = $this->taxonomyRepo->get($sourceLang, $targetLang, 'title_slug', $baseNick);
+                    if ($cachedSlug !== null && $cachedSlug !== '') {
+                        $urlTranslationsArr[$baseNick][$targetLang] = $cachedSlug;
+                        $reverseTranslations[$targetLang][$cachedSlug] = $baseNick;
+                    } else {
+                        // Translate title to derive slug
+                        $title = (string) ($page->title ?? $baseNick);
+                        if ($title !== '' && $title !== 'Untitled' && $title !== 'untitled') {
+                            $translatedTitle = $this->translationEngine->translateText($title, $targetLang, $sourceLang);
+                            $translatedSlug = TextParser::slugize($translatedTitle);
+                        } else {
+                            $translatedSlug = $baseNick;
+                        }
+
+                        $this->taxonomyRepo->set($sourceLang, $targetLang, 'title_slug', $baseNick, $translatedSlug);
+                        $this->persistUrlTranslationToDb($targetLang, $baseNick, $translatedSlug);
+
+                        $urlTranslationsArr[$baseNick][$targetLang] = $translatedSlug;
+                        $reverseTranslations[$targetLang][$translatedSlug] = $baseNick;
+                    }
+                }
+
+                // 2. Pre-translate Flowerbeds (Canteiros)
+                if (!empty($page->metadata->flowerbed)) {
+                    $flowerbeds = is_array($page->metadata->flowerbed) ? $page->metadata->flowerbed : [$page->metadata->flowerbed];
+                    foreach ($flowerbeds as $fb) {
+                        if (is_string($fb) && trim($fb) !== '') {
+                            $cachedFb = $this->taxonomyRepo->get($sourceLang, $targetLang, 'flowerbed', $fb);
+                            if ($cachedFb === null) {
+                                $transFb = $this->translationEngine->translateText($fb, $targetLang, $sourceLang);
+                                $this->taxonomyRepo->set($sourceLang, $targetLang, 'flowerbed', $fb, $transFb);
+                            }
+                        }
+                    }
+                }
+
+                // 3. Pre-translate Tags
+                if (!empty($page->metadata->tags)) {
+                    $tags = is_array($page->metadata->tags) ? $page->metadata->tags : [$page->metadata->tags];
+                    foreach ($tags as $tag) {
+                        if (is_string($tag) && trim($tag) !== '' && $tag !== 'draft') {
+                            $cachedTag = $this->taxonomyRepo->get($sourceLang, $targetLang, 'tag', $tag);
+                            if ($cachedTag === null) {
+                                $transTag = $this->translationEngine->translateText($tag, $targetLang, $sourceLang);
+                                $cleanTag = TextParser::slugize($transTag);
+                                $this->taxonomyRepo->set($sourceLang, $targetLang, 'tag', $tag, $cleanTag);
+                            }
+                        }
+                    }
+                }
+
+                // 4. Pre-translate Category
+                if (!empty($page->category) && is_string($page->category)) {
+                    $cat = trim($page->category);
+                    $cachedCat = $this->taxonomyRepo->get($sourceLang, $targetLang, 'category', $cat);
+                    if ($cachedCat === null) {
+                        $transCat = $this->translationEngine->translateText($cat, $targetLang, $sourceLang);
+                        $this->taxonomyRepo->set($sourceLang, $targetLang, 'category', $cat, $transCat);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Applies pre-translated taxonomies onto a cloned page.
+     */
+    private function applyTranslatedTaxonomies(Page $cloned, string $targetLang, string $sourceLang): void
+    {
+        // Flowerbeds
+        if (!empty($cloned->metadata->flowerbed)) {
+            $flowerbeds = is_array($cloned->metadata->flowerbed) ? $cloned->metadata->flowerbed : [$cloned->metadata->flowerbed];
+            $translatedFbs = [];
+            foreach ($flowerbeds as $fb) {
+                if (is_string($fb)) {
+                    $mapped = $this->taxonomyRepo->get($sourceLang, $targetLang, 'flowerbed', $fb);
+                    $translatedFbs[] = $mapped ?: $fb;
+                }
+            }
+            $cloned->metadata->flowerbed = $translatedFbs;
+        }
+
+        // Tags
+        if (!empty($cloned->metadata->tags)) {
+            $tags = is_array($cloned->metadata->tags) ? $cloned->metadata->tags : [$cloned->metadata->tags];
+            $translatedTags = [];
+            foreach ($tags as $tag) {
+                if ($tag === 'draft') {
+                    $translatedTags[] = 'draft';
+                } elseif (is_string($tag)) {
+                    $mapped = $this->taxonomyRepo->get($sourceLang, $targetLang, 'tag', $tag);
+                    $translatedTags[] = $mapped ?: $tag;
+                }
+            }
+            $cloned->metadata->tags = $translatedTags;
+        }
+
+        // Category
+        if (!empty($cloned->category) && is_string($cloned->category)) {
+            $mappedCat = $this->taxonomyRepo->get($sourceLang, $targetLang, 'category', $cloned->category);
+            if ($mappedCat !== null) {
+                $cloned->category = $mappedCat;
+                if (isset($cloned->metadata->category)) {
+                    $cloned->metadata->category = $mappedCat;
+                }
+            }
+        }
+    }
+
     /**
      * Translates a page in place using the configured TranslationEngine.
-     * Preserves frontmatter, code blocks, and HTML tags while translating title and content.
+     * Uses PositionalLinkMasker to resolve internal cross-links and preserve links safely.
      *
-     * @param Page $page The page to translate in place.
-     * @param string $targetLang The target language code.
-     * @param string $sourceLang The source language code.
+     * @param Page $page
+     * @param string $targetLang
+     * @param string $sourceLang
+     * @param array<string, array<string, string>> $urlTranslationsArr
      * @return void
      */
-    public function pseudoTranslate(Page $page, string $targetLang, string $sourceLang = 'en'): void
-    {
+    public function pseudoTranslate(
+        Page $page,
+        string $targetLang,
+        string $sourceLang = 'en',
+        array $urlTranslationsArr = []
+    ): void {
         $hasTitle = !empty($page->title)
             && $page->title !== 'Untitled'
             && $page->title !== 'untitled';
@@ -330,40 +528,109 @@ class TranslationVirtualizer
 
         if ($hasTitle) {
             $page->title = $this->translationEngine->translateText($page->title, $targetLang, $sourceLang);
-            // When translating with AI/MT, translate full post body as well as title
-            if ($this->translationEngine instanceof \Indieinabox\Localization\Engines\AiTranslationEngine) {
-                $page->content->content = $this->translationEngine->translateContent($page->content->content, $targetLang, $sourceLang);
-                $page->content->rawBody = $this->translationEngine->translateContent($page->content->rawBody, $targetLang, $sourceLang);
-            }
-        } else {
-            $page->content->content = $this->translationEngine->translateContent($page->content->content, $targetLang, $sourceLang);
-            $page->content->rawBody = $this->translationEngine->translateContent($page->content->rawBody, $targetLang, $sourceLang);
+        }
+
+        $rawBody = (string) ($page->content->rawBody ?? $page->content->content ?? '');
+
+        if ($this->translationEngine instanceof AiTranslationEngine) {
+            $defaultLang = (string) ($this->site->localization->defaultLang ?? 'en');
+
+            // Positional link resolver callback for rewriting internal links
+            $urlResolver = function (string $url) use ($targetLang, $defaultLang, $urlTranslationsArr): string {
+                if (preg_match('~^(https?://|mailto:|tel:|#)~i', $url)) {
+                    return $url;
+                }
+
+                $path = parse_url($url, PHP_URL_PATH) ?? $url;
+                $query = parse_url($url, PHP_URL_QUERY);
+                $fragment = parse_url($url, PHP_URL_FRAGMENT);
+
+                foreach ($urlTranslationsArr as $srcNick => $transNicks) {
+                    if (isset($transNicks[$targetLang])) {
+                        $translatedSlug = $transNicks[$targetLang];
+                        if (str_contains($path, '/' . $srcNick . '.') || str_contains($path, '/' . $srcNick . '/') || str_ends_with($path, '/' . $srcNick)) {
+                            $path = str_replace($srcNick, $translatedSlug, $path);
+                            break;
+                        }
+                    }
+                }
+
+                if ($targetLang !== $defaultLang) {
+                    $cleanPath = ltrim($path, '/');
+                    if (!str_starts_with($cleanPath, $targetLang . '/')) {
+                        $path = '/' . $targetLang . '/' . $cleanPath;
+                    }
+                }
+
+                $finalUrl = $path;
+                if ($query) $finalUrl .= '?' . $query;
+                if ($fragment) $finalUrl .= '#' . $fragment;
+                return $finalUrl;
+            };
+
+            // Mask links, images, and code blocks before sending to AI
+            $masked = PositionalLinkMasker::mask($rawBody, $urlResolver);
+
+            // Translate pure body without frontmatter
+            $translatedContent = $this->translationEngine->translateContent($masked['maskedContent'], $targetLang, $sourceLang);
+
+            // Sanitize conversational filler
+            $sanitized = AiResponseSanitizer::sanitize($translatedContent);
+
+            // Restore links strictly by position
+            $restored = PositionalLinkMasker::restore($sanitized, $masked['tokens']);
+
+            $page->content->content = $restored;
+            $page->content->rawBody = $restored;
+        } elseif (!$hasTitle) {
+            // Dictionary engine / Fallback: only translate body when page has no title
+            $page->content->content = $this->translationEngine->translateContent($rawBody, $targetLang, $sourceLang);
+            $page->content->rawBody = $this->translationEngine->translateContent($rawBody, $targetLang, $sourceLang);
         }
     }
 
-    /**
-     * Returns the underlying translation engine.
-     */
+    private function persistUrlTranslationToDb(string $lang, string $slugKey, string $slugValue): void
+    {
+        try {
+            $db = Database::getDb();
+            if ($db) {
+                $stmt = $db->prepare('INSERT OR REPLACE INTO url_translations (lang, slug_key, slug_value) VALUES (?, ?, ?)');
+                $stmt->execute([$lang, $slugKey, $slugValue]);
+            }
+        } catch (Throwable) {
+            // Graceful fallback
+        }
+    }
+
+    private function getAiProviderLabel(): string
+    {
+        return match ($this->aiProviderName) {
+            'gemini' => 'Google Gemini',
+            'openai' => 'OpenAI GPT',
+            'claude' => 'Anthropic Claude',
+            'grok' => 'xAI Grok',
+            'ollama' => 'Ollama (Local)',
+            default => 'AI',
+        };
+    }
+
     public function getTranslationEngine(): \Indieinabox\Localization\Contracts\TranslationEngineInterface
     {
         return $this->translationEngine;
     }
 
-    /**
-     * Sets a custom translation engine.
-     */
     public function setTranslationEngine(\Indieinabox\Localization\Contracts\TranslationEngineInterface $engine): void
     {
         $this->translationEngine = $engine;
     }
 
-    /**
-     * Retrieves the taxonomy service instance.
-     *
-     * @return \Indieinabox\Taxonomy\Contracts\TaxonomyServiceInterface
-     */
     public function getTaxonomyService(): TaxonomyServiceInterface
     {
         return $this->taxonomyService;
+    }
+
+    public function getTaxonomyRepo(): PersistentTaxonomyTranslationRepository
+    {
+        return $this->taxonomyRepo;
     }
 }

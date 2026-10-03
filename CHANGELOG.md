@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 ### Features
+  - (i18n) implementar arquitetura de traducao IA em dois passos com mascaramento posicional e persistencia SQLite
   - (federation) implementar ponte nativa de federacao AT Protocol Bluesky (closes #43)
   - (search) implementar indexacao e busca full-text com SQLite FTS5 (closes #44)
   - (themes) disponibilizar pacotes de temas oficiais com theme.json (closes #41)

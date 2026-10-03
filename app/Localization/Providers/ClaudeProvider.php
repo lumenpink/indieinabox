@@ -85,7 +85,7 @@ class ClaudeProvider implements AiTranslationProviderInterface
                 $decoded = json_decode($body, true);
                 $blockText = $decoded['content'][0]['text'] ?? null;
                 if ($blockText !== null && is_string($blockText)) {
-                    return trim($blockText);
+                    return \Indieinabox\Localization\Services\AiResponseSanitizer::sanitize($blockText);
                 }
             }
         } catch (Throwable) {

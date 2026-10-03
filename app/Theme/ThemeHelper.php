@@ -206,14 +206,30 @@ class ThemeHelper
      */
     public static function getAITranslationNotice(Page $page): string
     {
-        if (isset($page->metadata->translated_by_ia) && $page->metadata->translated_by_ia !== false) {
+        $hasAiNotice = (isset($page->metadata->translated_by_ia) && $page->metadata->translated_by_ia !== false)
+            || (isset($page->metadata->translated_by) && in_array($page->metadata->translated_by, ['ai', 'ia'], true));
+
+        if ($hasAiNotice) {
             $html = '<div class="ai-translation-notice" style="background: rgba(0,0,0,0.05); padding: 1em; border-left: 4px solid var(--accent); margin-bottom: 2em; font-size: 0.9em; font-style: italic;">';
+
+            $provider = !empty($page->metadata->translation_ai_provider) ? htmlspecialchars((string) $page->metadata->translation_ai_provider) : null;
+            $model = !empty($page->metadata->translation_ai_model) ? htmlspecialchars((string) $page->metadata->translation_ai_model) : null;
+            $srcLang = !empty($page->metadata->translation_source_lang) ? htmlspecialchars((string) $page->metadata->translation_source_lang) : null;
+
             if ($page->metadata->translated_by_ia === 'revised') {
-                $html .= '✓ ' . Translator::translate('This page was automatically translated by AI and revised by a human.');
+                $msg = '✓ ' . Translator::translate('This page was automatically translated by AI and revised by a human.');
             } else {
-                $html .= '⚠ ' . Translator::translate('This page was automatically translated by AI.');
+                $msg = '🤖 ' . Translator::translate('This page was automatically translated by AI');
+                if ($provider !== null) {
+                    $msg .= ' (' . $provider . ($model !== null ? ' - ' . $model : '') . ')';
+                }
+                if ($srcLang !== null) {
+                    $msg .= ' ' . Translator::translate('from') . ' ' . strtoupper($srcLang);
+                }
+                $msg .= '.';
             }
-            $html .= '</div>';
+
+            $html .= $msg . '</div>';
             return $html;
         }
 

@@ -93,7 +93,7 @@ class GeminiProvider implements AiTranslationProviderInterface
                 $decoded = json_decode($body, true);
                 $candidateText = $decoded['candidates'][0]['content']['parts'][0]['text'] ?? null;
                 if ($candidateText !== null && is_string($candidateText)) {
-                    return trim($candidateText);
+                    return \Indieinabox\Localization\Services\AiResponseSanitizer::sanitize($candidateText);
                 }
             }
         } catch (Throwable) {

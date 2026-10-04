@@ -177,7 +177,7 @@ class SearchService implements SearchServiceInterface
      */
     public function indexPage(Page $page): bool
     {
-        if (($page->filepath && basename($page->filepath) === 'intro.md') || in_array('draft', $page->metadata->tags ?? [])) {
+        if ($page->nick === 'intro' || ($page->filepath && basename($page->filepath) === 'intro.md') || in_array('draft', $page->metadata->tags ?? [])) {
             return false;
         }
 

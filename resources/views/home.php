@@ -13,18 +13,33 @@
     <main>
 
         <?php
-        $contentPath = method_exists($site->paths, 'getContentPath') ? $site->paths->getContentPath() : $site->paths->contentDir;
-        $introFile = $contentPath . '/' . $page->lang . '/intro.md';
-        if (!file_exists($introFile)) {
-            $introFile = $contentPath . '/intro.md';
+        $introRendered = null;
+        if (isset($pages)) {
+            foreach ($pages as $p) {
+                if (($p->nick === 'intro' || ($p->filepath && basename($p->filepath) === 'intro.md')) && ($p->lang ?? '') === $page->lang) {
+                    $introRendered = (string) ($p->content->content ?? '');
+                    break;
+                }
+            }
         }
-        
-        if (file_exists($introFile)) {
+
+        if ($introRendered === null || $introRendered === '') {
+            $contentPath = method_exists($site->paths, 'getContentPath') ? $site->paths->getContentPath() : $site->paths->contentDir;
+            $introFile = $contentPath . '/' . $page->lang . '/intro.md';
+            if (!file_exists($introFile)) {
+                $introFile = $contentPath . '/intro.md';
+            }
+            if (file_exists($introFile)) {
+                $processor = new \Indieinabox\Markdown\ContentProcessor();
+                $rawIntro = (string) file_get_contents($introFile);
+                $cleanIntro = $processor->removeYamlFrontMatter($rawIntro);
+                $introRendered = $processor->processContent($cleanIntro, $page);
+            }
+        }
+
+        if (!empty($introRendered) && trim($introRendered) !== '') {
             echo '<div class="introduction" style="margin-left: 2em;">';
-            $processor = new \Indieinabox\Markdown\ContentProcessor();
-            $rawIntro = file_get_contents($introFile);
-            $cleanIntro = $processor->removeYamlFrontMatter($rawIntro);
-            echo $processor->processContent($cleanIntro, $page);
+            echo $introRendered;
             echo '</div><hr>';
         }
         ?>

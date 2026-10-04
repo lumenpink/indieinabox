@@ -326,7 +326,11 @@ class Page
                 if (is_int($epoch) || (is_string($epoch) && is_numeric($epoch))) {
                     $date = DateTime::createFromFormat("U", strval($epoch));
                 } else {
-                    $date = new DateTime($epoch);
+                    try {
+                        $date = new DateTime($epoch);
+                    } catch (\Throwable) {
+                        $date = new DateTime('now');
+                    }
                 }
             }
         }

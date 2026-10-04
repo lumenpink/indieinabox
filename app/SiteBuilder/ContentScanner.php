@@ -79,9 +79,6 @@ class ContentScanner
             ) {
                 $path = $dir . DIRECTORY_SEPARATOR . $entry;
                 if (is_file($path)) {
-                    if ($entry === 'intro.md') {
-                        continue;
-                    }
                     $page = $this->parser->parse($path);
                     if ($page) {
                         $pages->add($page);

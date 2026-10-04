@@ -54,8 +54,7 @@ it('scans markdown files and ignores system files and ignored directories', func
     file_put_contents($contentDir . '/post1.md', "---\ntitle: Post 1\nkind: article\n---\nHello");
     file_put_contents($contentDir . '/sub/post2.md', "---\ntitle: Post 2\nkind: note\n---\nWorld");
 
-    // Ignored files: intro.md, dotfile, underscore
-    file_put_contents($contentDir . '/intro.md', "intro");
+    // Ignored files: dotfile, underscore
     file_put_contents($contentDir . '/.hidden.md', "hidden");
     file_put_contents($contentDir . '/_draft.md', "draft");
 

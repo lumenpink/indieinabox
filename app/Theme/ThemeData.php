@@ -345,7 +345,7 @@ class ThemeData
             if ($currentLang !== null && $p->lang !== null && $p->lang !== $currentLang) {
                 continue;
             }
-            if (($p->filepath && basename($p->filepath) === 'intro.md') || in_array('draft', $p->metadata->tags ?? [])) {
+            if ($p->nick === 'intro' || ($p->filepath && basename($p->filepath) === 'intro.md') || in_array('draft', $p->metadata->tags ?? [])) {
                 continue;
             }
 

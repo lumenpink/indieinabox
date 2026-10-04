@@ -220,7 +220,7 @@ class IndexPublisher
     {
         $grouped = [];
         foreach ($pages as $p) {
-            if (!empty($p->filepath) && basename($p->filepath) === 'intro.md') {
+            if ($p->nick === 'intro' || (!empty($p->filepath) && basename($p->filepath) === 'intro.md')) {
                 continue;
             }
 
@@ -414,7 +414,7 @@ class IndexPublisher
     {
         $grouped = [];
         foreach ($pages as $p) {
-            if (($p->filepath && basename($p->filepath) === 'intro.md') || in_array('draft', $p->metadata->tags)) {
+            if ($p->nick === 'intro' || ($p->filepath && basename($p->filepath) === 'intro.md') || in_array('draft', $p->metadata->tags ?? [])) {
                 continue;
             }
 
@@ -565,7 +565,7 @@ class IndexPublisher
         $entriesByLang = [];
 
         foreach ($pages as $p) {
-            if (($p->filepath && basename($p->filepath) === 'intro.md') || in_array('draft', $p->metadata->tags ?? [])) {
+            if ($p->nick === 'intro' || ($p->filepath && basename($p->filepath) === 'intro.md') || in_array('draft', $p->metadata->tags ?? [])) {
                 continue;
             }
             if (in_array($p->kind, ['generic', 'home', 'page'], true) && ($p->slug === '/' || $p->slug === 'index/' || $p->slug === '')) {

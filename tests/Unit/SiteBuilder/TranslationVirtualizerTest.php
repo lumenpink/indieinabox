@@ -108,3 +108,33 @@ it('respects parity rule from-main-only', function () {
     $this->virtualizer->virtualize($pages);
     expect($pages)->toHaveCount(1);
 });
+
+it('virtualizes intro page across languages for multilingual home banner (#59)', function () {
+    $pages = new Pages();
+    $page = Page::fromArray([
+        'lang' => 'en',
+        'kind' => 'page',
+        'nick' => 'intro',
+        'slug' => '/intro/',
+        'title' => 'Intro',
+        'content' => 'Hello I am the author',
+        'rawBody' => 'Hello I am the author',
+    ]);
+    $pages->add($page);
+
+    $this->virtualizer->virtualize($pages);
+
+    expect($pages)->toHaveCount(2);
+    $ptIntro = null;
+    foreach ($pages as $p) {
+        if ($p->lang === 'pt' && $p->nick === 'intro') {
+            $ptIntro = $p;
+            break;
+        }
+    }
+
+    expect($ptIntro)->not->toBeNull();
+    expect($ptIntro->kind)->toBe('page');
+    expect($ptIntro->lang)->toBe('pt');
+});
+

@@ -37,6 +37,7 @@ The primary generator settings are loaded from `config.yml` in the project root:
   * `code_short` (alias `short`): Uses clean 2-letter uppercase ISO 639-1 base codes (e.g. `PT • EN • ES`), ideal for minimalist navigation bars.
   * `code_long`: Uses full uppercase BCP-47 language tags (e.g. `PT-BR • EN-US • ES`), preserving regional precision in code form.
   * In all modes, full BCP-47 codes are preserved inside HTML `hreflang="..."` attributes for search engines and accessibility tools.
+  * During static site generation (`php indieinabox.php build`), `lang_display_mode` is propagated to site localization, ensuring language navigation menus render using the selected format.
 * In the Web Admin panel (`/admin/config`), languages can be selected from a curated catalog of standard ISO 639-1 and BCP-47 languages with native endonyms and English descriptions, or entered as custom BCP-47 tags. Languages can be reordered at any time using **Move Up (▲)** and **Move Down (▼)**, or promoted to primary directly using the **Make Main** button.
 * **Locale Dictionaries & On-Demand Downloads:**
   * Locale translation dictionaries are maintained in the official repository under `resources/locales/` (`pt.json`, `es.json`, `en.json`, etc.) keeping the executable package minimal and lightweight.

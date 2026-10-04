@@ -75,7 +75,13 @@ class GeminiProvider implements AiTranslationProviderInterface
             ],
             'generationConfig' => [
                 'temperature' => 0.2,
-            ]
+            ],
+            'safetySettings' => [
+                ['category' => 'HARM_CATEGORY_HARASSMENT', 'threshold' => 'BLOCK_NONE'],
+                ['category' => 'HARM_CATEGORY_HATE_SPEECH', 'threshold' => 'BLOCK_NONE'],
+                ['category' => 'HARM_CATEGORY_SEXUALLY_EXPLICIT', 'threshold' => 'BLOCK_NONE'],
+                ['category' => 'HARM_CATEGORY_DANGEROUS_CONTENT', 'threshold' => 'BLOCK_NONE'],
+            ],
         ];
 
         $jsonPayload = (string)json_encode($payload, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
@@ -103,6 +109,14 @@ class GeminiProvider implements AiTranslationProviderInterface
         return $text;
     }
 
+    /**
+     * Returns the HTTP timeout in seconds for translation requests.
+     */
+    public function getTimeout(): int
+    {
+        return 180;
+    }
+
     private function httpPost(string $url, array $headers, string $payload): string
     {
         $ch = curl_init($url);
@@ -110,7 +124,7 @@ class GeminiProvider implements AiTranslationProviderInterface
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+        curl_setopt($ch, CURLOPT_TIMEOUT, $this->getTimeout());
         $result = curl_exec($ch);
         if (\PHP_VERSION_ID < 80000) {
             curl_close($ch);

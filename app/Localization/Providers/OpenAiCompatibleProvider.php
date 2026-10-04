@@ -114,7 +114,7 @@ class OpenAiCompatibleProvider implements AiTranslationProviderInterface
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 180);
         $result = curl_exec($ch);
         if (\PHP_VERSION_ID < 80000) {
             curl_close($ch);

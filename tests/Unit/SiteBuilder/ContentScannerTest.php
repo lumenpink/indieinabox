@@ -115,3 +115,22 @@ it('renders raw markdown bodies into final html content for pages', function () 
     expect($page->content->content)->toContain('<h2>Hello World</h2>');
     expect($page->content->content)->toContain('<strong>bold</strong>');
 });
+
+it('scans intro.md into page collection for virtualization and multilingual homepages (#59)', function () {
+    $contentDir = $this->tempDir . '/content';
+    mkdir($contentDir, 0777, true);
+    file_put_contents($contentDir . '/intro.md', "---\ntitle: Intro\n---\nHello this is the author intro.");
+
+    $scanner = new ContentScanner($this->site);
+    $scanner->scan($contentDir, $this->pages);
+
+    expect($this->pages)->toHaveCount(1);
+    $intro = null;
+    foreach ($this->pages as $p) {
+        $intro = $p;
+        break;
+    }
+    expect($intro)->not->toBeNull();
+    expect($intro->nick)->toBe('intro');
+});
+

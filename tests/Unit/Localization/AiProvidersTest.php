@@ -189,3 +189,47 @@ it('virtualizes pages with translated_by: ai metadata flag when AI engine is act
     expect($ptPage->metadata->translation_source_lang)->toBe('en');
     expect($ptPage->content->content)->toBe('Conteúdo em Português');
 });
+
+it('GeminiProvider configures permissive safetySettings and payload for academic/philosophical content (#58)', function () {
+    $recordedPayload = null;
+    $transport = function (string $url, array $headers, string $body) use (&$recordedPayload) {
+        $recordedPayload = json_decode($body, true);
+        return [
+            'code' => 200,
+            'body' => json_encode([
+                'candidates' => [
+                    [
+                        'content' => [
+                            'parts' => [
+                                ['text' => 'Translated long text']
+                            ]
+                        ]
+                    ]
+                ]
+            ])
+        ];
+    };
+
+    $provider = new GeminiProvider('fake-key', 'gemini-3.5-flash', $transport);
+    $result = $provider->translate('Long article about travesti identity', 'en', 'pt-BR');
+
+    expect($result)->toBe('Translated long text');
+    expect($recordedPayload)->toHaveKey('safetySettings');
+    expect($recordedPayload['safetySettings'])->toBeArray();
+
+    $categories = array_column($recordedPayload['safetySettings'], 'category');
+    expect($categories)->toContain('HARM_CATEGORY_HARASSMENT')
+        ->toContain('HARM_CATEGORY_HATE_SPEECH')
+        ->toContain('HARM_CATEGORY_SEXUALLY_EXPLICIT')
+        ->toContain('HARM_CATEGORY_DANGEROUS_CONTENT');
+
+    foreach ($recordedPayload['safetySettings'] as $setting) {
+        expect($setting['threshold'])->toBe('BLOCK_NONE');
+    }
+});
+
+it('GeminiProvider has a default timeout of at least 180s for long article translation (#58)', function () {
+    $provider = new GeminiProvider('fake-key', 'gemini-3.5-flash');
+    expect($provider->getTimeout())->toBeGreaterThanOrEqual(180);
+});
+

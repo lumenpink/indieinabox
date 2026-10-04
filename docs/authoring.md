@@ -31,6 +31,7 @@ Para usar este bloco:
 1. Crie um arquivo chamado **`intro.md`** diretamente na pasta `content/` (ou em `content/pt/` para português, por exemplo).
 2. Não é necessário incluir cabeçalho YAML para este arquivo (ele não se tornará uma página navegável independente, ele apenas servirá para popular o bloco da Home).
 3. Tudo que você escrever ali será compilado dinamicamente para HTML e aparecerá na introdução da Home principal e na Home traduzida.
+4. Caso exista apenas um `intro.md` no idioma padrão (ou raiz do vault), o motor de IA virtualizará e traduzirá a introdução automaticamente para as páginas iniciais secundárias (`/en/`, `/es/`), reescrevendo links internos.
 
 Se você apagar ou não tiver esse arquivo, o bloco será simplesmente ocultado.
 

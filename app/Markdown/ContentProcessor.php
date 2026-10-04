@@ -114,7 +114,13 @@ class ContentProcessor
             $page["tags"] = (array) $page["tags"];
         }
 
-        $page["tags"] = array_unique(array_merge($page["tags"], $tags));
+        // Filter out non-strings, comments/arrays, and empty or placeholder tags
+        $cleanExistingTags = array_values(array_filter(
+            $page["tags"],
+            fn($t) => is_string($t) && trim($t) !== '' && $t !== 'No Tag'
+        ));
+
+        $page["tags"] = array_values(array_unique(array_merge($cleanExistingTags, $tags)));
         $content = (string) preg_replace('/^(?:\s*#\w+\s*?)*$/m', "", $content);
 
         return $page;

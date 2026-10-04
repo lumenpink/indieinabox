@@ -83,16 +83,28 @@ class ThemeHelper
 
             // Line 3: Tags
             if (!empty($page->tags)) {
-                $html .= '<div class="meta-line-3" style="margin-left: 0.6em;">';
-                foreach ($page->tags as $tag) {
-                    $html .= '<a href="' . $page->relpath . $langPrefix . 'tag/' . TextParser::slugize($tag) . '/" class="p-category">#' . htmlspecialchars($tag) . '</a>&#32;';
+                $rawTags = is_array($page->tags) ? $page->tags : [$page->tags];
+                $tags = [];
+                foreach ($rawTags as $tag) {
+                    if (is_array($tag)) {
+                        $tag = implode('-', array_filter(array_map('strval', $tag)));
+                    }
+                    if (is_scalar($tag) && trim((string) $tag) !== '' && trim((string) $tag) !== 'No Tag') {
+                        $tags[] = trim((string) $tag);
+                    }
                 }
-                $html .= '</div>';
+                if (!empty($tags)) {
+                    $html .= '<div class="meta-line-3" style="margin-left: 0.6em;">';
+                    foreach ($tags as $tag) {
+                        $html .= '<a href="' . $page->relpath . $langPrefix . 'tag/' . TextParser::slugize($tag) . '/" class="p-category">#' . htmlspecialchars($tag) . '</a>&#32;';
+                    }
+                    $html .= '</div>';
+                }
             }
 
             // Custom Garden Fields (if any, append to line 2 or create new block)
             if ($page->kind === 'garden' || $page->kind === 'jardim') {
-                $flowerbed = isset($page->metadata->flowerbed) && is_array($page->metadata->flowerbed) ? $page->metadata->flowerbed : [Translator::translate('general', $page->lang ?? null)];
+                $rawFlowerbed = isset($page->metadata->flowerbed) && is_array($page->metadata->flowerbed) ? $page->metadata->flowerbed : [Translator::translate('general', $page->lang ?? null)];
                 $confidence = $page->metadata->confidence ?? 'possible';
                 if (!in_array($confidence, ['certain', 'likely', 'possible', 'unlikely', 'impossible'])) {
                     $confidence = 'unknown';
@@ -109,8 +121,14 @@ class ThemeHelper
                 }
                 
                 $flowerbedLinks = [];
-                foreach ($flowerbed as $fb) {
-                    $flowerbedLinks[] = '<a href="' . $page->relpath . $langPrefix . 'flowerbed/' . TextParser::slugize($fb) . '/">' . htmlspecialchars(Translator::translate($fb, $pageLang)) . '</a>';
+                foreach ($rawFlowerbed as $fb) {
+                    if (is_array($fb)) {
+                        $fb = implode('-', array_filter(array_map('strval', $fb)));
+                    }
+                    if (is_scalar($fb) && trim((string) $fb) !== '') {
+                        $fbStr = trim((string) $fb);
+                        $flowerbedLinks[] = '<a href="' . $page->relpath . $langPrefix . 'flowerbed/' . TextParser::slugize($fbStr) . '/">' . htmlspecialchars(Translator::translate($fbStr, $pageLang)) . '</a>';
+                    }
                 }
                 $html .= '<div class="meta-garden-fields" style="margin-left: 0.6em;">';
                 $html .= ' • ' . Translator::translate('Flowerbed', $pageLang) . ': ' . implode(', ', $flowerbedLinks) . '<br>';

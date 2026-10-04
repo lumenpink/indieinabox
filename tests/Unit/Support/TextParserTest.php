@@ -36,3 +36,8 @@ it('generates clean url slugs with slugize', function () {
         ->and(TextParser::slugize('Crème Brûlée & Café'))->toBe('creme-brulee--cafe')
         ->and(TextParser::slugize('Multiple---Dashes'))->toBe('multiple---dashes');
 });
+
+it('handles array input in slugize gracefully', function () {
+    expect(TextParser::slugize(['hello', 'world']))->toBe('hello-world')
+        ->and(TextParser::slugize([]))->toBe('');
+});

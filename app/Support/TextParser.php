@@ -170,14 +170,17 @@ class TextParser
     }
 
     /**
-     * Converts a string into a clean, URL-safe slug.
+     * Converts a string or array into a clean, URL-safe slug.
      *
-     * @param string $str
+     * @param string|array<mixed> $str
      * @return string
      */
-    public static function slugize(string $str): string
+    public static function slugize(string|array $str): string
     {
-        $str = urldecode($str);
+        if (is_array($str)) {
+            $str = implode('-', array_filter(array_map('strval', $str)));
+        }
+        $str = urldecode((string) $str);
         $str = str_replace(' ', '-', trim($str));
         $str = self::unaccent($str);
         $str = strtolower($str);

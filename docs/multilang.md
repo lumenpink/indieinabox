@@ -48,6 +48,7 @@ Before sending article bodies to the AI:
 4. **AI Response Sanitizer**: Strips LLM conversational preambles (e.g., *"Here is the translated article:"*, *"Tradução para português:"*), conversational sign-offs (e.g., *"Hope this helps! Let me know what you think"*, *"Qualquer dúvida estou à disposição"*), and accidental outer ` ```markdown ` code fences.
 5. **Positional Token Restoration**: Masked tokens are restored strictly by position via `strtr`, guaranteeing that link targets and code blocks are never altered, dropped, or corrupted by the model.
 6. **Summary Translation**: Translates the Pass 0 source summary into the target language.
+7. **Long-Form Resilience & Safety Configurations**: AI providers configure a robust 180s HTTP timeout to accommodate large encyclopedic notes (>30KB / >8,000 tokens) without timing out, alongside permissive `safetySettings` (`BLOCK_NONE` thresholds) in Gemini to prevent false-positive moderation blocks on academic, political, and gender theory essays.
 
 ### Frontmatter Metadata & Origin Lineage Tracking
 Virtualized pages automatically receive standardized frontmatter metadata for provenance:

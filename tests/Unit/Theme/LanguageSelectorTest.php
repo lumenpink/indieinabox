@@ -70,6 +70,34 @@ test('getLanguageSelector renders uppercase BCP-47 codes when code_long mode is 
         ->not->toContain('Português');
 });
 
+test('build configuration propagates lang_display_mode into Site localization and renders ISO codes (#57)', function () {
+    $config = [
+        'lang' => ['pt-BR', 'en', 'es'],
+        'defaultlang' => 'pt-BR',
+        'lang_display_mode' => 'code_short',
+    ];
+
+    $site = new Site();
+    $site->localization->lang = $config['lang'];
+    $site->localization->defaultLang = $config['defaultlang'];
+    if (isset($config['lang_display_mode'])) {
+        $site->localization->langDisplayMode = (string) $config['lang_display_mode'];
+    }
+
+    expect($site->localization->langDisplayMode)->toBe('code_short');
+
+    $page = new Page();
+    $page->lang = 'pt-BR';
+    $page->relpath = './';
+
+    $html = ThemeData::getLanguageSelector($page, $site);
+    expect($html)->toContain('<strong aria-current="true">PT</strong>')
+        ->toContain('hreflang="en">EN</a>')
+        ->toContain('hreflang="es">ES</a>')
+        ->not->toContain('Português');
+});
+
+
 test('getLanguageSelector returns empty string for single language site', function () {
     $loc = new Localization(['en'], 'en');
     $site = new Site(localization: $loc);

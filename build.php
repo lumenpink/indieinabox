@@ -146,6 +146,9 @@ if (isset($config['defaultcategory'])) {
 }
 $site->localization->lang = $config['lang'];
 $site->localization->defaultLang = $config['defaultlang'];
+if (isset($config['lang_display_mode'])) {
+    $site->localization->langDisplayMode = (string) $config['lang_display_mode'];
+}
 if (isset($config['htmlpostprocessing'])) {
     $site->options->htmlpostprocessing = $config['htmlpostprocessing'];
 }

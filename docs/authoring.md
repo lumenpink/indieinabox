@@ -72,6 +72,9 @@ Além disso, a opção **Translation Auto-Generation** define o que ocorre caso 
 
 O IndieinaBox indexa automaticamente tanto tags declaradas no frontmatter (`tags: [indieweb, dev]`) quanto `#hashtags` escritas diretamente no corpo do texto (ex: `#indieweb`, `#fediverse`, `#posse`).
 
+> [!TIP]
+> Caso utilize `#` em listas YAML (ex: `tags: - "#indieweb"`), envolva o valor entre aspas para evitar que o parser interprete o conteúdo como comentário YAML. O sistema higieniza automaticamente itens não-escalares e arrays vazios, prevenindo quebras em renderizações de metadados e rotas.
+
 ### Páginas de Tags Geradas
 
 Durante a compilação do site pelo `SiteBuilder`, as seguintes rotas e páginas estáticas são geradas:

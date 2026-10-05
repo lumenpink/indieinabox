@@ -253,6 +253,7 @@ class SiteBuilder
         $this->feedPublisher->publishFeeds($this->pages);
         $this->indexPublisher->publishTimelineStaticPage();
         $this->indexPublisher->loadThemeFeedView($this->pages);
+        $this->publishFederationWellKnown();
         $s4 = microtime(true);
         $timings['Generate Feeds'] = ($s4 - $s3) * 1000.0;
 
@@ -334,4 +335,48 @@ class SiteBuilder
     {
         $this->contentScanner->ensureMandatoryHomepage($this->pages);
     }
+
+    /**
+     * Emits protocol discovery files (Nostr NIP-05, ATProto DID) to .well-known.
+     */
+    public function publishFederationWellKnown(): void
+    {
+        $base = $this->site->paths->baseDir;
+        $outDirHtml = $base . DIRECTORY_SEPARATOR . $this->site->paths->outputDirHtml;
+        $wellKnownDir = $outDirHtml . DIRECTORY_SEPARATOR . '.well-known';
+
+        // Nostr NIP-05
+        $pubKeyHex = \Indieinabox\Nostr\NostrService::getPublicKey($this->site);
+        if (!empty($pubKeyHex)) {
+            if (!is_dir($wellKnownDir)) {
+                @mkdir($wellKnownDir, 0755, true);
+            }
+            $nip05Name = (string) (
+                $this->site->config['nostr_nip05_name'] ??
+                (\Indieinabox\Core\Database::isConnected() ? \Indieinabox\Core\Database::getSetting('nostr_nip05_name') : null) ??
+                $this->site->metadata->author ??
+                'lumen'
+            );
+            $relays = \Indieinabox\Nostr\NostrService::getRelays($this->site);
+            $payload = \Indieinabox\Nostr\NostrService::buildNip05Payload($pubKeyHex, $nip05Name, $relays);
+            $targetNostr = $wellKnownDir . DIRECTORY_SEPARATOR . 'nostr.json';
+            @file_put_contents($targetNostr, json_encode($payload, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
+            self::addManifest($targetNostr);
+        }
+
+        // ATProto DID
+        $did = (string) (
+            $this->site->config['atproto_did'] ??
+            (\Indieinabox\Core\Database::isConnected() ? \Indieinabox\Core\Database::getSetting('atproto_did') : '')
+        );
+        if (!empty($did)) {
+            if (!is_dir($wellKnownDir)) {
+                @mkdir($wellKnownDir, 0755, true);
+            }
+            $targetDid = $wellKnownDir . DIRECTORY_SEPARATOR . 'atproto-did';
+            @file_put_contents($targetDid, trim($did));
+            self::addManifest($targetDid);
+        }
+    }
 }
+

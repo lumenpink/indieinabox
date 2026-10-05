@@ -113,6 +113,32 @@ class WebRouter
             return;
         }
 
+        // Route: Nostr NIP-05 DNS Verification
+        if ($requestUriClean === '/.well-known/nostr.json') {
+            $pubKeyHex = \Indieinabox\Nostr\NostrService::getPublicKey($this->site);
+            if (!empty($pubKeyHex)) {
+                $nip05Name = (string) (
+                    $this->site->config['nostr_nip05_name'] ??
+                    (\Indieinabox\Core\Database::isConnected() ? \Indieinabox\Core\Database::getSetting('nostr_nip05_name') : null) ??
+                    $this->site->metadata->author ??
+                    'lumen'
+                );
+                $relays = \Indieinabox\Nostr\NostrService::getRelays($this->site);
+                $requestedName = isset($_GET['name']) ? (string) $_GET['name'] : null;
+                $payload = \Indieinabox\Nostr\NostrService::buildNip05Payload($pubKeyHex, $nip05Name, $relays, $requestedName);
+
+                header('Content-Type: application/json; charset=utf-8');
+                header('Access-Control-Allow-Origin: *');
+                echo json_encode($payload, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+                return;
+            }
+            http_response_code(404);
+            header('Content-Type: application/json; charset=utf-8');
+            header('Access-Control-Allow-Origin: *');
+            echo json_encode(['error' => 'Nostr public key not configured']);
+            return;
+        }
+
         // Route: Micropub Discovery Redirect
         if ($requestUriClean === '/.well-known/micropub') {
             header('HTTP/1.1 302 Found');

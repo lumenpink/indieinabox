@@ -182,6 +182,21 @@ class CreatePostCommandHandler
         } catch (\Throwable) {
         }
 
+        // Nostr auto-syndication
+        try {
+            if (\Indieinabox\Nostr\NostrService::isEnabled($site)) {
+                $autoSyndicate = (bool) (
+                    $site->config['nostr_auto_syndicate'] ??
+                    (\Indieinabox\Core\Database::isConnected() ? \Indieinabox\Core\Database::getSetting('nostr_auto_syndicate') : false)
+                );
+                if ($autoSyndicate) {
+                    $nostr = new \Indieinabox\Nostr\NostrSyndicationService($site);
+                    $nostr->syndicateFile($filePath);
+                }
+            }
+        } catch (\Throwable) {
+        }
+
         // Dispatch domain event
         if ($this->eventDispatcher !== null) {
             $this->eventDispatcher->dispatch(new PostPublishedEvent(

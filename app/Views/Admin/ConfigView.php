@@ -1343,6 +1343,82 @@ class ConfigView
                     </fieldset>
 
                     <fieldset>
+                        <legend>Nostr Protocol &amp; NIP-05 Federation</legend>
+                        <div class="checkbox-group" style="margin-bottom: 1em;">
+                            <input type="checkbox" name="nostr_enabled" id="nostr_enabled" <?= !empty($config['nostr_enabled']) ? 'checked' : '' ?>>
+                            <label for="nostr_enabled">Enable Nostr Protocol &amp; NIP-05 Identity</label>
+                        </div>
+                        <div class="checkbox-group" style="margin-bottom: 1em;">
+                            <input type="checkbox" name="nostr_auto_syndicate" id="nostr_auto_syndicate" <?= !empty($config['nostr_auto_syndicate']) ? 'checked' : '' ?>>
+                            <label for="nostr_auto_syndicate">Auto-syndicate new notes to Nostr relays (POSSE)</label>
+                        </div>
+                        <div class="grid-2">
+                            <div class="form-group">
+                                <label for="nostr_nip05_name">NIP-05 Username</label>
+                                <input type="text" name="nostr_nip05_name" id="nostr_nip05_name" value="<?= htmlspecialchars($config['nostr_nip05_name'] ?? $config['author'] ?? 'lumen') ?>" placeholder="e.g. lumen">
+                                <small>Served at <code>/.well-known/nostr.json</code> for <code>name@<?= htmlspecialchars(parse_url($config['fqdn'] ?? '', PHP_URL_HOST) ?: 'yourdomain.com') ?></code>.</small>
+                            </div>
+                            <div class="form-group">
+                                <label for="nostr_pubkey">Public Key (npub or 64-hex)</label>
+                                <input type="text" name="nostr_pubkey" id="nostr_pubkey" value="<?= htmlspecialchars($config['nostr_pubkey'] ?? '') ?>" placeholder="npub1... or 64-character hex">
+                                <small>Public key associated with your Nostr profile.</small>
+                            </div>
+                        </div>
+                        <div class="grid-2">
+                            <div class="form-group">
+                                <label for="nostr_privkey">Private Key (nsec or 64-hex)</label>
+                                <input type="password" name="nostr_privkey" id="nostr_privkey" value="<?= !empty($config['nostr_privkey']) ? '••••••••••••••••••••••••••••••••' : '' ?>" placeholder="nsec1... or 64-character hex">
+                                <small>Required for signing Kind 1 notes. Stored locally.</small>
+                            </div>
+                            <div class="form-group" style="display: flex; flex-direction: column; justify-content: flex-end;">
+                                <button type="button" class="btn" id="btn-gen-nostr" onclick="generateNostrKeys()" style="cursor: pointer; padding: 0.6em 1em; align-self: flex-start;">Generate New Keypair</button>
+                                <small id="nostr-gen-status" style="margin-top: 0.4em; font-weight: 500;"></small>
+                            </div>
+                        </div>
+
+                        <div class="form-group" style="margin-top: 1.5em;">
+                            <label>Configured Nostr Relays</label>
+                            <small style="display: block; margin-bottom: 0.5em;">Relays receive signed Kind 1 notes upon publication. Activate, deactivate, or add custom relays.</small>
+                            <?php
+                            $relaysList = $config['nostr_relays'] ?? null;
+                            if (empty($relaysList) || !is_array($relaysList)) {
+                                $relaysList = \Indieinabox\Nostr\NostrRelayClient::getDefaultRelays();
+                            }
+                            ?>
+                            <table style="width: 100%; border-collapse: collapse; margin-top: 0.5em;" id="nostr-relays-table">
+                                <thead>
+                                    <tr style="text-align: left; border-bottom: 1px solid var(--border-color, #e5e7eb);">
+                                        <th style="padding: 0.5em; width: 80px;">Active</th>
+                                        <th style="padding: 0.5em;">Relay WebSocket URL</th>
+                                        <th style="padding: 0.5em; width: 60px; text-align: center;">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="nostr-relays-body">
+                                    <?php foreach ($relaysList as $rIdx => $rItem): 
+                                        $rUrl = is_array($rItem) ? ($rItem['url'] ?? '') : (string)$rItem;
+                                        $rActive = is_array($rItem) ? !empty($rItem['active']) : true;
+                                    ?>
+                                    <tr style="border-bottom: 1px solid var(--border-color, #f3f4f6);">
+                                        <td style="padding: 0.5em; text-align: center;">
+                                            <input type="checkbox" name="nostr_relays[<?= $rIdx ?>][active]" value="1" <?= $rActive ? 'checked' : '' ?>>
+                                        </td>
+                                        <td style="padding: 0.5em;">
+                                            <input type="text" name="nostr_relays[<?= $rIdx ?>][url]" value="<?= htmlspecialchars($rUrl) ?>" style="width: 100%; font-family: monospace;">
+                                        </td>
+                                        <td style="padding: 0.5em; text-align: center;">
+                                            <button type="button" class="btn" onclick="this.closest('tr').remove()" style="padding: 0.2em 0.5em; color: #ef4444; border-color: #ef4444;" title="Remove relay">&times;</button>
+                                        </td>
+                                    </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                            <div style="margin-top: 0.5em;">
+                                <button type="button" class="btn" onclick="addNostrRelayRow()" style="padding: 0.4em 0.8em; font-size: 0.9em;">+ Add Relay</button>
+                            </div>
+                        </div>
+                    </fieldset>
+
+                    <fieldset>
                         <legend>Microsub Feeds &amp; Media</legend>
                         <div class="checkbox-group">
                             <input type="checkbox" name="download_media_image" id="download_media_image" <?= ($config['download_media_image'] ?? true) ? 'checked' : '' ?>>
@@ -1807,6 +1883,61 @@ class ConfigView
                         resSpan.style.color = '#ef4444';
                         resSpan.textContent = '✘ Error: ' + err.message;
                     });
+                }
+
+                function generateNostrKeys() {
+                    const btn = document.getElementById('btn-gen-nostr');
+                    const status = document.getElementById('nostr-gen-status');
+                    btn.disabled = true;
+                    btn.textContent = 'Generating...';
+                    status.textContent = '';
+
+                    const formData = new FormData();
+                    formData.append('action', 'generate_nostr_keys');
+
+                    fetch('/admin/config', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(r => r.json())
+                    .then(data => {
+                        btn.disabled = false;
+                        btn.textContent = 'Generate New Keypair';
+                        if (data.nsec && data.npub) {
+                            document.getElementById('nostr_privkey').value = data.nsec;
+                            document.getElementById('nostr_pubkey').value = data.npub;
+                            status.style.color = '#10b981';
+                            status.textContent = '✔ Generated! Save configuration to apply.';
+                        } else {
+                            status.style.color = '#ef4444';
+                            status.textContent = '✘ Key generation failed.';
+                        }
+                    })
+                    .catch(err => {
+                        btn.disabled = false;
+                        btn.textContent = 'Generate New Keypair';
+                        status.style.color = '#ef4444';
+                        status.textContent = '✘ Error: ' + err.message;
+                    });
+                }
+
+                function addNostrRelayRow() {
+                    const tbody = document.getElementById('nostr-relays-body');
+                    const idx = Date.now();
+                    const tr = document.createElement('tr');
+                    tr.style.borderBottom = '1px solid var(--border-color, #f3f4f6)';
+                    tr.innerHTML = `
+                        <td style="padding: 0.5em; text-align: center;">
+                            <input type="checkbox" name="nostr_relays[${idx}][active]" value="1" checked>
+                        </td>
+                        <td style="padding: 0.5em;">
+                            <input type="text" name="nostr_relays[${idx}][url]" value="wss://" style="width: 100%; font-family: monospace;">
+                        </td>
+                        <td style="padding: 0.5em; text-align: center;">
+                            <button type="button" class="btn" onclick="this.closest('tr').remove()" style="padding: 0.2em 0.5em; color: #ef4444; border-color: #ef4444;" title="Remove relay">&times;</button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
                 }
 
                 document.addEventListener('DOMContentLoaded', function() {

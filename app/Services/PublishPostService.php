@@ -137,6 +137,21 @@ class PublishPostService
         } catch (\Throwable) {
         }
 
+        // Nostr auto-syndication
+        try {
+            if (\Indieinabox\Nostr\NostrService::isEnabled($this->site)) {
+                $autoSyndicate = (bool) (
+                    $this->site->config['nostr_auto_syndicate'] ??
+                    (\Indieinabox\Core\Database::isConnected() ? \Indieinabox\Core\Database::getSetting('nostr_auto_syndicate') : false)
+                );
+                if ($autoSyndicate) {
+                    $nostr = new \Indieinabox\Nostr\NostrSyndicationService($this->site);
+                    $nostr->syndicateFile($postPath);
+                }
+            }
+        } catch (\Throwable) {
+        }
+
         return [
             'slug' => $slug,
             'filepath' => $postPath,

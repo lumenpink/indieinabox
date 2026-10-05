@@ -153,6 +153,12 @@ class AdminController extends AbstractController
                     echo json_encode($result);
                     exit;
                 }
+                if ($_POST['action'] === 'generate_nostr_keys') {
+                    header('Content-Type: application/json; charset=utf-8');
+                    $pair = \Indieinabox\Nostr\NostrKey::generate();
+                    echo json_encode($pair);
+                    exit;
+                }
                 if ($_POST['action'] === 'manual_update' && !empty($_POST['download_url'])) {
                     UpdateService::downloadAndInstall((string) $_POST['download_url']);
                     $this->redirect('/admin/config?saved=1');
@@ -629,6 +635,53 @@ class AdminController extends AbstractController
             $currentConfig['atproto_did'] = trim((string) $_POST['atproto_did']);
         }
         $currentConfig['atproto_auto_syndicate'] = isset($_POST['atproto_auto_syndicate']) ? '1' : '0';
+
+        // Nostr configuration
+        $currentConfig['nostr_enabled'] = isset($_POST['nostr_enabled']);
+        $currentConfig['nostr_auto_syndicate'] = isset($_POST['nostr_auto_syndicate']);
+        if (isset($_POST['nostr_nip05_name'])) {
+            $currentConfig['nostr_nip05_name'] = trim((string) $_POST['nostr_nip05_name']);
+        }
+        if (isset($_POST['nostr_privkey'])) {
+            $privInput = trim((string) $_POST['nostr_privkey']);
+            if ($privInput !== '' && !str_starts_with($privInput, '••••')) {
+                if (str_starts_with($privInput, 'nsec1')) {
+                    $privHex = \Indieinabox\Nostr\NostrKey::nsecToHex($privInput);
+                } else {
+                    $privHex = strtolower($privInput);
+                }
+                $currentConfig['nostr_privkey'] = $privHex;
+                if (empty($_POST['nostr_pubkey'])) {
+                    $currentConfig['nostr_pubkey'] = \Indieinabox\Nostr\NostrKey::derivePublicKey($privHex);
+                }
+            }
+        }
+        if (isset($_POST['nostr_pubkey']) && !empty($_POST['nostr_pubkey'])) {
+            $pubInput = trim((string) $_POST['nostr_pubkey']);
+            if (str_starts_with($pubInput, 'npub1')) {
+                $pubHex = \Indieinabox\Nostr\NostrKey::npubToHex($pubInput);
+            } else {
+                $pubHex = strtolower($pubInput);
+            }
+            $currentConfig['nostr_pubkey'] = $pubHex;
+        }
+        if (isset($_POST['nostr_relays']) && is_array($_POST['nostr_relays'])) {
+            $relays = [];
+            foreach ($_POST['nostr_relays'] as $r) {
+                if (is_array($r) && !empty($r['url'])) {
+                    $u = trim((string) $r['url']);
+                    if ($u !== '' && $u !== 'wss://') {
+                        $relays[] = [
+                            'url' => $u,
+                            'active' => !empty($r['active']),
+                        ];
+                    }
+                }
+            }
+            if (!empty($relays)) {
+                $currentConfig['nostr_relays'] = $relays;
+            }
+        }
 
         $currentConfig['cron_token'] = trim((string) ($_POST['cron_token'] ?? ''));
         $currentConfig['build_token'] = trim((string) ($_POST['build_token'] ?? ''));

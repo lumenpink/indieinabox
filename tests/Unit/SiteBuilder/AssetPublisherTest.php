@@ -31,7 +31,7 @@ afterEach(function () {
 it('returns false when publishing static files from non-existent directory without DefaultTheme', function () {
     $result = $this->publisher->publishStaticFiles($this->tempDir . '/non_existent_dir');
     expect($result)->toBeFalse();
-});
+})->skip(fn () => class_exists('\\DefaultTheme'), 'DefaultTheme is loaded in compiled test mode');
 
 it('copies static files to outputDirHtml successfully', function () {
     $staticDir = $this->tempDir . '/static_source';

@@ -28,5 +28,31 @@ if [ "$1" = "cron" ]; then
     done
 fi
 
+# Tratamento para o modo demo sandbox
+if [ "${DEMO_MODE:-false}" = "true" ] || [ "${DEMO_MODE:-0}" = "1" ]; then
+    echo ">> [indieinabox-demo] Demo mode enabled."
+    # Inicializa o golden snapshot se ainda não existir
+    if [ ! -f "/app/data/.demo_seed/demo.sqlite" ]; then
+        echo ">> [indieinabox-demo] Initializing demo sandbox seed..."
+        php /app/indieinabox.php demo seed \
+            --fqdn "${DEMO_FQDN:-https://demo.indieinabox.2lp.in}" \
+            --sitename "${DEMO_SITENAME:-IndieInABox Public Sandbox}" \
+            --password "${DEMO_PASSWORD:-demo123}"
+        chown -R www-data:www-data /app/data /app/content /app/public_html || true
+    fi
+
+    # Dispara daemon de reset periodico em background
+    echo ">> [indieinabox-demo] Starting periodic reset daemon (interval: ${DEMO_RESET_INTERVAL:-3600}s)..."
+    (
+        while true; do
+            sleep "${DEMO_RESET_INTERVAL:-3600}"
+            echo ">> [indieinabox-demo] Triggering periodic sandbox reset..."
+            php /app/indieinabox.php demo reset || echo ">> [indieinabox-demo] Reset exited with code $?"
+            chown -R www-data:www-data /app/data /app/content /app/public_html || true
+        done
+    ) &
+fi
+
 # Se não for cron, executa o comando passado pelo CMD (ex: frankenphp run)
 exec "$@"
+

@@ -205,7 +205,7 @@ class Bootstrap
         if (!file_exists($configFile)) {
             if ($sapi === 'cli') {
                 global $argv;
-                $isSetup = isset($argv[1]) && $argv[1] === 'setup';
+                $isSetup = isset($argv[1]) && in_array($argv[1], ['setup', 'demo'], true);
                 if ($isSetup) {
                     return [
                         'data_dir' => $baseDir . '/data',
@@ -287,6 +287,8 @@ class Bootstrap
 
             if (isset($dbConfig['db_path']) && file_exists((string)$dbConfig['db_path'])) {
                 $dbPath = (string)$dbConfig['db_path'];
+            } elseif (file_exists($dataDir . '/indieinabox.sqlite')) {
+                $dbPath = $dataDir . '/indieinabox.sqlite';
             }
 
             Database::$dataDir = $dataDir;

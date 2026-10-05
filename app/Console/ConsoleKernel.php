@@ -9,6 +9,7 @@ use Indieinabox\Console\Commands\BskyCommand;
 use Indieinabox\Console\Commands\BuildCommand;
 use Indieinabox\Console\Commands\ConfigCommand;
 use Indieinabox\Console\Commands\CronCommand;
+use Indieinabox\Console\Commands\DemoCommand;
 use Indieinabox\Console\Commands\ExportCommand;
 use Indieinabox\Console\Commands\FetchCommand;
 use Indieinabox\Console\Commands\ImportCommand;
@@ -69,6 +70,7 @@ class ConsoleKernel
         $this->register(new UpdateCommand($this->site));
         $this->register(new SearchCommand($this->site));
         $this->register(new BskyCommand($this->site));
+        $this->register(new DemoCommand($this->site));
     }
 
     /**

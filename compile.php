@@ -239,7 +239,8 @@ foreach ($themeStatic as $path => $content) {
     $themeCode .= "            '" . addslashes(str_replace('\\', '/', $rel)) . "' => '" . base64_encode($content) . "',\n";
 }
 $themeCode .= "        ];\n";
-$themeCode .= "        public static function getView(string \$path): ?string {\n";
+$themeCode .= "        public static function getView(?string \$path): ?string {\n";
+$themeCode .= "            if (\$path === null) return null;\n";
 $themeCode .= "            return isset(self::\$views[\$path]) ? base64_decode(self::\$views[\$path]) : null;\n";
 $themeCode .= "        }\n";
 $themeCode .= "        public static function getViews(): array {\n";
@@ -318,7 +319,7 @@ $runnerCode .= <<<'EOT'
     if (!file_exists($configFile)) {
         if (PHP_SAPI === 'cli') {
             global $argv;
-            $isSetup = isset($argv[1]) && $argv[1] === 'setup';
+            $isSetup = isset($argv[1]) && in_array($argv[1], ['setup', 'demo'], true);
             if (!$isSetup) {
                 file_put_contents('php://stderr', "\033[31;1mError: Database is not configured. Please run 'php indieinabox.php setup' or the web installer.\033[0m\n");
                 exit(1);
@@ -448,6 +449,8 @@ HTML;
             $dbPath = $dbConfig['data_dir'] . '/.indieinabox.sqlite';
             if (isset($dbConfig['db_path']) && file_exists($dbConfig['db_path'])) {
                 $dbPath = $dbConfig['db_path'];
+            } elseif (file_exists($dbConfig['data_dir'] . '/indieinabox.sqlite')) {
+                $dbPath = $dbConfig['data_dir'] . '/indieinabox.sqlite';
             }
             \Indieinabox\Core\Database::$dataDir = $dbConfig['data_dir'];
             \Indieinabox\Core\Database::connect($dbPath);

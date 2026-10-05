@@ -103,7 +103,7 @@ class ThemeManager implements ThemeEcosystemInterface
         }
 
         if (class_exists('\\DefaultTheme')) {
-            self::resolveEmbeddedKey($viewPath);
+            $relativePath = self::resolveEmbeddedKey($viewPath);
             /** @psalm-suppress UndefinedClass */
             return \DefaultTheme::getView($relativePath) !== null;
         }
@@ -125,7 +125,7 @@ class ThemeManager implements ThemeEcosystemInterface
         }
 
         if (class_exists('\\DefaultTheme')) {
-            self::resolveEmbeddedKey($viewPath);
+            $relativePath = self::resolveEmbeddedKey($viewPath);
             /** @psalm-suppress UndefinedClass */
             return \DefaultTheme::getView($relativePath);
         }

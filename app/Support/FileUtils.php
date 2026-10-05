@@ -110,4 +110,36 @@ class FileUtils
             throw new \RuntimeException("Error while removing directory: " . $e->getMessage());
         }
     }
+
+    /**
+     * Recursively copies a directory and its contents to a destination.
+     */
+    public static function copyDirectory(string $source, string $destination): bool
+    {
+        if (!is_dir($source)) {
+            return false;
+        }
+
+        if (!is_dir($destination)) {
+            @mkdir($destination, 0755, true);
+        }
+
+        $items = new \DirectoryIterator($source);
+        foreach ($items as $item) {
+            if ($item->isDot()) {
+                continue;
+            }
+
+            $srcPath = $item->getPathname();
+            $destPath = $destination . DIRECTORY_SEPARATOR . $item->getFilename();
+
+            if ($item->isDir()) {
+                self::copyDirectory($srcPath, $destPath);
+            } else {
+                @copy($srcPath, $destPath);
+            }
+        }
+
+        return true;
+    }
 }

@@ -23,7 +23,7 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.4'
-          extensions: pdo_sqlite, mbstring, intl, gd, zip, curl
+          extensions: pdo_sqlite, mbstring, intl, gd, zip, curl, gmp
 
       - name: "Install Composer dependencies (production)"
         run: composer install --no-interaction --prefer-dist --no-dev --no-progress
@@ -37,23 +37,18 @@ jobs:
         run: |
           docker build -t indieinabox-demo:latest -f docker/Dockerfile .
 
-      - name: "Automated SQLite seeding & Environment verification"
+      - name: "Automated Sandbox Seeding & Rollback Verification"
         run: |
-          mkdir -p demo_data/content demo_data/public_html
-          echo "<?php return ['db_path' => __DIR__ . '/demo_data/indieinabox.sqlite'];" > demo_data/.config.php
-          php -r '$db = new PDO("sqlite:" . __DIR__ . "/demo_data/indieinabox.sqlite"); $db->exec(file_get_contents("database.sql"));'
-          php -r '
-            $db = new PDO("sqlite:" . __DIR__ . "/demo_data/indieinabox.sqlite");
-            $db->exec("INSERT OR IGNORE INTO settings (key, value) VALUES (\x27site_name\x27, \x27Indieinabox Demo Instance\x27)");
-            $db->exec("INSERT OR IGNORE INTO settings (key, value) VALUES (\x27fqdn\x27, \x27https://demo.indieinabox.org\x27)");
-          '
+          php indieinabox.php demo seed --fqdn "https://demo.indieinabox.2lp.in" --password "demo123"
+          php indieinabox.php demo status
+          php indieinabox.php demo reset
 
       - name: "Health check confirmation"
         run: |
           php -r '
             require_once "app/Core/Version.php";
             echo "Indieinabox Version: " . \Indieinabox\Core\Version::get() . "\n";
-            $db = new PDO("sqlite:" . __DIR__ . "/demo_data/indieinabox.sqlite");
+            $db = new PDO("sqlite:" . __DIR__ . "/data/indieinabox.sqlite");
             $res = $db->query("SELECT 1")->fetchColumn();
             if ($res !== 1 && $res !== "1") {
               echo "Database health check failed\n";

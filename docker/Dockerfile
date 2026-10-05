@@ -50,6 +50,7 @@ RUN install-php-extensions \
     zip \
     gd \
     exif \
+    gmp \
     opcache
 
 WORKDIR /app

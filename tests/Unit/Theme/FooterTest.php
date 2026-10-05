@@ -25,7 +25,87 @@ it('renders footer links with RSS, ATOM, and custom links', function () {
     expect($html)->toContain('href="atom.xml">ATOM</a>');
 });
 
-it('renders complete footer view with copyright and credits', function () {
+it('renders canonical 2-line footer in 10 languages according to GOST Profile Lumen', function () {
+    $matrix = [
+        'pt' => [
+            'travesti_link' => 'https://travesti.2lp.in/pt/',
+            'phrase' => 'travesti latina',
+            'country' => 'Brasil 🇧🇷',
+            'by' => 'por',
+        ],
+        'en' => [
+            'travesti_link' => 'https://travesti.2lp.in/en/',
+            'phrase' => 'Latin American travesti',
+            'country' => 'Brazil 🇧🇷',
+            'by' => 'by',
+        ],
+        'es' => [
+            'travesti_link' => 'https://travesti.2lp.in/es/',
+            'phrase' => 'travesti latinoamericana',
+            'country' => 'Brasil 🇧🇷',
+            'by' => 'por',
+        ],
+        'fr' => [
+            'travesti_link' => 'https://travesti.2lp.in/fr/',
+            'phrase' => 'travesti latino-américaine',
+            'country' => 'Brésil 🇧🇷',
+            'by' => 'par',
+        ],
+        'de' => [
+            'travesti_link' => 'https://travesti.2lp.in/de/',
+            'phrase' => 'lateinamerikanischen Travesti',
+            'country' => 'Brasilien 🇧🇷',
+            'by' => 'von',
+        ],
+        'it' => [
+            'travesti_link' => 'https://travesti.2lp.in/it/',
+            'phrase' => 'travesti latinoamericana',
+            'country' => 'Brasile 🇧🇷',
+            'by' => 'da',
+        ],
+        'ru' => [
+            'travesti_link' => 'https://travesti.2lp.in/ru/',
+            'phrase' => 'латиноамериканской travesti',
+            'country' => 'Бразилия 🇧🇷',
+            'by' => 'от',
+        ],
+        'zh' => [
+            'travesti_link' => 'https://travesti.2lp.in/zh/',
+            'phrase' => '拉美 travesti',
+            'country' => '巴西 🇧🇷',
+            'by' => '来自',
+        ],
+        'ja' => [
+            'travesti_link' => 'https://travesti.2lp.in/ja/',
+            'phrase' => 'ラテンアメリカの travesti',
+            'country' => 'ブラジル 🇧🇷',
+            'by' => '制作:',
+        ],
+        'ar' => [
+            'travesti_link' => 'https://travesti.2lp.in/ar/',
+            'phrase' => 'travesti أمريكية لاتينية',
+            'country' => 'البرازيل 🇧🇷',
+            'by' => 'بواسطة',
+        ],
+    ];
+
+    foreach ($matrix as $lang => $expected) {
+        $html = ThemeData::getCanonicalFooter($lang);
+
+        // Linha 1 assertions
+        expect($html)->toContain('href="' . $expected['travesti_link'] . '"');
+        expect($html)->toContain($expected['phrase']);
+        expect($html)->toContain('🏳️‍⚧️ :)');
+
+        // Linha 2 assertions
+        expect($html)->toContain('IndieInABox');
+        expect($html)->toContain('href="https://lumen.pink">Lumen Pink</a>');
+        expect($html)->toContain($expected['country']);
+        expect($html)->toContain('Apache-2.0');
+    }
+});
+
+it('renders complete footer view with canonical footer and h-card', function () {
     $site = new Site();
     $site->metadata->sitename = 'Lumen Blog';
     $site->metadata->author = 'Lumen Pink';
@@ -48,8 +128,10 @@ it('renders complete footer view with copyright and credits', function () {
     $output = ob_get_clean();
 
     expect($output)->toContain('<footer role="contentinfo">');
-    expect($output)->toContain('Lumen Blog');
-    expect($output)->toContain('Lumen Pink');
-    expect($output)->toContain('Publicado com');
+    expect($output)->toContain('https://travesti.2lp.in/pt/');
+    expect($output)->toContain('travesti latina');
+    expect($output)->toContain('🏳️‍⚧️ :)');
     expect($output)->toContain('IndieInABox');
+    expect($output)->toContain('https://lumen.pink');
+    expect($output)->toContain('Brasil 🇧🇷');
 });

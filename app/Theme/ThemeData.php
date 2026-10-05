@@ -302,6 +302,102 @@ class ThemeData
     }
 
     /**
+     * Generates the canonical 2-line multilingual footer according to GOST Profile Lumen Section 13.
+     *
+     * @param string $lang ISO 639-1 language code (e.g. 'pt', 'en', 'es', etc.).
+     * @param string|null $appName Public application identifier (default: 'IndieInABox').
+     * @param string|null $version Version string (default: Version::get()).
+     * @param string|null $timestamp ISO 8601 UTC timestamp (default: current UTC time).
+     * @param string|null $license License SPDX code (default: 'Apache-2.0').
+     * @param string|null $licenseUrl License URL.
+     * @return string
+     */
+    public static function getCanonicalFooter(
+        string $lang = 'pt',
+        ?string $appName = null,
+        ?string $version = null,
+        ?string $timestamp = null,
+        ?string $license = 'Apache-2.0',
+        ?string $licenseUrl = 'https://codeberg.org/indieinabox/indieinabox/src/branch/main/LICENSE'
+    ): string {
+        $appName = $appName ?? 'IndieInABox';
+        $version = $version ?? \Indieinabox\Core\Version::get();
+        $timestamp = $timestamp ?? gmdate('Y-m-d\TH:i:s\Z');
+        $license = $license ?? 'Apache-2.0';
+        $licenseUrl = $licenseUrl ?? 'https://codeberg.org/indieinabox/indieinabox/src/branch/main/LICENSE';
+
+        $matrix = [
+            'pt' => [
+                'line1' => 'Orgulhosamente produzido por uma <a href="https://travesti.2lp.in/pt/">travesti latina</a> 🏳️‍⚧️ :)',
+                'by' => 'por',
+                'country' => 'Brasil 🇧🇷',
+            ],
+            'en' => [
+                'line1' => 'Proudly produced by a <a href="https://travesti.2lp.in/en/">Latin American travesti</a> 🏳️‍⚧️ :)',
+                'by' => 'by',
+                'country' => 'Brazil 🇧🇷',
+            ],
+            'es' => [
+                'line1' => 'Orgullosamente producido por una <a href="https://travesti.2lp.in/es/">travesti latinoamericana</a> 🏳️‍⚧️ :)',
+                'by' => 'por',
+                'country' => 'Brasil 🇧🇷',
+            ],
+            'fr' => [
+                'line1' => 'Fièrement produit par une <a href="https://travesti.2lp.in/fr/">travesti latino-américaine</a> 🏳️‍⚧️ :)',
+                'by' => 'par',
+                'country' => 'Brésil 🇧🇷',
+            ],
+            'de' => [
+                'line1' => 'Mit Stolz entwickelt von einer <a href="https://travesti.2lp.in/de/">lateinamerikanischen Travesti</a> 🏳️‍⚧️ :)',
+                'by' => 'von',
+                'country' => 'Brasilien 🇧🇷',
+            ],
+            'it' => [
+                'line1' => 'Orgogliosamente prodotto da uma <a href="https://travesti.2lp.in/it/">travesti latinoamericana</a> 🏳️‍⚧️ :)',
+                'by' => 'da',
+                'country' => 'Brasile 🇧🇷',
+            ],
+            'ru' => [
+                'line1' => 'С гордостью создано <a href="https://travesti.2lp.in/ru/">латиноамериканской travesti</a> 🏳️‍⚧️ :)',
+                'by' => 'от',
+                'country' => 'Бразилия 🇧🇷',
+            ],
+            'zh' => [
+                'line1' => '由一位<a href="https://travesti.2lp.in/zh/">拉美 travesti</a> 自豪制作 🏳️‍⚧️ :)',
+                'by' => '来自',
+                'country' => '巴西 🇧🇷',
+            ],
+            'ja' => [
+                'line1' => '<a href="https://travesti.2lp.in/ja/">ラテンアメリカの travesti</a> によって誇りを持って制作されました 🏳️‍⚧️ :)',
+                'by' => '制作:',
+                'country' => 'ブラジル 🇧🇷',
+            ],
+            'ar' => [
+                'line1' => 'صُنع بكل فخر بواسطة <a href="https://travesti.2lp.in/ar/">travesti أمريكية لاتينية</a> 🏳️‍⚧️ :)',
+                'by' => 'بواسطة',
+                'country' => 'البرازيل 🇧🇷',
+            ],
+        ];
+
+        $target = $matrix[$lang] ?? $matrix['pt'];
+        $line1 = $target['line1'];
+
+        $appFormatted = htmlspecialchars($appName) . ' v' . htmlspecialchars($version);
+        $authorFormatted = $target['by'] . ' <a href="https://lumen.pink">Lumen Pink</a>';
+        $countryFormatted = $target['country'];
+        $licenseFormatted = '<a href="' . htmlspecialchars($licenseUrl) . '" target="_blank" rel="noopener">' . htmlspecialchars($license) . '</a>';
+
+        $line2 = $appFormatted . ' &bull; ' . $authorFormatted . ' &bull; ' . htmlspecialchars($timestamp) . ' &bull; ' . $countryFormatted . ' &bull; ' . $licenseFormatted;
+
+        $dirAttr = ($lang === 'ar') ? ' dir="rtl"' : '';
+
+        return '<div class="footer-canonical"' . $dirAttr . ">\n" .
+               '    <div class="footer-line footer-line-identity">' . $line1 . "</div>\n" .
+               '    <div class="footer-line footer-line-metadata">' . $line2 . "</div>\n" .
+               '</div>';
+    }
+
+    /**
      * Generates a semantic h-card markup for the site author (IndieWebify.me Level 1).
      *
      * @param Site $site

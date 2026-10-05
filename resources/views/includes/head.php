@@ -127,8 +127,16 @@ $colors = ThemeData::getThemeColors($page);
         text-decoration: underline;
         margin: 0 0.4em;
     }
-    footer[role="contentinfo"] .footer-credit {
-        margin-top: 0.5em;
+    footer[role="contentinfo"] .footer-canonical {
+        margin-top: 1em;
+        line-height: 1.6;
+        font-size: 0.9em;
+    }
+    footer[role="contentinfo"] .footer-line-identity {
+        font-weight: 500;
+        margin-bottom: 0.3em;
+    }
+    footer[role="contentinfo"] .footer-line-metadata {
         font-size: 0.85em;
         opacity: 0.8;
     }

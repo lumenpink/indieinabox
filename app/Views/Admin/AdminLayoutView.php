@@ -793,8 +793,8 @@ class AdminLayoutView
     </div>
     <div class="admin-content">
         <?= $content ?>
-        <footer class="admin-footer" style="margin-top: 4rem; padding: 2rem 0; border-top: 2px solid #000000; text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: #555555;">
-            <span>IndieInABox Cockpit &bull; Sistema de Resistência &amp; Publicação Periférica</span>
+        <footer class="admin-footer" style="margin-top: 4rem; padding: 2rem 0; border-top: 2px solid #000000; text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: #555555; line-height: 1.6;">
+            <?= \Indieinabox\Theme\ThemeData::getCanonicalFooter('pt', 'IndieInABox Cockpit') ?>
         </footer>
     </div>
 </body>

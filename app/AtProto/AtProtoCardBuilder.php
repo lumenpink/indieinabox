@@ -182,15 +182,21 @@ class AtProtoCardBuilder
     }
 
     /**
-     * Cleans Markdown formatting to produce readable plain text.
+     * Cleans Markdown/HTML formatting to produce readable plain text.
+     * When $preserveLineBreaks is true, stanzas, verses, and paragraph breaks are preserved.
      */
-    public function cleanMarkdown(string $md): string
+    public function cleanMarkdown(string $md, bool $preserveLineBreaks = false): string
     {
         // Strip frontmatter if present
         $md = preg_replace('/^---[\s\S]*?---\s*/', '', $md);
         // Strip images and links but keep link text
         $md = preg_replace('/!\[.*?\]\(.*?\)/', '', $md);
         $md = preg_replace('/\[(.*?)\]\(.*?\)/', '$1', $md);
+        // Strip Obsidian image embeds ![[...]]
+        $md = preg_replace('/!\[\[.*?\]\]/', '', $md);
+        // Convert Obsidian wikilinks [[target|text]] -> text, [[target]] -> target
+        $md = preg_replace('/\[\[[^|\]]+\|([^\]]+)\]\]/', '$1', $md);
+        $md = preg_replace('/\[\[([^\]]+)\]\]/', '$1', $md);
         // Strip code blocks and inline code
         $md = preg_replace('/```[\s\S]*?```/', '', $md);
         $md = preg_replace('/`.*?`/', '', $md);
@@ -198,11 +204,30 @@ class AtProtoCardBuilder
         $md = preg_replace('/(\*\*|__)(.*?)\1/s', '$2', $md);
         $md = preg_replace('/(\*|_)(.*?)\1/s', '$2', $md);
         $md = preg_replace('/~~(.*?)~~/s', '$1', $md);
-        // Strip HTML tags
+
+        // Convert break tags and paragraph boundaries to newlines before strip_tags
+        $md = preg_replace('/<br\s*\/?>/i', "\n", $md);
+        $md = preg_replace('/<\/p>\s*<p[^>]*>/i', "\n\n", $md);
+        $md = preg_replace('/<\/?(p|div|h[1-6]|li|blockquote)[^>]*>/i', "\n", $md);
+        // Strip remaining HTML tags
         $md = strip_tags($md);
         // Strip headers, blockquotes, bullets
         $md = preg_replace('/^[#>\-*+]\s+/m', '', $md);
-        // Normalize whitespace
+
+        if ($preserveLineBreaks) {
+            // Normalize CRLF to LF
+            $md = str_replace(["\r\n", "\r"], "\n", $md);
+            // Normalize horizontal whitespace on each line without collapsing newlines
+            $md = preg_replace('/[^\S\r\n]+/', ' ', $md);
+            // Trim whitespace around linebreaks
+            $md = preg_replace('/[ \t]*\n[ \t]*/', "\n", $md);
+            // Collapse 3 or more newlines to at most 2
+            $md = preg_replace('/\n{3,}/', "\n\n", $md);
+
+            return trim($md);
+        }
+
+        // Normalize whitespace into single line (for card excerpts)
         $md = preg_replace('/\s+/', ' ', $md);
 
         return trim($md);

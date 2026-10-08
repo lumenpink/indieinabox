@@ -11,6 +11,7 @@ $lang = $page->lang ?? ($site->localization->defaultLang ?? 'pt');
 ?>
 <footer role="contentinfo">
     <hr>
+    <?= ThemeData::getKindLinks($page, $pages ?? null, $site) ?>
     <?= ThemeData::getFooterLinks($page, $footerLinks ?? []) ?>
     
     <?= ThemeData::getCanonicalFooter($lang) ?>

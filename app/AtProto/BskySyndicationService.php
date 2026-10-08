@@ -236,7 +236,7 @@ class BskySyndicationService
             $photos = is_array($frontmatter['photo']) ? $frontmatter['photo'] : [$frontmatter['photo']];
             foreach ($photos as $ph) {
                 if (is_string($ph)) {
-                    $images[] = $this->resolveLocalImagePath($ph);
+                    $images[] = $this->resolveLocalImagePath($ph, $filePath);
                 }
             }
         }
@@ -285,7 +285,7 @@ class BskySyndicationService
         $embed = null;
         $postText = '';
 
-        $cleanBody = $cardBuilder->cleanMarkdown($body);
+        $cleanBody = $cardBuilder->cleanMarkdown($body, true);
         $isArticle = ($kind === 'article' || ($title !== '' && mb_strlen($cleanBody) > 300));
 
         if ($isArticle && $canonicalUrl !== null) {
@@ -445,16 +445,25 @@ class BskySyndicationService
     /**
      * Resolves a public or local image path to a local filesystem path.
      */
-    private function resolveLocalImagePath(string $path): ?string
+    private function resolveLocalImagePath(string $path, ?string $referenceFile = null): ?string
     {
         if (file_exists($path)) {
             return $path;
+        }
+
+        if ($referenceFile !== null) {
+            $refDir = dirname($referenceFile);
+            if (file_exists($refDir . DIRECTORY_SEPARATOR . $path)) {
+                return $refDir . DIRECTORY_SEPARATOR . $path;
+            }
         }
 
         $dataDir = Database::$dataDir ? dirname(Database::$dataDir) : getcwd();
         $candidates = [
             $dataDir . DIRECTORY_SEPARATOR . 'content' . DIRECTORY_SEPARATOR . ltrim($path, '/\\'),
             $dataDir . DIRECTORY_SEPARATOR . 'public' . DIRECTORY_SEPARATOR . ltrim($path, '/\\'),
+            $dataDir . DIRECTORY_SEPARATOR . 'public_media' . DIRECTORY_SEPARATOR . ltrim($path, '/\\'),
+            $dataDir . DIRECTORY_SEPARATOR . 'public_html' . DIRECTORY_SEPARATOR . 'media' . DIRECTORY_SEPARATOR . ltrim($path, '/\\'),
             $dataDir . DIRECTORY_SEPARATOR . ltrim($path, '/\\'),
         ];
 

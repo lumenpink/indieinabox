@@ -454,12 +454,13 @@ class IndexPublisher
         }
 
         foreach ($grouped as $lang => $terms) {
-            uksort($terms, 'strcasecmp');
+            uksort($terms, fn($a, $b) => strcasecmp((string) $a, (string) $b));
 
             $globalContent = "<ul>\n";
             $globalRaw = '';
 
             foreach ($terms as $term => $termPages) {
+                $term = (string) $term;
                 usort($termPages, function ($a, $b) {
                     return $b->date->getTimestamp() <=> $a->date->getTimestamp();
                 });

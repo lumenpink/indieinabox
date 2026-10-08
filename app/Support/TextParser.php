@@ -172,14 +172,15 @@ class TextParser
     /**
      * Converts a string or array into a clean, URL-safe slug.
      *
-     * @param string|array<mixed> $str
+     * @param string|int|float|array<mixed> $str
      * @return string
      */
-    public static function slugize(string|array $str): string
+    public static function slugize(string|int|float|array $str): string
     {
         if (is_array($str)) {
             $str = implode('-', array_filter(array_map('strval', $str)));
         }
+        $str = (string) $str;
         $str = urldecode((string) $str);
         $str = str_replace(' ', '-', trim($str));
         $str = self::unaccent($str);

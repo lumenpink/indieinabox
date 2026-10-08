@@ -73,12 +73,13 @@ $_kindLabel = \Indieinabox\Taxonomy\KindHelper::kindLabel($page->kind);
         $hasExcerpt = !empty($page->metadata->excerpt);
         $dontExcerpt = !empty($page->metadata->dont_excerpt);
         
-        $readMoreLink = ' <a href="' . $page->relpath . ltrim($page->slug, '/') . '" class="u-url">' . \Indieinabox\Localization\Translator::translate('Read more') . '</a>';
+        $postUrl = $page->relpath . ltrim($page->slug, '/');
+        $readMoreLink = ' <a href="' . htmlspecialchars($postUrl) . '" class="u-url">' . \Indieinabox\Localization\Translator::translate('Read more') . '</a>';
         
         if ($dontExcerpt) {
             echo $content;
         } elseif ($hasExcerpt) {
-            echo '<p>' . nl2br(htmlspecialchars($page->metadata->excerpt)) . '...' . $readMoreLink . '</p>';
+            echo '<p><a href="' . htmlspecialchars($postUrl) . '" class="u-url" style="color: inherit; text-decoration: none; cursor: pointer;">' . nl2br(htmlspecialchars($page->metadata->excerpt)) . '...</a>' . $readMoreLink . '</p>';
         } else {
             $cleanContent = preg_replace('/<a[^>]*class="[^"]*dithered-image-link[^"]*"[^>]*>.*?<\/a>/is', '', $content);
             $text = html_entity_decode(strip_tags($cleanContent), ENT_QUOTES | ENT_HTML5, 'UTF-8');
@@ -96,12 +97,12 @@ $_kindLabel = \Indieinabox\Taxonomy\KindHelper::kindLabel($page->kind);
                 $thumb = '';
                 if (preg_match('/<img[^>]+src="([^"]+_global\.gif)"/i', $content, $matches)) {
                     $thumbSrc = str_replace('_global.gif', '_thumb.gif', $matches[1]);
-                    $thumb = '<img src="' . htmlspecialchars($thumbSrc) . '" alt="Thumbnail" style="max-width:100px; float:left; margin-right:1em;">';
+                    $thumb = '<a href="' . htmlspecialchars($postUrl) . '" class="u-url" style="float:left; margin-right:1em; display:block;"><img src="' . htmlspecialchars($thumbSrc) . '" alt="Thumbnail" style="max-width:100px; display:block; border-radius:4px;"></a>';
                 }
-                echo $thumb . '<p style="margin:0;">' . htmlspecialchars(trim($snippet)) . ($needsReadMore ? $readMoreLink : '') . '</p><div style="clear:both;"></div>';
+                echo $thumb . '<p style="margin:0;"><a href="' . htmlspecialchars($postUrl) . '" class="u-url" style="color: inherit; text-decoration: none; cursor: pointer;">' . htmlspecialchars(trim($snippet)) . '</a>' . ($needsReadMore ? $readMoreLink : '') . '</p><div style="clear:both;"></div>';
             } else {
                 if ($needsReadMore) {
-                    echo '<p>' . htmlspecialchars(trim($snippet)) . $readMoreLink . '</p>';
+                    echo '<p><a href="' . htmlspecialchars($postUrl) . '" class="u-url" style="color: inherit; text-decoration: none; cursor: pointer;">' . htmlspecialchars(trim($snippet)) . '</a>' . $readMoreLink . '</p>';
                 } else {
                     echo $content;
                 }

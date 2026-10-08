@@ -168,7 +168,8 @@ it('renders ImageNode with dimensions, /media/ path, and mirrors across protocol
 
     expect($html)->toContain('<figure class="content-media"')
         ->and($html)->toContain('<img src="/media/sample_500.gif" alt="Alt text for sample" width="500" height="300"')
-        ->and($html)->toContain('<a href="/media/sample.png" class="dithered-image-link"')
+        ->and($html)->toContain('<a href="/media/sample.png" class="dithered-image-link" target="_self"')
+        ->and($html)->not->toContain('target="_blank"')
         ->and(file_exists($tempApp . '/public_media/sample_500.gif'))->toBeTrue()
         ->and(file_exists($tempApp . '/public_media/sample.png'))->toBeTrue()
         ->and(file_exists($tempApp . '/public_html/media/sample_500.gif'))->toBeTrue()

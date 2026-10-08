@@ -183,6 +183,23 @@ describe('AtProtoCardBuilder', function () {
         expect($excerpt)->not->toContain('#');
     });
 
+    it('preserves stanzas and line breaks in poems when preserveLineBreaks is true', function () {
+        $builder = new AtProtoCardBuilder();
+        $poem = "SUbiu pra mente\n\nQuem quis me ver chorando\nviu a fumaça subir:\no fumo queimando brando,\no luto virando o agir.\n\nDepois da raiva vem a ação:\na brasa da revolução.";
+
+        $cleaned = $builder->cleanMarkdown($poem, true);
+        expect($cleaned)->toContain("SUbiu pra mente\n\nQuem quis me ver chorando\nviu a fumaça subir:");
+        expect($cleaned)->toContain("o fumo queimando brando,\no luto virando o agir.\n\nDepois da raiva vem a ação:\na brasa da revolução.");
+    });
+
+    it('converts br and p html tags to newlines when preserving line breaks', function () {
+        $builder = new AtProtoCardBuilder();
+        $htmlPoem = "<p>SUbiu pra mente</p><p>Quem quis me ver chorando<br />viu a fumaça subir:<br>o fumo queimando brando,<br />o luto virando o agir.</p><p>Depois da raiva vem a ação:<br />a brasa da revolução.</p>";
+
+        $cleaned = $builder->cleanMarkdown($htmlPoem, true);
+        expect($cleaned)->toContain("SUbiu pra mente\n\nQuem quis me ver chorando\nviu a fumaça subir:\no fumo queimando brando,\no luto virando o agir.\n\nDepois da raiva vem a ação:\na brasa da revolução.");
+    });
+
     it('generates description via Gemini API when configured', function () {
         $mockGeminiTransport = function (string $url, array $headers, string $body) {
             expect($url)->toContain('generativelanguage.googleapis.com');

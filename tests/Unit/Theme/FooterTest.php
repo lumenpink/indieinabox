@@ -135,3 +135,47 @@ it('renders complete footer view with canonical footer and h-card', function () 
     expect($output)->toContain('https://lumen.pink');
     expect($output)->toContain('Brasil 🇧🇷');
 });
+
+it('renders post kinds links in footer only for enabled kinds with published posts', function () {
+    $site = new Site();
+    $site->metadata->sitename = 'Lumen Blog';
+    $site->localization->defaultLang = 'pt';
+    $site->options->prettylinks = true;
+    $site->config['kinds'] = [
+        'article' => ['content_dir' => 'artigos', 'title' => ['pt' => 'Artigos']],
+        'photo' => ['content_dir' => 'fotos', 'title' => ['pt' => 'Fotos']],
+        'note' => ['content_dir' => 'notas', 'title' => ['pt' => 'Notas']],
+        'bookmark' => ['content_dir' => 'favoritos', 'title' => ['pt' => 'Favoritos'], 'show_in_menu' => false],
+    ];
+
+    $post1 = new Page(null, null, null);
+    $post1->kind = 'photo';
+    $post1->slug = 'fotos/1.html';
+
+    $post2 = new Page(null, null, null);
+    $post2->kind = 'article';
+    $post2->slug = 'artigos/1.html';
+
+    $pages = new \Indieinabox\Page\Pages([$post1, $post2]);
+
+    $currentPage = new Page(null, null, null);
+    $currentPage->relpath = '../../';
+    $currentPage->lang = 'pt';
+
+    $html = ThemeData::getKindLinks($currentPage, $pages, $site);
+
+    expect($html)->toContain('<nav class="footer-kinds"')
+        ->and($html)->toContain('href="../../fotos/"')
+        ->and($html)->toContain('Fotos</a>')
+        ->and($html)->toContain('href="../../artigos/"')
+        ->and($html)->toContain('Artigos</a>')
+        ->and($html)->not->toContain('Notas')
+        ->and($html)->not->toContain('Favoritos');
+});
+
+it('returns empty string from getKindLinks when no pages or posts exist', function () {
+    $page = new Page(null, null, null);
+    $page->relpath = '';
+    $html = ThemeData::getKindLinks($page, new \Indieinabox\Page\Pages([]));
+    expect($html)->toBe('');
+});

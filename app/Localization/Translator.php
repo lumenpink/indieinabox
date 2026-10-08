@@ -48,23 +48,26 @@ class Translator
         $found = null;
         if ($site && !empty($site->config['translations'])) {
             foreach ($site->config['translations'] as $original => $langs) {
-                if (strcasecmp($original, $text) === 0) {
-                    $found = $original;
+                $originalStr = (string) $original;
+                if (strcasecmp($originalStr, $text) === 0) {
+                    $found = $originalStr;
                     if (isset($langs[$lang]) && $langs[$lang] !== '') {
-                        return $langs[$lang];
+                        return (string) $langs[$lang];
                     }
                     break;
                 }
-                foreach ($langs as $lVal) {
-                    if ($lVal !== '' && strcasecmp($lVal, $text) === 0) {
-                        $found = $original;
-                        if ($lang === ($site->localization->defaultLang ?? 'en')) {
-                            return $original;
+                if (is_iterable($langs)) {
+                    foreach ($langs as $lVal) {
+                        if ($lVal !== '' && strcasecmp((string) $lVal, $text) === 0) {
+                            $found = $originalStr;
+                            if ($lang === ($site->localization->defaultLang ?? 'en')) {
+                                return $originalStr;
+                            }
+                            if (isset($langs[$lang]) && $langs[$lang] !== '') {
+                                return (string) $langs[$lang];
+                            }
+                            break 2;
                         }
-                        if (isset($langs[$lang]) && $langs[$lang] !== '') {
-                            return $langs[$lang];
-                        }
-                        break 2;
                     }
                 }
             }

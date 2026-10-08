@@ -8,9 +8,11 @@ use Indieinabox\Core\Database;
 use Indieinabox\Localization\IsoLanguages;
 use Indieinabox\Localization\Translator;
 use Indieinabox\Page\Page;
+use Indieinabox\Page\Pages;
 use Indieinabox\Site\Site;
 use Indieinabox\Support\TextParser;
 use Indieinabox\Taxonomy\KindHelper;
+use Indieinabox\Taxonomy\TaxonomyService;
 
 /**
  * Class ThemeData
@@ -281,6 +283,94 @@ class ThemeData
     }
 
     /**
+     * Renders a navigation section listing all enabled and existing post kinds in the footer.
+     *
+     * @param Page $page
+     * @param Pages|array<Page>|null $pages
+     * @param Site|null $site
+     * @return string HTML nav block or empty string if no active kinds exist.
+     */
+    public static function getKindLinks(Page $page, mixed $pages = null, ?Site $site = null): string
+    {
+        $container = class_exists(\Indieinabox\Core\Container::class) ? \Indieinabox\Core\Container::getInstance() : null;
+        $site = $site ?? ($container && $container->has(Site::class) ? $container->get(Site::class) : ($GLOBALS['site'] ?? null));
+        $pageCollection = $pages ?? ($container && $container->has(Pages::class) ? $container->get(Pages::class) : ($GLOBALS['pages'] ?? null));
+
+        if ($pageCollection === null) {
+            return '';
+        }
+
+        // Count posts by kind
+        $kindCounts = [];
+        $iterable = $pageCollection instanceof Pages ? $pageCollection->all() : (is_iterable($pageCollection) ? $pageCollection : []);
+        foreach ($iterable as $p) {
+            if ($p instanceof Page && !empty($p->kind)) {
+                $kind = strtolower((string)$p->kind);
+                $kindCounts[$kind] = ($kindCounts[$kind] ?? 0) + 1;
+            }
+        }
+
+        if (empty($kindCounts)) {
+            return '';
+        }
+
+        $taxonomyService = new TaxonomyService($site);
+        $configuredKinds = $site && !empty($site->config['kinds']) ? $site->config['kinds'] : Database::getKinds();
+
+        // System kinds to ignore
+        $systemKinds = ['generic', 'page', 'home'];
+
+        // Determine all active kinds that have posts and are not hidden
+        $activeKinds = [];
+        $candidates = array_unique(array_merge(array_keys($configuredKinds), array_keys($kindCounts)));
+
+        foreach ($candidates as $kind) {
+            $kind = strtolower((string)$kind);
+            if (in_array($kind, $systemKinds, true)) {
+                continue;
+            }
+            if (($kindCounts[$kind] ?? 0) === 0) {
+                continue;
+            }
+
+            $conf = $configuredKinds[$kind] ?? $taxonomyService->getKindConfig($kind);
+            if (isset($conf['show_in_menu']) && !$conf['show_in_menu']) {
+                continue;
+            }
+
+            $activeKinds[] = $kind;
+        }
+
+        if (empty($activeKinds)) {
+            return '';
+        }
+
+        $lang = $page->lang ?? ($site?->localization->defaultLang ?? 'pt');
+        $defaultLang = $site?->localization->defaultLang ?? 'pt';
+        $prettylinks = $site?->options->prettylinks ?? true;
+        $langPrefix = ($lang === $defaultLang) ? '' : $lang . '/';
+
+        $linksHTML = [];
+        foreach ($activeKinds as $kind) {
+            $label = $taxonomyService->getKindLabel($kind, $lang);
+            $folder = $taxonomyService->getKindFolder($kind, $lang);
+
+            if ($prettylinks) {
+                $url = ltrim($langPrefix . $folder . '/', '/');
+            } else {
+                $url = ltrim($langPrefix . $folder . '.html', '/');
+            }
+            $relUrl = $page->relpath . $url;
+
+            $linksHTML[] = '<a href="' . htmlspecialchars($relUrl, ENT_QUOTES | ENT_HTML5) . '" class="kind-link kind-link-' . htmlspecialchars($kind, ENT_QUOTES | ENT_HTML5) . '">' . htmlspecialchars($label, ENT_QUOTES | ENT_HTML5) . '</a>';
+        }
+
+        return '<nav class="footer-kinds" aria-label="' . htmlspecialchars(Translator::translate('Post kinds', $lang), ENT_QUOTES | ENT_HTML5) . '" style="text-align: center; margin-bottom: 0.5rem;">' . "\n" .
+               '    [ ' . implode(' &bull; ', $linksHTML) . ' ]' . "\n" .
+               '</nav>' . "\n";
+    }
+
+    /**
      * Generates the footer links HTML markup including RSS and ATOM.
      *
      * @param Page $page
@@ -473,7 +563,7 @@ class ThemeData
             return [];
         }
 
-        uksort($frequencies, 'strcasecmp');
+        uksort($frequencies, fn($a, $b) => strcasecmp((string) $a, (string) $b));
         $min = min($frequencies);
         $max = max($frequencies);
         $range = $max - $min;

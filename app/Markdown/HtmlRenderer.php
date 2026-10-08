@@ -385,7 +385,8 @@ class HtmlRenderer implements RendererInterface
             if (isset($originalTarget)) {
                 $origEsc = htmlspecialchars($originalTarget, ENT_QUOTES | ENT_HTML5);
                 $linkText = Translator::translate('Original image');
-                return "<figure class=\"content-media\" style=\"text-align: center; margin: 1.5rem auto; display: block; max-width: 100%;\">\n{$imgTag}\n<figcaption style=\"text-align: center;\"><a href=\"{$origEsc}\" class=\"dithered-image-link\" style=\"font-size: 0.85em; opacity: 0.8;\">[ {$linkText} ]</a></figcaption>\n</figure>\n";
+                $linkedImgTag = "<a href=\"{$origEsc}\" class=\"dithered-image-link\" target=\"_self\" style=\"display: inline-block; cursor: pointer;\">{$imgTag}</a>";
+                return "<figure class=\"content-media\" style=\"text-align: center; margin: 1.5rem auto; display: block; max-width: 100%;\">\n{$linkedImgTag}\n<figcaption style=\"text-align: center;\"><a href=\"{$origEsc}\" class=\"dithered-image-link\" target=\"_self\" style=\"font-size: 0.85em; opacity: 0.8;\">[ {$linkText} ]</a></figcaption>\n</figure>\n";
             }
             return "<figure class=\"content-media\" style=\"text-align: center; margin: 1.5rem auto; display: block; max-width: 100%;\">\n{$imgTag}\n</figure>\n";
         }

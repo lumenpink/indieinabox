@@ -5,6 +5,7 @@ global $footerLinks;
 use Indieinabox\Theme\ThemeData;
 ?>
 <footer role="contentinfo">
+    <?= ThemeData::getKindLinks($page, $pages ?? null, $site) ?>
     <?= ThemeData::getFooterLinks($page, $footerLinks ?? []) ?>
     
     <div class="footer-credit">

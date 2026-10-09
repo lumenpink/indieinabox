@@ -80,5 +80,33 @@ test('prefixes relative path when relpath is set for nested pages', function () 
     $html = $renderer->render($ast);
 
     expect($html)->toContain('<img src="../../media/nested_100.gif"')
-        ->and($html)->toContain('<a href="../../media/nested.png"');
+        ->and($html)->toContain('<a href="../../media/nested.png" class="dithered-image-link" target="_self"')
+        ->and($html)->toContain('<figcaption style="text-align: center;"><a href="../../media/nested.png"');
+});
+
+test('does not alter external image URLs even when relpath is configured', function () {
+    $tempApp = sys_get_temp_dir() . '/iiab_test_external_media_' . uniqid();
+    $contentDir = $tempApp . '/content';
+    mkdir($contentDir, 0777, true);
+
+    $site = new Site(null, new Paths(
+        baseDir: $tempApp,
+        outputDirHtml: 'public_html',
+        outputDirMedia: 'public_media',
+        contentDir: $contentDir
+    ));
+
+    $page = new Page();
+    $page->filepath = $contentDir . '/external.md';
+    $page->slug = 'external.html';
+    $page->relpath = '../../';
+
+    $parser = new ASTParser();
+    $ast = $parser->parse('![Alt external](https://cdn.example.org/photo.jpg)');
+
+    $renderer = new HtmlRenderer($page, $site);
+    $html = $renderer->render($ast);
+
+    expect($html)->toContain('src="https://cdn.example.org/photo.jpg"')
+        ->and($html)->not->toContain('../../https://');
 });

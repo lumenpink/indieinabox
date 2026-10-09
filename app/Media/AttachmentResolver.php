@@ -306,7 +306,7 @@ class AttachmentResolver
             }
         }
 
-        $canonicalMediaDir = $mediaDirs[0];
+        $canonicalMediaDir = realpath($mediaDirs[1]) ?: $mediaDirs[1];
         $canonicalGif = $canonicalMediaDir . DIRECTORY_SEPARATOR . $gifName;
         $canonicalGlobal = $canonicalMediaDir . DIRECTORY_SEPARATOR . $gifNameGlobal;
         $canonicalThumb = $canonicalMediaDir . DIRECTORY_SEPARATOR . $gifNameThumb;
@@ -355,10 +355,21 @@ class AttachmentResolver
         $filesToMirror = [$gifName, $gifNameGlobal, $gifNameThumb, $finalOriginalName];
 
         foreach ($mediaDirs as $targetDir) {
+            $realTarget = realpath($targetDir) ?: $targetDir;
+            if ($realTarget === $canonicalMediaDir) {
+                foreach ($filesToMirror as $file) {
+                    $dst = $targetDir . DIRECTORY_SEPARATOR . $file;
+                    if (file_exists($dst)) {
+                        SiteBuilder::addManifest($dst);
+                    }
+                }
+                continue;
+            }
+
             foreach ($filesToMirror as $file) {
                 $src = $canonicalMediaDir . DIRECTORY_SEPARATOR . $file;
                 $dst = $targetDir . DIRECTORY_SEPARATOR . $file;
-                if ($targetDir !== $canonicalMediaDir && file_exists($src)) {
+                if (file_exists($src)) {
                     if (!file_exists($dst) || filemtime($src) > filemtime($dst)) {
                         copy($src, $dst);
                     }

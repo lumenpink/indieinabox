@@ -368,6 +368,12 @@ class HtmlRenderer implements RendererInterface
                     $mediaInfo = AttachmentResolver::publishImage($caminhoOriginal, $site, $width);
                     $target = $mediaInfo['webPath'];
                     $originalTarget = $mediaInfo['originalWebPath'];
+
+                    if ($this->page && !empty($this->page->relpath)) {
+                        $rel = rtrim($this->page->relpath, '/') . '/';
+                        $target = $rel . ltrim($target, '/');
+                        $originalTarget = $rel . ltrim($originalTarget, '/');
+                    }
                 }
             }
 

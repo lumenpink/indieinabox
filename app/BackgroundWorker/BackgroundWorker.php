@@ -17,6 +17,8 @@ use Indieinabox\Repositories\SqliteSettingsRepository;
 use Indieinabox\Services\BackupService;
 use Indieinabox\Services\Contracts\BackupServiceInterface;
 use Indieinabox\Services\Contracts\UpdateServiceInterface;
+use Indieinabox\Services\InstagramImportService;
+use Indieinabox\Services\AutoSyndicationService;
 use Indieinabox\Services\UpdateManager;
 use Indieinabox\Site\Site;
 use Indieinabox\SiteBuilder\SiteBuilder;
@@ -93,6 +95,8 @@ class BackgroundWorker implements BackgroundWorkerInterface
         }
 
         try {
+            $this->processInstagramImport();
+            $this->processAutoSyndication();
             $this->processInboxQueue();
             $this->processOutbox();
             $this->processOutgoingWebmentions();
@@ -105,6 +109,26 @@ class BackgroundWorker implements BackgroundWorkerInterface
             flock($fp, LOCK_UN);
             fclose($fp);
         }
+    }
+
+    /**
+     * Imports new Instagram media folders placed in .meta_inbox.
+     */
+    #[\Override]
+    public function processInstagramImport(): void
+    {
+        $importer = new InstagramImportService($this->site);
+        $importer->process();
+    }
+
+    /**
+     * Checks recent content within 48h and syndicates to Bluesky/Nostr/etc.
+     */
+    #[\Override]
+    public function processAutoSyndication(): void
+    {
+        $syndicator = new AutoSyndicationService($this->site);
+        $syndicator->process();
     }
 
     /**

@@ -57,4 +57,14 @@ interface BackgroundWorkerInterface
      * Checks for application updates and performs auto-upgrade if enabled.
      */
     public function processUpdates(): void;
+
+    /**
+     * Processes PESOS import of Instagram media from .meta_inbox.
+     */
+    public function processInstagramImport(): void;
+
+    /**
+     * Scans recent notes, photos, videos, and articles for POSSE auto-syndication.
+     */
+    public function processAutoSyndication(): void;
 }

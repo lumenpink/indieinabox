@@ -259,6 +259,22 @@ Seu conteúdo em Markdown aqui...
    - Totalmente segregados em suas respectivas pastas (`public_gemini/` e `public_gopher/`).
    - Geram `/{slug}/history/index.gmi` e snapshots de gemtext, além de menus `gophermap` compatíveis com o RFC 1436.
 
+## Paginação Estática (Static Pagination)
+
+Para evitar documentos extensos e lentidão no carregamento de listagens longas, o motor compila paginação estática automática para índices de seções/kinds (`/notas/`, `/artigos/`, `/fotos/`) e taxonomias (`/tag/{slug}/`, `/flowerbed/{slug}/`).
+
+### Contrato de Paginação
+- **Limite por Página**: 20 itens por página padrão (configurável via `site.config['pagination']['per_page']`).
+- **Rotas das Páginas**:
+  - Primeira página: Rota canônica raiz do índice (ex: `/notas/`, `/tag/indieweb/`).
+  - Páginas subsequentes: Rota subdiretório `/page/{número}/` (ex: `/notas/page/2/`, `/tag/indieweb/page/2/`).
+  - Em sites multilíngue: `/en/notes/page/2/`, `/es/notas/page/2/`.
+- **Controles de Navegação**:
+  - Bloco `<nav class="pagination" aria-label="Paginação">` renderizado ao final da listagem.
+  - Links contextuais `← Anterior` (apontando para página anterior ou raiz se for página 1) e `Próxima →`.
+  - Indicador numérico do estado atual: `Página X de Y`.
+
+
 
 
 

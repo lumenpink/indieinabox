@@ -500,4 +500,81 @@ class ImageProcessor
 
         return $results;
     }
+
+    /**
+     * Converts any supported image format to a Mosaic-compatible baseline sequential JPEG.
+     * Enforces imageinterlace = 0 (baseline) and sRGB 24-bit color representation.
+     *
+     * @param string $caminhoOriginal Source image path
+     * @param string $caminhoDestino Target JPEG path
+     * @param int $qualidade JPEG compression quality (default 85)
+     * @return bool
+     */
+    public static function convertToBaselineJpeg(
+        string $caminhoOriginal,
+        string $caminhoDestino,
+        int $qualidade = 85
+    ): bool {
+        if (!is_dir(dirname($caminhoDestino))) {
+            mkdir(dirname($caminhoDestino), 0777, true);
+        }
+
+        if (file_exists($caminhoDestino) && file_exists($caminhoOriginal)) {
+            if (filemtime($caminhoDestino) >= filemtime($caminhoOriginal)) {
+                return true;
+            }
+        }
+
+        $imageInfo = @getimagesize($caminhoOriginal);
+        if (!$imageInfo) {
+            return false;
+        }
+        $mimeType = $imageInfo['mime'];
+
+        if ($mimeType === 'image/png') {
+            $imgOriginal = @imagecreatefrompng($caminhoOriginal);
+        } elseif ($mimeType === 'image/gif') {
+            $imgOriginal = @imagecreatefromgif($caminhoOriginal);
+        } elseif ($mimeType === 'image/webp') {
+            $imgOriginal = function_exists('imagecreatefromwebp') ? @imagecreatefromwebp($caminhoOriginal) : false;
+        } else {
+            $imgOriginal = @imagecreatefromjpeg($caminhoOriginal);
+            if ($imgOriginal && function_exists('exif_read_data')) {
+                $exif = @exif_read_data($caminhoOriginal);
+                if (!empty($exif['Orientation'])) {
+                    switch ($exif['Orientation']) {
+                        case 3:
+                            $imgOriginal = imagerotate($imgOriginal, 180, 0);
+                            break;
+                        case 6:
+                            $imgOriginal = imagerotate($imgOriginal, -90, 0);
+                            break;
+                        case 8:
+                            $imgOriginal = imagerotate($imgOriginal, 90, 0);
+                            break;
+                    }
+                }
+            }
+        }
+
+        if (!$imgOriginal) {
+            return false;
+        }
+
+        $width = imagesx($imgOriginal);
+        $height = imagesy($imgOriginal);
+
+        // Render onto a truecolor surface with white background for alpha channels
+        $trueColor = imagecreatetruecolor($width, $height);
+        $white = imagecolorallocate($trueColor, 255, 255, 255);
+        imagefilledrectangle($trueColor, 0, 0, $width, $height, $white);
+        imagecopy($trueColor, $imgOriginal, 0, 0, 0, 0, $width, $height);
+
+        // Explicitly enforce Baseline (Sequential) JPEG: interlace must be false / 0
+        imageinterlace($trueColor, false);
+
+        $saved = imagejpeg($trueColor, $caminhoDestino, $qualidade);
+
+        return $saved;
+    }
 }

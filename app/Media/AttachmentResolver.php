@@ -346,13 +346,18 @@ class AttachmentResolver
             $globalColors['fg']
         );
 
-        // 3. Copy original
+        // 3. Normalized Mosaic-compatible baseline JPEG
+        $canonicalJpg = $canonicalMediaDir . DIRECTORY_SEPARATOR . $finalInfo['filename'] . '.jpg';
+        ImageProcessor::convertToBaselineJpeg($sourceFile, $canonicalJpg, 85);
+
+        // 4. Copy original (if original format is different from JPG)
         if (!file_exists($canonicalOriginal)) {
             copy($sourceFile, $canonicalOriginal);
         }
 
         // Mirror files to html/media, gemini/media, gopher/media and register in manifest
-        $filesToMirror = [$gifName, $gifNameGlobal, $gifNameThumb, $finalOriginalName];
+        $jpgName = $finalInfo['filename'] . '.jpg';
+        $filesToMirror = array_unique([$gifName, $gifNameGlobal, $gifNameThumb, $jpgName, $finalOriginalName]);
 
         foreach ($mediaDirs as $targetDir) {
             $realTarget = realpath($targetDir) ?: $targetDir;
@@ -383,7 +388,9 @@ class AttachmentResolver
         return [
             'webPath' => '/media/' . $gifName,
             'originalWebPath' => '/media/' . $finalOriginalName,
+            'jpgWebPath' => '/media/' . $jpgName,
             'gifName' => $gifName,
+            'jpgName' => $jpgName,
             'originalName' => $finalOriginalName,
         ];
     }

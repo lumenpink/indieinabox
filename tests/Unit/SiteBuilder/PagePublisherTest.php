@@ -272,6 +272,6 @@ it('publishes dedicated image viewer pages at {post_url}/image{n}/ with baseline
         ->and($viewerContent)->toContain('https://creativecommons.org/licenses/by-nd/4.0/')
         ->and($viewerContent)->toContain('src="/media/sunset.jpg"')
         ->and($viewerContent)->toContain('href="../"')
-        ->and($viewerContent)->toContain('Voltar')
+        ->and($viewerContent)->toContain('Back to post')
         ->and($viewerContent)->not->toContain('download');
 });

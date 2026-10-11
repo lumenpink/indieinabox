@@ -52,8 +52,8 @@ it('converts images to Mosaic-compatible baseline JPEG without progressive scan'
     // Verify JPEG format and baseline interlace flag
     $imgLoaded = imagecreatefromjpeg($destJpg);
     expect($imgLoaded)->not->toBeFalse();
-    // imageinterlace() returns 0 for non-interlaced (baseline sequential) JPEG
-    expect(imageinterlace($imgLoaded))->toBe(0);
+    // imageinterlace() returns false or 0 for non-interlaced (baseline sequential) JPEG
+    expect(imageinterlace($imgLoaded))->toBeFalse();
 
     FileUtils::recursiveRmdir($tempDir);
 });

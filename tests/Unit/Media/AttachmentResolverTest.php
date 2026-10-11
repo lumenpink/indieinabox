@@ -171,8 +171,11 @@ it('renders ImageNode with dimensions, /media/ path, and mirrors across protocol
         ->and($html)->toContain('<a href="/media/sample.png" class="dithered-image-link" target="_self"')
         ->and($html)->not->toContain('target="_blank"')
         ->and(file_exists($tempApp . '/public_media/sample_500.gif'))->toBeTrue()
+        ->and(file_exists($tempApp . '/public_media/sample.jpg'))->toBeTrue()
+        ->and(file_exists($tempApp . '/public_media/sample_thumb.gif'))->toBeTrue()
         ->and(file_exists($tempApp . '/public_media/sample.png'))->toBeTrue()
         ->and(file_exists($tempApp . '/public_html/media/sample_500.gif'))->toBeTrue()
+        ->and(file_exists($tempApp . '/public_html/media/sample.jpg'))->toBeTrue()
         ->and(file_exists($tempApp . '/public_gemini/media/sample_500.gif'))->toBeTrue()
         ->and(file_exists($tempApp . '/public_gopher/media/sample_500.gif'))->toBeTrue();
 

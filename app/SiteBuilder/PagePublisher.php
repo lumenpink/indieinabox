@@ -359,6 +359,131 @@ class PagePublisher
             file_put_contents($replyFile, $replyContent);
             SiteBuilder::addManifest($replyFile);
         }
+
+        // Publish dedicated image viewer pages at {post_url}/image{n}/ (#84)
+        $renderedBody = (string) ($fileContent ?? $page->content->content ?? '');
+        if (preg_match_all('/<figure[^>]*class="[^"]*content-media[^"]*"[^>]*>.*?<\/figure>/is', $renderedBody, $figMatches)) {
+            $imgIdx = 1;
+            foreach ($figMatches[0] as $figureHtml) {
+                // Find original or JPG media link
+                $imageSrc = null;
+                $imageAlt = '';
+
+                if (preg_match('/<a[^>]*href="([^"]+)"[^>]*class="[^"]*dithered-image-link[^"]*"[^>]*>/i', $figureHtml, $aMatch)) {
+                    $imageSrc = $aMatch[1];
+                }
+
+                if (preg_match('/<img[^>]*alt="([^"]*)"[^>]*>/i', $figureHtml, $altMatch)) {
+                    $imageAlt = $altMatch[1];
+                }
+
+                if (!$imageSrc && preg_match('/<img[^>]*src="([^"]+)"[^>]*>/i', $figureHtml, $imgSrcMatch)) {
+                    $imageSrc = $imgSrcMatch[1];
+                }
+
+                if ($imageSrc) {
+                    // Convert link to .jpg baseline version if it points to /media/
+                    $cleanImgSrc = $imageSrc;
+                    if (str_contains($cleanImgSrc, '/media/')) {
+                        $info = pathinfo($cleanImgSrc);
+                        // Strip width or thumb suffix if pointing to dithered file
+                        $baseName = preg_replace('/(_\d+|_global|_thumb)$/', '', $info['filename']);
+                        $cleanImgSrc = $info['dirname'] . '/' . $baseName . '.jpg';
+                    }
+
+                    $viewerDir = dirname($destinationFile) . DIRECTORY_SEPARATOR . 'image' . $imgIdx;
+                    if (!is_dir($viewerDir)) {
+                        mkdir($viewerDir, 0777, true);
+                    }
+                    $viewerFile = $viewerDir . DIRECTORY_SEPARATOR . 'index.html';
+
+                    $backLabel = Translator::translate('Back to post');
+                    if (empty($backLabel) || $backLabel === 'Back to post') {
+                        $backLabel = ($page->lang === 'pt' || (!isset($page->lang) && ($this->site->localization->defaultLang ?? 'en') === 'pt')) ? 'Voltar ao post' : 'Back to post';
+                    }
+
+                    $licenseUrl = 'https://creativecommons.org/licenses/by-nd/4.0/';
+                    $titleText = htmlspecialchars($page->title ?? 'Imagem', ENT_QUOTES | ENT_HTML5);
+                    $altText = htmlspecialchars($imageAlt ?: ($page->title ?? 'Imagem'), ENT_QUOTES | ENT_HTML5);
+                    $escapedImgSrc = htmlspecialchars($cleanImgSrc, ENT_QUOTES | ENT_HTML5);
+
+                    $viewerHtml = '<!DOCTYPE html>
+<html lang="' . htmlspecialchars($page->lang ?? 'pt', ENT_QUOTES | ENT_HTML5) . '">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>' . $titleText . ' - Imagem ' . $imgIdx . '</title>
+    <meta name="license" content="' . $licenseUrl . '">
+    <link rel="license" href="' . $licenseUrl . '">
+    <style>
+        body {
+            margin: 0;
+            padding: 1.5rem;
+            background: #111;
+            color: #eee;
+            font-family: ui-monospace, SFMono-Regular, monospace;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 90vh;
+            text-align: center;
+        }
+        .nav-back {
+            margin-bottom: 1.5rem;
+        }
+        .nav-back a {
+            color: #58a6ff;
+            text-decoration: underline;
+            font-size: 1.1em;
+        }
+        .nav-back a:hover {
+            color: #79c0ff;
+        }
+        .media-container {
+            max-width: 100%;
+        }
+        .media-container img {
+            max-width: 100%;
+            max-height: 85vh;
+            height: auto;
+            width: auto;
+            display: block;
+            margin: 0 auto;
+            border-radius: 4px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+        }
+        .license-info {
+            margin-top: 1rem;
+            font-size: 0.8em;
+            opacity: 0.7;
+        }
+        .license-info a {
+            color: #aaa;
+        }
+    </style>
+</head>
+<body>
+    <div class="nav-back">
+        <a href="../">&larr; ' . htmlspecialchars($backLabel, ENT_QUOTES | ENT_HTML5) . '</a>
+    </div>
+    <div class="media-container" itemprop="image" itemscope itemtype="https://schema.org/ImageObject">
+        <img src="' . $escapedImgSrc . '" alt="' . $altText . '" itemprop="contentUrl">
+        <div class="license-info">
+            Licença: <a rel="license" href="' . $licenseUrl . '">CC-BY-ND 4.0</a>
+        </div>
+    </div>
+</body>
+</html>';
+
+                    file_put_contents($viewerFile, $viewerHtml);
+                    SiteBuilder::addManifest($viewerFile);
+                    SiteBuilder::addManifest($viewerDir);
+
+                    $imgIdx++;
+                }
+            }
+        }
     }
 
     /**

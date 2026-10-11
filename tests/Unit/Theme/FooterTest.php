@@ -179,3 +179,40 @@ it('returns empty string from getKindLinks when no pages or posts exist', functi
     $html = ThemeData::getKindLinks($page, new \Indieinabox\Page\Pages([]));
     expect($html)->toBe('');
 });
+
+it('renders correct post counts when multiple posts belong to same kind', function () {
+    $site = new Site();
+    $site->localization->defaultLang = 'pt';
+    $site->options->prettylinks = true;
+    $site->config['kinds'] = [
+        'note' => ['content_dir' => 'notas', 'title' => ['pt' => 'Notas']],
+        'photo' => ['content_dir' => 'fotos', 'title' => ['pt' => 'Fotos']],
+    ];
+
+    $notes = [];
+    for ($i = 0; $i < 15; $i++) {
+        $p = new Page(null, null, null);
+        $p->kind = 'note';
+        $p->slug = "notas/{$i}.html";
+        $notes[] = $p;
+    }
+
+    $photos = [];
+    for ($i = 0; $i < 45; $i++) {
+        $p = new Page(null, null, null);
+        $p->kind = 'photo';
+        $p->slug = "fotos/{$i}.html";
+        $photos[] = $p;
+    }
+
+    $pages = new \Indieinabox\Page\Pages(array_merge($notes, $photos));
+
+    $currentPage = new Page(null, null, null);
+    $currentPage->relpath = '';
+    $currentPage->lang = 'pt';
+
+    $html = ThemeData::getKindLinks($currentPage, $pages, $site);
+
+    expect($html)->toContain('Notas (15)</a>')
+        ->and($html)->toContain('Fotos (45)</a>');
+});

@@ -166,9 +166,9 @@ it('renders post kinds links in footer only for enabled kinds with published pos
 
     expect($html)->toContain('<nav class="footer-kinds"')
         ->and($html)->toContain('href="../../fotos/"')
-        ->and($html)->toContain('Fotos</a>')
+        ->and($html)->toContain('Fotos (1)</a>')
         ->and($html)->toContain('href="../../artigos/"')
-        ->and($html)->toContain('Artigos</a>')
+        ->and($html)->toContain('Artigos (1)</a>')
         ->and($html)->not->toContain('Notas')
         ->and($html)->not->toContain('Favoritos');
 });

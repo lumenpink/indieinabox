@@ -1,8 +1,9 @@
 <?php
 /** @var \Indieinabox\Page\Page $page */
 /** @var \Indieinabox\Site\Site $site */
-global $langLinks, $headerLinks;
 use Indieinabox\Theme\ThemeData;
+$activeLangLinks = $langLinks ?? ($GLOBALS['langLinks'] ?? null);
+$activeHeaderLinks = $headerLinks ?? ($GLOBALS['headerLinks'] ?? []);
 ?>
 <header>
     <div class="terminal-bar" style="font-size: 0.8em; color: var(--accent-cyan); margin-bottom: 0.5em;">
@@ -14,6 +15,6 @@ use Indieinabox\Theme\ThemeData;
 |/\/  | | |_| | | | | | |  __/ | | |
       |_|\__,_|_| |_| |_|\___|_| |_|</pre>
     
-    <?= ThemeData::getLanguageSelector($page, $site, $langLinks ?? null) ?>
-    <?= ThemeData::getHeaderNavLinks($page, $site, $headerLinks ?? []) ?>
+    <?= ThemeData::getLanguageSelector($page, $site, $activeLangLinks) ?>
+    <?= ThemeData::getHeaderNavLinks($page, $site, $activeHeaderLinks) ?>
 </header>

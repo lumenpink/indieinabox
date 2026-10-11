@@ -1,8 +1,9 @@
 <?php
 /** @var \Indieinabox\Page\Page $page */
 /** @var \Indieinabox\Site\Site $site */
-global $footerLinks;
 use Indieinabox\Theme\ThemeData;
+$activeFooterLinks = $footerLinks ?? ($GLOBALS['footerLinks'] ?? []);
+
 
 $baseUrl = rtrim($site->metadata->fqdn ?? '', '/');
 $sitename = $site->metadata->sitename ?? 'IndieInABox';
@@ -12,7 +13,7 @@ $lang = $page->lang ?? ($site->localization->defaultLang ?? 'pt');
 <footer role="contentinfo">
     <hr>
     <?= ThemeData::getKindLinks($page, $pages ?? null, $site) ?>
-    <?= ThemeData::getFooterLinks($page, $footerLinks ?? []) ?>
+    <?= ThemeData::getFooterLinks($page, $activeFooterLinks) ?>
     
     <?= ThemeData::getCanonicalFooter($lang) ?>
 

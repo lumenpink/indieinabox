@@ -138,3 +138,33 @@ test('header.php renders language switcher pointing to correlated translated pos
         ->and($output)->not->toContain('href="../../es/"');
 });
 
+test('header.php falls back gracefully to language root when a language link is root or missing in langLinks', function () {
+    $site = new Site();
+    $site->localization->defaultLang = 'pt';
+    $site->localization->lang = ['pt', 'en', 'es'];
+    $site->paths->themeDir = dirname(__DIR__, 3) . '/resources';
+
+    $page = new Page();
+    $page->lang = 'pt';
+    $page->slug = 'artigos/post-sem-traducao-es/';
+    $page->relpath = '../../';
+
+    $langLinks = [
+        'pt' => '/artigos/post-sem-traducao-es/',
+        'en' => '/en/articles/post-without-es/',
+        'es' => '/es/',
+    ];
+
+    ob_start();
+    \Indieinabox\Theme\ThemeManager::includeView('includes/header.php', [
+        'page' => $page,
+        'site' => $site,
+        'langLinks' => $langLinks,
+    ]);
+    $output = ob_get_clean();
+
+    expect($output)->toContain('href="/en/articles/post-without-es/"')
+        ->and($output)->toContain('href="/es/"');
+});
+
+

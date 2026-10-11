@@ -80,3 +80,88 @@ it('renders summary view with clickable thumbnail and clickable text snippet for
         ->and($output)->toContain('<a href="notes/poem.html" class="u-url"')
         ->and($output)->toContain('Depois da raiva vem a acao.</a>');
 });
+
+it('hides zero social counters in getMetadataHtml and displays only permalink when no interactions exist', function () {
+    $site = new \Indieinabox\Site\Site();
+    $site->config['kinds'] = ['note' => ['has_title' => false]];
+    \Indieinabox\Core\Container::getInstance()->instance(\Indieinabox\Site\Site::class, $site);
+    $GLOBALS['site'] = $site;
+
+    $page = new Page(null, null, null);
+    $page->kind = 'note';
+    $page->slug = 'notes/test.html';
+    $page->relpath = '';
+    $page->isodate = '2026-10-11T12:00:00Z';
+    $page->localizeddate = '2026-10-11';
+    $page->shortlink = 'https://lumen.pink/p/abc';
+    $page->interactions = [];
+
+    $html = ThemeHelper::getMetadataHtml($page);
+
+    expect($html)->toContain('<a href="https://lumen.pink/p/abc"')
+        ->and($html)->not->toContain('0 Like')
+        ->and($html)->not->toContain('0 Repost')
+        ->and($html)->not->toContain('0 Reply')
+        ->and($html)->not->toContain('🔗</a> - ');
+});
+
+it('displays only non-zero social counters when interactions exist in getMetadataHtml', function () {
+    $site = new \Indieinabox\Site\Site();
+    $site->config['kinds'] = ['note' => ['has_title' => false]];
+    \Indieinabox\Core\Container::getInstance()->instance(\Indieinabox\Site\Site::class, $site);
+    $GLOBALS['site'] = $site;
+
+    $page = new Page(null, null, null);
+    $page->kind = 'note';
+    $page->slug = 'notes/test.html';
+    $page->relpath = '';
+    $page->isodate = '2026-10-11T12:00:00Z';
+    $page->localizeddate = '2026-10-11';
+    $page->shortlink = 'https://lumen.pink/p/abc';
+    $page->interactions = [
+        'likes' => [['id' => '1', 'author' => 'Alice']],
+        'reposts' => [],
+        'replies' => [],
+    ];
+
+    $html = ThemeHelper::getMetadataHtml($page);
+
+    expect($html)->toContain('<a href="https://lumen.pink/p/abc"')
+        ->and($html)->toContain('1 Like')
+        ->and($html)->not->toContain('0 Repost')
+        ->and($html)->not->toContain('0 Reply')
+        ->and($html)->toContain('🔗</a> - <a href="notes/test.html/interactions#likes"');
+});
+
+it('hides zero social counters in summary view', function () {
+    $site = new \Indieinabox\Site\Site();
+    $site->metadata->sitename = 'Lumen Blog';
+    $site->localization->defaultLang = 'pt';
+    $site->paths->themeDir = dirname(__DIR__, 3) . '/resources';
+    $site->config['kinds'] = ['note' => ['has_title' => false]];
+    \Indieinabox\Core\Container::getInstance()->instance(\Indieinabox\Site\Site::class, $site);
+    $GLOBALS['site'] = $site;
+
+    $page = new Page(null, null, null);
+    $page->kind = 'note';
+    $page->slug = 'notes/summary-test.html';
+    $page->relpath = '';
+    $page->date = new DateTime('2026-10-11 12:00:00');
+    $page->localizeddate = '2026-10-11';
+    $page->shortlink = 'https://lumen.pink/p/xyz';
+    $page->interactions = [];
+
+    ob_start();
+    \Indieinabox\Theme\ThemeManager::includeView('includes/summary.php', [
+        'page' => $page,
+        'site' => $site,
+    ]);
+    $output = ob_get_clean();
+
+    expect($output)->toContain('<a href="https://lumen.pink/p/xyz"')
+        ->and($output)->not->toContain('0 Like')
+        ->and($output)->not->toContain('0 Repost')
+        ->and($output)->not->toContain('0 Reply')
+        ->and($output)->not->toContain('🔗</a> - ');
+});
+

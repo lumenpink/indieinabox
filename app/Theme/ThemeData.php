@@ -422,51 +422,61 @@ class ThemeData
             'pt' => [
                 'line1' => 'Orgulhosamente produzido por uma <a href="https://travesti.2lp.in/pt/">travesti latina</a> 🏳️‍⚧️ :)',
                 'by' => 'por',
+                'build' => 'build estático:',
                 'country' => 'Brasil 🇧🇷',
             ],
             'en' => [
                 'line1' => 'Proudly produced by a <a href="https://travesti.2lp.in/en/">Latin American travesti</a> 🏳️‍⚧️ :)',
                 'by' => 'by',
+                'build' => 'static build:',
                 'country' => 'Brazil 🇧🇷',
             ],
             'es' => [
                 'line1' => 'Orgullosamente producido por una <a href="https://travesti.2lp.in/es/">travesti latinoamericana</a> 🏳️‍⚧️ :)',
                 'by' => 'por',
+                'build' => 'compilación estática:',
                 'country' => 'Brasil 🇧🇷',
             ],
             'fr' => [
                 'line1' => 'Fièrement produit par une <a href="https://travesti.2lp.in/fr/">travesti latino-américaine</a> 🏳️‍⚧️ :)',
                 'by' => 'par',
+                'build' => 'compilation statique :',
                 'country' => 'Brésil 🇧🇷',
             ],
             'de' => [
                 'line1' => 'Mit Stolz entwickelt von einer <a href="https://travesti.2lp.in/de/">lateinamerikanischen Travesti</a> 🏳️‍⚧️ :)',
                 'by' => 'von',
+                'build' => 'statischer Build:',
                 'country' => 'Brasilien 🇧🇷',
             ],
             'it' => [
                 'line1' => 'Orgogliosamente prodotto da uma <a href="https://travesti.2lp.in/it/">travesti latinoamericana</a> 🏳️‍⚧️ :)',
                 'by' => 'da',
+                'build' => 'build statico:',
                 'country' => 'Brasile 🇧🇷',
             ],
             'ru' => [
                 'line1' => 'С гордостью создано <a href="https://travesti.2lp.in/ru/">латиноамериканской travesti</a> 🏳️‍⚧️ :)',
                 'by' => 'от',
+                'build' => 'статическая сборка:',
                 'country' => 'Бразилия 🇧🇷',
             ],
             'zh' => [
                 'line1' => '由一位<a href="https://travesti.2lp.in/zh/">拉美 travesti</a> 自豪制作 🏳️‍⚧️ :)',
                 'by' => '来自',
+                'build' => '静态构建:',
                 'country' => '巴西 🇧🇷',
             ],
             'ja' => [
                 'line1' => '<a href="https://travesti.2lp.in/ja/">ラテンアメリカの travesti</a> によって誇りを持って制作されました 🏳️‍⚧️ :)',
                 'by' => '制作:',
+                'build' => '静的ビルド:',
                 'country' => 'ブラジル 🇧🇷',
             ],
             'ar' => [
                 'line1' => 'صُنع بكل فخر بواسطة <a href="https://travesti.2lp.in/ar/">travesti أمريكية لاتينية</a> 🏳️‍⚧️ :)',
                 'by' => 'بواسطة',
+                'build' => 'بناء ثابت:',
                 'country' => 'البرازيل 🇧🇷',
             ],
         ];
@@ -476,10 +486,11 @@ class ThemeData
 
         $appFormatted = htmlspecialchars($appName) . ' v' . htmlspecialchars($version);
         $authorFormatted = $target['by'] . ' <a href="https://lumen.pink">Lumen Pink</a>';
+        $buildFormatted = htmlspecialchars($target['build']) . ' ' . htmlspecialchars($timestamp);
         $countryFormatted = $target['country'];
         $licenseFormatted = '<a href="' . htmlspecialchars($licenseUrl) . '" target="_blank" rel="noopener">' . htmlspecialchars($license) . '</a>';
 
-        $line2 = $appFormatted . ' &bull; ' . $authorFormatted . ' &bull; ' . htmlspecialchars($timestamp) . ' &bull; ' . $countryFormatted . ' &bull; ' . $licenseFormatted;
+        $line2 = $appFormatted . ' &bull; ' . $authorFormatted . ' &bull; ' . $buildFormatted . ' &bull; ' . $countryFormatted . ' &bull; ' . $licenseFormatted;
 
         $dirAttr = ($lang === 'ar') ? ' dir="rtl"' : '';
 

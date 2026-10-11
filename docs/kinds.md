@@ -26,6 +26,7 @@ The `config_json` payload for a kind controls how it is displayed:
 - `has_title`: (Boolean) Determines whether this kind inherently possesses a title. Kinds like `note` and `photo` typically have this set to `false`. When `has_title` is `false`, the platform automatically displays a text snippet and a thumbnail (if applicable) instead of the full post content in summary views.
 - `show_on_home`: (Boolean) Determines whether posts of this kind appear in the main home stream (homepage).
 - `show_in_menu`: (Boolean) Determines whether this kind is listed in the site's footer navigation menu and if its structural indices are generated. If set to `false`, the kind won't have a listing page, and its descriptor (e.g. `[BOOKMARK]`) in individual posts won't be a hyperlink. Note: Kinds that have zero posts are also automatically hidden from the menu and won't generate an index page.
+- **Footer Count Representation**: Active kinds displayed in the footer navigation include the total post count for that kind in parentheses alongside the localized label (e.g. `Notas (15)` or `Fotos (45)`). The count reflects total published posts of that kind for the current language scope.
 - `display_mode`: Controls how indices and summaries render the kind. E.g., `thumbnail_snippet` renders visual grids for photos.
 
 ## Template Integration

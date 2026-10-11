@@ -109,4 +109,98 @@ describe('Multilingual Wikilink Resolution in HtmlRenderer', function () {
         expect($html)->not->toContain('href="../../curriculo/"');
         expect($html)->not->toContain('href="../../jardins/travesti/"');
     });
+
+    it('resolves wikilink via reverse translation mapping from target language', function () {
+        $site = new Site();
+        $site->localization->defaultLang = 'pt';
+        $site->localization->lang = ['pt', 'en', 'es'];
+        $site->config['urltranslations'] = [
+            'curriculo' => [
+                'en' => 'resume',
+                'es' => 'curriculum-vitae',
+            ],
+        ];
+
+        $pageCurriculoEs = Page::fromArray([
+            'slug' => 'es/curriculum-vitae/',
+            'nick' => 'curriculum-vitae',
+            'title' => 'Curriculum Vitae',
+            'lang' => 'es',
+            'kind' => 'generic',
+            'relpath' => '../../',
+        ]);
+        $pageCurriculoEs->metadata->translation_source = 'curriculo/';
+        $pageCurriculoEs->metadata->translation_source_lang = 'pt';
+
+        $introEs = Page::fromArray([
+            'slug' => 'es/intro/',
+            'nick' => 'intro',
+            'title' => 'Introducción',
+            'lang' => 'es',
+            'kind' => 'generic',
+            'relpath' => '../../',
+        ]);
+
+        $pages = new Pages([
+            $pageCurriculoEs,
+            $introEs,
+        ]);
+
+        $parser = new ASTParser();
+        $ast = $parser->parse('Consulte mi [[curriculo]].');
+
+        $renderer = new HtmlRenderer($introEs, $site, $pages);
+        $html = $renderer->render($ast);
+
+        expect($html)->toContain('href="../../es/curriculum-vitae/"');
+    });
+
+    it('resolves wikilink using translation_source metadata if not found in urltranslations', function () {
+        $site = new Site();
+        $site->localization->defaultLang = 'pt';
+        $site->localization->lang = ['pt', 'en'];
+
+        $pageOrigPt = Page::fromArray([
+            'slug' => 'notas/minha-nota/',
+            'nick' => 'minha-nota',
+            'title' => 'Minha Nota',
+            'lang' => 'pt',
+            'kind' => 'note',
+            'relpath' => '../../',
+        ]);
+
+        $pageClonedEn = Page::fromArray([
+            'slug' => 'en/notes/my-note/',
+            'nick' => 'my-note',
+            'title' => 'My Note',
+            'lang' => 'en',
+            'kind' => 'note',
+            'relpath' => '../../../',
+        ]);
+        $pageClonedEn->metadata->translation_source = 'notas/minha-nota/';
+        $pageClonedEn->metadata->translation_source_lang = 'pt';
+
+        $introEn = Page::fromArray([
+            'slug' => 'en/intro/',
+            'nick' => 'intro',
+            'title' => 'Intro',
+            'lang' => 'en',
+            'kind' => 'generic',
+            'relpath' => '../../',
+        ]);
+
+        $pages = new Pages([
+            $pageOrigPt,
+            $pageClonedEn,
+            $introEn,
+        ]);
+
+        $parser = new ASTParser();
+        $ast = $parser->parse('Read [[minha-nota]].');
+
+        $renderer = new HtmlRenderer($introEn, $site, $pages);
+        $html = $renderer->render($ast);
+
+        expect($html)->toContain('href="../../en/notes/my-note/"');
+    });
 });

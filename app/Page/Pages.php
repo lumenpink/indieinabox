@@ -28,7 +28,7 @@ class Pages extends ArrayObject
      */
     public function __construct(array $pages = [])
     {
-        parent::__construct();
+        parent::__construct($pages);
         $this->pages = $pages;
     }
 

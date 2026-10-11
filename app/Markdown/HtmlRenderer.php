@@ -237,13 +237,14 @@ class HtmlRenderer implements RendererInterface
                     $matchedKind = null;
                     if ($site !== null && !empty($site->config['kinds'])) {
                         foreach ($site->config['kinds'] as $k => $kindData) {
-                            if ($metaKey === TextParser::slugize($k)) {
-                                $matchedKind = $k;
+                            $kStr = (string) $k;
+                            if ($metaKey === TextParser::slugize($kStr)) {
+                                $matchedKind = $kStr;
                                 break;
                             }
                         }
                     }
-                    if ($matchedKind) {
+                    if ($matchedKind !== null) {
                         $folder = KindHelper::getKindFolder($matchedKind, $currentPageLang);
                         $url = $relpath . $langPrefix . ltrim($folder . '/', '/');
                     } else {
@@ -260,29 +261,120 @@ class HtmlRenderer implements RendererInterface
                 
                 if (isset($pages) && ($pages instanceof \Indieinabox\Page\Pages || is_iterable($pages))) {
                     $matches = [];
-                    // Try to find in the same language first
+                    // 1. Try to find in the same language first
                     foreach ($pages as $p) {
                         $pLang = $p->lang ?? 'en';
-                        if ($pLang !== $currentPageLang) continue;
-                        
+                        if ($pLang !== $currentPageLang) {
+                            continue;
+                        }
+
                         $pTitle = TextParser::slugize($p->title ?? '');
                         $pSlug = TextParser::slugize(basename($p->slug ?? ''));
                         $pNick = TextParser::slugize($p->nick ?? '');
-                        
+
                         if ($slugTarget === $pTitle || $slugTarget === $pSlug || $slugTarget === $pNick) {
                             $matches[] = $p;
                         }
                     }
-                    
-                    // If not found, try any language
+
+                    // 2. If not found in current language, check url_translations table/config
                     if (empty($matches)) {
+                        $rawTranslations = $site?->config['urltranslations']
+                            ?? \Indieinabox\Core\Database::getUrlTranslations();
+                        $urlTranslationsArr = (array) $rawTranslations;
+                        $translatedTargetNick = null;
+
+                        // Check direct mapping (slug_key -> $currentPageLang)
+                        if (isset($urlTranslationsArr[$slugTarget][$currentPageLang])) {
+                            $translatedTargetNick = TextParser::slugize(
+                                $urlTranslationsArr[$slugTarget][$currentPageLang]
+                            );
+                        } else {
+                            // Check reverse mapping (slug_value -> base key -> $currentPageLang)
+                            foreach ($urlTranslationsArr as $baseKey => $trans) {
+                                foreach ($trans as $l => $v) {
+                                    $vSlug = TextParser::slugize($v);
+                                    $baseSlug = TextParser::slugize($baseKey);
+                                    if ($vSlug === $slugTarget || $baseSlug === $slugTarget) {
+                                        if (isset($trans[$currentPageLang])) {
+                                            $translatedTargetNick = TextParser::slugize($trans[$currentPageLang]);
+                                        } elseif ($currentPageLang === $defaultLang) {
+                                            $translatedTargetNick = TextParser::slugize($baseKey);
+                                        }
+                                        break 2;
+                                    }
+                                }
+                            }
+                        }
+
+                        if ($translatedTargetNick !== null) {
+                            foreach ($pages as $p) {
+                                $pLang = $p->lang ?? 'en';
+                                if ($pLang !== $currentPageLang) {
+                                    continue;
+                                }
+
+                                $pTitle = TextParser::slugize($p->title ?? '');
+                                $pSlug = TextParser::slugize(basename($p->slug ?? ''));
+                                $pNick = TextParser::slugize($p->nick ?? '');
+
+                                if (
+                                    $translatedTargetNick === $pTitle
+                                    || $translatedTargetNick === $pSlug
+                                    || $translatedTargetNick === $pNick
+                                ) {
+                                    $matches[] = $p;
+                                }
+                            }
+                        }
+                    }
+
+                    // 3. If still not found, search in other languages and check for clones in $currentPageLang
+                    if (empty($matches)) {
+                        $sourceMatches = [];
                         foreach ($pages as $p) {
                             $pTitle = TextParser::slugize($p->title ?? '');
                             $pSlug = TextParser::slugize(basename($p->slug ?? ''));
                             $pNick = TextParser::slugize($p->nick ?? '');
-                            
+
                             if ($slugTarget === $pTitle || $slugTarget === $pSlug || $slugTarget === $pNick) {
-                                $matches[] = $p;
+                                $sourceMatches[] = $p;
+                            }
+                        }
+
+                        if (!empty($sourceMatches)) {
+                            // Check if any sourceMatch has a clone/translation in $currentPageLang
+                            foreach ($sourceMatches as $srcPage) {
+                                $srcSlug = trim($srcPage->slug, '/');
+                                $srcNick = TextParser::slugize($srcPage->nick ?? '');
+
+                                foreach ($pages as $candidate) {
+                                    if (($candidate->lang ?? 'en') !== $currentPageLang) {
+                                        continue;
+                                    }
+
+                                    $transSource = trim($candidate->metadata->translation_source ?? '', '/');
+
+                                    if (
+                                        $transSource !== ''
+                                        && (
+                                            $transSource === $srcSlug
+                                            || str_ends_with($transSource, '/' . $srcSlug)
+                                            || $transSource === $srcNick
+                                        )
+                                    ) {
+                                        $matches[] = $candidate;
+                                        break;
+                                    }
+                                }
+                                if (!empty($matches)) {
+                                    break;
+                                }
+                            }
+
+                            // If no clone found in $currentPageLang, fallback to sourceMatches
+                            if (empty($matches)) {
+                                $matches = $sourceMatches;
                             }
                         }
                     }
@@ -301,11 +393,11 @@ class HtmlRenderer implements RendererInterface
                             }
                         }
                         
-                        // 2. 'jardim' folder precedence
+                        // 2. 'jardim' / 'gardens' folder precedence
                         if (!$foundPage) {
                             foreach ($matches as $m) {
                                 $mSlugClean = preg_replace('/\.html$/', '', $m->slug ?? '');
-                                if (str_starts_with($mSlugClean, 'jardim/') || dirname($mSlugClean) === 'jardim') {
+                                if (str_starts_with($mSlugClean, 'jardim/') || dirname($mSlugClean) === 'jardim' || str_contains($mSlugClean, '/gardens/')) {
                                     $foundPage = $m;
                                     break;
                                 }

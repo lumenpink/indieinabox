@@ -103,7 +103,9 @@ Para lidar com políticas estritas de tráfego do Internet Archive:
 
 - **`archive_queue`**: Fila de despacho (`id`, `url`, `status`, `requested_at`, `force_archive`).
 - **`archived_links`**: Histórico permanente de links arquivados (`id`, `url`, `timestamp`, `local_pdf_path`, `archive_org_url`).
-- **`archive_aliases`**: Relação de URLs encurtadas/redirecionadas para seus destinos finais (`original_url`, `final_url`).
+- **`archive_aliases`**: Relação de URLs originais redirecionadas para seus destinos canônicos finais (`original_url TEXT PRIMARY KEY`, `final_url TEXT NOT NULL`).
+  - `original_url`: URL de entrada original consultada pelo serviço de arquivamento.
+  - `final_url`: URL final de destino resolvida após seguir redirecionamentos HTTP.
 
 ---
 

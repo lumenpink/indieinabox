@@ -225,4 +225,30 @@ it('renders non-zero social counters in summary view when interactions exist', f
         ->and($output)->toContain('href="notes/summary-test-active.html/interactions#reposts"');
 });
 
+it('renders clickable thumbnail and accessible link for photo post without title or text in renderPostSnippet', function () {
+    $site = new \Indieinabox\Site\Site();
+    $site->localization->defaultLang = 'pt';
+    $site->config['kinds'] = [
+        'photo' => ['has_title' => false, 'display_mode' => 'default']
+    ];
+    \Indieinabox\Core\Container::getInstance()->instance(\Indieinabox\Site\Site::class, $site);
+    $GLOBALS['site'] = $site;
 
+    $contextPage = new Page(null, null, null);
+    $contextPage->relpath = '../../';
+
+    $post = new Page(null, null, null);
+    $post->kind = 'photo';
+    $post->slug = 'photos/untitled-pic.html';
+    $post->lang = 'pt';
+    $post->isodate = '2026-10-11T14:30:00Z';
+    $post->localizeddate = '11/10/2026';
+    // Post with only an image tag, no text
+    $post->content = '<figure class="content-media"><a href="/media/myphoto.jpg" class="dithered-image-link"><img src="/media/myphoto_512.gif" alt="Sem texto"></a></figure>';
+
+    $html = ThemeHelper::renderPostSnippet($contextPage, $post);
+
+    expect($html)->toContain('href="../../photos/untitled-pic.html"')
+        ->and($html)->toContain('img src="/media/myphoto_thumb.gif"')
+        ->and($html)->toContain('Foto sem título publicada em');
+});

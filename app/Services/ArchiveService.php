@@ -68,10 +68,14 @@ class ArchiveService
      */
     public function queueForceArchive(string $url): bool
     {
-        $targetUrl = $this->resolveAlias($url);
-        $normUrl = rtrim(strtolower($targetUrl), '/');
+        try {
+            $targetUrl = $this->resolveAlias($url);
+            $normUrl = rtrim(strtolower($targetUrl), '/');
 
-        $stmt = $this->db->prepare("INSERT INTO archive_queue (url, force_archive) VALUES (?, 1)");
-        return $stmt->execute([$normUrl]);
+            $stmt = $this->db->prepare("INSERT INTO archive_queue (url, force_archive, requested_at) VALUES (?, 1, ?)");
+            return $stmt->execute([$normUrl, time()]);
+        } catch (\Throwable) {
+            return false;
+        }
     }
 }

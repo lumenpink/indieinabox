@@ -69,3 +69,25 @@ it('finds snapshot without throwing PDOException on real schema', function () {
     expect($snapshot)->not->toBeNull();
     expect($snapshot['archive_org_url'])->toBe('https://web.archive.org/web/test');
 });
+
+it('gracefully falls back when database encounters an error', function () {
+    $brokenDb = new PDO('sqlite::memory:');
+    // brokenDb does not have tables created
+    $service = new ArchiveService($brokenDb);
+
+    expect($service->resolveAlias('https://fallback.test'))->toBe('https://fallback.test');
+    expect($service->findSnapshot('https://fallback.test'))->toBeNull();
+});
+
+it('queues url for force archive with resolved alias', function () {
+    $this->db->prepare('INSERT INTO archive_aliases (original_url, final_url) VALUES (?, ?)')
+        ->execute(['https://short.url/x', 'https://destination.url/x']);
+
+    $service = new ArchiveService($this->db);
+    $result = $service->queueForceArchive('https://short.url/x');
+
+    expect($result)->toBeTrue();
+    $queued = $this->db->query("SELECT * FROM archive_queue WHERE url = 'https://destination.url/x'")->fetch(PDO::FETCH_ASSOC);
+    expect($queued)->not->toBeFalse();
+    expect((int)$queued['force_archive'])->toBe(1);
+});

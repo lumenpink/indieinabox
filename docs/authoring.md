@@ -274,6 +274,27 @@ Para evitar documentos extensos e lentidão no carregamento de listagens longas,
   - Links contextuais `← Anterior` (apontando para página anterior ou raiz se for página 1) e `Próxima →`.
   - Indicador numérico do estado atual: `Página X de Y`.
 
+---
+
+## Visualizador Dedicado de Imagens e Compatibilidade NCSA Mosaic (#84)
+
+Para garantir que imagens fotográficas completas possam ser visualizadas em sua fidelidade original sem quebrar a experiência do usuário ou depender do comportamento arbitrário de download de cada navegador:
+
+### Contrato de Mídia e Visualizador
+1. **Página Dedicada de Visualização (`{post}/image1/`, `{post}/image2/`)**:
+   - Cada imagem referenciada no post ganha uma subpágina estática minimalista dedicada (`image1/index.html`, etc.).
+   - A página é centralizada, livre de distrações, contendo apenas:
+     - Link contextual `[ ← Voltar ao post ]` no topo.
+     - A imagem em tamanho integral no formato JPEG Baseline.
+     - Metadados semânticos de licença Creative Commons `CC-BY-ND`.
+2. **Normalização e Compatibilidade NCSA Mosaic**:
+   - No diretório de saída `/media/`, toda imagem processada passa a contar com:
+     - `nome.gif`: Versão ditherizada em tamanho padrão com a paleta do tema.
+     - `nome_thumb.gif`: Versão miniatura ditherizada para listagens rápidas e sumários.
+     - `nome.jpg`: Versão fotográfica completa normalizada estritamente em **JPEG Baseline (Sequential)** via GD (`imageinterlace = false`), garantindo 100% de compatibilidade com navegadores legados (NCSA Mosaic, Netscape 1.x) e clientes contemporâneos.
+3. **Licenciamento CC-BY-ND**:
+   - Todas as páginas dedicadas de imagem incluem metadados explícitos: `<meta name="license" content="https://creativecommons.org/licenses/by-nd/4.0/">` e link semântico com atributo `rel="license"`.
+
 
 
 

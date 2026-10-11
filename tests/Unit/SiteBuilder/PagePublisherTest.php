@@ -252,7 +252,7 @@ it('binds Pages, Page and Site into Container during publishHtml', function () {
     expect($content)->toContain('pages:yes page:yes site:yes');
 });
 
-it('publishes dedicated image viewer pages at {post_url}/image{n}/ with baseline JPEG and CC-BY-ND license', function () {
+it('publishes dedicated image viewer pages at {post_url}/image{n}/ with baseline JPEG and CC-BY-NC license', function () {
     $page = Page::fromArray([
         'title' => 'Post com Imagens',
         'slug' => 'photos/vacation/',
@@ -269,7 +269,7 @@ it('publishes dedicated image viewer pages at {post_url}/image{n}/ with baseline
 
     $viewerContent = file_get_contents($viewerFile);
     expect($viewerContent)->toContain('rel="license"')
-        ->and($viewerContent)->toContain('https://creativecommons.org/licenses/by-nd/4.0/')
+        ->and($viewerContent)->toContain('https://creativecommons.org/licenses/by-nc/4.0/')
         ->and($viewerContent)->toContain('src="/media/sunset.jpg"')
         ->and($viewerContent)->toContain('href="../"')
         ->and($viewerContent)->toContain('Back to post')

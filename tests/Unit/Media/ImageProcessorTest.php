@@ -57,3 +57,29 @@ it('converts images to Mosaic-compatible baseline JPEG without progressive scan'
 
     FileUtils::recursiveRmdir($tempDir);
 });
+
+it('embeds license comment into JPEG and GIF binaries', function () {
+    $tempDir = __DIR__ . '/tmp_unit_embed_meta';
+    if (!is_dir($tempDir)) {
+        mkdir($tempDir, 0777, true);
+    }
+
+    $jpgPath = $tempDir . '/test.jpg';
+    $gifPath = $tempDir . '/test.gif';
+
+    $img = imagecreatetruecolor(50, 50);
+    imagejpeg($img, $jpgPath);
+    imagegif($img, $gifPath);
+
+    $license = 'CC-BY-NC 4.0 https://creativecommons.org/licenses/by-nc/4.0/';
+    ImageProcessor::embedMetadata($jpgPath, $license);
+    ImageProcessor::embedMetadata($gifPath, $license);
+
+    $jpgData = file_get_contents($jpgPath);
+    expect($jpgData)->toContain('CC-BY-NC 4.0');
+
+    $gifData = file_get_contents($gifPath);
+    expect($gifData)->toContain('CC-BY-NC 4.0');
+
+    FileUtils::recursiveRmdir($tempDir);
+});

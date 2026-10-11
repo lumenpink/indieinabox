@@ -23,6 +23,16 @@ To correlate posts that exist in multiple languages (and specifically, posts tha
 
 When the `SiteBuilder` compiles the site, it queries this table. If it sees `about.md`, it knows its Portuguese counterpart is `pt/sobre.md`. This drives the language switcher in the site header, ensuring it points to the correct localized URL.
 
+### Multilingual Wikilink Resolution Contract
+When rendering internal wikilinks (e.g. `[[currículo|aqui]]` or `[[Travesti]]`) inside a page written or virtualized in a target language (e.g. `en` or `es`):
+1. **Target-Language Match First**: The renderer checks if any page in `$currentPageLang` has a matching title, slug, or nick for the wikilink target (after slugification).
+2. **Translation Table Resolution**: If no direct match exists in `$currentPageLang`, the renderer consults `url_translations`:
+   - Checks if `$slugTarget` exists as `slug_key` with a mapping for `$currentPageLang` in `url_translations` (source default -> target secondary).
+   - Or if `$slugTarget` is a secondary language slug (`slug_value`), finds its root `slug_key` and translates to `$currentPageLang`.
+   - If a translated slug is resolved, looks up the corresponding page in `$pages` matching the translated slug in `$currentPageLang`.
+3. **Cloned Translation Fallback**: If still not matched, finds the source page matching `$slugTarget` in any language (e.g. `pt`) and verifies if a cloned or translated counterpart exists in `$currentPageLang` (matching `translation_source`, `translation_source_slug`, or original nick/stem).
+4. **Target Language Routing**: The final rendered `href` must route to the `$currentPageLang` path (e.g. `../../resume/` or `../../jardins/travesti-gender-identity/` instead of staying pinned to the Portuguese route). If no matching page or translation exists, the unresolved link fallback uses `$currentPageLang` relative path.
+
 ## AI Virtualization & Two-Pass Auto-Translation Architecture
 
 When a post exists in one language but lacks a translation in another, IndieInABox can automatically "virtualize" and translate the missing page using either a lightweight mock (`pseudo`) or intelligent LLMs (Google Gemini, OpenAI GPT, Anthropic Claude, xAI Grok, Ollama).

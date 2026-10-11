@@ -23,7 +23,7 @@ Orgulhosamente produzido por uma [travesti latina](https://travesti.2lp.in/<lang
 - `{App}`: Nome da aplicação (`IndieInABox`).
 - `v{Versão}`: Versão semântica extraída de `Version::get()` ou `VERSION`.
 - `[Lumen Pink]`: Link canônico para o site oficial `https://lumen.pink`.
-- `{ISO_UTC}`: Timestamp ISO 8601 UTC do build (`date('Y-m-d\TH:i:s\Z')`).
+- `{ISO_UTC}`: Timestamp ISO 8601 UTC do build estático (`date('Y-m-d\TH:i:s\Z')`). Para máxima transparência e clareza aos leitores, a data é identificada como timestamp de compilação estática (`build: {TIMESTAMP}` ou no idioma da página) para distinguir a data de geração do site da versão de lançamento do software.
 - `{País} 🇧🇷`: `Brasil 🇧🇷` adaptado de acordo com a língua ativa (`Brazil 🇧🇷`, `Brésil 🇧🇷`, etc.).
 - `[{Licença}]`: Identificador SPDX (`Apache-2.0`) com hiperlink para o arquivo de licença do repositório.
 

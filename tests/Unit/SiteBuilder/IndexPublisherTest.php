@@ -130,3 +130,79 @@ it('publishes timeline static page when timeline view exists in theme', function
     $timelineOut = $this->tempDir . '/public_html/timeline/index.html';
     expect(file_exists($timelineOut))->toBeTrue();
 });
+
+it('paginates section indexes when total posts exceed per_page limit', function () {
+    // Set pagination per_page to 2
+    $this->site->config['pagination'] = ['per_page' => 2];
+
+    for ($i = 1; $i <= 5; $i++) {
+        $article = Page::fromArray([
+            'title' => "Artigo {$i}",
+            'kind' => 'article',
+            'slug' => "articles/artigo-{$i}/",
+            'rawBody' => "Conteudo artigo {$i}",
+            'date' => new \DateTime("2026-09-0{$i}"),
+            'lang' => 'en',
+        ]);
+        $this->pages->add($article);
+    }
+
+    $this->indexPublisher->publishKindIndexes($this->pages);
+
+    // Page 1 (canonical)
+    $page1Html = $this->tempDir . '/public_html/articles/index.html';
+    expect(file_exists($page1Html))->toBeTrue();
+    $p1Content = file_get_contents($page1Html);
+    expect($p1Content)->toContain('Artigo 5')
+        ->and($p1Content)->toContain('Artigo 4')
+        ->and($p1Content)->not->toContain('Artigo 1')
+        ->and($p1Content)->toContain('class="pagination"')
+        ->and($p1Content)->toContain('href="page/2/"');
+
+    // Page 2
+    $page2Html = $this->tempDir . '/public_html/articles/page/2/index.html';
+    expect(file_exists($page2Html))->toBeTrue();
+    $p2Content = file_get_contents($page2Html);
+    expect($p2Content)->toContain('Artigo 3')
+        ->and($p2Content)->toContain('Artigo 2')
+        ->and($p2Content)->toContain('href="../../"') // previous link pointing to page 1
+        ->and($p2Content)->toContain('href="../3/"'); // next link pointing to page 3
+
+    // Page 3
+    $page3Html = $this->tempDir . '/public_html/articles/page/3/index.html';
+    expect(file_exists($page3Html))->toBeTrue();
+    $p3Content = file_get_contents($page3Html);
+    expect($p3Content)->toContain('Artigo 1')
+        ->and($p3Content)->toContain('href="../2/"');
+});
+
+it('paginates taxonomy indexes when tag posts exceed per_page limit', function () {
+    $this->site->config['pagination'] = ['per_page' => 2];
+
+    for ($i = 1; $i <= 3; $i++) {
+        $post = Page::fromArray([
+            'title' => "Post Tag {$i}",
+            'kind' => 'article',
+            'slug' => "articles/tag-post-{$i}/",
+            'rawBody' => "Texto {$i}",
+            'date' => new \DateTime("2026-09-0{$i}"),
+            'lang' => 'en',
+            'tags' => ['linux'],
+        ]);
+        $this->pages->add($post);
+    }
+
+    $this->indexPublisher->publishTaxonomies($this->pages);
+
+    $tagP1 = $this->tempDir . '/public_html/tag/linux/index.html';
+    $tagP2 = $this->tempDir . '/public_html/tag/linux/page/2/index.html';
+
+    expect(file_exists($tagP1))->toBeTrue();
+    expect(file_exists($tagP2))->toBeTrue();
+
+    $p1Content = file_get_contents($tagP1);
+    expect($p1Content)->toContain('Post Tag 3')
+        ->and($p1Content)->toContain('class="pagination"')
+        ->and($p1Content)->toContain('href="page/2/"');
+});
+

@@ -400,23 +400,63 @@ class ThemeHelper
         } else {
             $hasTitle = KindHelper::getKindConfig($post->kind)['has_title'] ?? true;
             $formattedDate = $post->kind === 'photo' ? date('Y-m-d', strtotime($post->isodate)) : $post->localizeddate;
-            $html .= '<span style="font-size:0.85em; opacity:0.75; margin-right: 0.5em;">' . $formattedDate . '</span> ';
-            
-            if (!$hasTitle) {
-                $cleanContent = preg_replace('/<a[^>]*class="[^"]*dithered-image-link[^"]*"[^>]*>.*?<\/a>/is', '', (string)$post->content);
-                $snippet = strip_tags($cleanContent);
-                $snippet = html_entity_decode($snippet, ENT_QUOTES | ENT_HTML5, 'UTF-8');
-                $snippet = trim(preg_replace('/\s+/', ' ', $snippet));
-                if (mb_strlen($snippet) > 45) {
-                    $snippet = mb_substr($snippet, 0, 42) . '...';
+
+            // Detect thumbnail if post has images
+            $thumbSrc = '';
+            if (preg_match('/src="([^"]+)\.(gif|jpg|png|webp)"/i', (string)$post->content, $imgMatches)) {
+                $baseImg = preg_replace('/(_\d+|_global|_thumb)$/', '', $imgMatches[1]);
+                $thumbSrc = $baseImg . '_thumb.gif';
+            }
+
+            $cleanContent = preg_replace('/<figure[^>]*class="[^"]*content-media[^"]*"[^>]*>.*?<\/figure>/is', '', (string)$post->content);
+            $cleanContent = preg_replace('/<a[^>]*class="[^"]*dithered-image-link[^"]*"[^>]*>.*?<\/a>/is', '', $cleanContent);
+            $cleanContent = preg_replace('/<img[^>]*>/i', '', $cleanContent);
+            $snippet = strip_tags($cleanContent);
+            $snippet = html_entity_decode($snippet, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+            $snippet = trim(preg_replace('/\s+/', ' ', $snippet));
+
+            $postLink = $contextPage->relpath . ltrim($post->slug, '/');
+
+            // If photo post with thumbnail, render thumbnail and link
+            if ($post->kind === 'photo' || $thumbSrc) {
+                $html .= '<div style="display: flex; align-items: center; margin-bottom: 0.5em;">';
+                $html .= '<span style="font-size:0.85em; opacity:0.75; margin-right: 0.5em; flex-shrink: 0;">' . $formattedDate . '</span> ';
+                $html .= '<span style="margin-right: 0.5em; flex-shrink: 0;">=&gt;</span> ';
+                if ($thumbSrc) {
+                    $html .= '<a href="' . $postLink . '" style="margin-right: 0.5em; flex-shrink: 0; display: inline-block;">';
+                    $html .= '<img src="' . htmlspecialchars($thumbSrc) . '" alt="Thumbnail" style="width: 2.5em; height: 2.5em; object-fit: cover; border-radius: 4px; vertical-align: middle;">';
+                    $html .= '</a> ';
                 }
-                $html .= '=&gt; <a href="' . $contextPage->relpath . ltrim($post->slug, '/') . '">' . htmlspecialchars($snippet) . '</a>';
+
+                $displayText = '';
+                if (!empty($post->title) && $post->title !== 'Untitled') {
+                    $displayText = html_entity_decode((string)$post->title, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+                } elseif ($snippet !== '') {
+                    $displayText = $snippet;
+                } else {
+                    $displayText = 'Foto sem título publicada em ' . $formattedDate;
+                }
+
+                if (mb_strlen($displayText) > 60) {
+                    $displayText = mb_substr($displayText, 0, 57) . '...';
+                }
+
+                $html .= '<a href="' . $postLink . '">' . htmlspecialchars($displayText) . '</a>';
+                $html .= '</div>';
             } else {
-                $title = html_entity_decode((string)$post->title, ENT_QUOTES | ENT_HTML5, 'UTF-8');
-                if (mb_strlen($title) > 45) {
-                    $title = mb_substr($title, 0, 42) . '...';
+                $html .= '<span style="font-size:0.85em; opacity:0.75; margin-right: 0.5em;">' . $formattedDate . '</span> ';
+                if (!$hasTitle) {
+                    if (mb_strlen($snippet) > 45) {
+                        $snippet = mb_substr($snippet, 0, 42) . '...';
+                    }
+                    $html .= '=&gt; <a href="' . $postLink . '">' . htmlspecialchars($snippet) . '</a>';
+                } else {
+                    $title = html_entity_decode((string)$post->title, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+                    if (mb_strlen($title) > 45) {
+                        $title = mb_substr($title, 0, 42) . '...';
+                    }
+                    $html .= '=&gt; <a href="' . $postLink . '">' . htmlspecialchars($title) . '</a>';
                 }
-                $html .= '=&gt; <a href="' . $contextPage->relpath . ltrim($post->slug, '/') . '">' . htmlspecialchars($title) . '</a>';
             }
         }
 

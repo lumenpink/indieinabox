@@ -105,3 +105,36 @@ test('getLanguageSelector returns empty string for single language site', functi
 
     expect(ThemeData::getLanguageSelector($page, $site))->toBe('');
 });
+
+test('header.php renders language switcher pointing to correlated translated post routes from view data', function () {
+    $site = new Site();
+    $site->localization->defaultLang = 'pt';
+    $site->localization->lang = ['pt', 'en', 'es'];
+    $site->localization->langDisplayMode = 'code_short';
+    $site->paths->themeDir = dirname(__DIR__, 3) . '/resources';
+
+    $page = new Page();
+    $page->lang = 'pt';
+    $page->slug = 'artigos/primeiro-post/';
+    $page->relpath = '../../';
+
+    $langLinks = [
+        'pt' => '/artigos/primeiro-post/',
+        'en' => '/en/articles/first-post/',
+        'es' => '/es/articulos/primer-post/',
+    ];
+
+    ob_start();
+    \Indieinabox\Theme\ThemeManager::includeView('includes/header.php', [
+        'page' => $page,
+        'site' => $site,
+        'langLinks' => $langLinks,
+    ]);
+    $output = ob_get_clean();
+
+    expect($output)->toContain('href="/en/articles/first-post/"')
+        ->and($output)->toContain('href="/es/articulos/primer-post/"')
+        ->and($output)->not->toContain('href="../../en/"')
+        ->and($output)->not->toContain('href="../../es/"');
+});
+

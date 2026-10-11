@@ -30,3 +30,30 @@ it('creates thumbnails and dithers images correctly', function () {
 
     FileUtils::recursiveRmdir($tempDir);
 });
+
+it('converts images to Mosaic-compatible baseline JPEG without progressive scan', function () {
+    $tempDir = __DIR__ . '/tmp_unit_baseline_jpg';
+    if (!is_dir($tempDir)) {
+        mkdir($tempDir, 0777, true);
+    }
+
+    $source = $tempDir . '/source.png';
+    $destJpg = $tempDir . '/output.jpg';
+
+    $img = imagecreatetruecolor(100, 100);
+    $color = imagecolorallocate($img, 120, 180, 240);
+    imagefill($img, 0, 0, $color);
+    imagepng($img, $source);
+
+    $converted = ImageProcessor::convertToBaselineJpeg($source, $destJpg, 85);
+    expect($converted)->toBeTrue()
+        ->and(file_exists($destJpg))->toBeTrue();
+
+    // Verify JPEG format and baseline interlace flag
+    $imgLoaded = imagecreatefromjpeg($destJpg);
+    expect($imgLoaded)->not->toBeFalse();
+    // imageinterlace() returns 0 for non-interlaced (baseline sequential) JPEG
+    expect(imageinterlace($imgLoaded))->toBe(0);
+
+    FileUtils::recursiveRmdir($tempDir);
+});

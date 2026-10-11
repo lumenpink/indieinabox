@@ -354,6 +354,8 @@ class ThemeData
         foreach ($activeKinds as $kind) {
             $label = $taxonomyService->getKindLabel($kind, $lang);
             $folder = $taxonomyService->getKindFolder($kind, $lang);
+            $count = $kindCounts[$kind] ?? 0;
+            $displayLabel = $label . ' (' . $count . ')';
 
             if ($prettylinks) {
                 $url = ltrim($langPrefix . $folder . '/', '/');
@@ -362,7 +364,7 @@ class ThemeData
             }
             $relUrl = $page->relpath . $url;
 
-            $linksHTML[] = '<a href="' . htmlspecialchars($relUrl, ENT_QUOTES | ENT_HTML5) . '" class="kind-link kind-link-' . htmlspecialchars($kind, ENT_QUOTES | ENT_HTML5) . '">' . htmlspecialchars($label, ENT_QUOTES | ENT_HTML5) . '</a>';
+            $linksHTML[] = '<a href="' . htmlspecialchars($relUrl, ENT_QUOTES | ENT_HTML5) . '" class="kind-link kind-link-' . htmlspecialchars($kind, ENT_QUOTES | ENT_HTML5) . '">' . htmlspecialchars($displayLabel, ENT_QUOTES | ENT_HTML5) . '</a>';
         }
 
         return '<nav class="footer-kinds" aria-label="' . htmlspecialchars(Translator::translate('Post kinds', $lang), ENT_QUOTES | ENT_HTML5) . '" style="text-align: center; margin-bottom: 0.5rem;">' . "\n" .

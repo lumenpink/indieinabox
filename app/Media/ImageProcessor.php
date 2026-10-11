@@ -577,4 +577,80 @@ class ImageProcessor
 
         return $saved;
     }
+
+    /**
+     * Embeds license and copyright metadata comment into JPEG or GIF binaries.
+     * For JPEG: writes a standard COM marker (0xFF 0xFE).
+     * For GIF: writes a GIF89a Comment Extension block (0x21 0xFE).
+     * Both techniques are 100% compatible with NCSA Mosaic and legacy viewers.
+     *
+     * @param string $filePath Absolute path to the image file
+     * @param string $commentText Comment or license string to embed
+     * @return bool True on success, false otherwise
+     */
+    public static function embedMetadata(string $filePath, string $commentText): bool
+    {
+        if (!file_exists($filePath) || empty($commentText)) {
+            return false;
+        }
+
+        $data = file_get_contents($filePath);
+        if ($data === false || strlen($data) < 4) {
+            return false;
+        }
+
+        // 1. JPEG check (starts with 0xFF 0xD8)
+        if (substr($data, 0, 2) === chr(0xFF) . chr(0xD8)) {
+            // Check if comment already exists
+            if (str_contains($data, $commentText)) {
+                return true;
+            }
+
+            // COM marker format: 0xFF 0xFE + 2-byte length (big-endian, including length bytes) + payload
+            $commentBytes = $commentText;
+            $length = strlen($commentBytes) + 2;
+            if ($length > 65535) {
+                $commentBytes = substr($commentBytes, 0, 65533);
+                $length = strlen($commentBytes) + 2;
+            }
+            $comBlock = chr(0xFF) . chr(0xFE) . pack('n', $length) . $commentBytes;
+
+            // Insert COM marker immediately after SOI (0xFF 0xD8)
+            $newData = substr($data, 0, 2) . $comBlock . substr($data, 2);
+            return file_put_contents($filePath, $newData) !== false;
+        }
+
+        // 2. GIF check (starts with GIF87a or GIF89a)
+        if (substr($data, 0, 3) === 'GIF') {
+            if (str_contains($data, $commentText)) {
+                return true;
+            }
+
+            // Ensure GIF89a header for comment extension support
+            $header = 'GIF89a' . substr($data, 6);
+
+            // Find trailer (0x3B = ';') from end
+            $trailerPos = strrpos($header, chr(0x3B));
+            if ($trailerPos === false) {
+                $trailerPos = strlen($header);
+            }
+
+            // GIF Comment Extension: 0x21 0xFE + chunks (sub-block size 1-255 + data) + 0x00 terminator
+            $chunks = '';
+            $offset = 0;
+            $commentLen = strlen($commentText);
+            while ($offset < $commentLen) {
+                $chunk = substr($commentText, $offset, 255);
+                $chunks .= chr(strlen($chunk)) . $chunk;
+                $offset += 255;
+            }
+            $commentExtension = chr(0x21) . chr(0xFE) . $chunks . chr(0);
+
+            // Insert comment extension right before trailer
+            $newData = substr($header, 0, $trailerPos) . $commentExtension . chr(0x3B);
+            return file_put_contents($filePath, $newData) !== false;
+        }
+
+        return false;
+    }
 }

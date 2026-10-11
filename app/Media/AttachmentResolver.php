@@ -350,6 +350,13 @@ class AttachmentResolver
         $canonicalJpg = $canonicalMediaDir . DIRECTORY_SEPARATOR . $finalInfo['filename'] . '.jpg';
         ImageProcessor::convertToBaselineJpeg($sourceFile, $canonicalJpg, 85);
 
+        // 3.1 Embed CC-BY-NC license metadata in all generated image binaries (#91)
+        $licenseText = 'License: CC-BY-NC 4.0 (https://creativecommons.org/licenses/by-nc/4.0/)';
+        ImageProcessor::embedMetadata($canonicalGif, $licenseText);
+        ImageProcessor::embedMetadata($canonicalGlobal, $licenseText);
+        ImageProcessor::embedMetadata($canonicalThumb, $licenseText);
+        ImageProcessor::embedMetadata($canonicalJpg, $licenseText);
+
         // 4. Copy original (if original format is different from JPG)
         if (!file_exists($canonicalOriginal)) {
             copy($sourceFile, $canonicalOriginal);

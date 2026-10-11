@@ -402,7 +402,7 @@ class PagePublisher
                         $backLabel = ($page->lang === 'pt' || (!isset($page->lang) && ($this->site->localization->defaultLang ?? 'en') === 'pt')) ? 'Voltar ao post' : 'Back to post';
                     }
 
-                    $licenseUrl = 'https://creativecommons.org/licenses/by-nd/4.0/';
+                    $licenseUrl = 'https://creativecommons.org/licenses/by-nc/4.0/';
                     $titleText = htmlspecialchars($page->title ?? 'Imagem', ENT_QUOTES | ENT_HTML5);
                     $altText = htmlspecialchars($imageAlt ?: ($page->title ?? 'Imagem'), ENT_QUOTES | ENT_HTML5);
                     $escapedImgSrc = htmlspecialchars($cleanImgSrc, ENT_QUOTES | ENT_HTML5);
@@ -470,7 +470,7 @@ class PagePublisher
     <div class="media-container" itemprop="image" itemscope itemtype="https://schema.org/ImageObject">
         <img src="' . $escapedImgSrc . '" alt="' . $altText . '" itemprop="contentUrl">
         <div class="license-info">
-            Licença: <a rel="license" href="' . $licenseUrl . '">CC-BY-ND 4.0</a>
+            Licença: <a rel="license" href="' . $licenseUrl . '">CC-BY-NC 4.0</a>
         </div>
     </div>
 </body>

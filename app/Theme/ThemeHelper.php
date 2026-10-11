@@ -50,36 +50,37 @@ class ThemeHelper
             $html .= '</div>';
 
             // Line 2: Shortlink - Likes / Reposts / Replies
-            $html .= '<div class="meta-line-2" style="margin-left: 0.6em;">';
-            if (!empty($page->shortlink)) {
-                $html .= '<a href="' . htmlspecialchars($page->shortlink) . '" style="color: inherit; text-decoration: none; opacity: 0.8;">🔗</a> - ';
-            }
-
             $likes = KindHelper::getInteractions($page, 'like');
             $reposts = KindHelper::getInteractions($page, 'repost');
             $replies = KindHelper::getInteractions($page, 'reply');
 
+            $interactionParts = [];
             if (count($likes) > 0) {
-                $html .= '<a href="' . $page->relpath . ltrim($page->slug, '/') . '/interactions#likes" style="color: inherit; text-decoration: none;">' . count($likes) . ' ' . Translator::translatePlural('Like', 'Likes', count($likes)) . '</a>';
-            } else {
-                $html .= '<span style="opacity: 0.8; font-size: 0.9em;">0 ' . Translator::translatePlural('Like', 'Likes', 0) . '</span>';
+                $interactionParts[] = '<a href="' . $page->relpath . ltrim($page->slug, '/') . '/interactions#likes" style="color: inherit; text-decoration: none;">' . count($likes) . ' ' . Translator::translatePlural('Like', 'Likes', count($likes)) . '</a>';
             }
-            $html .= ' / ';
-
             if (count($reposts) > 0) {
-                $html .= '<a href="' . $page->relpath . ltrim($page->slug, '/') . '/interactions#reposts" style="color: inherit; text-decoration: none;">' . count($reposts) . ' ' . Translator::translatePlural('Repost', 'Reposts', count($reposts)) . '</a>';
-            } else {
-                $html .= '<span style="opacity: 0.8; font-size: 0.9em;">0 ' . Translator::translatePlural('Repost', 'Reposts', 0) . '</span>';
+                $interactionParts[] = '<a href="' . $page->relpath . ltrim($page->slug, '/') . '/interactions#reposts" style="color: inherit; text-decoration: none;">' . count($reposts) . ' ' . Translator::translatePlural('Repost', 'Reposts', count($reposts)) . '</a>';
             }
-            $html .= ' / ';
-
             if (count($replies) > 0) {
-                $html .= '<a href="' . $page->relpath . ltrim($page->slug, '/') . '#interactions" style="color: inherit; text-decoration: none;">' . count($replies) . ' ' . Translator::translatePlural('Reply', 'Replies', count($replies)) . '</a>';
-            } else {
-                $html .= '<span style="opacity: 0.8; font-size: 0.9em;">0 ' . Translator::translatePlural('Reply', 'Replies', 0) . '</span>';
+                $interactionParts[] = '<a href="' . $page->relpath . ltrim($page->slug, '/') . '#interactions" style="color: inherit; text-decoration: none;">' . count($replies) . ' ' . Translator::translatePlural('Reply', 'Replies', count($replies)) . '</a>';
             }
 
-            $html .= '</div>';
+            $hasShortlink = !empty($page->shortlink);
+            $hasInteractions = !empty($interactionParts);
+
+            if ($hasShortlink || $hasInteractions) {
+                $html .= '<div class="meta-line-2" style="margin-left: 0.6em;">';
+                if ($hasShortlink) {
+                    $html .= '<a href="' . htmlspecialchars($page->shortlink) . '" style="color: inherit; text-decoration: none; opacity: 0.8;">🔗</a>';
+                    if ($hasInteractions) {
+                        $html .= ' - ';
+                    }
+                }
+                if ($hasInteractions) {
+                    $html .= implode(' / ', $interactionParts);
+                }
+                $html .= '</div>';
+            }
 
             // Line 3: Tags
             if (!empty($page->tags)) {

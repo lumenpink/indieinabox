@@ -124,6 +124,20 @@ it('displays only non-zero social counters when interactions exist in getMetadat
         'replies' => [],
     ];
 
+    $mockRepo = new class implements \Indieinabox\Repositories\Contracts\InteractionRepositoryInterface {
+        public function findByPageSlug(string $slug, ?string $type = null): array {
+            if ($type === 'like') {
+                return [['id' => '1', 'author' => 'Alice']];
+            }
+            return [];
+        }
+        public function listByStatus(string $status = 'pending'): array { return []; }
+        public function updateStatus(string $id, string $status, string $type = 'pending'): bool { return true; }
+        public function save(string $id, array $metadata, string $content = '', string $channel = 'notifications'): bool { return true; }
+        public function delete(string $id, string $type = 'pending'): bool { return true; }
+    };
+    \Indieinabox\Core\Container::getInstance()->instance(\Indieinabox\Repositories\Contracts\InteractionRepositoryInterface::class, $mockRepo);
+
     $html = ThemeHelper::getMetadataHtml($page);
 
     expect($html)->toContain('<a href="https://lumen.pink/p/abc"')
@@ -164,4 +178,51 @@ it('hides zero social counters in summary view', function () {
         ->and($output)->not->toContain('0 Reply')
         ->and($output)->not->toContain('🔗</a> - ');
 });
+
+it('renders non-zero social counters in summary view when interactions exist', function () {
+    $site = new \Indieinabox\Site\Site();
+    $site->metadata->sitename = 'Lumen Blog';
+    $site->localization->defaultLang = 'pt';
+    $site->paths->themeDir = dirname(__DIR__, 3) . '/resources';
+    $site->config['kinds'] = ['note' => ['has_title' => false]];
+    \Indieinabox\Core\Container::getInstance()->instance(\Indieinabox\Site\Site::class, $site);
+    $GLOBALS['site'] = $site;
+
+    $page = new Page(null, null, null);
+    $page->kind = 'note';
+    $page->slug = 'notes/summary-test-active.html';
+    $page->relpath = '';
+    $page->date = new DateTime('2026-10-11 12:00:00');
+    $page->localizeddate = '2026-10-11';
+    $page->shortlink = 'https://lumen.pink/p/active';
+
+    $mockRepo = new class implements \Indieinabox\Repositories\Contracts\InteractionRepositoryInterface {
+        public function findByPageSlug(string $slug, ?string $type = null): array {
+            if ($type === 'repost') {
+                return [['id' => '2', 'author' => 'Bob']];
+            }
+            return [];
+        }
+        public function listByStatus(string $status = 'pending'): array { return []; }
+        public function updateStatus(string $id, string $status, string $type = 'pending'): bool { return true; }
+        public function save(string $id, array $metadata, string $content = '', string $channel = 'notifications'): bool { return true; }
+        public function delete(string $id, string $type = 'pending'): bool { return true; }
+    };
+    \Indieinabox\Core\Container::getInstance()->instance(\Indieinabox\Repositories\Contracts\InteractionRepositoryInterface::class, $mockRepo);
+
+    ob_start();
+    \Indieinabox\Theme\ThemeManager::includeView('includes/summary.php', [
+        'page' => $page,
+        'site' => $site,
+    ]);
+    $output = ob_get_clean();
+
+    expect($output)->toContain('<a href="https://lumen.pink/p/active"')
+        ->and($output)->toContain('1 Repost')
+        ->and($output)->not->toContain('0 Like')
+        ->and($output)->not->toContain('0 Reply')
+        ->and($output)->toContain('🔗</a> -')
+        ->and($output)->toContain('href="notes/summary-test-active.html/interactions#reposts"');
+});
+
 

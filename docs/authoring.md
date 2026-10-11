@@ -295,8 +295,11 @@ Para garantir que imagens fotográficas completas possam ser visualizadas em sua
 3. **Licenciamento CC-BY-NC**:
    - Todas as páginas dedicadas de imagem incluem metadados explícitos: `<meta name="license" content="https://creativecommons.org/licenses/by-nc/4.0/">` e link semântico com atributo `rel="license"`.
 
+---
 
+## Miniaturas e Links Acessíveis em Posts de Foto (#87)
 
-
-
-
+Para posts do tipo foto (`kind: photo`) e posts que contenham imagens:
+1. **Exibição nas Listagens (`renderPostSnippet`)**:
+   - A listagem exibe a miniatura ditherizada compacta (`_thumb.gif`) com link clicável apontando para o permalink do post.
+   - Posts sem título e sem texto no corpo recebem um texto acessível padrão contextual: `Foto sem título publicada em [data]` (ou equivalente no idioma ativo), garantindo elementos de clique visíveis e semânticos para leitores de tela e navegadores de modo texto (Lynx).

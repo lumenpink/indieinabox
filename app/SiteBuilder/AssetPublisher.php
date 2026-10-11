@@ -109,6 +109,8 @@ class AssetPublisher
             return;
         }
 
+        $realSource = realpath($sourceMediaDir) ?: $sourceMediaDir;
+
         $targets = [
             $this->site->paths->outputDirHtml . DIRECTORY_SEPARATOR . 'media',
             $this->site->paths->outputDirGemini . DIRECTORY_SEPARATOR . 'media',
@@ -116,6 +118,14 @@ class AssetPublisher
         ];
 
         foreach ($targets as $target) {
+            $destPath = $base . DIRECTORY_SEPARATOR . $target;
+            if (is_link($destPath)) {
+                continue;
+            }
+            $realDest = realpath($destPath);
+            if ($realDest !== false && $realDest === $realSource) {
+                continue;
+            }
             $this->copyStaticFiles($sourceMediaDir, $base, $target);
         }
     }

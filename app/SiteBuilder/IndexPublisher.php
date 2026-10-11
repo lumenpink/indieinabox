@@ -56,6 +56,7 @@ class IndexPublisher
         $this->publishKindIndexes($pages);
         $this->publishTaxonomies($pages);
         $this->publishSearchIndex($pages);
+        $this->publishAlphabeticalSearchPage($pages);
     }
 
     /**
@@ -737,6 +738,122 @@ class IndexPublisher
      *
      * @return \Indieinabox\Taxonomy\Contracts\TaxonomyServiceInterface
      */
+
+    /**
+     * Compiles and publishes static alphabetical search index pages (A-Z) (#86).
+     * Generated completely statically with Zero JavaScript and Zero server-side runtime,
+     * fully accessible to NCSA Mosaic, Lynx, and modern browsers.
+     *
+     * @param iterable<Page> $pages
+     * @return void
+     */
+    public function publishAlphabeticalSearchPage(iterable $pages): void
+    {
+        $defaultLang = $this->site->localization->defaultLang ?? 'en';
+        $activeLangs = $this->site->localization->lang ?? [$defaultLang];
+
+        $pagesByLang = [];
+        foreach ($activeLangs as $l) {
+            $pagesByLang[$l] = [];
+        }
+
+        foreach ($pages as $p) {
+            if ($p->nick === 'intro' || ($p->filepath && basename($p->filepath) === 'intro.md') || in_array('draft', $p->metadata->tags ?? [])) {
+                continue;
+            }
+            if (in_array($p->kind, ['generic', 'home', 'page'], true) && ($p->slug === '/' || $p->slug === 'index/' || $p->slug === '')) {
+                continue;
+            }
+
+            $lang = (string) ($p->lang ?? $defaultLang);
+            if (!isset($pagesByLang[$lang])) {
+                $pagesByLang[$lang] = [];
+            }
+            $pagesByLang[$lang][] = $p;
+        }
+
+        foreach ($pagesByLang as $lang => $langPages) {
+            // Group pages by uppercase first letter
+            $sections = [];
+            foreach ($langPages as $p) {
+                $rawTitle = trim((string) ($p->metadata->title ?? ''));
+                if ($rawTitle === '' || $rawTitle === 'Untitled') {
+                    $cleanBody = strip_tags((string) ($p->content->content ?? $p->rawBody ?? ''));
+                    $cleanBody = trim(preg_replace('/\s+/', ' ', $cleanBody));
+                    $rawTitle = mb_substr($cleanBody, 0, 40) ?: 'Sem título';
+                }
+
+                // Normalise first letter (remove accents for grouping A-Z)
+                $firstChar = mb_substr($rawTitle, 0, 1);
+                $asciiChar = @iconv('UTF-8', 'ASCII//TRANSLIT', $firstChar);
+                $asciiChar = strtoupper($asciiChar ?: $firstChar);
+                $letter = preg_match('/^[A-Z]$/', $asciiChar) ? $asciiChar : '#';
+
+                $sections[$letter][] = [
+                    'page' => $p,
+                    'title' => $rawTitle,
+                ];
+            }
+
+            // Sort sections: letters A-Z, then #
+            uksort($sections, function ($a, $b) {
+                if ($a === '#') return 1;
+                if ($b === '#') return -1;
+                return strcmp($a, $b);
+            });
+
+            // Sort items within each section
+            foreach ($sections as $letter => &$items) {
+                usort($items, fn($a, $b) => strcasecmp($a['title'], $b['title']));
+            }
+            unset($items);
+
+            $searchSlug = ($lang === $defaultLang ? '' : $lang . '/') . 'busca/';
+            $pageTitle = ($lang === 'pt') ? 'Busca e Índice Alfabético' : (($lang === 'es') ? 'Búsqueda e Índice Alfabético' : 'Search & Alphabetical Index');
+
+            $navLetters = '';
+            foreach (array_keys($sections) as $let) {
+                $navLetters .= '<a href="#letter-' . $let . '" style="margin: 0 0.3em; font-weight: bold;">[' . $let . ']</a> ';
+            }
+
+            $hintText = ($lang === 'pt')
+                ? 'Dica: Use <code>Ctrl+F</code> (ou a busca do seu navegador) para encontrar termos instantaneamente nesta página.'
+                : 'Tip: Use <code>Ctrl+F</code> (or your browser find tool) to search terms instantly on this page.';
+
+            $bodyHtml = '<div class="static-search-index" style="line-height: 1.6;">';
+            $bodyHtml .= '<p style="font-size: 0.9em; opacity: 0.85; margin-bottom: 1.5em;">' . $hintText . '</p>';
+            $bodyHtml .= '<nav class="search-letter-nav" aria-label="Navegação Alfabética" style="margin-bottom: 2em; padding: 0.5em; background: rgba(128,128,128,0.1); border-radius: 4px; text-align: center;">';
+            $bodyHtml .= $navLetters;
+            $bodyHtml .= '</nav>';
+
+            foreach ($sections as $letter => $items) {
+                $bodyHtml .= '<h3 id="letter-' . $letter . '" style="border-bottom: 1px dashed var(--fg, #888); padding-bottom: 0.2em; margin-top: 1.5em;">' . $letter . '</h3>';
+                $bodyHtml .= '<ul style="list-style-type: none; padding-left: 0.5em;">';
+                foreach ($items as $item) {
+                    /** @var Page $p */
+                    $p = $item['page'];
+                    $itemUrl = '/' . ltrim((string) $p->slug, '/');
+                    $kindBadge = '<span style="font-size: 0.8em; opacity: 0.7; margin-right: 0.4em;">[' . htmlspecialchars($p->kind ?? 'post') . ']</span>';
+                    $bodyHtml .= '<li style="margin-bottom: 0.4em;">' . $kindBadge . '<a href="' . htmlspecialchars($itemUrl) . '">' . htmlspecialchars($item['title']) . '</a></li>';
+                }
+                $bodyHtml .= '</ul>';
+            }
+            $bodyHtml .= '</div>';
+
+            $indexPage = Page::fromArray([
+                'title'   => $pageTitle,
+                'layout'  => 'page',
+                'slug'    => $searchSlug,
+                'rawBody' => '',
+                'content' => $bodyHtml,
+                'lang'    => $lang,
+                'kind'    => 'generic',
+            ]);
+
+            $this->pagePublisher->publish($indexPage);
+        }
+    }
+
     public function getTaxonomyService(): TaxonomyServiceInterface
     {
         return $this->taxonomyService;

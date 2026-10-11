@@ -385,6 +385,10 @@ class ThemeData
         foreach ($footerLinks as $item) {
             $linksHTML[] = '<a href="' . htmlspecialchars($item['url']) . '">' . htmlspecialchars($item['label']) . '</a>';
         }
+        $lang = $page->lang ?? 'pt';
+        $searchPath = ($lang === 'pt' ? 'busca/' : ($lang === 'es' ? 'es/busca/' : 'en/busca/'));
+        $searchLabel = ($lang === 'pt' ? 'Busca' : ($lang === 'es' ? 'Búsqueda' : 'Search'));
+        $linksHTML[] = '<a href="' . htmlspecialchars($page->relpath . $searchPath) . '">' . htmlspecialchars($searchLabel) . '</a>';
         $linksHTML[] = '<a href="' . htmlspecialchars($page->relpath) . 'rss.xml">RSS</a>';
         $linksHTML[] = '<a href="' . htmlspecialchars($page->relpath) . 'atom.xml">ATOM</a>';
 

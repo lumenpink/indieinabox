@@ -303,3 +303,18 @@ Para posts do tipo foto (`kind: photo`) e posts que contenham imagens:
 1. **Exibição nas Listagens (`renderPostSnippet`)**:
    - A listagem exibe a miniatura ditherizada compacta (`_thumb.gif`) com link clicável apontando para o permalink do post.
    - Posts sem título e sem texto no corpo recebem um texto acessível padrão contextual: `Foto sem título publicada em [data]` (ou equivalente no idioma ativo), garantindo elementos de clique visíveis e semânticos para leitores de tela e navegadores de modo texto (Lynx).
+
+---
+
+## Sistema de Busca Estática e Índice Alfabético A-Z (#86)
+
+Para manter o princípio fundamental de **Zero JavaScript** e **Zero processamento dinâmico no servidor** (prevenindo abuso, scraping hostil e DoS), o sistema implementa um **Índice Alfabético Estático A-Z / Glossário Geral**:
+
+### Contrato de Busca Estática
+1. **Páginas Geradas (`/busca/`, `/en/search/`, `/es/buscar/`)**:
+   - Compiladas estaticamente em tempo de build para HTML, Gemini (.gmi) e Gopher (gophermap).
+   - Menu superior de navegação por âncoras locais: `[ A ] [ B ] [ C ] ... [ Z ] [ # ]`.
+   - Seções agrupadas por letra inicial (com suporte a acentuação e caracteres especiais Unicode).
+   - Entradas detalhadas contendo o título ou descrição do post, link permanente, tipo de conteúdo (`[artigo]`, `[nota]`, `[foto]`) e data.
+   - Índice de tags e termos associados.
+   - Orientação acessível encorajando o uso da busca nativa do cliente (`Ctrl+F` ou comando local de busca de texto).

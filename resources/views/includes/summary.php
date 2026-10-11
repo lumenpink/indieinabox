@@ -17,41 +17,41 @@ $_kindLabel = \Indieinabox\Taxonomy\KindHelper::kindLabel($page->kind);
                     - <a href="<?= $page->relpath ?><?= $page->slug ?>" class="u-url"><time class="dt-published" datetime="<?= $page->isodate ?>"><?= $page->localizeddate ?></time></a>
                 <?php endif; ?>
             </div>
-            
             <?php
             $likes = \Indieinabox\Taxonomy\KindHelper::getInteractions($page, 'like');
             $reposts = \Indieinabox\Taxonomy\KindHelper::getInteractions($page, 'repost');
             $replies = \Indieinabox\Taxonomy\KindHelper::getInteractions($page, 'reply');
+
+            $interactionParts = [];
+            if (count($likes) > 0) {
+                $interactionParts[] = '<a href="' . $page->relpath . $page->slug . '/interactions#likes" style="color: inherit; text-decoration: none;">'
+                    . count($likes) . ' ' . \Indieinabox\Localization\Translator::translatePlural('Like', 'Likes', count($likes))
+                    . '</a>';
+            }
+            if (count($reposts) > 0) {
+                $interactionParts[] = '<a href="' . $page->relpath . $page->slug . '/interactions#reposts" style="color: inherit; text-decoration: none;">'
+                    . count($reposts) . ' ' . \Indieinabox\Localization\Translator::translatePlural('Repost', 'Reposts', count($reposts))
+                    . '</a>';
+            }
+            if (count($replies) > 0) {
+                $interactionParts[] = '<a href="' . $page->relpath . $page->slug . '#interactions" style="color: inherit; text-decoration: none;">'
+                    . count($replies) . ' ' . \Indieinabox\Localization\Translator::translatePlural('Reply', 'Replies', count($replies))
+                    . '</a>';
+            }
+
+            $hasShortlink = !empty($page->shortlink);
+            $hasInteractions = !empty($interactionParts);
             ?>
-            <div class="meta-line-2" style="margin-left: 0.6em;">
-                <?php if (!empty($page->shortlink)): ?>
-                    <a href="<?= htmlspecialchars($page->shortlink) ?>" style="color: inherit; text-decoration: none; opacity: 0.8;">🔗</a> - 
-                <?php endif; ?>
-                
-                <?php if (count($likes) > 0): ?>
-                    <a href="<?= $page->relpath ?><?= $page->slug ?>/interactions#likes" style="color: inherit; text-decoration: none;">
-                        <?= count($likes) ?> <?= \Indieinabox\Localization\Translator::translatePlural('Like', 'Likes', count($likes)) ?>
-                    </a>
-                <?php else: ?>
-                    <span style="opacity: 0.8; font-size: 0.9em;">0 <?= \Indieinabox\Localization\Translator::translatePlural('Like', 'Likes', 0) ?></span>
-                <?php endif; ?>
-                /
-                <?php if (count($reposts) > 0): ?>
-                    <a href="<?= $page->relpath ?><?= $page->slug ?>/interactions#reposts" style="color: inherit; text-decoration: none;">
-                        <?= count($reposts) ?> <?= \Indieinabox\Localization\Translator::translatePlural('Repost', 'Reposts', count($reposts)) ?>
-                    </a>
-                <?php else: ?>
-                    <span style="opacity: 0.8; font-size: 0.9em;">0 <?= \Indieinabox\Localization\Translator::translatePlural('Repost', 'Reposts', 0) ?></span>
-                <?php endif; ?>
-                /
-                <?php if (count($replies) > 0): ?>
-                    <a href="<?= $page->relpath ?><?= $page->slug ?>#interactions" style="color: inherit; text-decoration: none;">
-                        <?= count($replies) ?> <?= \Indieinabox\Localization\Translator::translatePlural('Reply', 'Replies', count($replies)) ?>
-                    </a>
-                <?php else: ?>
-                    <span style="opacity: 0.8; font-size: 0.9em;">0 <?= \Indieinabox\Localization\Translator::translatePlural('Reply', 'Replies', 0) ?></span>
-                <?php endif; ?>
-            </div>
+            <?php if ($hasShortlink || $hasInteractions): ?>
+                <div class="meta-line-2" style="margin-left: 0.6em;">
+                    <?php if ($hasShortlink): ?>
+                        <a href="<?= htmlspecialchars($page->shortlink) ?>" style="color: inherit; text-decoration: none; opacity: 0.8;">🔗</a><?php if ($hasInteractions): ?> - <?php endif; ?>
+                    <?php endif; ?>
+                    <?php if ($hasInteractions): ?>
+                        <?= implode(' / ', $interactionParts) ?>
+                    <?php endif; ?>
+                </div>
+            <?php endif; ?>
 
             <?php if (!empty($page->tags)): ?>
                 <div class="meta-line-3" style="margin-left: 0.6em;">

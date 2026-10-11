@@ -102,3 +102,45 @@ test('IndexPublisher publishes global and per-language search.json index files',
     expect($ptData[0]['title'])->toBe('Sobre Mim');
     expect($ptData[0]['tags'])->toContain('bio')->toContain('tecnologia');
 });
+
+test('IndexPublisher publishes static alphabetical search index page with A-Z sections and no javascript', function () {
+    $themeDir = $this->tempDir . '/theme/views';
+    @mkdir($themeDir, 0755, true);
+    file_put_contents($themeDir . '/page.php', '<html><body><?= $page->content ?></body></html>');
+    $this->site->paths->themeDir = 'theme';
+
+    $postA = Page::fromArray([
+        'slug' => 'articles/abacate/',
+        'title' => 'Abacate e Nutrição',
+        'kind' => 'article',
+        'rawBody' => 'Conteúdo sobre abacate.',
+        'date' => new \DateTime('2026-09-01'),
+        'lang' => 'pt',
+    ]);
+
+    $postZ = Page::fromArray([
+        'slug' => 'articles/zebra/',
+        'title' => 'Zebra nas Savanas',
+        'kind' => 'article',
+        'rawBody' => 'Conteúdo sobre zebras.',
+        'date' => new \DateTime('2026-09-02'),
+        'lang' => 'pt',
+    ]);
+
+    $this->pages->add($postA);
+    $this->pages->add($postZ);
+
+    $this->indexPublisher->publishAlphabeticalSearchPage($this->pages);
+
+    $searchPage = $this->tempDir . '/public_html/pt/busca/index.html';
+    expect(file_exists($searchPage))->toBeTrue();
+
+    $content = file_get_contents($searchPage);
+    expect($content)->toContain('Abacate e Nutrição')
+        ->and($content)->toContain('Zebra nas Savanas')
+        ->and($content)->toContain('href="#letter-A"')
+        ->and($content)->toContain('id="letter-A"')
+        ->and($content)->toContain('href="#letter-Z"')
+        ->and($content)->toContain('id="letter-Z"')
+        ->and($content)->not->toContain('<script');
+});

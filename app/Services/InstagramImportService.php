@@ -111,7 +111,20 @@ class InstagramImportService
                     }
                     if (empty($uris)) continue;
 
-                    $id = md5($ts . '_' . implode(',', $uris));
+                    // Ignorar se nenhum dos arquivos de mídia existir no disco
+                    $availableSrcFiles = [];
+                    foreach ($uris as $srcRel) {
+                        $srcFile = $folderPath . '/' . $srcRel;
+                        if (file_exists($srcFile)) {
+                            $availableSrcFiles[$srcRel] = $srcFile;
+                        }
+                    }
+                    if (empty($availableSrcFiles)) {
+                        continue;
+                    }
+
+                    // Previne duplicações de posts gerados com timestamps ligeiramente diferentes no export
+                    $id = md5(implode(',', $uris));
                     if (isset($state[$id])) {
                         continue;
                     }
@@ -122,15 +135,15 @@ class InstagramImportService
                     $mdFile = $postDir . '/' . $ts . '.md';
 
                     $copiedFiles = [];
-                    foreach ($uris as $srcRel) {
-                        $srcFile = $folderPath . '/' . $srcRel;
+                    foreach ($availableSrcFiles as $srcRel => $srcFile) {
                         $filename = basename($srcRel);
                         $destFile = $postDir . '/' . $filename;
+                        copy($srcFile, $destFile);
+                        $copiedFiles[] = $filename;
+                    }
 
-                        if (file_exists($srcFile)) {
-                            copy($srcFile, $destFile);
-                            $copiedFiles[] = $filename;
-                        }
+                    if (empty($copiedFiles)) {
+                        continue;
                     }
 
                     // Tags e Frontmatter

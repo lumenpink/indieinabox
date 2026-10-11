@@ -37,7 +37,7 @@ Se você apagar ou não tiver esse arquivo, o bloco será simplesmente ocultado.
 
 ## Interações e Contadores
 
-Todas as páginas geradas exibirão os links para suas interações (Likes, Reposts e Replies). Mesmo que uma postagem não tenha nenhuma interação, os contadores serão exibidos com valor 0 em formato de texto sem link (ex: `0 Likes / 0 Reposts / 0 Replies`), permitindo que a interface sempre mantenha sua consistência. Se as interações existirem, o texto se tornará um link navegável.
+Todas as postagens com interações sociais ativas (Likes, Reposts e Replies) exibirão seus respectivos contadores e links para a visualização detalhada. Contadores sociais zerados (0 Likes, 0 Reposts, 0 Replies) são ocultados para manter o layout limpo e sem poluição visual. Quando não houver nenhuma interação no post, apenas o link permanente / shortlink (🔗) é exibido na linha de metadados. Caso existam interações em alguma das categorias, apenas as categorias com contagem maior que zero são renderizadas, separadas por barra (`/`).
 
 ## Internacionalização (i18n)
 

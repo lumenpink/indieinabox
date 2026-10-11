@@ -25,10 +25,15 @@ class ArchiveService
      */
     public function resolveAlias(string $url): string
     {
-        $stmt = $this->db->prepare("SELECT target_url FROM archive_aliases WHERE alias_url = ?");
-        $stmt->execute([$url]);
-        if ($row = $stmt->fetch()) {
-            return (string) $row['target_url'];
+        try {
+            $stmt = $this->db->prepare("SELECT final_url FROM archive_aliases WHERE original_url = ?");
+            $stmt->execute([$url]);
+            if ($row = $stmt->fetch()) {
+                return (string) $row['final_url'];
+            }
+        } catch (\Throwable) {
+            // Defensive fallback when database table is unavailable or error occurs
+            return $url;
         }
 
         return $url;
@@ -41,17 +46,21 @@ class ArchiveService
      */
     public function findSnapshot(string $url, ?int $timestamp = null): ?array
     {
-        $targetUrl = $this->resolveAlias($url);
-        $normUrl = rtrim(strtolower($targetUrl), '/');
-        $ts = $timestamp ?? time();
+        try {
+            $targetUrl = $this->resolveAlias($url);
+            $normUrl = rtrim(strtolower($targetUrl), '/');
+            $ts = $timestamp ?? time();
 
-        $stmt = $this->db->prepare(
-            "SELECT * FROM archived_links WHERE url = ? ORDER BY ABS(timestamp - ?) ASC LIMIT 1"
-        );
-        $stmt->execute([$normUrl, $ts]);
-        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            $stmt = $this->db->prepare(
+                "SELECT * FROM archived_links WHERE url = ? ORDER BY ABS(timestamp - ?) ASC LIMIT 1"
+            );
+            $stmt->execute([$normUrl, $ts]);
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        return $result ?: null;
+            return $result ?: null;
+        } catch (\Throwable) {
+            return null;
+        }
     }
 
     /**

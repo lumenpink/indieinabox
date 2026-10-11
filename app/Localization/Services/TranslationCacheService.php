@@ -19,7 +19,16 @@ class TranslationCacheService
         if ($cacheDir !== null) {
             $this->cacheDir = $cacheDir;
         } else {
-            $dataDir = Database::$dataDir !== '' ? Database::$dataDir : dirname(__DIR__, 3) . '/data';
+            $dataDir = !empty(Database::$dataDir) ? Database::$dataDir : '';
+            if ($dataDir === '' || !is_dir($dataDir)) {
+                if (is_dir('/app/data')) {
+                    $dataDir = '/app/data';
+                } elseif (is_dir(getcwd() . '/data')) {
+                    $dataDir = getcwd() . '/data';
+                } else {
+                    $dataDir = sys_get_temp_dir() . '/indieinabox_data';
+                }
+            }
             $this->cacheDir = $dataDir . '/cache/translations';
         }
 

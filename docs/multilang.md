@@ -23,6 +23,15 @@ To correlate posts that exist in multiple languages (and specifically, posts tha
 
 When the `SiteBuilder` compiles the site, it queries this table. If it sees `about.md`, it knows its Portuguese counterpart is `pt/sobre.md`. This drives the language switcher in the site header, ensuring it points to the correct localized URL.
 
+### Comutador de Idioma no Cabeçalho (Header Language Switcher)
+
+O comutador de idioma no cabeçalho (`ThemeData::getLanguageSelector()`) permite que o leitor alterne entre os idiomas disponíveis preservando o contexto exato da página atual (correlação 1:1):
+1. **Página de Conteúdo / Post**: Quando o leitor está em uma página (seja ela nativa ou virtualizada/traduzida por IA), o comutador resolve o link de cada idioma alternativo para a rota correspondente daquele post (por exemplo, de `/pt/artigos/sobre/` para `/en/articles/about/` ou `/es/articulos/sobre/`).
+2. **Resolução de Rotas e Taxonomias**: Utiliza os links mapeados em `$langLinks` (gerados por `PagePublisher::getLanguageLinks($page)`), que resolve taxonomias (`tags`, `flowerbeds`), tipos de post e correspondências em `url_translations`.
+3. **Fallback Gracioso para Raiz**: Se um determinado post ou taxonomia não existir ou não tiver correlação válida no idioma de destino, o link faz fallback gracioso para a raiz daquele idioma (ex: `/en/` ou `/`).
+4. **Caminho Relativo no Contexto da Página**: As URLs geradas no seletor são ajustadas com base no `$page->relpath` da página corrente quando necessário, garantindo que o comutador funcione perfeitamente em sites servidos com links relativos (HTML estático) ou servidos sob subdiretórios.
+
+
 ### Multilingual Wikilink Resolution Contract
 When rendering internal wikilinks (e.g. `[[currículo|aqui]]` or `[[Travesti]]`) inside a page written or virtualized in a target language (e.g. `en` or `es`):
 1. **Target-Language Match First**: The renderer checks if any page in `$currentPageLang` has a matching title, slug, or nick for the wikilink target (after slugification).

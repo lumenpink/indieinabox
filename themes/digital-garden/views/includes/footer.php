@@ -1,12 +1,12 @@
 <?php
 /** @var \Indieinabox\Page\Page $page */
 /** @var \Indieinabox\Site\Site $site */
-global $footerLinks;
 use Indieinabox\Theme\ThemeData;
+$activeFooterLinks = $footerLinks ?? ($GLOBALS['footerLinks'] ?? []);
 ?>
 <footer role="contentinfo">
     <?= ThemeData::getKindLinks($page, $pages ?? null, $site) ?>
-    <?= ThemeData::getFooterLinks($page, $footerLinks ?? []) ?>
+    <?= ThemeData::getFooterLinks($page, $activeFooterLinks) ?>
     
     <div class="footer-credit">
         🌿 Cultivado com carinho por <?= htmlspecialchars($site->metadata->author ?? 'Jardineiro') ?> &bull;

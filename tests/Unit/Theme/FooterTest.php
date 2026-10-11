@@ -102,6 +102,7 @@ it('renders canonical 2-line footer in 10 languages according to GOST Profile Lu
         expect($html)->toContain('href="https://lumen.pink">Lumen Pink</a>');
         expect($html)->toContain($expected['country']);
         expect($html)->toContain('Apache-2.0');
+        expect($html)->toMatch('/(build est[aá]tico|static build|compilaci[oó]n est[aá]tica|build|compilação):/i');
     }
 });
 

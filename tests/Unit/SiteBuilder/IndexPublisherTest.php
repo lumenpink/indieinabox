@@ -43,6 +43,10 @@ beforeEach(function () {
     global $site;
     $site = $this->site;
 
+    $themeViewsDir = $this->tempDir . '/theme/views';
+    mkdir($themeViewsDir, 0777, true);
+    file_put_contents($themeViewsDir . '/page.php', '<html><body><?= $page->content ?></body></html>');
+
     $this->pages = new Pages();
     $this->pagePublisher = new PagePublisher($this->site, $this->pages);
     $this->indexPublisher = new IndexPublisher($this->site, $this->pagePublisher);
@@ -122,7 +126,9 @@ it('publishes taxonomy indexes for tags and flowerbeds', function () {
 
 it('publishes timeline static page when timeline view exists in theme', function () {
     $themeDir = $this->tempDir . '/theme/views';
-    mkdir($themeDir, 0777, true);
+    if (!is_dir($themeDir)) {
+        mkdir($themeDir, 0777, true);
+    }
     file_put_contents($themeDir . '/timeline.php', '<html>Timeline</html>');
 
     $this->indexPublisher->publishTimelineStaticPage();

@@ -378,27 +378,55 @@ class IndexPublisher
                 $kindSlug = ($lang === $defaultLang ? '' : $lang . '/') . $kindFolder . '.html';
             }
 
-            $indexPage = Page::fromArray([
-                'title'   => $title,
-                'layout'  => 'page',
-                'slug'    => $kindSlug,
-                'rawBody' => '',
-                'content' => '',
-                'lang'    => $lang,
-                'kind'    => $targetKind
-            ]);
-
-            $content = '<ul style="list-style-type: none; padding-left: 0;">';
-            foreach ($kindPages as $p) {
-                $content .= '<li style="margin-bottom: 1.0em;">';
-                $content .= ThemeHelper::renderPostSnippet($indexPage, $p);
-                $content .= '</li>';
+            $perPage = (int) ($this->site->config['pagination']['per_page'] ?? 20);
+            if ($perPage <= 0) {
+                $perPage = 20;
             }
-            $content .= '</ul>';
 
-            $indexPage->content->content = $content;
+            $chunks = array_chunk($kindPages, $perPage);
+            if (empty($chunks)) {
+                $chunks = [[]];
+            }
+            $totalPages = count($chunks);
 
-            $this->pagePublisher->publish($indexPage);
+            foreach ($chunks as $chunkIndex => $pageSlice) {
+                $pageNum = $chunkIndex + 1;
+                $pageSlug = $kindSlug;
+                if ($pageNum > 1) {
+                    $pageSlug = rtrim($kindSlug, '/') . '/page/' . $pageNum . '/';
+                }
+
+                $pageTitle = $title;
+                if ($pageNum > 1) {
+                    $pageTitle .= ' (' . Translator::translate('Page') . ' ' . $pageNum . ')';
+                }
+
+                $indexPage = Page::fromArray([
+                    'title'   => $pageTitle,
+                    'layout'  => 'page',
+                    'slug'    => $pageSlug,
+                    'rawBody' => '',
+                    'content' => '',
+                    'lang'    => $lang,
+                    'kind'    => $targetKind
+                ]);
+
+                $content = '<ul style="list-style-type: none; padding-left: 0;">';
+                foreach ($pageSlice as $p) {
+                    $content .= '<li style="margin-bottom: 1.0em;">';
+                    $content .= ThemeHelper::renderPostSnippet($indexPage, $p);
+                    $content .= '</li>';
+                }
+                $content .= '</ul>';
+
+                if ($totalPages > 1) {
+                    $content .= $this->renderPaginationNav($pageNum, $totalPages);
+                }
+
+                $indexPage->content->content = $content;
+
+                $this->pagePublisher->publish($indexPage);
+            }
         }
     }
 
@@ -473,45 +501,74 @@ class IndexPublisher
                     . $count . ')</li>' . "\n";
                 $globalRaw .= "=> /" . $termSlug . ' ' . $term . ' (' . $count . ")\n";
 
-                $termTitleBase = Translator::translate(ucfirst($taxonomyName)) . ': ' . $term;
-
-                $termPage = Page::fromArray([
-                    'title' => $termTitleBase,
-                    'layout' => 'page',
-                    'slug' => $termSlug,
-                    'date' => time(),
-                    'content' => '',
-                    'rawBody' => '',
-                    'lang' => $lang,
-                    'kind' => 'generic'
-                ]);
-
-                $termContent = '<ul style="list-style-type: none; padding-left: 0;">' . "\n";
-                $termRaw = '';
-                foreach ($termPages as $idx => $p) {
-                    $termContent .= '<li style="margin-bottom: 1.0em;">' . "\n";
-                    $termContent .= ThemeHelper::renderPostSnippet($termPage, $p);
-                    $termContent .= '</li>' . "\n";
-
-                    if ($idx > 0) {
-                        $termRaw .= "\n\n---\n\n";
-                    }
-                    $termRaw .= $p->rawBody;
+                $termPerPage = (int) ($this->site->config['pagination']['per_page'] ?? 20);
+                if ($termPerPage <= 0) {
+                    $termPerPage = 20;
                 }
-                $termContent .= "</ul>\n";
 
-                $termPage->content->content = $termContent;
-                $termPage->content->rawBody = $termRaw;
+                $termChunks = array_chunk($termPages, $termPerPage);
+                if (empty($termChunks)) {
+                    $termChunks = [[]];
+                }
+                $totalTermPages = count($termChunks);
 
-                $this->pagePublisher->publish($termPage);
+                foreach ($termChunks as $tChunkIndex => $tPageSlice) {
+                    $tPageNum = $tChunkIndex + 1;
+                    $currentTermSlug = $termSlug;
+                    if ($tPageNum > 1) {
+                        $currentTermSlug = rtrim($termSlug, '/') . '/page/' . $tPageNum . '/';
+                    }
 
-                // If singular taxonomy (e.g. tag), also publish plural alias (e.g. tags/<slug>/)
-                if ($taxonomyName === 'tag') {
-                    $termSlugPlural = ($lang === $this->site->localization->defaultLang ? '' : $lang . '/')
-                        . 'tags/' . TextParser::slugize($term) . '/';
-                    $termPagePlural = clone $termPage;
-                    $termPagePlural->slug = $termSlugPlural;
-                    $this->pagePublisher->publish($termPagePlural);
+                    $currentTermTitle = $termTitleBase;
+                    if ($tPageNum > 1) {
+                        $currentTermTitle .= ' (' . Translator::translate('Page') . ' ' . $tPageNum . ')';
+                    }
+
+                    $termPage = Page::fromArray([
+                        'title' => $currentTermTitle,
+                        'layout' => 'page',
+                        'slug' => $currentTermSlug,
+                        'date' => time(),
+                        'content' => '',
+                        'rawBody' => '',
+                        'lang' => $lang,
+                        'kind' => 'generic'
+                    ]);
+
+                    $termContent = '<ul style="list-style-type: none; padding-left: 0;">' . "\n";
+                    $termRaw = '';
+                    foreach ($tPageSlice as $idx => $p) {
+                        $termContent .= '<li style="margin-bottom: 1.0em;">' . "\n";
+                        $termContent .= ThemeHelper::renderPostSnippet($termPage, $p);
+                        $termContent .= '</li>' . "\n";
+
+                        if ($idx > 0) {
+                            $termRaw .= "\n\n---\n\n";
+                        }
+                        $termRaw .= $p->rawBody;
+                    }
+                    $termContent .= "</ul>\n";
+
+                    if ($totalTermPages > 1) {
+                        $termContent .= $this->renderPaginationNav($tPageNum, $totalTermPages);
+                    }
+
+                    $termPage->content->content = $termContent;
+                    $termPage->content->rawBody = $termRaw;
+
+                    $this->pagePublisher->publish($termPage);
+
+                    // If singular taxonomy (e.g. tag), also publish plural alias (e.g. tags/<slug>/)
+                    if ($taxonomyName === 'tag') {
+                        $termSlugPlural = ($lang === $this->site->localization->defaultLang ? '' : $lang . '/')
+                            . 'tags/' . TextParser::slugize($term) . '/';
+                        if ($tPageNum > 1) {
+                            $termSlugPlural = rtrim($termSlugPlural, '/') . '/page/' . $tPageNum . '/';
+                        }
+                        $termPagePlural = clone $termPage;
+                        $termPagePlural->slug = $termSlugPlural;
+                        $this->pagePublisher->publish($termPagePlural);
+                    }
                 }
             }
 
@@ -644,6 +701,35 @@ class IndexPublisher
                 // Non-fatal if FTS5 indexing fails during static build
             }
         }
+    }
+
+    /**
+     * Renders an accessible HTML pagination navigation component with relative links.
+     *
+     * @param int $currentPage
+     * @param int $totalPages
+     * @return string
+     */
+    protected function renderPaginationNav(int $currentPage, int $totalPages): string
+    {
+        $prevLink = '';
+        if ($currentPage > 1) {
+            $prevHref = ($currentPage === 2) ? '../../' : '../' . ($currentPage - 1) . '/';
+            $prevLink = '<a class="pagination-prev" href="' . $prevHref . '">&larr; ' . Translator::translate('Previous') . '</a>';
+        }
+
+        $nextLink = '';
+        if ($currentPage < $totalPages) {
+            $nextHref = ($currentPage === 1) ? 'page/2/' : '../' . ($currentPage + 1) . '/';
+            $nextLink = '<a class="pagination-next" href="' . $nextHref . '">' . Translator::translate('Next') . ' &rarr;</a>';
+        }
+
+        $info = '<span class="pagination-info">' . Translator::translate('Page') . ' ' . $currentPage . ' / ' . $totalPages . '</span>';
+
+        $parts = array_filter([$prevLink, $info, $nextLink]);
+        return '<nav class="pagination" aria-label="' . Translator::translate('Pagination') . '">'
+            . implode(' ', $parts)
+            . '</nav>';
     }
 
     /**

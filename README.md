@@ -137,3 +137,13 @@ Indieinabox stands on the shoulders of giants in the open web and IndieWeb commu
 - **Microformats 2 Parser (`mf2/mf2`)**: Immense thanks to the maintainer trio **Barnaby Walters** ([@waterpigs](https://github.com/barnabywalters)), **Tantek Çelik** ([@tantek](https://github.com/tantek)), and **Aaron Parecki** ([@aaronpk](https://github.com/aaronpk)) for creating and stewarding `php-mf2`, enabling lightweight, standard-compliant structured data parsing across the PHP IndieWeb.
 - **IndieWeb Community**: For continuous inspiration, standards design, and testbeds like [webmention.rocks](https://webmention.rocks/).
 
+
+## 📄 Licença
+
+Este projeto é software livre licenciado sob a [GNU General Public License v3.0](LICENSE) (GPL-3.0-or-later).
+
+| Componente | Licença | Arquivo |
+| :--- | :--- | :--- |
+| **Código-fonte e binários** | GPL-3.0-or-later | [LICENSE](LICENSE) |
+| **Logotipos e marcas** | CC-BY-ND-4.0 | [LICENSE-LOGO](LICENSE-LOGO) |
+| **Mídias e documentação** | CC-BY-SA-4.0 | [LICENSE-MEDIA](LICENSE-MEDIA) |

@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 ### Features
+  - (ci) continuous deployment no obitwo com rollback (closes #1)
   - (media) resolver caminhos de midia relativos para paginas aninhadas (closes #80)
   - (ui) tornar textos e miniaturas de midia clicaveis nas listagens (closes #79)
   - (i18n,garden) sincronizacao de resumos com content-hashing (summary, summary_hash, summary_origin), linhagem original (translation_source, translation_source_hash) e adocao do Gemini 3.5 Flash como padrao

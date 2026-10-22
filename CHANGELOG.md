@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+### Fixes
+  - (ci) tornar caminhos de auditoria de CI relativos (closes #3)
+
 ### Features
   - (ci) unificar esteira em ci.yml unico e safe mount ssh (closes #2)
   - (ci) continuous deployment no obitwo com rollback (closes #1)

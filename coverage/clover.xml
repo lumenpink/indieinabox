@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1792634828">
-  <project timestamp="1792634828" name="Clover Coverage">
+<coverage generated="1792635945">
+  <project timestamp="1792635945" name="Clover Coverage">
     <package name="Indieinabox\ActivityPub">
       <file name="/workspace/lumen/indieinabox/app/ActivityPub/ActivityBuilder.php">
         <class name="Indieinabox\ActivityPub\ActivityBuilder" namespace="Indieinabox\ActivityPub">

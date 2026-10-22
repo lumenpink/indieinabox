@@ -1,7 +1,7 @@
 # ==========================================
 # STAGE 1: Build & Compilação
 # ==========================================
-FROM php:8.4-cli-alpine AS builder
+FROM php:8.5-cli-alpine AS builder
 
 # Instala ferramentas de compilação, git e dependências para extensões
 RUN apk add --no-cache bash curl git unzip nodejs npm
@@ -35,7 +35,7 @@ RUN test -f indieinabox.php && php -l indieinabox.php
 # ==========================================
 # STAGE 2: Imagem Final de Produção (Runtime)
 # ==========================================
-FROM dunglas/frankenphp:php8.4-alpine
+FROM dunglas/frankenphp:php8.5-alpine
 
 # Instala bash, shadow e mapeia o usuário www-data para UID/GID 1000:1000 (compatível com o host)
 RUN apk add --no-cache bash shadow \

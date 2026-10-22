@@ -1,4 +1,4 @@
-# CI image — PHP 8.4 + Node.js 22 LTS + Xdebug + Composer
+# CI image — PHP 8.5 + Node.js 22 LTS + Xdebug + Composer
 # NOT the production image (see docker/Dockerfile for that — uses FrankenPHP).
 #
 # Node.js 22 LTS is required by the Forgejo runner (act) to execute
@@ -11,7 +11,7 @@
 # Rebuilt automatically by .forgejo/workflows/docker-ci-image.yml
 # when this file changes on main.
 
-FROM php:8.4-cli
+FROM php:8.5-cli
 
 # All required PHP extensions are already in php:8.4-cli:
 # curl, fileinfo, json, mbstring, pdo_sqlite, sqlite3, OPcache

@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 ### Features
+  - (ci) unificar esteira em ci.yml unico e safe mount ssh (closes #2)
   - (ci) continuous deployment no obitwo com rollback (closes #1)
   - (media) resolver caminhos de midia relativos para paginas aninhadas (closes #80)
   - (ui) tornar textos e miniaturas de midia clicaveis nas listagens (closes #79)

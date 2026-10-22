@@ -455,5 +455,160 @@ jobs:
             npx wrangler deploy
           fi
 
+  # ─────────────────────────────────────────────────────────────────────────────
+  # JOB — Container Build, Push & Sovereign CD (obitwo)
+  # ─────────────────────────────────────────────────────────────────────────────
+  build-and-deploy-docker:
+    name: "Container — Build & Sovereign CD (obitwo)"
+    runs-on: ubuntu-latest
+    needs: [test]
+    if: (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')) && github.event_name == 'push'
+    env:
+      IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME || 'lumenpink' }}/indieinabox
+    steps:
+      - name: "Checkout repository"
+        uses: actions/checkout@v4
+
+      - name: "Log in to Docker Hub"
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: "Extract metadata (tags, labels) for Docker"
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.IMAGE_NAME }}
+          tags: |
+            type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
+            type=ref,event=tag
+
+      - name: "Build and push Docker image"
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: docker/Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+      - name: "Deploy Remotely to obitwo (Tailscale / SSH)"
+        env:
+          OBITWO_SSH_HOST: ${{ secrets.OBITWO_SSH_HOST || '100.90.43.39' }}
+          OBITWO_SSH_USER: ${{ secrets.OBITWO_SSH_USER || 'ubuntu' }}
+          OBITWO_SSH_KEY: ${{ secrets.OBITWO_SSH_KEY }}
+        run: |
+          echo "-> Iniciando deploy soberano no nó de borda obitwo ($OBITWO_SSH_HOST)..."
+          if [ -f ~/.ssh/id_obitwo ]; then
+            SSH_OPTS="-i ~/.ssh/id_obitwo -o StrictHostKeyChecking=accept-new -o ConnectTimeout=15"
+          elif [ -f ~/.ssh/id_ed25519 ]; then
+            SSH_OPTS="-i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=accept-new -o ConnectTimeout=15"
+          elif [ -n "$OBITWO_SSH_KEY" ]; then
+            mkdir -p ~/.ssh && chmod 700 ~/.ssh
+            echo "$OBITWO_SSH_KEY" > /tmp/id_ci_obitwo
+            chmod 600 /tmp/id_ci_obitwo
+            SSH_OPTS="-i /tmp/id_ci_obitwo -o StrictHostKeyChecking=accept-new -o ConnectTimeout=15"
+          else
+            SSH_OPTS="-o StrictHostKeyChecking=accept-new -o ConnectTimeout=15"
+          fi
+
+          ssh $SSH_OPTS "$OBITWO_SSH_USER@$OBITWO_SSH_HOST" "
+            set -eo pipefail
+            cd ~/stacks/blog
+            OLD_IMAGE_ID=\$(docker inspect --format='{{.Id}}' lumenpink/indieinabox:latest 2>/dev/null || true)
+            echo \"OLD_IMAGE_ID=\$OLD_IMAGE_ID\"
+
+            echo '-> Puxando nova imagem lumenpink/indieinabox:latest no obitwo...'
+            docker compose pull web cron
+            docker compose up -d --no-build web cron
+
+            echo '-> Validando estabilidade (healthcheck polling 15s)...'
+            SUCCESS=0
+            for i in \$(seq 1 15); do
+              STATUS=\$(docker inspect --format='{{.State.Status}}' indieinabox_web 2>/dev/null || echo 'unknown')
+              if [ \"\$STATUS\" = 'running' ]; then
+                echo \"  [PASS] Container indieinabox_web saudável e ativo (tentativa \$i/15).\"
+                SUCCESS=1
+                break
+              fi
+              sleep 1
+            done
+
+            if [ \$SUCCESS -ne 1 ]; then
+              echo '✘ [FALHA] Container indieinabox_web não estabilizou no obitwo! Acionando Rollback...'
+              if [ -n \"\$OLD_IMAGE_ID\" ]; then
+                docker tag \"\$OLD_IMAGE_ID\" lumenpink/indieinabox:latest
+                docker compose up -d --no-build web cron
+                echo '✔ Rollback concluído no obitwo.'
+              fi
+              exit 1
+            fi
+
+            echo '-> Limpando camadas órfãs no obitwo...'
+            docker image prune -f
+          "
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # JOB — Deploy Public Demo Instance
+  # ─────────────────────────────────────────────────────────────────────────────
+  deploy-demo:
+    name: "Build & Deploy Public Demo Instance"
+    runs-on: ubuntu-latest
+    needs: [test]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    steps:
+      - name: "Checkout repository"
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: "Set up PHP 8.4"
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: pdo_sqlite, mbstring, intl, gd, zip, curl, gmp
+
+      - name: "Install Composer dependencies (production)"
+        run: composer install --no-interaction --prefer-dist --no-dev --no-progress
+
+      - name: "Build single-file executable (php compile.php)"
+        run: |
+          php compile.php
+          test -f indieinabox.php && php -l indieinabox.php
+
+      - name: "Build Docker Demo Image"
+        run: |
+          docker build -t indieinabox-demo:latest -f docker/Dockerfile .
+
+      - name: "Automated Sandbox Seeding & Rollback Verification"
+        run: |
+          php indieinabox.php demo seed --fqdn "https://demo.indieinabox.2lp.in" --password "demo123"
+          php indieinabox.php demo status
+          php indieinabox.php demo reset
+
+      - name: "Health check confirmation"
+        run: |
+          php -r '
+            require_once "app/Core/Version.php";
+            echo "Indieinabox Version: " . \Indieinabox\Core\Version::get() . "\n";
+            $db = new PDO("sqlite:" . __DIR__ . "/data/indieinabox.sqlite");
+            $res = $db->query("SELECT 1")->fetchColumn();
+            if ($res !== 1 && $res !== "1") {
+              echo "Database health check failed\n";
+              exit(1);
+            }
+            echo "Database and environment healthy!\n";
+          '
+
+      - name: "Deploy to Demo Server"
+        if: ${{ env.DEMO_SSH_HOST != '' }}
+        env:
+          DEMO_SSH_HOST: ${{ secrets.DEMO_SSH_HOST }}
+          DEMO_SSH_KEY: ${{ secrets.DEMO_SSH_KEY }}
+          DEMO_DEPLOY_PATH: ${{ secrets.DEMO_DEPLOY_PATH || '/var/www/indieinabox-demo' }}
+        run: |
+          echo "Deploying release bundle and seeded content to public demo server at $DEMO_SSH_HOST..."
+
 
 

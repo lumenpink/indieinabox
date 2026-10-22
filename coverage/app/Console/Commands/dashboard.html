@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboard for /workspace/lumen/indieinabox/app/Console/Commands</title>
+  <link rel="stylesheet" href="../../../_css/style.css?v=14.3.1">
+  <link rel="stylesheet" href="../../../_css/custom.css">
+ </head>
+ <body>
+  <header class="masthead">
+   <nav aria-label="Breadcrumb">
+    <ol class="breadcrumbs">
+     <li><a href="../../../index.html">/workspace/lumen/indieinabox</a></li>
+     <li><a href="../../index.html">app</a></li>
+     <li><a href="../index.html">Console</a></li>
+     <li><a href="index.html">Commands</a></li>
+     <li class="current">Dashboard</li>
+    </ol>
+   </nav>
+   <ul class="tabs">
+    <li><a href="../../../index.html" aria-current="page">Files</a></li>
+    <li><a href="../../../_classes/dashboard.html">Classes</a></li>
+   </ul>
+  </header>
+  <main class="dashboard">
+   <section>
+    <h2>Classes</h2>
+    <div class="panel">
+     <div class="chart">
+      <p class="hint">Line coverage against cyclomatic complexity. Bubble size is the number of executable lines; hover for details, click to navigate.</p>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400" preserveAspectRatio="xMidYMid meet">
+ <style>
+  .bubble-success { fill: var(--coverage-success-bar); opacity: 0.7; }
+  .bubble-warning { fill: var(--coverage-warning-bar); opacity: 0.7; }
+  .bubble-danger { fill: var(--coverage-danger-bar); opacity: 0.7; }
+  .bubble-success:hover, .bubble-warning:hover, .bubble-danger:hover { opacity: 1; stroke: var(--text); stroke-width: 1.5; }
+  .chart-grid { stroke: var(--border); stroke-width: 0.5; stroke-dasharray: 4,4; opacity: 0.5; }
+  .chart-axis { stroke: var(--border); stroke-width: 1; }
+  .chart-label { fill: var(--text); font-size: 11px; font-family: var(--font-sans); }
+  .chart-title { fill: var(--text); font-size: 12px; font-family: var(--font-sans); }
+ </style>
+ <line x1="60.0" y1="20" x2="60.0" y2="350" class="chart-grid"/>
+ <text x="60.0" y="368" text-anchor="middle" class="chart-label">0%</text>
+ <line x1="204.0" y1="20" x2="204.0" y2="350" class="chart-grid"/>
+ <text x="204.0" y="368" text-anchor="middle" class="chart-label">20%</text>
+ <line x1="348.0" y1="20" x2="348.0" y2="350" class="chart-grid"/>
+ <text x="348.0" y="368" text-anchor="middle" class="chart-label">40%</text>
+ <line x1="492.0" y1="20" x2="492.0" y2="350" class="chart-grid"/>
+ <text x="492.0" y="368" text-anchor="middle" class="chart-label">60%</text>
+ <line x1="636.0" y1="20" x2="636.0" y2="350" class="chart-grid"/>
+ <text x="636.0" y="368" text-anchor="middle" class="chart-label">80%</text>
+ <line x1="780.0" y1="20" x2="780.0" y2="350" class="chart-grid"/>
+ <text x="780.0" y="368" text-anchor="middle" class="chart-label">100%</text>
+ <line x1="60" y1="350.0" x2="780" y2="350.0" class="chart-grid"/>
+ <text x="52" y="350.0" text-anchor="end" dominant-baseline="middle" class="chart-label">0</text>
+ <line x1="60" y1="240.0" x2="780" y2="240.0" class="chart-grid"/>
+ <text x="52" y="240.0" text-anchor="end" dominant-baseline="middle" class="chart-label">20</text>
+ <line x1="60" y1="130.0" x2="780" y2="130.0" class="chart-grid"/>
+ <text x="52" y="130.0" text-anchor="end" dominant-baseline="middle" class="chart-label">40</text>
+ <line x1="60" y1="20.0" x2="780" y2="20.0" class="chart-grid"/>
+ <text x="52" y="20.0" text-anchor="end" dominant-baseline="middle" class="chart-label">60</text>
+ <line x1="60" y1="20" x2="60" y2="350" class="chart-axis"/>
+ <line x1="60" y1="350" x2="780" y2="350" class="chart-axis"/>
+ <text x="420.0" y="395" text-anchor="middle" class="chart-title">Line Coverage (%)</text>
+ <text x="15" y="185.0" text-anchor="middle" transform="rotate(-90, 15, 185.0)" class="chart-title">Cyclomatic Complexity</text>
+ <a href="TestWebmentionCommand.php.html#13"><circle cx="361.2" cy="86.0" r="20.0" class="bubble-danger"><title>Indieinabox\Console\Commands\TestWebmentionCommand — Coverage: 41.8% | Lines: 98 | Complexity: 48</title></circle></a>
+ <a href="BskyCommand.php.html#13"><circle cx="233.8" cy="196.0" r="18.8" class="bubble-danger"><title>Indieinabox\Console\Commands\BskyCommand — Coverage: 24.1% | Lines: 87 | Complexity: 28</title></circle></a>
+ <a href="UpdateCommand.php.html#14"><circle cx="161.5" cy="190.5" r="17.8" class="bubble-danger"><title>Indieinabox\Console\Commands\UpdateCommand — Coverage: 14.1% | Lines: 78 | Complexity: 29</title></circle></a>
+ <a href="ProfileCommand.php.html#12"><circle cx="597.6" cy="218.0" r="17.5" class="bubble-warning"><title>Indieinabox\Console\Commands\ProfileCommand — Coverage: 74.7% | Lines: 75 | Complexity: 24</title></circle></a>
+ <a href="SearchCommand.php.html#13"><circle cx="549.6" cy="201.5" r="17.5" class="bubble-warning"><title>Indieinabox\Console\Commands\SearchCommand — Coverage: 68.0% | Lines: 75 | Complexity: 27</title></circle></a>
+ <a href="SetupCommand.php.html#13"><circle cx="602.8" cy="289.5" r="16.3" class="bubble-warning"><title>Indieinabox\Console\Commands\SetupCommand — Coverage: 75.4% | Lines: 65 | Complexity: 11</title></circle></a>
+ <a href="ImportCommand.php.html#12"><circle cx="636.0" cy="245.5" r="15.0" class="bubble-warning"><title>Indieinabox\Console\Commands\ImportCommand — Coverage: 80.0% | Lines: 55 | Complexity: 19</title></circle></a>
+ <a href="MigrateCommand.php.html#14"><circle cx="99.3" cy="218.0" r="15.0" class="bubble-danger"><title>Indieinabox\Console\Commands\MigrateCommand — Coverage: 5.5% | Lines: 55 | Complexity: 24</title></circle></a>
+ <a href="PostCommand.php.html#14"><circle cx="624.7" cy="245.5" r="14.4" class="bubble-warning"><title>Indieinabox\Console\Commands\PostCommand — Coverage: 78.4% | Lines: 51 | Complexity: 19</title></circle></a>
+ <a href="DemoCommand.php.html#12"><circle cx="694.3" cy="284.0" r="13.1" class="bubble-warning"><title>Indieinabox\Console\Commands\DemoCommand — Coverage: 88.1% | Lines: 42 | Complexity: 12</title></circle></a>
+ <a href="ExportCommand.php.html#12"><circle cx="700.0" cy="284.0" r="10.5" class="bubble-warning"><title>Indieinabox\Console\Commands\ExportCommand — Coverage: 88.9% | Lines: 27 | Complexity: 12</title></circle></a>
+ <a href="ConfigCommand.php.html#12"><circle cx="520.8" cy="300.5" r="10.1" class="bubble-warning"><title>Indieinabox\Console\Commands\ConfigCommand — Coverage: 64.0% | Lines: 25 | Complexity: 9</title></circle></a>
+ <a href="VersionCommand.php.html#12"><circle cx="724.6" cy="311.5" r="7.3" class="bubble-success"><title>Indieinabox\Console\Commands\VersionCommand — Coverage: 92.3% | Lines: 13 | Complexity: 7</title></circle></a>
+ <a href="LinkCheckCommand.php.html#12"><circle cx="180.0" cy="306.0" r="7.0" class="bubble-danger"><title>Indieinabox\Console\Commands\LinkCheckCommand — Coverage: 16.7% | Lines: 12 | Complexity: 8</title></circle></a>
+ <a href="FetchCommand.php.html#12"><circle cx="300.0" cy="322.5" r="6.1" class="bubble-danger"><title>Indieinabox\Console\Commands\FetchCommand — Coverage: 33.3% | Lines: 9 | Complexity: 5</title></circle></a>
+ <a href="AbstractCommand.php.html#13"><circle cx="690.0" cy="311.5" r="5.7" class="bubble-warning"><title>Indieinabox\Console\Commands\AbstractCommand — Coverage: 87.5% | Lines: 8 | Complexity: 7</title></circle></a>
+ <a href="BackupCommand.php.html#12"><circle cx="240.0" cy="328.0" r="5.7" class="bubble-danger"><title>Indieinabox\Console\Commands\BackupCommand — Coverage: 25.0% | Lines: 8 | Complexity: 4</title></circle></a>
+ <a href="BuildCommand.php.html#12"><circle cx="265.7" cy="328.0" r="5.3" class="bubble-danger"><title>Indieinabox\Console\Commands\BuildCommand — Coverage: 28.6% | Lines: 7 | Complexity: 4</title></circle></a>
+ <a href="CronCommand.php.html#12"><circle cx="300.0" cy="328.0" r="4.9" class="bubble-danger"><title>Indieinabox\Console\Commands\CronCommand — Coverage: 33.3% | Lines: 6 | Complexity: 4</title></circle></a>
+</svg>
+     </div>
+     <div>
+      <p class="hint">Sorted by descending <abbr title="Change Risk Anti-Patterns">CRAP</abbr> index.</p>
+      <div class="scrollbox">
+     <table class="crap">
+      <thead>
+       <tr>
+        <th scope="col">Class</th>
+        <th scope="col" class="number"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+        <th scope="col" class="number">Coverage</th>
+       </tr>
+      </thead>
+      <tbody>
+       <tr><td><a href="UpdateCommand.php.html#14">Indieinabox\Console\Commands\UpdateCommand</a></td><td class="number">562.01</td><td class="number">14.1%</td></tr>
+       <tr><td><a href="MigrateCommand.php.html#14">Indieinabox\Console\Commands\MigrateCommand</a></td><td class="number">510.79</td><td class="number">5.5%</td></tr>
+       <tr><td><a href="TestWebmentionCommand.php.html#13">Indieinabox\Console\Commands\TestWebmentionCommand</a></td><td class="number">501.34</td><td class="number">41.8%</td></tr>
+       <tr><td><a href="BskyCommand.php.html#13">Indieinabox\Console\Commands\BskyCommand</a></td><td class="number">370.29</td><td class="number">24.1%</td></tr>
+       <tr><td><a href="SearchCommand.php.html#13">Indieinabox\Console\Commands\SearchCommand</a></td><td class="number">50.89</td><td class="number">68.0%</td></tr>
+       <tr><td><a href="LinkCheckCommand.php.html#12">Indieinabox\Console\Commands\LinkCheckCommand</a></td><td class="number">45.04</td><td class="number">16.7%</td></tr>
+       <tr><td><a href="ProfileCommand.php.html#12">Indieinabox\Console\Commands\ProfileCommand</a></td><td class="number">33.36</td><td class="number">74.7%</td></tr>
+       <tr><td><a href="PostCommand.php.html#14">Indieinabox\Console\Commands\PostCommand</a></td><td class="number">22.62</td><td class="number">78.4%</td></tr>
+       <tr><td><a href="ImportCommand.php.html#12">Indieinabox\Console\Commands\ImportCommand</a></td><td class="number">21.89</td><td class="number">80.0%</td></tr>
+       <tr><td><a href="SetupCommand.php.html#13">Indieinabox\Console\Commands\SetupCommand</a></td><td class="number">12.80</td><td class="number">75.4%</td></tr>
+       <tr><td><a href="ConfigCommand.php.html#12">Indieinabox\Console\Commands\ConfigCommand</a></td><td class="number">12.78</td><td class="number">64.0%</td></tr>
+       <tr><td><a href="FetchCommand.php.html#12">Indieinabox\Console\Commands\FetchCommand</a></td><td class="number">12.41</td><td class="number">33.3%</td></tr>
+       <tr><td><a href="DemoCommand.php.html#12">Indieinabox\Console\Commands\DemoCommand</a></td><td class="number">12.24</td><td class="number">88.1%</td></tr>
+       <tr><td><a href="ExportCommand.php.html#12">Indieinabox\Console\Commands\ExportCommand</a></td><td class="number">12.20</td><td class="number">88.9%</td></tr>
+       <tr><td><a href="BackupCommand.php.html#12">Indieinabox\Console\Commands\BackupCommand</a></td><td class="number">10.75</td><td class="number">25.0%</td></tr>
+       <tr><td><a href="BuildCommand.php.html#12">Indieinabox\Console\Commands\BuildCommand</a></td><td class="number">9.83</td><td class="number">28.6%</td></tr>
+       <tr><td><a href="CronCommand.php.html#12">Indieinabox\Console\Commands\CronCommand</a></td><td class="number">8.74</td><td class="number">33.3%</td></tr>
+       <tr><td><a href="AbstractCommand.php.html#13">Indieinabox\Console\Commands\AbstractCommand</a></td><td class="number">7.10</td><td class="number">87.5%</td></tr>
+       <tr><td><a href="VersionCommand.php.html#12">Indieinabox\Console\Commands\VersionCommand</a></td><td class="number">7.02</td><td class="number">92.3%</td></tr>
+      </tbody>
+     </table>
+      </div>
+     </div>
+    </div>
+   </section>
+   <section>
+    <h2>Methods</h2>
+    <div class="panel">
+     <div class="chart">
+      <p class="hint">Line coverage against cyclomatic complexity. Bubble size is the number of executable lines; hover for details, click to navigate.</p>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400" preserveAspectRatio="xMidYMid meet">
+ <style>
+  .bubble-success { fill: var(--coverage-success-bar); opacity: 0.7; }
+  .bubble-warning { fill: var(--coverage-warning-bar); opacity: 0.7; }
+  .bubble-danger { fill: var(--coverage-danger-bar); opacity: 0.7; }
+  .bubble-success:hover, .bubble-warning:hover, .bubble-danger:hover { opacity: 1; stroke: var(--text); stroke-width: 1.5; }
+  .chart-grid { stroke: var(--border); stroke-width: 0.5; stroke-dasharray: 4,4; opacity: 0.5; }
+  .chart-axis { stroke: var(--border); stroke-width: 1; }
+  .chart-label { fill: var(--text); font-size: 11px; font-family: var(--font-sans); }
+  .chart-title { fill: var(--text); font-size: 12px; font-family: var(--font-sans); }
+ </style>
+ <line x1="60.0" y1="20" x2="60.0" y2="350" class="chart-grid"/>
+ <text x="60.0" y="368" text-anchor="middle" class="chart-label">0%</text>
+ <line x1="204.0" y1="20" x2="204.0" y2="350" class="chart-grid"/>
+ <text x="204.0" y="368" text-anchor="middle" class="chart-label">20%</text>
+ <line x1="348.0" y1="20" x2="348.0" y2="350" class="chart-grid"/>
+ <text x="348.0" y="368" text-anchor="middle" class="chart-label">40%</text>
+ <line x1="492.0" y1="20" x2="492.0" y2="350" class="chart-grid"/>
+ <text x="492.0" y="368" text-anchor="middle" class="chart-label">60%</text>
+ <line x1="636.0" y1="20" x2="636.0" y2="350" class="chart-grid"/>
+ <text x="636.0" y="368" text-anchor="middle" class="chart-label">80%</text>
+ <line x1="780.0" y1="20" x2="780.0" y2="350" class="chart-grid"/>
+ <text x="780.0" y="368" text-anchor="middle" class="chart-label">100%</text>
+ <line x1="60" y1="350.0" x2="780" y2="350.0" class="chart-grid"/>
+ <text x="52" y="350.0" text-anchor="end" dominant-baseline="middle" class="chart-label">0</text>
+ <line x1="60" y1="240.0" x2="780" y2="240.0" class="chart-grid"/>
+ <text x="52" y="240.0" text-anchor="end" dominant-baseline="middle" class="chart-label">10</text>
+ <line x1="60" y1="130.0" x2="780" y2="130.0" class="chart-grid"/>
+ <text x="52" y="130.0" text-anchor="end" dominant-baseline="middle" class="chart-label">20</text>
+ <line x1="60" y1="20.0" x2="780" y2="20.0" class="chart-grid"/>
+ <text x="52" y="20.0" text-anchor="end" dominant-baseline="middle" class="chart-label">30</text>
+ <line x1="60" y1="20" x2="60" y2="350" class="chart-axis"/>
+ <line x1="60" y1="350" x2="780" y2="350" class="chart-axis"/>
+ <text x="420.0" y="395" text-anchor="middle" class="chart-title">Line Coverage (%)</text>
+ <text x="15" y="185.0" text-anchor="middle" transform="rotate(-90, 15, 185.0)" class="chart-title">Cyclomatic Complexity</text>
+ <a href="SearchCommand.php.html#40"><circle cx="546.8" cy="97.0" r="20.0" class="bubble-warning"><title>Indieinabox\Console\Commands\SearchCommand::execute — Coverage: 67.6% | Lines: 71 | Complexity: 23</title></circle></a>
+ <a href="UpdateCommand.php.html#40"><circle cx="152.6" cy="64.0" r="19.9" class="bubble-danger"><title>Indieinabox\Console\Commands\UpdateCommand::execute — Coverage: 12.9% | Lines: 70 | Complexity: 26</title></circle></a>
+ <a href="ImportCommand.php.html#39"><circle cx="638.8" cy="185.0" r="17.0" class="bubble-warning"><title>Indieinabox\Console\Commands\ImportCommand::execute — Coverage: 80.4% | Lines: 51 | Complexity: 15</title></circle></a>
+ <a href="SetupCommand.php.html#53"><circle cx="721.2" cy="273.0" r="16.6" class="bubble-success"><title>Indieinabox\Console\Commands\SetupCommand::execute — Coverage: 91.8% | Lines: 49 | Complexity: 7</title></circle></a>
+ <a href="TestWebmentionCommand.php.html#112"><circle cx="589.0" cy="53.0" r="16.6" class="bubble-warning"><title>Indieinabox\Console\Commands\TestWebmentionCommand::validateHcard — Coverage: 73.5% | Lines: 49 | Complexity: 27</title></circle></a>
+ <a href="PostCommand.php.html#35"><circle cx="630.0" cy="174.0" r="16.4" class="bubble-warning"><title>Indieinabox\Console\Commands\PostCommand::execute — Coverage: 79.2% | Lines: 48 | Complexity: 16</title></circle></a>
+ <a href="TestWebmentionCommand.php.html#36"><circle cx="109.1" cy="152.0" r="15.7" class="bubble-danger"><title>Indieinabox\Console\Commands\TestWebmentionCommand::execute — Coverage: 6.8% | Lines: 44 | Complexity: 18</title></circle></a>
+ <a href="DemoCommand.php.html#33"><circle cx="706.2" cy="251.0" r="14.8" class="bubble-warning"><title>Indieinabox\Console\Commands\DemoCommand::execute — Coverage: 89.7% | Lines: 39 | Complexity: 9</title></circle></a>
+ <a href="ProfileCommand.php.html#35"><circle cx="738.9" cy="229.0" r="14.0" class="bubble-success"><title>Indieinabox\Console\Commands\ProfileCommand::execute — Coverage: 94.3% | Lines: 35 | Complexity: 11</title></circle></a>
+ <a href="ProfileCommand.php.html#87"><circle cx="492.0" cy="240.0" r="14.0" class="bubble-warning"><title>Indieinabox\Console\Commands\ProfileCommand::resizeImage — Coverage: 60.0% | Lines: 35 | Complexity: 10</title></circle></a>
+ <a href="BskyCommand.php.html#43"><circle cx="269.0" cy="229.0" r="13.2" class="bubble-danger"><title>Indieinabox\Console\Commands\BskyCommand::execute — Coverage: 29.0% | Lines: 31 | Complexity: 11</title></circle></a>
+ <a href="BskyCommand.php.html#115"><circle cx="60.0" cy="284.0" r="12.1" class="bubble-danger"><title>Indieinabox\Console\Commands\BskyCommand::handleSyndicate — Coverage: 0.0% | Lines: 26 | Complexity: 6</title></circle></a>
+ <a href="ExportCommand.php.html#39"><circle cx="717.4" cy="262.0" r="11.4" class="bubble-success"><title>Indieinabox\Console\Commands\ExportCommand::execute — Coverage: 91.3% | Lines: 23 | Complexity: 8</title></circle></a>
+ <a href="ConfigCommand.php.html#35"><circle cx="564.0" cy="284.0" r="10.6" class="bubble-warning"><title>Indieinabox\Console\Commands\ConfigCommand::execute — Coverage: 70.0% | Lines: 20 | Complexity: 6</title></circle></a>
+ <a href="MigrateCommand.php.html#44"><circle cx="60.0" cy="273.0" r="9.8" class="bubble-danger"><title>Indieinabox\Console\Commands\MigrateCommand::execute — Coverage: 0.0% | Lines: 17 | Complexity: 7</title></circle></a>
+ <a href="BskyCommand.php.html#91"><circle cx="492.0" cy="295.0" r="9.2" class="bubble-warning"><title>Indieinabox\Console\Commands\BskyCommand::handleTest — Coverage: 60.0% | Lines: 15 | Complexity: 5</title></circle></a>
+ <a href="MigrateCommand.php.html#96"><circle cx="60.0" cy="284.0" r="8.9" class="bubble-danger"><title>Indieinabox\Console\Commands\MigrateCommand::runRollback — Coverage: 0.0% | Lines: 14 | Complexity: 6</title></circle></a>
+ <a href="SetupCommand.php.html#36"><circle cx="60.0" cy="339.0" r="8.2" class="bubble-danger"><title>Indieinabox\Console\Commands\SetupCommand::getUsage — Coverage: 0.0% | Lines: 12 | Complexity: 1</title></circle></a>
+ <a href="MigrateCommand.php.html#122"><circle cx="60.0" cy="306.0" r="7.9" class="bubble-danger"><title>Indieinabox\Console\Commands\MigrateCommand::showStatus — Coverage: 0.0% | Lines: 11 | Complexity: 4</title></circle></a>
+ <a href="LinkCheckCommand.php.html#33"><circle cx="60.0" cy="295.0" r="7.1" class="bubble-danger"><title>Indieinabox\Console\Commands\LinkCheckCommand::execute — Coverage: 0.0% | Lines: 9 | Complexity: 5</title></circle></a>
+ <a href="MigrateCommand.php.html#75"><circle cx="60.0" cy="317.0" r="7.1" class="bubble-danger"><title>Indieinabox\Console\Commands\MigrateCommand::runMigrate — Coverage: 0.0% | Lines: 9 | Complexity: 3</title></circle></a>
+ <a href="VersionCommand.php.html#42"><circle cx="780.0" cy="317.0" r="7.1" class="bubble-success"><title>Indieinabox\Console\Commands\VersionCommand::execute — Coverage: 100.0% | Lines: 9 | Complexity: 3</title></circle></a>
+ <a href="BskyCommand.php.html#156"><circle cx="60.0" cy="328.0" r="6.7" class="bubble-danger"><title>Indieinabox\Console\Commands\BskyCommand::handlePost — Coverage: 0.0% | Lines: 8 | Complexity: 2</title></circle></a>
+ <a href="UpdateCommand.php.html#29"><circle cx="60.0" cy="339.0" r="5.8" class="bubble-danger"><title>Indieinabox\Console\Commands\UpdateCommand::getUsage — Coverage: 0.0% | Lines: 6 | Complexity: 1</title></circle></a>
+ <a href="BackupCommand.php.html#33"><circle cx="60.0" cy="339.0" r="5.3" class="bubble-danger"><title>Indieinabox\Console\Commands\BackupCommand::execute — Coverage: 0.0% | Lines: 5 | Complexity: 1</title></circle></a>
+ <a href="FetchCommand.php.html#42"><circle cx="60.0" cy="339.0" r="5.3" class="bubble-danger"><title>Indieinabox\Console\Commands\FetchCommand::execute — Coverage: 0.0% | Lines: 5 | Complexity: 1</title></circle></a>
+ <a href="AbstractCommand.php.html#42"><circle cx="780.0" cy="317.0" r="4.7" class="bubble-success"><title>Indieinabox\Console\Commands\AbstractCommand::getOption — Coverage: 100.0% | Lines: 4 | Complexity: 3</title></circle></a>
+ <a href="BskyCommand.php.html#34"><circle cx="60.0" cy="339.0" r="4.7" class="bubble-danger"><title>Indieinabox\Console\Commands\BskyCommand::getUsage — Coverage: 0.0% | Lines: 4 | Complexity: 1</title></circle></a>
+ <a href="BuildCommand.php.html#33"><circle cx="60.0" cy="339.0" r="4.7" class="bubble-danger"><title>Indieinabox\Console\Commands\BuildCommand::execute — Coverage: 0.0% | Lines: 4 | Complexity: 1</title></circle></a>
+ <a href="ConfigCommand.php.html#27"><circle cx="60.0" cy="339.0" r="4.1" class="bubble-danger"><title>Indieinabox\Console\Commands\ConfigCommand::getUsage — Coverage: 0.0% | Lines: 3 | Complexity: 1</title></circle></a>
+ <a href="CronCommand.php.html#33"><circle cx="60.0" cy="339.0" r="4.1" class="bubble-danger"><title>Indieinabox\Console\Commands\CronCommand::execute — Coverage: 0.0% | Lines: 3 | Complexity: 1</title></circle></a>
+ <a href="ProfileCommand.php.html#27"><circle cx="60.0" cy="339.0" r="4.1" class="bubble-danger"><title>Indieinabox\Console\Commands\ProfileCommand::getUsage — Coverage: 0.0% | Lines: 3 | Complexity: 1</title></circle></a>
+ <a href="TestWebmentionCommand.php.html#28"><circle cx="60.0" cy="339.0" r="4.1" class="bubble-danger"><title>Indieinabox\Console\Commands\TestWebmentionCommand::getUsage — Coverage: 0.0% | Lines: 3 | Complexity: 1</title></circle></a>
+ <a href="SetupCommand.php.html#17"><circle cx="780.0" cy="339.0" r="4.0" class="bubble-success"><title>Indieinabox\Console\Commands\SetupCommand::__construct — Coverage: 100.0% | Lines: 2 | Complexity: 1</title></circle></a>
+ <a href="AbstractCommand.php.html#17"><circle cx="780.0" cy="339.0" r="4.0" class="bubble-success"><title>Indieinabox\Console\Commands\AbstractCommand::__construct — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="AbstractCommand.php.html#26"><circle cx="780.0" cy="339.0" r="4.0" class="bubble-success"><title>Indieinabox\Console\Commands\AbstractCommand::getAliases — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="AbstractCommand.php.html#32"><circle cx="60.0" cy="339.0" r="4.0" class="bubble-danger"><title>Indieinabox\Console\Commands\AbstractCommand::getUsage — Coverage: 0.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="AbstractCommand.php.html#57"><circle cx="780.0" cy="339.0" r="4.0" class="bubble-success"><title>Indieinabox\Console\Commands\AbstractCommand::hasFlag — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="BackupCommand.php.html#15"><circle cx="780.0" cy="339.0" r="4.0" class="bubble-success"><title>Indieinabox\Console\Commands\BackupCommand::getName — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="BackupCommand.php.html#21"><circle cx="780.0" cy="339.0" r="4.0" class="bubble-success"><title>Indieinabox\Console\Commands\BackupCommand::getDescription — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="BackupCommand.php.html#27"><circle cx="60.0" cy="339.0" r="4.0" class="bubble-danger"><title>Indieinabox\Console\Commands\BackupCommand::getUsage — Coverage: 0.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="BskyCommand.php.html#16"><circle cx="780.0" cy="339.0" r="4.0" class="bubble-success"><title>Indieinabox\Console\Commands\BskyCommand::getName — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="BskyCommand.php.html#22"><circle cx="780.0" cy="339.0" r="4.0" class="bubble-success"><title>Indieinabox\Console\Commands\BskyCommand::getAliases — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="BskyCommand.php.html#28"><circle cx="780.0" cy="339.0" r="4.0" class="bubble-success"><title>Indieinabox\Console\Commands\BskyCommand::getDescription — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="BuildCommand.php.html#15"><circle cx="780.0" cy="339.0" r="4.0" class="bubble-success"><title>Indieinabox\Console\Commands\BuildCommand::getName — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="BuildCommand.php.html#21"><circle cx="780.0" cy="339.0" r="4.0" class="bubble-success"><title>Indieinabox\Console\Commands\BuildCommand::getDescription — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="BuildCommand.php.html#27"><circle cx="60.0" cy="339.0" r="4.0" class="bubble-danger"><title>Indieinabox\Console\Commands\BuildCommand::getUsage — Coverage: 0.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="ConfigCommand.php.html#15"><circle cx="780.0" cy="339.0" r="4.0" class="bubble-success"><title>Indieinabox\Console\Commands\ConfigCommand::getName — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="ConfigCommand.php.html#21"><circle cx="780.0" cy="339.0" r="4.0" class="bubble-success"><title>Indieinabox\Console\Commands\ConfigCommand::getDescription — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="CronCommand.php.html#15"><circle cx="780.0" cy="339.0" r="4.0" class="bubble-success"><title>Indieinabox\Console\Commands\CronCommand::getName — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="CronCommand.php.html#21"><circle cx="780.0" cy="339.0" r="4.0" class="bubble-success"><title>Indieinabox\Console\Commands\CronCommand::getDescription — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="CronCommand.php.html#27"><circle cx="60.0" cy="339.0" r="4.0" class="bubble-danger"><title>Indieinabox\Console\Commands\CronCommand::getUsage — Coverage: 0.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="DemoCommand.php.html#15"><circle cx="780.0" cy="339.0" r="4.0" class="bubble-success"><title>Indieinabox\Console\Commands\DemoCommand::getName — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="DemoCommand.php.html#21"><circle cx="780.0" cy="339.0" r="4.0" class="bubble-success"><title>Indieinabox\Console\Commands\DemoCommand::getDescription — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="DemoCommand.php.html#27"><circle cx="60.0" cy="339.0" r="4.0" class="bubble-danger"><title>Indieinabox\Console\Commands\DemoCommand::getUsage — Coverage: 0.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="ExportCommand.php.html#15"><circle cx="780.0" cy="339.0" r="4.0" class="bubble-success"><title>Indieinabox\Console\Commands\ExportCommand::getName — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="ExportCommand.php.html#21"><circle cx="780.0" cy="339.0" r="4.0" class="bubble-success"><title>Indieinabox\Console\Commands\ExportCommand::getDescription — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="ExportCommand.php.html#27"><circle cx="60.0" cy="339.0" r="4.0" class="bubble-danger"><title>Indieinabox\Console\Commands\ExportCommand::getUsage — Coverage: 0.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="ExportCommand.php.html#33"><circle cx="780.0" cy="339.0" r="4.0" class="bubble-success"><title>Indieinabox\Console\Commands\ExportCommand::getAliases — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="FetchCommand.php.html#15"><circle cx="780.0" cy="339.0" r="4.0" class="bubble-success"><title>Indieinabox\Console\Commands\FetchCommand::getName — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="FetchCommand.php.html#24"><circle cx="780.0" cy="339.0" r="4.0" class="bubble-success"><title>Indieinabox\Console\Commands\FetchCommand::getAliases — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="FetchCommand.php.html#30"><circle cx="780.0" cy="339.0" r="4.0" class="bubble-success"><title>Indieinabox\Console\Commands\FetchCommand::getDescription — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="FetchCommand.php.html#36"><circle cx="60.0" cy="339.0" r="4.0" class="bubble-danger"><title>Indieinabox\Console\Commands\FetchCommand::getUsage — Coverage: 0.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="ImportCommand.php.html#15"><circle cx="780.0" cy="339.0" r="4.0" class="bubble-success"><title>Indieinabox\Console\Commands\ImportCommand::getName — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="ImportCommand.php.html#21"><circle cx="780.0" cy="339.0" r="4.0" class="bubble-success"><title>Indieinabox\Console\Commands\ImportCommand::getDescription — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="ImportCommand.php.html#27"><circle cx="60.0" cy="339.0" r="4.0" class="bubble-danger"><title>Indieinabox\Console\Commands\ImportCommand::getUsage — Coverage: 0.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="ImportCommand.php.html#33"><circle cx="780.0" cy="339.0" r="4.0" class="bubble-success"><title>Indieinabox\Console\Commands\ImportCommand::getAliases — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="LinkCheckCommand.php.html#15"><circle cx="780.0" cy="339.0" r="4.0" class="bubble-success"><title>Indieinabox\Console\Commands\LinkCheckCommand::getName — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="LinkCheckCommand.php.html#21"><circle cx="780.0" cy="339.0" r="4.0" class="bubble-success"><title>Indieinabox\Console\Commands\LinkCheckCommand::getDescription — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="LinkCheckCommand.php.html#27"><circle cx="60.0" cy="339.0" r="4.0" class="bubble-danger"><title>Indieinabox\Console\Commands\LinkCheckCommand::getUsage — Coverage: 0.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="MigrateCommand.php.html#17"><circle cx="780.0" cy="339.0" r="4.0" class="bubble-success"><title>Indieinabox\Console\Commands\MigrateCommand::getName — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="MigrateCommand.php.html#26"><circle cx="780.0" cy="339.0" r="4.0" class="bubble-success"><title>Indieinabox\Console\Commands\MigrateCommand::getAliases — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="MigrateCommand.php.html#32"><circle cx="780.0" cy="339.0" r="4.0" class="bubble-success"><title>Indieinabox\Console\Commands\MigrateCommand::getDescription — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="MigrateCommand.php.html#38"><circle cx="60.0" cy="339.0" r="4.0" class="bubble-danger"><title>Indieinabox\Console\Commands\MigrateCommand::getUsage — Coverage: 0.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="PostCommand.php.html#17"><circle cx="780.0" cy="339.0" r="4.0" class="bubble-success"><title>Indieinabox\Console\Commands\PostCommand::getName — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="PostCommand.php.html#23"><circle cx="780.0" cy="339.0" r="4.0" class="bubble-success"><title>Indieinabox\Console\Commands\PostCommand::getDescription — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="PostCommand.php.html#29"><circle cx="60.0" cy="339.0" r="4.0" class="bubble-danger"><title>Indieinabox\Console\Commands\PostCommand::getUsage — Coverage: 0.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="ProfileCommand.php.html#15"><circle cx="780.0" cy="339.0" r="4.0" class="bubble-success"><title>Indieinabox\Console\Commands\ProfileCommand::getName — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="ProfileCommand.php.html#21"><circle cx="780.0" cy="339.0" r="4.0" class="bubble-success"><title>Indieinabox\Console\Commands\ProfileCommand::getDescription — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="SearchCommand.php.html#16"><circle cx="780.0" cy="339.0" r="4.0" class="bubble-success"><title>Indieinabox\Console\Commands\SearchCommand::getName — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="SearchCommand.php.html#22"><circle cx="780.0" cy="339.0" r="4.0" class="bubble-success"><title>Indieinabox\Console\Commands\SearchCommand::getAliases — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="SearchCommand.php.html#28"><circle cx="780.0" cy="339.0" r="4.0" class="bubble-success"><title>Indieinabox\Console\Commands\SearchCommand::getDescription — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="SearchCommand.php.html#34"><circle cx="60.0" cy="339.0" r="4.0" class="bubble-danger"><title>Indieinabox\Console\Commands\SearchCommand::getUsage — Coverage: 0.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="SetupCommand.php.html#24"><circle cx="780.0" cy="339.0" r="4.0" class="bubble-success"><title>Indieinabox\Console\Commands\SetupCommand::getName — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="SetupCommand.php.html#30"><circle cx="780.0" cy="339.0" r="4.0" class="bubble-success"><title>Indieinabox\Console\Commands\SetupCommand::getDescription — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="TestWebmentionCommand.php.html#16"><circle cx="780.0" cy="339.0" r="4.0" class="bubble-success"><title>Indieinabox\Console\Commands\TestWebmentionCommand::getName — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="TestWebmentionCommand.php.html#22"><circle cx="780.0" cy="339.0" r="4.0" class="bubble-success"><title>Indieinabox\Console\Commands\TestWebmentionCommand::getDescription — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="UpdateCommand.php.html#17"><circle cx="780.0" cy="339.0" r="4.0" class="bubble-success"><title>Indieinabox\Console\Commands\UpdateCommand::getName — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="UpdateCommand.php.html#23"><circle cx="780.0" cy="339.0" r="4.0" class="bubble-success"><title>Indieinabox\Console\Commands\UpdateCommand::getDescription — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="VersionCommand.php.html#15"><circle cx="780.0" cy="339.0" r="4.0" class="bubble-success"><title>Indieinabox\Console\Commands\VersionCommand::getName — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="VersionCommand.php.html#24"><circle cx="780.0" cy="339.0" r="4.0" class="bubble-success"><title>Indieinabox\Console\Commands\VersionCommand::getAliases — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="VersionCommand.php.html#30"><circle cx="780.0" cy="339.0" r="4.0" class="bubble-success"><title>Indieinabox\Console\Commands\VersionCommand::getDescription — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="VersionCommand.php.html#36"><circle cx="60.0" cy="339.0" r="4.0" class="bubble-danger"><title>Indieinabox\Console\Commands\VersionCommand::getUsage — Coverage: 0.0% | Lines: 1 | Complexity: 1</title></circle></a>
+</svg>
+     </div>
+     <div>
+      <p class="hint">Sorted by descending <abbr title="Change Risk Anti-Patterns">CRAP</abbr> index.</p>
+      <div class="scrollbox">
+     <table class="crap">
+      <thead>
+       <tr>
+        <th scope="col">Method</th>
+        <th scope="col" class="number"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+        <th scope="col" class="number">Coverage</th>
+       </tr>
+      </thead>
+      <tbody>
+       <tr><td><a href="UpdateCommand.php.html#40">Indieinabox\Console\Commands\UpdateCommand::execute</a></td><td class="number">473.34</td><td class="number">12.9%</td></tr>
+       <tr><td><a href="TestWebmentionCommand.php.html#36">Indieinabox\Console\Commands\TestWebmentionCommand::execute</a></td><td class="number">280.14</td><td class="number">6.8%</td></tr>
+       <tr><td><a href="MigrateCommand.php.html#44">Indieinabox\Console\Commands\MigrateCommand::execute</a></td><td class="number">56</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="BskyCommand.php.html#43">Indieinabox\Console\Commands\BskyCommand::execute</a></td><td class="number">54.25</td><td class="number">29.0%</td></tr>
+       <tr><td><a href="BskyCommand.php.html#115">Indieinabox\Console\Commands\BskyCommand::handleSyndicate</a></td><td class="number">42</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="MigrateCommand.php.html#96">Indieinabox\Console\Commands\MigrateCommand::runRollback</a></td><td class="number">42</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="SearchCommand.php.html#40">Indieinabox\Console\Commands\SearchCommand::execute</a></td><td class="number">40.98</td><td class="number">67.6%</td></tr>
+       <tr><td><a href="TestWebmentionCommand.php.html#112">Indieinabox\Console\Commands\TestWebmentionCommand::validateHcard</a></td><td class="number">40.61</td><td class="number">73.5%</td></tr>
+       <tr><td><a href="LinkCheckCommand.php.html#33">Indieinabox\Console\Commands\LinkCheckCommand::execute</a></td><td class="number">30</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="MigrateCommand.php.html#122">Indieinabox\Console\Commands\MigrateCommand::showStatus</a></td><td class="number">20</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="PostCommand.php.html#35">Indieinabox\Console\Commands\PostCommand::execute</a></td><td class="number">18.31</td><td class="number">79.2%</td></tr>
+       <tr><td><a href="ImportCommand.php.html#39">Indieinabox\Console\Commands\ImportCommand::execute</a></td><td class="number">16.70</td><td class="number">80.4%</td></tr>
+       <tr><td><a href="ProfileCommand.php.html#87">Indieinabox\Console\Commands\ProfileCommand::resizeImage</a></td><td class="number">16.40</td><td class="number">60.0%</td></tr>
+       <tr><td><a href="MigrateCommand.php.html#75">Indieinabox\Console\Commands\MigrateCommand::runMigrate</a></td><td class="number">12</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="ProfileCommand.php.html#35">Indieinabox\Console\Commands\ProfileCommand::execute</a></td><td class="number">11.02</td><td class="number">94.3%</td></tr>
+       <tr><td><a href="DemoCommand.php.html#33">Indieinabox\Console\Commands\DemoCommand::execute</a></td><td class="number">9.09</td><td class="number">89.7%</td></tr>
+       <tr><td><a href="ExportCommand.php.html#39">Indieinabox\Console\Commands\ExportCommand::execute</a></td><td class="number">8.04</td><td class="number">91.3%</td></tr>
+       <tr><td><a href="SetupCommand.php.html#53">Indieinabox\Console\Commands\SetupCommand::execute</a></td><td class="number">7.03</td><td class="number">91.8%</td></tr>
+       <tr><td><a href="ConfigCommand.php.html#35">Indieinabox\Console\Commands\ConfigCommand::execute</a></td><td class="number">6.97</td><td class="number">70.0%</td></tr>
+       <tr><td><a href="BskyCommand.php.html#91">Indieinabox\Console\Commands\BskyCommand::handleTest</a></td><td class="number">6.60</td><td class="number">60.0%</td></tr>
+       <tr><td><a href="BskyCommand.php.html#156">Indieinabox\Console\Commands\BskyCommand::handlePost</a></td><td class="number">6</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="AbstractCommand.php.html#42">Indieinabox\Console\Commands\AbstractCommand::getOption</a></td><td class="number">3</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="VersionCommand.php.html#42">Indieinabox\Console\Commands\VersionCommand::execute</a></td><td class="number">3</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="AbstractCommand.php.html#32">Indieinabox\Console\Commands\AbstractCommand::getUsage</a></td><td class="number">2</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="BackupCommand.php.html#27">Indieinabox\Console\Commands\BackupCommand::getUsage</a></td><td class="number">2</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="BackupCommand.php.html#33">Indieinabox\Console\Commands\BackupCommand::execute</a></td><td class="number">2</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="BskyCommand.php.html#34">Indieinabox\Console\Commands\BskyCommand::getUsage</a></td><td class="number">2</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="BuildCommand.php.html#27">Indieinabox\Console\Commands\BuildCommand::getUsage</a></td><td class="number">2</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="BuildCommand.php.html#33">Indieinabox\Console\Commands\BuildCommand::execute</a></td><td class="number">2</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="ConfigCommand.php.html#27">Indieinabox\Console\Commands\ConfigCommand::getUsage</a></td><td class="number">2</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="CronCommand.php.html#27">Indieinabox\Console\Commands\CronCommand::getUsage</a></td><td class="number">2</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="CronCommand.php.html#33">Indieinabox\Console\Commands\CronCommand::execute</a></td><td class="number">2</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="DemoCommand.php.html#27">Indieinabox\Console\Commands\DemoCommand::getUsage</a></td><td class="number">2</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="ExportCommand.php.html#27">Indieinabox\Console\Commands\ExportCommand::getUsage</a></td><td class="number">2</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="FetchCommand.php.html#36">Indieinabox\Console\Commands\FetchCommand::getUsage</a></td><td class="number">2</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="FetchCommand.php.html#42">Indieinabox\Console\Commands\FetchCommand::execute</a></td><td class="number">2</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="ImportCommand.php.html#27">Indieinabox\Console\Commands\ImportCommand::getUsage</a></td><td class="number">2</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="LinkCheckCommand.php.html#27">Indieinabox\Console\Commands\LinkCheckCommand::getUsage</a></td><td class="number">2</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="MigrateCommand.php.html#38">Indieinabox\Console\Commands\MigrateCommand::getUsage</a></td><td class="number">2</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="PostCommand.php.html#29">Indieinabox\Console\Commands\PostCommand::getUsage</a></td><td class="number">2</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="ProfileCommand.php.html#27">Indieinabox\Console\Commands\ProfileCommand::getUsage</a></td><td class="number">2</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="SearchCommand.php.html#34">Indieinabox\Console\Commands\SearchCommand::getUsage</a></td><td class="number">2</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="SetupCommand.php.html#36">Indieinabox\Console\Commands\SetupCommand::getUsage</a></td><td class="number">2</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="TestWebmentionCommand.php.html#28">Indieinabox\Console\Commands\TestWebmentionCommand::getUsage</a></td><td class="number">2</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="UpdateCommand.php.html#29">Indieinabox\Console\Commands\UpdateCommand::getUsage</a></td><td class="number">2</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="VersionCommand.php.html#36">Indieinabox\Console\Commands\VersionCommand::getUsage</a></td><td class="number">2</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="AbstractCommand.php.html#17">Indieinabox\Console\Commands\AbstractCommand::__construct</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="AbstractCommand.php.html#26">Indieinabox\Console\Commands\AbstractCommand::getAliases</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="AbstractCommand.php.html#57">Indieinabox\Console\Commands\AbstractCommand::hasFlag</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="BackupCommand.php.html#15">Indieinabox\Console\Commands\BackupCommand::getName</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="BackupCommand.php.html#21">Indieinabox\Console\Commands\BackupCommand::getDescription</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="BskyCommand.php.html#16">Indieinabox\Console\Commands\BskyCommand::getName</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="BskyCommand.php.html#22">Indieinabox\Console\Commands\BskyCommand::getAliases</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="BskyCommand.php.html#28">Indieinabox\Console\Commands\BskyCommand::getDescription</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="BuildCommand.php.html#15">Indieinabox\Console\Commands\BuildCommand::getName</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="BuildCommand.php.html#21">Indieinabox\Console\Commands\BuildCommand::getDescription</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="ConfigCommand.php.html#15">Indieinabox\Console\Commands\ConfigCommand::getName</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="ConfigCommand.php.html#21">Indieinabox\Console\Commands\ConfigCommand::getDescription</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="CronCommand.php.html#15">Indieinabox\Console\Commands\CronCommand::getName</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="CronCommand.php.html#21">Indieinabox\Console\Commands\CronCommand::getDescription</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="DemoCommand.php.html#15">Indieinabox\Console\Commands\DemoCommand::getName</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="DemoCommand.php.html#21">Indieinabox\Console\Commands\DemoCommand::getDescription</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="ExportCommand.php.html#15">Indieinabox\Console\Commands\ExportCommand::getName</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="ExportCommand.php.html#21">Indieinabox\Console\Commands\ExportCommand::getDescription</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="ExportCommand.php.html#33">Indieinabox\Console\Commands\ExportCommand::getAliases</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="FetchCommand.php.html#15">Indieinabox\Console\Commands\FetchCommand::getName</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="FetchCommand.php.html#24">Indieinabox\Console\Commands\FetchCommand::getAliases</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="FetchCommand.php.html#30">Indieinabox\Console\Commands\FetchCommand::getDescription</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="ImportCommand.php.html#15">Indieinabox\Console\Commands\ImportCommand::getName</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="ImportCommand.php.html#21">Indieinabox\Console\Commands\ImportCommand::getDescription</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="ImportCommand.php.html#33">Indieinabox\Console\Commands\ImportCommand::getAliases</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="LinkCheckCommand.php.html#15">Indieinabox\Console\Commands\LinkCheckCommand::getName</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="LinkCheckCommand.php.html#21">Indieinabox\Console\Commands\LinkCheckCommand::getDescription</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="MigrateCommand.php.html#17">Indieinabox\Console\Commands\MigrateCommand::getName</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="MigrateCommand.php.html#26">Indieinabox\Console\Commands\MigrateCommand::getAliases</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="MigrateCommand.php.html#32">Indieinabox\Console\Commands\MigrateCommand::getDescription</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="PostCommand.php.html#17">Indieinabox\Console\Commands\PostCommand::getName</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="PostCommand.php.html#23">Indieinabox\Console\Commands\PostCommand::getDescription</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="ProfileCommand.php.html#15">Indieinabox\Console\Commands\ProfileCommand::getName</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="ProfileCommand.php.html#21">Indieinabox\Console\Commands\ProfileCommand::getDescription</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="SearchCommand.php.html#16">Indieinabox\Console\Commands\SearchCommand::getName</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="SearchCommand.php.html#22">Indieinabox\Console\Commands\SearchCommand::getAliases</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="SearchCommand.php.html#28">Indieinabox\Console\Commands\SearchCommand::getDescription</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="SetupCommand.php.html#17">Indieinabox\Console\Commands\SetupCommand::__construct</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="SetupCommand.php.html#24">Indieinabox\Console\Commands\SetupCommand::getName</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="SetupCommand.php.html#30">Indieinabox\Console\Commands\SetupCommand::getDescription</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="TestWebmentionCommand.php.html#16">Indieinabox\Console\Commands\TestWebmentionCommand::getName</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="TestWebmentionCommand.php.html#22">Indieinabox\Console\Commands\TestWebmentionCommand::getDescription</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="UpdateCommand.php.html#17">Indieinabox\Console\Commands\UpdateCommand::getName</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="UpdateCommand.php.html#23">Indieinabox\Console\Commands\UpdateCommand::getDescription</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="VersionCommand.php.html#15">Indieinabox\Console\Commands\VersionCommand::getName</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="VersionCommand.php.html#24">Indieinabox\Console\Commands\VersionCommand::getAliases</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="VersionCommand.php.html#30">Indieinabox\Console\Commands\VersionCommand::getDescription</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+      </tbody>
+     </table>
+      </div>
+     </div>
+    </div>
+   </section>
+  </main>
+  <footer>
+   <p class="credits">Generated by <a href="https://github.com/sebastianbergmann/php-code-coverage" target="_top">php-code-coverage 14.3.1</a> using <a href="https://www.php.net/" target="_top">PHP 8.4.26</a> and <a href="https://phpunit.de/">PHPUnit 13.3.1</a> at Thu Oct 22 2:07:08 UTC 2026.</p>
+  </footer>
+ </body>
+</html>

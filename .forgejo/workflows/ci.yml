@@ -469,7 +469,15 @@ jobs:
       - name: "Checkout repository"
         uses: actions/checkout@v4
 
+      - name: "Log in to Sovereign Registry"
+        uses: docker/login-action@v3
+        with:
+          registry: git.2lp.in
+          username: lumen
+          password: ${{ secrets.REGISTRY_TOKEN }}
+
       - name: "Log in to Docker Hub"
+        if: secrets.DOCKERHUB_USERNAME != ''
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
@@ -479,7 +487,9 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ env.IMAGE_NAME }}
+          images: |
+            git.2lp.in/lumen/indieinabox
+            ${{ env.IMAGE_NAME }}
           tags: |
             type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
             type=ref,event=tag

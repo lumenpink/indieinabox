@@ -13,7 +13,7 @@ concurrency:
   cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 env:
-  CI_IMAGE: codeberg.org/lumenpink/gost-ci-php:latest
+  CI_IMAGE: gambi.2lp.in/lumen/gost-ci-php:latest
 
 jobs:
   # ─────────────────────────────────────────────────────────────────────────────
@@ -472,7 +472,7 @@ jobs:
       - name: "Log in to Sovereign Registry"
         uses: docker/login-action@v3
         with:
-          registry: git.2lp.in
+          registry: gambi.2lp.in
           username: lumen
           password: ${{ secrets.REGISTRY_TOKEN }}
 
@@ -488,7 +488,7 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: |
-            git.2lp.in/lumen/indieinabox
+            gambi.2lp.in/lumen/indieinabox
             ${{ env.IMAGE_NAME }}
           tags: |
             type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'main') }}

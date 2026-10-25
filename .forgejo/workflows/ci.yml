@@ -23,7 +23,7 @@ jobs:
     name: "PHP ${{ matrix.php }} — Tests & Lint"
     runs-on: ubuntu-latest
     container:
-      image: ${{ env.CI_IMAGE }}
+      image: gambi.2lp.in/lumen/gost-ci-php:latest
     strategy:
       fail-fast: true          # Stop at the first error in any version
       matrix:
@@ -123,7 +123,7 @@ jobs:
     name: "Check for 404s (PHP LinkChecker)"
     runs-on: ubuntu-latest
     container:
-      image: ${{ env.CI_IMAGE }}
+      image: gambi.2lp.in/lumen/gost-ci-php:latest
 
     steps:
       - name: "Checkout"
@@ -168,7 +168,7 @@ jobs:
     name: "Psalm — Static Security Analysis"
     runs-on: ubuntu-latest
     container:
-      image: ${{ env.CI_IMAGE }}
+      image: gambi.2lp.in/lumen/gost-ci-php:latest
     needs: test           # Only runs if tests pass
 
     steps:
@@ -305,7 +305,7 @@ jobs:
     name: "Nightly Release"
     runs-on: ubuntu-latest
     container:
-      image: ${{ env.CI_IMAGE }}
+      image: gambi.2lp.in/lumen/gost-ci-php:latest
     needs: [test, psalm]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     steps:
@@ -385,7 +385,7 @@ jobs:
     name: "Stable Release"
     runs-on: ubuntu-latest
     container:
-      image: ${{ env.CI_IMAGE }}
+      image: gambi.2lp.in/lumen/gost-ci-php:latest
     needs: [test, psalm]
     if: startsWith(github.ref, 'refs/tags/v')
     steps:

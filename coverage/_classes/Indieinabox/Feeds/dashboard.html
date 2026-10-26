@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboard for Indieinabox\Feeds</title>
+  <link rel="stylesheet" href="../../../_css/style.css?v=14.3.1">
+  <link rel="stylesheet" href="../../../_css/custom.css">
+ </head>
+ <body>
+  <header class="masthead">
+   <nav aria-label="Breadcrumb">
+    <ol class="breadcrumbs">
+     <li><a href="../../index.html">(Global)</a></li>
+     <li><a href="../index.html">Indieinabox</a></li>
+     <li><a href="index.html">Feeds</a></li>
+     <li class="current">Dashboard</li>
+    </ol>
+   </nav>
+   <ul class="tabs">
+    <li><a href="../../../dashboard.html">Files</a></li>
+    <li><a href="../../../_classes/index.html" aria-current="page">Classes</a></li>
+   </ul>
+  </header>
+  <main class="dashboard">
+   <section>
+    <h2>Classes</h2>
+    <div class="panel">
+     <div class="chart">
+      <p class="hint">Line coverage against cyclomatic complexity. Bubble size is the number of executable lines; hover for details, click to navigate.</p>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400" preserveAspectRatio="xMidYMid meet">
+ <style>
+  .bubble-success { fill: var(--coverage-success-bar); opacity: 0.7; }
+  .bubble-warning { fill: var(--coverage-warning-bar); opacity: 0.7; }
+  .bubble-danger { fill: var(--coverage-danger-bar); opacity: 0.7; }
+  .bubble-success:hover, .bubble-warning:hover, .bubble-danger:hover { opacity: 1; stroke: var(--text); stroke-width: 1.5; }
+  .chart-grid { stroke: var(--border); stroke-width: 0.5; stroke-dasharray: 4,4; opacity: 0.5; }
+  .chart-axis { stroke: var(--border); stroke-width: 1; }
+  .chart-label { fill: var(--text); font-size: 11px; font-family: var(--font-sans); }
+  .chart-title { fill: var(--text); font-size: 12px; font-family: var(--font-sans); }
+ </style>
+ <line x1="60.0" y1="20" x2="60.0" y2="350" class="chart-grid"/>
+ <text x="60.0" y="368" text-anchor="middle" class="chart-label">0%</text>
+ <line x1="204.0" y1="20" x2="204.0" y2="350" class="chart-grid"/>
+ <text x="204.0" y="368" text-anchor="middle" class="chart-label">20%</text>
+ <line x1="348.0" y1="20" x2="348.0" y2="350" class="chart-grid"/>
+ <text x="348.0" y="368" text-anchor="middle" class="chart-label">40%</text>
+ <line x1="492.0" y1="20" x2="492.0" y2="350" class="chart-grid"/>
+ <text x="492.0" y="368" text-anchor="middle" class="chart-label">60%</text>
+ <line x1="636.0" y1="20" x2="636.0" y2="350" class="chart-grid"/>
+ <text x="636.0" y="368" text-anchor="middle" class="chart-label">80%</text>
+ <line x1="780.0" y1="20" x2="780.0" y2="350" class="chart-grid"/>
+ <text x="780.0" y="368" text-anchor="middle" class="chart-label">100%</text>
+ <line x1="60" y1="350.0" x2="780" y2="350.0" class="chart-grid"/>
+ <text x="52" y="350.0" text-anchor="end" dominant-baseline="middle" class="chart-label">0</text>
+ <line x1="60" y1="240.0" x2="780" y2="240.0" class="chart-grid"/>
+ <text x="52" y="240.0" text-anchor="end" dominant-baseline="middle" class="chart-label">20</text>
+ <line x1="60" y1="130.0" x2="780" y2="130.0" class="chart-grid"/>
+ <text x="52" y="130.0" text-anchor="end" dominant-baseline="middle" class="chart-label">40</text>
+ <line x1="60" y1="20.0" x2="780" y2="20.0" class="chart-grid"/>
+ <text x="52" y="20.0" text-anchor="end" dominant-baseline="middle" class="chart-label">60</text>
+ <line x1="60" y1="20" x2="60" y2="350" class="chart-axis"/>
+ <line x1="60" y1="350" x2="780" y2="350" class="chart-axis"/>
+ <text x="420.0" y="395" text-anchor="middle" class="chart-title">Line Coverage (%)</text>
+ <text x="15" y="185.0" text-anchor="middle" transform="rotate(-90, 15, 185.0)" class="chart-title">Cyclomatic Complexity</text>
+ <a href="../../../app/Feeds/Generators/TwtxtFeedGenerator.php.html#17"><circle cx="628.8" cy="80.5" r="20.0" class="bubble-warning"><title>Indieinabox\Feeds\Generators\TwtxtFeedGenerator — Coverage: 79.0% | Lines: 100 | Complexity: 49</title></circle></a>
+ <a href="../../../app/Feeds/Generators/AtomFeedGenerator.php.html#16"><circle cx="677.1" cy="223.5" r="19.1" class="bubble-warning"><title>Indieinabox\Feeds\Generators\AtomFeedGenerator — Coverage: 85.7% | Lines: 91 | Complexity: 23</title></circle></a>
+ <a href="../../../app/Feeds/Generators/RssFeedGenerator.php.html#16"><circle cx="754.0" cy="234.5" r="18.2" class="bubble-success"><title>Indieinabox\Feeds\Generators\RssFeedGenerator — Coverage: 96.4% | Lines: 83 | Complexity: 21</title></circle></a>
+ <a href="../../../app/Feeds/Parsers/AtomParser.php.html#12"><circle cx="681.2" cy="196.0" r="14.3" class="bubble-warning"><title>Indieinabox\Feeds\Parsers\AtomParser — Coverage: 86.3% | Lines: 51 | Complexity: 28</title></circle></a>
+ <a href="../../../app/Feeds/Parsers/TwtxtParser.php.html#12"><circle cx="780.0" cy="267.5" r="13.1" class="bubble-success"><title>Indieinabox\Feeds\Parsers\TwtxtParser — Coverage: 100.0% | Lines: 43 | Complexity: 15</title></circle></a>
+ <a href="../../../app/Feeds/Parsers/JsonFeedParser.php.html#12"><circle cx="738.9" cy="278.5" r="11.8" class="bubble-success"><title>Indieinabox\Feeds\Parsers\JsonFeedParser — Coverage: 94.3% | Lines: 35 | Complexity: 13</title></circle></a>
+ <a href="../../../app/Feeds/Parsers/RssParser.php.html#12"><circle cx="735.0" cy="267.5" r="11.3" class="bubble-success"><title>Indieinabox\Feeds\Parsers\RssParser — Coverage: 93.8% | Lines: 32 | Complexity: 15</title></circle></a>
+</svg>
+     </div>
+     <div>
+      <p class="hint">Sorted by descending <abbr title="Change Risk Anti-Patterns">CRAP</abbr> index.</p>
+      <div class="scrollbox">
+     <table class="crap">
+      <thead>
+       <tr>
+        <th scope="col">Class</th>
+        <th scope="col" class="number"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+        <th scope="col" class="number">Coverage</th>
+       </tr>
+      </thead>
+      <tbody>
+       <tr><td><a href="../../../app/Feeds/Generators/TwtxtFeedGenerator.php.html#17">Indieinabox\Feeds\Generators\TwtxtFeedGenerator</a></td><td class="number">71.24</td><td class="number">79.0%</td></tr>
+       <tr><td><a href="../../../app/Feeds/Parsers/AtomParser.php.html#12">Indieinabox\Feeds\Parsers\AtomParser</a></td><td class="number">30.03</td><td class="number">86.3%</td></tr>
+       <tr><td><a href="../../../app/Feeds/Generators/AtomFeedGenerator.php.html#16">Indieinabox\Feeds\Generators\AtomFeedGenerator</a></td><td class="number">24.54</td><td class="number">85.7%</td></tr>
+       <tr><td><a href="../../../app/Feeds/Generators/RssFeedGenerator.php.html#16">Indieinabox\Feeds\Generators\RssFeedGenerator</a></td><td class="number">21</td><td class="number">96.4%</td></tr>
+       <tr><td><a href="../../../app/Feeds/Parsers/RssParser.php.html#12">Indieinabox\Feeds\Parsers\RssParser</a></td><td class="number">15.05</td><td class="number">93.8%</td></tr>
+       <tr><td><a href="../../../app/Feeds/Parsers/TwtxtParser.php.html#12">Indieinabox\Feeds\Parsers\TwtxtParser</a></td><td class="number">15</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Feeds/Parsers/JsonFeedParser.php.html#12">Indieinabox\Feeds\Parsers\JsonFeedParser</a></td><td class="number">13.03</td><td class="number">94.3%</td></tr>
+      </tbody>
+     </table>
+      </div>
+     </div>
+    </div>
+   </section>
+   <section>
+    <h2>Methods</h2>
+    <div class="panel">
+     <div class="chart">
+      <p class="hint">Line coverage against cyclomatic complexity. Bubble size is the number of executable lines; hover for details, click to navigate.</p>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400" preserveAspectRatio="xMidYMid meet">
+ <style>
+  .bubble-success { fill: var(--coverage-success-bar); opacity: 0.7; }
+  .bubble-warning { fill: var(--coverage-warning-bar); opacity: 0.7; }
+  .bubble-danger { fill: var(--coverage-danger-bar); opacity: 0.7; }
+  .bubble-success:hover, .bubble-warning:hover, .bubble-danger:hover { opacity: 1; stroke: var(--text); stroke-width: 1.5; }
+  .chart-grid { stroke: var(--border); stroke-width: 0.5; stroke-dasharray: 4,4; opacity: 0.5; }
+  .chart-axis { stroke: var(--border); stroke-width: 1; }
+  .chart-label { fill: var(--text); font-size: 11px; font-family: var(--font-sans); }
+  .chart-title { fill: var(--text); font-size: 12px; font-family: var(--font-sans); }
+ </style>
+ <line x1="60.0" y1="20" x2="60.0" y2="350" class="chart-grid"/>
+ <text x="60.0" y="368" text-anchor="middle" class="chart-label">0%</text>
+ <line x1="204.0" y1="20" x2="204.0" y2="350" class="chart-grid"/>
+ <text x="204.0" y="368" text-anchor="middle" class="chart-label">20%</text>
+ <line x1="348.0" y1="20" x2="348.0" y2="350" class="chart-grid"/>
+ <text x="348.0" y="368" text-anchor="middle" class="chart-label">40%</text>
+ <line x1="492.0" y1="20" x2="492.0" y2="350" class="chart-grid"/>
+ <text x="492.0" y="368" text-anchor="middle" class="chart-label">60%</text>
+ <line x1="636.0" y1="20" x2="636.0" y2="350" class="chart-grid"/>
+ <text x="636.0" y="368" text-anchor="middle" class="chart-label">80%</text>
+ <line x1="780.0" y1="20" x2="780.0" y2="350" class="chart-grid"/>
+ <text x="780.0" y="368" text-anchor="middle" class="chart-label">100%</text>
+ <line x1="60" y1="350.0" x2="780" y2="350.0" class="chart-grid"/>
+ <text x="52" y="350.0" text-anchor="end" dominant-baseline="middle" class="chart-label">0</text>
+ <line x1="60" y1="240.0" x2="780" y2="240.0" class="chart-grid"/>
+ <text x="52" y="240.0" text-anchor="end" dominant-baseline="middle" class="chart-label">10</text>
+ <line x1="60" y1="130.0" x2="780" y2="130.0" class="chart-grid"/>
+ <text x="52" y="130.0" text-anchor="end" dominant-baseline="middle" class="chart-label">20</text>
+ <line x1="60" y1="20.0" x2="780" y2="20.0" class="chart-grid"/>
+ <text x="52" y="20.0" text-anchor="end" dominant-baseline="middle" class="chart-label">30</text>
+ <line x1="60" y1="20" x2="60" y2="350" class="chart-axis"/>
+ <line x1="60" y1="350" x2="780" y2="350" class="chart-axis"/>
+ <text x="420.0" y="395" text-anchor="middle" class="chart-title">Line Coverage (%)</text>
+ <text x="15" y="185.0" text-anchor="middle" transform="rotate(-90, 15, 185.0)" class="chart-title">Cyclomatic Complexity</text>
+ <a href="../../../app/Feeds/Generators/AtomFeedGenerator.php.html#28"><circle cx="757.5" cy="229.0" r="20.0" class="bubble-success"><title>Indieinabox\Feeds\Generators\AtomFeedGenerator::generate — Coverage: 96.9% | Lines: 64 | Complexity: 11</title></circle></a>
+ <a href="../../../app/Feeds/Generators/RssFeedGenerator.php.html#28"><circle cx="780.0" cy="251.0" r="18.7" class="bubble-success"><title>Indieinabox\Feeds\Generators\RssFeedGenerator::generate — Coverage: 100.0% | Lines: 56 | Complexity: 9</title></circle></a>
+ <a href="../../../app/Feeds/Generators/TwtxtFeedGenerator.php.html#111"><circle cx="535.5" cy="53.0" r="18.2" class="bubble-warning"><title>Indieinabox\Feeds\Generators\TwtxtFeedGenerator::formatEntryToTwtxt — Coverage: 66.0% | Lines: 53 | Complexity: 27</title></circle></a>
+ <a href="../../../app/Feeds/Parsers/AtomParser.php.html#44"><circle cx="665.5" cy="108.0" r="16.6" class="bubble-warning"><title>Indieinabox\Feeds\Parsers\AtomParser::parse — Coverage: 84.1% | Lines: 44 | Complexity: 22</title></circle></a>
+ <a href="../../../app/Feeds/Parsers/TwtxtParser.php.html#31"><circle cx="780.0" cy="240.0" r="15.2" class="bubble-success"><title>Indieinabox\Feeds\Parsers\TwtxtParser::parse — Coverage: 100.0% | Lines: 37 | Complexity: 10</title></circle></a>
+ <a href="../../../app/Feeds/Generators/TwtxtFeedGenerator.php.html#29"><circle cx="735.0" cy="185.0" r="14.1" class="bubble-success"><title>Indieinabox\Feeds\Generators\TwtxtFeedGenerator::generate — Coverage: 93.8% | Lines: 32 | Complexity: 15</title></circle></a>
+ <a href="../../../app/Feeds/Parsers/JsonFeedParser.php.html#45"><circle cx="726.7" cy="262.0" r="13.0" class="bubble-success"><title>Indieinabox\Feeds\Parsers\JsonFeedParser::parse — Coverage: 92.6% | Lines: 27 | Complexity: 8</title></circle></a>
+ <a href="../../../app/Feeds/Parsers/RssParser.php.html#44"><circle cx="722.4" cy="229.0" r="12.5" class="bubble-success"><title>Indieinabox\Feeds\Parsers\RssParser::parse — Coverage: 92.0% | Lines: 25 | Complexity: 11</title></circle></a>
+ <a href="../../../app/Feeds/Generators/AtomFeedGenerator.php.html#132"><circle cx="728.6" cy="295.0" r="9.4" class="bubble-success"><title>Indieinabox\Feeds\Generators\AtomFeedGenerator::prepareEntries — Coverage: 92.9% | Lines: 14 | Complexity: 5</title></circle></a>
+ <a href="../../../app/Feeds/Generators/RssFeedGenerator.php.html#119"><circle cx="728.6" cy="295.0" r="9.4" class="bubble-success"><title>Indieinabox\Feeds\Generators\RssFeedGenerator::prepareEntries — Coverage: 92.9% | Lines: 14 | Complexity: 5</title></circle></a>
+ <a href="../../../app/Feeds/Generators/TwtxtFeedGenerator.php.html#88"><circle cx="780.0" cy="317.0" r="8.3" class="bubble-success"><title>Indieinabox\Feeds\Generators\TwtxtFeedGenerator::prepareEntries — Coverage: 100.0% | Lines: 11 | Complexity: 3</title></circle></a>
+ <a href="../../../app/Feeds/Generators/AtomFeedGenerator.php.html#171"><circle cx="60.0" cy="317.0" r="7.5" class="bubble-danger"><title>Indieinabox\Feeds\Generators\AtomFeedGenerator::renderPollFallback — Coverage: 0.0% | Lines: 9 | Complexity: 3</title></circle></a>
+ <a href="../../../app/Feeds/Generators/RssFeedGenerator.php.html#158"><circle cx="700.0" cy="317.0" r="7.5" class="bubble-warning"><title>Indieinabox\Feeds\Generators\RssFeedGenerator::renderPollFallback — Coverage: 88.9% | Lines: 9 | Complexity: 3</title></circle></a>
+ <a href="../../../app/Feeds/Parsers/JsonFeedParser.php.html#21"><circle cx="780.0" cy="306.0" r="6.6" class="bubble-success"><title>Indieinabox\Feeds\Parsers\JsonFeedParser::supports — Coverage: 100.0% | Lines: 7 | Complexity: 4</title></circle></a>
+ <a href="../../../app/Feeds/Parsers/AtomParser.php.html#21"><circle cx="780.0" cy="295.0" r="6.1" class="bubble-success"><title>Indieinabox\Feeds\Parsers\AtomParser::supports — Coverage: 100.0% | Lines: 6 | Complexity: 5</title></circle></a>
+ <a href="../../../app/Feeds/Parsers/RssParser.php.html#21"><circle cx="780.0" cy="317.0" r="6.1" class="bubble-success"><title>Indieinabox\Feeds\Parsers\RssParser::supports — Coverage: 100.0% | Lines: 6 | Complexity: 3</title></circle></a>
+ <a href="../../../app/Feeds/Parsers/TwtxtParser.php.html#21"><circle cx="780.0" cy="306.0" r="5.6" class="bubble-success"><title>Indieinabox\Feeds\Parsers\TwtxtParser::supports — Coverage: 100.0% | Lines: 5 | Complexity: 4</title></circle></a>
+ <a href="../../../app/Feeds/Generators/AtomFeedGenerator.php.html#159"><circle cx="540.0" cy="317.0" r="4.3" class="bubble-warning"><title>Indieinabox\Feeds\Generators\AtomFeedGenerator::resolveEntryUrl — Coverage: 66.7% | Lines: 3 | Complexity: 3</title></circle></a>
+ <a href="../../../app/Feeds/Generators/RssFeedGenerator.php.html#146"><circle cx="540.0" cy="317.0" r="4.3" class="bubble-warning"><title>Indieinabox\Feeds\Generators\RssFeedGenerator::resolveEntryUrl — Coverage: 66.7% | Lines: 3 | Complexity: 3</title></circle></a>
+ <a href="../../../app/Feeds/Generators/TwtxtFeedGenerator.php.html#200"><circle cx="540.0" cy="317.0" r="4.3" class="bubble-warning"><title>Indieinabox\Feeds\Generators\TwtxtFeedGenerator::resolveEntryUrl — Coverage: 66.7% | Lines: 3 | Complexity: 3</title></circle></a>
+ <a href="../../../app/Feeds/Generators/AtomFeedGenerator.php.html#19"><circle cx="780.0" cy="339.0" r="4.0" class="bubble-success"><title>Indieinabox\Feeds\Generators\AtomFeedGenerator::getFilename — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Feeds/Generators/RssFeedGenerator.php.html#19"><circle cx="780.0" cy="339.0" r="4.0" class="bubble-success"><title>Indieinabox\Feeds\Generators\RssFeedGenerator::getFilename — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Feeds/Generators/TwtxtFeedGenerator.php.html#20"><circle cx="780.0" cy="339.0" r="4.0" class="bubble-success"><title>Indieinabox\Feeds\Generators\TwtxtFeedGenerator::getFilename — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Feeds/Parsers/AtomParser.php.html#15"><circle cx="780.0" cy="339.0" r="4.0" class="bubble-success"><title>Indieinabox\Feeds\Parsers\AtomParser::getFormat — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Feeds/Parsers/JsonFeedParser.php.html#15"><circle cx="780.0" cy="339.0" r="4.0" class="bubble-success"><title>Indieinabox\Feeds\Parsers\JsonFeedParser::getFormat — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Feeds/Parsers/RssParser.php.html#15"><circle cx="780.0" cy="339.0" r="4.0" class="bubble-success"><title>Indieinabox\Feeds\Parsers\RssParser::getFormat — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Feeds/Parsers/TwtxtParser.php.html#15"><circle cx="780.0" cy="339.0" r="4.0" class="bubble-success"><title>Indieinabox\Feeds\Parsers\TwtxtParser::getFormat — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+</svg>
+     </div>
+     <div>
+      <p class="hint">Sorted by descending <abbr title="Change Risk Anti-Patterns">CRAP</abbr> index.</p>
+      <div class="scrollbox">
+     <table class="crap">
+      <thead>
+       <tr>
+        <th scope="col">Method</th>
+        <th scope="col" class="number"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+        <th scope="col" class="number">Coverage</th>
+       </tr>
+      </thead>
+      <tbody>
+       <tr><td><a href="../../../app/Feeds/Generators/TwtxtFeedGenerator.php.html#111">Indieinabox\Feeds\Generators\TwtxtFeedGenerator::formatEntryToTwtxt</a></td><td class="number">55.56</td><td class="number">66.0%</td></tr>
+       <tr><td><a href="../../../app/Feeds/Parsers/AtomParser.php.html#44">Indieinabox\Feeds\Parsers\AtomParser::parse</a></td><td class="number">23.95</td><td class="number">84.1%</td></tr>
+       <tr><td><a href="../../../app/Feeds/Generators/TwtxtFeedGenerator.php.html#29">Indieinabox\Feeds\Generators\TwtxtFeedGenerator::generate</a></td><td class="number">15.05</td><td class="number">93.8%</td></tr>
+       <tr><td><a href="../../../app/Feeds/Generators/AtomFeedGenerator.php.html#171">Indieinabox\Feeds\Generators\AtomFeedGenerator::renderPollFallback</a></td><td class="number">12</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="../../../app/Feeds/Parsers/RssParser.php.html#44">Indieinabox\Feeds\Parsers\RssParser::parse</a></td><td class="number">11.06</td><td class="number">92.0%</td></tr>
+       <tr><td><a href="../../../app/Feeds/Generators/AtomFeedGenerator.php.html#28">Indieinabox\Feeds\Generators\AtomFeedGenerator::generate</a></td><td class="number">11</td><td class="number">96.9%</td></tr>
+       <tr><td><a href="../../../app/Feeds/Parsers/TwtxtParser.php.html#31">Indieinabox\Feeds\Parsers\TwtxtParser::parse</a></td><td class="number">10</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Feeds/Generators/RssFeedGenerator.php.html#28">Indieinabox\Feeds\Generators\RssFeedGenerator::generate</a></td><td class="number">9</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Feeds/Parsers/JsonFeedParser.php.html#45">Indieinabox\Feeds\Parsers\JsonFeedParser::parse</a></td><td class="number">8.03</td><td class="number">92.6%</td></tr>
+       <tr><td><a href="../../../app/Feeds/Generators/AtomFeedGenerator.php.html#132">Indieinabox\Feeds\Generators\AtomFeedGenerator::prepareEntries</a></td><td class="number">5.01</td><td class="number">92.9%</td></tr>
+       <tr><td><a href="../../../app/Feeds/Generators/RssFeedGenerator.php.html#119">Indieinabox\Feeds\Generators\RssFeedGenerator::prepareEntries</a></td><td class="number">5.01</td><td class="number">92.9%</td></tr>
+       <tr><td><a href="../../../app/Feeds/Parsers/AtomParser.php.html#21">Indieinabox\Feeds\Parsers\AtomParser::supports</a></td><td class="number">5</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Feeds/Parsers/JsonFeedParser.php.html#21">Indieinabox\Feeds\Parsers\JsonFeedParser::supports</a></td><td class="number">4</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Feeds/Parsers/TwtxtParser.php.html#21">Indieinabox\Feeds\Parsers\TwtxtParser::supports</a></td><td class="number">4</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Feeds/Generators/AtomFeedGenerator.php.html#159">Indieinabox\Feeds\Generators\AtomFeedGenerator::resolveEntryUrl</a></td><td class="number">3.33</td><td class="number">66.7%</td></tr>
+       <tr><td><a href="../../../app/Feeds/Generators/RssFeedGenerator.php.html#146">Indieinabox\Feeds\Generators\RssFeedGenerator::resolveEntryUrl</a></td><td class="number">3.33</td><td class="number">66.7%</td></tr>
+       <tr><td><a href="../../../app/Feeds/Generators/TwtxtFeedGenerator.php.html#200">Indieinabox\Feeds\Generators\TwtxtFeedGenerator::resolveEntryUrl</a></td><td class="number">3.33</td><td class="number">66.7%</td></tr>
+       <tr><td><a href="../../../app/Feeds/Generators/RssFeedGenerator.php.html#158">Indieinabox\Feeds\Generators\RssFeedGenerator::renderPollFallback</a></td><td class="number">3.01</td><td class="number">88.9%</td></tr>
+       <tr><td><a href="../../../app/Feeds/Generators/TwtxtFeedGenerator.php.html#88">Indieinabox\Feeds\Generators\TwtxtFeedGenerator::prepareEntries</a></td><td class="number">3</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Feeds/Parsers/RssParser.php.html#21">Indieinabox\Feeds\Parsers\RssParser::supports</a></td><td class="number">3</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Feeds/Generators/AtomFeedGenerator.php.html#19">Indieinabox\Feeds\Generators\AtomFeedGenerator::getFilename</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Feeds/Generators/RssFeedGenerator.php.html#19">Indieinabox\Feeds\Generators\RssFeedGenerator::getFilename</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Feeds/Generators/TwtxtFeedGenerator.php.html#20">Indieinabox\Feeds\Generators\TwtxtFeedGenerator::getFilename</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Feeds/Parsers/AtomParser.php.html#15">Indieinabox\Feeds\Parsers\AtomParser::getFormat</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Feeds/Parsers/JsonFeedParser.php.html#15">Indieinabox\Feeds\Parsers\JsonFeedParser::getFormat</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Feeds/Parsers/RssParser.php.html#15">Indieinabox\Feeds\Parsers\RssParser::getFormat</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Feeds/Parsers/TwtxtParser.php.html#15">Indieinabox\Feeds\Parsers\TwtxtParser::getFormat</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+      </tbody>
+     </table>
+      </div>
+     </div>
+    </div>
+   </section>
+  </main>
+  <footer>
+   <p class="credits">Generated by <a href="https://github.com/sebastianbergmann/php-code-coverage" target="_top">php-code-coverage 14.3.1</a> using <a href="https://www.php.net/" target="_top">PHP 8.4.27</a> and <a href="https://phpunit.de/">PHPUnit 13.3.1</a> at Mon Oct 26 6:16:30 UTC 2026.</p>
+  </footer>
+ </body>
+</html>

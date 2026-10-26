@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboard for /workspace/lumen/indieinabox/app/Localization/Providers</title>
+  <link rel="stylesheet" href="../../../_css/style.css?v=14.3.1">
+  <link rel="stylesheet" href="../../../_css/custom.css">
+ </head>
+ <body>
+  <header class="masthead">
+   <nav aria-label="Breadcrumb">
+    <ol class="breadcrumbs">
+     <li><a href="../../../index.html">/workspace/lumen/indieinabox</a></li>
+     <li><a href="../../index.html">app</a></li>
+     <li><a href="../index.html">Localization</a></li>
+     <li><a href="index.html">Providers</a></li>
+     <li class="current">Dashboard</li>
+    </ol>
+   </nav>
+   <ul class="tabs">
+    <li><a href="../../../index.html" aria-current="page">Files</a></li>
+    <li><a href="../../../_classes/dashboard.html">Classes</a></li>
+   </ul>
+  </header>
+  <main class="dashboard">
+   <section>
+    <h2>Classes</h2>
+    <div class="panel">
+     <div class="chart">
+      <p class="hint">Line coverage against cyclomatic complexity. Bubble size is the number of executable lines; hover for details, click to navigate.</p>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400" preserveAspectRatio="xMidYMid meet">
+ <style>
+  .bubble-success { fill: var(--coverage-success-bar); opacity: 0.7; }
+  .bubble-warning { fill: var(--coverage-warning-bar); opacity: 0.7; }
+  .bubble-danger { fill: var(--coverage-danger-bar); opacity: 0.7; }
+  .bubble-success:hover, .bubble-warning:hover, .bubble-danger:hover { opacity: 1; stroke: var(--text); stroke-width: 1.5; }
+  .chart-grid { stroke: var(--border); stroke-width: 0.5; stroke-dasharray: 4,4; opacity: 0.5; }
+  .chart-axis { stroke: var(--border); stroke-width: 1; }
+  .chart-label { fill: var(--text); font-size: 11px; font-family: var(--font-sans); }
+  .chart-title { fill: var(--text); font-size: 12px; font-family: var(--font-sans); }
+ </style>
+ <line x1="60.0" y1="20" x2="60.0" y2="350" class="chart-grid"/>
+ <text x="60.0" y="368" text-anchor="middle" class="chart-label">0%</text>
+ <line x1="204.0" y1="20" x2="204.0" y2="350" class="chart-grid"/>
+ <text x="204.0" y="368" text-anchor="middle" class="chart-label">20%</text>
+ <line x1="348.0" y1="20" x2="348.0" y2="350" class="chart-grid"/>
+ <text x="348.0" y="368" text-anchor="middle" class="chart-label">40%</text>
+ <line x1="492.0" y1="20" x2="492.0" y2="350" class="chart-grid"/>
+ <text x="492.0" y="368" text-anchor="middle" class="chart-label">60%</text>
+ <line x1="636.0" y1="20" x2="636.0" y2="350" class="chart-grid"/>
+ <text x="636.0" y="368" text-anchor="middle" class="chart-label">80%</text>
+ <line x1="780.0" y1="20" x2="780.0" y2="350" class="chart-grid"/>
+ <text x="780.0" y="368" text-anchor="middle" class="chart-label">100%</text>
+ <line x1="60" y1="350.0" x2="780" y2="350.0" class="chart-grid"/>
+ <text x="52" y="350.0" text-anchor="end" dominant-baseline="middle" class="chart-label">0</text>
+ <line x1="60" y1="267.5" x2="780" y2="267.5" class="chart-grid"/>
+ <text x="52" y="267.5" text-anchor="end" dominant-baseline="middle" class="chart-label">5</text>
+ <line x1="60" y1="185.0" x2="780" y2="185.0" class="chart-grid"/>
+ <text x="52" y="185.0" text-anchor="end" dominant-baseline="middle" class="chart-label">10</text>
+ <line x1="60" y1="102.5" x2="780" y2="102.5" class="chart-grid"/>
+ <text x="52" y="102.5" text-anchor="end" dominant-baseline="middle" class="chart-label">15</text>
+ <line x1="60" y1="20.0" x2="780" y2="20.0" class="chart-grid"/>
+ <text x="52" y="20.0" text-anchor="end" dominant-baseline="middle" class="chart-label">20</text>
+ <line x1="60" y1="20" x2="60" y2="350" class="chart-axis"/>
+ <line x1="60" y1="350" x2="780" y2="350" class="chart-axis"/>
+ <text x="420.0" y="395" text-anchor="middle" class="chart-title">Line Coverage (%)</text>
+ <text x="15" y="185.0" text-anchor="middle" transform="rotate(-90, 15, 185.0)" class="chart-title">Cyclomatic Complexity</text>
+ <a href="GeminiProvider.php.html#14"><circle cx="606.2" cy="69.5" r="20.0" class="bubble-warning"><title>Indieinabox\Localization\Providers\GeminiProvider — Coverage: 75.9% | Lines: 58 | Complexity: 17</title></circle></a>
+ <a href="OpenAiCompatibleProvider.php.html#14"><circle cx="574.3" cy="53.0" r="18.4" class="bubble-warning"><title>Indieinabox\Localization\Providers\OpenAiCompatibleProvider — Coverage: 71.4% | Lines: 49 | Complexity: 18</title></circle></a>
+ <a href="ClaudeProvider.php.html#14"><circle cx="545.2" cy="86.0" r="17.8" class="bubble-warning"><title>Indieinabox\Localization\Providers\ClaudeProvider — Coverage: 67.4% | Lines: 46 | Complexity: 16</title></circle></a>
+</svg>
+     </div>
+     <div>
+      <p class="hint">Sorted by descending <abbr title="Change Risk Anti-Patterns">CRAP</abbr> index.</p>
+      <div class="scrollbox">
+     <table class="crap">
+      <thead>
+       <tr>
+        <th scope="col">Class</th>
+        <th scope="col" class="number"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+        <th scope="col" class="number">Coverage</th>
+       </tr>
+      </thead>
+      <tbody>
+       <tr><td><a href="OpenAiCompatibleProvider.php.html#14">Indieinabox\Localization\Providers\OpenAiCompatibleProvider</a></td><td class="number">25.56</td><td class="number">71.4%</td></tr>
+       <tr><td><a href="ClaudeProvider.php.html#14">Indieinabox\Localization\Providers\ClaudeProvider</a></td><td class="number">24.88</td><td class="number">67.4%</td></tr>
+       <tr><td><a href="GeminiProvider.php.html#14">Indieinabox\Localization\Providers\GeminiProvider</a></td><td class="number">21.06</td><td class="number">75.9%</td></tr>
+      </tbody>
+     </table>
+      </div>
+     </div>
+    </div>
+   </section>
+   <section>
+    <h2>Methods</h2>
+    <div class="panel">
+     <div class="chart">
+      <p class="hint">Line coverage against cyclomatic complexity. Bubble size is the number of executable lines; hover for details, click to navigate.</p>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400" preserveAspectRatio="xMidYMid meet">
+ <style>
+  .bubble-success { fill: var(--coverage-success-bar); opacity: 0.7; }
+  .bubble-warning { fill: var(--coverage-warning-bar); opacity: 0.7; }
+  .bubble-danger { fill: var(--coverage-danger-bar); opacity: 0.7; }
+  .bubble-success:hover, .bubble-warning:hover, .bubble-danger:hover { opacity: 1; stroke: var(--text); stroke-width: 1.5; }
+  .chart-grid { stroke: var(--border); stroke-width: 0.5; stroke-dasharray: 4,4; opacity: 0.5; }
+  .chart-axis { stroke: var(--border); stroke-width: 1; }
+  .chart-label { fill: var(--text); font-size: 11px; font-family: var(--font-sans); }
+  .chart-title { fill: var(--text); font-size: 12px; font-family: var(--font-sans); }
+ </style>
+ <line x1="60.0" y1="20" x2="60.0" y2="350" class="chart-grid"/>
+ <text x="60.0" y="368" text-anchor="middle" class="chart-label">0%</text>
+ <line x1="204.0" y1="20" x2="204.0" y2="350" class="chart-grid"/>
+ <text x="204.0" y="368" text-anchor="middle" class="chart-label">20%</text>
+ <line x1="348.0" y1="20" x2="348.0" y2="350" class="chart-grid"/>
+ <text x="348.0" y="368" text-anchor="middle" class="chart-label">40%</text>
+ <line x1="492.0" y1="20" x2="492.0" y2="350" class="chart-grid"/>
+ <text x="492.0" y="368" text-anchor="middle" class="chart-label">60%</text>
+ <line x1="636.0" y1="20" x2="636.0" y2="350" class="chart-grid"/>
+ <text x="636.0" y="368" text-anchor="middle" class="chart-label">80%</text>
+ <line x1="780.0" y1="20" x2="780.0" y2="350" class="chart-grid"/>
+ <text x="780.0" y="368" text-anchor="middle" class="chart-label">100%</text>
+ <line x1="60" y1="350.0" x2="780" y2="350.0" class="chart-grid"/>
+ <text x="52" y="350.0" text-anchor="end" dominant-baseline="middle" class="chart-label">0</text>
+ <line x1="60" y1="284.0" x2="780" y2="284.0" class="chart-grid"/>
+ <text x="52" y="284.0" text-anchor="end" dominant-baseline="middle" class="chart-label">2</text>
+ <line x1="60" y1="218.0" x2="780" y2="218.0" class="chart-grid"/>
+ <text x="52" y="218.0" text-anchor="end" dominant-baseline="middle" class="chart-label">4</text>
+ <line x1="60" y1="152.0" x2="780" y2="152.0" class="chart-grid"/>
+ <text x="52" y="152.0" text-anchor="end" dominant-baseline="middle" class="chart-label">6</text>
+ <line x1="60" y1="86.0" x2="780" y2="86.0" class="chart-grid"/>
+ <text x="52" y="86.0" text-anchor="end" dominant-baseline="middle" class="chart-label">8</text>
+ <line x1="60" y1="20.0" x2="780" y2="20.0" class="chart-grid"/>
+ <text x="52" y="20.0" text-anchor="end" dominant-baseline="middle" class="chart-label">10</text>
+ <line x1="60" y1="20" x2="60" y2="350" class="chart-axis"/>
+ <line x1="60" y1="350" x2="780" y2="350" class="chart-axis"/>
+ <text x="420.0" y="395" text-anchor="middle" class="chart-title">Line Coverage (%)</text>
+ <text x="15" y="185.0" text-anchor="middle" transform="rotate(-90, 15, 185.0)" class="chart-title">Cyclomatic Complexity</text>
+ <a href="GeminiProvider.php.html#52"><circle cx="727.3" cy="86.0" r="20.0" class="bubble-success"><title>Indieinabox\Localization\Providers\GeminiProvider::translate — Coverage: 92.7% | Lines: 41 | Complexity: 8</title></circle></a>
+ <a href="ClaudeProvider.php.html#50"><circle cx="684.0" cy="86.0" r="17.1" class="bubble-warning"><title>Indieinabox\Localization\Providers\ClaudeProvider::translate — Coverage: 86.7% | Lines: 30 | Complexity: 8</title></circle></a>
+ <a href="OpenAiCompatibleProvider.php.html#63"><circle cx="677.1" cy="53.0" r="16.5" class="bubble-warning"><title>Indieinabox\Localization\Providers\OpenAiCompatibleProvider::translate — Coverage: 85.7% | Lines: 28 | Complexity: 9</title></circle></a>
+ <a href="ClaudeProvider.php.html#98"><circle cx="60.0" cy="251.0" r="9.9" class="bubble-danger"><title>Indieinabox\Localization\Providers\ClaudeProvider::httpPost — Coverage: 0.0% | Lines: 10 | Complexity: 3</title></circle></a>
+ <a href="GeminiProvider.php.html#120"><circle cx="60.0" cy="251.0" r="9.9" class="bubble-danger"><title>Indieinabox\Localization\Providers\GeminiProvider::httpPost — Coverage: 0.0% | Lines: 10 | Complexity: 3</title></circle></a>
+ <a href="OpenAiCompatibleProvider.php.html#110"><circle cx="60.0" cy="251.0" r="9.9" class="bubble-danger"><title>Indieinabox\Localization\Providers\OpenAiCompatibleProvider::httpPost — Coverage: 0.0% | Lines: 10 | Complexity: 3</title></circle></a>
+ <a href="OpenAiCompatibleProvider.php.html#24"><circle cx="780.0" cy="284.0" r="7.7" class="bubble-success"><title>Indieinabox\Localization\Providers\OpenAiCompatibleProvider::__construct — Coverage: 100.0% | Lines: 6 | Complexity: 2</title></circle></a>
+ <a href="ClaudeProvider.php.html#21"><circle cx="780.0" cy="284.0" r="5.4" class="bubble-success"><title>Indieinabox\Localization\Providers\ClaudeProvider::__construct — Coverage: 100.0% | Lines: 3 | Complexity: 2</title></circle></a>
+ <a href="GeminiProvider.php.html#26"><circle cx="780.0" cy="284.0" r="5.4" class="bubble-success"><title>Indieinabox\Localization\Providers\GeminiProvider::__construct — Coverage: 100.0% | Lines: 3 | Complexity: 2</title></circle></a>
+ <a href="OpenAiCompatibleProvider.php.html#53"><circle cx="780.0" cy="284.0" r="5.4" class="bubble-success"><title>Indieinabox\Localization\Providers\OpenAiCompatibleProvider::isAvailable — Coverage: 100.0% | Lines: 3 | Complexity: 2</title></circle></a>
+ <a href="ClaudeProvider.php.html#32"><circle cx="780.0" cy="317.0" r="4.0" class="bubble-success"><title>Indieinabox\Localization\Providers\ClaudeProvider::getName — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="ClaudeProvider.php.html#38"><circle cx="60.0" cy="317.0" r="4.0" class="bubble-danger"><title>Indieinabox\Localization\Providers\ClaudeProvider::getLabel — Coverage: 0.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="ClaudeProvider.php.html#44"><circle cx="780.0" cy="317.0" r="4.0" class="bubble-success"><title>Indieinabox\Localization\Providers\ClaudeProvider::isAvailable — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="GeminiProvider.php.html#34"><circle cx="780.0" cy="317.0" r="4.0" class="bubble-success"><title>Indieinabox\Localization\Providers\GeminiProvider::getName — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="GeminiProvider.php.html#40"><circle cx="60.0" cy="317.0" r="4.0" class="bubble-danger"><title>Indieinabox\Localization\Providers\GeminiProvider::getLabel — Coverage: 0.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="GeminiProvider.php.html#46"><circle cx="780.0" cy="317.0" r="4.0" class="bubble-success"><title>Indieinabox\Localization\Providers\GeminiProvider::isAvailable — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="GeminiProvider.php.html#115"><circle cx="780.0" cy="317.0" r="4.0" class="bubble-success"><title>Indieinabox\Localization\Providers\GeminiProvider::getTimeout — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="OpenAiCompatibleProvider.php.html#41"><circle cx="780.0" cy="317.0" r="4.0" class="bubble-success"><title>Indieinabox\Localization\Providers\OpenAiCompatibleProvider::getName — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="OpenAiCompatibleProvider.php.html#47"><circle cx="780.0" cy="317.0" r="4.0" class="bubble-success"><title>Indieinabox\Localization\Providers\OpenAiCompatibleProvider::getLabel — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+</svg>
+     </div>
+     <div>
+      <p class="hint">Sorted by descending <abbr title="Change Risk Anti-Patterns">CRAP</abbr> index.</p>
+      <div class="scrollbox">
+     <table class="crap">
+      <thead>
+       <tr>
+        <th scope="col">Method</th>
+        <th scope="col" class="number"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+        <th scope="col" class="number">Coverage</th>
+       </tr>
+      </thead>
+      <tbody>
+       <tr><td><a href="ClaudeProvider.php.html#98">Indieinabox\Localization\Providers\ClaudeProvider::httpPost</a></td><td class="number">12</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="GeminiProvider.php.html#120">Indieinabox\Localization\Providers\GeminiProvider::httpPost</a></td><td class="number">12</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="OpenAiCompatibleProvider.php.html#110">Indieinabox\Localization\Providers\OpenAiCompatibleProvider::httpPost</a></td><td class="number">12</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="OpenAiCompatibleProvider.php.html#63">Indieinabox\Localization\Providers\OpenAiCompatibleProvider::translate</a></td><td class="number">9.24</td><td class="number">85.7%</td></tr>
+       <tr><td><a href="ClaudeProvider.php.html#50">Indieinabox\Localization\Providers\ClaudeProvider::translate</a></td><td class="number">8.15</td><td class="number">86.7%</td></tr>
+       <tr><td><a href="GeminiProvider.php.html#52">Indieinabox\Localization\Providers\GeminiProvider::translate</a></td><td class="number">8.03</td><td class="number">92.7%</td></tr>
+       <tr><td><a href="ClaudeProvider.php.html#21">Indieinabox\Localization\Providers\ClaudeProvider::__construct</a></td><td class="number">2</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="ClaudeProvider.php.html#38">Indieinabox\Localization\Providers\ClaudeProvider::getLabel</a></td><td class="number">2</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="GeminiProvider.php.html#26">Indieinabox\Localization\Providers\GeminiProvider::__construct</a></td><td class="number">2</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="GeminiProvider.php.html#40">Indieinabox\Localization\Providers\GeminiProvider::getLabel</a></td><td class="number">2</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="OpenAiCompatibleProvider.php.html#24">Indieinabox\Localization\Providers\OpenAiCompatibleProvider::__construct</a></td><td class="number">2</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="OpenAiCompatibleProvider.php.html#53">Indieinabox\Localization\Providers\OpenAiCompatibleProvider::isAvailable</a></td><td class="number">2</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="ClaudeProvider.php.html#32">Indieinabox\Localization\Providers\ClaudeProvider::getName</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="ClaudeProvider.php.html#44">Indieinabox\Localization\Providers\ClaudeProvider::isAvailable</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="GeminiProvider.php.html#34">Indieinabox\Localization\Providers\GeminiProvider::getName</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="GeminiProvider.php.html#46">Indieinabox\Localization\Providers\GeminiProvider::isAvailable</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="GeminiProvider.php.html#115">Indieinabox\Localization\Providers\GeminiProvider::getTimeout</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="OpenAiCompatibleProvider.php.html#41">Indieinabox\Localization\Providers\OpenAiCompatibleProvider::getName</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="OpenAiCompatibleProvider.php.html#47">Indieinabox\Localization\Providers\OpenAiCompatibleProvider::getLabel</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+      </tbody>
+     </table>
+      </div>
+     </div>
+    </div>
+   </section>
+  </main>
+  <footer>
+   <p class="credits">Generated by <a href="https://github.com/sebastianbergmann/php-code-coverage" target="_top">php-code-coverage 14.3.1</a> using <a href="https://www.php.net/" target="_top">PHP 8.4.27</a> and <a href="https://phpunit.de/">PHPUnit 13.3.1</a> at Mon Oct 26 6:16:30 UTC 2026.</p>
+  </footer>
+ </body>
+</html>

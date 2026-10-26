@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboard for Indieinabox\BackgroundWorker</title>
+  <link rel="stylesheet" href="../../../_css/style.css?v=14.3.1">
+  <link rel="stylesheet" href="../../../_css/custom.css">
+ </head>
+ <body>
+  <header class="masthead">
+   <nav aria-label="Breadcrumb">
+    <ol class="breadcrumbs">
+     <li><a href="../../index.html">(Global)</a></li>
+     <li><a href="../index.html">Indieinabox</a></li>
+     <li><a href="index.html">BackgroundWorker</a></li>
+     <li class="current">Dashboard</li>
+    </ol>
+   </nav>
+   <ul class="tabs">
+    <li><a href="../../../dashboard.html">Files</a></li>
+    <li><a href="../../../_classes/index.html" aria-current="page">Classes</a></li>
+   </ul>
+  </header>
+  <main class="dashboard">
+   <section>
+    <h2>Classes</h2>
+    <div class="panel">
+     <div class="chart">
+      <p class="hint">Line coverage against cyclomatic complexity. Bubble size is the number of executable lines; hover for details, click to navigate.</p>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400" preserveAspectRatio="xMidYMid meet">
+ <style>
+  .bubble-success { fill: var(--coverage-success-bar); opacity: 0.7; }
+  .bubble-warning { fill: var(--coverage-warning-bar); opacity: 0.7; }
+  .bubble-danger { fill: var(--coverage-danger-bar); opacity: 0.7; }
+  .bubble-success:hover, .bubble-warning:hover, .bubble-danger:hover { opacity: 1; stroke: var(--text); stroke-width: 1.5; }
+  .chart-grid { stroke: var(--border); stroke-width: 0.5; stroke-dasharray: 4,4; opacity: 0.5; }
+  .chart-axis { stroke: var(--border); stroke-width: 1; }
+  .chart-label { fill: var(--text); font-size: 11px; font-family: var(--font-sans); }
+  .chart-title { fill: var(--text); font-size: 12px; font-family: var(--font-sans); }
+ </style>
+ <line x1="60.0" y1="20" x2="60.0" y2="350" class="chart-grid"/>
+ <text x="60.0" y="368" text-anchor="middle" class="chart-label">0%</text>
+ <line x1="204.0" y1="20" x2="204.0" y2="350" class="chart-grid"/>
+ <text x="204.0" y="368" text-anchor="middle" class="chart-label">20%</text>
+ <line x1="348.0" y1="20" x2="348.0" y2="350" class="chart-grid"/>
+ <text x="348.0" y="368" text-anchor="middle" class="chart-label">40%</text>
+ <line x1="492.0" y1="20" x2="492.0" y2="350" class="chart-grid"/>
+ <text x="492.0" y="368" text-anchor="middle" class="chart-label">60%</text>
+ <line x1="636.0" y1="20" x2="636.0" y2="350" class="chart-grid"/>
+ <text x="636.0" y="368" text-anchor="middle" class="chart-label">80%</text>
+ <line x1="780.0" y1="20" x2="780.0" y2="350" class="chart-grid"/>
+ <text x="780.0" y="368" text-anchor="middle" class="chart-label">100%</text>
+ <line x1="60" y1="350.0" x2="780" y2="350.0" class="chart-grid"/>
+ <text x="52" y="350.0" text-anchor="end" dominant-baseline="middle" class="chart-label">0</text>
+ <line x1="60" y1="240.0" x2="780" y2="240.0" class="chart-grid"/>
+ <text x="52" y="240.0" text-anchor="end" dominant-baseline="middle" class="chart-label">50</text>
+ <line x1="60" y1="130.0" x2="780" y2="130.0" class="chart-grid"/>
+ <text x="52" y="130.0" text-anchor="end" dominant-baseline="middle" class="chart-label">100</text>
+ <line x1="60" y1="20.0" x2="780" y2="20.0" class="chart-grid"/>
+ <text x="52" y="20.0" text-anchor="end" dominant-baseline="middle" class="chart-label">150</text>
+ <line x1="60" y1="20" x2="60" y2="350" class="chart-axis"/>
+ <line x1="60" y1="350" x2="780" y2="350" class="chart-axis"/>
+ <text x="420.0" y="395" text-anchor="middle" class="chart-title">Line Coverage (%)</text>
+ <text x="15" y="185.0" text-anchor="middle" transform="rotate(-90, 15, 185.0)" class="chart-title">Cyclomatic Complexity</text>
+ <a href="../../../app/BackgroundWorker/InboxProcessor.php.html#23"><circle cx="607.1" cy="147.6" r="20.0" class="bubble-warning"><title>Indieinabox\BackgroundWorker\InboxProcessor — Coverage: 76.0% | Lines: 279 | Complexity: 92</title></circle></a>
+ <a href="../../../app/BackgroundWorker/ArchiveProcessor.php.html#17"><circle cx="550.9" cy="255.4" r="15.9" class="bubble-warning"><title>Indieinabox\BackgroundWorker\ArchiveProcessor — Coverage: 68.2% | Lines: 176 | Complexity: 43</title></circle></a>
+ <a href="../../../app/BackgroundWorker/BackgroundWorker.php.html#34"><circle cx="672.0" cy="288.4" r="10.7" class="bubble-warning"><title>Indieinabox\BackgroundWorker\BackgroundWorker — Coverage: 85.0% | Lines: 80 | Complexity: 28</title></circle></a>
+ <a href="../../../app/BackgroundWorker/OutboxDispatcher.php.html#19"><circle cx="284.3" cy="330.2" r="9.4" class="bubble-danger"><title>Indieinabox\BackgroundWorker\OutboxDispatcher — Coverage: 31.1% | Lines: 61 | Complexity: 9</title></circle></a>
+ <a href="../../../app/BackgroundWorker/WebmentionDiscovery.php.html#16"><circle cx="540.0" cy="323.6" r="8.0" class="bubble-warning"><title>Indieinabox\BackgroundWorker\WebmentionDiscovery — Coverage: 66.7% | Lines: 45 | Complexity: 12</title></circle></a>
+ <a href="../../../app/BackgroundWorker/OutgoingWebmentionDispatcher.php.html#17"><circle cx="581.4" cy="336.8" r="6.4" class="bubble-warning"><title>Indieinabox\BackgroundWorker\OutgoingWebmentionDispatcher — Coverage: 72.4% | Lines: 29 | Complexity: 6</title></circle></a>
+</svg>
+     </div>
+     <div>
+      <p class="hint">Sorted by descending <abbr title="Change Risk Anti-Patterns">CRAP</abbr> index.</p>
+      <div class="scrollbox">
+     <table class="crap">
+      <thead>
+       <tr>
+        <th scope="col">Class</th>
+        <th scope="col" class="number"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+        <th scope="col" class="number">Coverage</th>
+       </tr>
+      </thead>
+      <tbody>
+       <tr><td><a href="../../../app/BackgroundWorker/InboxProcessor.php.html#23">Indieinabox\BackgroundWorker\InboxProcessor</a></td><td class="number">209.22</td><td class="number">76.0%</td></tr>
+       <tr><td><a href="../../../app/BackgroundWorker/ArchiveProcessor.php.html#17">Indieinabox\BackgroundWorker\ArchiveProcessor</a></td><td class="number">102.56</td><td class="number">68.2%</td></tr>
+       <tr><td><a href="../../../app/BackgroundWorker/OutboxDispatcher.php.html#19">Indieinabox\BackgroundWorker\OutboxDispatcher</a></td><td class="number">35.44</td><td class="number">31.1%</td></tr>
+       <tr><td><a href="../../../app/BackgroundWorker/BackgroundWorker.php.html#34">Indieinabox\BackgroundWorker\BackgroundWorker</a></td><td class="number">30.65</td><td class="number">85.0%</td></tr>
+       <tr><td><a href="../../../app/BackgroundWorker/WebmentionDiscovery.php.html#16">Indieinabox\BackgroundWorker\WebmentionDiscovery</a></td><td class="number">17.33</td><td class="number">66.7%</td></tr>
+       <tr><td><a href="../../../app/BackgroundWorker/OutgoingWebmentionDispatcher.php.html#17">Indieinabox\BackgroundWorker\OutgoingWebmentionDispatcher</a></td><td class="number">6.76</td><td class="number">72.4%</td></tr>
+      </tbody>
+     </table>
+      </div>
+     </div>
+    </div>
+   </section>
+   <section>
+    <h2>Methods</h2>
+    <div class="panel">
+     <div class="chart">
+      <p class="hint">Line coverage against cyclomatic complexity. Bubble size is the number of executable lines; hover for details, click to navigate.</p>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400" preserveAspectRatio="xMidYMid meet">
+ <style>
+  .bubble-success { fill: var(--coverage-success-bar); opacity: 0.7; }
+  .bubble-warning { fill: var(--coverage-warning-bar); opacity: 0.7; }
+  .bubble-danger { fill: var(--coverage-danger-bar); opacity: 0.7; }
+  .bubble-success:hover, .bubble-warning:hover, .bubble-danger:hover { opacity: 1; stroke: var(--text); stroke-width: 1.5; }
+  .chart-grid { stroke: var(--border); stroke-width: 0.5; stroke-dasharray: 4,4; opacity: 0.5; }
+  .chart-axis { stroke: var(--border); stroke-width: 1; }
+  .chart-label { fill: var(--text); font-size: 11px; font-family: var(--font-sans); }
+  .chart-title { fill: var(--text); font-size: 12px; font-family: var(--font-sans); }
+ </style>
+ <line x1="60.0" y1="20" x2="60.0" y2="350" class="chart-grid"/>
+ <text x="60.0" y="368" text-anchor="middle" class="chart-label">0%</text>
+ <line x1="204.0" y1="20" x2="204.0" y2="350" class="chart-grid"/>
+ <text x="204.0" y="368" text-anchor="middle" class="chart-label">20%</text>
+ <line x1="348.0" y1="20" x2="348.0" y2="350" class="chart-grid"/>
+ <text x="348.0" y="368" text-anchor="middle" class="chart-label">40%</text>
+ <line x1="492.0" y1="20" x2="492.0" y2="350" class="chart-grid"/>
+ <text x="492.0" y="368" text-anchor="middle" class="chart-label">60%</text>
+ <line x1="636.0" y1="20" x2="636.0" y2="350" class="chart-grid"/>
+ <text x="636.0" y="368" text-anchor="middle" class="chart-label">80%</text>
+ <line x1="780.0" y1="20" x2="780.0" y2="350" class="chart-grid"/>
+ <text x="780.0" y="368" text-anchor="middle" class="chart-label">100%</text>
+ <line x1="60" y1="350.0" x2="780" y2="350.0" class="chart-grid"/>
+ <text x="52" y="350.0" text-anchor="end" dominant-baseline="middle" class="chart-label">0</text>
+ <line x1="60" y1="284.0" x2="780" y2="284.0" class="chart-grid"/>
+ <text x="52" y="284.0" text-anchor="end" dominant-baseline="middle" class="chart-label">5</text>
+ <line x1="60" y1="218.0" x2="780" y2="218.0" class="chart-grid"/>
+ <text x="52" y="218.0" text-anchor="end" dominant-baseline="middle" class="chart-label">10</text>
+ <line x1="60" y1="152.0" x2="780" y2="152.0" class="chart-grid"/>
+ <text x="52" y="152.0" text-anchor="end" dominant-baseline="middle" class="chart-label">15</text>
+ <line x1="60" y1="86.0" x2="780" y2="86.0" class="chart-grid"/>
+ <text x="52" y="86.0" text-anchor="end" dominant-baseline="middle" class="chart-label">20</text>
+ <line x1="60" y1="20.0" x2="780" y2="20.0" class="chart-grid"/>
+ <text x="52" y="20.0" text-anchor="end" dominant-baseline="middle" class="chart-label">25</text>
+ <line x1="60" y1="20" x2="60" y2="350" class="chart-axis"/>
+ <line x1="60" y1="350" x2="780" y2="350" class="chart-axis"/>
+ <text x="420.0" y="395" text-anchor="middle" class="chart-title">Line Coverage (%)</text>
+ <text x="15" y="185.0" text-anchor="middle" transform="rotate(-90, 15, 185.0)" class="chart-title">Cyclomatic Complexity</text>
+ <a href="../../../app/BackgroundWorker/ArchiveProcessor.php.html#194"><circle cx="240.0" cy="152.0" r="20.0" class="bubble-danger"><title>Indieinabox\BackgroundWorker\ArchiveProcessor::sendToArchiveOrg — Coverage: 25.0% | Lines: 68 | Complexity: 15</title></circle></a>
+ <a href="../../../app/BackgroundWorker/OutboxDispatcher.php.html#35"><circle cx="267.5" cy="244.4" r="18.6" class="bubble-danger"><title>Indieinabox\BackgroundWorker\OutboxDispatcher::process — Coverage: 28.8% | Lines: 59 | Complexity: 8</title></circle></a>
+ <a href="../../../app/BackgroundWorker/InboxProcessor.php.html#268"><circle cx="506.9" cy="59.6" r="18.5" class="bubble-warning"><title>Indieinabox\BackgroundWorker\InboxProcessor::saveActivityPubCreate — Coverage: 62.1% | Lines: 58 | Complexity: 22</title></circle></a>
+ <a href="../../../app/BackgroundWorker/ArchiveProcessor.php.html#67"><circle cx="780.0" cy="204.8" r="17.3" class="bubble-success"><title>Indieinabox\BackgroundWorker\ArchiveProcessor::process — Coverage: 100.0% | Lines: 51 | Complexity: 11</title></circle></a>
+ <a href="../../../app/BackgroundWorker/InboxProcessor.php.html#183"><circle cx="650.4" cy="125.6" r="17.1" class="bubble-warning"><title>Indieinabox\BackgroundWorker\InboxProcessor::handleActivityPub — Coverage: 82.0% | Lines: 50 | Complexity: 17</title></circle></a>
+ <a href="../../../app/BackgroundWorker/WebmentionDiscovery.php.html#42"><circle cx="702.9" cy="231.2" r="12.8" class="bubble-warning"><title>Indieinabox\BackgroundWorker\WebmentionDiscovery::process — Coverage: 89.3% | Lines: 28 | Complexity: 9</title></circle></a>
+ <a href="../../../app/BackgroundWorker/OutgoingWebmentionDispatcher.php.html#33"><circle cx="566.7" cy="284.0" r="12.6" class="bubble-warning"><title>Indieinabox\BackgroundWorker\OutgoingWebmentionDispatcher::process — Coverage: 70.4% | Lines: 27 | Complexity: 5</title></circle></a>
+ <a href="../../../app/BackgroundWorker/InboxProcessor.php.html#517"><circle cx="146.4" cy="310.4" r="12.1" class="bubble-danger"><title>Indieinabox\BackgroundWorker\InboxProcessor::checkAkismet — Coverage: 12.0% | Lines: 25 | Complexity: 3</title></circle></a>
+ <a href="../../../app/BackgroundWorker/ArchiveProcessor.php.html#292"><circle cx="717.4" cy="231.2" r="11.6" class="bubble-success"><title>Indieinabox\BackgroundWorker\ArchiveProcessor::fetchPdfFromMicrolink — Coverage: 91.3% | Lines: 23 | Complexity: 9</title></circle></a>
+ <a href="../../../app/BackgroundWorker/InboxProcessor.php.html#77"><circle cx="717.4" cy="231.2" r="11.6" class="bubble-success"><title>Indieinabox\BackgroundWorker\InboxProcessor::process — Coverage: 91.3% | Lines: 23 | Complexity: 9</title></circle></a>
+ <a href="../../../app/BackgroundWorker/InboxProcessor.php.html#141"><circle cx="672.0" cy="257.6" r="10.8" class="bubble-warning"><title>Indieinabox\BackgroundWorker\InboxProcessor::handleWebmention — Coverage: 85.0% | Lines: 20 | Complexity: 7</title></circle></a>
+ <a href="../../../app/BackgroundWorker/BackgroundWorker.php.html#45"><circle cx="660.0" cy="204.8" r="10.3" class="bubble-warning"><title>Indieinabox\BackgroundWorker\BackgroundWorker::__construct — Coverage: 83.3% | Lines: 18 | Complexity: 11</title></circle></a>
+ <a href="../../../app/BackgroundWorker/BackgroundWorker.php.html#87"><circle cx="780.0" cy="323.6" r="10.3" class="bubble-success"><title>Indieinabox\BackgroundWorker\BackgroundWorker::runAll — Coverage: 100.0% | Lines: 18 | Complexity: 2</title></circle></a>
+ <a href="../../../app/BackgroundWorker/ArchiveProcessor.php.html#163"><circle cx="737.6" cy="297.2" r="10.0" class="bubble-success"><title>Indieinabox\BackgroundWorker\ArchiveProcessor::resolveFinalUrl — Coverage: 94.1% | Lines: 17 | Complexity: 4</title></circle></a>
+ <a href="../../../app/BackgroundWorker/BackgroundWorker.php.html#185"><circle cx="398.8" cy="297.2" r="10.0" class="bubble-danger"><title>Indieinabox\BackgroundWorker\BackgroundWorker::processTwtxtFeeds — Coverage: 47.1% | Lines: 17 | Complexity: 4</title></circle></a>
+ <a href="../../../app/BackgroundWorker/InboxProcessor.php.html#374"><circle cx="732.0" cy="284.0" r="9.4" class="bubble-success"><title>Indieinabox\BackgroundWorker\InboxProcessor::downloadAvatarLocally — Coverage: 93.3% | Lines: 15 | Complexity: 5</title></circle></a>
+ <a href="../../../app/BackgroundWorker/InboxProcessor.php.html#463"><circle cx="677.1" cy="284.0" r="9.1" class="bubble-warning"><title>Indieinabox\BackgroundWorker\InboxProcessor::getPublicKey — Coverage: 85.7% | Lines: 14 | Complexity: 5</title></circle></a>
+ <a href="../../../app/BackgroundWorker/InboxProcessor.php.html#559"><circle cx="728.6" cy="284.0" r="9.1" class="bubble-success"><title>Indieinabox\BackgroundWorker\InboxProcessor::fetchJsonUrl — Coverage: 92.9% | Lines: 14 | Complexity: 5</title></circle></a>
+ <a href="../../../app/BackgroundWorker/WebmentionDiscovery.php.html#98"><circle cx="162.9" cy="323.6" r="9.1" class="bubble-danger"><title>Indieinabox\BackgroundWorker\WebmentionDiscovery::fetchUrl — Coverage: 14.3% | Lines: 14 | Complexity: 2</title></circle></a>
+ <a href="../../../app/BackgroundWorker/InboxProcessor.php.html#409"><circle cx="780.0" cy="336.8" r="8.4" class="bubble-success"><title>Indieinabox\BackgroundWorker\InboxProcessor::queueAcceptFollow — Coverage: 100.0% | Lines: 12 | Complexity: 1</title></circle></a>
+ <a href="../../../app/BackgroundWorker/InboxProcessor.php.html#433"><circle cx="780.0" cy="257.6" r="8.4" class="bubble-success"><title>Indieinabox\BackgroundWorker\InboxProcessor::extractLinksToArchiveQueue — Coverage: 100.0% | Lines: 12 | Complexity: 7</title></circle></a>
+ <a href="../../../app/BackgroundWorker/ArchiveProcessor.php.html#333"><circle cx="649.1" cy="310.4" r="8.0" class="bubble-warning"><title>Indieinabox\BackgroundWorker\ArchiveProcessor::fetchUrl — Coverage: 81.8% | Lines: 11 | Complexity: 3</title></circle></a>
+ <a href="../../../app/BackgroundWorker/InboxProcessor.php.html#587"><circle cx="780.0" cy="323.6" r="8.0" class="bubble-success"><title>Indieinabox\BackgroundWorker\InboxProcessor::fetchUrl — Coverage: 100.0% | Lines: 11 | Complexity: 2</title></circle></a>
+ <a href="../../../app/BackgroundWorker/BackgroundWorker.php.html#148"><circle cx="780.0" cy="310.4" r="7.7" class="bubble-success"><title>Indieinabox\BackgroundWorker\BackgroundWorker::processBackups — Coverage: 100.0% | Lines: 10 | Complexity: 3</title></circle></a>
+ <a href="../../../app/BackgroundWorker/InboxProcessor.php.html#49"><circle cx="708.0" cy="297.2" r="7.7" class="bubble-success"><title>Indieinabox\BackgroundWorker\InboxProcessor::__construct — Coverage: 90.0% | Lines: 10 | Complexity: 4</title></circle></a>
+ <a href="../../../app/BackgroundWorker/InboxProcessor.php.html#120"><circle cx="780.0" cy="336.8" r="6.9" class="bubble-success"><title>Indieinabox\BackgroundWorker\InboxProcessor::handleBuildSite — Coverage: 100.0% | Lines: 8 | Complexity: 1</title></circle></a>
+ <a href="../../../app/BackgroundWorker/InboxProcessor.php.html#495"><circle cx="368.6" cy="297.2" r="6.4" class="bubble-danger"><title>Indieinabox\BackgroundWorker\InboxProcessor::verifySignature — Coverage: 42.9% | Lines: 7 | Complexity: 4</title></circle></a>
+ <a href="../../../app/BackgroundWorker/ArchiveProcessor.php.html#46"><circle cx="780.0" cy="336.8" r="5.9" class="bubble-success"><title>Indieinabox\BackgroundWorker\ArchiveProcessor::__construct — Coverage: 100.0% | Lines: 6 | Complexity: 1</title></circle></a>
+ <a href="../../../app/BackgroundWorker/BackgroundWorker.php.html#173"><circle cx="780.0" cy="336.8" r="4.2" class="bubble-success"><title>Indieinabox\BackgroundWorker\BackgroundWorker::processUpdates — Coverage: 100.0% | Lines: 3 | Complexity: 1</title></circle></a>
+ <a href="../../../app/BackgroundWorker/WebmentionDiscovery.php.html#30"><circle cx="780.0" cy="336.8" r="4.2" class="bubble-success"><title>Indieinabox\BackgroundWorker\WebmentionDiscovery::__construct — Coverage: 100.0% | Lines: 3 | Complexity: 1</title></circle></a>
+ <a href="../../../app/BackgroundWorker/BackgroundWorker.php.html#118"><circle cx="780.0" cy="336.8" r="4.0" class="bubble-success"><title>Indieinabox\BackgroundWorker\BackgroundWorker::processInstagramImport — Coverage: 100.0% | Lines: 2 | Complexity: 1</title></circle></a>
+ <a href="../../../app/BackgroundWorker/BackgroundWorker.php.html#128"><circle cx="780.0" cy="336.8" r="4.0" class="bubble-success"><title>Indieinabox\BackgroundWorker\BackgroundWorker::processAutoSyndication — Coverage: 100.0% | Lines: 2 | Complexity: 1</title></circle></a>
+ <a href="../../../app/BackgroundWorker/BackgroundWorker.php.html#138"><circle cx="780.0" cy="336.8" r="4.0" class="bubble-success"><title>Indieinabox\BackgroundWorker\BackgroundWorker::processWebmentionDiscovery — Coverage: 100.0% | Lines: 2 | Complexity: 1</title></circle></a>
+ <a href="../../../app/BackgroundWorker/BackgroundWorker.php.html#219"><circle cx="780.0" cy="336.8" r="4.0" class="bubble-success"><title>Indieinabox\BackgroundWorker\BackgroundWorker::processInboxQueue — Coverage: 100.0% | Lines: 2 | Complexity: 1</title></circle></a>
+ <a href="../../../app/BackgroundWorker/BackgroundWorker.php.html#229"><circle cx="780.0" cy="336.8" r="4.0" class="bubble-success"><title>Indieinabox\BackgroundWorker\BackgroundWorker::processOutgoingWebmentions — Coverage: 100.0% | Lines: 2 | Complexity: 1</title></circle></a>
+ <a href="../../../app/BackgroundWorker/BackgroundWorker.php.html#240"><circle cx="780.0" cy="336.8" r="4.0" class="bubble-success"><title>Indieinabox\BackgroundWorker\BackgroundWorker::processOutbox — Coverage: 100.0% | Lines: 2 | Complexity: 1</title></circle></a>
+ <a href="../../../app/BackgroundWorker/BackgroundWorker.php.html#251"><circle cx="780.0" cy="336.8" r="4.0" class="bubble-success"><title>Indieinabox\BackgroundWorker\BackgroundWorker::processArchiveQueue — Coverage: 100.0% | Lines: 2 | Complexity: 1</title></circle></a>
+ <a href="../../../app/BackgroundWorker/OutboxDispatcher.php.html#24"><circle cx="780.0" cy="336.8" r="4.0" class="bubble-success"><title>Indieinabox\BackgroundWorker\OutboxDispatcher::__construct — Coverage: 100.0% | Lines: 2 | Complexity: 1</title></circle></a>
+ <a href="../../../app/BackgroundWorker/OutgoingWebmentionDispatcher.php.html#22"><circle cx="780.0" cy="336.8" r="4.0" class="bubble-success"><title>Indieinabox\BackgroundWorker\OutgoingWebmentionDispatcher::__construct — Coverage: 100.0% | Lines: 2 | Complexity: 1</title></circle></a>
+</svg>
+     </div>
+     <div>
+      <p class="hint">Sorted by descending <abbr title="Change Risk Anti-Patterns">CRAP</abbr> index.</p>
+      <div class="scrollbox">
+     <table class="crap">
+      <thead>
+       <tr>
+        <th scope="col">Method</th>
+        <th scope="col" class="number"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+        <th scope="col" class="number">Coverage</th>
+       </tr>
+      </thead>
+      <tbody>
+       <tr><td><a href="../../../app/BackgroundWorker/ArchiveProcessor.php.html#194">Indieinabox\BackgroundWorker\ArchiveProcessor::sendToArchiveOrg</a></td><td class="number">109.92</td><td class="number">25.0%</td></tr>
+       <tr><td><a href="../../../app/BackgroundWorker/InboxProcessor.php.html#268">Indieinabox\BackgroundWorker\InboxProcessor::saveActivityPubCreate</a></td><td class="number">48.41</td><td class="number">62.1%</td></tr>
+       <tr><td><a href="../../../app/BackgroundWorker/OutboxDispatcher.php.html#35">Indieinabox\BackgroundWorker\OutboxDispatcher::process</a></td><td class="number">31.09</td><td class="number">28.8%</td></tr>
+       <tr><td><a href="../../../app/BackgroundWorker/InboxProcessor.php.html#183">Indieinabox\BackgroundWorker\InboxProcessor::handleActivityPub</a></td><td class="number">18.69</td><td class="number">82.0%</td></tr>
+       <tr><td><a href="../../../app/BackgroundWorker/BackgroundWorker.php.html#45">Indieinabox\BackgroundWorker\BackgroundWorker::__construct</a></td><td class="number">11.56</td><td class="number">83.3%</td></tr>
+       <tr><td><a href="../../../app/BackgroundWorker/ArchiveProcessor.php.html#67">Indieinabox\BackgroundWorker\ArchiveProcessor::process</a></td><td class="number">11</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/BackgroundWorker/InboxProcessor.php.html#517">Indieinabox\BackgroundWorker\InboxProcessor::checkAkismet</a></td><td class="number">9.13</td><td class="number">12.0%</td></tr>
+       <tr><td><a href="../../../app/BackgroundWorker/WebmentionDiscovery.php.html#42">Indieinabox\BackgroundWorker\WebmentionDiscovery::process</a></td><td class="number">9.10</td><td class="number">89.3%</td></tr>
+       <tr><td><a href="../../../app/BackgroundWorker/ArchiveProcessor.php.html#292">Indieinabox\BackgroundWorker\ArchiveProcessor::fetchPdfFromMicrolink</a></td><td class="number">9.05</td><td class="number">91.3%</td></tr>
+       <tr><td><a href="../../../app/BackgroundWorker/InboxProcessor.php.html#77">Indieinabox\BackgroundWorker\InboxProcessor::process</a></td><td class="number">9.05</td><td class="number">91.3%</td></tr>
+       <tr><td><a href="../../../app/BackgroundWorker/InboxProcessor.php.html#141">Indieinabox\BackgroundWorker\InboxProcessor::handleWebmention</a></td><td class="number">7.17</td><td class="number">85.0%</td></tr>
+       <tr><td><a href="../../../app/BackgroundWorker/InboxProcessor.php.html#433">Indieinabox\BackgroundWorker\InboxProcessor::extractLinksToArchiveQueue</a></td><td class="number">7</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/BackgroundWorker/InboxProcessor.php.html#495">Indieinabox\BackgroundWorker\InboxProcessor::verifySignature</a></td><td class="number">6.99</td><td class="number">42.9%</td></tr>
+       <tr><td><a href="../../../app/BackgroundWorker/BackgroundWorker.php.html#185">Indieinabox\BackgroundWorker\BackgroundWorker::processTwtxtFeeds</a></td><td class="number">6.37</td><td class="number">47.1%</td></tr>
+       <tr><td><a href="../../../app/BackgroundWorker/OutgoingWebmentionDispatcher.php.html#33">Indieinabox\BackgroundWorker\OutgoingWebmentionDispatcher::process</a></td><td class="number">5.65</td><td class="number">70.4%</td></tr>
+       <tr><td><a href="../../../app/BackgroundWorker/InboxProcessor.php.html#463">Indieinabox\BackgroundWorker\InboxProcessor::getPublicKey</a></td><td class="number">5.07</td><td class="number">85.7%</td></tr>
+       <tr><td><a href="../../../app/BackgroundWorker/InboxProcessor.php.html#374">Indieinabox\BackgroundWorker\InboxProcessor::downloadAvatarLocally</a></td><td class="number">5.01</td><td class="number">93.3%</td></tr>
+       <tr><td><a href="../../../app/BackgroundWorker/InboxProcessor.php.html#559">Indieinabox\BackgroundWorker\InboxProcessor::fetchJsonUrl</a></td><td class="number">5.01</td><td class="number">92.9%</td></tr>
+       <tr><td><a href="../../../app/BackgroundWorker/WebmentionDiscovery.php.html#98">Indieinabox\BackgroundWorker\WebmentionDiscovery::fetchUrl</a></td><td class="number">4.52</td><td class="number">14.3%</td></tr>
+       <tr><td><a href="../../../app/BackgroundWorker/InboxProcessor.php.html#49">Indieinabox\BackgroundWorker\InboxProcessor::__construct</a></td><td class="number">4.02</td><td class="number">90.0%</td></tr>
+       <tr><td><a href="../../../app/BackgroundWorker/ArchiveProcessor.php.html#163">Indieinabox\BackgroundWorker\ArchiveProcessor::resolveFinalUrl</a></td><td class="number">4.00</td><td class="number">94.1%</td></tr>
+       <tr><td><a href="../../../app/BackgroundWorker/ArchiveProcessor.php.html#333">Indieinabox\BackgroundWorker\ArchiveProcessor::fetchUrl</a></td><td class="number">3.05</td><td class="number">81.8%</td></tr>
+       <tr><td><a href="../../../app/BackgroundWorker/BackgroundWorker.php.html#148">Indieinabox\BackgroundWorker\BackgroundWorker::processBackups</a></td><td class="number">3</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/BackgroundWorker/BackgroundWorker.php.html#87">Indieinabox\BackgroundWorker\BackgroundWorker::runAll</a></td><td class="number">2</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/BackgroundWorker/InboxProcessor.php.html#587">Indieinabox\BackgroundWorker\InboxProcessor::fetchUrl</a></td><td class="number">2</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/BackgroundWorker/ArchiveProcessor.php.html#46">Indieinabox\BackgroundWorker\ArchiveProcessor::__construct</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/BackgroundWorker/BackgroundWorker.php.html#118">Indieinabox\BackgroundWorker\BackgroundWorker::processInstagramImport</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/BackgroundWorker/BackgroundWorker.php.html#128">Indieinabox\BackgroundWorker\BackgroundWorker::processAutoSyndication</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/BackgroundWorker/BackgroundWorker.php.html#138">Indieinabox\BackgroundWorker\BackgroundWorker::processWebmentionDiscovery</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/BackgroundWorker/BackgroundWorker.php.html#173">Indieinabox\BackgroundWorker\BackgroundWorker::processUpdates</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/BackgroundWorker/BackgroundWorker.php.html#219">Indieinabox\BackgroundWorker\BackgroundWorker::processInboxQueue</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/BackgroundWorker/BackgroundWorker.php.html#229">Indieinabox\BackgroundWorker\BackgroundWorker::processOutgoingWebmentions</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/BackgroundWorker/BackgroundWorker.php.html#240">Indieinabox\BackgroundWorker\BackgroundWorker::processOutbox</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/BackgroundWorker/BackgroundWorker.php.html#251">Indieinabox\BackgroundWorker\BackgroundWorker::processArchiveQueue</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/BackgroundWorker/InboxProcessor.php.html#120">Indieinabox\BackgroundWorker\InboxProcessor::handleBuildSite</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/BackgroundWorker/InboxProcessor.php.html#409">Indieinabox\BackgroundWorker\InboxProcessor::queueAcceptFollow</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/BackgroundWorker/OutboxDispatcher.php.html#24">Indieinabox\BackgroundWorker\OutboxDispatcher::__construct</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/BackgroundWorker/OutgoingWebmentionDispatcher.php.html#22">Indieinabox\BackgroundWorker\OutgoingWebmentionDispatcher::__construct</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/BackgroundWorker/WebmentionDiscovery.php.html#30">Indieinabox\BackgroundWorker\WebmentionDiscovery::__construct</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+      </tbody>
+     </table>
+      </div>
+     </div>
+    </div>
+   </section>
+  </main>
+  <footer>
+   <p class="credits">Generated by <a href="https://github.com/sebastianbergmann/php-code-coverage" target="_top">php-code-coverage 14.3.1</a> using <a href="https://www.php.net/" target="_top">PHP 8.4.27</a> and <a href="https://phpunit.de/">PHPUnit 13.3.1</a> at Mon Oct 26 6:16:30 UTC 2026.</p>
+  </footer>
+ </body>
+</html>

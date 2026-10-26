@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboard for /workspace/lumen/indieinabox/app/Http</title>
+  <link rel="stylesheet" href="../../_css/style.css?v=14.3.1">
+  <link rel="stylesheet" href="../../_css/custom.css">
+ </head>
+ <body>
+  <header class="masthead">
+   <nav aria-label="Breadcrumb">
+    <ol class="breadcrumbs">
+     <li><a href="../../index.html">/workspace/lumen/indieinabox</a></li>
+     <li><a href="../index.html">app</a></li>
+     <li><a href="index.html">Http</a></li>
+     <li class="current">Dashboard</li>
+    </ol>
+   </nav>
+   <ul class="tabs">
+    <li><a href="../../index.html" aria-current="page">Files</a></li>
+    <li><a href="../../_classes/dashboard.html">Classes</a></li>
+   </ul>
+  </header>
+  <main class="dashboard">
+   <section>
+    <h2>Classes</h2>
+    <div class="panel">
+     <div class="chart">
+      <p class="hint">Line coverage against cyclomatic complexity. Bubble size is the number of executable lines; hover for details, click to navigate.</p>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400" preserveAspectRatio="xMidYMid meet">
+ <style>
+  .bubble-success { fill: var(--coverage-success-bar); opacity: 0.7; }
+  .bubble-warning { fill: var(--coverage-warning-bar); opacity: 0.7; }
+  .bubble-danger { fill: var(--coverage-danger-bar); opacity: 0.7; }
+  .bubble-success:hover, .bubble-warning:hover, .bubble-danger:hover { opacity: 1; stroke: var(--text); stroke-width: 1.5; }
+  .chart-grid { stroke: var(--border); stroke-width: 0.5; stroke-dasharray: 4,4; opacity: 0.5; }
+  .chart-axis { stroke: var(--border); stroke-width: 1; }
+  .chart-label { fill: var(--text); font-size: 11px; font-family: var(--font-sans); }
+  .chart-title { fill: var(--text); font-size: 12px; font-family: var(--font-sans); }
+ </style>
+ <line x1="60.0" y1="20" x2="60.0" y2="350" class="chart-grid"/>
+ <text x="60.0" y="368" text-anchor="middle" class="chart-label">0%</text>
+ <line x1="204.0" y1="20" x2="204.0" y2="350" class="chart-grid"/>
+ <text x="204.0" y="368" text-anchor="middle" class="chart-label">20%</text>
+ <line x1="348.0" y1="20" x2="348.0" y2="350" class="chart-grid"/>
+ <text x="348.0" y="368" text-anchor="middle" class="chart-label">40%</text>
+ <line x1="492.0" y1="20" x2="492.0" y2="350" class="chart-grid"/>
+ <text x="492.0" y="368" text-anchor="middle" class="chart-label">60%</text>
+ <line x1="636.0" y1="20" x2="636.0" y2="350" class="chart-grid"/>
+ <text x="636.0" y="368" text-anchor="middle" class="chart-label">80%</text>
+ <line x1="780.0" y1="20" x2="780.0" y2="350" class="chart-grid"/>
+ <text x="780.0" y="368" text-anchor="middle" class="chart-label">100%</text>
+ <line x1="60" y1="350.0" x2="780" y2="350.0" class="chart-grid"/>
+ <text x="52" y="350.0" text-anchor="end" dominant-baseline="middle" class="chart-label">0</text>
+ <line x1="60" y1="267.5" x2="780" y2="267.5" class="chart-grid"/>
+ <text x="52" y="267.5" text-anchor="end" dominant-baseline="middle" class="chart-label">100</text>
+ <line x1="60" y1="185.0" x2="780" y2="185.0" class="chart-grid"/>
+ <text x="52" y="185.0" text-anchor="end" dominant-baseline="middle" class="chart-label">200</text>
+ <line x1="60" y1="102.5" x2="780" y2="102.5" class="chart-grid"/>
+ <text x="52" y="102.5" text-anchor="end" dominant-baseline="middle" class="chart-label">300</text>
+ <line x1="60" y1="20.0" x2="780" y2="20.0" class="chart-grid"/>
+ <text x="52" y="20.0" text-anchor="end" dominant-baseline="middle" class="chart-label">400</text>
+ <line x1="60" y1="20" x2="60" y2="350" class="chart-axis"/>
+ <line x1="60" y1="350" x2="780" y2="350" class="chart-axis"/>
+ <text x="420.0" y="395" text-anchor="middle" class="chart-title">Line Coverage (%)</text>
+ <text x="15" y="185.0" text-anchor="middle" transform="rotate(-90, 15, 185.0)" class="chart-title">Cyclomatic Complexity</text>
+ <a href="Controllers/AdminController.php.html#29"><circle cx="549.4" cy="124.8" r="20.0" class="bubble-warning"><title>Indieinabox\Http\Controllers\AdminController — Coverage: 68.0% | Lines: 740 | Complexity: 273</title></circle></a>
+ <a href="WebRouter.php.html#27"><circle cx="534.1" cy="279.1" r="10.4" class="bubble-warning"><title>Indieinabox\Http\WebRouter — Coverage: 65.8% | Lines: 202 | Complexity: 86</title></circle></a>
+ <a href="Controllers/MicrosubController.php.html#19"><circle cx="439.7" cy="290.6" r="10.4" class="bubble-warning"><title>Indieinabox\Http\Controllers\MicrosubController — Coverage: 52.7% | Lines: 201 | Complexity: 72</title></circle></a>
+ <a href="Controllers/ActivityPubController.php.html#21"><circle cx="612.6" cy="317.8" r="10.0" class="bubble-warning"><title>Indieinabox\Http\Controllers\ActivityPubController — Coverage: 76.8% | Lines: 185 | Complexity: 39</title></circle></a>
+ <a href="Controllers/MicropubController.php.html#23"><circle cx="446.1" cy="300.5" r="8.6" class="bubble-warning"><title>Indieinabox\Http\Controllers\MicropubController — Coverage: 53.6% | Lines: 138 | Complexity: 60</title></circle></a>
+ <a href="Controllers/DiscoveryController.php.html#19"><circle cx="747.8" cy="322.8" r="8.5" class="bubble-success"><title>Indieinabox\Http\Controllers\DiscoveryController — Coverage: 95.5% | Lines: 134 | Complexity: 33</title></circle></a>
+ <a href="StaticFileServer.php.html#14"><circle cx="753.8" cy="321.9" r="7.7" class="bubble-success"><title>Indieinabox\Http\StaticFileServer — Coverage: 96.4% | Lines: 110 | Complexity: 34</title></circle></a>
+ <a href="Controllers/IndieAuthController.php.html#14"><circle cx="654.2" cy="329.4" r="7.5" class="bubble-warning"><title>Indieinabox\Http\Controllers\IndieAuthController — Coverage: 82.5% | Lines: 103 | Complexity: 25</title></circle></a>
+ <a href="Controllers/WebmentionController.php.html#14"><circle cx="780.0" cy="336.8" r="4.5" class="bubble-success"><title>Indieinabox\Http\Controllers\WebmentionController — Coverage: 100.0% | Lines: 37 | Complexity: 16</title></circle></a>
+ <a href="Controllers/SearchController.php.html#18"><circle cx="755.2" cy="337.6" r="4.0" class="bubble-success"><title>Indieinabox\Http\Controllers\SearchController — Coverage: 96.6% | Lines: 29 | Complexity: 15</title></circle></a>
+ <a href="Controllers/AbstractController.php.html#12"><circle cx="672.0" cy="340.9" r="4.0" class="bubble-warning"><title>Indieinabox\Http\Controllers\AbstractController — Coverage: 85.0% | Lines: 20 | Complexity: 11</title></circle></a>
+ <a href="Controllers/ArchiveController.php.html#14"><circle cx="588.0" cy="345.1" r="4.0" class="bubble-warning"><title>Indieinabox\Http\Controllers\ArchiveController — Coverage: 73.3% | Lines: 15 | Complexity: 6</title></circle></a>
+ <a href="SecurityHeaders.php.html#13"><circle cx="724.6" cy="344.2" r="4.0" class="bubble-success"><title>Indieinabox\Http\SecurityHeaders — Coverage: 92.3% | Lines: 13 | Complexity: 7</title></circle></a>
+ <a href="Controllers/ClientController.php.html#15"><circle cx="660.0" cy="347.5" r="4.0" class="bubble-warning"><title>Indieinabox\Http\Controllers\ClientController — Coverage: 83.3% | Lines: 12 | Complexity: 3</title></circle></a>
+ <a href="Controllers/ConfigController.php.html#13"><circle cx="492.0" cy="347.5" r="4.0" class="bubble-warning"><title>Indieinabox\Http\Controllers\ConfigController — Coverage: 60.0% | Lines: 5 | Complexity: 3</title></circle></a>
+</svg>
+     </div>
+     <div>
+      <p class="hint">Sorted by descending <abbr title="Change Risk Anti-Patterns">CRAP</abbr> index.</p>
+      <div class="scrollbox">
+     <table class="crap">
+      <thead>
+       <tr>
+        <th scope="col">Class</th>
+        <th scope="col" class="number"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+        <th scope="col" class="number">Coverage</th>
+       </tr>
+      </thead>
+      <tbody>
+       <tr><td><a href="Controllers/AdminController.php.html#29">Indieinabox\Http\Controllers\AdminController</a></td><td class="number">2721.36</td><td class="number">68.0%</td></tr>
+       <tr><td><a href="Controllers/MicrosubController.php.html#19">Indieinabox\Http\Controllers\MicrosubController</a></td><td class="number">619.33</td><td class="number">52.7%</td></tr>
+       <tr><td><a href="Controllers/MicropubController.php.html#23">Indieinabox\Http\Controllers\MicropubController</a></td><td class="number">419.09</td><td class="number">53.6%</td></tr>
+       <tr><td><a href="WebRouter.php.html#27">Indieinabox\Http\WebRouter</a></td><td class="number">380.77</td><td class="number">65.8%</td></tr>
+       <tr><td><a href="Controllers/ActivityPubController.php.html#21">Indieinabox\Http\Controllers\ActivityPubController</a></td><td class="number">58.10</td><td class="number">76.8%</td></tr>
+       <tr><td><a href="StaticFileServer.php.html#14">Indieinabox\Http\StaticFileServer</a></td><td class="number">34</td><td class="number">96.4%</td></tr>
+       <tr><td><a href="Controllers/DiscoveryController.php.html#19">Indieinabox\Http\Controllers\DiscoveryController</a></td><td class="number">33</td><td class="number">95.5%</td></tr>
+       <tr><td><a href="Controllers/IndieAuthController.php.html#14">Indieinabox\Http\Controllers\IndieAuthController</a></td><td class="number">28.34</td><td class="number">82.5%</td></tr>
+       <tr><td><a href="Controllers/WebmentionController.php.html#14">Indieinabox\Http\Controllers\WebmentionController</a></td><td class="number">16</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="Controllers/SearchController.php.html#18">Indieinabox\Http\Controllers\SearchController</a></td><td class="number">15</td><td class="number">96.6%</td></tr>
+       <tr><td><a href="Controllers/AbstractController.php.html#12">Indieinabox\Http\Controllers\AbstractController</a></td><td class="number">11.41</td><td class="number">85.0%</td></tr>
+       <tr><td><a href="SecurityHeaders.php.html#13">Indieinabox\Http\SecurityHeaders</a></td><td class="number">7.02</td><td class="number">92.3%</td></tr>
+       <tr><td><a href="Controllers/ArchiveController.php.html#14">Indieinabox\Http\Controllers\ArchiveController</a></td><td class="number">6.68</td><td class="number">73.3%</td></tr>
+       <tr><td><a href="Controllers/ConfigController.php.html#13">Indieinabox\Http\Controllers\ConfigController</a></td><td class="number">3.58</td><td class="number">60.0%</td></tr>
+       <tr><td><a href="Controllers/ClientController.php.html#15">Indieinabox\Http\Controllers\ClientController</a></td><td class="number">3.04</td><td class="number">83.3%</td></tr>
+      </tbody>
+     </table>
+      </div>
+     </div>
+    </div>
+   </section>
+   <section>
+    <h2>Methods</h2>
+    <div class="panel">
+     <div class="chart">
+      <p class="hint">Line coverage against cyclomatic complexity. Bubble size is the number of executable lines; hover for details, click to navigate.</p>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400" preserveAspectRatio="xMidYMid meet">
+ <style>
+  .bubble-success { fill: var(--coverage-success-bar); opacity: 0.7; }
+  .bubble-warning { fill: var(--coverage-warning-bar); opacity: 0.7; }
+  .bubble-danger { fill: var(--coverage-danger-bar); opacity: 0.7; }
+  .bubble-success:hover, .bubble-warning:hover, .bubble-danger:hover { opacity: 1; stroke: var(--text); stroke-width: 1.5; }
+  .chart-grid { stroke: var(--border); stroke-width: 0.5; stroke-dasharray: 4,4; opacity: 0.5; }
+  .chart-axis { stroke: var(--border); stroke-width: 1; }
+  .chart-label { fill: var(--text); font-size: 11px; font-family: var(--font-sans); }
+  .chart-title { fill: var(--text); font-size: 12px; font-family: var(--font-sans); }
+ </style>
+ <line x1="60.0" y1="20" x2="60.0" y2="350" class="chart-grid"/>
+ <text x="60.0" y="368" text-anchor="middle" class="chart-label">0%</text>
+ <line x1="204.0" y1="20" x2="204.0" y2="350" class="chart-grid"/>
+ <text x="204.0" y="368" text-anchor="middle" class="chart-label">20%</text>
+ <line x1="348.0" y1="20" x2="348.0" y2="350" class="chart-grid"/>
+ <text x="348.0" y="368" text-anchor="middle" class="chart-label">40%</text>
+ <line x1="492.0" y1="20" x2="492.0" y2="350" class="chart-grid"/>
+ <text x="492.0" y="368" text-anchor="middle" class="chart-label">60%</text>
+ <line x1="636.0" y1="20" x2="636.0" y2="350" class="chart-grid"/>
+ <text x="636.0" y="368" text-anchor="middle" class="chart-label">80%</text>
+ <line x1="780.0" y1="20" x2="780.0" y2="350" class="chart-grid"/>
+ <text x="780.0" y="368" text-anchor="middle" class="chart-label">100%</text>
+ <line x1="60" y1="350.0" x2="780" y2="350.0" class="chart-grid"/>
+ <text x="52" y="350.0" text-anchor="end" dominant-baseline="middle" class="chart-label">0</text>
+ <line x1="60" y1="267.5" x2="780" y2="267.5" class="chart-grid"/>
+ <text x="52" y="267.5" text-anchor="end" dominant-baseline="middle" class="chart-label">50</text>
+ <line x1="60" y1="185.0" x2="780" y2="185.0" class="chart-grid"/>
+ <text x="52" y="185.0" text-anchor="end" dominant-baseline="middle" class="chart-label">100</text>
+ <line x1="60" y1="102.5" x2="780" y2="102.5" class="chart-grid"/>
+ <text x="52" y="102.5" text-anchor="end" dominant-baseline="middle" class="chart-label">150</text>
+ <line x1="60" y1="20.0" x2="780" y2="20.0" class="chart-grid"/>
+ <text x="52" y="20.0" text-anchor="end" dominant-baseline="middle" class="chart-label">200</text>
+ <line x1="60" y1="20" x2="60" y2="350" class="chart-axis"/>
+ <line x1="60" y1="350" x2="780" y2="350" class="chart-axis"/>
+ <text x="420.0" y="395" text-anchor="middle" class="chart-title">Line Coverage (%)</text>
+ <text x="15" y="185.0" text-anchor="middle" transform="rotate(-90, 15, 185.0)" class="chart-title">Cyclomatic Complexity</text>
+ <a href="Controllers/AdminController.php.html#555"><circle cx="567.4" cy="102.5" r="20.0" class="bubble-warning"><title>Indieinabox\Http\Controllers\AdminController::saveConfig — Coverage: 70.5% | Lines: 359 | Complexity: 150</title></circle></a>
+ <a href="WebRouter.php.html#73"><circle cx="525.7" cy="234.5" r="14.3" class="bubble-warning"><title>Indieinabox\Http\WebRouter::handleRequest — Coverage: 64.7% | Lines: 184 | Complexity: 70</title></circle></a>
+ <a href="Controllers/MicrosubController.php.html#149"><circle cx="375.7" cy="280.7" r="12.0" class="bubble-danger"><title>Indieinabox\Http\Controllers\MicrosubController::handlePost — Coverage: 43.8% | Lines: 130 | Complexity: 42</title></circle></a>
+ <a href="Controllers/AdminController.php.html#101"><circle cx="331.7" cy="297.2" r="10.9" class="bubble-danger"><title>Indieinabox\Http\Controllers\AdminController::config — Coverage: 37.7% | Lines: 106 | Complexity: 32</title></circle></a>
+ <a href="Controllers/MicropubController.php.html#121"><circle cx="327.4" cy="298.9" r="8.8" class="bubble-danger"><title>Indieinabox\Http\Controllers\MicropubController::handlePostRequest — Coverage: 37.1% | Lines: 70 | Complexity: 31</title></circle></a>
+ <a href="Controllers/ActivityPubController.php.html#76"><circle cx="780.0" cy="336.8" r="8.3" class="bubble-success"><title>Indieinabox\Http\Controllers\ActivityPubController::webfinger — Coverage: 100.0% | Lines: 62 | Complexity: 8</title></circle></a>
+ <a href="Controllers/AdminController.php.html#1063"><circle cx="780.0" cy="315.4" r="7.3" class="bubble-success"><title>Indieinabox\Http\Controllers\AdminController::rebuildSite — Coverage: 100.0% | Lines: 48 | Complexity: 21</title></circle></a>
+ <a href="Controllers/DiscoveryController.php.html#155"><circle cx="780.0" cy="336.8" r="7.1" class="bubble-success"><title>Indieinabox\Http\Controllers\DiscoveryController::respondRss — Coverage: 100.0% | Lines: 45 | Complexity: 8</title></circle></a>
+ <a href="StaticFileServer.php.html#80"><circle cx="780.0" cy="317.0" r="7.0" class="bubble-success"><title>Indieinabox\Http\StaticFileServer::serve — Coverage: 100.0% | Lines: 44 | Complexity: 20</title></circle></a>
+ <a href="Controllers/AdminController.php.html#401"><circle cx="729.8" cy="325.2" r="6.9" class="bubble-success"><title>Indieinabox\Http\Controllers\AdminController::validateWebhookToken — Coverage: 93.0% | Lines: 43 | Complexity: 15</title></circle></a>
+ <a href="Controllers/DiscoveryController.php.html#102"><circle cx="780.0" cy="348.4" r="6.8" class="bubble-success"><title>Indieinabox\Http\Controllers\DiscoveryController::respondJson — Coverage: 100.0% | Lines: 41 | Complexity: 1</title></circle></a>
+ <a href="Controllers/ActivityPubController.php.html#159"><circle cx="780.0" cy="345.1" r="6.7" class="bubble-success"><title>Indieinabox\Http\Controllers\ActivityPubController::actor — Coverage: 100.0% | Lines: 40 | Complexity: 3</title></circle></a>
+ <a href="Controllers/AdminController.php.html#285"><circle cx="528.0" cy="326.9" r="6.7" class="bubble-warning"><title>Indieinabox\Http\Controllers\AdminController::moderation — Coverage: 65.0% | Lines: 40 | Complexity: 14</title></circle></a>
+ <a href="Controllers/AdminController.php.html#505"><circle cx="518.2" cy="340.1" r="6.1" class="bubble-warning"><title>Indieinabox\Http\Controllers\AdminController::handleCallback — Coverage: 63.6% | Lines: 33 | Complexity: 6</title></circle></a>
+ <a href="Controllers/MicrosubController.php.html#100"><circle cx="561.8" cy="330.2" r="6.1" class="bubble-warning"><title>Indieinabox\Http\Controllers\MicrosubController::handleGet — Coverage: 69.7% | Lines: 33 | Complexity: 12</title></circle></a>
+ <a href="StaticFileServer.php.html#30"><circle cx="758.2" cy="338.4" r="6.1" class="bubble-success"><title>Indieinabox\Http\StaticFileServer::serveProxiedMedia — Coverage: 97.0% | Lines: 33 | Complexity: 7</title></circle></a>
+ <a href="Controllers/IndieAuthController.php.html#97"><circle cx="600.0" cy="341.8" r="6.0" class="bubble-warning"><title>Indieinabox\Http\Controllers\IndieAuthController::processLogin — Coverage: 75.0% | Lines: 32 | Complexity: 5</title></circle></a>
+ <a href="Controllers/ActivityPubController.php.html#213"><circle cx="501.3" cy="331.9" r="5.9" class="bubble-warning"><title>Indieinabox\Http\Controllers\ActivityPubController::inbox — Coverage: 61.3% | Lines: 31 | Complexity: 11</title></circle></a>
+ <a href="Controllers/WebmentionController.php.html#27"><circle cx="780.0" cy="326.9" r="5.9" class="bubble-success"><title>Indieinabox\Http\Controllers\WebmentionController::handle — Coverage: 100.0% | Lines: 31 | Complexity: 14</title></circle></a>
+ <a href="Controllers/ActivityPubController.php.html#265"><circle cx="420.0" cy="340.1" r="5.4" class="bubble-danger"><title>Indieinabox\Http\Controllers\ActivityPubController::outbox — Coverage: 50.0% | Lines: 26 | Complexity: 6</title></circle></a>
+ <a href="Controllers/SearchController.php.html#35"><circle cx="780.0" cy="331.9" r="5.2" class="bubble-success"><title>Indieinabox\Http\Controllers\SearchController::handle — Coverage: 100.0% | Lines: 24 | Complexity: 11</title></circle></a>
+ <a href="Controllers/AdminController.php.html#361"><circle cx="780.0" cy="341.8" r="5.1" class="bubble-success"><title>Indieinabox\Http\Controllers\AdminController::build — Coverage: 100.0% | Lines: 23 | Complexity: 5</title></circle></a>
+ <a href="Controllers/DiscoveryController.php.html#36"><circle cx="677.1" cy="330.2" r="4.8" class="bubble-warning"><title>Indieinabox\Http\Controllers\DiscoveryController::handle — Coverage: 85.7% | Lines: 21 | Complexity: 12</title></circle></a>
+ <a href="Controllers/MicropubController.php.html#48"><circle cx="672.0" cy="338.4" r="4.7" class="bubble-warning"><title>Indieinabox\Http\Controllers\MicropubController::handle — Coverage: 85.0% | Lines: 20 | Complexity: 7</title></circle></a>
+ <a href="Controllers/AdminController.php.html#37"><circle cx="700.0" cy="335.1" r="4.5" class="bubble-warning"><title>Indieinabox\Http\Controllers\AdminController::__construct — Coverage: 88.9% | Lines: 18 | Complexity: 9</title></circle></a>
+ <a href="StaticFileServer.php.html#151"><circle cx="652.9" cy="341.8" r="4.4" class="bubble-warning"><title>Indieinabox\Http\StaticFileServer::renderNotFound — Coverage: 82.4% | Lines: 17 | Complexity: 5</title></circle></a>
+ <a href="Controllers/AdminController.php.html#1134"><circle cx="60.0" cy="343.4" r="4.2" class="bubble-danger"><title>Indieinabox\Http\Controllers\AdminController::downloadTheme — Coverage: 0.0% | Lines: 16 | Complexity: 4</title></circle></a>
+ <a href="StaticFileServer.php.html#275"><circle cx="780.0" cy="348.4" r="4.1" class="bubble-success"><title>Indieinabox\Http\StaticFileServer::getMimeType — Coverage: 100.0% | Lines: 15 | Complexity: 1</title></circle></a>
+ <a href="Controllers/MicropubController.php.html#238"><circle cx="677.1" cy="341.8" r="4.0" class="bubble-warning"><title>Indieinabox\Http\Controllers\MicropubController::handleMediaEndpoint — Coverage: 85.7% | Lines: 14 | Complexity: 5</title></circle></a>
+ <a href="Controllers/MicrosubController.php.html#71"><circle cx="625.7" cy="340.1" r="4.0" class="bubble-warning"><title>Indieinabox\Http\Controllers\MicrosubController::handle — Coverage: 78.6% | Lines: 14 | Complexity: 6</title></circle></a>
+ <a href="SecurityHeaders.php.html#20"><circle cx="724.6" cy="338.4" r="4.0" class="bubble-success"><title>Indieinabox\Http\SecurityHeaders::apply — Coverage: 92.3% | Lines: 13 | Complexity: 7</title></circle></a>
+ <a href="Controllers/AdminController.php.html#465"><circle cx="660.0" cy="345.1" r="4.0" class="bubble-warning"><title>Indieinabox\Http\Controllers\AdminController::handleBootstrap — Coverage: 83.3% | Lines: 12 | Complexity: 3</title></circle></a>
+ <a href="Controllers/AdminController.php.html#486"><circle cx="780.0" cy="348.4" r="4.0" class="bubble-success"><title>Indieinabox\Http\Controllers\AdminController::redirectToAuth — Coverage: 100.0% | Lines: 12 | Complexity: 1</title></circle></a>
+ <a href="Controllers/DiscoveryController.php.html#73"><circle cx="660.0" cy="338.4" r="4.0" class="bubble-warning"><title>Indieinabox\Http\Controllers\DiscoveryController::determineFormat — Coverage: 83.3% | Lines: 12 | Complexity: 7</title></circle></a>
+ <a href="Controllers/IndieAuthController.php.html#32"><circle cx="720.0" cy="343.4" r="4.0" class="bubble-success"><title>Indieinabox\Http\Controllers\IndieAuthController::handle — Coverage: 91.7% | Lines: 12 | Complexity: 4</title></circle></a>
+ <a href="Controllers/ClientController.php.html#25"><circle cx="649.1" cy="346.7" r="4.0" class="bubble-warning"><title>Indieinabox\Http\Controllers\ClientController::handle — Coverage: 81.8% | Lines: 11 | Complexity: 2</title></circle></a>
+ <a href="Controllers/MicrosubController.php.html#25"><circle cx="714.5" cy="341.8" r="4.0" class="bubble-success"><title>Indieinabox\Http\Controllers\MicrosubController::__construct — Coverage: 90.9% | Lines: 11 | Complexity: 5</title></circle></a>
+ <a href="Controllers/DiscoveryController.php.html#228"><circle cx="780.0" cy="348.4" r="4.0" class="bubble-success"><title>Indieinabox\Http\Controllers\DiscoveryController::respondHtml — Coverage: 100.0% | Lines: 10 | Complexity: 1</title></circle></a>
+ <a href="Controllers/IndieAuthController.php.html#58"><circle cx="780.0" cy="348.4" r="4.0" class="bubble-success"><title>Indieinabox\Http\Controllers\IndieAuthController::sendMetadata — Coverage: 100.0% | Lines: 10 | Complexity: 1</title></circle></a>
+ <a href="Controllers/IndieAuthController.php.html#213"><circle cx="636.0" cy="346.7" r="4.0" class="bubble-warning"><title>Indieinabox\Http\Controllers\IndieAuthController::verifyToken — Coverage: 80.0% | Lines: 10 | Complexity: 2</title></circle></a>
+ <a href="Controllers/AdminController.php.html#245"><circle cx="380.0" cy="345.1" r="4.0" class="bubble-danger"><title>Indieinabox\Http\Controllers\AdminController::micropub — Coverage: 44.4% | Lines: 9 | Complexity: 3</title></circle></a>
+ <a href="Controllers/AdminController.php.html#265"><circle cx="380.0" cy="345.1" r="4.0" class="bubble-danger"><title>Indieinabox\Http\Controllers\AdminController::microsub — Coverage: 44.4% | Lines: 9 | Complexity: 3</title></circle></a>
+ <a href="Controllers/IndieAuthController.php.html#144"><circle cx="620.0" cy="346.7" r="4.0" class="bubble-warning"><title>Indieinabox\Http\Controllers\IndieAuthController::verifyAuthCode — Coverage: 77.8% | Lines: 9 | Complexity: 2</title></circle></a>
+ <a href="Controllers/IndieAuthController.php.html#163"><circle cx="620.0" cy="345.1" r="4.0" class="bubble-warning"><title>Indieinabox\Http\Controllers\IndieAuthController::handleTokenRequest — Coverage: 77.8% | Lines: 9 | Complexity: 3</title></circle></a>
+ <a href="Controllers/IndieAuthController.php.html#183"><circle cx="620.0" cy="346.7" r="4.0" class="bubble-warning"><title>Indieinabox\Http\Controllers\IndieAuthController::exchangeCodeForToken — Coverage: 77.8% | Lines: 9 | Complexity: 2</title></circle></a>
+ <a href="Controllers/MicropubController.php.html#88"><circle cx="380.0" cy="345.1" r="4.0" class="bubble-danger"><title>Indieinabox\Http\Controllers\MicropubController::client — Coverage: 44.4% | Lines: 9 | Complexity: 3</title></circle></a>
+ <a href="Controllers/MicrosubController.php.html#338"><circle cx="380.0" cy="345.1" r="4.0" class="bubble-danger"><title>Indieinabox\Http\Controllers\MicrosubController::reader — Coverage: 44.4% | Lines: 9 | Complexity: 3</title></circle></a>
+ <a href="Controllers/ActivityPubController.php.html#29"><circle cx="780.0" cy="348.4" r="4.0" class="bubble-success"><title>Indieinabox\Http\Controllers\ActivityPubController::__construct — Coverage: 100.0% | Lines: 8 | Complexity: 1</title></circle></a>
+ <a href="Controllers/ActivityPubController.php.html#311"><circle cx="60.0" cy="345.1" r="4.0" class="bubble-danger"><title>Indieinabox\Http\Controllers\ActivityPubController::flowerbedInbox — Coverage: 0.0% | Lines: 8 | Complexity: 3</title></circle></a>
+ <a href="Controllers/IndieAuthController.php.html#77"><circle cx="780.0" cy="345.1" r="4.0" class="bubble-success"><title>Indieinabox\Http\Controllers\IndieAuthController::handleAuthRequest — Coverage: 100.0% | Lines: 8 | Complexity: 3</title></circle></a>
+ <a href="Controllers/MicropubController.php.html#28"><circle cx="690.0" cy="341.8" r="4.0" class="bubble-warning"><title>Indieinabox\Http\Controllers\MicropubController::__construct — Coverage: 87.5% | Lines: 8 | Complexity: 5</title></circle></a>
+ <a href="Controllers/ArchiveController.php.html#27"><circle cx="574.3" cy="345.1" r="4.0" class="bubble-warning"><title>Indieinabox\Http\Controllers\ArchiveController::handle — Coverage: 71.4% | Lines: 7 | Complexity: 3</title></circle></a>
+ <a href="Controllers/AbstractController.php.html#33"><circle cx="660.0" cy="346.7" r="4.0" class="bubble-warning"><title>Indieinabox\Http\Controllers\AbstractController::json — Coverage: 83.3% | Lines: 6 | Complexity: 2</title></circle></a>
+ <a href="Controllers/AbstractController.php.html#51"><circle cx="660.0" cy="346.7" r="4.0" class="bubble-warning"><title>Indieinabox\Http\Controllers\AbstractController::html — Coverage: 83.3% | Lines: 6 | Complexity: 2</title></circle></a>
+ <a href="Controllers/AdminController.php.html#346"><circle cx="780.0" cy="346.7" r="4.0" class="bubble-success"><title>Indieinabox\Http\Controllers\AdminController::cron — Coverage: 100.0% | Lines: 6 | Complexity: 2</title></circle></a>
+ <a href="Controllers/ArchiveController.php.html#44"><circle cx="540.0" cy="346.7" r="4.0" class="bubble-warning"><title>Indieinabox\Http\Controllers\ArchiveController::force — Coverage: 66.7% | Lines: 6 | Complexity: 2</title></circle></a>
+ <a href="Controllers/MicropubController.php.html#105"><circle cx="540.0" cy="346.7" r="4.0" class="bubble-warning"><title>Indieinabox\Http\Controllers\MicropubController::handleGetRequest — Coverage: 66.7% | Lines: 6 | Complexity: 2</title></circle></a>
+ <a href="Controllers/DiscoveryController.php.html#24"><circle cx="636.0" cy="343.4" r="4.0" class="bubble-warning"><title>Indieinabox\Http\Controllers\DiscoveryController::__construct — Coverage: 80.0% | Lines: 5 | Complexity: 4</title></circle></a>
+ <a href="Controllers/MicropubController.php.html#276"><circle cx="60.0" cy="343.4" r="4.0" class="bubble-danger"><title>Indieinabox\Http\Controllers\MicropubController::sendSuccessResponse — Coverage: 0.0% | Lines: 5 | Complexity: 4</title></circle></a>
+ <a href="Controllers/SearchController.php.html#23"><circle cx="636.0" cy="343.4" r="4.0" class="bubble-warning"><title>Indieinabox\Http\Controllers\SearchController::__construct — Coverage: 80.0% | Lines: 5 | Complexity: 4</title></circle></a>
+ <a href="WebRouter.php.html#51"><circle cx="780.0" cy="346.7" r="4.0" class="bubble-success"><title>Indieinabox\Http\WebRouter::__construct — Coverage: 100.0% | Lines: 5 | Complexity: 2</title></circle></a>
+ <a href="Controllers/MicropubController.php.html#287"><circle cx="780.0" cy="348.4" r="4.0" class="bubble-success"><title>Indieinabox\Http\Controllers\MicropubController::sendErrorResponse — Coverage: 100.0% | Lines: 4 | Complexity: 1</title></circle></a>
+ <a href="Controllers/WebmentionController.php.html#79"><circle cx="780.0" cy="348.4" r="4.0" class="bubble-success"><title>Indieinabox\Http\Controllers\WebmentionController::sendResponse — Coverage: 100.0% | Lines: 4 | Complexity: 1</title></circle></a>
+ <a href="Controllers/AdminController.php.html#85"><circle cx="60.0" cy="346.7" r="4.0" class="bubble-danger"><title>Indieinabox\Http\Controllers\AdminController::getMicrosubService — Coverage: 0.0% | Lines: 3 | Complexity: 2</title></circle></a>
+ <a href="Controllers/ConfigController.php.html#18"><circle cx="780.0" cy="348.4" r="4.0" class="bubble-success"><title>Indieinabox\Http\Controllers\ConfigController::__construct — Coverage: 100.0% | Lines: 3 | Complexity: 1</title></circle></a>
+ <a href="Controllers/AbstractController.php.html#65"><circle cx="780.0" cy="348.4" r="4.0" class="bubble-success"><title>Indieinabox\Http\Controllers\AbstractController::redirect — Coverage: 100.0% | Lines: 2 | Complexity: 1</title></circle></a>
+ <a href="Controllers/ActivityPubController.php.html#305"><circle cx="60.0" cy="348.4" r="4.0" class="bubble-danger"><title>Indieinabox\Http\Controllers\ActivityPubController::flowerbedActor — Coverage: 0.0% | Lines: 2 | Complexity: 1</title></circle></a>
+ <a href="Controllers/ActivityPubController.php.html#324"><circle cx="60.0" cy="348.4" r="4.0" class="bubble-danger"><title>Indieinabox\Http\Controllers\ActivityPubController::flowerbedOutbox — Coverage: 0.0% | Lines: 2 | Complexity: 1</title></circle></a>
+ <a href="Controllers/ActivityPubController.php.html#330"><circle cx="60.0" cy="348.4" r="4.0" class="bubble-danger"><title>Indieinabox\Http\Controllers\ActivityPubController::flowerbedFollowers — Coverage: 0.0% | Lines: 2 | Complexity: 1</title></circle></a>
+ <a href="Controllers/ArchiveController.php.html#18"><circle cx="780.0" cy="348.4" r="4.0" class="bubble-success"><title>Indieinabox\Http\Controllers\ArchiveController::__construct — Coverage: 100.0% | Lines: 2 | Complexity: 1</title></circle></a>
+ <a href="Controllers/IndieAuthController.php.html#18"><circle cx="780.0" cy="348.4" r="4.0" class="bubble-success"><title>Indieinabox\Http\Controllers\IndieAuthController::__construct — Coverage: 100.0% | Lines: 2 | Complexity: 1</title></circle></a>
+ <a href="Controllers/WebmentionController.php.html#18"><circle cx="780.0" cy="348.4" r="4.0" class="bubble-success"><title>Indieinabox\Http\Controllers\WebmentionController::__construct — Coverage: 100.0% | Lines: 2 | Complexity: 1</title></circle></a>
+ <a href="Controllers/AbstractController.php.html#16"><circle cx="780.0" cy="348.4" r="4.0" class="bubble-success"><title>Indieinabox\Http\Controllers\AbstractController::__construct — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="Controllers/AbstractController.php.html#21"><circle cx="780.0" cy="348.4" r="4.0" class="bubble-success"><title>Indieinabox\Http\Controllers\AbstractController::getSite — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="Controllers/AbstractController.php.html#74"><circle cx="60.0" cy="348.4" r="4.0" class="bubble-danger"><title>Indieinabox\Http\Controllers\AbstractController::status — Coverage: 0.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="Controllers/AbstractController.php.html#85"><circle cx="780.0" cy="348.4" r="4.0" class="bubble-success"><title>Indieinabox\Http\Controllers\AbstractController::jsonResponse — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="Controllers/AbstractController.php.html#93"><circle cx="780.0" cy="348.4" r="4.0" class="bubble-success"><title>Indieinabox\Http\Controllers\AbstractController::htmlResponse — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="Controllers/AbstractController.php.html#98"><circle cx="780.0" cy="348.4" r="4.0" class="bubble-success"><title>Indieinabox\Http\Controllers\AbstractController::redirectResponse — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="Controllers/ActivityPubController.php.html#47"><circle cx="60.0" cy="348.4" r="4.0" class="bubble-danger"><title>Indieinabox\Http\Controllers\ActivityPubController::getKeyManager — Coverage: 0.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="Controllers/ActivityPubController.php.html#52"><circle cx="60.0" cy="348.4" r="4.0" class="bubble-danger"><title>Indieinabox\Http\Controllers\ActivityPubController::getInteractionHandler — Coverage: 0.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="Controllers/ActivityPubController.php.html#60"><circle cx="60.0" cy="348.4" r="4.0" class="bubble-danger"><title>Indieinabox\Http\Controllers\ActivityPubController::interact — Coverage: 0.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="Controllers/ActivityPubController.php.html#68"><circle cx="60.0" cy="348.4" r="4.0" class="bubble-danger"><title>Indieinabox\Http\Controllers\ActivityPubController::authorizeInteraction — Coverage: 0.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="Controllers/AdminController.php.html#75"><circle cx="60.0" cy="348.4" r="4.0" class="bubble-danger"><title>Indieinabox\Http\Controllers\AdminController::getConfigurationService — Coverage: 0.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="Controllers/AdminController.php.html#80"><circle cx="60.0" cy="348.4" r="4.0" class="bubble-danger"><title>Indieinabox\Http\Controllers\AdminController::getModerationService — Coverage: 0.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="Controllers/AdminController.php.html#93"><circle cx="60.0" cy="348.4" r="4.0" class="bubble-danger"><title>Indieinabox\Http\Controllers\AdminController::index — Coverage: 0.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="Controllers/ClientController.php.html#17"><circle cx="780.0" cy="348.4" r="4.0" class="bubble-success"><title>Indieinabox\Http\Controllers\ClientController::__construct — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="Controllers/ConfigController.php.html#28"><circle cx="60.0" cy="348.4" r="4.0" class="bubble-danger"><title>Indieinabox\Http\Controllers\ConfigController::getConfigurationService — Coverage: 0.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="Controllers/ConfigController.php.html#36"><circle cx="60.0" cy="348.4" r="4.0" class="bubble-danger"><title>Indieinabox\Http\Controllers\ConfigController::handle — Coverage: 0.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="Controllers/IndieAuthController.php.html#24"><circle cx="60.0" cy="348.4" r="4.0" class="bubble-danger"><title>Indieinabox\Http\Controllers\IndieAuthController::getTokenManager — Coverage: 0.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="Controllers/IndieAuthController.php.html#205"><circle cx="780.0" cy="348.4" r="4.0" class="bubble-success"><title>Indieinabox\Http\Controllers\IndieAuthController::validateBearerToken — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="Controllers/MicropubController.php.html#261"><circle cx="60.0" cy="348.4" r="4.0" class="bubble-danger"><title>Indieinabox\Http\Controllers\MicropubController::getRawInput — Coverage: 0.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="Controllers/MicropubController.php.html#266"><circle cx="60.0" cy="348.4" r="4.0" class="bubble-danger"><title>Indieinabox\Http\Controllers\MicropubController::moveUploadedFile — Coverage: 0.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="Controllers/MicrosubController.php.html#58"><circle cx="60.0" cy="348.4" r="4.0" class="bubble-danger"><title>Indieinabox\Http\Controllers\MicrosubController::getService — Coverage: 0.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="Controllers/MicrosubController.php.html#63"><circle cx="60.0" cy="348.4" r="4.0" class="bubble-danger"><title>Indieinabox\Http\Controllers\MicrosubController::getTokenManager — Coverage: 0.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="Controllers/MicrosubController.php.html#360"><circle cx="780.0" cy="348.4" r="4.0" class="bubble-success"><title>Indieinabox\Http\Controllers\MicrosubController::getRemoteUrl — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="Controllers/MicrosubController.php.html#368"><circle cx="60.0" cy="348.4" r="4.0" class="bubble-danger"><title>Indieinabox\Http\Controllers\MicrosubController::fetchUrl — Coverage: 0.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="StaticFileServer.php.html#18"><circle cx="780.0" cy="348.4" r="4.0" class="bubble-success"><title>Indieinabox\Http\StaticFileServer::__construct — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="WebRouter.php.html#61"><circle cx="780.0" cy="348.4" r="4.0" class="bubble-success"><title>Indieinabox\Http\WebRouter::getFileServer — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="WebRouter.php.html#359"><circle cx="780.0" cy="348.4" r="4.0" class="bubble-success"><title>Indieinabox\Http\WebRouter::getWebmentionController — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="WebRouter.php.html#364"><circle cx="780.0" cy="348.4" r="4.0" class="bubble-success"><title>Indieinabox\Http\WebRouter::getIndieAuthController — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="WebRouter.php.html#369"><circle cx="60.0" cy="348.4" r="4.0" class="bubble-danger"><title>Indieinabox\Http\WebRouter::getMicropubController — Coverage: 0.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="WebRouter.php.html#374"><circle cx="60.0" cy="348.4" r="4.0" class="bubble-danger"><title>Indieinabox\Http\WebRouter::getMicrosubController — Coverage: 0.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="WebRouter.php.html#379"><circle cx="780.0" cy="348.4" r="4.0" class="bubble-success"><title>Indieinabox\Http\WebRouter::getActivityPubController — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="WebRouter.php.html#384"><circle cx="60.0" cy="348.4" r="4.0" class="bubble-danger"><title>Indieinabox\Http\WebRouter::getArchiveController — Coverage: 0.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="WebRouter.php.html#389"><circle cx="780.0" cy="348.4" r="4.0" class="bubble-success"><title>Indieinabox\Http\WebRouter::getDiscoveryController — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="WebRouter.php.html#394"><circle cx="780.0" cy="348.4" r="4.0" class="bubble-success"><title>Indieinabox\Http\WebRouter::getClientController — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="WebRouter.php.html#399"><circle cx="780.0" cy="348.4" r="4.0" class="bubble-success"><title>Indieinabox\Http\WebRouter::getAdminController — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="WebRouter.php.html#404"><circle cx="60.0" cy="348.4" r="4.0" class="bubble-danger"><title>Indieinabox\Http\WebRouter::getSearchController — Coverage: 0.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="WebRouter.php.html#412"><circle cx="780.0" cy="348.4" r="4.0" class="bubble-success"><title>Indieinabox\Http\WebRouter::serveStatic — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="WebRouter.php.html#423"><circle cx="780.0" cy="348.4" r="4.0" class="bubble-success"><title>Indieinabox\Http\WebRouter::getMimeType — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+</svg>
+     </div>
+     <div>
+      <p class="hint">Sorted by descending <abbr title="Change Risk Anti-Patterns">CRAP</abbr> index.</p>
+      <div class="scrollbox">
+     <table class="crap">
+      <thead>
+       <tr>
+        <th scope="col">Method</th>
+        <th scope="col" class="number"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+        <th scope="col" class="number">Coverage</th>
+       </tr>
+      </thead>
+      <tbody>
+       <tr><td><a href="Controllers/AdminController.php.html#555">Indieinabox\Http\Controllers\AdminController::saveConfig</a></td><td class="number">729.18</td><td class="number">70.5%</td></tr>
+       <tr><td><a href="Controllers/MicrosubController.php.html#149">Indieinabox\Http\Controllers\MicrosubController::handlePost</a></td><td class="number">354.35</td><td class="number">43.8%</td></tr>
+       <tr><td><a href="WebRouter.php.html#73">Indieinabox\Http\WebRouter::handleRequest</a></td><td class="number">286.01</td><td class="number">64.7%</td></tr>
+       <tr><td><a href="Controllers/AdminController.php.html#101">Indieinabox\Http\Controllers\AdminController::config</a></td><td class="number">279.18</td><td class="number">37.7%</td></tr>
+       <tr><td><a href="Controllers/MicropubController.php.html#121">Indieinabox\Http\Controllers\MicropubController::handlePostRequest</a></td><td class="number">269.66</td><td class="number">37.1%</td></tr>
+       <tr><td><a href="Controllers/AdminController.php.html#285">Indieinabox\Http\Controllers\AdminController::moderation</a></td><td class="number">22.40</td><td class="number">65.0%</td></tr>
+       <tr><td><a href="Controllers/AdminController.php.html#1063">Indieinabox\Http\Controllers\AdminController::rebuildSite</a></td><td class="number">21</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="Controllers/AdminController.php.html#1134">Indieinabox\Http\Controllers\AdminController::downloadTheme</a></td><td class="number">20</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="Controllers/MicropubController.php.html#276">Indieinabox\Http\Controllers\MicropubController::sendSuccessResponse</a></td><td class="number">20</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="StaticFileServer.php.html#80">Indieinabox\Http\StaticFileServer::serve</a></td><td class="number">20</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="Controllers/ActivityPubController.php.html#213">Indieinabox\Http\Controllers\ActivityPubController::inbox</a></td><td class="number">18.02</td><td class="number">61.3%</td></tr>
+       <tr><td><a href="Controllers/MicrosubController.php.html#100">Indieinabox\Http\Controllers\MicrosubController::handleGet</a></td><td class="number">16.01</td><td class="number">69.7%</td></tr>
+       <tr><td><a href="Controllers/AdminController.php.html#401">Indieinabox\Http\Controllers\AdminController::validateWebhookToken</a></td><td class="number">15.08</td><td class="number">93.0%</td></tr>
+       <tr><td><a href="Controllers/WebmentionController.php.html#27">Indieinabox\Http\Controllers\WebmentionController::handle</a></td><td class="number">14</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="Controllers/DiscoveryController.php.html#36">Indieinabox\Http\Controllers\DiscoveryController::handle</a></td><td class="number">12.42</td><td class="number">85.7%</td></tr>
+       <tr><td><a href="Controllers/ActivityPubController.php.html#311">Indieinabox\Http\Controllers\ActivityPubController::flowerbedInbox</a></td><td class="number">12</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="Controllers/SearchController.php.html#35">Indieinabox\Http\Controllers\SearchController::handle</a></td><td class="number">11</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="Controllers/ActivityPubController.php.html#265">Indieinabox\Http\Controllers\ActivityPubController::outbox</a></td><td class="number">10.50</td><td class="number">50.0%</td></tr>
+       <tr><td><a href="Controllers/AdminController.php.html#37">Indieinabox\Http\Controllers\AdminController::__construct</a></td><td class="number">9.11</td><td class="number">88.9%</td></tr>
+       <tr><td><a href="Controllers/ActivityPubController.php.html#76">Indieinabox\Http\Controllers\ActivityPubController::webfinger</a></td><td class="number">8</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="Controllers/DiscoveryController.php.html#155">Indieinabox\Http\Controllers\DiscoveryController::respondRss</a></td><td class="number">8</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="Controllers/AdminController.php.html#505">Indieinabox\Http\Controllers\AdminController::handleCallback</a></td><td class="number">7.73</td><td class="number">63.6%</td></tr>
+       <tr><td><a href="Controllers/DiscoveryController.php.html#73">Indieinabox\Http\Controllers\DiscoveryController::determineFormat</a></td><td class="number">7.23</td><td class="number">83.3%</td></tr>
+       <tr><td><a href="Controllers/MicropubController.php.html#48">Indieinabox\Http\Controllers\MicropubController::handle</a></td><td class="number">7.17</td><td class="number">85.0%</td></tr>
+       <tr><td><a href="SecurityHeaders.php.html#20">Indieinabox\Http\SecurityHeaders::apply</a></td><td class="number">7.02</td><td class="number">92.3%</td></tr>
+       <tr><td><a href="StaticFileServer.php.html#30">Indieinabox\Http\StaticFileServer::serveProxiedMedia</a></td><td class="number">7</td><td class="number">97.0%</td></tr>
+       <tr><td><a href="Controllers/MicrosubController.php.html#71">Indieinabox\Http\Controllers\MicrosubController::handle</a></td><td class="number">6.35</td><td class="number">78.6%</td></tr>
+       <tr><td><a href="Controllers/AdminController.php.html#85">Indieinabox\Http\Controllers\AdminController::getMicrosubService</a></td><td class="number">6</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="Controllers/IndieAuthController.php.html#97">Indieinabox\Http\Controllers\IndieAuthController::processLogin</a></td><td class="number">5.39</td><td class="number">75.0%</td></tr>
+       <tr><td><a href="StaticFileServer.php.html#151">Indieinabox\Http\StaticFileServer::renderNotFound</a></td><td class="number">5.14</td><td class="number">82.4%</td></tr>
+       <tr><td><a href="Controllers/MicropubController.php.html#238">Indieinabox\Http\Controllers\MicropubController::handleMediaEndpoint</a></td><td class="number">5.07</td><td class="number">85.7%</td></tr>
+       <tr><td><a href="Controllers/MicropubController.php.html#28">Indieinabox\Http\Controllers\MicropubController::__construct</a></td><td class="number">5.05</td><td class="number">87.5%</td></tr>
+       <tr><td><a href="Controllers/MicrosubController.php.html#25">Indieinabox\Http\Controllers\MicrosubController::__construct</a></td><td class="number">5.02</td><td class="number">90.9%</td></tr>
+       <tr><td><a href="Controllers/AdminController.php.html#361">Indieinabox\Http\Controllers\AdminController::build</a></td><td class="number">5</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="Controllers/AdminController.php.html#245">Indieinabox\Http\Controllers\AdminController::micropub</a></td><td class="number">4.54</td><td class="number">44.4%</td></tr>
+       <tr><td><a href="Controllers/AdminController.php.html#265">Indieinabox\Http\Controllers\AdminController::microsub</a></td><td class="number">4.54</td><td class="number">44.4%</td></tr>
+       <tr><td><a href="Controllers/MicropubController.php.html#88">Indieinabox\Http\Controllers\MicropubController::client</a></td><td class="number">4.54</td><td class="number">44.4%</td></tr>
+       <tr><td><a href="Controllers/MicrosubController.php.html#338">Indieinabox\Http\Controllers\MicrosubController::reader</a></td><td class="number">4.54</td><td class="number">44.4%</td></tr>
+       <tr><td><a href="Controllers/DiscoveryController.php.html#24">Indieinabox\Http\Controllers\DiscoveryController::__construct</a></td><td class="number">4.13</td><td class="number">80.0%</td></tr>
+       <tr><td><a href="Controllers/SearchController.php.html#23">Indieinabox\Http\Controllers\SearchController::__construct</a></td><td class="number">4.13</td><td class="number">80.0%</td></tr>
+       <tr><td><a href="Controllers/IndieAuthController.php.html#32">Indieinabox\Http\Controllers\IndieAuthController::handle</a></td><td class="number">4.01</td><td class="number">91.7%</td></tr>
+       <tr><td><a href="Controllers/ArchiveController.php.html#27">Indieinabox\Http\Controllers\ArchiveController::handle</a></td><td class="number">3.21</td><td class="number">71.4%</td></tr>
+       <tr><td><a href="Controllers/IndieAuthController.php.html#163">Indieinabox\Http\Controllers\IndieAuthController::handleTokenRequest</a></td><td class="number">3.10</td><td class="number">77.8%</td></tr>
+       <tr><td><a href="Controllers/AdminController.php.html#465">Indieinabox\Http\Controllers\AdminController::handleBootstrap</a></td><td class="number">3.04</td><td class="number">83.3%</td></tr>
+       <tr><td><a href="Controllers/ActivityPubController.php.html#159">Indieinabox\Http\Controllers\ActivityPubController::actor</a></td><td class="number">3</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="Controllers/IndieAuthController.php.html#77">Indieinabox\Http\Controllers\IndieAuthController::handleAuthRequest</a></td><td class="number">3</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="Controllers/ArchiveController.php.html#44">Indieinabox\Http\Controllers\ArchiveController::force</a></td><td class="number">2.15</td><td class="number">66.7%</td></tr>
+       <tr><td><a href="Controllers/MicropubController.php.html#105">Indieinabox\Http\Controllers\MicropubController::handleGetRequest</a></td><td class="number">2.15</td><td class="number">66.7%</td></tr>
+       <tr><td><a href="Controllers/IndieAuthController.php.html#144">Indieinabox\Http\Controllers\IndieAuthController::verifyAuthCode</a></td><td class="number">2.04</td><td class="number">77.8%</td></tr>
+       <tr><td><a href="Controllers/IndieAuthController.php.html#183">Indieinabox\Http\Controllers\IndieAuthController::exchangeCodeForToken</a></td><td class="number">2.04</td><td class="number">77.8%</td></tr>
+       <tr><td><a href="Controllers/IndieAuthController.php.html#213">Indieinabox\Http\Controllers\IndieAuthController::verifyToken</a></td><td class="number">2.03</td><td class="number">80.0%</td></tr>
+       <tr><td><a href="Controllers/AbstractController.php.html#33">Indieinabox\Http\Controllers\AbstractController::json</a></td><td class="number">2.02</td><td class="number">83.3%</td></tr>
+       <tr><td><a href="Controllers/AbstractController.php.html#51">Indieinabox\Http\Controllers\AbstractController::html</a></td><td class="number">2.02</td><td class="number">83.3%</td></tr>
+       <tr><td><a href="Controllers/ClientController.php.html#25">Indieinabox\Http\Controllers\ClientController::handle</a></td><td class="number">2.02</td><td class="number">81.8%</td></tr>
+       <tr><td><a href="Controllers/AbstractController.php.html#74">Indieinabox\Http\Controllers\AbstractController::status</a></td><td class="number">2</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="Controllers/ActivityPubController.php.html#47">Indieinabox\Http\Controllers\ActivityPubController::getKeyManager</a></td><td class="number">2</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="Controllers/ActivityPubController.php.html#52">Indieinabox\Http\Controllers\ActivityPubController::getInteractionHandler</a></td><td class="number">2</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="Controllers/ActivityPubController.php.html#60">Indieinabox\Http\Controllers\ActivityPubController::interact</a></td><td class="number">2</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="Controllers/ActivityPubController.php.html#68">Indieinabox\Http\Controllers\ActivityPubController::authorizeInteraction</a></td><td class="number">2</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="Controllers/ActivityPubController.php.html#305">Indieinabox\Http\Controllers\ActivityPubController::flowerbedActor</a></td><td class="number">2</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="Controllers/ActivityPubController.php.html#324">Indieinabox\Http\Controllers\ActivityPubController::flowerbedOutbox</a></td><td class="number">2</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="Controllers/ActivityPubController.php.html#330">Indieinabox\Http\Controllers\ActivityPubController::flowerbedFollowers</a></td><td class="number">2</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="Controllers/AdminController.php.html#75">Indieinabox\Http\Controllers\AdminController::getConfigurationService</a></td><td class="number">2</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="Controllers/AdminController.php.html#80">Indieinabox\Http\Controllers\AdminController::getModerationService</a></td><td class="number">2</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="Controllers/AdminController.php.html#93">Indieinabox\Http\Controllers\AdminController::index</a></td><td class="number">2</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="Controllers/AdminController.php.html#346">Indieinabox\Http\Controllers\AdminController::cron</a></td><td class="number">2</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="Controllers/ConfigController.php.html#28">Indieinabox\Http\Controllers\ConfigController::getConfigurationService</a></td><td class="number">2</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="Controllers/ConfigController.php.html#36">Indieinabox\Http\Controllers\ConfigController::handle</a></td><td class="number">2</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="Controllers/IndieAuthController.php.html#24">Indieinabox\Http\Controllers\IndieAuthController::getTokenManager</a></td><td class="number">2</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="Controllers/MicropubController.php.html#261">Indieinabox\Http\Controllers\MicropubController::getRawInput</a></td><td class="number">2</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="Controllers/MicropubController.php.html#266">Indieinabox\Http\Controllers\MicropubController::moveUploadedFile</a></td><td class="number">2</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="Controllers/MicrosubController.php.html#58">Indieinabox\Http\Controllers\MicrosubController::getService</a></td><td class="number">2</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="Controllers/MicrosubController.php.html#63">Indieinabox\Http\Controllers\MicrosubController::getTokenManager</a></td><td class="number">2</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="Controllers/MicrosubController.php.html#368">Indieinabox\Http\Controllers\MicrosubController::fetchUrl</a></td><td class="number">2</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="WebRouter.php.html#51">Indieinabox\Http\WebRouter::__construct</a></td><td class="number">2</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="WebRouter.php.html#369">Indieinabox\Http\WebRouter::getMicropubController</a></td><td class="number">2</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="WebRouter.php.html#374">Indieinabox\Http\WebRouter::getMicrosubController</a></td><td class="number">2</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="WebRouter.php.html#384">Indieinabox\Http\WebRouter::getArchiveController</a></td><td class="number">2</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="WebRouter.php.html#404">Indieinabox\Http\WebRouter::getSearchController</a></td><td class="number">2</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="Controllers/AbstractController.php.html#16">Indieinabox\Http\Controllers\AbstractController::__construct</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="Controllers/AbstractController.php.html#21">Indieinabox\Http\Controllers\AbstractController::getSite</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="Controllers/AbstractController.php.html#65">Indieinabox\Http\Controllers\AbstractController::redirect</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="Controllers/AbstractController.php.html#85">Indieinabox\Http\Controllers\AbstractController::jsonResponse</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="Controllers/AbstractController.php.html#93">Indieinabox\Http\Controllers\AbstractController::htmlResponse</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="Controllers/AbstractController.php.html#98">Indieinabox\Http\Controllers\AbstractController::redirectResponse</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="Controllers/ActivityPubController.php.html#29">Indieinabox\Http\Controllers\ActivityPubController::__construct</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="Controllers/AdminController.php.html#486">Indieinabox\Http\Controllers\AdminController::redirectToAuth</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="Controllers/ArchiveController.php.html#18">Indieinabox\Http\Controllers\ArchiveController::__construct</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="Controllers/ClientController.php.html#17">Indieinabox\Http\Controllers\ClientController::__construct</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="Controllers/ConfigController.php.html#18">Indieinabox\Http\Controllers\ConfigController::__construct</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="Controllers/DiscoveryController.php.html#102">Indieinabox\Http\Controllers\DiscoveryController::respondJson</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="Controllers/DiscoveryController.php.html#228">Indieinabox\Http\Controllers\DiscoveryController::respondHtml</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="Controllers/IndieAuthController.php.html#18">Indieinabox\Http\Controllers\IndieAuthController::__construct</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="Controllers/IndieAuthController.php.html#58">Indieinabox\Http\Controllers\IndieAuthController::sendMetadata</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="Controllers/IndieAuthController.php.html#205">Indieinabox\Http\Controllers\IndieAuthController::validateBearerToken</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="Controllers/MicropubController.php.html#287">Indieinabox\Http\Controllers\MicropubController::sendErrorResponse</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="Controllers/MicrosubController.php.html#360">Indieinabox\Http\Controllers\MicrosubController::getRemoteUrl</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="Controllers/WebmentionController.php.html#18">Indieinabox\Http\Controllers\WebmentionController::__construct</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="Controllers/WebmentionController.php.html#79">Indieinabox\Http\Controllers\WebmentionController::sendResponse</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="StaticFileServer.php.html#18">Indieinabox\Http\StaticFileServer::__construct</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="StaticFileServer.php.html#275">Indieinabox\Http\StaticFileServer::getMimeType</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="WebRouter.php.html#61">Indieinabox\Http\WebRouter::getFileServer</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="WebRouter.php.html#359">Indieinabox\Http\WebRouter::getWebmentionController</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="WebRouter.php.html#364">Indieinabox\Http\WebRouter::getIndieAuthController</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="WebRouter.php.html#379">Indieinabox\Http\WebRouter::getActivityPubController</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="WebRouter.php.html#389">Indieinabox\Http\WebRouter::getDiscoveryController</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="WebRouter.php.html#394">Indieinabox\Http\WebRouter::getClientController</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="WebRouter.php.html#399">Indieinabox\Http\WebRouter::getAdminController</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="WebRouter.php.html#412">Indieinabox\Http\WebRouter::serveStatic</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="WebRouter.php.html#423">Indieinabox\Http\WebRouter::getMimeType</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="WebRouter.php.html#431">Indieinabox\Http\WebRouter::getServiceWorkerScript</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+      </tbody>
+     </table>
+      </div>
+     </div>
+    </div>
+   </section>
+  </main>
+  <footer>
+   <p class="credits">Generated by <a href="https://github.com/sebastianbergmann/php-code-coverage" target="_top">php-code-coverage 14.3.1</a> using <a href="https://www.php.net/" target="_top">PHP 8.4.27</a> and <a href="https://phpunit.de/">PHPUnit 13.3.1</a> at Mon Oct 26 6:16:30 UTC 2026.</p>
+  </footer>
+ </body>
+</html>

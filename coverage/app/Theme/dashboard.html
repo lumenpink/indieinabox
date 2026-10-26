@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboard for /workspace/lumen/indieinabox/app/Theme</title>
+  <link rel="stylesheet" href="../../_css/style.css?v=14.3.1">
+  <link rel="stylesheet" href="../../_css/custom.css">
+ </head>
+ <body>
+  <header class="masthead">
+   <nav aria-label="Breadcrumb">
+    <ol class="breadcrumbs">
+     <li><a href="../../index.html">/workspace/lumen/indieinabox</a></li>
+     <li><a href="../index.html">app</a></li>
+     <li><a href="index.html">Theme</a></li>
+     <li class="current">Dashboard</li>
+    </ol>
+   </nav>
+   <ul class="tabs">
+    <li><a href="../../index.html" aria-current="page">Files</a></li>
+    <li><a href="../../_classes/dashboard.html">Classes</a></li>
+   </ul>
+  </header>
+  <main class="dashboard">
+   <section>
+    <h2>Classes</h2>
+    <div class="panel">
+     <div class="chart">
+      <p class="hint">Line coverage against cyclomatic complexity. Bubble size is the number of executable lines; hover for details, click to navigate.</p>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400" preserveAspectRatio="xMidYMid meet">
+ <style>
+  .bubble-success { fill: var(--coverage-success-bar); opacity: 0.7; }
+  .bubble-warning { fill: var(--coverage-warning-bar); opacity: 0.7; }
+  .bubble-danger { fill: var(--coverage-danger-bar); opacity: 0.7; }
+  .bubble-success:hover, .bubble-warning:hover, .bubble-danger:hover { opacity: 1; stroke: var(--text); stroke-width: 1.5; }
+  .chart-grid { stroke: var(--border); stroke-width: 0.5; stroke-dasharray: 4,4; opacity: 0.5; }
+  .chart-axis { stroke: var(--border); stroke-width: 1; }
+  .chart-label { fill: var(--text); font-size: 11px; font-family: var(--font-sans); }
+  .chart-title { fill: var(--text); font-size: 12px; font-family: var(--font-sans); }
+ </style>
+ <line x1="60.0" y1="20" x2="60.0" y2="350" class="chart-grid"/>
+ <text x="60.0" y="368" text-anchor="middle" class="chart-label">0%</text>
+ <line x1="204.0" y1="20" x2="204.0" y2="350" class="chart-grid"/>
+ <text x="204.0" y="368" text-anchor="middle" class="chart-label">20%</text>
+ <line x1="348.0" y1="20" x2="348.0" y2="350" class="chart-grid"/>
+ <text x="348.0" y="368" text-anchor="middle" class="chart-label">40%</text>
+ <line x1="492.0" y1="20" x2="492.0" y2="350" class="chart-grid"/>
+ <text x="492.0" y="368" text-anchor="middle" class="chart-label">60%</text>
+ <line x1="636.0" y1="20" x2="636.0" y2="350" class="chart-grid"/>
+ <text x="636.0" y="368" text-anchor="middle" class="chart-label">80%</text>
+ <line x1="780.0" y1="20" x2="780.0" y2="350" class="chart-grid"/>
+ <text x="780.0" y="368" text-anchor="middle" class="chart-label">100%</text>
+ <line x1="60" y1="350.0" x2="780" y2="350.0" class="chart-grid"/>
+ <text x="52" y="350.0" text-anchor="end" dominant-baseline="middle" class="chart-label">0</text>
+ <line x1="60" y1="240.0" x2="780" y2="240.0" class="chart-grid"/>
+ <text x="52" y="240.0" text-anchor="end" dominant-baseline="middle" class="chart-label">50</text>
+ <line x1="60" y1="130.0" x2="780" y2="130.0" class="chart-grid"/>
+ <text x="52" y="130.0" text-anchor="end" dominant-baseline="middle" class="chart-label">100</text>
+ <line x1="60" y1="20.0" x2="780" y2="20.0" class="chart-grid"/>
+ <text x="52" y="20.0" text-anchor="end" dominant-baseline="middle" class="chart-label">150</text>
+ <line x1="60" y1="20" x2="60" y2="350" class="chart-axis"/>
+ <line x1="60" y1="350" x2="780" y2="350" class="chart-axis"/>
+ <text x="420.0" y="395" text-anchor="middle" class="chart-title">Line Coverage (%)</text>
+ <text x="15" y="185.0" text-anchor="middle" transform="rotate(-90, 15, 185.0)" class="chart-title">Cyclomatic Complexity</text>
+ <a href="ThemeData.php.html#23"><circle cx="755.0" cy="149.8" r="20.0" class="bubble-success"><title>Indieinabox\Theme\ThemeData — Coverage: 96.5% | Lines: 346 | Complexity: 91</title></circle></a>
+ <a href="ThemeHelper.php.html#19"><circle cx="679.4" cy="134.4" r="17.7" class="bubble-warning"><title>Indieinabox\Theme\ThemeHelper — Coverage: 86.0% | Lines: 272 | Complexity: 98</title></circle></a>
+ <a href="ThemeManager.php.html#18"><circle cx="372.7" cy="152.0" r="15.1" class="bubble-danger"><title>Indieinabox\Theme\ThemeManager — Coverage: 43.4% | Lines: 198 | Complexity: 90</title></circle></a>
+ <a href="Whostyles.php.html#10"><circle cx="322.6" cy="259.8" r="13.6" class="bubble-danger"><title>Indieinabox\Theme\Whostyles — Coverage: 36.5% | Lines: 159 | Complexity: 41</title></circle></a>
+ <a href="ThemeStarterService.php.html#15"><circle cx="568.2" cy="240.0" r="13.3" class="bubble-warning"><title>Indieinabox\Theme\ThemeStarterService — Coverage: 70.6% | Lines: 153 | Complexity: 50</title></circle></a>
+</svg>
+     </div>
+     <div>
+      <p class="hint">Sorted by descending <abbr title="Change Risk Anti-Patterns">CRAP</abbr> index.</p>
+      <div class="scrollbox">
+     <table class="crap">
+      <thead>
+       <tr>
+        <th scope="col">Class</th>
+        <th scope="col" class="number"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+        <th scope="col" class="number">Coverage</th>
+       </tr>
+      </thead>
+      <tbody>
+       <tr><td><a href="ThemeManager.php.html#18">Indieinabox\Theme\ThemeManager</a></td><td class="number">1556.03</td><td class="number">43.4%</td></tr>
+       <tr><td><a href="Whostyles.php.html#10">Indieinabox\Theme\Whostyles</a></td><td class="number">471.86</td><td class="number">36.5%</td></tr>
+       <tr><td><a href="ThemeHelper.php.html#19">Indieinabox\Theme\ThemeHelper</a></td><td class="number">124.19</td><td class="number">86.0%</td></tr>
+       <tr><td><a href="ThemeStarterService.php.html#15">Indieinabox\Theme\ThemeStarterService</a></td><td class="number">113.61</td><td class="number">70.6%</td></tr>
+       <tr><td><a href="ThemeData.php.html#23">Indieinabox\Theme\ThemeData</a></td><td class="number">91</td><td class="number">96.5%</td></tr>
+      </tbody>
+     </table>
+      </div>
+     </div>
+    </div>
+   </section>
+   <section>
+    <h2>Methods</h2>
+    <div class="panel">
+     <div class="chart">
+      <p class="hint">Line coverage against cyclomatic complexity. Bubble size is the number of executable lines; hover for details, click to navigate.</p>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400" preserveAspectRatio="xMidYMid meet">
+ <style>
+  .bubble-success { fill: var(--coverage-success-bar); opacity: 0.7; }
+  .bubble-warning { fill: var(--coverage-warning-bar); opacity: 0.7; }
+  .bubble-danger { fill: var(--coverage-danger-bar); opacity: 0.7; }
+  .bubble-success:hover, .bubble-warning:hover, .bubble-danger:hover { opacity: 1; stroke: var(--text); stroke-width: 1.5; }
+  .chart-grid { stroke: var(--border); stroke-width: 0.5; stroke-dasharray: 4,4; opacity: 0.5; }
+  .chart-axis { stroke: var(--border); stroke-width: 1; }
+  .chart-label { fill: var(--text); font-size: 11px; font-family: var(--font-sans); }
+  .chart-title { fill: var(--text); font-size: 12px; font-family: var(--font-sans); }
+ </style>
+ <line x1="60.0" y1="20" x2="60.0" y2="350" class="chart-grid"/>
+ <text x="60.0" y="368" text-anchor="middle" class="chart-label">0%</text>
+ <line x1="204.0" y1="20" x2="204.0" y2="350" class="chart-grid"/>
+ <text x="204.0" y="368" text-anchor="middle" class="chart-label">20%</text>
+ <line x1="348.0" y1="20" x2="348.0" y2="350" class="chart-grid"/>
+ <text x="348.0" y="368" text-anchor="middle" class="chart-label">40%</text>
+ <line x1="492.0" y1="20" x2="492.0" y2="350" class="chart-grid"/>
+ <text x="492.0" y="368" text-anchor="middle" class="chart-label">60%</text>
+ <line x1="636.0" y1="20" x2="636.0" y2="350" class="chart-grid"/>
+ <text x="636.0" y="368" text-anchor="middle" class="chart-label">80%</text>
+ <line x1="780.0" y1="20" x2="780.0" y2="350" class="chart-grid"/>
+ <text x="780.0" y="368" text-anchor="middle" class="chart-label">100%</text>
+ <line x1="60" y1="350.0" x2="780" y2="350.0" class="chart-grid"/>
+ <text x="52" y="350.0" text-anchor="end" dominant-baseline="middle" class="chart-label">0</text>
+ <line x1="60" y1="284.0" x2="780" y2="284.0" class="chart-grid"/>
+ <text x="52" y="284.0" text-anchor="end" dominant-baseline="middle" class="chart-label">10</text>
+ <line x1="60" y1="218.0" x2="780" y2="218.0" class="chart-grid"/>
+ <text x="52" y="218.0" text-anchor="end" dominant-baseline="middle" class="chart-label">20</text>
+ <line x1="60" y1="152.0" x2="780" y2="152.0" class="chart-grid"/>
+ <text x="52" y="152.0" text-anchor="end" dominant-baseline="middle" class="chart-label">30</text>
+ <line x1="60" y1="86.0" x2="780" y2="86.0" class="chart-grid"/>
+ <text x="52" y="86.0" text-anchor="end" dominant-baseline="middle" class="chart-label">40</text>
+ <line x1="60" y1="20.0" x2="780" y2="20.0" class="chart-grid"/>
+ <text x="52" y="20.0" text-anchor="end" dominant-baseline="middle" class="chart-label">50</text>
+ <line x1="60" y1="20" x2="60" y2="350" class="chart-axis"/>
+ <line x1="60" y1="350" x2="780" y2="350" class="chart-axis"/>
+ <text x="420.0" y="395" text-anchor="middle" class="chart-title">Line Coverage (%)</text>
+ <text x="15" y="185.0" text-anchor="middle" transform="rotate(-90, 15, 185.0)" class="chart-title">Cyclomatic Complexity</text>
+ <a href="ThemeHelper.php.html#24"><circle cx="737.1" cy="92.6" r="20.0" class="bubble-success"><title>Indieinabox\Theme\ThemeHelper::getMetadataHtml — Coverage: 94.0% | Lines: 84 | Complexity: 39</title></circle></a>
+ <a href="ThemeData.php.html#411"><circle cx="780.0" cy="336.8" r="19.5" class="bubble-success"><title>Indieinabox\Theme\ThemeData::getCanonicalFooter — Coverage: 100.0% | Lines: 80 | Complexity: 2</title></circle></a>
+ <a href="ThemeHelper.php.html#355"><circle cx="666.3" cy="218.0" r="19.0" class="bubble-warning"><title>Indieinabox\Theme\ThemeHelper::renderPostSnippet — Coverage: 84.2% | Lines: 76 | Complexity: 20</title></circle></a>
+ <a href="Whostyles.php.html#300"><circle cx="60.0" cy="310.4" r="17.0" class="bubble-danger"><title>Indieinabox\Theme\Whostyles::generateAttributes — Coverage: 0.0% | Lines: 61 | Complexity: 6</title></circle></a>
+ <a href="ThemeStarterService.php.html#99"><circle cx="475.4" cy="231.2" r="15.7" class="bubble-warning"><title>Indieinabox\Theme\ThemeStarterService::installOfficialTheme — Coverage: 57.7% | Lines: 52 | Complexity: 18</title></circle></a>
+ <a href="ThemeManager.php.html#296"><circle cx="88.8" cy="231.2" r="15.4" class="bubble-danger"><title>Indieinabox\Theme\ThemeManager::installFromZip — Coverage: 4.0% | Lines: 50 | Complexity: 18</title></circle></a>
+ <a href="ThemeData.php.html#293"><circle cx="735.0" cy="191.6" r="15.1" class="bubble-success"><title>Indieinabox\Theme\ThemeData::getKindLinks — Coverage: 93.8% | Lines: 48 | Complexity: 24</title></circle></a>
+ <a href="ThemeManager.php.html#181"><circle cx="749.4" cy="237.8" r="15.0" class="bubble-success"><title>Indieinabox\Theme\ThemeManager::getAllThemes — Coverage: 95.7% | Lines: 47 | Complexity: 17</title></circle></a>
+ <a href="ThemeHelper.php.html#283"><circle cx="623.5" cy="251.0" r="14.8" class="bubble-warning"><title>Indieinabox\Theme\ThemeHelper::getInteractionsHtml — Coverage: 78.3% | Lines: 46 | Complexity: 15</title></circle></a>
+ <a href="ThemeStarterService.php.html#35"><circle cx="681.8" cy="297.2" r="14.5" class="bubble-warning"><title>Indieinabox\Theme\ThemeStarterService::getOfficialThemes — Coverage: 86.4% | Lines: 44 | Complexity: 8</title></circle></a>
+ <a href="ThemeStarterService.php.html#183"><circle cx="499.0" cy="231.2" r="14.0" class="bubble-warning"><title>Indieinabox\Theme\ThemeStarterService::createZipPackage — Coverage: 61.0% | Lines: 41 | Complexity: 18</title></circle></a>
+ <a href="ThemeData.php.html#149"><circle cx="780.0" cy="330.2" r="13.8" class="bubble-success"><title>Indieinabox\Theme\ThemeData::getJsonLd — Coverage: 100.0% | Lines: 40 | Complexity: 3</title></circle></a>
+ <a href="ThemeData.php.html#543"><circle cx="702.2" cy="218.0" r="13.3" class="bubble-warning"><title>Indieinabox\Theme\ThemeData::getTagCloudData — Coverage: 89.2% | Lines: 37 | Complexity: 20</title></circle></a>
+ <a href="ThemeManager.php.html#384"><circle cx="60.0" cy="277.4" r="11.8" class="bubble-danger"><title>Indieinabox\Theme\ThemeManager::installFromGit — Coverage: 0.0% | Lines: 29 | Complexity: 11</title></circle></a>
+ <a href="ThemeHelper.php.html#185"><circle cx="503.1" cy="317.0" r="11.1" class="bubble-warning"><title>Indieinabox\Theme\ThemeHelper::getIndieWebContext — Coverage: 61.5% | Lines: 26 | Complexity: 5</title></circle></a>
+ <a href="ThemeData.php.html#204"><circle cx="751.2" cy="290.6" r="10.9" class="bubble-success"><title>Indieinabox\Theme\ThemeData::getLanguageSelector — Coverage: 96.0% | Lines: 25 | Complexity: 9</title></circle></a>
+ <a href="ThemeData.php.html#612"><circle cx="780.0" cy="317.0" r="10.7" class="bubble-success"><title>Indieinabox\Theme\ThemeData::getTagCloud — Coverage: 100.0% | Lines: 24 | Complexity: 5</title></circle></a>
+ <a href="Whostyles.php.html#117"><circle cx="642.9" cy="310.4" r="10.0" class="bubble-warning"><title>Indieinabox\Theme\Whostyles::decode — Coverage: 81.0% | Lines: 21 | Complexity: 6</title></circle></a>
+ <a href="ThemeData.php.html#256"><circle cx="660.0" cy="317.0" r="9.3" class="bubble-warning"><title>Indieinabox\Theme\ThemeData::getHeaderNavLinks — Coverage: 83.3% | Lines: 18 | Complexity: 5</title></circle></a>
+ <a href="ThemeHelper.php.html#226"><circle cx="740.0" cy="270.8" r="9.3" class="bubble-success"><title>Indieinabox\Theme\ThemeHelper::getAITranslationNotice — Coverage: 94.4% | Lines: 18 | Complexity: 12</title></circle></a>
+ <a href="ThemeData.php.html#93"><circle cx="780.0" cy="330.2" r="9.0" class="bubble-success"><title>Indieinabox\Theme\ThemeData::getOpenGraphTags — Coverage: 100.0% | Lines: 17 | Complexity: 3</title></circle></a>
+ <a href="ThemeData.php.html#513"><circle cx="780.0" cy="323.6" r="8.5" class="bubble-success"><title>Indieinabox\Theme\ThemeData::getHCard — Coverage: 100.0% | Lines: 15 | Complexity: 4</title></circle></a>
+ <a href="Whostyles.php.html#162"><circle cx="60.0" cy="323.6" r="8.5" class="bubble-danger"><title>Indieinabox\Theme\Whostyles::encode — Coverage: 0.0% | Lines: 15 | Complexity: 4</title></circle></a>
+ <a href="ThemeStarterService.php.html#256"><circle cx="728.6" cy="317.0" r="8.2" class="bubble-success"><title>Indieinabox\Theme\ThemeStarterService::copyRecursive — Coverage: 92.9% | Lines: 14 | Complexity: 5</title></circle></a>
+ <a href="ThemeManager.php.html#142"><circle cx="60.0" cy="310.4" r="7.9" class="bubble-danger"><title>Indieinabox\Theme\ThemeManager::resolveEmbeddedKey — Coverage: 0.0% | Lines: 13 | Complexity: 6</title></circle></a>
+ <a href="ThemeManager.php.html#262"><circle cx="780.0" cy="277.4" r="7.9" class="bubble-success"><title>Indieinabox\Theme\ThemeManager::checkManifest — Coverage: 100.0% | Lines: 13 | Complexity: 11</title></circle></a>
+ <a href="ThemeData.php.html#382"><circle cx="780.0" cy="310.4" r="7.6" class="bubble-success"><title>Indieinabox\Theme\ThemeData::getFooterLinks — Coverage: 100.0% | Lines: 12 | Complexity: 6</title></circle></a>
+ <a href="ThemeHelper.php.html#161"><circle cx="780.0" cy="330.2" r="7.6" class="bubble-success"><title>Indieinabox\Theme\ThemeHelper::getOldVersionNotice — Coverage: 100.0% | Lines: 12 | Complexity: 3</title></circle></a>
+ <a href="Whostyles.php.html#196"><circle cx="780.0" cy="290.6" r="7.6" class="bubble-success"><title>Indieinabox\Theme\Whostyles::extract — Coverage: 100.0% | Lines: 12 | Complexity: 9</title></circle></a>
+ <a href="ThemeManager.php.html#28"><circle cx="452.7" cy="323.6" r="7.2" class="bubble-warning"><title>Indieinabox\Theme\ThemeManager::loadView — Coverage: 54.5% | Lines: 11 | Complexity: 4</title></circle></a>
+ <a href="ThemeManager.php.html#442"><circle cx="60.0" cy="297.2" r="7.2" class="bubble-danger"><title>Indieinabox\Theme\ThemeManager::activateTheme — Coverage: 0.0% | Lines: 11 | Complexity: 8</title></circle></a>
+ <a href="ThemeHelper.php.html#261"><circle cx="780.0" cy="323.6" r="6.9" class="bubble-success"><title>Indieinabox\Theme\ThemeHelper::getSyndicationLinks — Coverage: 100.0% | Lines: 10 | Complexity: 4</title></circle></a>
+ <a href="ThemeData.php.html#47"><circle cx="780.0" cy="323.6" r="6.5" class="bubble-success"><title>Indieinabox\Theme\ThemeData::getThemeColors — Coverage: 100.0% | Lines: 9 | Complexity: 4</title></circle></a>
+ <a href="ThemeData.php.html#127"><circle cx="780.0" cy="343.4" r="6.5" class="bubble-success"><title>Indieinabox\Theme\ThemeData::getTwitterCardTags — Coverage: 100.0% | Lines: 9 | Complexity: 1</title></circle></a>
+ <a href="Whostyles.php.html#50"><circle cx="780.0" cy="330.2" r="6.5" class="bubble-success"><title>Indieinabox\Theme\Whostyles::decodeBase64 — Coverage: 100.0% | Lines: 9 | Complexity: 3</title></circle></a>
+ <a href="Whostyles.php.html#226"><circle cx="60.0" cy="336.8" r="6.5" class="bubble-danger"><title>Indieinabox\Theme\Whostyles::clean — Coverage: 0.0% | Lines: 9 | Complexity: 2</title></circle></a>
+ <a href="ThemeData.php.html#70"><circle cx="690.0" cy="336.8" r="6.2" class="bubble-warning"><title>Indieinabox\Theme\ThemeData::getMetaTags — Coverage: 87.5% | Lines: 8 | Complexity: 2</title></circle></a>
+ <a href="ThemeManager.php.html#120"><circle cx="574.3" cy="323.6" r="5.8" class="bubble-warning"><title>Indieinabox\Theme\ThemeManager::getViewContent — Coverage: 71.4% | Lines: 7 | Complexity: 4</title></circle></a>
+ <a href="Whostyles.php.html#85"><circle cx="780.0" cy="343.4" r="5.8" class="bubble-success"><title>Indieinabox\Theme\Whostyles::decodeColor — Coverage: 100.0% | Lines: 7 | Complexity: 1</title></circle></a>
+ <a href="Whostyles.php.html#101"><circle cx="60.0" cy="343.4" r="5.8" class="bubble-danger"><title>Indieinabox\Theme\Whostyles::encodeColor — Coverage: 0.0% | Lines: 7 | Complexity: 1</title></circle></a>
+ <a href="Whostyles.php.html#269"><circle cx="780.0" cy="323.6" r="5.8" class="bubble-success"><title>Indieinabox\Theme\Whostyles::getLuminance — Coverage: 100.0% | Lines: 7 | Complexity: 4</title></circle></a>
+ <a href="ThemeManager.php.html#99"><circle cx="540.0" cy="330.2" r="5.3" class="bubble-warning"><title>Indieinabox\Theme\ThemeManager::hasView — Coverage: 66.7% | Lines: 6 | Complexity: 3</title></circle></a>
+ <a href="Whostyles.php.html#70"><circle cx="60.0" cy="336.8" r="4.9" class="bubble-danger"><title>Indieinabox\Theme\Whostyles::encodeBase64 — Coverage: 0.0% | Lines: 5 | Complexity: 2</title></circle></a>
+ <a href="ThemeData.php.html#32"><circle cx="780.0" cy="330.2" r="4.4" class="bubble-success"><title>Indieinabox\Theme\ThemeData::getPageTitle — Coverage: 100.0% | Lines: 4 | Complexity: 3</title></circle></a>
+ <a href="ThemeManager.php.html#85"><circle cx="780.0" cy="323.6" r="4.4" class="bubble-success"><title>Indieinabox\Theme\ThemeManager::resolveViewPath — Coverage: 100.0% | Lines: 4 | Complexity: 4</title></circle></a>
+ <a href="ThemeManager.php.html#59"><circle cx="780.0" cy="343.4" r="4.0" class="bubble-success"><title>Indieinabox\Theme\ThemeManager::renderView — Coverage: 100.0% | Lines: 3 | Complexity: 1</title></circle></a>
+ <a href="Whostyles.php.html#23"><circle cx="780.0" cy="336.8" r="4.0" class="bubble-success"><title>Indieinabox\Theme\Whostyles::getAlphabetMap — Coverage: 100.0% | Lines: 3 | Complexity: 2</title></circle></a>
+ <a href="Whostyles.php.html#288"><circle cx="780.0" cy="343.4" r="4.0" class="bubble-success"><title>Indieinabox\Theme\Whostyles::getContrast — Coverage: 100.0% | Lines: 3 | Complexity: 1</title></circle></a>
+ <a href="ThemeManager.php.html#73"><circle cx="780.0" cy="343.4" r="4.0" class="bubble-success"><title>Indieinabox\Theme\ThemeManager::includeView — Coverage: 100.0% | Lines: 2 | Complexity: 1</title></circle></a>
+ <a href="ThemeStarterService.php.html#23"><circle cx="780.0" cy="343.4" r="4.0" class="bubble-success"><title>Indieinabox\Theme\ThemeStarterService::getStartersSourceDir — Coverage: 100.0% | Lines: 2 | Complexity: 1</title></circle></a>
+ <a href="ThemeManager.php.html#170"><circle cx="780.0" cy="343.4" r="4.0" class="bubble-success"><title>Indieinabox\Theme\ThemeManager::listThemes — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="ThemeManager.php.html#251"><circle cx="780.0" cy="343.4" r="4.0" class="bubble-success"><title>Indieinabox\Theme\ThemeManager::validateManifest — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+</svg>
+     </div>
+     <div>
+      <p class="hint">Sorted by descending <abbr title="Change Risk Anti-Patterns">CRAP</abbr> index.</p>
+      <div class="scrollbox">
+     <table class="crap">
+      <thead>
+       <tr>
+        <th scope="col">Method</th>
+        <th scope="col" class="number"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+        <th scope="col" class="number">Coverage</th>
+       </tr>
+      </thead>
+      <tbody>
+       <tr><td><a href="ThemeManager.php.html#296">Indieinabox\Theme\ThemeManager::installFromZip</a></td><td class="number">304.65</td><td class="number">4.0%</td></tr>
+       <tr><td><a href="ThemeManager.php.html#384">Indieinabox\Theme\ThemeManager::installFromGit</a></td><td class="number">132</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="ThemeManager.php.html#442">Indieinabox\Theme\ThemeManager::activateTheme</a></td><td class="number">72</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="ThemeStarterService.php.html#99">Indieinabox\Theme\ThemeStarterService::installOfficialTheme</a></td><td class="number">42.54</td><td class="number">57.7%</td></tr>
+       <tr><td><a href="ThemeManager.php.html#142">Indieinabox\Theme\ThemeManager::resolveEmbeddedKey</a></td><td class="number">42</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="Whostyles.php.html#300">Indieinabox\Theme\Whostyles::generateAttributes</a></td><td class="number">42</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="ThemeHelper.php.html#24">Indieinabox\Theme\ThemeHelper::getMetadataHtml</a></td><td class="number">39.32</td><td class="number">94.0%</td></tr>
+       <tr><td><a href="ThemeStarterService.php.html#183">Indieinabox\Theme\ThemeStarterService::createZipPackage</a></td><td class="number">37.26</td><td class="number">61.0%</td></tr>
+       <tr><td><a href="ThemeData.php.html#293">Indieinabox\Theme\ThemeData::getKindLinks</a></td><td class="number">24.14</td><td class="number">93.8%</td></tr>
+       <tr><td><a href="ThemeHelper.php.html#355">Indieinabox\Theme\ThemeHelper::renderPostSnippet</a></td><td class="number">21.57</td><td class="number">84.2%</td></tr>
+       <tr><td><a href="ThemeData.php.html#543">Indieinabox\Theme\ThemeData::getTagCloudData</a></td><td class="number">20.51</td><td class="number">89.2%</td></tr>
+       <tr><td><a href="Whostyles.php.html#162">Indieinabox\Theme\Whostyles::encode</a></td><td class="number">20</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="ThemeHelper.php.html#283">Indieinabox\Theme\ThemeHelper::getInteractionsHtml</a></td><td class="number">17.31</td><td class="number">78.3%</td></tr>
+       <tr><td><a href="ThemeManager.php.html#181">Indieinabox\Theme\ThemeManager::getAllThemes</a></td><td class="number">17</td><td class="number">95.7%</td></tr>
+       <tr><td><a href="ThemeHelper.php.html#226">Indieinabox\Theme\ThemeHelper::getAITranslationNotice</a></td><td class="number">12.02</td><td class="number">94.4%</td></tr>
+       <tr><td><a href="ThemeManager.php.html#262">Indieinabox\Theme\ThemeManager::checkManifest</a></td><td class="number">11</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="ThemeData.php.html#204">Indieinabox\Theme\ThemeData::getLanguageSelector</a></td><td class="number">9</td><td class="number">96.0%</td></tr>
+       <tr><td><a href="Whostyles.php.html#196">Indieinabox\Theme\Whostyles::extract</a></td><td class="number">9</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="ThemeStarterService.php.html#35">Indieinabox\Theme\ThemeStarterService::getOfficialThemes</a></td><td class="number">8.16</td><td class="number">86.4%</td></tr>
+       <tr><td><a href="ThemeHelper.php.html#185">Indieinabox\Theme\ThemeHelper::getIndieWebContext</a></td><td class="number">6.42</td><td class="number">61.5%</td></tr>
+       <tr><td><a href="Whostyles.php.html#117">Indieinabox\Theme\Whostyles::decode</a></td><td class="number">6.25</td><td class="number">81.0%</td></tr>
+       <tr><td><a href="ThemeData.php.html#382">Indieinabox\Theme\ThemeData::getFooterLinks</a></td><td class="number">6</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="Whostyles.php.html#70">Indieinabox\Theme\Whostyles::encodeBase64</a></td><td class="number">6</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="Whostyles.php.html#226">Indieinabox\Theme\Whostyles::clean</a></td><td class="number">6</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="ThemeManager.php.html#28">Indieinabox\Theme\ThemeManager::loadView</a></td><td class="number">5.50</td><td class="number">54.5%</td></tr>
+       <tr><td><a href="ThemeData.php.html#256">Indieinabox\Theme\ThemeData::getHeaderNavLinks</a></td><td class="number">5.12</td><td class="number">83.3%</td></tr>
+       <tr><td><a href="ThemeStarterService.php.html#256">Indieinabox\Theme\ThemeStarterService::copyRecursive</a></td><td class="number">5.01</td><td class="number">92.9%</td></tr>
+       <tr><td><a href="ThemeData.php.html#612">Indieinabox\Theme\ThemeData::getTagCloud</a></td><td class="number">5</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="ThemeManager.php.html#120">Indieinabox\Theme\ThemeManager::getViewContent</a></td><td class="number">4.37</td><td class="number">71.4%</td></tr>
+       <tr><td><a href="ThemeData.php.html#47">Indieinabox\Theme\ThemeData::getThemeColors</a></td><td class="number">4</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="ThemeData.php.html#513">Indieinabox\Theme\ThemeData::getHCard</a></td><td class="number">4</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="ThemeHelper.php.html#261">Indieinabox\Theme\ThemeHelper::getSyndicationLinks</a></td><td class="number">4</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="ThemeManager.php.html#85">Indieinabox\Theme\ThemeManager::resolveViewPath</a></td><td class="number">4</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="Whostyles.php.html#269">Indieinabox\Theme\Whostyles::getLuminance</a></td><td class="number">4</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="ThemeManager.php.html#99">Indieinabox\Theme\ThemeManager::hasView</a></td><td class="number">3.33</td><td class="number">66.7%</td></tr>
+       <tr><td><a href="ThemeData.php.html#32">Indieinabox\Theme\ThemeData::getPageTitle</a></td><td class="number">3</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="ThemeData.php.html#93">Indieinabox\Theme\ThemeData::getOpenGraphTags</a></td><td class="number">3</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="ThemeData.php.html#149">Indieinabox\Theme\ThemeData::getJsonLd</a></td><td class="number">3</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="ThemeHelper.php.html#161">Indieinabox\Theme\ThemeHelper::getOldVersionNotice</a></td><td class="number">3</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="Whostyles.php.html#50">Indieinabox\Theme\Whostyles::decodeBase64</a></td><td class="number">3</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="ThemeData.php.html#70">Indieinabox\Theme\ThemeData::getMetaTags</a></td><td class="number">2.01</td><td class="number">87.5%</td></tr>
+       <tr><td><a href="ThemeData.php.html#411">Indieinabox\Theme\ThemeData::getCanonicalFooter</a></td><td class="number">2</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="Whostyles.php.html#23">Indieinabox\Theme\Whostyles::getAlphabetMap</a></td><td class="number">2</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="Whostyles.php.html#101">Indieinabox\Theme\Whostyles::encodeColor</a></td><td class="number">2</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="ThemeData.php.html#127">Indieinabox\Theme\ThemeData::getTwitterCardTags</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="ThemeManager.php.html#59">Indieinabox\Theme\ThemeManager::renderView</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="ThemeManager.php.html#73">Indieinabox\Theme\ThemeManager::includeView</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="ThemeManager.php.html#170">Indieinabox\Theme\ThemeManager::listThemes</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="ThemeManager.php.html#251">Indieinabox\Theme\ThemeManager::validateManifest</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="ThemeStarterService.php.html#23">Indieinabox\Theme\ThemeStarterService::getStartersSourceDir</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="Whostyles.php.html#85">Indieinabox\Theme\Whostyles::decodeColor</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="Whostyles.php.html#288">Indieinabox\Theme\Whostyles::getContrast</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+      </tbody>
+     </table>
+      </div>
+     </div>
+    </div>
+   </section>
+  </main>
+  <footer>
+   <p class="credits">Generated by <a href="https://github.com/sebastianbergmann/php-code-coverage" target="_top">php-code-coverage 14.3.1</a> using <a href="https://www.php.net/" target="_top">PHP 8.4.27</a> and <a href="https://phpunit.de/">PHPUnit 13.3.1</a> at Mon Oct 26 6:16:30 UTC 2026.</p>
+  </footer>
+ </body>
+</html>

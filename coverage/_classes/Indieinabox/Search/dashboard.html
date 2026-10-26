@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboard for Indieinabox\Search</title>
+  <link rel="stylesheet" href="../../../_css/style.css?v=14.3.1">
+  <link rel="stylesheet" href="../../../_css/custom.css">
+ </head>
+ <body>
+  <header class="masthead">
+   <nav aria-label="Breadcrumb">
+    <ol class="breadcrumbs">
+     <li><a href="../../index.html">(Global)</a></li>
+     <li><a href="../index.html">Indieinabox</a></li>
+     <li><a href="index.html">Search</a></li>
+     <li class="current">Dashboard</li>
+    </ol>
+   </nav>
+   <ul class="tabs">
+    <li><a href="../../../dashboard.html">Files</a></li>
+    <li><a href="../../../_classes/index.html" aria-current="page">Classes</a></li>
+   </ul>
+  </header>
+  <main class="dashboard">
+   <section>
+    <h2>Classes</h2>
+    <div class="panel">
+     <div class="chart">
+      <p class="hint">Line coverage against cyclomatic complexity. Bubble size is the number of executable lines; hover for details, click to navigate.</p>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400" preserveAspectRatio="xMidYMid meet">
+ <style>
+  .bubble-success { fill: var(--coverage-success-bar); opacity: 0.7; }
+  .bubble-warning { fill: var(--coverage-warning-bar); opacity: 0.7; }
+  .bubble-danger { fill: var(--coverage-danger-bar); opacity: 0.7; }
+  .bubble-success:hover, .bubble-warning:hover, .bubble-danger:hover { opacity: 1; stroke: var(--text); stroke-width: 1.5; }
+  .chart-grid { stroke: var(--border); stroke-width: 0.5; stroke-dasharray: 4,4; opacity: 0.5; }
+  .chart-axis { stroke: var(--border); stroke-width: 1; }
+  .chart-label { fill: var(--text); font-size: 11px; font-family: var(--font-sans); }
+  .chart-title { fill: var(--text); font-size: 12px; font-family: var(--font-sans); }
+ </style>
+ <line x1="60.0" y1="20" x2="60.0" y2="350" class="chart-grid"/>
+ <text x="60.0" y="368" text-anchor="middle" class="chart-label">0%</text>
+ <line x1="204.0" y1="20" x2="204.0" y2="350" class="chart-grid"/>
+ <text x="204.0" y="368" text-anchor="middle" class="chart-label">20%</text>
+ <line x1="348.0" y1="20" x2="348.0" y2="350" class="chart-grid"/>
+ <text x="348.0" y="368" text-anchor="middle" class="chart-label">40%</text>
+ <line x1="492.0" y1="20" x2="492.0" y2="350" class="chart-grid"/>
+ <text x="492.0" y="368" text-anchor="middle" class="chart-label">60%</text>
+ <line x1="636.0" y1="20" x2="636.0" y2="350" class="chart-grid"/>
+ <text x="636.0" y="368" text-anchor="middle" class="chart-label">80%</text>
+ <line x1="780.0" y1="20" x2="780.0" y2="350" class="chart-grid"/>
+ <text x="780.0" y="368" text-anchor="middle" class="chart-label">100%</text>
+ <line x1="60" y1="350.0" x2="780" y2="350.0" class="chart-grid"/>
+ <text x="52" y="350.0" text-anchor="end" dominant-baseline="middle" class="chart-label">0</text>
+ <line x1="60" y1="284.0" x2="780" y2="284.0" class="chart-grid"/>
+ <text x="52" y="284.0" text-anchor="end" dominant-baseline="middle" class="chart-label">20</text>
+ <line x1="60" y1="218.0" x2="780" y2="218.0" class="chart-grid"/>
+ <text x="52" y="218.0" text-anchor="end" dominant-baseline="middle" class="chart-label">40</text>
+ <line x1="60" y1="152.0" x2="780" y2="152.0" class="chart-grid"/>
+ <text x="52" y="152.0" text-anchor="end" dominant-baseline="middle" class="chart-label">60</text>
+ <line x1="60" y1="86.0" x2="780" y2="86.0" class="chart-grid"/>
+ <text x="52" y="86.0" text-anchor="end" dominant-baseline="middle" class="chart-label">80</text>
+ <line x1="60" y1="20.0" x2="780" y2="20.0" class="chart-grid"/>
+ <text x="52" y="20.0" text-anchor="end" dominant-baseline="middle" class="chart-label">100</text>
+ <line x1="60" y1="20" x2="60" y2="350" class="chart-axis"/>
+ <line x1="60" y1="350" x2="780" y2="350" class="chart-axis"/>
+ <text x="420.0" y="395" text-anchor="middle" class="chart-title">Line Coverage (%)</text>
+ <text x="15" y="185.0" text-anchor="middle" transform="rotate(-90, 15, 185.0)" class="chart-title">Cyclomatic Complexity</text>
+ <a href="../../../app/Search/SearchService.php.html#22"><circle cx="621.6" cy="76.1" r="20.0" class="bubble-warning"><title>Indieinabox\Search\SearchService — Coverage: 78.0% | Lines: 250 | Complexity: 83</title></circle></a>
+</svg>
+     </div>
+     <div>
+      <p class="hint">Sorted by descending <abbr title="Change Risk Anti-Patterns">CRAP</abbr> index.</p>
+      <div class="scrollbox">
+     <table class="crap">
+      <thead>
+       <tr>
+        <th scope="col">Class</th>
+        <th scope="col" class="number"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+        <th scope="col" class="number">Coverage</th>
+       </tr>
+      </thead>
+      <tbody>
+       <tr><td><a href="../../../app/Search/SearchService.php.html#22">Indieinabox\Search\SearchService</a></td><td class="number">156.35</td><td class="number">78.0%</td></tr>
+      </tbody>
+     </table>
+      </div>
+     </div>
+    </div>
+   </section>
+   <section>
+    <h2>Methods</h2>
+    <div class="panel">
+     <div class="chart">
+      <p class="hint">Line coverage against cyclomatic complexity. Bubble size is the number of executable lines; hover for details, click to navigate.</p>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400" preserveAspectRatio="xMidYMid meet">
+ <style>
+  .bubble-success { fill: var(--coverage-success-bar); opacity: 0.7; }
+  .bubble-warning { fill: var(--coverage-warning-bar); opacity: 0.7; }
+  .bubble-danger { fill: var(--coverage-danger-bar); opacity: 0.7; }
+  .bubble-success:hover, .bubble-warning:hover, .bubble-danger:hover { opacity: 1; stroke: var(--text); stroke-width: 1.5; }
+  .chart-grid { stroke: var(--border); stroke-width: 0.5; stroke-dasharray: 4,4; opacity: 0.5; }
+  .chart-axis { stroke: var(--border); stroke-width: 1; }
+  .chart-label { fill: var(--text); font-size: 11px; font-family: var(--font-sans); }
+  .chart-title { fill: var(--text); font-size: 12px; font-family: var(--font-sans); }
+ </style>
+ <line x1="60.0" y1="20" x2="60.0" y2="350" class="chart-grid"/>
+ <text x="60.0" y="368" text-anchor="middle" class="chart-label">0%</text>
+ <line x1="204.0" y1="20" x2="204.0" y2="350" class="chart-grid"/>
+ <text x="204.0" y="368" text-anchor="middle" class="chart-label">20%</text>
+ <line x1="348.0" y1="20" x2="348.0" y2="350" class="chart-grid"/>
+ <text x="348.0" y="368" text-anchor="middle" class="chart-label">40%</text>
+ <line x1="492.0" y1="20" x2="492.0" y2="350" class="chart-grid"/>
+ <text x="492.0" y="368" text-anchor="middle" class="chart-label">60%</text>
+ <line x1="636.0" y1="20" x2="636.0" y2="350" class="chart-grid"/>
+ <text x="636.0" y="368" text-anchor="middle" class="chart-label">80%</text>
+ <line x1="780.0" y1="20" x2="780.0" y2="350" class="chart-grid"/>
+ <text x="780.0" y="368" text-anchor="middle" class="chart-label">100%</text>
+ <line x1="60" y1="350.0" x2="780" y2="350.0" class="chart-grid"/>
+ <text x="52" y="350.0" text-anchor="end" dominant-baseline="middle" class="chart-label">0</text>
+ <line x1="60" y1="284.0" x2="780" y2="284.0" class="chart-grid"/>
+ <text x="52" y="284.0" text-anchor="end" dominant-baseline="middle" class="chart-label">5</text>
+ <line x1="60" y1="218.0" x2="780" y2="218.0" class="chart-grid"/>
+ <text x="52" y="218.0" text-anchor="end" dominant-baseline="middle" class="chart-label">10</text>
+ <line x1="60" y1="152.0" x2="780" y2="152.0" class="chart-grid"/>
+ <text x="52" y="152.0" text-anchor="end" dominant-baseline="middle" class="chart-label">15</text>
+ <line x1="60" y1="86.0" x2="780" y2="86.0" class="chart-grid"/>
+ <text x="52" y="86.0" text-anchor="end" dominant-baseline="middle" class="chart-label">20</text>
+ <line x1="60" y1="20.0" x2="780" y2="20.0" class="chart-grid"/>
+ <text x="52" y="20.0" text-anchor="end" dominant-baseline="middle" class="chart-label">25</text>
+ <line x1="60" y1="20" x2="60" y2="350" class="chart-axis"/>
+ <line x1="60" y1="350" x2="780" y2="350" class="chart-axis"/>
+ <text x="420.0" y="395" text-anchor="middle" class="chart-title">Line Coverage (%)</text>
+ <text x="15" y="185.0" text-anchor="middle" transform="rotate(-90, 15, 185.0)" class="chart-title">Cyclomatic Complexity</text>
+ <a href="../../../app/Search/SearchService.php.html#385"><circle cx="602.6" cy="125.6" r="20.0" class="bubble-warning"><title>Indieinabox\Search\SearchService::search — Coverage: 75.4% | Lines: 69 | Complexity: 17</title></circle></a>
+ <a href="../../../app/Search/SearchService.php.html#178"><circle cx="726.0" cy="72.8" r="15.2" class="bubble-success"><title>Indieinabox\Search\SearchService::indexPage — Coverage: 92.5% | Lines: 40 | Complexity: 21</title></circle></a>
+ <a href="../../../app/Search/SearchService.php.html#309"><circle cx="142.3" cy="218.0" r="14.2" class="bubble-danger"><title>Indieinabox\Search\SearchService::indexAllFeeds — Coverage: 11.4% | Lines: 35 | Complexity: 10</title></circle></a>
+ <a href="../../../app/Search/SearchService.php.html#257"><circle cx="737.6" cy="257.6" r="14.0" class="bubble-success"><title>Indieinabox\Search\SearchService::indexFeedEntry — Coverage: 94.1% | Lines: 34 | Complexity: 7</title></circle></a>
+ <a href="../../../app/Search/SearchService.php.html#61"><circle cx="756.0" cy="112.4" r="13.2" class="bubble-success"><title>Indieinabox\Search\SearchService::sanitizeQuery — Coverage: 96.7% | Lines: 30 | Complexity: 18</title></circle></a>
+ <a href="../../../app/Search/SearchService.php.html#134"><circle cx="780.0" cy="336.8" r="9.0" class="bubble-success"><title>Indieinabox\Search\SearchService::indexDocument — Coverage: 100.0% | Lines: 14 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Search/SearchService.php.html#365"><circle cx="780.0" cy="336.8" r="6.8" class="bubble-success"><title>Indieinabox\Search\SearchService::rebuildIndex — Coverage: 100.0% | Lines: 8 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Search/SearchService.php.html#114"><circle cx="780.0" cy="336.8" r="6.4" class="bubble-success"><title>Indieinabox\Search\SearchService::extractPlainText — Coverage: 100.0% | Lines: 7 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Search/SearchService.php.html#241"><circle cx="780.0" cy="310.4" r="5.4" class="bubble-success"><title>Indieinabox\Search\SearchService::indexAllPages — Coverage: 100.0% | Lines: 5 | Complexity: 3</title></circle></a>
+ <a href="../../../app/Search/SearchService.php.html#27"><circle cx="780.0" cy="336.8" r="4.2" class="bubble-success"><title>Indieinabox\Search\SearchService::__construct — Coverage: 100.0% | Lines: 3 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Search/SearchService.php.html#37"><circle cx="540.0" cy="323.6" r="4.2" class="bubble-warning"><title>Indieinabox\Search\SearchService::ensureTable — Coverage: 66.7% | Lines: 3 | Complexity: 2</title></circle></a>
+ <a href="../../../app/Search/SearchService.php.html#169"><circle cx="780.0" cy="336.8" r="4.0" class="bubble-success"><title>Indieinabox\Search\SearchService::deleteDocument — Coverage: 100.0% | Lines: 2 | Complexity: 1</title></circle></a>
+</svg>
+     </div>
+     <div>
+      <p class="hint">Sorted by descending <abbr title="Change Risk Anti-Patterns">CRAP</abbr> index.</p>
+      <div class="scrollbox">
+     <table class="crap">
+      <thead>
+       <tr>
+        <th scope="col">Method</th>
+        <th scope="col" class="number"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+        <th scope="col" class="number">Coverage</th>
+       </tr>
+      </thead>
+      <tbody>
+       <tr><td><a href="../../../app/Search/SearchService.php.html#309">Indieinabox\Search\SearchService::indexAllFeeds</a></td><td class="number">79.48</td><td class="number">11.4%</td></tr>
+       <tr><td><a href="../../../app/Search/SearchService.php.html#385">Indieinabox\Search\SearchService::search</a></td><td class="number">21.32</td><td class="number">75.4%</td></tr>
+       <tr><td><a href="../../../app/Search/SearchService.php.html#178">Indieinabox\Search\SearchService::indexPage</a></td><td class="number">21.19</td><td class="number">92.5%</td></tr>
+       <tr><td><a href="../../../app/Search/SearchService.php.html#61">Indieinabox\Search\SearchService::sanitizeQuery</a></td><td class="number">18</td><td class="number">96.7%</td></tr>
+       <tr><td><a href="../../../app/Search/SearchService.php.html#257">Indieinabox\Search\SearchService::indexFeedEntry</a></td><td class="number">7.01</td><td class="number">94.1%</td></tr>
+       <tr><td><a href="../../../app/Search/SearchService.php.html#241">Indieinabox\Search\SearchService::indexAllPages</a></td><td class="number">3</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Search/SearchService.php.html#37">Indieinabox\Search\SearchService::ensureTable</a></td><td class="number">2.15</td><td class="number">66.7%</td></tr>
+       <tr><td><a href="../../../app/Search/SearchService.php.html#27">Indieinabox\Search\SearchService::__construct</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Search/SearchService.php.html#114">Indieinabox\Search\SearchService::extractPlainText</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Search/SearchService.php.html#134">Indieinabox\Search\SearchService::indexDocument</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Search/SearchService.php.html#169">Indieinabox\Search\SearchService::deleteDocument</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Search/SearchService.php.html#365">Indieinabox\Search\SearchService::rebuildIndex</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+      </tbody>
+     </table>
+      </div>
+     </div>
+    </div>
+   </section>
+  </main>
+  <footer>
+   <p class="credits">Generated by <a href="https://github.com/sebastianbergmann/php-code-coverage" target="_top">php-code-coverage 14.3.1</a> using <a href="https://www.php.net/" target="_top">PHP 8.4.27</a> and <a href="https://phpunit.de/">PHPUnit 13.3.1</a> at Mon Oct 26 6:16:30 UTC 2026.</p>
+  </footer>
+ </body>
+</html>

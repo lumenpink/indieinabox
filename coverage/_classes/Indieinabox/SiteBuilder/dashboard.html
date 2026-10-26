@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboard for Indieinabox\SiteBuilder</title>
+  <link rel="stylesheet" href="../../../_css/style.css?v=14.3.1">
+  <link rel="stylesheet" href="../../../_css/custom.css">
+ </head>
+ <body>
+  <header class="masthead">
+   <nav aria-label="Breadcrumb">
+    <ol class="breadcrumbs">
+     <li><a href="../../index.html">(Global)</a></li>
+     <li><a href="../index.html">Indieinabox</a></li>
+     <li><a href="index.html">SiteBuilder</a></li>
+     <li class="current">Dashboard</li>
+    </ol>
+   </nav>
+   <ul class="tabs">
+    <li><a href="../../../dashboard.html">Files</a></li>
+    <li><a href="../../../_classes/index.html" aria-current="page">Classes</a></li>
+   </ul>
+  </header>
+  <main class="dashboard">
+   <section>
+    <h2>Classes</h2>
+    <div class="panel">
+     <div class="chart">
+      <p class="hint">Line coverage against cyclomatic complexity. Bubble size is the number of executable lines; hover for details, click to navigate.</p>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400" preserveAspectRatio="xMidYMid meet">
+ <style>
+  .bubble-success { fill: var(--coverage-success-bar); opacity: 0.7; }
+  .bubble-warning { fill: var(--coverage-warning-bar); opacity: 0.7; }
+  .bubble-danger { fill: var(--coverage-danger-bar); opacity: 0.7; }
+  .bubble-success:hover, .bubble-warning:hover, .bubble-danger:hover { opacity: 1; stroke: var(--text); stroke-width: 1.5; }
+  .chart-grid { stroke: var(--border); stroke-width: 0.5; stroke-dasharray: 4,4; opacity: 0.5; }
+  .chart-axis { stroke: var(--border); stroke-width: 1; }
+  .chart-label { fill: var(--text); font-size: 11px; font-family: var(--font-sans); }
+  .chart-title { fill: var(--text); font-size: 12px; font-family: var(--font-sans); }
+ </style>
+ <line x1="60.0" y1="20" x2="60.0" y2="350" class="chart-grid"/>
+ <text x="60.0" y="368" text-anchor="middle" class="chart-label">0%</text>
+ <line x1="204.0" y1="20" x2="204.0" y2="350" class="chart-grid"/>
+ <text x="204.0" y="368" text-anchor="middle" class="chart-label">20%</text>
+ <line x1="348.0" y1="20" x2="348.0" y2="350" class="chart-grid"/>
+ <text x="348.0" y="368" text-anchor="middle" class="chart-label">40%</text>
+ <line x1="492.0" y1="20" x2="492.0" y2="350" class="chart-grid"/>
+ <text x="492.0" y="368" text-anchor="middle" class="chart-label">60%</text>
+ <line x1="636.0" y1="20" x2="636.0" y2="350" class="chart-grid"/>
+ <text x="636.0" y="368" text-anchor="middle" class="chart-label">80%</text>
+ <line x1="780.0" y1="20" x2="780.0" y2="350" class="chart-grid"/>
+ <text x="780.0" y="368" text-anchor="middle" class="chart-label">100%</text>
+ <line x1="60" y1="350.0" x2="780" y2="350.0" class="chart-grid"/>
+ <text x="52" y="350.0" text-anchor="end" dominant-baseline="middle" class="chart-label">0</text>
+ <line x1="60" y1="284.0" x2="780" y2="284.0" class="chart-grid"/>
+ <text x="52" y="284.0" text-anchor="end" dominant-baseline="middle" class="chart-label">50</text>
+ <line x1="60" y1="218.0" x2="780" y2="218.0" class="chart-grid"/>
+ <text x="52" y="218.0" text-anchor="end" dominant-baseline="middle" class="chart-label">100</text>
+ <line x1="60" y1="152.0" x2="780" y2="152.0" class="chart-grid"/>
+ <text x="52" y="152.0" text-anchor="end" dominant-baseline="middle" class="chart-label">150</text>
+ <line x1="60" y1="86.0" x2="780" y2="86.0" class="chart-grid"/>
+ <text x="52" y="86.0" text-anchor="end" dominant-baseline="middle" class="chart-label">200</text>
+ <line x1="60" y1="20.0" x2="780" y2="20.0" class="chart-grid"/>
+ <text x="52" y="20.0" text-anchor="end" dominant-baseline="middle" class="chart-label">250</text>
+ <line x1="60" y1="20" x2="60" y2="350" class="chart-axis"/>
+ <line x1="60" y1="350" x2="780" y2="350" class="chart-axis"/>
+ <text x="420.0" y="395" text-anchor="middle" class="chart-title">Line Coverage (%)</text>
+ <text x="15" y="185.0" text-anchor="middle" transform="rotate(-90, 15, 185.0)" class="chart-title">Cyclomatic Complexity</text>
+ <a href="../../../app/SiteBuilder/PagePublisher.php.html#29"><circle cx="644.4" cy="70.2" r="20.0" class="bubble-warning"><title>Indieinabox\SiteBuilder\PagePublisher — Coverage: 81.2% | Lines: 515 | Complexity: 212</title></circle></a>
+ <a href="../../../app/SiteBuilder/IndexPublisher.php.html#23"><circle cx="717.9" cy="145.4" r="19.4" class="bubble-success"><title>Indieinabox\SiteBuilder\IndexPublisher — Coverage: 91.4% | Lines: 487 | Complexity: 155</title></circle></a>
+ <a href="../../../app/SiteBuilder/TranslationVirtualizer.php.html#37"><circle cx="630.1" cy="108.4" r="16.8" class="bubble-warning"><title>Indieinabox\SiteBuilder\TranslationVirtualizer — Coverage: 79.2% | Lines: 365 | Complexity: 183</title></circle></a>
+ <a href="../../../app/SiteBuilder/AssetPublisher.php.html#14"><circle cx="621.2" cy="265.5" r="10.3" class="bubble-warning"><title>Indieinabox\SiteBuilder\AssetPublisher — Coverage: 77.9% | Lines: 136 | Complexity: 64</title></circle></a>
+ <a href="../../../app/SiteBuilder/SiteBuilder.php.html#26"><circle cx="690.9" cy="306.4" r="9.0" class="bubble-warning"><title>Indieinabox\SiteBuilder\SiteBuilder — Coverage: 87.6% | Lines: 105 | Complexity: 33</title></circle></a>
+ <a href="../../../app/SiteBuilder/ContentScanner.php.html#20"><circle cx="771.1" cy="310.4" r="7.9" class="bubble-success"><title>Indieinabox\SiteBuilder\ContentScanner — Coverage: 98.8% | Lines: 81 | Complexity: 30</title></circle></a>
+ <a href="../../../app/SiteBuilder/FeedPublisher.php.html#19"><circle cx="765.0" cy="330.2" r="6.1" class="bubble-success"><title>Indieinabox\SiteBuilder\FeedPublisher — Coverage: 97.9% | Lines: 48 | Complexity: 15</title></circle></a>
+</svg>
+     </div>
+     <div>
+      <p class="hint">Sorted by descending <abbr title="Change Risk Anti-Patterns">CRAP</abbr> index.</p>
+      <div class="scrollbox">
+     <table class="crap">
+      <thead>
+       <tr>
+        <th scope="col">Class</th>
+        <th scope="col" class="number"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+        <th scope="col" class="number">Coverage</th>
+       </tr>
+      </thead>
+      <tbody>
+       <tr><td><a href="../../../app/SiteBuilder/PagePublisher.php.html#29">Indieinabox\SiteBuilder\PagePublisher</a></td><td class="number">512.31</td><td class="number">81.2%</td></tr>
+       <tr><td><a href="../../../app/SiteBuilder/TranslationVirtualizer.php.html#37">Indieinabox\SiteBuilder\TranslationVirtualizer</a></td><td class="number">485.32</td><td class="number">79.2%</td></tr>
+       <tr><td><a href="../../../app/SiteBuilder/IndexPublisher.php.html#23">Indieinabox\SiteBuilder\IndexPublisher</a></td><td class="number">170.41</td><td class="number">91.4%</td></tr>
+       <tr><td><a href="../../../app/SiteBuilder/AssetPublisher.php.html#14">Indieinabox\SiteBuilder\AssetPublisher</a></td><td class="number">107.96</td><td class="number">77.9%</td></tr>
+       <tr><td><a href="../../../app/SiteBuilder/SiteBuilder.php.html#26">Indieinabox\SiteBuilder\SiteBuilder</a></td><td class="number">35.07</td><td class="number">87.6%</td></tr>
+       <tr><td><a href="../../../app/SiteBuilder/ContentScanner.php.html#20">Indieinabox\SiteBuilder\ContentScanner</a></td><td class="number">30</td><td class="number">98.8%</td></tr>
+       <tr><td><a href="../../../app/SiteBuilder/FeedPublisher.php.html#19">Indieinabox\SiteBuilder\FeedPublisher</a></td><td class="number">15</td><td class="number">97.9%</td></tr>
+      </tbody>
+     </table>
+      </div>
+     </div>
+    </div>
+   </section>
+   <section>
+    <h2>Methods</h2>
+    <div class="panel">
+     <div class="chart">
+      <p class="hint">Line coverage against cyclomatic complexity. Bubble size is the number of executable lines; hover for details, click to navigate.</p>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400" preserveAspectRatio="xMidYMid meet">
+ <style>
+  .bubble-success { fill: var(--coverage-success-bar); opacity: 0.7; }
+  .bubble-warning { fill: var(--coverage-warning-bar); opacity: 0.7; }
+  .bubble-danger { fill: var(--coverage-danger-bar); opacity: 0.7; }
+  .bubble-success:hover, .bubble-warning:hover, .bubble-danger:hover { opacity: 1; stroke: var(--text); stroke-width: 1.5; }
+  .chart-grid { stroke: var(--border); stroke-width: 0.5; stroke-dasharray: 4,4; opacity: 0.5; }
+  .chart-axis { stroke: var(--border); stroke-width: 1; }
+  .chart-label { fill: var(--text); font-size: 11px; font-family: var(--font-sans); }
+  .chart-title { fill: var(--text); font-size: 12px; font-family: var(--font-sans); }
+ </style>
+ <line x1="60.0" y1="20" x2="60.0" y2="350" class="chart-grid"/>
+ <text x="60.0" y="368" text-anchor="middle" class="chart-label">0%</text>
+ <line x1="204.0" y1="20" x2="204.0" y2="350" class="chart-grid"/>
+ <text x="204.0" y="368" text-anchor="middle" class="chart-label">20%</text>
+ <line x1="348.0" y1="20" x2="348.0" y2="350" class="chart-grid"/>
+ <text x="348.0" y="368" text-anchor="middle" class="chart-label">40%</text>
+ <line x1="492.0" y1="20" x2="492.0" y2="350" class="chart-grid"/>
+ <text x="492.0" y="368" text-anchor="middle" class="chart-label">60%</text>
+ <line x1="636.0" y1="20" x2="636.0" y2="350" class="chart-grid"/>
+ <text x="636.0" y="368" text-anchor="middle" class="chart-label">80%</text>
+ <line x1="780.0" y1="20" x2="780.0" y2="350" class="chart-grid"/>
+ <text x="780.0" y="368" text-anchor="middle" class="chart-label">100%</text>
+ <line x1="60" y1="350.0" x2="780" y2="350.0" class="chart-grid"/>
+ <text x="52" y="350.0" text-anchor="end" dominant-baseline="middle" class="chart-label">0</text>
+ <line x1="60" y1="284.0" x2="780" y2="284.0" class="chart-grid"/>
+ <text x="52" y="284.0" text-anchor="end" dominant-baseline="middle" class="chart-label">20</text>
+ <line x1="60" y1="218.0" x2="780" y2="218.0" class="chart-grid"/>
+ <text x="52" y="218.0" text-anchor="end" dominant-baseline="middle" class="chart-label">40</text>
+ <line x1="60" y1="152.0" x2="780" y2="152.0" class="chart-grid"/>
+ <text x="52" y="152.0" text-anchor="end" dominant-baseline="middle" class="chart-label">60</text>
+ <line x1="60" y1="86.0" x2="780" y2="86.0" class="chart-grid"/>
+ <text x="52" y="86.0" text-anchor="end" dominant-baseline="middle" class="chart-label">80</text>
+ <line x1="60" y1="20.0" x2="780" y2="20.0" class="chart-grid"/>
+ <text x="52" y="20.0" text-anchor="end" dominant-baseline="middle" class="chart-label">100</text>
+ <line x1="60" y1="20" x2="60" y2="350" class="chart-axis"/>
+ <line x1="60" y1="350" x2="780" y2="350" class="chart-axis"/>
+ <text x="420.0" y="395" text-anchor="middle" class="chart-title">Line Coverage (%)</text>
+ <text x="15" y="185.0" text-anchor="middle" transform="rotate(-90, 15, 185.0)" class="chart-title">Cyclomatic Complexity</text>
+ <a href="../../../app/SiteBuilder/PagePublisher.php.html#106"><circle cx="507.9" cy="109.1" r="20.0" class="bubble-warning"><title>Indieinabox\SiteBuilder\PagePublisher::publishHtml — Coverage: 62.2% | Lines: 217 | Complexity: 73</title></circle></a>
+ <a href="../../../app/SiteBuilder/TranslationVirtualizer.php.html#146"><circle cx="738.3" cy="165.2" r="15.9" class="bubble-success"><title>Indieinabox\SiteBuilder\TranslationVirtualizer::virtualize — Coverage: 94.2% | Lines: 138 | Complexity: 56</title></circle></a>
+ <a href="../../../app/SiteBuilder/IndexPublisher.php.html#442"><circle cx="747.0" cy="231.2" r="14.2" class="bubble-success"><title>Indieinabox\SiteBuilder\IndexPublisher::compileTaxonomyIndexes — Coverage: 95.4% | Lines: 109 | Complexity: 36</title></circle></a>
+ <a href="../../../app/SiteBuilder/PagePublisher.php.html#677"><circle cx="741.7" cy="168.5" r="13.2" class="bubble-success"><title>Indieinabox\SiteBuilder\PagePublisher::getLanguageLinks — Coverage: 94.7% | Lines: 94 | Complexity: 55</title></circle></a>
+ <a href="../../../app/SiteBuilder/IndexPublisher.php.html#220"><circle cx="612.0" cy="293.9" r="12.9" class="bubble-warning"><title>Indieinabox\SiteBuilder\IndexPublisher::compileTimelineIndexes — Coverage: 76.7% | Lines: 90 | Complexity: 17</title></circle></a>
+ <a href="../../../app/SiteBuilder/IndexPublisher.php.html#750"><circle cx="759.7" cy="254.3" r="11.4" class="bubble-success"><title>Indieinabox\SiteBuilder\IndexPublisher::publishAlphabeticalSearchPage — Coverage: 97.2% | Lines: 71 | Complexity: 29</title></circle></a>
+ <a href="../../../app/SiteBuilder/TranslationVirtualizer.php.html#47"><circle cx="382.4" cy="254.3" r="11.1" class="bubble-danger"><title>Indieinabox\SiteBuilder\TranslationVirtualizer::__construct — Coverage: 44.8% | Lines: 67 | Complexity: 29</title></circle></a>
+ <a href="../../../app/SiteBuilder/PagePublisher.php.html#843"><circle cx="757.1" cy="260.9" r="10.8" class="bubble-success"><title>Indieinabox\SiteBuilder\PagePublisher::getMenuLinks — Coverage: 96.8% | Lines: 63 | Complexity: 27</title></circle></a>
+ <a href="../../../app/SiteBuilder/PagePublisher.php.html#582"><circle cx="745.2" cy="280.7" r="10.7" class="bubble-success"><title>Indieinabox\SiteBuilder\PagePublisher::publishGopher — Coverage: 95.2% | Lines: 62 | Complexity: 21</title></circle></a>
+ <a href="../../../app/SiteBuilder/IndexPublisher.php.html#613"><circle cx="755.2" cy="274.1" r="10.3" class="bubble-success"><title>Indieinabox\SiteBuilder\IndexPublisher::publishSearchIndex — Coverage: 96.6% | Lines: 58 | Complexity: 23</title></circle></a>
+ <a href="../../../app/SiteBuilder/PagePublisher.php.html#495"><circle cx="740.7" cy="284.0" r="10.1" class="bubble-success"><title>Indieinabox\SiteBuilder\PagePublisher::publishGemini — Coverage: 94.5% | Lines: 55 | Complexity: 20</title></circle></a>
+ <a href="../../../app/SiteBuilder/IndexPublisher.php.html#350"><circle cx="753.3" cy="300.5" r="10.0" class="bubble-success"><title>Indieinabox\SiteBuilder\IndexPublisher::compileSectionIndexes — Coverage: 96.3% | Lines: 54 | Complexity: 15</title></circle></a>
+ <a href="../../../app/SiteBuilder/TranslationVirtualizer.php.html#432"><circle cx="655.4" cy="231.2" r="9.8" class="bubble-warning"><title>Indieinabox\SiteBuilder\TranslationVirtualizer::pass1PretranslateTaxonomiesAndSlugs — Coverage: 82.7% | Lines: 52 | Complexity: 36</title></circle></a>
+ <a href="../../../app/SiteBuilder/SiteBuilder.php.html#227"><circle cx="749.4" cy="326.9" r="9.3" class="bubble-success"><title>Indieinabox\SiteBuilder\SiteBuilder::build — Coverage: 95.7% | Lines: 47 | Complexity: 7</title></circle></a>
+ <a href="../../../app/SiteBuilder/FeedPublisher.php.html#42"><circle cx="780.0" cy="303.8" r="8.8" class="bubble-success"><title>Indieinabox\SiteBuilder\FeedPublisher::publishFeeds — Coverage: 100.0% | Lines: 42 | Complexity: 14</title></circle></a>
+ <a href="../../../app/SiteBuilder/TranslationVirtualizer.php.html#584"><circle cx="762.4" cy="290.6" r="8.7" class="bubble-success"><title>Indieinabox\SiteBuilder\TranslationVirtualizer::pseudoTranslate — Coverage: 97.6% | Lines: 41 | Complexity: 18</title></circle></a>
+ <a href="../../../app/SiteBuilder/ContentScanner.php.html#63"><circle cx="761.1" cy="300.5" r="8.4" class="bubble-success"><title>Indieinabox\SiteBuilder\ContentScanner::scan — Coverage: 97.4% | Lines: 38 | Complexity: 15</title></circle></a>
+ <a href="../../../app/SiteBuilder/IndexPublisher.php.html#153"><circle cx="622.5" cy="333.5" r="7.7" class="bubble-warning"><title>Indieinabox\SiteBuilder\IndexPublisher::publishTimelineStaticPage — Coverage: 78.1% | Lines: 32 | Complexity: 5</title></circle></a>
+ <a href="../../../app/SiteBuilder/SiteBuilder.php.html#342"><circle cx="625.7" cy="326.9" r="7.2" class="bubble-warning"><title>Indieinabox\SiteBuilder\SiteBuilder::publishFederationWellKnown — Coverage: 78.6% | Lines: 28 | Complexity: 7</title></circle></a>
+ <a href="../../../app/SiteBuilder/TranslationVirtualizer.php.html#382"><circle cx="620.0" cy="303.8" r="7.1" class="bubble-warning"><title>Indieinabox\SiteBuilder\TranslationVirtualizer::pass0SyncOriginSummaries — Coverage: 77.8% | Lines: 27 | Complexity: 14</title></circle></a>
+ <a href="../../../app/SiteBuilder/TranslationVirtualizer.php.html#532"><circle cx="630.0" cy="297.2" r="6.7" class="bubble-warning"><title>Indieinabox\SiteBuilder\TranslationVirtualizer::applyTranslatedTaxonomies — Coverage: 79.2% | Lines: 24 | Complexity: 16</title></circle></a>
+ <a href="../../../app/SiteBuilder/ContentScanner.php.html#124"><circle cx="780.0" cy="323.6" r="6.4" class="bubble-success"><title>Indieinabox\SiteBuilder\ContentScanner::ensureMandatoryHomepage — Coverage: 100.0% | Lines: 22 | Complexity: 8</title></circle></a>
+ <a href="../../../app/SiteBuilder/AssetPublisher.php.html#63"><circle cx="780.0" cy="326.9" r="6.2" class="bubble-success"><title>Indieinabox\SiteBuilder\AssetPublisher::publishMedia — Coverage: 100.0% | Lines: 21 | Complexity: 7</title></circle></a>
+ <a href="../../../app/SiteBuilder/AssetPublisher.php.html#238"><circle cx="708.0" cy="313.7" r="6.1" class="bubble-success"><title>Indieinabox\SiteBuilder\AssetPublisher::copyAssetsFromDisk — Coverage: 90.0% | Lines: 20 | Complexity: 11</title></circle></a>
+ <a href="../../../app/SiteBuilder/IndexPublisher.php.html#101"><circle cx="744.0" cy="323.6" r="6.1" class="bubble-success"><title>Indieinabox\SiteBuilder\IndexPublisher::publishKindIndexes — Coverage: 95.0% | Lines: 20 | Complexity: 8</title></circle></a>
+ <a href="../../../app/SiteBuilder/AssetPublisher.php.html#104"><circle cx="700.0" cy="326.9" r="5.8" class="bubble-warning"><title>Indieinabox\SiteBuilder\AssetPublisher::mirrorMedia — Coverage: 88.9% | Lines: 18 | Complexity: 7</title></circle></a>
+ <a href="../../../app/SiteBuilder/IndexPublisher.php.html#67"><circle cx="780.0" cy="330.2" r="5.8" class="bubble-success"><title>Indieinabox\SiteBuilder\IndexPublisher::publishSitemaps — Coverage: 100.0% | Lines: 18 | Complexity: 6</title></circle></a>
+ <a href="../../../app/SiteBuilder/AssetPublisher.php.html#300"><circle cx="732.0" cy="317.0" r="5.3" class="bubble-success"><title>Indieinabox\SiteBuilder\AssetPublisher::cleanOrphanedFiles — Coverage: 93.3% | Lines: 15 | Complexity: 10</title></circle></a>
+ <a href="../../../app/SiteBuilder/ContentScanner.php.html#25"><circle cx="780.0" cy="343.4" r="5.3" class="bubble-success"><title>Indieinabox\SiteBuilder\ContentScanner::__construct — Coverage: 100.0% | Lines: 15 | Complexity: 2</title></circle></a>
+ <a href="../../../app/SiteBuilder/SiteBuilder.php.html#80"><circle cx="732.0" cy="333.5" r="5.3" class="bubble-success"><title>Indieinabox\SiteBuilder\SiteBuilder::__construct — Coverage: 93.3% | Lines: 15 | Complexity: 5</title></circle></a>
+ <a href="../../../app/SiteBuilder/AssetPublisher.php.html#142"><circle cx="162.9" cy="330.2" r="5.1" class="bubble-danger"><title>Indieinabox\SiteBuilder\AssetPublisher::copyStaticFiles — Coverage: 14.3% | Lines: 14 | Complexity: 6</title></circle></a>
+ <a href="../../../app/SiteBuilder/AssetPublisher.php.html#206"><circle cx="162.9" cy="326.9" r="5.1" class="bubble-danger"><title>Indieinabox\SiteBuilder\AssetPublisher::copyViewAssets — Coverage: 14.3% | Lines: 14 | Complexity: 7</title></circle></a>
+ <a href="../../../app/SiteBuilder/IndexPublisher.php.html#714"><circle cx="780.0" cy="333.5" r="4.9" class="bubble-success"><title>Indieinabox\SiteBuilder\IndexPublisher::renderPaginationNav — Coverage: 100.0% | Lines: 13 | Complexity: 5</title></circle></a>
+ <a href="../../../app/SiteBuilder/PagePublisher.php.html#36"><circle cx="669.2" cy="323.6" r="4.9" class="bubble-warning"><title>Indieinabox\SiteBuilder\PagePublisher::__construct — Coverage: 84.6% | Lines: 13 | Complexity: 8</title></circle></a>
+ <a href="../../../app/SiteBuilder/AssetPublisher.php.html#175"><circle cx="720.0" cy="330.2" r="4.7" class="bubble-success"><title>Indieinabox\SiteBuilder\AssetPublisher::copyFromDisk — Coverage: 91.7% | Lines: 12 | Complexity: 6</title></circle></a>
+ <a href="../../../app/SiteBuilder/AssetPublisher.php.html#277"><circle cx="780.0" cy="340.1" r="4.5" class="bubble-success"><title>Indieinabox\SiteBuilder\AssetPublisher::garbageCollect — Coverage: 100.0% | Lines: 11 | Complexity: 3</title></circle></a>
+ <a href="../../../app/SiteBuilder/IndexPublisher.php.html#29"><circle cx="690.0" cy="333.5" r="4.0" class="bubble-warning"><title>Indieinabox\SiteBuilder\IndexPublisher::__construct — Coverage: 87.5% | Lines: 8 | Complexity: 5</title></circle></a>
+ <a href="../../../app/SiteBuilder/PagePublisher.php.html#69"><circle cx="780.0" cy="333.5" r="4.0" class="bubble-success"><title>Indieinabox\SiteBuilder\PagePublisher::publish — Coverage: 100.0% | Lines: 8 | Complexity: 5</title></circle></a>
+ <a href="../../../app/SiteBuilder/TranslationVirtualizer.php.html#675"><circle cx="265.7" cy="326.9" r="4.0" class="bubble-danger"><title>Indieinabox\SiteBuilder\TranslationVirtualizer::getAiProviderLabel — Coverage: 28.6% | Lines: 7 | Complexity: 7</title></circle></a>
+ <a href="../../../app/SiteBuilder/AssetPublisher.php.html#45"><circle cx="780.0" cy="340.1" r="4.0" class="bubble-success"><title>Indieinabox\SiteBuilder\AssetPublisher::publishStaticFiles — Coverage: 100.0% | Lines: 6 | Complexity: 3</title></circle></a>
+ <a href="../../../app/SiteBuilder/FeedPublisher.php.html#29"><circle cx="660.0" cy="346.7" r="4.0" class="bubble-warning"><title>Indieinabox\SiteBuilder\FeedPublisher::__construct — Coverage: 83.3% | Lines: 6 | Complexity: 1</title></circle></a>
+ <a href="../../../app/SiteBuilder/IndexPublisher.php.html#203"><circle cx="660.0" cy="340.1" r="4.0" class="bubble-warning"><title>Indieinabox\SiteBuilder\IndexPublisher::loadThemeFeedView — Coverage: 83.3% | Lines: 6 | Complexity: 3</title></circle></a>
+ <a href="../../../app/SiteBuilder/ContentScanner.php.html#162"><circle cx="780.0" cy="336.8" r="4.0" class="bubble-success"><title>Indieinabox\SiteBuilder\ContentScanner::renderRawBodies — Coverage: 100.0% | Lines: 5 | Complexity: 4</title></circle></a>
+ <a href="../../../app/SiteBuilder/IndexPublisher.php.html#53"><circle cx="780.0" cy="346.7" r="4.0" class="bubble-success"><title>Indieinabox\SiteBuilder\IndexPublisher::publishAll — Coverage: 100.0% | Lines: 5 | Complexity: 1</title></circle></a>
+ <a href="../../../app/SiteBuilder/TranslationVirtualizer.php.html#662"><circle cx="348.0" cy="340.1" r="4.0" class="bubble-danger"><title>Indieinabox\SiteBuilder\TranslationVirtualizer::persistUrlTranslationToDb — Coverage: 40.0% | Lines: 5 | Complexity: 3</title></circle></a>
+ <a href="../../../app/SiteBuilder/AssetPublisher.php.html#28"><circle cx="780.0" cy="340.1" r="4.0" class="bubble-success"><title>Indieinabox\SiteBuilder\AssetPublisher::publishViewAssets — Coverage: 100.0% | Lines: 4 | Complexity: 3</title></circle></a>
+ <a href="../../../app/SiteBuilder/SiteBuilder.php.html#319"><circle cx="780.0" cy="343.4" r="4.0" class="bubble-success"><title>Indieinabox\SiteBuilder\SiteBuilder::generateHTMLFiles — Coverage: 100.0% | Lines: 3 | Complexity: 2</title></circle></a>
+ <a href="../../../app/SiteBuilder/IndexPublisher.php.html#142"><circle cx="780.0" cy="346.7" r="4.0" class="bubble-success"><title>Indieinabox\SiteBuilder\IndexPublisher::publishTaxonomies — Coverage: 100.0% | Lines: 2 | Complexity: 1</title></circle></a>
+ <a href="../../../app/SiteBuilder/PagePublisher.php.html#91"><circle cx="780.0" cy="343.4" r="4.0" class="bubble-success"><title>Indieinabox\SiteBuilder\PagePublisher::publishAll — Coverage: 100.0% | Lines: 2 | Complexity: 2</title></circle></a>
+ <a href="../../../app/SiteBuilder/AssetPublisher.php.html#18"><circle cx="780.0" cy="346.7" r="4.0" class="bubble-success"><title>Indieinabox\SiteBuilder\AssetPublisher::__construct — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/SiteBuilder/ContentScanner.php.html#49"><circle cx="780.0" cy="346.7" r="4.0" class="bubble-success"><title>Indieinabox\SiteBuilder\ContentScanner::getParser — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/SiteBuilder/IndexPublisher.php.html#857"><circle cx="780.0" cy="346.7" r="4.0" class="bubble-success"><title>Indieinabox\SiteBuilder\IndexPublisher::getTaxonomyService — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/SiteBuilder/PagePublisher.php.html#962"><circle cx="780.0" cy="346.7" r="4.0" class="bubble-success"><title>Indieinabox\SiteBuilder\PagePublisher::getTaxonomyService — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/SiteBuilder/SiteBuilder.php.html#118"><circle cx="780.0" cy="346.7" r="4.0" class="bubble-success"><title>Indieinabox\SiteBuilder\SiteBuilder::getPages — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/SiteBuilder/SiteBuilder.php.html#128"><circle cx="60.0" cy="346.7" r="4.0" class="bubble-danger"><title>Indieinabox\SiteBuilder\SiteBuilder::getParser — Coverage: 0.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/SiteBuilder/SiteBuilder.php.html#138"><circle cx="60.0" cy="346.7" r="4.0" class="bubble-danger"><title>Indieinabox\SiteBuilder\SiteBuilder::getContentScanner — Coverage: 0.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/SiteBuilder/SiteBuilder.php.html#148"><circle cx="60.0" cy="346.7" r="4.0" class="bubble-danger"><title>Indieinabox\SiteBuilder\SiteBuilder::getAssetPublisher — Coverage: 0.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/SiteBuilder/SiteBuilder.php.html#158"><circle cx="60.0" cy="346.7" r="4.0" class="bubble-danger"><title>Indieinabox\SiteBuilder\SiteBuilder::getFeedPublisher — Coverage: 0.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/SiteBuilder/SiteBuilder.php.html#168"><circle cx="780.0" cy="346.7" r="4.0" class="bubble-success"><title>Indieinabox\SiteBuilder\SiteBuilder::getPagePublisher — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/SiteBuilder/SiteBuilder.php.html#178"><circle cx="780.0" cy="346.7" r="4.0" class="bubble-success"><title>Indieinabox\SiteBuilder\SiteBuilder::getTranslationVirtualizer — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/SiteBuilder/SiteBuilder.php.html#188"><circle cx="780.0" cy="346.7" r="4.0" class="bubble-success"><title>Indieinabox\SiteBuilder\SiteBuilder::getIndexPublisher — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/SiteBuilder/SiteBuilder.php.html#198"><circle cx="780.0" cy="346.7" r="4.0" class="bubble-success"><title>Indieinabox\SiteBuilder\SiteBuilder::getTaxonomyService — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/SiteBuilder/SiteBuilder.php.html#216"><circle cx="780.0" cy="346.7" r="4.0" class="bubble-success"><title>Indieinabox\SiteBuilder\SiteBuilder::addManifest — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/SiteBuilder/SiteBuilder.php.html#308"><circle cx="780.0" cy="346.7" r="4.0" class="bubble-success"><title>Indieinabox\SiteBuilder\SiteBuilder::scan — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/SiteBuilder/SiteBuilder.php.html#334"><circle cx="780.0" cy="346.7" r="4.0" class="bubble-success"><title>Indieinabox\SiteBuilder\SiteBuilder::ensureMandatoryHomepage — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/SiteBuilder/TranslationVirtualizer.php.html#687"><circle cx="780.0" cy="346.7" r="4.0" class="bubble-success"><title>Indieinabox\SiteBuilder\TranslationVirtualizer::getTranslationEngine — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/SiteBuilder/TranslationVirtualizer.php.html#692"><circle cx="60.0" cy="346.7" r="4.0" class="bubble-danger"><title>Indieinabox\SiteBuilder\TranslationVirtualizer::setTranslationEngine — Coverage: 0.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/SiteBuilder/TranslationVirtualizer.php.html#697"><circle cx="780.0" cy="346.7" r="4.0" class="bubble-success"><title>Indieinabox\SiteBuilder\TranslationVirtualizer::getTaxonomyService — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/SiteBuilder/TranslationVirtualizer.php.html#702"><circle cx="60.0" cy="346.7" r="4.0" class="bubble-danger"><title>Indieinabox\SiteBuilder\TranslationVirtualizer::getTaxonomyRepo — Coverage: 0.0% | Lines: 1 | Complexity: 1</title></circle></a>
+</svg>
+     </div>
+     <div>
+      <p class="hint">Sorted by descending <abbr title="Change Risk Anti-Patterns">CRAP</abbr> index.</p>
+      <div class="scrollbox">
+     <table class="crap">
+      <thead>
+       <tr>
+        <th scope="col">Method</th>
+        <th scope="col" class="number"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+        <th scope="col" class="number">Coverage</th>
+       </tr>
+      </thead>
+      <tbody>
+       <tr><td><a href="../../../app/SiteBuilder/PagePublisher.php.html#106">Indieinabox\SiteBuilder\PagePublisher::publishHtml</a></td><td class="number">360.55</td><td class="number">62.2%</td></tr>
+       <tr><td><a href="../../../app/SiteBuilder/TranslationVirtualizer.php.html#47">Indieinabox\SiteBuilder\TranslationVirtualizer::__construct</a></td><td class="number">170.64</td><td class="number">44.8%</td></tr>
+       <tr><td><a href="../../../app/SiteBuilder/TranslationVirtualizer.php.html#146">Indieinabox\SiteBuilder\TranslationVirtualizer::virtualize</a></td><td class="number">56.61</td><td class="number">94.2%</td></tr>
+       <tr><td><a href="../../../app/SiteBuilder/PagePublisher.php.html#677">Indieinabox\SiteBuilder\PagePublisher::getLanguageLinks</a></td><td class="number">55.46</td><td class="number">94.7%</td></tr>
+       <tr><td><a href="../../../app/SiteBuilder/TranslationVirtualizer.php.html#432">Indieinabox\SiteBuilder\TranslationVirtualizer::pass1PretranslateTaxonomiesAndSlugs</a></td><td class="number">42.72</td><td class="number">82.7%</td></tr>
+       <tr><td><a href="../../../app/SiteBuilder/AssetPublisher.php.html#206">Indieinabox\SiteBuilder\AssetPublisher::copyViewAssets</a></td><td class="number">37.86</td><td class="number">14.3%</td></tr>
+       <tr><td><a href="../../../app/SiteBuilder/IndexPublisher.php.html#442">Indieinabox\SiteBuilder\IndexPublisher::compileTaxonomyIndexes</a></td><td class="number">36</td><td class="number">95.4%</td></tr>
+       <tr><td><a href="../../../app/SiteBuilder/IndexPublisher.php.html#750">Indieinabox\SiteBuilder\IndexPublisher::publishAlphabeticalSearchPage</a></td><td class="number">29</td><td class="number">97.2%</td></tr>
+       <tr><td><a href="../../../app/SiteBuilder/AssetPublisher.php.html#142">Indieinabox\SiteBuilder\AssetPublisher::copyStaticFiles</a></td><td class="number">28.67</td><td class="number">14.3%</td></tr>
+       <tr><td><a href="../../../app/SiteBuilder/PagePublisher.php.html#843">Indieinabox\SiteBuilder\PagePublisher::getMenuLinks</a></td><td class="number">27</td><td class="number">96.8%</td></tr>
+       <tr><td><a href="../../../app/SiteBuilder/TranslationVirtualizer.php.html#675">Indieinabox\SiteBuilder\TranslationVirtualizer::getAiProviderLabel</a></td><td class="number">24.86</td><td class="number">28.6%</td></tr>
+       <tr><td><a href="../../../app/SiteBuilder/IndexPublisher.php.html#613">Indieinabox\SiteBuilder\IndexPublisher::publishSearchIndex</a></td><td class="number">23</td><td class="number">96.6%</td></tr>
+       <tr><td><a href="../../../app/SiteBuilder/PagePublisher.php.html#582">Indieinabox\SiteBuilder\PagePublisher::publishGopher</a></td><td class="number">21</td><td class="number">95.2%</td></tr>
+       <tr><td><a href="../../../app/SiteBuilder/IndexPublisher.php.html#220">Indieinabox\SiteBuilder\IndexPublisher::compileTimelineIndexes</a></td><td class="number">20.67</td><td class="number">76.7%</td></tr>
+       <tr><td><a href="../../../app/SiteBuilder/PagePublisher.php.html#495">Indieinabox\SiteBuilder\PagePublisher::publishGemini</a></td><td class="number">20.06</td><td class="number">94.5%</td></tr>
+       <tr><td><a href="../../../app/SiteBuilder/TranslationVirtualizer.php.html#532">Indieinabox\SiteBuilder\TranslationVirtualizer::applyTranslatedTaxonomies</a></td><td class="number">18.31</td><td class="number">79.2%</td></tr>
+       <tr><td><a href="../../../app/SiteBuilder/TranslationVirtualizer.php.html#584">Indieinabox\SiteBuilder\TranslationVirtualizer::pseudoTranslate</a></td><td class="number">18</td><td class="number">97.6%</td></tr>
+       <tr><td><a href="../../../app/SiteBuilder/TranslationVirtualizer.php.html#382">Indieinabox\SiteBuilder\TranslationVirtualizer::pass0SyncOriginSummaries</a></td><td class="number">16.15</td><td class="number">77.8%</td></tr>
+       <tr><td><a href="../../../app/SiteBuilder/ContentScanner.php.html#63">Indieinabox\SiteBuilder\ContentScanner::scan</a></td><td class="number">15</td><td class="number">97.4%</td></tr>
+       <tr><td><a href="../../../app/SiteBuilder/IndexPublisher.php.html#350">Indieinabox\SiteBuilder\IndexPublisher::compileSectionIndexes</a></td><td class="number">15</td><td class="number">96.3%</td></tr>
+       <tr><td><a href="../../../app/SiteBuilder/FeedPublisher.php.html#42">Indieinabox\SiteBuilder\FeedPublisher::publishFeeds</a></td><td class="number">14</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/SiteBuilder/AssetPublisher.php.html#238">Indieinabox\SiteBuilder\AssetPublisher::copyAssetsFromDisk</a></td><td class="number">11.12</td><td class="number">90.0%</td></tr>
+       <tr><td><a href="../../../app/SiteBuilder/AssetPublisher.php.html#300">Indieinabox\SiteBuilder\AssetPublisher::cleanOrphanedFiles</a></td><td class="number">10.03</td><td class="number">93.3%</td></tr>
+       <tr><td><a href="../../../app/SiteBuilder/PagePublisher.php.html#36">Indieinabox\SiteBuilder\PagePublisher::__construct</a></td><td class="number">8.23</td><td class="number">84.6%</td></tr>
+       <tr><td><a href="../../../app/SiteBuilder/ContentScanner.php.html#124">Indieinabox\SiteBuilder\ContentScanner::ensureMandatoryHomepage</a></td><td class="number">8</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/SiteBuilder/IndexPublisher.php.html#101">Indieinabox\SiteBuilder\IndexPublisher::publishKindIndexes</a></td><td class="number">8</td><td class="number">95.0%</td></tr>
+       <tr><td><a href="../../../app/SiteBuilder/SiteBuilder.php.html#342">Indieinabox\SiteBuilder\SiteBuilder::publishFederationWellKnown</a></td><td class="number">7.48</td><td class="number">78.6%</td></tr>
+       <tr><td><a href="../../../app/SiteBuilder/AssetPublisher.php.html#104">Indieinabox\SiteBuilder\AssetPublisher::mirrorMedia</a></td><td class="number">7.07</td><td class="number">88.9%</td></tr>
+       <tr><td><a href="../../../app/SiteBuilder/AssetPublisher.php.html#63">Indieinabox\SiteBuilder\AssetPublisher::publishMedia</a></td><td class="number">7</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/SiteBuilder/SiteBuilder.php.html#227">Indieinabox\SiteBuilder\SiteBuilder::build</a></td><td class="number">7</td><td class="number">95.7%</td></tr>
+       <tr><td><a href="../../../app/SiteBuilder/AssetPublisher.php.html#175">Indieinabox\SiteBuilder\AssetPublisher::copyFromDisk</a></td><td class="number">6.02</td><td class="number">91.7%</td></tr>
+       <tr><td><a href="../../../app/SiteBuilder/IndexPublisher.php.html#67">Indieinabox\SiteBuilder\IndexPublisher::publishSitemaps</a></td><td class="number">6</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/SiteBuilder/IndexPublisher.php.html#153">Indieinabox\SiteBuilder\IndexPublisher::publishTimelineStaticPage</a></td><td class="number">5.26</td><td class="number">78.1%</td></tr>
+       <tr><td><a href="../../../app/SiteBuilder/IndexPublisher.php.html#29">Indieinabox\SiteBuilder\IndexPublisher::__construct</a></td><td class="number">5.05</td><td class="number">87.5%</td></tr>
+       <tr><td><a href="../../../app/SiteBuilder/SiteBuilder.php.html#80">Indieinabox\SiteBuilder\SiteBuilder::__construct</a></td><td class="number">5.01</td><td class="number">93.3%</td></tr>
+       <tr><td><a href="../../../app/SiteBuilder/IndexPublisher.php.html#714">Indieinabox\SiteBuilder\IndexPublisher::renderPaginationNav</a></td><td class="number">5</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/SiteBuilder/PagePublisher.php.html#69">Indieinabox\SiteBuilder\PagePublisher::publish</a></td><td class="number">5</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/SiteBuilder/TranslationVirtualizer.php.html#662">Indieinabox\SiteBuilder\TranslationVirtualizer::persistUrlTranslationToDb</a></td><td class="number">4.94</td><td class="number">40.0%</td></tr>
+       <tr><td><a href="../../../app/SiteBuilder/ContentScanner.php.html#162">Indieinabox\SiteBuilder\ContentScanner::renderRawBodies</a></td><td class="number">4</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/SiteBuilder/IndexPublisher.php.html#203">Indieinabox\SiteBuilder\IndexPublisher::loadThemeFeedView</a></td><td class="number">3.04</td><td class="number">83.3%</td></tr>
+       <tr><td><a href="../../../app/SiteBuilder/AssetPublisher.php.html#28">Indieinabox\SiteBuilder\AssetPublisher::publishViewAssets</a></td><td class="number">3</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/SiteBuilder/AssetPublisher.php.html#45">Indieinabox\SiteBuilder\AssetPublisher::publishStaticFiles</a></td><td class="number">3</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/SiteBuilder/AssetPublisher.php.html#277">Indieinabox\SiteBuilder\AssetPublisher::garbageCollect</a></td><td class="number">3</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/SiteBuilder/ContentScanner.php.html#25">Indieinabox\SiteBuilder\ContentScanner::__construct</a></td><td class="number">2</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/SiteBuilder/PagePublisher.php.html#91">Indieinabox\SiteBuilder\PagePublisher::publishAll</a></td><td class="number">2</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/SiteBuilder/SiteBuilder.php.html#128">Indieinabox\SiteBuilder\SiteBuilder::getParser</a></td><td class="number">2</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="../../../app/SiteBuilder/SiteBuilder.php.html#138">Indieinabox\SiteBuilder\SiteBuilder::getContentScanner</a></td><td class="number">2</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="../../../app/SiteBuilder/SiteBuilder.php.html#148">Indieinabox\SiteBuilder\SiteBuilder::getAssetPublisher</a></td><td class="number">2</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="../../../app/SiteBuilder/SiteBuilder.php.html#158">Indieinabox\SiteBuilder\SiteBuilder::getFeedPublisher</a></td><td class="number">2</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="../../../app/SiteBuilder/SiteBuilder.php.html#319">Indieinabox\SiteBuilder\SiteBuilder::generateHTMLFiles</a></td><td class="number">2</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/SiteBuilder/TranslationVirtualizer.php.html#692">Indieinabox\SiteBuilder\TranslationVirtualizer::setTranslationEngine</a></td><td class="number">2</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="../../../app/SiteBuilder/TranslationVirtualizer.php.html#702">Indieinabox\SiteBuilder\TranslationVirtualizer::getTaxonomyRepo</a></td><td class="number">2</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="../../../app/SiteBuilder/AssetPublisher.php.html#18">Indieinabox\SiteBuilder\AssetPublisher::__construct</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/SiteBuilder/ContentScanner.php.html#49">Indieinabox\SiteBuilder\ContentScanner::getParser</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/SiteBuilder/FeedPublisher.php.html#29">Indieinabox\SiteBuilder\FeedPublisher::__construct</a></td><td class="number">1.00</td><td class="number">83.3%</td></tr>
+       <tr><td><a href="../../../app/SiteBuilder/IndexPublisher.php.html#53">Indieinabox\SiteBuilder\IndexPublisher::publishAll</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/SiteBuilder/IndexPublisher.php.html#142">Indieinabox\SiteBuilder\IndexPublisher::publishTaxonomies</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/SiteBuilder/IndexPublisher.php.html#857">Indieinabox\SiteBuilder\IndexPublisher::getTaxonomyService</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/SiteBuilder/PagePublisher.php.html#962">Indieinabox\SiteBuilder\PagePublisher::getTaxonomyService</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/SiteBuilder/SiteBuilder.php.html#118">Indieinabox\SiteBuilder\SiteBuilder::getPages</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/SiteBuilder/SiteBuilder.php.html#168">Indieinabox\SiteBuilder\SiteBuilder::getPagePublisher</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/SiteBuilder/SiteBuilder.php.html#178">Indieinabox\SiteBuilder\SiteBuilder::getTranslationVirtualizer</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/SiteBuilder/SiteBuilder.php.html#188">Indieinabox\SiteBuilder\SiteBuilder::getIndexPublisher</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/SiteBuilder/SiteBuilder.php.html#198">Indieinabox\SiteBuilder\SiteBuilder::getTaxonomyService</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/SiteBuilder/SiteBuilder.php.html#216">Indieinabox\SiteBuilder\SiteBuilder::addManifest</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/SiteBuilder/SiteBuilder.php.html#308">Indieinabox\SiteBuilder\SiteBuilder::scan</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/SiteBuilder/SiteBuilder.php.html#334">Indieinabox\SiteBuilder\SiteBuilder::ensureMandatoryHomepage</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/SiteBuilder/TranslationVirtualizer.php.html#687">Indieinabox\SiteBuilder\TranslationVirtualizer::getTranslationEngine</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/SiteBuilder/TranslationVirtualizer.php.html#697">Indieinabox\SiteBuilder\TranslationVirtualizer::getTaxonomyService</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+      </tbody>
+     </table>
+      </div>
+     </div>
+    </div>
+   </section>
+  </main>
+  <footer>
+   <p class="credits">Generated by <a href="https://github.com/sebastianbergmann/php-code-coverage" target="_top">php-code-coverage 14.3.1</a> using <a href="https://www.php.net/" target="_top">PHP 8.4.27</a> and <a href="https://phpunit.de/">PHPUnit 13.3.1</a> at Mon Oct 26 6:16:30 UTC 2026.</p>
+  </footer>
+ </body>
+</html>

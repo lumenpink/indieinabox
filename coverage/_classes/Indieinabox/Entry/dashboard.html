@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboard for Indieinabox\Entry</title>
+  <link rel="stylesheet" href="../../../_css/style.css?v=14.3.1">
+  <link rel="stylesheet" href="../../../_css/custom.css">
+ </head>
+ <body>
+  <header class="masthead">
+   <nav aria-label="Breadcrumb">
+    <ol class="breadcrumbs">
+     <li><a href="../../index.html">(Global)</a></li>
+     <li><a href="../index.html">Indieinabox</a></li>
+     <li><a href="index.html">Entry</a></li>
+     <li class="current">Dashboard</li>
+    </ol>
+   </nav>
+   <ul class="tabs">
+    <li><a href="../../../dashboard.html">Files</a></li>
+    <li><a href="../../../_classes/index.html" aria-current="page">Classes</a></li>
+   </ul>
+  </header>
+  <main class="dashboard">
+   <section>
+    <h2>Classes</h2>
+    <div class="panel">
+     <div class="chart">
+      <p class="hint">Line coverage against cyclomatic complexity. Bubble size is the number of executable lines; hover for details, click to navigate.</p>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400" preserveAspectRatio="xMidYMid meet">
+ <style>
+  .bubble-success { fill: var(--coverage-success-bar); opacity: 0.7; }
+  .bubble-warning { fill: var(--coverage-warning-bar); opacity: 0.7; }
+  .bubble-danger { fill: var(--coverage-danger-bar); opacity: 0.7; }
+  .bubble-success:hover, .bubble-warning:hover, .bubble-danger:hover { opacity: 1; stroke: var(--text); stroke-width: 1.5; }
+  .chart-grid { stroke: var(--border); stroke-width: 0.5; stroke-dasharray: 4,4; opacity: 0.5; }
+  .chart-axis { stroke: var(--border); stroke-width: 1; }
+  .chart-label { fill: var(--text); font-size: 11px; font-family: var(--font-sans); }
+  .chart-title { fill: var(--text); font-size: 12px; font-family: var(--font-sans); }
+ </style>
+ <line x1="60.0" y1="20" x2="60.0" y2="350" class="chart-grid"/>
+ <text x="60.0" y="368" text-anchor="middle" class="chart-label">0%</text>
+ <line x1="204.0" y1="20" x2="204.0" y2="350" class="chart-grid"/>
+ <text x="204.0" y="368" text-anchor="middle" class="chart-label">20%</text>
+ <line x1="348.0" y1="20" x2="348.0" y2="350" class="chart-grid"/>
+ <text x="348.0" y="368" text-anchor="middle" class="chart-label">40%</text>
+ <line x1="492.0" y1="20" x2="492.0" y2="350" class="chart-grid"/>
+ <text x="492.0" y="368" text-anchor="middle" class="chart-label">60%</text>
+ <line x1="636.0" y1="20" x2="636.0" y2="350" class="chart-grid"/>
+ <text x="636.0" y="368" text-anchor="middle" class="chart-label">80%</text>
+ <line x1="780.0" y1="20" x2="780.0" y2="350" class="chart-grid"/>
+ <text x="780.0" y="368" text-anchor="middle" class="chart-label">100%</text>
+ <line x1="60" y1="350.0" x2="780" y2="350.0" class="chart-grid"/>
+ <text x="52" y="350.0" text-anchor="end" dominant-baseline="middle" class="chart-label">0</text>
+ <line x1="60" y1="240.0" x2="780" y2="240.0" class="chart-grid"/>
+ <text x="52" y="240.0" text-anchor="end" dominant-baseline="middle" class="chart-label">50</text>
+ <line x1="60" y1="130.0" x2="780" y2="130.0" class="chart-grid"/>
+ <text x="52" y="130.0" text-anchor="end" dominant-baseline="middle" class="chart-label">100</text>
+ <line x1="60" y1="20.0" x2="780" y2="20.0" class="chart-grid"/>
+ <text x="52" y="20.0" text-anchor="end" dominant-baseline="middle" class="chart-label">150</text>
+ <line x1="60" y1="20" x2="60" y2="350" class="chart-axis"/>
+ <line x1="60" y1="350" x2="780" y2="350" class="chart-axis"/>
+ <text x="420.0" y="395" text-anchor="middle" class="chart-title">Line Coverage (%)</text>
+ <text x="15" y="185.0" text-anchor="middle" transform="rotate(-90, 15, 185.0)" class="chart-title">Cyclomatic Complexity</text>
+ <a href="../../../app/Entry/Entry.php.html#13"><circle cx="709.2" cy="105.8" r="20.0" class="bubble-success"><title>Indieinabox\Entry\Entry — Coverage: 90.2% | Lines: 183 | Complexity: 111</title></circle></a>
+</svg>
+     </div>
+     <div>
+      <p class="hint">Sorted by descending <abbr title="Change Risk Anti-Patterns">CRAP</abbr> index.</p>
+      <div class="scrollbox">
+     <table class="crap">
+      <thead>
+       <tr>
+        <th scope="col">Class</th>
+        <th scope="col" class="number"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+        <th scope="col" class="number">Coverage</th>
+       </tr>
+      </thead>
+      <tbody>
+       <tr><td><a href="../../../app/Entry/Entry.php.html#13">Indieinabox\Entry\Entry</a></td><td class="number">122.72</td><td class="number">90.2%</td></tr>
+      </tbody>
+     </table>
+      </div>
+     </div>
+    </div>
+   </section>
+   <section>
+    <h2>Methods</h2>
+    <div class="panel">
+     <div class="chart">
+      <p class="hint">Line coverage against cyclomatic complexity. Bubble size is the number of executable lines; hover for details, click to navigate.</p>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400" preserveAspectRatio="xMidYMid meet">
+ <style>
+  .bubble-success { fill: var(--coverage-success-bar); opacity: 0.7; }
+  .bubble-warning { fill: var(--coverage-warning-bar); opacity: 0.7; }
+  .bubble-danger { fill: var(--coverage-danger-bar); opacity: 0.7; }
+  .bubble-success:hover, .bubble-warning:hover, .bubble-danger:hover { opacity: 1; stroke: var(--text); stroke-width: 1.5; }
+  .chart-grid { stroke: var(--border); stroke-width: 0.5; stroke-dasharray: 4,4; opacity: 0.5; }
+  .chart-axis { stroke: var(--border); stroke-width: 1; }
+  .chart-label { fill: var(--text); font-size: 11px; font-family: var(--font-sans); }
+  .chart-title { fill: var(--text); font-size: 12px; font-family: var(--font-sans); }
+ </style>
+ <line x1="60.0" y1="20" x2="60.0" y2="350" class="chart-grid"/>
+ <text x="60.0" y="368" text-anchor="middle" class="chart-label">0%</text>
+ <line x1="204.0" y1="20" x2="204.0" y2="350" class="chart-grid"/>
+ <text x="204.0" y="368" text-anchor="middle" class="chart-label">20%</text>
+ <line x1="348.0" y1="20" x2="348.0" y2="350" class="chart-grid"/>
+ <text x="348.0" y="368" text-anchor="middle" class="chart-label">40%</text>
+ <line x1="492.0" y1="20" x2="492.0" y2="350" class="chart-grid"/>
+ <text x="492.0" y="368" text-anchor="middle" class="chart-label">60%</text>
+ <line x1="636.0" y1="20" x2="636.0" y2="350" class="chart-grid"/>
+ <text x="636.0" y="368" text-anchor="middle" class="chart-label">80%</text>
+ <line x1="780.0" y1="20" x2="780.0" y2="350" class="chart-grid"/>
+ <text x="780.0" y="368" text-anchor="middle" class="chart-label">100%</text>
+ <line x1="60" y1="350.0" x2="780" y2="350.0" class="chart-grid"/>
+ <text x="52" y="350.0" text-anchor="end" dominant-baseline="middle" class="chart-label">0</text>
+ <line x1="60" y1="284.0" x2="780" y2="284.0" class="chart-grid"/>
+ <text x="52" y="284.0" text-anchor="end" dominant-baseline="middle" class="chart-label">5</text>
+ <line x1="60" y1="218.0" x2="780" y2="218.0" class="chart-grid"/>
+ <text x="52" y="218.0" text-anchor="end" dominant-baseline="middle" class="chart-label">10</text>
+ <line x1="60" y1="152.0" x2="780" y2="152.0" class="chart-grid"/>
+ <text x="52" y="152.0" text-anchor="end" dominant-baseline="middle" class="chart-label">15</text>
+ <line x1="60" y1="86.0" x2="780" y2="86.0" class="chart-grid"/>
+ <text x="52" y="86.0" text-anchor="end" dominant-baseline="middle" class="chart-label">20</text>
+ <line x1="60" y1="20.0" x2="780" y2="20.0" class="chart-grid"/>
+ <text x="52" y="20.0" text-anchor="end" dominant-baseline="middle" class="chart-label">25</text>
+ <line x1="60" y1="20" x2="60" y2="350" class="chart-axis"/>
+ <line x1="60" y1="350" x2="780" y2="350" class="chart-axis"/>
+ <text x="420.0" y="395" text-anchor="middle" class="chart-title">Line Coverage (%)</text>
+ <text x="15" y="185.0" text-anchor="middle" transform="rotate(-90, 15, 185.0)" class="chart-title">Cyclomatic Complexity</text>
+ <a href="../../../app/Entry/Entry.php.html#435"><circle cx="762.4" cy="178.4" r="20.0" class="bubble-success"><title>Indieinabox\Entry\Entry::fromTwtxt — Coverage: 97.6% | Lines: 41 | Complexity: 13</title></circle></a>
+ <a href="../../../app/Entry/Entry.php.html#72"><circle cx="738.9" cy="72.8" r="18.5" class="bubble-success"><title>Indieinabox\Entry\Entry::__construct — Coverage: 94.3% | Lines: 35 | Complexity: 21</title></circle></a>
+ <a href="../../../app/Entry/Entry.php.html#387"><circle cx="780.0" cy="336.8" r="17.1" class="bubble-success"><title>Indieinabox\Entry\Entry::with — Coverage: 100.0% | Lines: 30 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Entry/Entry.php.html#493"><circle cx="480.0" cy="191.6" r="10.8" class="bubble-warning"><title>Indieinabox\Entry\Entry::__get — Coverage: 58.3% | Lines: 12 | Complexity: 12</title></circle></a>
+ <a href="../../../app/Entry/Entry.php.html#513"><circle cx="321.8" cy="204.8" r="10.4" class="bubble-danger"><title>Indieinabox\Entry\Entry::__isset — Coverage: 36.4% | Lines: 11 | Complexity: 11</title></circle></a>
+ <a href="../../../app/Entry/Entry.php.html#357"><circle cx="636.0" cy="284.0" r="9.9" class="bubble-warning"><title>Indieinabox\Entry\Entry::isPollClosed — Coverage: 80.0% | Lines: 10 | Complexity: 5</title></circle></a>
+ <a href="../../../app/Entry/Entry.php.html#329"><circle cx="780.0" cy="310.4" r="5.4" class="bubble-success"><title>Indieinabox\Entry\Entry::shouldSyndicateTo — Coverage: 100.0% | Lines: 3 | Complexity: 3</title></circle></a>
+ <a href="../../../app/Entry/Entry.php.html#124"><circle cx="780.0" cy="336.8" r="4.0" class="bubble-success"><title>Indieinabox\Entry\Entry::getId — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Entry/Entry.php.html#129"><circle cx="780.0" cy="336.8" r="4.0" class="bubble-success"><title>Indieinabox\Entry\Entry::getSlug — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Entry/Entry.php.html#134"><circle cx="780.0" cy="336.8" r="4.0" class="bubble-success"><title>Indieinabox\Entry\Entry::getTitle — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Entry/Entry.php.html#139"><circle cx="780.0" cy="336.8" r="4.0" class="bubble-success"><title>Indieinabox\Entry\Entry::getContent — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Entry/Entry.php.html#144"><circle cx="780.0" cy="336.8" r="4.0" class="bubble-success"><title>Indieinabox\Entry\Entry::getRawContent — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Entry/Entry.php.html#149"><circle cx="780.0" cy="336.8" r="4.0" class="bubble-success"><title>Indieinabox\Entry\Entry::getSummary — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Entry/Entry.php.html#154"><circle cx="780.0" cy="336.8" r="4.0" class="bubble-success"><title>Indieinabox\Entry\Entry::getPublishedAt — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Entry/Entry.php.html#159"><circle cx="780.0" cy="336.8" r="4.0" class="bubble-success"><title>Indieinabox\Entry\Entry::getUpdatedAt — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Entry/Entry.php.html#164"><circle cx="780.0" cy="336.8" r="4.0" class="bubble-success"><title>Indieinabox\Entry\Entry::getSourceNetwork — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Entry/Entry.php.html#169"><circle cx="780.0" cy="336.8" r="4.0" class="bubble-success"><title>Indieinabox\Entry\Entry::getSourceUrl — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Entry/Entry.php.html#177"><circle cx="780.0" cy="336.8" r="4.0" class="bubble-success"><title>Indieinabox\Entry\Entry::getAuthor — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Entry/Entry.php.html#185"><circle cx="780.0" cy="336.8" r="4.0" class="bubble-success"><title>Indieinabox\Entry\Entry::getSyndicationTargets — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Entry/Entry.php.html#190"><circle cx="780.0" cy="336.8" r="4.0" class="bubble-success"><title>Indieinabox\Entry\Entry::getLang — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Entry/Entry.php.html#195"><circle cx="780.0" cy="336.8" r="4.0" class="bubble-success"><title>Indieinabox\Entry\Entry::getOriginalLangUrl — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Entry/Entry.php.html#203"><circle cx="780.0" cy="336.8" r="4.0" class="bubble-success"><title>Indieinabox\Entry\Entry::getTranslations — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Entry/Entry.php.html#208"><circle cx="780.0" cy="336.8" r="4.0" class="bubble-success"><title>Indieinabox\Entry\Entry::getKind — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Entry/Entry.php.html#216"><circle cx="780.0" cy="336.8" r="4.0" class="bubble-success"><title>Indieinabox\Entry\Entry::getTags — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Entry/Entry.php.html#221"><circle cx="780.0" cy="336.8" r="4.0" class="bubble-success"><title>Indieinabox\Entry\Entry::getInReplyTo — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Entry/Entry.php.html#226"><circle cx="780.0" cy="336.8" r="4.0" class="bubble-success"><title>Indieinabox\Entry\Entry::getRepostOf — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Entry/Entry.php.html#231"><circle cx="780.0" cy="336.8" r="4.0" class="bubble-success"><title>Indieinabox\Entry\Entry::getLikeOf — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Entry/Entry.php.html#236"><circle cx="780.0" cy="336.8" r="4.0" class="bubble-success"><title>Indieinabox\Entry\Entry::getBookmarkOf — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Entry/Entry.php.html#244"><circle cx="780.0" cy="336.8" r="4.0" class="bubble-success"><title>Indieinabox\Entry\Entry::getAttachments — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Entry/Entry.php.html#249"><circle cx="780.0" cy="336.8" r="4.0" class="bubble-success"><title>Indieinabox\Entry\Entry::getContentWarning — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Entry/Entry.php.html#254"><circle cx="780.0" cy="336.8" r="4.0" class="bubble-success"><title>Indieinabox\Entry\Entry::getVisibility — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Entry/Entry.php.html#259"><circle cx="780.0" cy="336.8" r="4.0" class="bubble-success"><title>Indieinabox\Entry\Entry::isDraft — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Entry/Entry.php.html#267"><circle cx="780.0" cy="336.8" r="4.0" class="bubble-success"><title>Indieinabox\Entry\Entry::getMetadata — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Entry/Entry.php.html#272"><circle cx="780.0" cy="336.8" r="4.0" class="bubble-success"><title>Indieinabox\Entry\Entry::getMetadataItem — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Entry/Entry.php.html#279"><circle cx="780.0" cy="336.8" r="4.0" class="bubble-success"><title>Indieinabox\Entry\Entry::isLocal — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Entry/Entry.php.html#284"><circle cx="780.0" cy="336.8" r="4.0" class="bubble-success"><title>Indieinabox\Entry\Entry::isFederated — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Entry/Entry.php.html#289"><circle cx="780.0" cy="336.8" r="4.0" class="bubble-success"><title>Indieinabox\Entry\Entry::isNote — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Entry/Entry.php.html#294"><circle cx="780.0" cy="336.8" r="4.0" class="bubble-success"><title>Indieinabox\Entry\Entry::isArticle — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Entry/Entry.php.html#299"><circle cx="780.0" cy="336.8" r="4.0" class="bubble-success"><title>Indieinabox\Entry\Entry::isPage — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Entry/Entry.php.html#304"><circle cx="780.0" cy="323.6" r="4.0" class="bubble-success"><title>Indieinabox\Entry\Entry::isReply — Coverage: 100.0% | Lines: 1 | Complexity: 2</title></circle></a>
+ <a href="../../../app/Entry/Entry.php.html#309"><circle cx="780.0" cy="323.6" r="4.0" class="bubble-success"><title>Indieinabox\Entry\Entry::isRepost — Coverage: 100.0% | Lines: 1 | Complexity: 2</title></circle></a>
+ <a href="../../../app/Entry/Entry.php.html#314"><circle cx="780.0" cy="323.6" r="4.0" class="bubble-success"><title>Indieinabox\Entry\Entry::isLike — Coverage: 100.0% | Lines: 1 | Complexity: 2</title></circle></a>
+ <a href="../../../app/Entry/Entry.php.html#319"><circle cx="780.0" cy="336.8" r="4.0" class="bubble-success"><title>Indieinabox\Entry\Entry::hasSensitiveContent — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Entry/Entry.php.html#324"><circle cx="780.0" cy="336.8" r="4.0" class="bubble-success"><title>Indieinabox\Entry\Entry::isPublic — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Entry/Entry.php.html#347"><circle cx="780.0" cy="336.8" r="4.0" class="bubble-success"><title>Indieinabox\Entry\Entry::getPoll — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Entry/Entry.php.html#352"><circle cx="780.0" cy="323.6" r="4.0" class="bubble-success"><title>Indieinabox\Entry\Entry::hasPoll — Coverage: 100.0% | Lines: 1 | Complexity: 2</title></circle></a>
+ <a href="../../../app/Entry/Entry.php.html#377"><circle cx="780.0" cy="336.8" r="4.0" class="bubble-success"><title>Indieinabox\Entry\Entry::hasTranslations — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Entry/Entry.php.html#425"><circle cx="60.0" cy="336.8" r="4.0" class="bubble-danger"><title>Indieinabox\Entry\Entry::fromPage — Coverage: 0.0% | Lines: 1 | Complexity: 1</title></circle></a>
+</svg>
+     </div>
+     <div>
+      <p class="hint">Sorted by descending <abbr title="Change Risk Anti-Patterns">CRAP</abbr> index.</p>
+      <div class="scrollbox">
+     <table class="crap">
+      <thead>
+       <tr>
+        <th scope="col">Method</th>
+        <th scope="col" class="number"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+        <th scope="col" class="number">Coverage</th>
+       </tr>
+      </thead>
+      <tbody>
+       <tr><td><a href="../../../app/Entry/Entry.php.html#513">Indieinabox\Entry\Entry::__isset</a></td><td class="number">42.18</td><td class="number">36.4%</td></tr>
+       <tr><td><a href="../../../app/Entry/Entry.php.html#493">Indieinabox\Entry\Entry::__get</a></td><td class="number">22.42</td><td class="number">58.3%</td></tr>
+       <tr><td><a href="../../../app/Entry/Entry.php.html#72">Indieinabox\Entry\Entry::__construct</a></td><td class="number">21.08</td><td class="number">94.3%</td></tr>
+       <tr><td><a href="../../../app/Entry/Entry.php.html#435">Indieinabox\Entry\Entry::fromTwtxt</a></td><td class="number">13</td><td class="number">97.6%</td></tr>
+       <tr><td><a href="../../../app/Entry/Entry.php.html#357">Indieinabox\Entry\Entry::isPollClosed</a></td><td class="number">5.20</td><td class="number">80.0%</td></tr>
+       <tr><td><a href="../../../app/Entry/Entry.php.html#329">Indieinabox\Entry\Entry::shouldSyndicateTo</a></td><td class="number">3</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Entry/Entry.php.html#304">Indieinabox\Entry\Entry::isReply</a></td><td class="number">2</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Entry/Entry.php.html#309">Indieinabox\Entry\Entry::isRepost</a></td><td class="number">2</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Entry/Entry.php.html#314">Indieinabox\Entry\Entry::isLike</a></td><td class="number">2</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Entry/Entry.php.html#352">Indieinabox\Entry\Entry::hasPoll</a></td><td class="number">2</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Entry/Entry.php.html#425">Indieinabox\Entry\Entry::fromPage</a></td><td class="number">2</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="../../../app/Entry/Entry.php.html#124">Indieinabox\Entry\Entry::getId</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Entry/Entry.php.html#129">Indieinabox\Entry\Entry::getSlug</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Entry/Entry.php.html#134">Indieinabox\Entry\Entry::getTitle</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Entry/Entry.php.html#139">Indieinabox\Entry\Entry::getContent</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Entry/Entry.php.html#144">Indieinabox\Entry\Entry::getRawContent</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Entry/Entry.php.html#149">Indieinabox\Entry\Entry::getSummary</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Entry/Entry.php.html#154">Indieinabox\Entry\Entry::getPublishedAt</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Entry/Entry.php.html#159">Indieinabox\Entry\Entry::getUpdatedAt</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Entry/Entry.php.html#164">Indieinabox\Entry\Entry::getSourceNetwork</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Entry/Entry.php.html#169">Indieinabox\Entry\Entry::getSourceUrl</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Entry/Entry.php.html#177">Indieinabox\Entry\Entry::getAuthor</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Entry/Entry.php.html#185">Indieinabox\Entry\Entry::getSyndicationTargets</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Entry/Entry.php.html#190">Indieinabox\Entry\Entry::getLang</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Entry/Entry.php.html#195">Indieinabox\Entry\Entry::getOriginalLangUrl</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Entry/Entry.php.html#203">Indieinabox\Entry\Entry::getTranslations</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Entry/Entry.php.html#208">Indieinabox\Entry\Entry::getKind</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Entry/Entry.php.html#216">Indieinabox\Entry\Entry::getTags</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Entry/Entry.php.html#221">Indieinabox\Entry\Entry::getInReplyTo</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Entry/Entry.php.html#226">Indieinabox\Entry\Entry::getRepostOf</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Entry/Entry.php.html#231">Indieinabox\Entry\Entry::getLikeOf</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Entry/Entry.php.html#236">Indieinabox\Entry\Entry::getBookmarkOf</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Entry/Entry.php.html#244">Indieinabox\Entry\Entry::getAttachments</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Entry/Entry.php.html#249">Indieinabox\Entry\Entry::getContentWarning</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Entry/Entry.php.html#254">Indieinabox\Entry\Entry::getVisibility</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Entry/Entry.php.html#259">Indieinabox\Entry\Entry::isDraft</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Entry/Entry.php.html#267">Indieinabox\Entry\Entry::getMetadata</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Entry/Entry.php.html#272">Indieinabox\Entry\Entry::getMetadataItem</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Entry/Entry.php.html#279">Indieinabox\Entry\Entry::isLocal</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Entry/Entry.php.html#284">Indieinabox\Entry\Entry::isFederated</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Entry/Entry.php.html#289">Indieinabox\Entry\Entry::isNote</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Entry/Entry.php.html#294">Indieinabox\Entry\Entry::isArticle</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Entry/Entry.php.html#299">Indieinabox\Entry\Entry::isPage</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Entry/Entry.php.html#319">Indieinabox\Entry\Entry::hasSensitiveContent</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Entry/Entry.php.html#324">Indieinabox\Entry\Entry::isPublic</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Entry/Entry.php.html#347">Indieinabox\Entry\Entry::getPoll</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Entry/Entry.php.html#377">Indieinabox\Entry\Entry::hasTranslations</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Entry/Entry.php.html#387">Indieinabox\Entry\Entry::with</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+      </tbody>
+     </table>
+      </div>
+     </div>
+    </div>
+   </section>
+  </main>
+  <footer>
+   <p class="credits">Generated by <a href="https://github.com/sebastianbergmann/php-code-coverage" target="_top">php-code-coverage 14.3.1</a> using <a href="https://www.php.net/" target="_top">PHP 8.4.27</a> and <a href="https://phpunit.de/">PHPUnit 13.3.1</a> at Mon Oct 26 6:16:30 UTC 2026.</p>
+  </footer>
+ </body>
+</html>

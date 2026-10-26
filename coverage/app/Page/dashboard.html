@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboard for /workspace/lumen/indieinabox/app/Page</title>
+  <link rel="stylesheet" href="../../_css/style.css?v=14.3.1">
+  <link rel="stylesheet" href="../../_css/custom.css">
+ </head>
+ <body>
+  <header class="masthead">
+   <nav aria-label="Breadcrumb">
+    <ol class="breadcrumbs">
+     <li><a href="../../index.html">/workspace/lumen/indieinabox</a></li>
+     <li><a href="../index.html">app</a></li>
+     <li><a href="index.html">Page</a></li>
+     <li class="current">Dashboard</li>
+    </ol>
+   </nav>
+   <ul class="tabs">
+    <li><a href="../../index.html" aria-current="page">Files</a></li>
+    <li><a href="../../_classes/dashboard.html">Classes</a></li>
+   </ul>
+  </header>
+  <main class="dashboard">
+   <section>
+    <h2>Classes</h2>
+    <div class="panel">
+     <div class="chart">
+      <p class="hint">Line coverage against cyclomatic complexity. Bubble size is the number of executable lines; hover for details, click to navigate.</p>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400" preserveAspectRatio="xMidYMid meet">
+ <style>
+  .bubble-success { fill: var(--coverage-success-bar); opacity: 0.7; }
+  .bubble-warning { fill: var(--coverage-warning-bar); opacity: 0.7; }
+  .bubble-danger { fill: var(--coverage-danger-bar); opacity: 0.7; }
+  .bubble-success:hover, .bubble-warning:hover, .bubble-danger:hover { opacity: 1; stroke: var(--text); stroke-width: 1.5; }
+  .chart-grid { stroke: var(--border); stroke-width: 0.5; stroke-dasharray: 4,4; opacity: 0.5; }
+  .chart-axis { stroke: var(--border); stroke-width: 1; }
+  .chart-label { fill: var(--text); font-size: 11px; font-family: var(--font-sans); }
+  .chart-title { fill: var(--text); font-size: 12px; font-family: var(--font-sans); }
+ </style>
+ <line x1="60.0" y1="20" x2="60.0" y2="350" class="chart-grid"/>
+ <text x="60.0" y="368" text-anchor="middle" class="chart-label">0%</text>
+ <line x1="204.0" y1="20" x2="204.0" y2="350" class="chart-grid"/>
+ <text x="204.0" y="368" text-anchor="middle" class="chart-label">20%</text>
+ <line x1="348.0" y1="20" x2="348.0" y2="350" class="chart-grid"/>
+ <text x="348.0" y="368" text-anchor="middle" class="chart-label">40%</text>
+ <line x1="492.0" y1="20" x2="492.0" y2="350" class="chart-grid"/>
+ <text x="492.0" y="368" text-anchor="middle" class="chart-label">60%</text>
+ <line x1="636.0" y1="20" x2="636.0" y2="350" class="chart-grid"/>
+ <text x="636.0" y="368" text-anchor="middle" class="chart-label">80%</text>
+ <line x1="780.0" y1="20" x2="780.0" y2="350" class="chart-grid"/>
+ <text x="780.0" y="368" text-anchor="middle" class="chart-label">100%</text>
+ <line x1="60" y1="350.0" x2="780" y2="350.0" class="chart-grid"/>
+ <text x="52" y="350.0" text-anchor="end" dominant-baseline="middle" class="chart-label">0</text>
+ <line x1="60" y1="240.0" x2="780" y2="240.0" class="chart-grid"/>
+ <text x="52" y="240.0" text-anchor="end" dominant-baseline="middle" class="chart-label">50</text>
+ <line x1="60" y1="130.0" x2="780" y2="130.0" class="chart-grid"/>
+ <text x="52" y="130.0" text-anchor="end" dominant-baseline="middle" class="chart-label">100</text>
+ <line x1="60" y1="20.0" x2="780" y2="20.0" class="chart-grid"/>
+ <text x="52" y="20.0" text-anchor="end" dominant-baseline="middle" class="chart-label">150</text>
+ <line x1="60" y1="20" x2="60" y2="350" class="chart-axis"/>
+ <line x1="60" y1="350" x2="780" y2="350" class="chart-axis"/>
+ <text x="420.0" y="395" text-anchor="middle" class="chart-title">Line Coverage (%)</text>
+ <text x="15" y="185.0" text-anchor="middle" transform="rotate(-90, 15, 185.0)" class="chart-title">Cyclomatic Complexity</text>
+ <a href="Page.php.html#36"><circle cx="691.0" cy="138.8" r="20.0" class="bubble-warning"><title>Indieinabox\Page\Page — Coverage: 87.6% | Lines: 283 | Complexity: 96</title></circle></a>
+ <a href="Pages.php.html#19"><circle cx="780.0" cy="297.2" r="7.8" class="bubble-success"><title>Indieinabox\Page\Pages — Coverage: 100.0% | Lines: 43 | Complexity: 24</title></circle></a>
+ <a href="Metadata.php.html#15"><circle cx="780.0" cy="347.8" r="4.8" class="bubble-success"><title>Indieinabox\Page\Metadata — Coverage: 100.0% | Lines: 16 | Complexity: 1</title></circle></a>
+ <a href="Localization.php.html#12"><circle cx="780.0" cy="347.8" r="4.0" class="bubble-success"><title>Indieinabox\Page\Localization — Coverage: 100.0% | Lines: 7 | Complexity: 1</title></circle></a>
+ <a href="Content.php.html#12"><circle cx="780.0" cy="345.6" r="4.0" class="bubble-success"><title>Indieinabox\Page\Content — Coverage: 100.0% | Lines: 5 | Complexity: 2</title></circle></a>
+</svg>
+     </div>
+     <div>
+      <p class="hint">Sorted by descending <abbr title="Change Risk Anti-Patterns">CRAP</abbr> index.</p>
+      <div class="scrollbox">
+     <table class="crap">
+      <thead>
+       <tr>
+        <th scope="col">Class</th>
+        <th scope="col" class="number"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+        <th scope="col" class="number">Coverage</th>
+       </tr>
+      </thead>
+      <tbody>
+       <tr><td><a href="Page.php.html#36">Indieinabox\Page\Page</a></td><td class="number">113.43</td><td class="number">87.6%</td></tr>
+       <tr><td><a href="Pages.php.html#19">Indieinabox\Page\Pages</a></td><td class="number">24</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="Content.php.html#12">Indieinabox\Page\Content</a></td><td class="number">2</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="Localization.php.html#12">Indieinabox\Page\Localization</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="Metadata.php.html#15">Indieinabox\Page\Metadata</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+      </tbody>
+     </table>
+      </div>
+     </div>
+    </div>
+   </section>
+   <section>
+    <h2>Methods</h2>
+    <div class="panel">
+     <div class="chart">
+      <p class="hint">Line coverage against cyclomatic complexity. Bubble size is the number of executable lines; hover for details, click to navigate.</p>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400" preserveAspectRatio="xMidYMid meet">
+ <style>
+  .bubble-success { fill: var(--coverage-success-bar); opacity: 0.7; }
+  .bubble-warning { fill: var(--coverage-warning-bar); opacity: 0.7; }
+  .bubble-danger { fill: var(--coverage-danger-bar); opacity: 0.7; }
+  .bubble-success:hover, .bubble-warning:hover, .bubble-danger:hover { opacity: 1; stroke: var(--text); stroke-width: 1.5; }
+  .chart-grid { stroke: var(--border); stroke-width: 0.5; stroke-dasharray: 4,4; opacity: 0.5; }
+  .chart-axis { stroke: var(--border); stroke-width: 1; }
+  .chart-label { fill: var(--text); font-size: 11px; font-family: var(--font-sans); }
+  .chart-title { fill: var(--text); font-size: 12px; font-family: var(--font-sans); }
+ </style>
+ <line x1="60.0" y1="20" x2="60.0" y2="350" class="chart-grid"/>
+ <text x="60.0" y="368" text-anchor="middle" class="chart-label">0%</text>
+ <line x1="204.0" y1="20" x2="204.0" y2="350" class="chart-grid"/>
+ <text x="204.0" y="368" text-anchor="middle" class="chart-label">20%</text>
+ <line x1="348.0" y1="20" x2="348.0" y2="350" class="chart-grid"/>
+ <text x="348.0" y="368" text-anchor="middle" class="chart-label">40%</text>
+ <line x1="492.0" y1="20" x2="492.0" y2="350" class="chart-grid"/>
+ <text x="492.0" y="368" text-anchor="middle" class="chart-label">60%</text>
+ <line x1="636.0" y1="20" x2="636.0" y2="350" class="chart-grid"/>
+ <text x="636.0" y="368" text-anchor="middle" class="chart-label">80%</text>
+ <line x1="780.0" y1="20" x2="780.0" y2="350" class="chart-grid"/>
+ <text x="780.0" y="368" text-anchor="middle" class="chart-label">100%</text>
+ <line x1="60" y1="350.0" x2="780" y2="350.0" class="chart-grid"/>
+ <text x="52" y="350.0" text-anchor="end" dominant-baseline="middle" class="chart-label">0</text>
+ <line x1="60" y1="240.0" x2="780" y2="240.0" class="chart-grid"/>
+ <text x="52" y="240.0" text-anchor="end" dominant-baseline="middle" class="chart-label">10</text>
+ <line x1="60" y1="130.0" x2="780" y2="130.0" class="chart-grid"/>
+ <text x="52" y="130.0" text-anchor="end" dominant-baseline="middle" class="chart-label">20</text>
+ <line x1="60" y1="20.0" x2="780" y2="20.0" class="chart-grid"/>
+ <text x="52" y="20.0" text-anchor="end" dominant-baseline="middle" class="chart-label">30</text>
+ <line x1="60" y1="20" x2="60" y2="350" class="chart-axis"/>
+ <line x1="60" y1="350" x2="780" y2="350" class="chart-axis"/>
+ <text x="420.0" y="395" text-anchor="middle" class="chart-title">Line Coverage (%)</text>
+ <text x="15" y="185.0" text-anchor="middle" transform="rotate(-90, 15, 185.0)" class="chart-title">Cyclomatic Complexity</text>
+ <a href="Page.php.html#252"><circle cx="752.3" cy="75.0" r="20.0" class="bubble-success"><title>Indieinabox\Page\Page::fromArray — Coverage: 96.2% | Lines: 78 | Complexity: 25</title></circle></a>
+ <a href="Page.php.html#170"><circle cx="566.7" cy="141.0" r="16.6" class="bubble-warning"><title>Indieinabox\Page\Page::__set — Coverage: 70.4% | Lines: 54 | Complexity: 19</title></circle></a>
+ <a href="Page.php.html#385"><circle cx="735.0" cy="218.0" r="15.7" class="bubble-success"><title>Indieinabox\Page\Page::toEntry — Coverage: 93.8% | Lines: 48 | Complexity: 12</title></circle></a>
+ <a href="Page.php.html#110"><circle cx="572.0" cy="97.0" r="15.2" class="bubble-warning"><title>Indieinabox\Page\Page::__get — Coverage: 71.1% | Lines: 45 | Complexity: 23</title></circle></a>
+ <a href="Page.php.html#520"><circle cx="780.0" cy="328.0" r="12.4" class="bubble-success"><title>Indieinabox\Page\Page::toArray — Coverage: 100.0% | Lines: 30 | Complexity: 2</title></circle></a>
+ <a href="Metadata.php.html#136"><circle cx="780.0" cy="339.0" r="9.1" class="bubble-success"><title>Indieinabox\Page\Metadata::__construct — Coverage: 100.0% | Lines: 16 | Complexity: 1</title></circle></a>
+ <a href="Pages.php.html#135"><circle cx="780.0" cy="262.0" r="9.1" class="bubble-success"><title>Indieinabox\Page\Pages::getRecentPosts — Coverage: 100.0% | Lines: 16 | Complexity: 8</title></circle></a>
+ <a href="Page.php.html#364"><circle cx="780.0" cy="295.0" r="6.4" class="bubble-success"><title>Indieinabox\Page\Page::__clone — Coverage: 100.0% | Lines: 8 | Complexity: 5</title></circle></a>
+ <a href="Localization.php.html#60"><circle cx="780.0" cy="339.0" r="6.0" class="bubble-success"><title>Indieinabox\Page\Localization::__construct — Coverage: 100.0% | Lines: 7 | Complexity: 1</title></circle></a>
+ <a href="Page.php.html#88"><circle cx="780.0" cy="339.0" r="5.5" class="bubble-success"><title>Indieinabox\Page\Page::__construct — Coverage: 100.0% | Lines: 6 | Complexity: 1</title></circle></a>
+ <a href="Page.php.html#236"><circle cx="780.0" cy="339.0" r="5.5" class="bubble-success"><title>Indieinabox\Page\Page::__isset — Coverage: 100.0% | Lines: 6 | Complexity: 1</title></circle></a>
+ <a href="Pages.php.html#39"><circle cx="780.0" cy="317.0" r="5.5" class="bubble-success"><title>Indieinabox\Page\Pages::add — Coverage: 100.0% | Lines: 6 | Complexity: 3</title></circle></a>
+ <a href="Content.php.html#42"><circle cx="780.0" cy="339.0" r="4.5" class="bubble-success"><title>Indieinabox\Page\Content::__construct — Coverage: 100.0% | Lines: 4 | Complexity: 1</title></circle></a>
+ <a href="Pages.php.html#103"><circle cx="780.0" cy="328.0" r="4.5" class="bubble-success"><title>Indieinabox\Page\Pages::filterByKind — Coverage: 100.0% | Lines: 4 | Complexity: 2</title></circle></a>
+ <a href="Pages.php.html#118"><circle cx="780.0" cy="328.0" r="4.5" class="bubble-success"><title>Indieinabox\Page\Pages::filterByLanguage — Coverage: 100.0% | Lines: 4 | Complexity: 2</title></circle></a>
+ <a href="Pages.php.html#168"><circle cx="780.0" cy="328.0" r="4.5" class="bubble-success"><title>Indieinabox\Page\Pages::query — Coverage: 100.0% | Lines: 4 | Complexity: 2</title></circle></a>
+ <a href="Pages.php.html#89"><circle cx="780.0" cy="328.0" r="4.0" class="bubble-success"><title>Indieinabox\Page\Pages::remove — Coverage: 100.0% | Lines: 3 | Complexity: 2</title></circle></a>
+ <a href="Pages.php.html#29"><circle cx="780.0" cy="339.0" r="4.0" class="bubble-success"><title>Indieinabox\Page\Pages::__construct — Coverage: 100.0% | Lines: 2 | Complexity: 1</title></circle></a>
+ <a href="Content.php.html#59"><circle cx="780.0" cy="339.0" r="4.0" class="bubble-success"><title>Indieinabox\Page\Content::__toString — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="Page.php.html#454"><circle cx="780.0" cy="339.0" r="4.0" class="bubble-success"><title>Indieinabox\Page\Page::isDraft — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="Page.php.html#462"><circle cx="780.0" cy="339.0" r="4.0" class="bubble-success"><title>Indieinabox\Page\Page::hasTitle — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="Page.php.html#470"><circle cx="780.0" cy="339.0" r="4.0" class="bubble-success"><title>Indieinabox\Page\Page::getTitle — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="Page.php.html#478"><circle cx="780.0" cy="339.0" r="4.0" class="bubble-success"><title>Indieinabox\Page\Page::getSlug — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="Page.php.html#486"><circle cx="780.0" cy="339.0" r="4.0" class="bubble-success"><title>Indieinabox\Page\Page::getKind — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="Page.php.html#494"><circle cx="780.0" cy="339.0" r="4.0" class="bubble-success"><title>Indieinabox\Page\Page::getLanguage — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="Page.php.html#502"><circle cx="780.0" cy="339.0" r="4.0" class="bubble-success"><title>Indieinabox\Page\Page::hasTag — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="Page.php.html#510"><circle cx="780.0" cy="339.0" r="4.0" class="bubble-success"><title>Indieinabox\Page\Page::getDate — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="Pages.php.html#56"><circle cx="780.0" cy="339.0" r="4.0" class="bubble-success"><title>Indieinabox\Page\Pages::all — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="Pages.php.html#65"><circle cx="780.0" cy="339.0" r="4.0" class="bubble-success"><title>Indieinabox\Page\Pages::get — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="Pages.php.html#73"><circle cx="780.0" cy="339.0" r="4.0" class="bubble-success"><title>Indieinabox\Page\Pages::find — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="Pages.php.html#81"><circle cx="780.0" cy="339.0" r="4.0" class="bubble-success"><title>Indieinabox\Page\Pages::has — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+</svg>
+     </div>
+     <div>
+      <p class="hint">Sorted by descending <abbr title="Change Risk Anti-Patterns">CRAP</abbr> index.</p>
+      <div class="scrollbox">
+     <table class="crap">
+      <thead>
+       <tr>
+        <th scope="col">Method</th>
+        <th scope="col" class="number"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+        <th scope="col" class="number">Coverage</th>
+       </tr>
+      </thead>
+      <tbody>
+       <tr><td><a href="Page.php.html#110">Indieinabox\Page\Page::__get</a></td><td class="number">35.75</td><td class="number">71.1%</td></tr>
+       <tr><td><a href="Page.php.html#170">Indieinabox\Page\Page::__set</a></td><td class="number">28.39</td><td class="number">70.4%</td></tr>
+       <tr><td><a href="Page.php.html#252">Indieinabox\Page\Page::fromArray</a></td><td class="number">25</td><td class="number">96.2%</td></tr>
+       <tr><td><a href="Page.php.html#385">Indieinabox\Page\Page::toEntry</a></td><td class="number">12.04</td><td class="number">93.8%</td></tr>
+       <tr><td><a href="Pages.php.html#135">Indieinabox\Page\Pages::getRecentPosts</a></td><td class="number">8</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="Page.php.html#364">Indieinabox\Page\Page::__clone</a></td><td class="number">5</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="Pages.php.html#39">Indieinabox\Page\Pages::add</a></td><td class="number">3</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="Page.php.html#520">Indieinabox\Page\Page::toArray</a></td><td class="number">2</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="Pages.php.html#89">Indieinabox\Page\Pages::remove</a></td><td class="number">2</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="Pages.php.html#103">Indieinabox\Page\Pages::filterByKind</a></td><td class="number">2</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="Pages.php.html#118">Indieinabox\Page\Pages::filterByLanguage</a></td><td class="number">2</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="Pages.php.html#168">Indieinabox\Page\Pages::query</a></td><td class="number">2</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="Content.php.html#42">Indieinabox\Page\Content::__construct</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="Content.php.html#59">Indieinabox\Page\Content::__toString</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="Localization.php.html#60">Indieinabox\Page\Localization::__construct</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="Metadata.php.html#136">Indieinabox\Page\Metadata::__construct</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="Page.php.html#88">Indieinabox\Page\Page::__construct</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="Page.php.html#236">Indieinabox\Page\Page::__isset</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="Page.php.html#454">Indieinabox\Page\Page::isDraft</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="Page.php.html#462">Indieinabox\Page\Page::hasTitle</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="Page.php.html#470">Indieinabox\Page\Page::getTitle</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="Page.php.html#478">Indieinabox\Page\Page::getSlug</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="Page.php.html#486">Indieinabox\Page\Page::getKind</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="Page.php.html#494">Indieinabox\Page\Page::getLanguage</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="Page.php.html#502">Indieinabox\Page\Page::hasTag</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="Page.php.html#510">Indieinabox\Page\Page::getDate</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="Pages.php.html#29">Indieinabox\Page\Pages::__construct</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="Pages.php.html#56">Indieinabox\Page\Pages::all</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="Pages.php.html#65">Indieinabox\Page\Pages::get</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="Pages.php.html#73">Indieinabox\Page\Pages::find</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="Pages.php.html#81">Indieinabox\Page\Pages::has</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+      </tbody>
+     </table>
+      </div>
+     </div>
+    </div>
+   </section>
+  </main>
+  <footer>
+   <p class="credits">Generated by <a href="https://github.com/sebastianbergmann/php-code-coverage" target="_top">php-code-coverage 14.3.1</a> using <a href="https://www.php.net/" target="_top">PHP 8.4.27</a> and <a href="https://phpunit.de/">PHPUnit 13.3.1</a> at Mon Oct 26 6:16:30 UTC 2026.</p>
+  </footer>
+ </body>
+</html>

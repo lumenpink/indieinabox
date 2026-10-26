@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboard for Indieinabox\Federation</title>
+  <link rel="stylesheet" href="../../../_css/style.css?v=14.3.1">
+  <link rel="stylesheet" href="../../../_css/custom.css">
+ </head>
+ <body>
+  <header class="masthead">
+   <nav aria-label="Breadcrumb">
+    <ol class="breadcrumbs">
+     <li><a href="../../index.html">(Global)</a></li>
+     <li><a href="../index.html">Indieinabox</a></li>
+     <li><a href="index.html">Federation</a></li>
+     <li class="current">Dashboard</li>
+    </ol>
+   </nav>
+   <ul class="tabs">
+    <li><a href="../../../dashboard.html">Files</a></li>
+    <li><a href="../../../_classes/index.html" aria-current="page">Classes</a></li>
+   </ul>
+  </header>
+  <main class="dashboard">
+   <section>
+    <h2>Classes</h2>
+    <div class="panel">
+     <div class="chart">
+      <p class="hint">Line coverage against cyclomatic complexity. Bubble size is the number of executable lines; hover for details, click to navigate.</p>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400" preserveAspectRatio="xMidYMid meet">
+ <style>
+  .bubble-success { fill: var(--coverage-success-bar); opacity: 0.7; }
+  .bubble-warning { fill: var(--coverage-warning-bar); opacity: 0.7; }
+  .bubble-danger { fill: var(--coverage-danger-bar); opacity: 0.7; }
+  .bubble-success:hover, .bubble-warning:hover, .bubble-danger:hover { opacity: 1; stroke: var(--text); stroke-width: 1.5; }
+  .chart-grid { stroke: var(--border); stroke-width: 0.5; stroke-dasharray: 4,4; opacity: 0.5; }
+  .chart-axis { stroke: var(--border); stroke-width: 1; }
+  .chart-label { fill: var(--text); font-size: 11px; font-family: var(--font-sans); }
+  .chart-title { fill: var(--text); font-size: 12px; font-family: var(--font-sans); }
+ </style>
+ <line x1="60.0" y1="20" x2="60.0" y2="350" class="chart-grid"/>
+ <text x="60.0" y="368" text-anchor="middle" class="chart-label">0%</text>
+ <line x1="204.0" y1="20" x2="204.0" y2="350" class="chart-grid"/>
+ <text x="204.0" y="368" text-anchor="middle" class="chart-label">20%</text>
+ <line x1="348.0" y1="20" x2="348.0" y2="350" class="chart-grid"/>
+ <text x="348.0" y="368" text-anchor="middle" class="chart-label">40%</text>
+ <line x1="492.0" y1="20" x2="492.0" y2="350" class="chart-grid"/>
+ <text x="492.0" y="368" text-anchor="middle" class="chart-label">60%</text>
+ <line x1="636.0" y1="20" x2="636.0" y2="350" class="chart-grid"/>
+ <text x="636.0" y="368" text-anchor="middle" class="chart-label">80%</text>
+ <line x1="780.0" y1="20" x2="780.0" y2="350" class="chart-grid"/>
+ <text x="780.0" y="368" text-anchor="middle" class="chart-label">100%</text>
+ <line x1="60" y1="350.0" x2="780" y2="350.0" class="chart-grid"/>
+ <text x="52" y="350.0" text-anchor="end" dominant-baseline="middle" class="chart-label">0</text>
+ <line x1="60" y1="240.0" x2="780" y2="240.0" class="chart-grid"/>
+ <text x="52" y="240.0" text-anchor="end" dominant-baseline="middle" class="chart-label">10</text>
+ <line x1="60" y1="130.0" x2="780" y2="130.0" class="chart-grid"/>
+ <text x="52" y="130.0" text-anchor="end" dominant-baseline="middle" class="chart-label">20</text>
+ <line x1="60" y1="20.0" x2="780" y2="20.0" class="chart-grid"/>
+ <text x="52" y="20.0" text-anchor="end" dominant-baseline="middle" class="chart-label">30</text>
+ <line x1="60" y1="20" x2="60" y2="350" class="chart-axis"/>
+ <line x1="60" y1="350" x2="780" y2="350" class="chart-axis"/>
+ <text x="420.0" y="395" text-anchor="middle" class="chart-title">Line Coverage (%)</text>
+ <text x="15" y="185.0" text-anchor="middle" transform="rotate(-90, 15, 185.0)" class="chart-title">Cyclomatic Complexity</text>
+ <a href="../../../app/Federation/FlowerbedGroupService.php.html#15"><circle cx="603.3" cy="108.0" r="20.0" class="bubble-warning"><title>Indieinabox\Federation\FlowerbedGroupService — Coverage: 75.5% | Lines: 110 | Complexity: 22</title></circle></a>
+ <a href="../../../app/Federation/ActivityPubC2SService.php.html#14"><circle cx="732.0" cy="86.0" r="16.5" class="bubble-success"><title>Indieinabox\Federation\ActivityPubC2SService — Coverage: 93.3% | Lines: 75 | Complexity: 24</title></circle></a>
+ <a href="../../../app/Federation/ActivityPubAdapter.php.html#17"><circle cx="597.5" cy="108.0" r="16.1" class="bubble-warning"><title>Indieinabox\Federation\ActivityPubAdapter — Coverage: 74.6% | Lines: 71 | Complexity: 22</title></circle></a>
+ <a href="../../../app/Federation/HttpSignature.php.html#10"><circle cx="738.3" cy="108.0" r="15.8" class="bubble-success"><title>Indieinabox\Federation\HttpSignature — Coverage: 94.2% | Lines: 69 | Complexity: 22</title></circle></a>
+ <a href="../../../app/Federation/Adapters/BookwyrmAdapter.php.html#19"><circle cx="780.0" cy="284.0" r="11.9" class="bubble-success"><title>Indieinabox\Federation\Adapters\BookwyrmAdapter — Coverage: 100.0% | Lines: 39 | Complexity: 6</title></circle></a>
+ <a href="../../../app/Federation/Adapters/LemmyAdapter.php.html#20"><circle cx="756.8" cy="251.0" r="10.6" class="bubble-success"><title>Indieinabox\Federation\Adapters\LemmyAdapter — Coverage: 96.8% | Lines: 31 | Complexity: 9</title></circle></a>
+ <a href="../../../app/Federation/FederationManager.php.html#14"><circle cx="693.6" cy="207.0" r="9.5" class="bubble-warning"><title>Indieinabox\Federation\FederationManager — Coverage: 88.0% | Lines: 25 | Complexity: 13</title></circle></a>
+</svg>
+     </div>
+     <div>
+      <p class="hint">Sorted by descending <abbr title="Change Risk Anti-Patterns">CRAP</abbr> index.</p>
+      <div class="scrollbox">
+     <table class="crap">
+      <thead>
+       <tr>
+        <th scope="col">Class</th>
+        <th scope="col" class="number"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+        <th scope="col" class="number">Coverage</th>
+       </tr>
+      </thead>
+      <tbody>
+       <tr><td><a href="../../../app/Federation/ActivityPubAdapter.php.html#17">Indieinabox\Federation\ActivityPubAdapter</a></td><td class="number">29.89</td><td class="number">74.6%</td></tr>
+       <tr><td><a href="../../../app/Federation/FlowerbedGroupService.php.html#15">Indieinabox\Federation\FlowerbedGroupService</a></td><td class="number">29.16</td><td class="number">75.5%</td></tr>
+       <tr><td><a href="../../../app/Federation/ActivityPubC2SService.php.html#14">Indieinabox\Federation\ActivityPubC2SService</a></td><td class="number">24.17</td><td class="number">93.3%</td></tr>
+       <tr><td><a href="../../../app/Federation/HttpSignature.php.html#10">Indieinabox\Federation\HttpSignature</a></td><td class="number">22.09</td><td class="number">94.2%</td></tr>
+       <tr><td><a href="../../../app/Federation/FederationManager.php.html#14">Indieinabox\Federation\FederationManager</a></td><td class="number">13.29</td><td class="number">88.0%</td></tr>
+       <tr><td><a href="../../../app/Federation/Adapters/LemmyAdapter.php.html#20">Indieinabox\Federation\Adapters\LemmyAdapter</a></td><td class="number">9</td><td class="number">96.8%</td></tr>
+       <tr><td><a href="../../../app/Federation/Adapters/BookwyrmAdapter.php.html#19">Indieinabox\Federation\Adapters\BookwyrmAdapter</a></td><td class="number">6</td><td class="number">100.0%</td></tr>
+      </tbody>
+     </table>
+      </div>
+     </div>
+    </div>
+   </section>
+   <section>
+    <h2>Methods</h2>
+    <div class="panel">
+     <div class="chart">
+      <p class="hint">Line coverage against cyclomatic complexity. Bubble size is the number of executable lines; hover for details, click to navigate.</p>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400" preserveAspectRatio="xMidYMid meet">
+ <style>
+  .bubble-success { fill: var(--coverage-success-bar); opacity: 0.7; }
+  .bubble-warning { fill: var(--coverage-warning-bar); opacity: 0.7; }
+  .bubble-danger { fill: var(--coverage-danger-bar); opacity: 0.7; }
+  .bubble-success:hover, .bubble-warning:hover, .bubble-danger:hover { opacity: 1; stroke: var(--text); stroke-width: 1.5; }
+  .chart-grid { stroke: var(--border); stroke-width: 0.5; stroke-dasharray: 4,4; opacity: 0.5; }
+  .chart-axis { stroke: var(--border); stroke-width: 1; }
+  .chart-label { fill: var(--text); font-size: 11px; font-family: var(--font-sans); }
+  .chart-title { fill: var(--text); font-size: 12px; font-family: var(--font-sans); }
+ </style>
+ <line x1="60.0" y1="20" x2="60.0" y2="350" class="chart-grid"/>
+ <text x="60.0" y="368" text-anchor="middle" class="chart-label">0%</text>
+ <line x1="204.0" y1="20" x2="204.0" y2="350" class="chart-grid"/>
+ <text x="204.0" y="368" text-anchor="middle" class="chart-label">20%</text>
+ <line x1="348.0" y1="20" x2="348.0" y2="350" class="chart-grid"/>
+ <text x="348.0" y="368" text-anchor="middle" class="chart-label">40%</text>
+ <line x1="492.0" y1="20" x2="492.0" y2="350" class="chart-grid"/>
+ <text x="492.0" y="368" text-anchor="middle" class="chart-label">60%</text>
+ <line x1="636.0" y1="20" x2="636.0" y2="350" class="chart-grid"/>
+ <text x="636.0" y="368" text-anchor="middle" class="chart-label">80%</text>
+ <line x1="780.0" y1="20" x2="780.0" y2="350" class="chart-grid"/>
+ <text x="780.0" y="368" text-anchor="middle" class="chart-label">100%</text>
+ <line x1="60" y1="350.0" x2="780" y2="350.0" class="chart-grid"/>
+ <text x="52" y="350.0" text-anchor="end" dominant-baseline="middle" class="chart-label">0</text>
+ <line x1="60" y1="284.0" x2="780" y2="284.0" class="chart-grid"/>
+ <text x="52" y="284.0" text-anchor="end" dominant-baseline="middle" class="chart-label">5</text>
+ <line x1="60" y1="218.0" x2="780" y2="218.0" class="chart-grid"/>
+ <text x="52" y="218.0" text-anchor="end" dominant-baseline="middle" class="chart-label">10</text>
+ <line x1="60" y1="152.0" x2="780" y2="152.0" class="chart-grid"/>
+ <text x="52" y="152.0" text-anchor="end" dominant-baseline="middle" class="chart-label">15</text>
+ <line x1="60" y1="86.0" x2="780" y2="86.0" class="chart-grid"/>
+ <text x="52" y="86.0" text-anchor="end" dominant-baseline="middle" class="chart-label">20</text>
+ <line x1="60" y1="20.0" x2="780" y2="20.0" class="chart-grid"/>
+ <text x="52" y="20.0" text-anchor="end" dominant-baseline="middle" class="chart-label">25</text>
+ <line x1="60" y1="20" x2="60" y2="350" class="chart-axis"/>
+ <line x1="60" y1="350" x2="780" y2="350" class="chart-axis"/>
+ <text x="420.0" y="395" text-anchor="middle" class="chart-title">Line Coverage (%)</text>
+ <text x="15" y="185.0" text-anchor="middle" transform="rotate(-90, 15, 185.0)" class="chart-title">Cyclomatic Complexity</text>
+ <a href="../../../app/Federation/ActivityPubC2SService.php.html#26"><circle cx="717.9" cy="86.0" r="20.0" class="bubble-success"><title>Indieinabox\Federation\ActivityPubC2SService::handleSubmission — Coverage: 91.4% | Lines: 58 | Complexity: 20</title></circle></a>
+ <a href="../../../app/Federation/HttpSignature.php.html#23"><circle cx="762.0" cy="244.4" r="16.6" class="bubble-success"><title>Indieinabox\Federation\HttpSignature::sign — Coverage: 97.5% | Lines: 40 | Complexity: 8</title></circle></a>
+ <a href="../../../app/Federation/FlowerbedGroupService.php.html#63"><circle cx="685.3" cy="152.0" r="16.2" class="bubble-warning"><title>Indieinabox\Federation\FlowerbedGroupService::handleInbox — Coverage: 86.8% | Lines: 38 | Complexity: 15</title></circle></a>
+ <a href="../../../app/Federation/HttpSignature.php.html#101"><circle cx="705.5" cy="165.2" r="14.1" class="bubble-warning"><title>Indieinabox\Federation\HttpSignature::verify — Coverage: 89.7% | Lines: 29 | Complexity: 14</title></circle></a>
+ <a href="../../../app/Federation/FlowerbedGroupService.php.html#32"><circle cx="780.0" cy="336.8" r="13.1" class="bubble-success"><title>Indieinabox\Federation\FlowerbedGroupService::getActor — Coverage: 100.0% | Lines: 25 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Federation/FlowerbedGroupService.php.html#155"><circle cx="748.7" cy="310.4" r="12.6" class="bubble-success"><title>Indieinabox\Federation\FlowerbedGroupService::fanOutPost — Coverage: 95.7% | Lines: 23 | Complexity: 3</title></circle></a>
+ <a href="../../../app/Federation/Adapters/LemmyAdapter.php.html#70"><circle cx="780.0" cy="323.6" r="12.3" class="bubble-success"><title>Indieinabox\Federation\Adapters\LemmyAdapter::buildCommunityPostActivity — Coverage: 100.0% | Lines: 22 | Complexity: 2</title></circle></a>
+ <a href="../../../app/Federation/ActivityPubAdapter.php.html#91"><circle cx="744.0" cy="297.2" r="11.7" class="bubble-success"><title>Indieinabox\Federation\ActivityPubAdapter::deliverActivity — Coverage: 95.0% | Lines: 20 | Complexity: 4</title></circle></a>
+ <a href="../../../app/Federation/Adapters/BookwyrmAdapter.php.html#48"><circle cx="780.0" cy="323.6" r="11.4" class="bubble-success"><title>Indieinabox\Federation\Adapters\BookwyrmAdapter::buildReviewActivity — Coverage: 100.0% | Lines: 19 | Complexity: 2</title></circle></a>
+ <a href="../../../app/Federation/ActivityPubAdapter.php.html#56"><circle cx="700.0" cy="310.4" r="11.1" class="bubble-warning"><title>Indieinabox\Federation\ActivityPubAdapter::buildReplyActivity — Coverage: 88.9% | Lines: 18 | Complexity: 3</title></circle></a>
+ <a href="../../../app/Federation/Adapters/BookwyrmAdapter.php.html#87"><circle cx="780.0" cy="336.8" r="10.8" class="bubble-success"><title>Indieinabox\Federation\Adapters\BookwyrmAdapter::buildReadingStatusActivity — Coverage: 100.0% | Lines: 17 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Federation/ActivityPubAdapter.php.html#152"><circle cx="60.0" cy="310.4" r="10.2" class="bubble-danger"><title>Indieinabox\Federation\ActivityPubAdapter::sendCurl — Coverage: 0.0% | Lines: 15 | Complexity: 3</title></circle></a>
+ <a href="../../../app/Federation/ActivityPubC2SService.php.html#116"><circle cx="780.0" cy="310.4" r="10.2" class="bubble-success"><title>Indieinabox\Federation\ActivityPubC2SService::getOutboxCollection — Coverage: 100.0% | Lines: 15 | Complexity: 3</title></circle></a>
+ <a href="../../../app/Federation/FlowerbedGroupService.php.html#138"><circle cx="60.0" cy="336.8" r="8.7" class="bubble-danger"><title>Indieinabox\Federation\FlowerbedGroupService::getFollowers — Coverage: 0.0% | Lines: 11 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Federation/FlowerbedGroupService.php.html#122"><circle cx="60.0" cy="336.8" r="8.3" class="bubble-danger"><title>Indieinabox\Federation\FlowerbedGroupService::getOutbox — Coverage: 0.0% | Lines: 10 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Federation/FederationManager.php.html#51"><circle cx="677.1" cy="297.2" r="6.9" class="bubble-warning"><title>Indieinabox\Federation\FederationManager::has — Coverage: 85.7% | Lines: 7 | Complexity: 4</title></circle></a>
+ <a href="../../../app/Federation/FederationManager.php.html#70"><circle cx="677.1" cy="297.2" r="6.9" class="bubble-warning"><title>Indieinabox\Federation\FederationManager::get — Coverage: 85.7% | Lines: 7 | Complexity: 4</title></circle></a>
+ <a href="../../../app/Federation/FederationManager.php.html#23"><circle cx="660.0" cy="323.6" r="6.4" class="bubble-warning"><title>Indieinabox\Federation\FederationManager::__construct — Coverage: 83.3% | Lines: 6 | Complexity: 2</title></circle></a>
+ <a href="../../../app/Federation/ActivityPubAdapter.php.html#122"><circle cx="780.0" cy="310.4" r="5.3" class="bubble-success"><title>Indieinabox\Federation\ActivityPubAdapter::parseActivity — Coverage: 100.0% | Lines: 4 | Complexity: 3</title></circle></a>
+ <a href="../../../app/Federation/ActivityPubAdapter.php.html#48"><circle cx="780.0" cy="336.8" r="4.5" class="bubble-success"><title>Indieinabox\Federation\ActivityPubAdapter::buildLikeActivity — Coverage: 100.0% | Lines: 3 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Federation/ActivityPubAdapter.php.html#83"><circle cx="780.0" cy="336.8" r="4.5" class="bubble-success"><title>Indieinabox\Federation\ActivityPubAdapter::buildFollowActivity — Coverage: 100.0% | Lines: 3 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Federation/FederationManager.php.html#33"><circle cx="780.0" cy="336.8" r="4.5" class="bubble-success"><title>Indieinabox\Federation\FederationManager::registerDefaultAdapters — Coverage: 100.0% | Lines: 3 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Federation/FlowerbedGroupService.php.html#21"><circle cx="780.0" cy="336.8" r="4.5" class="bubble-success"><title>Indieinabox\Federation\FlowerbedGroupService::__construct — Coverage: 100.0% | Lines: 3 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Federation/Adapters/LemmyAdapter.php.html#54"><circle cx="780.0" cy="336.8" r="4.5" class="bubble-success"><title>Indieinabox\Federation\Adapters\LemmyAdapter::buildDislikeActivity — Coverage: 100.0% | Lines: 3 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Federation/ActivityPubAdapter.php.html#29"><circle cx="780.0" cy="336.8" r="4.0" class="bubble-success"><title>Indieinabox\Federation\ActivityPubAdapter::__construct — Coverage: 100.0% | Lines: 2 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Federation/ActivityPubAdapter.php.html#132"><circle cx="780.0" cy="323.6" r="4.0" class="bubble-success"><title>Indieinabox\Federation\ActivityPubAdapter::getFqdn — Coverage: 100.0% | Lines: 2 | Complexity: 2</title></circle></a>
+ <a href="../../../app/Federation/ActivityPubAdapter.php.html#138"><circle cx="780.0" cy="323.6" r="4.0" class="bubble-success"><title>Indieinabox\Federation\ActivityPubAdapter::getActorUri — Coverage: 100.0% | Lines: 2 | Complexity: 2</title></circle></a>
+ <a href="../../../app/Federation/ActivityPubC2SService.php.html#19"><circle cx="780.0" cy="336.8" r="4.0" class="bubble-success"><title>Indieinabox\Federation\ActivityPubC2SService::__construct — Coverage: 100.0% | Lines: 2 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Federation/Adapters/LemmyAdapter.php.html#107"><circle cx="780.0" cy="323.6" r="4.0" class="bubble-success"><title>Indieinabox\Federation\Adapters\LemmyAdapter::buildReplyActivity — Coverage: 100.0% | Lines: 2 | Complexity: 2</title></circle></a>
+ <a href="../../../app/Federation/ActivityPubAdapter.php.html#36"><circle cx="780.0" cy="336.8" r="4.0" class="bubble-success"><title>Indieinabox\Federation\ActivityPubAdapter::getProtocol — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Federation/ActivityPubAdapter.php.html#42"><circle cx="780.0" cy="336.8" r="4.0" class="bubble-success"><title>Indieinabox\Federation\ActivityPubAdapter::supports — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Federation/FederationManager.php.html#43"><circle cx="780.0" cy="336.8" r="4.0" class="bubble-success"><title>Indieinabox\Federation\FederationManager::register — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Federation/FederationManager.php.html#91"><circle cx="780.0" cy="336.8" r="4.0" class="bubble-success"><title>Indieinabox\Federation\FederationManager::all — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Federation/Adapters/BookwyrmAdapter.php.html#21"><circle cx="780.0" cy="336.8" r="4.0" class="bubble-success"><title>Indieinabox\Federation\Adapters\BookwyrmAdapter::__construct — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Federation/Adapters/BookwyrmAdapter.php.html#27"><circle cx="780.0" cy="336.8" r="4.0" class="bubble-success"><title>Indieinabox\Federation\Adapters\BookwyrmAdapter::getProtocol — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Federation/Adapters/BookwyrmAdapter.php.html#33"><circle cx="780.0" cy="336.8" r="4.0" class="bubble-success"><title>Indieinabox\Federation\Adapters\BookwyrmAdapter::supports — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Federation/Adapters/LemmyAdapter.php.html#22"><circle cx="780.0" cy="336.8" r="4.0" class="bubble-success"><title>Indieinabox\Federation\Adapters\LemmyAdapter::__construct — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Federation/Adapters/LemmyAdapter.php.html#28"><circle cx="780.0" cy="336.8" r="4.0" class="bubble-success"><title>Indieinabox\Federation\Adapters\LemmyAdapter::getProtocol — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Federation/Adapters/LemmyAdapter.php.html#34"><circle cx="780.0" cy="336.8" r="4.0" class="bubble-success"><title>Indieinabox\Federation\Adapters\LemmyAdapter::supports — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Federation/Adapters/LemmyAdapter.php.html#43"><circle cx="60.0" cy="336.8" r="4.0" class="bubble-danger"><title>Indieinabox\Federation\Adapters\LemmyAdapter::buildLikeActivity — Coverage: 0.0% | Lines: 1 | Complexity: 1</title></circle></a>
+</svg>
+     </div>
+     <div>
+      <p class="hint">Sorted by descending <abbr title="Change Risk Anti-Patterns">CRAP</abbr> index.</p>
+      <div class="scrollbox">
+     <table class="crap">
+      <thead>
+       <tr>
+        <th scope="col">Method</th>
+        <th scope="col" class="number"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+        <th scope="col" class="number">Coverage</th>
+       </tr>
+      </thead>
+      <tbody>
+       <tr><td><a href="../../../app/Federation/ActivityPubC2SService.php.html#26">Indieinabox\Federation\ActivityPubC2SService::handleSubmission</a></td><td class="number">20.26</td><td class="number">91.4%</td></tr>
+       <tr><td><a href="../../../app/Federation/FlowerbedGroupService.php.html#63">Indieinabox\Federation\FlowerbedGroupService::handleInbox</a></td><td class="number">15.51</td><td class="number">86.8%</td></tr>
+       <tr><td><a href="../../../app/Federation/HttpSignature.php.html#101">Indieinabox\Federation\HttpSignature::verify</a></td><td class="number">14.22</td><td class="number">89.7%</td></tr>
+       <tr><td><a href="../../../app/Federation/ActivityPubAdapter.php.html#152">Indieinabox\Federation\ActivityPubAdapter::sendCurl</a></td><td class="number">12</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="../../../app/Federation/HttpSignature.php.html#23">Indieinabox\Federation\HttpSignature::sign</a></td><td class="number">8</td><td class="number">97.5%</td></tr>
+       <tr><td><a href="../../../app/Federation/FederationManager.php.html#51">Indieinabox\Federation\FederationManager::has</a></td><td class="number">4.05</td><td class="number">85.7%</td></tr>
+       <tr><td><a href="../../../app/Federation/FederationManager.php.html#70">Indieinabox\Federation\FederationManager::get</a></td><td class="number">4.05</td><td class="number">85.7%</td></tr>
+       <tr><td><a href="../../../app/Federation/ActivityPubAdapter.php.html#91">Indieinabox\Federation\ActivityPubAdapter::deliverActivity</a></td><td class="number">4</td><td class="number">95.0%</td></tr>
+       <tr><td><a href="../../../app/Federation/ActivityPubAdapter.php.html#56">Indieinabox\Federation\ActivityPubAdapter::buildReplyActivity</a></td><td class="number">3.01</td><td class="number">88.9%</td></tr>
+       <tr><td><a href="../../../app/Federation/ActivityPubAdapter.php.html#122">Indieinabox\Federation\ActivityPubAdapter::parseActivity</a></td><td class="number">3</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Federation/ActivityPubC2SService.php.html#116">Indieinabox\Federation\ActivityPubC2SService::getOutboxCollection</a></td><td class="number">3</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Federation/FlowerbedGroupService.php.html#155">Indieinabox\Federation\FlowerbedGroupService::fanOutPost</a></td><td class="number">3</td><td class="number">95.7%</td></tr>
+       <tr><td><a href="../../../app/Federation/FederationManager.php.html#23">Indieinabox\Federation\FederationManager::__construct</a></td><td class="number">2.02</td><td class="number">83.3%</td></tr>
+       <tr><td><a href="../../../app/Federation/ActivityPubAdapter.php.html#132">Indieinabox\Federation\ActivityPubAdapter::getFqdn</a></td><td class="number">2</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Federation/ActivityPubAdapter.php.html#138">Indieinabox\Federation\ActivityPubAdapter::getActorUri</a></td><td class="number">2</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Federation/FlowerbedGroupService.php.html#122">Indieinabox\Federation\FlowerbedGroupService::getOutbox</a></td><td class="number">2</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="../../../app/Federation/FlowerbedGroupService.php.html#138">Indieinabox\Federation\FlowerbedGroupService::getFollowers</a></td><td class="number">2</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="../../../app/Federation/Adapters/BookwyrmAdapter.php.html#48">Indieinabox\Federation\Adapters\BookwyrmAdapter::buildReviewActivity</a></td><td class="number">2</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Federation/Adapters/LemmyAdapter.php.html#43">Indieinabox\Federation\Adapters\LemmyAdapter::buildLikeActivity</a></td><td class="number">2</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="../../../app/Federation/Adapters/LemmyAdapter.php.html#70">Indieinabox\Federation\Adapters\LemmyAdapter::buildCommunityPostActivity</a></td><td class="number">2</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Federation/Adapters/LemmyAdapter.php.html#107">Indieinabox\Federation\Adapters\LemmyAdapter::buildReplyActivity</a></td><td class="number">2</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Federation/ActivityPubAdapter.php.html#29">Indieinabox\Federation\ActivityPubAdapter::__construct</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Federation/ActivityPubAdapter.php.html#36">Indieinabox\Federation\ActivityPubAdapter::getProtocol</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Federation/ActivityPubAdapter.php.html#42">Indieinabox\Federation\ActivityPubAdapter::supports</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Federation/ActivityPubAdapter.php.html#48">Indieinabox\Federation\ActivityPubAdapter::buildLikeActivity</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Federation/ActivityPubAdapter.php.html#83">Indieinabox\Federation\ActivityPubAdapter::buildFollowActivity</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Federation/ActivityPubC2SService.php.html#19">Indieinabox\Federation\ActivityPubC2SService::__construct</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Federation/FederationManager.php.html#33">Indieinabox\Federation\FederationManager::registerDefaultAdapters</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Federation/FederationManager.php.html#43">Indieinabox\Federation\FederationManager::register</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Federation/FederationManager.php.html#91">Indieinabox\Federation\FederationManager::all</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Federation/FlowerbedGroupService.php.html#21">Indieinabox\Federation\FlowerbedGroupService::__construct</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Federation/FlowerbedGroupService.php.html#32">Indieinabox\Federation\FlowerbedGroupService::getActor</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Federation/Adapters/BookwyrmAdapter.php.html#21">Indieinabox\Federation\Adapters\BookwyrmAdapter::__construct</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Federation/Adapters/BookwyrmAdapter.php.html#27">Indieinabox\Federation\Adapters\BookwyrmAdapter::getProtocol</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Federation/Adapters/BookwyrmAdapter.php.html#33">Indieinabox\Federation\Adapters\BookwyrmAdapter::supports</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Federation/Adapters/BookwyrmAdapter.php.html#87">Indieinabox\Federation\Adapters\BookwyrmAdapter::buildReadingStatusActivity</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Federation/Adapters/LemmyAdapter.php.html#22">Indieinabox\Federation\Adapters\LemmyAdapter::__construct</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Federation/Adapters/LemmyAdapter.php.html#28">Indieinabox\Federation\Adapters\LemmyAdapter::getProtocol</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Federation/Adapters/LemmyAdapter.php.html#34">Indieinabox\Federation\Adapters\LemmyAdapter::supports</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Federation/Adapters/LemmyAdapter.php.html#54">Indieinabox\Federation\Adapters\LemmyAdapter::buildDislikeActivity</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+      </tbody>
+     </table>
+      </div>
+     </div>
+    </div>
+   </section>
+  </main>
+  <footer>
+   <p class="credits">Generated by <a href="https://github.com/sebastianbergmann/php-code-coverage" target="_top">php-code-coverage 14.3.1</a> using <a href="https://www.php.net/" target="_top">PHP 8.4.27</a> and <a href="https://phpunit.de/">PHPUnit 13.3.1</a> at Mon Oct 26 6:16:30 UTC 2026.</p>
+  </footer>
+ </body>
+</html>

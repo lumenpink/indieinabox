@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboard for /workspace/lumen/indieinabox/app/ValueObjects</title>
+  <link rel="stylesheet" href="../../_css/style.css?v=14.3.1">
+  <link rel="stylesheet" href="../../_css/custom.css">
+ </head>
+ <body>
+  <header class="masthead">
+   <nav aria-label="Breadcrumb">
+    <ol class="breadcrumbs">
+     <li><a href="../../index.html">/workspace/lumen/indieinabox</a></li>
+     <li><a href="../index.html">app</a></li>
+     <li><a href="index.html">ValueObjects</a></li>
+     <li class="current">Dashboard</li>
+    </ol>
+   </nav>
+   <ul class="tabs">
+    <li><a href="../../index.html" aria-current="page">Files</a></li>
+    <li><a href="../../_classes/dashboard.html">Classes</a></li>
+   </ul>
+  </header>
+  <main class="dashboard">
+   <section>
+    <h2>Classes</h2>
+    <div class="panel">
+     <div class="chart">
+      <p class="hint">Line coverage against cyclomatic complexity. Bubble size is the number of executable lines; hover for details, click to navigate.</p>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400" preserveAspectRatio="xMidYMid meet">
+ <style>
+  .bubble-success { fill: var(--coverage-success-bar); opacity: 0.7; }
+  .bubble-warning { fill: var(--coverage-warning-bar); opacity: 0.7; }
+  .bubble-danger { fill: var(--coverage-danger-bar); opacity: 0.7; }
+  .bubble-success:hover, .bubble-warning:hover, .bubble-danger:hover { opacity: 1; stroke: var(--text); stroke-width: 1.5; }
+  .chart-grid { stroke: var(--border); stroke-width: 0.5; stroke-dasharray: 4,4; opacity: 0.5; }
+  .chart-axis { stroke: var(--border); stroke-width: 1; }
+  .chart-label { fill: var(--text); font-size: 11px; font-family: var(--font-sans); }
+  .chart-title { fill: var(--text); font-size: 12px; font-family: var(--font-sans); }
+ </style>
+ <line x1="60.0" y1="20" x2="60.0" y2="350" class="chart-grid"/>
+ <text x="60.0" y="368" text-anchor="middle" class="chart-label">0%</text>
+ <line x1="204.0" y1="20" x2="204.0" y2="350" class="chart-grid"/>
+ <text x="204.0" y="368" text-anchor="middle" class="chart-label">20%</text>
+ <line x1="348.0" y1="20" x2="348.0" y2="350" class="chart-grid"/>
+ <text x="348.0" y="368" text-anchor="middle" class="chart-label">40%</text>
+ <line x1="492.0" y1="20" x2="492.0" y2="350" class="chart-grid"/>
+ <text x="492.0" y="368" text-anchor="middle" class="chart-label">60%</text>
+ <line x1="636.0" y1="20" x2="636.0" y2="350" class="chart-grid"/>
+ <text x="636.0" y="368" text-anchor="middle" class="chart-label">80%</text>
+ <line x1="780.0" y1="20" x2="780.0" y2="350" class="chart-grid"/>
+ <text x="780.0" y="368" text-anchor="middle" class="chart-label">100%</text>
+ <line x1="60" y1="350.0" x2="780" y2="350.0" class="chart-grid"/>
+ <text x="52" y="350.0" text-anchor="end" dominant-baseline="middle" class="chart-label">0</text>
+ <line x1="60" y1="284.0" x2="780" y2="284.0" class="chart-grid"/>
+ <text x="52" y="284.0" text-anchor="end" dominant-baseline="middle" class="chart-label">5</text>
+ <line x1="60" y1="218.0" x2="780" y2="218.0" class="chart-grid"/>
+ <text x="52" y="218.0" text-anchor="end" dominant-baseline="middle" class="chart-label">10</text>
+ <line x1="60" y1="152.0" x2="780" y2="152.0" class="chart-grid"/>
+ <text x="52" y="152.0" text-anchor="end" dominant-baseline="middle" class="chart-label">15</text>
+ <line x1="60" y1="86.0" x2="780" y2="86.0" class="chart-grid"/>
+ <text x="52" y="86.0" text-anchor="end" dominant-baseline="middle" class="chart-label">20</text>
+ <line x1="60" y1="20.0" x2="780" y2="20.0" class="chart-grid"/>
+ <text x="52" y="20.0" text-anchor="end" dominant-baseline="middle" class="chart-label">25</text>
+ <line x1="60" y1="20" x2="60" y2="350" class="chart-axis"/>
+ <line x1="60" y1="350" x2="780" y2="350" class="chart-axis"/>
+ <text x="420.0" y="395" text-anchor="middle" class="chart-title">Line Coverage (%)</text>
+ <text x="15" y="185.0" text-anchor="middle" transform="rotate(-90, 15, 185.0)" class="chart-title">Cyclomatic Complexity</text>
+ <a href="Fqdn.php.html#14"><circle cx="755.2" cy="99.2" r="20.0" class="bubble-success"><title>Indieinabox\ValueObjects\Fqdn — Coverage: 96.6% | Lines: 29 | Complexity: 19</title></circle></a>
+ <a href="AuthToken.php.html#14"><circle cx="720.0" cy="112.4" r="18.2" class="bubble-success"><title>Indieinabox\ValueObjects\AuthToken — Coverage: 91.7% | Lines: 24 | Complexity: 18</title></circle></a>
+ <a href="Slug.php.html#15"><circle cx="744.0" cy="178.4" r="16.6" class="bubble-success"><title>Indieinabox\ValueObjects\Slug — Coverage: 95.0% | Lines: 20 | Complexity: 13</title></circle></a>
+</svg>
+     </div>
+     <div>
+      <p class="hint">Sorted by descending <abbr title="Change Risk Anti-Patterns">CRAP</abbr> index.</p>
+      <div class="scrollbox">
+     <table class="crap">
+      <thead>
+       <tr>
+        <th scope="col">Class</th>
+        <th scope="col" class="number"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+        <th scope="col" class="number">Coverage</th>
+       </tr>
+      </thead>
+      <tbody>
+       <tr><td><a href="Fqdn.php.html#14">Indieinabox\ValueObjects\Fqdn</a></td><td class="number">19</td><td class="number">96.6%</td></tr>
+       <tr><td><a href="AuthToken.php.html#14">Indieinabox\ValueObjects\AuthToken</a></td><td class="number">18.19</td><td class="number">91.7%</td></tr>
+       <tr><td><a href="Slug.php.html#15">Indieinabox\ValueObjects\Slug</a></td><td class="number">13</td><td class="number">95.0%</td></tr>
+      </tbody>
+     </table>
+      </div>
+     </div>
+    </div>
+   </section>
+   <section>
+    <h2>Methods</h2>
+    <div class="panel">
+     <div class="chart">
+      <p class="hint">Line coverage against cyclomatic complexity. Bubble size is the number of executable lines; hover for details, click to navigate.</p>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400" preserveAspectRatio="xMidYMid meet">
+ <style>
+  .bubble-success { fill: var(--coverage-success-bar); opacity: 0.7; }
+  .bubble-warning { fill: var(--coverage-warning-bar); opacity: 0.7; }
+  .bubble-danger { fill: var(--coverage-danger-bar); opacity: 0.7; }
+  .bubble-success:hover, .bubble-warning:hover, .bubble-danger:hover { opacity: 1; stroke: var(--text); stroke-width: 1.5; }
+  .chart-grid { stroke: var(--border); stroke-width: 0.5; stroke-dasharray: 4,4; opacity: 0.5; }
+  .chart-axis { stroke: var(--border); stroke-width: 1; }
+  .chart-label { fill: var(--text); font-size: 11px; font-family: var(--font-sans); }
+  .chart-title { fill: var(--text); font-size: 12px; font-family: var(--font-sans); }
+ </style>
+ <line x1="60.0" y1="20" x2="60.0" y2="350" class="chart-grid"/>
+ <text x="60.0" y="368" text-anchor="middle" class="chart-label">0%</text>
+ <line x1="204.0" y1="20" x2="204.0" y2="350" class="chart-grid"/>
+ <text x="204.0" y="368" text-anchor="middle" class="chart-label">20%</text>
+ <line x1="348.0" y1="20" x2="348.0" y2="350" class="chart-grid"/>
+ <text x="348.0" y="368" text-anchor="middle" class="chart-label">40%</text>
+ <line x1="492.0" y1="20" x2="492.0" y2="350" class="chart-grid"/>
+ <text x="492.0" y="368" text-anchor="middle" class="chart-label">60%</text>
+ <line x1="636.0" y1="20" x2="636.0" y2="350" class="chart-grid"/>
+ <text x="636.0" y="368" text-anchor="middle" class="chart-label">80%</text>
+ <line x1="780.0" y1="20" x2="780.0" y2="350" class="chart-grid"/>
+ <text x="780.0" y="368" text-anchor="middle" class="chart-label">100%</text>
+ <line x1="60" y1="350.0" x2="780" y2="350.0" class="chart-grid"/>
+ <text x="52" y="350.0" text-anchor="end" dominant-baseline="middle" class="chart-label">0</text>
+ <line x1="60" y1="240.0" x2="780" y2="240.0" class="chart-grid"/>
+ <text x="52" y="240.0" text-anchor="end" dominant-baseline="middle" class="chart-label">2</text>
+ <line x1="60" y1="130.0" x2="780" y2="130.0" class="chart-grid"/>
+ <text x="52" y="130.0" text-anchor="end" dominant-baseline="middle" class="chart-label">4</text>
+ <line x1="60" y1="20.0" x2="780" y2="20.0" class="chart-grid"/>
+ <text x="52" y="20.0" text-anchor="end" dominant-baseline="middle" class="chart-label">6</text>
+ <line x1="60" y1="20" x2="60" y2="350" class="chart-axis"/>
+ <line x1="60" y1="350" x2="780" y2="350" class="chart-axis"/>
+ <text x="420.0" y="395" text-anchor="middle" class="chart-title">Line Coverage (%)</text>
+ <text x="15" y="185.0" text-anchor="middle" transform="rotate(-90, 15, 185.0)" class="chart-title">Cyclomatic Complexity</text>
+ <a href="Fqdn.php.html#32"><circle cx="700.0" cy="130.0" r="20.0" class="bubble-warning"><title>Indieinabox\ValueObjects\Fqdn::normalize — Coverage: 88.9% | Lines: 9 | Complexity: 4</title></circle></a>
+ <a href="Fqdn.php.html#52"><circle cx="780.0" cy="75.0" r="18.9" class="bubble-success"><title>Indieinabox\ValueObjects\Fqdn::isValid — Coverage: 100.0% | Lines: 8 | Complexity: 5</title></circle></a>
+ <a href="Slug.php.html#39"><circle cx="660.0" cy="240.0" r="16.3" class="bubble-warning"><title>Indieinabox\ValueObjects\Slug::fromTitle — Coverage: 83.3% | Lines: 6 | Complexity: 2</title></circle></a>
+ <a href="Slug.php.html#19"><circle cx="780.0" cy="240.0" r="14.9" class="bubble-success"><title>Indieinabox\ValueObjects\Slug::__construct — Coverage: 100.0% | Lines: 5 | Complexity: 2</title></circle></a>
+ <a href="AuthToken.php.html#18"><circle cx="780.0" cy="240.0" r="13.3" class="bubble-success"><title>Indieinabox\ValueObjects\AuthToken::__construct — Coverage: 100.0% | Lines: 4 | Complexity: 2</title></circle></a>
+ <a href="AuthToken.php.html#40"><circle cx="780.0" cy="240.0" r="13.3" class="bubble-success"><title>Indieinabox\ValueObjects\AuthToken::normalize — Coverage: 100.0% | Lines: 4 | Complexity: 2</title></circle></a>
+ <a href="AuthToken.php.html#72"><circle cx="600.0" cy="240.0" r="13.3" class="bubble-warning"><title>Indieinabox\ValueObjects\AuthToken::toMaskedString — Coverage: 75.0% | Lines: 4 | Complexity: 2</title></circle></a>
+ <a href="Fqdn.php.html#18"><circle cx="780.0" cy="240.0" r="13.3" class="bubble-success"><title>Indieinabox\ValueObjects\Fqdn::__construct — Coverage: 100.0% | Lines: 4 | Complexity: 2</title></circle></a>
+ <a href="AuthToken.php.html#49"><circle cx="780.0" cy="185.0" r="11.5" class="bubble-success"><title>Indieinabox\ValueObjects\AuthToken::isValid — Coverage: 100.0% | Lines: 3 | Complexity: 3</title></circle></a>
+ <a href="Slug.php.html#52"><circle cx="780.0" cy="185.0" r="11.5" class="bubble-success"><title>Indieinabox\ValueObjects\Slug::isValid — Coverage: 100.0% | Lines: 3 | Complexity: 3</title></circle></a>
+ <a href="AuthToken.php.html#93"><circle cx="780.0" cy="240.0" r="9.4" class="bubble-success"><title>Indieinabox\ValueObjects\AuthToken::equals — Coverage: 100.0% | Lines: 2 | Complexity: 2</title></circle></a>
+ <a href="Fqdn.php.html#86"><circle cx="780.0" cy="240.0" r="9.4" class="bubble-success"><title>Indieinabox\ValueObjects\Fqdn::equals — Coverage: 100.0% | Lines: 2 | Complexity: 2</title></circle></a>
+ <a href="Slug.php.html#66"><circle cx="780.0" cy="240.0" r="9.4" class="bubble-success"><title>Indieinabox\ValueObjects\Slug::equals — Coverage: 100.0% | Lines: 2 | Complexity: 2</title></circle></a>
+ <a href="AuthToken.php.html#27"><circle cx="60.0" cy="295.0" r="6.7" class="bubble-danger"><title>Indieinabox\ValueObjects\AuthToken::fromString — Coverage: 0.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="AuthToken.php.html#35"><circle cx="780.0" cy="295.0" r="6.7" class="bubble-success"><title>Indieinabox\ValueObjects\AuthToken::generate — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="AuthToken.php.html#59"><circle cx="780.0" cy="295.0" r="6.7" class="bubble-success"><title>Indieinabox\ValueObjects\AuthToken::toString — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="AuthToken.php.html#64"><circle cx="780.0" cy="295.0" r="6.7" class="bubble-success"><title>Indieinabox\ValueObjects\AuthToken::toHeader — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="AuthToken.php.html#85"><circle cx="780.0" cy="295.0" r="6.7" class="bubble-success"><title>Indieinabox\ValueObjects\AuthToken::hash — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="AuthToken.php.html#100"><circle cx="780.0" cy="295.0" r="6.7" class="bubble-success"><title>Indieinabox\ValueObjects\AuthToken::__toString — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="AuthToken.php.html#106"><circle cx="780.0" cy="295.0" r="6.7" class="bubble-success"><title>Indieinabox\ValueObjects\AuthToken::jsonSerialize — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="Fqdn.php.html#27"><circle cx="780.0" cy="295.0" r="6.7" class="bubble-success"><title>Indieinabox\ValueObjects\Fqdn::fromString — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="Fqdn.php.html#71"><circle cx="780.0" cy="295.0" r="6.7" class="bubble-success"><title>Indieinabox\ValueObjects\Fqdn::toString — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="Fqdn.php.html#76"><circle cx="780.0" cy="295.0" r="6.7" class="bubble-success"><title>Indieinabox\ValueObjects\Fqdn::getHost — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="Fqdn.php.html#81"><circle cx="780.0" cy="295.0" r="6.7" class="bubble-success"><title>Indieinabox\ValueObjects\Fqdn::toUrl — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="Fqdn.php.html#93"><circle cx="780.0" cy="295.0" r="6.7" class="bubble-success"><title>Indieinabox\ValueObjects\Fqdn::__toString — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="Fqdn.php.html#99"><circle cx="780.0" cy="295.0" r="6.7" class="bubble-success"><title>Indieinabox\ValueObjects\Fqdn::jsonSerialize — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="Slug.php.html#31"><circle cx="780.0" cy="295.0" r="6.7" class="bubble-success"><title>Indieinabox\ValueObjects\Slug::fromString — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="Slug.php.html#61"><circle cx="780.0" cy="295.0" r="6.7" class="bubble-success"><title>Indieinabox\ValueObjects\Slug::toString — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="Slug.php.html#73"><circle cx="780.0" cy="295.0" r="6.7" class="bubble-success"><title>Indieinabox\ValueObjects\Slug::__toString — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="Slug.php.html#79"><circle cx="780.0" cy="295.0" r="6.7" class="bubble-success"><title>Indieinabox\ValueObjects\Slug::jsonSerialize — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+</svg>
+     </div>
+     <div>
+      <p class="hint">Sorted by descending <abbr title="Change Risk Anti-Patterns">CRAP</abbr> index.</p>
+      <div class="scrollbox">
+     <table class="crap">
+      <thead>
+       <tr>
+        <th scope="col">Method</th>
+        <th scope="col" class="number"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+        <th scope="col" class="number">Coverage</th>
+       </tr>
+      </thead>
+      <tbody>
+       <tr><td><a href="Fqdn.php.html#52">Indieinabox\ValueObjects\Fqdn::isValid</a></td><td class="number">5</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="Fqdn.php.html#32">Indieinabox\ValueObjects\Fqdn::normalize</a></td><td class="number">4.02</td><td class="number">88.9%</td></tr>
+       <tr><td><a href="AuthToken.php.html#49">Indieinabox\ValueObjects\AuthToken::isValid</a></td><td class="number">3</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="Slug.php.html#52">Indieinabox\ValueObjects\Slug::isValid</a></td><td class="number">3</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="AuthToken.php.html#72">Indieinabox\ValueObjects\AuthToken::toMaskedString</a></td><td class="number">2.06</td><td class="number">75.0%</td></tr>
+       <tr><td><a href="Slug.php.html#39">Indieinabox\ValueObjects\Slug::fromTitle</a></td><td class="number">2.02</td><td class="number">83.3%</td></tr>
+       <tr><td><a href="AuthToken.php.html#18">Indieinabox\ValueObjects\AuthToken::__construct</a></td><td class="number">2</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="AuthToken.php.html#27">Indieinabox\ValueObjects\AuthToken::fromString</a></td><td class="number">2</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="AuthToken.php.html#40">Indieinabox\ValueObjects\AuthToken::normalize</a></td><td class="number">2</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="AuthToken.php.html#93">Indieinabox\ValueObjects\AuthToken::equals</a></td><td class="number">2</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="Fqdn.php.html#18">Indieinabox\ValueObjects\Fqdn::__construct</a></td><td class="number">2</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="Fqdn.php.html#86">Indieinabox\ValueObjects\Fqdn::equals</a></td><td class="number">2</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="Slug.php.html#19">Indieinabox\ValueObjects\Slug::__construct</a></td><td class="number">2</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="Slug.php.html#66">Indieinabox\ValueObjects\Slug::equals</a></td><td class="number">2</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="AuthToken.php.html#35">Indieinabox\ValueObjects\AuthToken::generate</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="AuthToken.php.html#59">Indieinabox\ValueObjects\AuthToken::toString</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="AuthToken.php.html#64">Indieinabox\ValueObjects\AuthToken::toHeader</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="AuthToken.php.html#85">Indieinabox\ValueObjects\AuthToken::hash</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="AuthToken.php.html#100">Indieinabox\ValueObjects\AuthToken::__toString</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="AuthToken.php.html#106">Indieinabox\ValueObjects\AuthToken::jsonSerialize</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="Fqdn.php.html#27">Indieinabox\ValueObjects\Fqdn::fromString</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="Fqdn.php.html#71">Indieinabox\ValueObjects\Fqdn::toString</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="Fqdn.php.html#76">Indieinabox\ValueObjects\Fqdn::getHost</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="Fqdn.php.html#81">Indieinabox\ValueObjects\Fqdn::toUrl</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="Fqdn.php.html#93">Indieinabox\ValueObjects\Fqdn::__toString</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="Fqdn.php.html#99">Indieinabox\ValueObjects\Fqdn::jsonSerialize</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="Slug.php.html#31">Indieinabox\ValueObjects\Slug::fromString</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="Slug.php.html#61">Indieinabox\ValueObjects\Slug::toString</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="Slug.php.html#73">Indieinabox\ValueObjects\Slug::__toString</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="Slug.php.html#79">Indieinabox\ValueObjects\Slug::jsonSerialize</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+      </tbody>
+     </table>
+      </div>
+     </div>
+    </div>
+   </section>
+  </main>
+  <footer>
+   <p class="credits">Generated by <a href="https://github.com/sebastianbergmann/php-code-coverage" target="_top">php-code-coverage 14.3.1</a> using <a href="https://www.php.net/" target="_top">PHP 8.4.27</a> and <a href="https://phpunit.de/">PHPUnit 13.3.1</a> at Mon Oct 26 6:16:30 UTC 2026.</p>
+  </footer>
+ </body>
+</html>

@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboard for Indieinabox\Services</title>
+  <link rel="stylesheet" href="../../../_css/style.css?v=14.3.1">
+  <link rel="stylesheet" href="../../../_css/custom.css">
+ </head>
+ <body>
+  <header class="masthead">
+   <nav aria-label="Breadcrumb">
+    <ol class="breadcrumbs">
+     <li><a href="../../index.html">(Global)</a></li>
+     <li><a href="../index.html">Indieinabox</a></li>
+     <li><a href="index.html">Services</a></li>
+     <li class="current">Dashboard</li>
+    </ol>
+   </nav>
+   <ul class="tabs">
+    <li><a href="../../../dashboard.html">Files</a></li>
+    <li><a href="../../../_classes/index.html" aria-current="page">Classes</a></li>
+   </ul>
+  </header>
+  <main class="dashboard">
+   <section>
+    <h2>Classes</h2>
+    <div class="panel">
+     <div class="chart">
+      <p class="hint">Line coverage against cyclomatic complexity. Bubble size is the number of executable lines; hover for details, click to navigate.</p>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400" preserveAspectRatio="xMidYMid meet">
+ <style>
+  .bubble-success { fill: var(--coverage-success-bar); opacity: 0.7; }
+  .bubble-warning { fill: var(--coverage-warning-bar); opacity: 0.7; }
+  .bubble-danger { fill: var(--coverage-danger-bar); opacity: 0.7; }
+  .bubble-success:hover, .bubble-warning:hover, .bubble-danger:hover { opacity: 1; stroke: var(--text); stroke-width: 1.5; }
+  .chart-grid { stroke: var(--border); stroke-width: 0.5; stroke-dasharray: 4,4; opacity: 0.5; }
+  .chart-axis { stroke: var(--border); stroke-width: 1; }
+  .chart-label { fill: var(--text); font-size: 11px; font-family: var(--font-sans); }
+  .chart-title { fill: var(--text); font-size: 12px; font-family: var(--font-sans); }
+ </style>
+ <line x1="60.0" y1="20" x2="60.0" y2="350" class="chart-grid"/>
+ <text x="60.0" y="368" text-anchor="middle" class="chart-label">0%</text>
+ <line x1="204.0" y1="20" x2="204.0" y2="350" class="chart-grid"/>
+ <text x="204.0" y="368" text-anchor="middle" class="chart-label">20%</text>
+ <line x1="348.0" y1="20" x2="348.0" y2="350" class="chart-grid"/>
+ <text x="348.0" y="368" text-anchor="middle" class="chart-label">40%</text>
+ <line x1="492.0" y1="20" x2="492.0" y2="350" class="chart-grid"/>
+ <text x="492.0" y="368" text-anchor="middle" class="chart-label">60%</text>
+ <line x1="636.0" y1="20" x2="636.0" y2="350" class="chart-grid"/>
+ <text x="636.0" y="368" text-anchor="middle" class="chart-label">80%</text>
+ <line x1="780.0" y1="20" x2="780.0" y2="350" class="chart-grid"/>
+ <text x="780.0" y="368" text-anchor="middle" class="chart-label">100%</text>
+ <line x1="60" y1="350.0" x2="780" y2="350.0" class="chart-grid"/>
+ <text x="52" y="350.0" text-anchor="end" dominant-baseline="middle" class="chart-label">0</text>
+ <line x1="60" y1="267.5" x2="780" y2="267.5" class="chart-grid"/>
+ <text x="52" y="267.5" text-anchor="end" dominant-baseline="middle" class="chart-label">50</text>
+ <line x1="60" y1="185.0" x2="780" y2="185.0" class="chart-grid"/>
+ <text x="52" y="185.0" text-anchor="end" dominant-baseline="middle" class="chart-label">100</text>
+ <line x1="60" y1="102.5" x2="780" y2="102.5" class="chart-grid"/>
+ <text x="52" y="102.5" text-anchor="end" dominant-baseline="middle" class="chart-label">150</text>
+ <line x1="60" y1="20.0" x2="780" y2="20.0" class="chart-grid"/>
+ <text x="52" y="20.0" text-anchor="end" dominant-baseline="middle" class="chart-label">200</text>
+ <line x1="60" y1="20" x2="60" y2="350" class="chart-axis"/>
+ <line x1="60" y1="350" x2="780" y2="350" class="chart-axis"/>
+ <text x="420.0" y="395" text-anchor="middle" class="chart-title">Line Coverage (%)</text>
+ <text x="15" y="185.0" text-anchor="middle" transform="rotate(-90, 15, 185.0)" class="chart-title">Cyclomatic Complexity</text>
+ <a href="../../../app/Services/MicrosubService.php.html#28"><circle cx="503.1" cy="117.4" r="20.0" class="bubble-warning"><title>Indieinabox\Services\MicrosubService — Coverage: 61.5% | Lines: 403 | Complexity: 141</title></circle></a>
+ <a href="../../../app/Services/FetchFeedsService.php.html#26"><circle cx="361.5" cy="190.0" r="16.9" class="bubble-danger"><title>Indieinabox\Services\FetchFeedsService — Coverage: 41.9% | Lines: 289 | Complexity: 97</title></circle></a>
+ <a href="../../../app/Services/MediaProxyService.php.html#17"><circle cx="513.2" cy="171.8" r="15.8" class="bubble-warning"><title>Indieinabox\Services\MediaProxyService — Coverage: 62.9% | Lines: 251 | Complexity: 108</title></circle></a>
+ <a href="../../../app/Services/LinkCheckerService.php.html#8"><circle cx="60.0" cy="239.4" r="15.6" class="bubble-danger"><title>Indieinabox\Services\LinkCheckerService — Coverage: 0.0% | Lines: 244 | Complexity: 67</title></circle></a>
+ <a href="../../../app/Services/ImportService.php.html#17"><circle cx="568.8" cy="218.0" r="15.5" class="bubble-warning"><title>Indieinabox\Services\ImportService — Coverage: 70.7% | Lines: 242 | Complexity: 80</title></circle></a>
+ <a href="../../../app/Services/UpdateManager.php.html#18"><circle cx="536.8" cy="219.7" r="14.9" class="bubble-warning"><title>Indieinabox\Services\UpdateManager — Coverage: 66.2% | Lines: 225 | Complexity: 79</title></circle></a>
+ <a href="../../../app/Services/WebPushService.php.html#17"><circle cx="652.5" cy="275.8" r="13.2" class="bubble-warning"><title>Indieinabox\Services\WebPushService — Coverage: 82.3% | Lines: 175 | Complexity: 45</title></circle></a>
+ <a href="../../../app/Services/ExportService.php.html#19"><circle cx="536.9" cy="257.6" r="12.5" class="bubble-warning"><title>Indieinabox\Services\ExportService — Coverage: 66.2% | Lines: 157 | Complexity: 56</title></circle></a>
+ <a href="../../../app/Services/InstallService.php.html#19"><circle cx="744.3" cy="295.6" r="11.0" class="bubble-success"><title>Indieinabox\Services\InstallService — Coverage: 95.0% | Lines: 121 | Complexity: 33</title></circle></a>
+ <a href="../../../app/Services/AiSummaryService.php.html#22"><circle cx="627.5" cy="288.9" r="10.8" class="bubble-warning"><title>Indieinabox\Services\AiSummaryService — Coverage: 78.8% | Lines: 118 | Complexity: 37</title></circle></a>
+ <a href="../../../app/Services/InstagramImportService.php.html#9"><circle cx="130.1" cy="255.9" r="10.6" class="bubble-danger"><title>Indieinabox\Services\InstagramImportService — Coverage: 9.7% | Lines: 113 | Complexity: 57</title></circle></a>
+ <a href="../../../app/Services/MicrosubFilterService.php.html#16"><circle cx="651.7" cy="222.9" r="10.0" class="bubble-warning"><title>Indieinabox\Services\MicrosubFilterService — Coverage: 82.2% | Lines: 101 | Complexity: 77</title></circle></a>
+ <a href="../../../app/Services/AutoSyndicationService.php.html#13"><circle cx="165.0" cy="280.7" r="9.8" class="bubble-danger"><title>Indieinabox\Services\AutoSyndicationService — Coverage: 14.6% | Lines: 96 | Complexity: 42</title></circle></a>
+ <a href="../../../app/Services/IngestInteractionService.php.html#19"><circle cx="716.2" cy="302.1" r="8.9" class="bubble-success"><title>Indieinabox\Services\IngestInteractionService — Coverage: 91.1% | Lines: 79 | Complexity: 29</title></circle></a>
+ <a href="../../../app/Services/PublishPostService.php.html#20"><circle cx="656.6" cy="307.1" r="8.3" class="bubble-warning"><title>Indieinabox\Services\PublishPostService — Coverage: 82.9% | Lines: 70 | Complexity: 26</title></circle></a>
+ <a href="../../../app/Services/ConfigurationService.php.html#20"><circle cx="503.1" cy="292.2" r="8.0" class="bubble-warning"><title>Indieinabox\Services\ConfigurationService — Coverage: 61.5% | Lines: 65 | Complexity: 35</title></circle></a>
+ <a href="../../../app/Services/BackupService.php.html#14"><circle cx="83.2" cy="305.4" r="7.8" class="bubble-danger"><title>Indieinabox\Services\BackupService — Coverage: 3.2% | Lines: 62 | Complexity: 27</title></circle></a>
+ <a href="../../../app/Services/ShortlinkService.php.html#12"><circle cx="671.3" cy="307.1" r="7.3" class="bubble-warning"><title>Indieinabox\Services\ShortlinkService — Coverage: 84.9% | Lines: 53 | Complexity: 26</title></circle></a>
+ <a href="../../../app/Services/InboxService.php.html#16"><circle cx="738.5" cy="320.3" r="7.2" class="bubble-success"><title>Indieinabox\Services\InboxService — Coverage: 94.2% | Lines: 52 | Complexity: 18</title></circle></a>
+ <a href="../../../app/Services/WebmentionService.php.html#16"><circle cx="732.0" cy="315.4" r="6.7" class="bubble-success"><title>Indieinabox\Services\WebmentionService — Coverage: 93.3% | Lines: 45 | Complexity: 21</title></circle></a>
+ <a href="../../../app/Services/OutboxService.php.html#17"><circle cx="711.4" cy="321.9" r="6.5" class="bubble-success"><title>Indieinabox\Services\OutboxService — Coverage: 90.5% | Lines: 42 | Complexity: 17</title></circle></a>
+ <a href="../../../app/Services/ArchiveService.php.html#14"><circle cx="722.4" cy="333.5" r="5.0" class="bubble-success"><title>Indieinabox\Services\ArchiveService — Coverage: 92.0% | Lines: 25 | Complexity: 10</title></circle></a>
+ <a href="../../../app/Services/ModerationService.php.html#16"><circle cx="690.0" cy="325.2" r="4.9" class="bubble-warning"><title>Indieinabox\Services\ModerationService — Coverage: 87.5% | Lines: 24 | Complexity: 15</title></circle></a>
+ <a href="../../../app/Services/UpdateService.php.html#13"><circle cx="465.0" cy="326.9" r="4.0" class="bubble-warning"><title>Indieinabox\Services\UpdateService — Coverage: 56.2% | Lines: 16 | Complexity: 14</title></circle></a>
+ <a href="../../../app/Services/FollowService.php.html#15"><circle cx="724.6" cy="331.9" r="4.0" class="bubble-success"><title>Indieinabox\Services\FollowService — Coverage: 92.3% | Lines: 13 | Complexity: 11</title></circle></a>
+</svg>
+     </div>
+     <div>
+      <p class="hint">Sorted by descending <abbr title="Change Risk Anti-Patterns">CRAP</abbr> index.</p>
+      <div class="scrollbox">
+     <table class="crap">
+      <thead>
+       <tr>
+        <th scope="col">Class</th>
+        <th scope="col" class="number"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+        <th scope="col" class="number">Coverage</th>
+       </tr>
+      </thead>
+      <tbody>
+       <tr><td><a href="../../../app/Services/LinkCheckerService.php.html#8">Indieinabox\Services\LinkCheckerService</a></td><td class="number">4556</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="../../../app/Services/InstagramImportService.php.html#9">Indieinabox\Services\InstagramImportService</a></td><td class="number">2446.54</td><td class="number">9.7%</td></tr>
+       <tr><td><a href="../../../app/Services/FetchFeedsService.php.html#26">Indieinabox\Services\FetchFeedsService</a></td><td class="number">1945.32</td><td class="number">41.9%</td></tr>
+       <tr><td><a href="../../../app/Services/MicrosubService.php.html#28">Indieinabox\Services\MicrosubService</a></td><td class="number">1272.14</td><td class="number">61.5%</td></tr>
+       <tr><td><a href="../../../app/Services/AutoSyndicationService.php.html#13">Indieinabox\Services\AutoSyndicationService</a></td><td class="number">1141.33</td><td class="number">14.6%</td></tr>
+       <tr><td><a href="../../../app/Services/MediaProxyService.php.html#17">Indieinabox\Services\MediaProxyService</a></td><td class="number">701.30</td><td class="number">62.9%</td></tr>
+       <tr><td><a href="../../../app/Services/BackupService.php.html#14">Indieinabox\Services\BackupService</a></td><td class="number">687.70</td><td class="number">3.2%</td></tr>
+       <tr><td><a href="../../../app/Services/UpdateManager.php.html#18">Indieinabox\Services\UpdateManager</a></td><td class="number">319.52</td><td class="number">66.2%</td></tr>
+       <tr><td><a href="../../../app/Services/ImportService.php.html#17">Indieinabox\Services\ImportService</a></td><td class="number">241.63</td><td class="number">70.7%</td></tr>
+       <tr><td><a href="../../../app/Services/ExportService.php.html#19">Indieinabox\Services\ExportService</a></td><td class="number">176.64</td><td class="number">66.2%</td></tr>
+       <tr><td><a href="../../../app/Services/MicrosubFilterService.php.html#16">Indieinabox\Services\MicrosubFilterService</a></td><td class="number">110.56</td><td class="number">82.2%</td></tr>
+       <tr><td><a href="../../../app/Services/ConfigurationService.php.html#20">Indieinabox\Services\ConfigurationService</a></td><td class="number">104.70</td><td class="number">61.5%</td></tr>
+       <tr><td><a href="../../../app/Services/WebPushService.php.html#17">Indieinabox\Services\WebPushService</a></td><td class="number">56.26</td><td class="number">82.3%</td></tr>
+       <tr><td><a href="../../../app/Services/AiSummaryService.php.html#22">Indieinabox\Services\AiSummaryService</a></td><td class="number">50.02</td><td class="number">78.8%</td></tr>
+       <tr><td><a href="../../../app/Services/InstallService.php.html#19">Indieinabox\Services\InstallService</a></td><td class="number">33</td><td class="number">95.0%</td></tr>
+       <tr><td><a href="../../../app/Services/UpdateService.php.html#13">Indieinabox\Services\UpdateService</a></td><td class="number">30.41</td><td class="number">56.2%</td></tr>
+       <tr><td><a href="../../../app/Services/IngestInteractionService.php.html#19">Indieinabox\Services\IngestInteractionService</a></td><td class="number">29.59</td><td class="number">91.1%</td></tr>
+       <tr><td><a href="../../../app/Services/PublishPostService.php.html#20">Indieinabox\Services\PublishPostService</a></td><td class="number">29.41</td><td class="number">82.9%</td></tr>
+       <tr><td><a href="../../../app/Services/ShortlinkService.php.html#12">Indieinabox\Services\ShortlinkService</a></td><td class="number">28.32</td><td class="number">84.9%</td></tr>
+       <tr><td><a href="../../../app/Services/WebmentionService.php.html#16">Indieinabox\Services\WebmentionService</a></td><td class="number">21.13</td><td class="number">93.3%</td></tr>
+       <tr><td><a href="../../../app/Services/InboxService.php.html#16">Indieinabox\Services\InboxService</a></td><td class="number">18.06</td><td class="number">94.2%</td></tr>
+       <tr><td><a href="../../../app/Services/OutboxService.php.html#17">Indieinabox\Services\OutboxService</a></td><td class="number">17.25</td><td class="number">90.5%</td></tr>
+       <tr><td><a href="../../../app/Services/ModerationService.php.html#16">Indieinabox\Services\ModerationService</a></td><td class="number">15.44</td><td class="number">87.5%</td></tr>
+       <tr><td><a href="../../../app/Services/FollowService.php.html#15">Indieinabox\Services\FollowService</a></td><td class="number">11.06</td><td class="number">92.3%</td></tr>
+       <tr><td><a href="../../../app/Services/ArchiveService.php.html#14">Indieinabox\Services\ArchiveService</a></td><td class="number">10.05</td><td class="number">92.0%</td></tr>
+      </tbody>
+     </table>
+      </div>
+     </div>
+    </div>
+   </section>
+   <section>
+    <h2>Methods</h2>
+    <div class="panel">
+     <div class="chart">
+      <p class="hint">Line coverage against cyclomatic complexity. Bubble size is the number of executable lines; hover for details, click to navigate.</p>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400" preserveAspectRatio="xMidYMid meet">
+ <style>
+  .bubble-success { fill: var(--coverage-success-bar); opacity: 0.7; }
+  .bubble-warning { fill: var(--coverage-warning-bar); opacity: 0.7; }
+  .bubble-danger { fill: var(--coverage-danger-bar); opacity: 0.7; }
+  .bubble-success:hover, .bubble-warning:hover, .bubble-danger:hover { opacity: 1; stroke: var(--text); stroke-width: 1.5; }
+  .chart-grid { stroke: var(--border); stroke-width: 0.5; stroke-dasharray: 4,4; opacity: 0.5; }
+  .chart-axis { stroke: var(--border); stroke-width: 1; }
+  .chart-label { fill: var(--text); font-size: 11px; font-family: var(--font-sans); }
+  .chart-title { fill: var(--text); font-size: 12px; font-family: var(--font-sans); }
+ </style>
+ <line x1="60.0" y1="20" x2="60.0" y2="350" class="chart-grid"/>
+ <text x="60.0" y="368" text-anchor="middle" class="chart-label">0%</text>
+ <line x1="204.0" y1="20" x2="204.0" y2="350" class="chart-grid"/>
+ <text x="204.0" y="368" text-anchor="middle" class="chart-label">20%</text>
+ <line x1="348.0" y1="20" x2="348.0" y2="350" class="chart-grid"/>
+ <text x="348.0" y="368" text-anchor="middle" class="chart-label">40%</text>
+ <line x1="492.0" y1="20" x2="492.0" y2="350" class="chart-grid"/>
+ <text x="492.0" y="368" text-anchor="middle" class="chart-label">60%</text>
+ <line x1="636.0" y1="20" x2="636.0" y2="350" class="chart-grid"/>
+ <text x="636.0" y="368" text-anchor="middle" class="chart-label">80%</text>
+ <line x1="780.0" y1="20" x2="780.0" y2="350" class="chart-grid"/>
+ <text x="780.0" y="368" text-anchor="middle" class="chart-label">100%</text>
+ <line x1="60" y1="350.0" x2="780" y2="350.0" class="chart-grid"/>
+ <text x="52" y="350.0" text-anchor="end" dominant-baseline="middle" class="chart-label">0</text>
+ <line x1="60" y1="240.0" x2="780" y2="240.0" class="chart-grid"/>
+ <text x="52" y="240.0" text-anchor="end" dominant-baseline="middle" class="chart-label">20</text>
+ <line x1="60" y1="130.0" x2="780" y2="130.0" class="chart-grid"/>
+ <text x="52" y="130.0" text-anchor="end" dominant-baseline="middle" class="chart-label">40</text>
+ <line x1="60" y1="20.0" x2="780" y2="20.0" class="chart-grid"/>
+ <text x="52" y="20.0" text-anchor="end" dominant-baseline="middle" class="chart-label">60</text>
+ <line x1="60" y1="20" x2="60" y2="350" class="chart-axis"/>
+ <line x1="60" y1="350" x2="780" y2="350" class="chart-axis"/>
+ <text x="420.0" y="395" text-anchor="middle" class="chart-title">Line Coverage (%)</text>
+ <text x="15" y="185.0" text-anchor="middle" transform="rotate(-90, 15, 185.0)" class="chart-title">Cyclomatic Complexity</text>
+ <a href="../../../app/Services/MicrosubService.php.html#318"><circle cx="374.6" cy="119.0" r="20.0" class="bubble-danger"><title>Indieinabox\Services\MicrosubService::follow — Coverage: 43.7% | Lines: 103 | Complexity: 42</title></circle></a>
+ <a href="../../../app/Services/InstagramImportService.php.html#34"><circle cx="74.7" cy="80.5" r="19.5" class="bubble-danger"><title>Indieinabox\Services\InstagramImportService::process — Coverage: 2.0% | Lines: 98 | Complexity: 49</title></circle></a>
+ <a href="../../../app/Services/LinkCheckerService.php.html#150"><circle cx="60.0" cy="207.0" r="19.5" class="bubble-danger"><title>Indieinabox\Services\LinkCheckerService::checkInternalLinks — Coverage: 0.0% | Lines: 98 | Complexity: 26</title></circle></a>
+ <a href="../../../app/Services/ImportService.php.html#99"><circle cx="701.7" cy="185.0" r="18.9" class="bubble-warning"><title>Indieinabox\Services\ImportService::import — Coverage: 89.1% | Lines: 92 | Complexity: 30</title></circle></a>
+ <a href="../../../app/Services/MicrosubService.php.html#126"><circle cx="763.4" cy="218.0" r="18.4" class="bubble-success"><title>Indieinabox\Services\MicrosubService::getTimeline — Coverage: 97.7% | Lines: 87 | Complexity: 24</title></circle></a>
+ <a href="../../../app/Services/AutoSyndicationService.php.html#67"><circle cx="60.0" cy="174.0" r="16.6" class="bubble-danger"><title>Indieinabox\Services\AutoSyndicationService::processFile — Coverage: 0.0% | Lines: 71 | Complexity: 32</title></circle></a>
+ <a href="../../../app/Services/ExportService.php.html#43"><circle cx="571.3" cy="256.5" r="16.4" class="bubble-warning"><title>Indieinabox\Services\ExportService::export — Coverage: 71.0% | Lines: 69 | Complexity: 17</title></circle></a>
+ <a href="../../../app/Services/LinkCheckerService.php.html#284"><circle cx="60.0" cy="284.0" r="15.8" class="bubble-danger"><title>Indieinabox\Services\LinkCheckerService::checkExternalLinks — Coverage: 0.0% | Lines: 64 | Complexity: 12</title></circle></a>
+ <a href="../../../app/Services/MediaProxyService.php.html#275"><circle cx="532.5" cy="234.5" r="15.8" class="bubble-warning"><title>Indieinabox\Services\MediaProxyService::fetchAndCache — Coverage: 65.6% | Lines: 64 | Complexity: 21</title></circle></a>
+ <a href="../../../app/Services/MicrosubService.php.html#598"><circle cx="116.2" cy="267.5" r="15.8" class="bubble-danger"><title>Indieinabox\Services\MicrosubService::interact — Coverage: 7.8% | Lines: 64 | Complexity: 15</title></circle></a>
+ <a href="../../../app/Services/FetchFeedsService.php.html#292"><circle cx="757.1" cy="289.5" r="15.6" class="bubble-success"><title>Indieinabox\Services\FetchFeedsService::saveEntry — Coverage: 96.8% | Lines: 63 | Complexity: 11</title></circle></a>
+ <a href="../../../app/Services/PublishPostService.php.html#62"><circle cx="658.0" cy="251.0" r="15.1" class="bubble-warning"><title>Indieinabox\Services\PublishPostService::publish — Coverage: 83.1% | Lines: 59 | Complexity: 18</title></circle></a>
+ <a href="../../../app/Services/IngestInteractionService.php.html#60"><circle cx="780.0" cy="262.0" r="15.0" class="bubble-success"><title>Indieinabox\Services\IngestInteractionService::ingest — Coverage: 100.0% | Lines: 58 | Complexity: 16</title></circle></a>
+ <a href="../../../app/Services/FetchFeedsService.php.html#131"><circle cx="589.0" cy="273.0" r="13.8" class="bubble-warning"><title>Indieinabox\Services\FetchFeedsService::fetchSubscription — Coverage: 73.5% | Lines: 49 | Complexity: 14</title></circle></a>
+ <a href="../../../app/Services/FetchFeedsService.php.html#407"><circle cx="60.0" cy="207.0" r="13.8" class="bubble-danger"><title>Indieinabox\Services\FetchFeedsService::downloadMedia — Coverage: 0.0% | Lines: 49 | Complexity: 26</title></circle></a>
+ <a href="../../../app/Services/InstallService.php.html#35"><circle cx="735.0" cy="295.0" r="13.7" class="bubble-success"><title>Indieinabox\Services\InstallService::install — Coverage: 93.8% | Lines: 48 | Complexity: 10</title></circle></a>
+ <a href="../../../app/Services/UpdateManager.php.html#55"><circle cx="705.0" cy="295.0" r="13.7" class="bubble-warning"><title>Indieinabox\Services\UpdateManager::checkAvailableVersions — Coverage: 89.6% | Lines: 48 | Complexity: 10</title></circle></a>
+ <a href="../../../app/Services/AiSummaryService.php.html#121"><circle cx="688.1" cy="284.0" r="13.5" class="bubble-warning"><title>Indieinabox\Services\AiSummaryService::generateSummary — Coverage: 87.2% | Lines: 47 | Complexity: 12</title></circle></a>
+ <a href="../../../app/Services/MicrosubService.php.html#464"><circle cx="397.0" cy="251.0" r="13.5" class="bubble-danger"><title>Indieinabox\Services\MicrosubService::unfollow — Coverage: 46.8% | Lines: 47 | Complexity: 18</title></circle></a>
+ <a href="../../../app/Services/BackupService.php.html#31"><circle cx="60.0" cy="256.5" r="13.2" class="bubble-danger"><title>Indieinabox\Services\BackupService::run — Coverage: 0.0% | Lines: 45 | Complexity: 17</title></circle></a>
+ <a href="../../../app/Services/LinkCheckerService.php.html#19"><circle cx="60.0" cy="245.5" r="13.1" class="bubble-danger"><title>Indieinabox\Services\LinkCheckerService::run — Coverage: 0.0% | Lines: 44 | Complexity: 19</title></circle></a>
+ <a href="../../../app/Services/UpdateManager.php.html#317"><circle cx="616.4" cy="256.5" r="13.1" class="bubble-warning"><title>Indieinabox\Services\UpdateManager::processScheduledUpdate — Coverage: 77.3% | Lines: 44 | Complexity: 17</title></circle></a>
+ <a href="../../../app/Services/FetchFeedsService.php.html#217"><circle cx="60.0" cy="278.5" r="12.9" class="bubble-danger"><title>Indieinabox\Services\FetchFeedsService::parseActivityPub — Coverage: 0.0% | Lines: 43 | Complexity: 13</title></circle></a>
+ <a href="../../../app/Services/ImportService.php.html#37"><circle cx="344.7" cy="311.5" r="12.9" class="bubble-danger"><title>Indieinabox\Services\ImportService::inspect — Coverage: 39.5% | Lines: 43 | Complexity: 7</title></circle></a>
+ <a href="../../../app/Services/MediaProxyService.php.html#411"><circle cx="60.0" cy="278.5" r="12.1" class="bubble-danger"><title>Indieinabox\Services\MediaProxyService::downloadFileSafely — Coverage: 0.0% | Lines: 38 | Complexity: 13</title></circle></a>
+ <a href="../../../app/Services/MicrosubService.php.html#539"><circle cx="685.3" cy="289.5" r="12.1" class="bubble-warning"><title>Indieinabox\Services\MicrosubService::search — Coverage: 86.8% | Lines: 38 | Complexity: 11</title></circle></a>
+ <a href="../../../app/Services/WebPushService.php.html#64"><circle cx="742.1" cy="295.0" r="12.1" class="bubble-success"><title>Indieinabox\Services\WebPushService::getVapidKeys — Coverage: 94.7% | Lines: 38 | Complexity: 10</title></circle></a>
+ <a href="../../../app/Services/ExportService.php.html#213"><circle cx="332.4" cy="251.0" r="12.0" class="bubble-danger"><title>Indieinabox\Services\ExportService::createArchiveFromDirectory — Coverage: 37.8% | Lines: 37 | Complexity: 18</title></circle></a>
+ <a href="../../../app/Services/ShortlinkService.php.html#82"><circle cx="636.0" cy="256.5" r="11.7" class="bubble-warning"><title>Indieinabox\Services\ShortlinkService::requestRemoteShortlink — Coverage: 80.0% | Lines: 35 | Complexity: 17</title></circle></a>
+ <a href="../../../app/Services/InstallService.php.html#157"><circle cx="780.0" cy="306.0" r="11.3" class="bubble-success"><title>Indieinabox\Services\InstallService::configureSiteSettings — Coverage: 100.0% | Lines: 33 | Complexity: 8</title></circle></a>
+ <a href="../../../app/Services/FetchFeedsService.php.html#498"><circle cx="60.0" cy="306.0" r="11.1" class="bubble-danger"><title>Indieinabox\Services\FetchFeedsService::fetchApJson — Coverage: 0.0% | Lines: 32 | Complexity: 8</title></circle></a>
+ <a href="../../../app/Services/UpdateManager.php.html#151"><circle cx="60.0" cy="311.5" r="10.8" class="bubble-danger"><title>Indieinabox\Services\UpdateManager::downloadAndInstall — Coverage: 0.0% | Lines: 30 | Complexity: 7</title></circle></a>
+ <a href="../../../app/Services/ImportService.php.html#334"><circle cx="342.9" cy="295.0" r="10.4" class="bubble-danger"><title>Indieinabox\Services\ImportService::extractArchive — Coverage: 39.3% | Lines: 28 | Complexity: 10</title></circle></a>
+ <a href="../../../app/Services/MediaProxyService.php.html#137"><circle cx="522.9" cy="240.0" r="10.4" class="bubble-warning"><title>Indieinabox\Services\MediaProxyService::isSafeUrl — Coverage: 64.3% | Lines: 28 | Complexity: 20</title></circle></a>
+ <a href="../../../app/Services/WebPushService.php.html#234"><circle cx="673.3" cy="300.5" r="10.2" class="bubble-warning"><title>Indieinabox\Services\WebPushService::sendNotification — Coverage: 85.2% | Lines: 27 | Complexity: 9</title></circle></a>
+ <a href="../../../app/Services/ImportService.php.html#286"><circle cx="641.5" cy="295.0" r="10.0" class="bubble-warning"><title>Indieinabox\Services\ImportService::verifyManifestFiles — Coverage: 80.8% | Lines: 26 | Complexity: 10</title></circle></a>
+ <a href="../../../app/Services/LinkCheckerService.php.html#94"><circle cx="60.0" cy="339.0" r="10.0" class="bubble-danger"><title>Indieinabox\Services\LinkCheckerService::writeReport — Coverage: 0.0% | Lines: 26 | Complexity: 2</title></circle></a>
+ <a href="../../../app/Services/MediaProxyService.php.html#375"><circle cx="780.0" cy="344.5" r="9.9" class="bubble-success"><title>Indieinabox\Services\MediaProxyService::rewriteHtmlMedia — Coverage: 100.0% | Lines: 25 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Services/ConfigurationService.php.html#51"><circle cx="686.1" cy="317.0" r="9.5" class="bubble-warning"><title>Indieinabox\Services\ConfigurationService::bootstrap — Coverage: 87.0% | Lines: 23 | Complexity: 6</title></circle></a>
+ <a href="../../../app/Services/MediaProxyService.php.html#195"><circle cx="592.2" cy="273.0" r="9.5" class="bubble-warning"><title>Indieinabox\Services\MediaProxyService::isPublicIp — Coverage: 73.9% | Lines: 23 | Complexity: 14</title></circle></a>
+ <a href="../../../app/Services/UpdateManager.php.html#262"><circle cx="748.7" cy="322.5" r="9.5" class="bubble-success"><title>Indieinabox\Services\UpdateManager::getLocalBackups — Coverage: 95.7% | Lines: 23 | Complexity: 5</title></circle></a>
+ <a href="../../../app/Services/ExportService.php.html#175"><circle cx="747.3" cy="311.5" r="9.2" class="bubble-success"><title>Indieinabox\Services\ExportService::copyDirectoryRecursive — Coverage: 95.5% | Lines: 22 | Complexity: 7</title></circle></a>
+ <a href="../../../app/Services/MicrosubFilterService.php.html#153"><circle cx="616.4" cy="240.0" r="9.2" class="bubble-warning"><title>Indieinabox\Services\MicrosubFilterService::matchesDomain — Coverage: 77.3% | Lines: 22 | Complexity: 20</title></circle></a>
+ <a href="../../../app/Services/MicrosubService.php.html#256"><circle cx="780.0" cy="306.0" r="9.0" class="bubble-success"><title>Indieinabox\Services\MicrosubService::markRead — Coverage: 100.0% | Lines: 21 | Complexity: 8</title></circle></a>
+ <a href="../../../app/Services/WebPushService.php.html#282"><circle cx="60.0" cy="328.0" r="9.0" class="bubble-danger"><title>Indieinabox\Services\WebPushService::dispatchHttp — Coverage: 0.0% | Lines: 21 | Complexity: 4</title></circle></a>
+ <a href="../../../app/Services/ImportService.php.html#384"><circle cx="672.0" cy="311.5" r="8.8" class="bubble-warning"><title>Indieinabox\Services\ImportService::copyDirectoryOverwrite — Coverage: 85.0% | Lines: 20 | Complexity: 7</title></circle></a>
+ <a href="../../../app/Services/WebPushService.php.html#124"><circle cx="744.0" cy="333.5" r="8.8" class="bubble-success"><title>Indieinabox\Services\WebPushService::createVapidJwt — Coverage: 95.0% | Lines: 20 | Complexity: 3</title></circle></a>
+ <a href="../../../app/Services/AiSummaryService.php.html#221"><circle cx="704.2" cy="317.0" r="8.6" class="bubble-warning"><title>Indieinabox\Services\AiSummaryService::syncFile — Coverage: 89.5% | Lines: 19 | Complexity: 6</title></circle></a>
+ <a href="../../../app/Services/UpdateManager.php.html#225"><circle cx="590.5" cy="306.0" r="8.6" class="bubble-warning"><title>Indieinabox\Services\UpdateManager::rollback — Coverage: 73.7% | Lines: 19 | Complexity: 8</title></circle></a>
+ <a href="../../../app/Services/FetchFeedsService.php.html#43"><circle cx="540.0" cy="300.5" r="8.4" class="bubble-warning"><title>Indieinabox\Services\FetchFeedsService::__construct — Coverage: 66.7% | Lines: 18 | Complexity: 9</title></circle></a>
+ <a href="../../../app/Services/InstallService.php.html#111"><circle cx="700.0" cy="295.0" r="8.4" class="bubble-warning"><title>Indieinabox\Services\InstallService::configureDbLocation — Coverage: 88.9% | Lines: 18 | Complexity: 10</title></circle></a>
+ <a href="../../../app/Services/InstallService.php.html#208"><circle cx="740.0" cy="333.5" r="8.4" class="bubble-success"><title>Indieinabox\Services\InstallService::buildSite — Coverage: 94.4% | Lines: 18 | Complexity: 3</title></circle></a>
+ <a href="../../../app/Services/MicrosubFilterService.php.html#119"><circle cx="660.0" cy="262.0" r="8.4" class="bubble-warning"><title>Indieinabox\Services\MicrosubFilterService::matchesAuthor — Coverage: 83.3% | Lines: 18 | Complexity: 16</title></circle></a>
+ <a href="../../../app/Services/OutboxService.php.html#23"><circle cx="695.3" cy="306.0" r="8.1" class="bubble-warning"><title>Indieinabox\Services\OutboxService::__construct — Coverage: 88.2% | Lines: 17 | Complexity: 8</title></circle></a>
+ <a href="../../../app/Services/WebmentionService.php.html#56"><circle cx="695.3" cy="295.0" r="8.1" class="bubble-warning"><title>Indieinabox\Services\WebmentionService::isValidTarget — Coverage: 88.2% | Lines: 17 | Complexity: 10</title></circle></a>
+ <a href="../../../app/Services/MicrosubFilterService.php.html#36"><circle cx="735.0" cy="306.0" r="7.9" class="bubble-success"><title>Indieinabox\Services\MicrosubFilterService::evaluate — Coverage: 93.8% | Lines: 16 | Complexity: 8</title></circle></a>
+ <a href="../../../app/Services/MicrosubService.php.html#38"><circle cx="690.0" cy="295.0" r="7.9" class="bubble-warning"><title>Indieinabox\Services\MicrosubService::__construct — Coverage: 87.5% | Lines: 16 | Complexity: 10</title></circle></a>
+ <a href="../../../app/Services/ShortlinkService.php.html#43"><circle cx="735.0" cy="306.0" r="7.9" class="bubble-success"><title>Indieinabox\Services\ShortlinkService::getShortlink — Coverage: 93.8% | Lines: 16 | Complexity: 8</title></circle></a>
+ <a href="../../../app/Services/WebPushService.php.html#189"><circle cx="735.0" cy="333.5" r="7.9" class="bubble-success"><title>Indieinabox\Services\WebPushService::subscribe — Coverage: 93.8% | Lines: 16 | Complexity: 3</title></circle></a>
+ <a href="../../../app/Services/ImportService.php.html#255"><circle cx="540.0" cy="311.5" r="7.6" class="bubble-warning"><title>Indieinabox\Services\ImportService::resolveTargetDatabasePath — Coverage: 66.7% | Lines: 15 | Complexity: 7</title></circle></a>
+ <a href="../../../app/Services/InboxService.php.html#124"><circle cx="780.0" cy="333.5" r="7.6" class="bubble-success"><title>Indieinabox\Services\InboxService::processPendingQueue — Coverage: 100.0% | Lines: 15 | Complexity: 3</title></circle></a>
+ <a href="../../../app/Services/MicrosubFilterService.php.html#93"><circle cx="636.0" cy="284.0" r="7.6" class="bubble-warning"><title>Indieinabox\Services\MicrosubFilterService::matchesKeyword — Coverage: 80.0% | Lines: 15 | Complexity: 12</title></circle></a>
+ <a href="../../../app/Services/OutboxService.php.html#92"><circle cx="732.0" cy="322.5" r="7.6" class="bubble-success"><title>Indieinabox\Services\OutboxService::dispatchPending — Coverage: 93.3% | Lines: 15 | Complexity: 5</title></circle></a>
+ <a href="../../../app/Services/WebPushService.php.html#159"><circle cx="732.0" cy="339.0" r="7.6" class="bubble-success"><title>Indieinabox\Services\WebPushService::derToP1363 — Coverage: 93.3% | Lines: 15 | Complexity: 2</title></circle></a>
+ <a href="../../../app/Services/WebPushService.php.html#316"><circle cx="732.0" cy="328.0" r="7.6" class="bubble-success"><title>Indieinabox\Services\WebPushService::broadcast — Coverage: 93.3% | Lines: 15 | Complexity: 4</title></circle></a>
+ <a href="../../../app/Services/IngestInteractionService.php.html#25"><circle cx="420.0" cy="295.0" r="7.4" class="bubble-danger"><title>Indieinabox\Services\IngestInteractionService::__construct — Coverage: 50.0% | Lines: 14 | Complexity: 10</title></circle></a>
+ <a href="../../../app/Services/MediaProxyService.php.html#61"><circle cx="162.9" cy="300.5" r="7.4" class="bubble-danger"><title>Indieinabox\Services\MediaProxyService::resolveSecretKey — Coverage: 14.3% | Lines: 14 | Complexity: 9</title></circle></a>
+ <a href="../../../app/Services/MediaProxyService.php.html#488"><circle cx="780.0" cy="344.5" r="7.4" class="bubble-success"><title>Indieinabox\Services\MediaProxyService::mimeToExtension — Coverage: 100.0% | Lines: 14 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Services/UpdateManager.php.html#385"><circle cx="162.9" cy="306.0" r="7.4" class="bubble-danger"><title>Indieinabox\Services\UpdateManager::getCurrentExecutablePath — Coverage: 14.3% | Lines: 14 | Complexity: 8</title></circle></a>
+ <a href="../../../app/Services/InboxService.php.html#64"><circle cx="669.2" cy="306.0" r="7.1" class="bubble-warning"><title>Indieinabox\Services\InboxService::handleActivity — Coverage: 84.6% | Lines: 13 | Complexity: 8</title></circle></a>
+ <a href="../../../app/Services/UpdateManager.php.html#200"><circle cx="669.2" cy="328.0" r="7.1" class="bubble-warning"><title>Indieinabox\Services\UpdateManager::backupCurrentVersion — Coverage: 84.6% | Lines: 13 | Complexity: 4</title></circle></a>
+ <a href="../../../app/Services/AiSummaryService.php.html#61"><circle cx="780.0" cy="344.5" r="6.8" class="bubble-success"><title>Indieinabox\Services\AiSummaryService::cleanBody — Coverage: 100.0% | Lines: 12 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Services/AutoSyndicationService.php.html#29"><circle cx="660.0" cy="328.0" r="6.8" class="bubble-warning"><title>Indieinabox\Services\AutoSyndicationService::process — Coverage: 83.3% | Lines: 12 | Complexity: 4</title></circle></a>
+ <a href="../../../app/Services/ExportService.php.html#148"><circle cx="540.0" cy="322.5" r="6.8" class="bubble-warning"><title>Indieinabox\Services\ExportService::resolveDatabasePath — Coverage: 66.7% | Lines: 12 | Complexity: 5</title></circle></a>
+ <a href="../../../app/Services/FetchFeedsService.php.html#387"><circle cx="180.0" cy="328.0" r="6.8" class="bubble-danger"><title>Indieinabox\Services\FetchFeedsService::processHtmlMedia — Coverage: 16.7% | Lines: 12 | Complexity: 4</title></circle></a>
+ <a href="../../../app/Services/MediaProxyService.php.html#33"><circle cx="720.0" cy="317.0" r="6.8" class="bubble-success"><title>Indieinabox\Services\MediaProxyService::__construct — Coverage: 91.7% | Lines: 12 | Complexity: 6</title></circle></a>
+ <a href="../../../app/Services/MediaProxyService.php.html#245"><circle cx="660.0" cy="306.0" r="6.8" class="bubble-warning"><title>Indieinabox\Services\MediaProxyService::getCachedPath — Coverage: 83.3% | Lines: 12 | Complexity: 8</title></circle></a>
+ <a href="../../../app/Services/AiSummaryService.php.html#93"><circle cx="714.5" cy="322.5" r="6.5" class="bubble-success"><title>Indieinabox\Services\AiSummaryService::isSummaryStale — Coverage: 90.9% | Lines: 11 | Complexity: 5</title></circle></a>
+ <a href="../../../app/Services/ArchiveService.php.html#47"><circle cx="780.0" cy="333.5" r="6.5" class="bubble-success"><title>Indieinabox\Services\ArchiveService::findSnapshot — Coverage: 100.0% | Lines: 11 | Complexity: 3</title></circle></a>
+ <a href="../../../app/Services/BackupService.php.html#119"><circle cx="60.0" cy="322.5" r="6.5" class="bubble-danger"><title>Indieinabox\Services\BackupService::rotateBackups — Coverage: 0.0% | Lines: 11 | Complexity: 5</title></circle></a>
+ <a href="../../../app/Services/ConfigurationService.php.html#165"><circle cx="190.9" cy="311.5" r="6.5" class="bubble-danger"><title>Indieinabox\Services\ConfigurationService::detectPrettyLinksSupport — Coverage: 18.2% | Lines: 11 | Complexity: 7</title></circle></a>
+ <a href="../../../app/Services/ExportService.php.html#280"><circle cx="714.5" cy="328.0" r="6.5" class="bubble-success"><title>Indieinabox\Services\ExportService::removeDirectoryRecursive — Coverage: 90.9% | Lines: 11 | Complexity: 4</title></circle></a>
+ <a href="../../../app/Services/ImportService.php.html#421"><circle cx="714.5" cy="328.0" r="6.5" class="bubble-success"><title>Indieinabox\Services\ImportService::deleteDirectoryRecursive — Coverage: 90.9% | Lines: 11 | Complexity: 4</title></circle></a>
+ <a href="../../../app/Services/InboxService.php.html#98"><circle cx="780.0" cy="328.0" r="6.5" class="bubble-success"><title>Indieinabox\Services\InboxService::handleFollow — Coverage: 100.0% | Lines: 11 | Complexity: 4</title></circle></a>
+ <a href="../../../app/Services/MediaProxyService.php.html#94"><circle cx="649.1" cy="306.0" r="6.5" class="bubble-warning"><title>Indieinabox\Services\MediaProxyService::generateProxiedUrl — Coverage: 81.8% | Lines: 11 | Complexity: 8</title></circle></a>
+ <a href="../../../app/Services/MicrosubService.php.html#295"><circle cx="780.0" cy="339.0" r="6.5" class="bubble-success"><title>Indieinabox\Services\MicrosubService::getSubscriptions — Coverage: 100.0% | Lines: 11 | Complexity: 2</title></circle></a>
+ <a href="../../../app/Services/ModerationService.php.html#21"><circle cx="649.1" cy="306.0" r="6.5" class="bubble-warning"><title>Indieinabox\Services\ModerationService::__construct — Coverage: 81.8% | Lines: 11 | Complexity: 8</title></circle></a>
+ <a href="../../../app/Services/PublishPostService.php.html#27"><circle cx="649.1" cy="306.0" r="6.5" class="bubble-warning"><title>Indieinabox\Services\PublishPostService::__construct — Coverage: 81.8% | Lines: 11 | Complexity: 8</title></circle></a>
+ <a href="../../../app/Services/WebmentionService.php.html#112"><circle cx="780.0" cy="333.5" r="6.5" class="bubble-success"><title>Indieinabox\Services\WebmentionService::saveMention — Coverage: 100.0% | Lines: 11 | Complexity: 3</title></circle></a>
+ <a href="../../../app/Services/AiSummaryService.php.html#197"><circle cx="348.0" cy="322.5" r="6.2" class="bubble-danger"><title>Indieinabox\Services\AiSummaryService::fallbackExcerpt — Coverage: 40.0% | Lines: 10 | Complexity: 5</title></circle></a>
+ <a href="../../../app/Services/ConfigurationService.php.html#25"><circle cx="708.0" cy="328.0" r="6.2" class="bubble-success"><title>Indieinabox\Services\ConfigurationService::__construct — Coverage: 90.0% | Lines: 10 | Complexity: 4</title></circle></a>
+ <a href="../../../app/Services/InstagramImportService.php.html#16"><circle cx="708.0" cy="333.5" r="6.2" class="bubble-success"><title>Indieinabox\Services\InstagramImportService::__construct — Coverage: 90.0% | Lines: 10 | Complexity: 3</title></circle></a>
+ <a href="../../../app/Services/MicrosubFilterService.php.html#194"><circle cx="636.0" cy="322.5" r="6.2" class="bubble-warning"><title>Indieinabox\Services\MicrosubFilterService::normalizeHost — Coverage: 80.0% | Lines: 10 | Complexity: 5</title></circle></a>
+ <a href="../../../app/Services/UpdateManager.php.html#34"><circle cx="708.0" cy="322.5" r="6.2" class="bubble-success"><title>Indieinabox\Services\UpdateManager::getVersionsDir — Coverage: 90.0% | Lines: 10 | Complexity: 5</title></circle></a>
+ <a href="../../../app/Services/AiSummaryService.php.html#253"><circle cx="60.0" cy="339.0" r="5.9" class="bubble-danger"><title>Indieinabox\Services\AiSummaryService::httpPost — Coverage: 0.0% | Lines: 9 | Complexity: 2</title></circle></a>
+ <a href="../../../app/Services/FetchFeedsService.php.html#105"><circle cx="60.0" cy="333.5" r="5.9" class="bubble-danger"><title>Indieinabox\Services\FetchFeedsService::fetchAll — Coverage: 0.0% | Lines: 9 | Complexity: 3</title></circle></a>
+ <a href="../../../app/Services/MicrosubFilterService.php.html#76"><circle cx="700.0" cy="317.0" r="5.9" class="bubble-warning"><title>Indieinabox\Services\MicrosubFilterService::matchesFilter — Coverage: 88.9% | Lines: 9 | Complexity: 6</title></circle></a>
+ <a href="../../../app/Services/ModerationService.php.html#51"><circle cx="780.0" cy="333.5" r="5.9" class="bubble-success"><title>Indieinabox\Services\ModerationService::approveInteraction — Coverage: 100.0% | Lines: 9 | Complexity: 3</title></circle></a>
+ <a href="../../../app/Services/UpdateManager.php.html#132"><circle cx="60.0" cy="322.5" r="5.9" class="bubble-danger"><title>Indieinabox\Services\UpdateManager::getLatestRelease — Coverage: 0.0% | Lines: 9 | Complexity: 5</title></circle></a>
+ <a href="../../../app/Services/WebPushService.php.html#43"><circle cx="780.0" cy="344.5" r="5.9" class="bubble-success"><title>Indieinabox\Services\WebPushService::ensureSubscriptionsTable — Coverage: 100.0% | Lines: 9 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Services/AiSummaryService.php.html#30"><circle cx="690.0" cy="322.5" r="5.6" class="bubble-warning"><title>Indieinabox\Services\AiSummaryService::__construct — Coverage: 87.5% | Lines: 8 | Complexity: 5</title></circle></a>
+ <a href="../../../app/Services/AutoSyndicationService.php.html#51"><circle cx="60.0" cy="328.0" r="5.6" class="bubble-danger"><title>Indieinabox\Services\AutoSyndicationService::scanDirectory — Coverage: 0.0% | Lines: 8 | Complexity: 4</title></circle></a>
+ <a href="../../../app/Services/FollowService.php.html#19"><circle cx="690.0" cy="317.0" r="5.6" class="bubble-warning"><title>Indieinabox\Services\FollowService::__construct — Coverage: 87.5% | Lines: 8 | Complexity: 6</title></circle></a>
+ <a href="../../../app/Services/InboxService.php.html#45"><circle cx="690.0" cy="339.0" r="5.6" class="bubble-warning"><title>Indieinabox\Services\InboxService::enqueue — Coverage: 87.5% | Lines: 8 | Complexity: 2</title></circle></a>
+ <a href="../../../app/Services/MicrosubService.php.html#90"><circle cx="600.0" cy="333.5" r="5.6" class="bubble-warning"><title>Indieinabox\Services\MicrosubService::createChannel — Coverage: 75.0% | Lines: 8 | Complexity: 3</title></circle></a>
+ <a href="../../../app/Services/UpdateManager.php.html#299"><circle cx="780.0" cy="328.0" r="5.6" class="bubble-success"><title>Indieinabox\Services\UpdateManager::cleanupOldBackups — Coverage: 100.0% | Lines: 8 | Complexity: 4</title></circle></a>
+ <a href="../../../app/Services/WebmentionService.php.html#92"><circle cx="780.0" cy="328.0" r="5.6" class="bubble-success"><title>Indieinabox\Services\WebmentionService::getMentions — Coverage: 100.0% | Lines: 8 | Complexity: 4</title></circle></a>
+ <a href="../../../app/Services/ArchiveService.php.html#26"><circle cx="780.0" cy="333.5" r="5.2" class="bubble-success"><title>Indieinabox\Services\ArchiveService::resolveAlias — Coverage: 100.0% | Lines: 7 | Complexity: 3</title></circle></a>
+ <a href="../../../app/Services/ConfigurationService.php.html#194"><circle cx="60.0" cy="328.0" r="5.2" class="bubble-danger"><title>Indieinabox\Services\ConfigurationService::installTheme — Coverage: 0.0% | Lines: 7 | Complexity: 4</title></circle></a>
+ <a href="../../../app/Services/ImportService.php.html#22"><circle cx="368.6" cy="322.5" r="5.2" class="bubble-danger"><title>Indieinabox\Services\ImportService::__construct — Coverage: 42.9% | Lines: 7 | Complexity: 5</title></circle></a>
+ <a href="../../../app/Services/ArchiveService.php.html#69"><circle cx="540.0" cy="339.0" r="4.8" class="bubble-warning"><title>Indieinabox\Services\ArchiveService::queueForceArchive — Coverage: 66.7% | Lines: 6 | Complexity: 2</title></circle></a>
+ <a href="../../../app/Services/BackupService.php.html#18"><circle cx="300.0" cy="322.5" r="4.8" class="bubble-danger"><title>Indieinabox\Services\BackupService::__construct — Coverage: 33.3% | Lines: 6 | Complexity: 5</title></circle></a>
+ <a href="../../../app/Services/ExportService.php.html#23"><circle cx="300.0" cy="322.5" r="4.8" class="bubble-danger"><title>Indieinabox\Services\ExportService::__construct — Coverage: 33.3% | Lines: 6 | Complexity: 5</title></circle></a>
+ <a href="../../../app/Services/LinkCheckerService.php.html#127"><circle cx="60.0" cy="328.0" r="4.8" class="bubble-danger"><title>Indieinabox\Services\LinkCheckerService::getHtmlFiles — Coverage: 0.0% | Lines: 6 | Complexity: 4</title></circle></a>
+ <a href="../../../app/Services/OutboxService.php.html#74"><circle cx="780.0" cy="339.0" r="4.8" class="bubble-success"><title>Indieinabox\Services\OutboxService::broadcastActivity — Coverage: 100.0% | Lines: 6 | Complexity: 2</title></circle></a>
+ <a href="../../../app/Services/WebmentionService.php.html#30"><circle cx="780.0" cy="344.5" r="4.8" class="bubble-success"><title>Indieinabox\Services\WebmentionService::queue — Coverage: 100.0% | Lines: 6 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Services/AutoSyndicationService.php.html#18"><circle cx="636.0" cy="339.0" r="4.4" class="bubble-warning"><title>Indieinabox\Services\AutoSyndicationService::__construct — Coverage: 80.0% | Lines: 5 | Complexity: 2</title></circle></a>
+ <a href="../../../app/Services/ConfigurationService.php.html#213"><circle cx="60.0" cy="322.5" r="4.4" class="bubble-danger"><title>Indieinabox\Services\ConfigurationService::triggerRebuild — Coverage: 0.0% | Lines: 5 | Complexity: 5</title></circle></a>
+ <a href="../../../app/Services/InboxService.php.html#24"><circle cx="780.0" cy="344.5" r="4.4" class="bubble-success"><title>Indieinabox\Services\InboxService::__construct — Coverage: 100.0% | Lines: 5 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Services/InstagramImportService.php.html#195"><circle cx="60.0" cy="322.5" r="4.4" class="bubble-danger"><title>Indieinabox\Services\InstagramImportService::decodeMetaText — Coverage: 0.0% | Lines: 5 | Complexity: 5</title></circle></a>
+ <a href="../../../app/Services/LinkCheckerService.php.html#139"><circle cx="60.0" cy="333.5" r="4.4" class="bubble-danger"><title>Indieinabox\Services\LinkCheckerService::extractLinks — Coverage: 0.0% | Lines: 5 | Complexity: 3</title></circle></a>
+ <a href="../../../app/Services/MediaProxyService.php.html#473"><circle cx="780.0" cy="333.5" r="4.4" class="bubble-success"><title>Indieinabox\Services\MediaProxyService::isAllowedMime — Coverage: 100.0% | Lines: 5 | Complexity: 3</title></circle></a>
+ <a href="../../../app/Services/MicrosubFilterService.php.html#20"><circle cx="348.0" cy="328.0" r="4.4" class="bubble-danger"><title>Indieinabox\Services\MicrosubFilterService::__construct — Coverage: 40.0% | Lines: 5 | Complexity: 4</title></circle></a>
+ <a href="../../../app/Services/UpdateManager.php.html#22"><circle cx="636.0" cy="328.0" r="4.4" class="bubble-warning"><title>Indieinabox\Services\UpdateManager::__construct — Coverage: 80.0% | Lines: 5 | Complexity: 4</title></circle></a>
+ <a href="../../../app/Services/UpdateService.php.html#33"><circle cx="636.0" cy="333.5" r="4.4" class="bubble-warning"><title>Indieinabox\Services\UpdateService::getManager — Coverage: 80.0% | Lines: 5 | Complexity: 3</title></circle></a>
+ <a href="../../../app/Services/FetchFeedsService.php.html#90"><circle cx="600.0" cy="333.5" r="4.0" class="bubble-warning"><title>Indieinabox\Services\FetchFeedsService::findParser — Coverage: 75.0% | Lines: 4 | Complexity: 3</title></circle></a>
+ <a href="../../../app/Services/FetchFeedsService.php.html#284"><circle cx="780.0" cy="344.5" r="4.0" class="bubble-success"><title>Indieinabox\Services\FetchFeedsService::itemExists — Coverage: 100.0% | Lines: 4 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Services/IngestInteractionService.php.html#164"><circle cx="780.0" cy="339.0" r="4.0" class="bubble-success"><title>Indieinabox\Services\IngestInteractionService::ingestActivity — Coverage: 100.0% | Lines: 4 | Complexity: 2</title></circle></a>
+ <a href="../../../app/Services/MediaProxyService.php.html#123"><circle cx="780.0" cy="333.5" r="4.0" class="bubble-success"><title>Indieinabox\Services\MediaProxyService::verifySignature — Coverage: 100.0% | Lines: 4 | Complexity: 3</title></circle></a>
+ <a href="../../../app/Services/MicrosubService.php.html#111"><circle cx="780.0" cy="328.0" r="4.0" class="bubble-success"><title>Indieinabox\Services\MicrosubService::deleteChannel — Coverage: 100.0% | Lines: 4 | Complexity: 4</title></circle></a>
+ <a href="../../../app/Services/OutboxService.php.html#59"><circle cx="600.0" cy="339.0" r="4.0" class="bubble-warning"><title>Indieinabox\Services\OutboxService::enqueueDelivery — Coverage: 75.0% | Lines: 4 | Complexity: 2</title></circle></a>
+ <a href="../../../app/Services/WebPushService.php.html#32"><circle cx="780.0" cy="328.0" r="4.0" class="bubble-success"><title>Indieinabox\Services\WebPushService::__construct — Coverage: 100.0% | Lines: 4 | Complexity: 4</title></circle></a>
+ <a href="../../../app/Services/WebPushService.php.html#215"><circle cx="780.0" cy="344.5" r="4.0" class="bubble-success"><title>Indieinabox\Services\WebPushService::unsubscribe — Coverage: 100.0% | Lines: 4 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Services/IngestInteractionService.php.html#144"><circle cx="780.0" cy="344.5" r="4.0" class="bubble-success"><title>Indieinabox\Services\IngestInteractionService::ingestWebmention — Coverage: 100.0% | Lines: 3 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Services/InstallService.php.html#145"><circle cx="780.0" cy="344.5" r="4.0" class="bubble-success"><title>Indieinabox\Services\InstallService::migrateDatabase — Coverage: 100.0% | Lines: 3 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Services/WebPushService.php.html#225"><circle cx="780.0" cy="339.0" r="4.0" class="bubble-success"><title>Indieinabox\Services\WebPushService::getSubscriptions — Coverage: 100.0% | Lines: 3 | Complexity: 2</title></circle></a>
+ <a href="../../../app/Services/AiSummaryService.php.html#52"><circle cx="780.0" cy="344.5" r="4.0" class="bubble-success"><title>Indieinabox\Services\AiSummaryService::computeBodyHash — Coverage: 100.0% | Lines: 2 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Services/FetchFeedsService.php.html#76"><circle cx="780.0" cy="344.5" r="4.0" class="bubble-success"><title>Indieinabox\Services\FetchFeedsService::addParser — Coverage: 100.0% | Lines: 2 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Services/ShortlinkService.php.html#27"><circle cx="780.0" cy="344.5" r="4.0" class="bubble-success"><title>Indieinabox\Services\ShortlinkService::__construct — Coverage: 100.0% | Lines: 2 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Services/UpdateManager.php.html#125"><circle cx="780.0" cy="339.0" r="4.0" class="bubble-success"><title>Indieinabox\Services\UpdateManager::getAvailableUpdates — Coverage: 100.0% | Lines: 2 | Complexity: 2</title></circle></a>
+ <a href="../../../app/Services/WebPushService.php.html#57"><circle cx="780.0" cy="344.5" r="4.0" class="bubble-success"><title>Indieinabox\Services\WebPushService::getVapidPublicKey — Coverage: 100.0% | Lines: 2 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Services/WebmentionService.php.html#21"><circle cx="780.0" cy="339.0" r="4.0" class="bubble-success"><title>Indieinabox\Services\WebmentionService::__construct — Coverage: 100.0% | Lines: 2 | Complexity: 2</title></circle></a>
+ <a href="../../../app/Services/ArchiveService.php.html#18"><circle cx="780.0" cy="339.0" r="4.0" class="bubble-success"><title>Indieinabox\Services\ArchiveService::__construct — Coverage: 100.0% | Lines: 1 | Complexity: 2</title></circle></a>
+ <a href="../../../app/Services/ConfigurationService.php.html#43"><circle cx="780.0" cy="344.5" r="4.0" class="bubble-success"><title>Indieinabox\Services\ConfigurationService::getSettingsRepository — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Services/ConfigurationService.php.html#89"><circle cx="780.0" cy="344.5" r="4.0" class="bubble-success"><title>Indieinabox\Services\ConfigurationService::getSettings — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Services/ConfigurationService.php.html#97"><circle cx="780.0" cy="344.5" r="4.0" class="bubble-success"><title>Indieinabox\Services\ConfigurationService::saveSetting — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Services/ConfigurationService.php.html#107"><circle cx="780.0" cy="344.5" r="4.0" class="bubble-success"><title>Indieinabox\Services\ConfigurationService::getKinds — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Services/ConfigurationService.php.html#117"><circle cx="780.0" cy="344.5" r="4.0" class="bubble-success"><title>Indieinabox\Services\ConfigurationService::saveKinds — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Services/ConfigurationService.php.html#127"><circle cx="780.0" cy="344.5" r="4.0" class="bubble-success"><title>Indieinabox\Services\ConfigurationService::getTranslations — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Services/ConfigurationService.php.html#137"><circle cx="780.0" cy="344.5" r="4.0" class="bubble-success"><title>Indieinabox\Services\ConfigurationService::saveTranslations — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Services/ConfigurationService.php.html#147"><circle cx="780.0" cy="344.5" r="4.0" class="bubble-success"><title>Indieinabox\Services\ConfigurationService::getUrlTranslations — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Services/ConfigurationService.php.html#157"><circle cx="780.0" cy="344.5" r="4.0" class="bubble-success"><title>Indieinabox\Services\ConfigurationService::saveUrlTranslations — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Services/FetchFeedsService.php.html#85"><circle cx="780.0" cy="344.5" r="4.0" class="bubble-success"><title>Indieinabox\Services\FetchFeedsService::getParsers — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Services/FetchFeedsService.php.html#377"><circle cx="60.0" cy="344.5" r="4.0" class="bubble-danger"><title>Indieinabox\Services\FetchFeedsService::getFilterService — Coverage: 0.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Services/FetchFeedsService.php.html#382"><circle cx="60.0" cy="344.5" r="4.0" class="bubble-danger"><title>Indieinabox\Services\FetchFeedsService::setFilterService — Coverage: 0.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Services/FetchFeedsService.php.html#488"><circle cx="60.0" cy="344.5" r="4.0" class="bubble-danger"><title>Indieinabox\Services\FetchFeedsService::fetchUrl — Coverage: 0.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Services/FollowService.php.html#36"><circle cx="780.0" cy="344.5" r="4.0" class="bubble-success"><title>Indieinabox\Services\FollowService::addFollower — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Services/FollowService.php.html#44"><circle cx="780.0" cy="344.5" r="4.0" class="bubble-success"><title>Indieinabox\Services\FollowService::removeFollower — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Services/FollowService.php.html#52"><circle cx="780.0" cy="344.5" r="4.0" class="bubble-success"><title>Indieinabox\Services\FollowService::isFollower — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Services/FollowService.php.html#62"><circle cx="780.0" cy="344.5" r="4.0" class="bubble-success"><title>Indieinabox\Services\FollowService::getFollowers — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Services/FollowService.php.html#72"><circle cx="780.0" cy="344.5" r="4.0" class="bubble-success"><title>Indieinabox\Services\FollowService::getDistinctInboxes — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Services/InstallService.php.html#23"><circle cx="780.0" cy="344.5" r="4.0" class="bubble-success"><title>Indieinabox\Services\InstallService::__construct — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Services/LinkCheckerService.php.html#14"><circle cx="60.0" cy="344.5" r="4.0" class="bubble-danger"><title>Indieinabox\Services\LinkCheckerService::__construct — Coverage: 0.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Services/MediaProxyService.php.html#510"><circle cx="780.0" cy="344.5" r="4.0" class="bubble-success"><title>Indieinabox\Services\MediaProxyService::getMetaPath — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Services/MicrosubFilterService.php.html#215"><circle cx="780.0" cy="344.5" r="4.0" class="bubble-success"><title>Indieinabox\Services\MicrosubFilterService::shouldMute — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Services/MicrosubFilterService.php.html#221"><circle cx="780.0" cy="344.5" r="4.0" class="bubble-success"><title>Indieinabox\Services\MicrosubFilterService::shouldAutoArchive — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Services/MicrosubFilterService.php.html#227"><circle cx="780.0" cy="344.5" r="4.0" class="bubble-success"><title>Indieinabox\Services\MicrosubFilterService::shouldDrop — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Services/MicrosubFilterService.php.html#233"><circle cx="780.0" cy="344.5" r="4.0" class="bubble-success"><title>Indieinabox\Services\MicrosubFilterService::getFilters — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Services/MicrosubFilterService.php.html#239"><circle cx="780.0" cy="344.5" r="4.0" class="bubble-success"><title>Indieinabox\Services\MicrosubFilterService::addFilter — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Services/MicrosubFilterService.php.html#245"><circle cx="780.0" cy="344.5" r="4.0" class="bubble-success"><title>Indieinabox\Services\MicrosubFilterService::deleteFilter — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Services/MicrosubService.php.html#69"><circle cx="780.0" cy="344.5" r="4.0" class="bubble-success"><title>Indieinabox\Services\MicrosubService::getFilterService — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Services/MicrosubService.php.html#79"><circle cx="780.0" cy="344.5" r="4.0" class="bubble-success"><title>Indieinabox\Services\MicrosubService::getChannels — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Services/MicrosubService.php.html#690"><circle cx="60.0" cy="344.5" r="4.0" class="bubble-danger"><title>Indieinabox\Services\MicrosubService::syncFeeds — Coverage: 0.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Services/MicrosubService.php.html#700"><circle cx="60.0" cy="344.5" r="4.0" class="bubble-danger"><title>Indieinabox\Services\MicrosubService::fetchUrl — Coverage: 0.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Services/ModerationService.php.html#43"><circle cx="780.0" cy="344.5" r="4.0" class="bubble-success"><title>Indieinabox\Services\ModerationService::getRepository — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Services/ModerationService.php.html#68"><circle cx="60.0" cy="344.5" r="4.0" class="bubble-danger"><title>Indieinabox\Services\ModerationService::rejectInteraction — Coverage: 0.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Services/ModerationService.php.html#76"><circle cx="780.0" cy="344.5" r="4.0" class="bubble-success"><title>Indieinabox\Services\ModerationService::deleteInteraction — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Services/ModerationService.php.html#86"><circle cx="780.0" cy="344.5" r="4.0" class="bubble-success"><title>Indieinabox\Services\ModerationService::listInteractions — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Services/UpdateService.php.html#44"><circle cx="780.0" cy="344.5" r="4.0" class="bubble-success"><title>Indieinabox\Services\UpdateService::getVersionsDir — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Services/UpdateService.php.html#49"><circle cx="60.0" cy="344.5" r="4.0" class="bubble-danger"><title>Indieinabox\Services\UpdateService::checkAvailableVersions — Coverage: 0.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Services/UpdateService.php.html#54"><circle cx="60.0" cy="344.5" r="4.0" class="bubble-danger"><title>Indieinabox\Services\UpdateService::getAvailableUpdates — Coverage: 0.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Services/UpdateService.php.html#59"><circle cx="60.0" cy="344.5" r="4.0" class="bubble-danger"><title>Indieinabox\Services\UpdateService::getLatestRelease — Coverage: 0.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Services/UpdateService.php.html#64"><circle cx="60.0" cy="344.5" r="4.0" class="bubble-danger"><title>Indieinabox\Services\UpdateService::downloadAndInstall — Coverage: 0.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Services/UpdateService.php.html#69"><circle cx="780.0" cy="344.5" r="4.0" class="bubble-success"><title>Indieinabox\Services\UpdateService::backupCurrentVersion — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Services/UpdateService.php.html#74"><circle cx="780.0" cy="344.5" r="4.0" class="bubble-success"><title>Indieinabox\Services\UpdateService::rollback — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Services/UpdateService.php.html#79"><circle cx="780.0" cy="344.5" r="4.0" class="bubble-success"><title>Indieinabox\Services\UpdateService::getLocalBackups — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Services/UpdateService.php.html#84"><circle cx="60.0" cy="344.5" r="4.0" class="bubble-danger"><title>Indieinabox\Services\UpdateService::cleanupOldBackups — Coverage: 0.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Services/UpdateService.php.html#89"><circle cx="780.0" cy="344.5" r="4.0" class="bubble-success"><title>Indieinabox\Services\UpdateService::processScheduledUpdate — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Services/UpdateService.php.html#94"><circle cx="60.0" cy="344.5" r="4.0" class="bubble-danger"><title>Indieinabox\Services\UpdateService::getCurrentExecutablePath — Coverage: 0.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Services/WebPushService.php.html#341"><circle cx="780.0" cy="344.5" r="4.0" class="bubble-success"><title>Indieinabox\Services\WebPushService::base64UrlEncode — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Services/WebmentionService.php.html#48"><circle cx="60.0" cy="344.5" r="4.0" class="bubble-danger"><title>Indieinabox\Services\WebmentionService::verifySourceLink — Coverage: 0.0% | Lines: 1 | Complexity: 1</title></circle></a>
+</svg>
+     </div>
+     <div>
+      <p class="hint">Sorted by descending <abbr title="Change Risk Anti-Patterns">CRAP</abbr> index.</p>
+      <div class="scrollbox">
+     <table class="crap">
+      <thead>
+       <tr>
+        <th scope="col">Method</th>
+        <th scope="col" class="number"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+        <th scope="col" class="number">Coverage</th>
+       </tr>
+      </thead>
+      <tbody>
+       <tr><td><a href="../../../app/Services/InstagramImportService.php.html#34">Indieinabox\Services\InstagramImportService::process</a></td><td class="number">2305.98</td><td class="number">2.0%</td></tr>
+       <tr><td><a href="../../../app/Services/AutoSyndicationService.php.html#67">Indieinabox\Services\AutoSyndicationService::processFile</a></td><td class="number">1056</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="../../../app/Services/FetchFeedsService.php.html#407">Indieinabox\Services\FetchFeedsService::downloadMedia</a></td><td class="number">702</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="../../../app/Services/LinkCheckerService.php.html#150">Indieinabox\Services\LinkCheckerService::checkInternalLinks</a></td><td class="number">702</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="../../../app/Services/LinkCheckerService.php.html#19">Indieinabox\Services\LinkCheckerService::run</a></td><td class="number">380</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="../../../app/Services/MicrosubService.php.html#318">Indieinabox\Services\MicrosubService::follow</a></td><td class="number">356.97</td><td class="number">43.7%</td></tr>
+       <tr><td><a href="../../../app/Services/BackupService.php.html#31">Indieinabox\Services\BackupService::run</a></td><td class="number">306</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="../../../app/Services/MicrosubService.php.html#598">Indieinabox\Services\MicrosubService::interact</a></td><td class="number">191.28</td><td class="number">7.8%</td></tr>
+       <tr><td><a href="../../../app/Services/FetchFeedsService.php.html#217">Indieinabox\Services\FetchFeedsService::parseActivityPub</a></td><td class="number">182</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="../../../app/Services/MediaProxyService.php.html#411">Indieinabox\Services\MediaProxyService::downloadFileSafely</a></td><td class="number">182</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="../../../app/Services/LinkCheckerService.php.html#284">Indieinabox\Services\LinkCheckerService::checkExternalLinks</a></td><td class="number">156</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="../../../app/Services/ExportService.php.html#213">Indieinabox\Services\ExportService::createArchiveFromDirectory</a></td><td class="number">95.83</td><td class="number">37.8%</td></tr>
+       <tr><td><a href="../../../app/Services/FetchFeedsService.php.html#498">Indieinabox\Services\FetchFeedsService::fetchApJson</a></td><td class="number">72</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="../../../app/Services/MicrosubService.php.html#464">Indieinabox\Services\MicrosubService::unfollow</a></td><td class="number">66.76</td><td class="number">46.8%</td></tr>
+       <tr><td><a href="../../../app/Services/MediaProxyService.php.html#61">Indieinabox\Services\MediaProxyService::resolveSecretKey</a></td><td class="number">60.01</td><td class="number">14.3%</td></tr>
+       <tr><td><a href="../../../app/Services/UpdateManager.php.html#151">Indieinabox\Services\UpdateManager::downloadAndInstall</a></td><td class="number">56</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="../../../app/Services/UpdateManager.php.html#385">Indieinabox\Services\UpdateManager::getCurrentExecutablePath</a></td><td class="number">48.30</td><td class="number">14.3%</td></tr>
+       <tr><td><a href="../../../app/Services/MediaProxyService.php.html#275">Indieinabox\Services\MediaProxyService::fetchAndCache</a></td><td class="number">38.91</td><td class="number">65.6%</td></tr>
+       <tr><td><a href="../../../app/Services/MediaProxyService.php.html#137">Indieinabox\Services\MediaProxyService::isSafeUrl</a></td><td class="number">38.22</td><td class="number">64.3%</td></tr>
+       <tr><td><a href="../../../app/Services/ConfigurationService.php.html#165">Indieinabox\Services\ConfigurationService::detectPrettyLinksSupport</a></td><td class="number">33.84</td><td class="number">18.2%</td></tr>
+       <tr><td><a href="../../../app/Services/ImportService.php.html#334">Indieinabox\Services\ImportService::extractArchive</a></td><td class="number">32.38</td><td class="number">39.3%</td></tr>
+       <tr><td><a href="../../../app/Services/ImportService.php.html#99">Indieinabox\Services\ImportService::import</a></td><td class="number">31.16</td><td class="number">89.1%</td></tr>
+       <tr><td><a href="../../../app/Services/BackupService.php.html#119">Indieinabox\Services\BackupService::rotateBackups</a></td><td class="number">30</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="../../../app/Services/ConfigurationService.php.html#213">Indieinabox\Services\ConfigurationService::triggerRebuild</a></td><td class="number">30</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="../../../app/Services/InstagramImportService.php.html#195">Indieinabox\Services\InstagramImportService::decodeMetaText</a></td><td class="number">30</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="../../../app/Services/UpdateManager.php.html#132">Indieinabox\Services\UpdateManager::getLatestRelease</a></td><td class="number">30</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="../../../app/Services/MicrosubFilterService.php.html#153">Indieinabox\Services\MicrosubFilterService::matchesDomain</a></td><td class="number">24.70</td><td class="number">77.3%</td></tr>
+       <tr><td><a href="../../../app/Services/ExportService.php.html#43">Indieinabox\Services\ExportService::export</a></td><td class="number">24.04</td><td class="number">71.0%</td></tr>
+       <tr><td><a href="../../../app/Services/MicrosubService.php.html#126">Indieinabox\Services\MicrosubService::getTimeline</a></td><td class="number">24</td><td class="number">97.7%</td></tr>
+       <tr><td><a href="../../../app/Services/IngestInteractionService.php.html#25">Indieinabox\Services\IngestInteractionService::__construct</a></td><td class="number">22.50</td><td class="number">50.0%</td></tr>
+       <tr><td><a href="../../../app/Services/UpdateManager.php.html#317">Indieinabox\Services\UpdateManager::processScheduledUpdate</a></td><td class="number">20.39</td><td class="number">77.3%</td></tr>
+       <tr><td><a href="../../../app/Services/AutoSyndicationService.php.html#51">Indieinabox\Services\AutoSyndicationService::scanDirectory</a></td><td class="number">20</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="../../../app/Services/ConfigurationService.php.html#194">Indieinabox\Services\ConfigurationService::installTheme</a></td><td class="number">20</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="../../../app/Services/LinkCheckerService.php.html#127">Indieinabox\Services\LinkCheckerService::getHtmlFiles</a></td><td class="number">20</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="../../../app/Services/WebPushService.php.html#282">Indieinabox\Services\WebPushService::dispatchHttp</a></td><td class="number">20</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="../../../app/Services/PublishPostService.php.html#62">Indieinabox\Services\PublishPostService::publish</a></td><td class="number">19.58</td><td class="number">83.1%</td></tr>
+       <tr><td><a href="../../../app/Services/ShortlinkService.php.html#82">Indieinabox\Services\ShortlinkService::requestRemoteShortlink</a></td><td class="number">19.31</td><td class="number">80.0%</td></tr>
+       <tr><td><a href="../../../app/Services/ImportService.php.html#37">Indieinabox\Services\ImportService::inspect</a></td><td class="number">17.83</td><td class="number">39.5%</td></tr>
+       <tr><td><a href="../../../app/Services/FetchFeedsService.php.html#131">Indieinabox\Services\FetchFeedsService::fetchSubscription</a></td><td class="number">17.66</td><td class="number">73.5%</td></tr>
+       <tr><td><a href="../../../app/Services/MediaProxyService.php.html#195">Indieinabox\Services\MediaProxyService::isPublicIp</a></td><td class="number">17.48</td><td class="number">73.9%</td></tr>
+       <tr><td><a href="../../../app/Services/MicrosubFilterService.php.html#119">Indieinabox\Services\MicrosubFilterService::matchesAuthor</a></td><td class="number">17.19</td><td class="number">83.3%</td></tr>
+       <tr><td><a href="../../../app/Services/IngestInteractionService.php.html#60">Indieinabox\Services\IngestInteractionService::ingest</a></td><td class="number">16</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Services/FetchFeedsService.php.html#387">Indieinabox\Services\FetchFeedsService::processHtmlMedia</a></td><td class="number">13.26</td><td class="number">16.7%</td></tr>
+       <tr><td><a href="../../../app/Services/MicrosubFilterService.php.html#93">Indieinabox\Services\MicrosubFilterService::matchesKeyword</a></td><td class="number">13.15</td><td class="number">80.0%</td></tr>
+       <tr><td><a href="../../../app/Services/BackupService.php.html#18">Indieinabox\Services\BackupService::__construct</a></td><td class="number">12.41</td><td class="number">33.3%</td></tr>
+       <tr><td><a href="../../../app/Services/ExportService.php.html#23">Indieinabox\Services\ExportService::__construct</a></td><td class="number">12.41</td><td class="number">33.3%</td></tr>
+       <tr><td><a href="../../../app/Services/AiSummaryService.php.html#121">Indieinabox\Services\AiSummaryService::generateSummary</a></td><td class="number">12.30</td><td class="number">87.2%</td></tr>
+       <tr><td><a href="../../../app/Services/FetchFeedsService.php.html#43">Indieinabox\Services\FetchFeedsService::__construct</a></td><td class="number">12.00</td><td class="number">66.7%</td></tr>
+       <tr><td><a href="../../../app/Services/FetchFeedsService.php.html#105">Indieinabox\Services\FetchFeedsService::fetchAll</a></td><td class="number">12</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="../../../app/Services/LinkCheckerService.php.html#139">Indieinabox\Services\LinkCheckerService::extractLinks</a></td><td class="number">12</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="../../../app/Services/MicrosubService.php.html#539">Indieinabox\Services\MicrosubService::search</a></td><td class="number">11.28</td><td class="number">86.8%</td></tr>
+       <tr><td><a href="../../../app/Services/FetchFeedsService.php.html#292">Indieinabox\Services\FetchFeedsService::saveEntry</a></td><td class="number">11</td><td class="number">96.8%</td></tr>
+       <tr><td><a href="../../../app/Services/ImportService.php.html#286">Indieinabox\Services\ImportService::verifyManifestFiles</a></td><td class="number">10.71</td><td class="number">80.8%</td></tr>
+       <tr><td><a href="../../../app/Services/AiSummaryService.php.html#197">Indieinabox\Services\AiSummaryService::fallbackExcerpt</a></td><td class="number">10.40</td><td class="number">40.0%</td></tr>
+       <tr><td><a href="../../../app/Services/MicrosubService.php.html#38">Indieinabox\Services\MicrosubService::__construct</a></td><td class="number">10.20</td><td class="number">87.5%</td></tr>
+       <tr><td><a href="../../../app/Services/WebmentionService.php.html#56">Indieinabox\Services\WebmentionService::isValidTarget</a></td><td class="number">10.16</td><td class="number">88.2%</td></tr>
+       <tr><td><a href="../../../app/Services/InstallService.php.html#111">Indieinabox\Services\InstallService::configureDbLocation</a></td><td class="number">10.14</td><td class="number">88.9%</td></tr>
+       <tr><td><a href="../../../app/Services/UpdateManager.php.html#55">Indieinabox\Services\UpdateManager::checkAvailableVersions</a></td><td class="number">10.11</td><td class="number">89.6%</td></tr>
+       <tr><td><a href="../../../app/Services/InstallService.php.html#35">Indieinabox\Services\InstallService::install</a></td><td class="number">10.02</td><td class="number">93.8%</td></tr>
+       <tr><td><a href="../../../app/Services/WebPushService.php.html#64">Indieinabox\Services\WebPushService::getVapidKeys</a></td><td class="number">10.01</td><td class="number">94.7%</td></tr>
+       <tr><td><a href="../../../app/Services/ImportService.php.html#22">Indieinabox\Services\ImportService::__construct</a></td><td class="number">9.66</td><td class="number">42.9%</td></tr>
+       <tr><td><a href="../../../app/Services/WebPushService.php.html#234">Indieinabox\Services\WebPushService::sendNotification</a></td><td class="number">9.26</td><td class="number">85.2%</td></tr>
+       <tr><td><a href="../../../app/Services/UpdateManager.php.html#225">Indieinabox\Services\UpdateManager::rollback</a></td><td class="number">9.17</td><td class="number">73.7%</td></tr>
+       <tr><td><a href="../../../app/Services/ImportService.php.html#255">Indieinabox\Services\ImportService::resolveTargetDatabasePath</a></td><td class="number">8.81</td><td class="number">66.7%</td></tr>
+       <tr><td><a href="../../../app/Services/MediaProxyService.php.html#94">Indieinabox\Services\MediaProxyService::generateProxiedUrl</a></td><td class="number">8.38</td><td class="number">81.8%</td></tr>
+       <tr><td><a href="../../../app/Services/ModerationService.php.html#21">Indieinabox\Services\ModerationService::__construct</a></td><td class="number">8.38</td><td class="number">81.8%</td></tr>
+       <tr><td><a href="../../../app/Services/PublishPostService.php.html#27">Indieinabox\Services\PublishPostService::__construct</a></td><td class="number">8.38</td><td class="number">81.8%</td></tr>
+       <tr><td><a href="../../../app/Services/MediaProxyService.php.html#245">Indieinabox\Services\MediaProxyService::getCachedPath</a></td><td class="number">8.30</td><td class="number">83.3%</td></tr>
+       <tr><td><a href="../../../app/Services/InboxService.php.html#64">Indieinabox\Services\InboxService::handleActivity</a></td><td class="number">8.23</td><td class="number">84.6%</td></tr>
+       <tr><td><a href="../../../app/Services/OutboxService.php.html#23">Indieinabox\Services\OutboxService::__construct</a></td><td class="number">8.10</td><td class="number">88.2%</td></tr>
+       <tr><td><a href="../../../app/Services/MicrosubFilterService.php.html#36">Indieinabox\Services\MicrosubFilterService::evaluate</a></td><td class="number">8.02</td><td class="number">93.8%</td></tr>
+       <tr><td><a href="../../../app/Services/ShortlinkService.php.html#43">Indieinabox\Services\ShortlinkService::getShortlink</a></td><td class="number">8.02</td><td class="number">93.8%</td></tr>
+       <tr><td><a href="../../../app/Services/InstallService.php.html#157">Indieinabox\Services\InstallService::configureSiteSettings</a></td><td class="number">8</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Services/MicrosubService.php.html#256">Indieinabox\Services\MicrosubService::markRead</a></td><td class="number">8</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Services/MicrosubFilterService.php.html#20">Indieinabox\Services\MicrosubFilterService::__construct</a></td><td class="number">7.46</td><td class="number">40.0%</td></tr>
+       <tr><td><a href="../../../app/Services/ImportService.php.html#384">Indieinabox\Services\ImportService::copyDirectoryOverwrite</a></td><td class="number">7.17</td><td class="number">85.0%</td></tr>
+       <tr><td><a href="../../../app/Services/ExportService.php.html#175">Indieinabox\Services\ExportService::copyDirectoryRecursive</a></td><td class="number">7</td><td class="number">95.5%</td></tr>
+       <tr><td><a href="../../../app/Services/ConfigurationService.php.html#51">Indieinabox\Services\ConfigurationService::bootstrap</a></td><td class="number">6.08</td><td class="number">87.0%</td></tr>
+       <tr><td><a href="../../../app/Services/FollowService.php.html#19">Indieinabox\Services\FollowService::__construct</a></td><td class="number">6.07</td><td class="number">87.5%</td></tr>
+       <tr><td><a href="../../../app/Services/MicrosubFilterService.php.html#76">Indieinabox\Services\MicrosubFilterService::matchesFilter</a></td><td class="number">6.05</td><td class="number">88.9%</td></tr>
+       <tr><td><a href="../../../app/Services/AiSummaryService.php.html#221">Indieinabox\Services\AiSummaryService::syncFile</a></td><td class="number">6.04</td><td class="number">89.5%</td></tr>
+       <tr><td><a href="../../../app/Services/MediaProxyService.php.html#33">Indieinabox\Services\MediaProxyService::__construct</a></td><td class="number">6.02</td><td class="number">91.7%</td></tr>
+       <tr><td><a href="../../../app/Services/AiSummaryService.php.html#253">Indieinabox\Services\AiSummaryService::httpPost</a></td><td class="number">6</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="../../../app/Services/LinkCheckerService.php.html#94">Indieinabox\Services\LinkCheckerService::writeReport</a></td><td class="number">6</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="../../../app/Services/ExportService.php.html#148">Indieinabox\Services\ExportService::resolveDatabasePath</a></td><td class="number">5.93</td><td class="number">66.7%</td></tr>
+       <tr><td><a href="../../../app/Services/MicrosubFilterService.php.html#194">Indieinabox\Services\MicrosubFilterService::normalizeHost</a></td><td class="number">5.20</td><td class="number">80.0%</td></tr>
+       <tr><td><a href="../../../app/Services/AiSummaryService.php.html#30">Indieinabox\Services\AiSummaryService::__construct</a></td><td class="number">5.05</td><td class="number">87.5%</td></tr>
+       <tr><td><a href="../../../app/Services/UpdateManager.php.html#34">Indieinabox\Services\UpdateManager::getVersionsDir</a></td><td class="number">5.03</td><td class="number">90.0%</td></tr>
+       <tr><td><a href="../../../app/Services/AiSummaryService.php.html#93">Indieinabox\Services\AiSummaryService::isSummaryStale</a></td><td class="number">5.02</td><td class="number">90.9%</td></tr>
+       <tr><td><a href="../../../app/Services/OutboxService.php.html#92">Indieinabox\Services\OutboxService::dispatchPending</a></td><td class="number">5.01</td><td class="number">93.3%</td></tr>
+       <tr><td><a href="../../../app/Services/UpdateManager.php.html#262">Indieinabox\Services\UpdateManager::getLocalBackups</a></td><td class="number">5</td><td class="number">95.7%</td></tr>
+       <tr><td><a href="../../../app/Services/UpdateManager.php.html#22">Indieinabox\Services\UpdateManager::__construct</a></td><td class="number">4.13</td><td class="number">80.0%</td></tr>
+       <tr><td><a href="../../../app/Services/AutoSyndicationService.php.html#29">Indieinabox\Services\AutoSyndicationService::process</a></td><td class="number">4.07</td><td class="number">83.3%</td></tr>
+       <tr><td><a href="../../../app/Services/UpdateManager.php.html#200">Indieinabox\Services\UpdateManager::backupCurrentVersion</a></td><td class="number">4.06</td><td class="number">84.6%</td></tr>
+       <tr><td><a href="../../../app/Services/ConfigurationService.php.html#25">Indieinabox\Services\ConfigurationService::__construct</a></td><td class="number">4.02</td><td class="number">90.0%</td></tr>
+       <tr><td><a href="../../../app/Services/ExportService.php.html#280">Indieinabox\Services\ExportService::removeDirectoryRecursive</a></td><td class="number">4.01</td><td class="number">90.9%</td></tr>
+       <tr><td><a href="../../../app/Services/ImportService.php.html#421">Indieinabox\Services\ImportService::deleteDirectoryRecursive</a></td><td class="number">4.01</td><td class="number">90.9%</td></tr>
+       <tr><td><a href="../../../app/Services/InboxService.php.html#98">Indieinabox\Services\InboxService::handleFollow</a></td><td class="number">4</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Services/MicrosubService.php.html#111">Indieinabox\Services\MicrosubService::deleteChannel</a></td><td class="number">4</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Services/UpdateManager.php.html#299">Indieinabox\Services\UpdateManager::cleanupOldBackups</a></td><td class="number">4</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Services/WebPushService.php.html#32">Indieinabox\Services\WebPushService::__construct</a></td><td class="number">4</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Services/WebPushService.php.html#316">Indieinabox\Services\WebPushService::broadcast</a></td><td class="number">4.00</td><td class="number">93.3%</td></tr>
+       <tr><td><a href="../../../app/Services/WebmentionService.php.html#92">Indieinabox\Services\WebmentionService::getMentions</a></td><td class="number">4</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Services/FetchFeedsService.php.html#90">Indieinabox\Services\FetchFeedsService::findParser</a></td><td class="number">3.14</td><td class="number">75.0%</td></tr>
+       <tr><td><a href="../../../app/Services/MicrosubService.php.html#90">Indieinabox\Services\MicrosubService::createChannel</a></td><td class="number">3.14</td><td class="number">75.0%</td></tr>
+       <tr><td><a href="../../../app/Services/UpdateService.php.html#33">Indieinabox\Services\UpdateService::getManager</a></td><td class="number">3.07</td><td class="number">80.0%</td></tr>
+       <tr><td><a href="../../../app/Services/InstagramImportService.php.html#16">Indieinabox\Services\InstagramImportService::__construct</a></td><td class="number">3.01</td><td class="number">90.0%</td></tr>
+       <tr><td><a href="../../../app/Services/ArchiveService.php.html#26">Indieinabox\Services\ArchiveService::resolveAlias</a></td><td class="number">3</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Services/ArchiveService.php.html#47">Indieinabox\Services\ArchiveService::findSnapshot</a></td><td class="number">3</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Services/InboxService.php.html#124">Indieinabox\Services\InboxService::processPendingQueue</a></td><td class="number">3</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Services/InstallService.php.html#208">Indieinabox\Services\InstallService::buildSite</a></td><td class="number">3.00</td><td class="number">94.4%</td></tr>
+       <tr><td><a href="../../../app/Services/MediaProxyService.php.html#123">Indieinabox\Services\MediaProxyService::verifySignature</a></td><td class="number">3</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Services/MediaProxyService.php.html#473">Indieinabox\Services\MediaProxyService::isAllowedMime</a></td><td class="number">3</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Services/ModerationService.php.html#51">Indieinabox\Services\ModerationService::approveInteraction</a></td><td class="number">3</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Services/WebPushService.php.html#124">Indieinabox\Services\WebPushService::createVapidJwt</a></td><td class="number">3</td><td class="number">95.0%</td></tr>
+       <tr><td><a href="../../../app/Services/WebPushService.php.html#189">Indieinabox\Services\WebPushService::subscribe</a></td><td class="number">3.00</td><td class="number">93.8%</td></tr>
+       <tr><td><a href="../../../app/Services/WebmentionService.php.html#112">Indieinabox\Services\WebmentionService::saveMention</a></td><td class="number">3</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Services/ArchiveService.php.html#69">Indieinabox\Services\ArchiveService::queueForceArchive</a></td><td class="number">2.15</td><td class="number">66.7%</td></tr>
+       <tr><td><a href="../../../app/Services/OutboxService.php.html#59">Indieinabox\Services\OutboxService::enqueueDelivery</a></td><td class="number">2.06</td><td class="number">75.0%</td></tr>
+       <tr><td><a href="../../../app/Services/AutoSyndicationService.php.html#18">Indieinabox\Services\AutoSyndicationService::__construct</a></td><td class="number">2.03</td><td class="number">80.0%</td></tr>
+       <tr><td><a href="../../../app/Services/InboxService.php.html#45">Indieinabox\Services\InboxService::enqueue</a></td><td class="number">2.01</td><td class="number">87.5%</td></tr>
+       <tr><td><a href="../../../app/Services/ArchiveService.php.html#18">Indieinabox\Services\ArchiveService::__construct</a></td><td class="number">2</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Services/FetchFeedsService.php.html#377">Indieinabox\Services\FetchFeedsService::getFilterService</a></td><td class="number">2</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="../../../app/Services/FetchFeedsService.php.html#382">Indieinabox\Services\FetchFeedsService::setFilterService</a></td><td class="number">2</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="../../../app/Services/FetchFeedsService.php.html#488">Indieinabox\Services\FetchFeedsService::fetchUrl</a></td><td class="number">2</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="../../../app/Services/IngestInteractionService.php.html#164">Indieinabox\Services\IngestInteractionService::ingestActivity</a></td><td class="number">2</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Services/LinkCheckerService.php.html#14">Indieinabox\Services\LinkCheckerService::__construct</a></td><td class="number">2</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="../../../app/Services/MicrosubService.php.html#295">Indieinabox\Services\MicrosubService::getSubscriptions</a></td><td class="number">2</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Services/MicrosubService.php.html#690">Indieinabox\Services\MicrosubService::syncFeeds</a></td><td class="number">2</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="../../../app/Services/MicrosubService.php.html#700">Indieinabox\Services\MicrosubService::fetchUrl</a></td><td class="number">2</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="../../../app/Services/ModerationService.php.html#68">Indieinabox\Services\ModerationService::rejectInteraction</a></td><td class="number">2</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="../../../app/Services/OutboxService.php.html#74">Indieinabox\Services\OutboxService::broadcastActivity</a></td><td class="number">2</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Services/UpdateManager.php.html#125">Indieinabox\Services\UpdateManager::getAvailableUpdates</a></td><td class="number">2</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Services/UpdateService.php.html#49">Indieinabox\Services\UpdateService::checkAvailableVersions</a></td><td class="number">2</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="../../../app/Services/UpdateService.php.html#54">Indieinabox\Services\UpdateService::getAvailableUpdates</a></td><td class="number">2</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="../../../app/Services/UpdateService.php.html#59">Indieinabox\Services\UpdateService::getLatestRelease</a></td><td class="number">2</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="../../../app/Services/UpdateService.php.html#64">Indieinabox\Services\UpdateService::downloadAndInstall</a></td><td class="number">2</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="../../../app/Services/UpdateService.php.html#84">Indieinabox\Services\UpdateService::cleanupOldBackups</a></td><td class="number">2</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="../../../app/Services/UpdateService.php.html#94">Indieinabox\Services\UpdateService::getCurrentExecutablePath</a></td><td class="number">2</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="../../../app/Services/WebPushService.php.html#159">Indieinabox\Services\WebPushService::derToP1363</a></td><td class="number">2.00</td><td class="number">93.3%</td></tr>
+       <tr><td><a href="../../../app/Services/WebPushService.php.html#225">Indieinabox\Services\WebPushService::getSubscriptions</a></td><td class="number">2</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Services/WebmentionService.php.html#21">Indieinabox\Services\WebmentionService::__construct</a></td><td class="number">2</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Services/WebmentionService.php.html#48">Indieinabox\Services\WebmentionService::verifySourceLink</a></td><td class="number">2</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="../../../app/Services/AiSummaryService.php.html#52">Indieinabox\Services\AiSummaryService::computeBodyHash</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Services/AiSummaryService.php.html#61">Indieinabox\Services\AiSummaryService::cleanBody</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Services/ConfigurationService.php.html#43">Indieinabox\Services\ConfigurationService::getSettingsRepository</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Services/ConfigurationService.php.html#89">Indieinabox\Services\ConfigurationService::getSettings</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Services/ConfigurationService.php.html#97">Indieinabox\Services\ConfigurationService::saveSetting</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Services/ConfigurationService.php.html#107">Indieinabox\Services\ConfigurationService::getKinds</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Services/ConfigurationService.php.html#117">Indieinabox\Services\ConfigurationService::saveKinds</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Services/ConfigurationService.php.html#127">Indieinabox\Services\ConfigurationService::getTranslations</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Services/ConfigurationService.php.html#137">Indieinabox\Services\ConfigurationService::saveTranslations</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Services/ConfigurationService.php.html#147">Indieinabox\Services\ConfigurationService::getUrlTranslations</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Services/ConfigurationService.php.html#157">Indieinabox\Services\ConfigurationService::saveUrlTranslations</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Services/FetchFeedsService.php.html#76">Indieinabox\Services\FetchFeedsService::addParser</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Services/FetchFeedsService.php.html#85">Indieinabox\Services\FetchFeedsService::getParsers</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Services/FetchFeedsService.php.html#284">Indieinabox\Services\FetchFeedsService::itemExists</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Services/FollowService.php.html#36">Indieinabox\Services\FollowService::addFollower</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Services/FollowService.php.html#44">Indieinabox\Services\FollowService::removeFollower</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Services/FollowService.php.html#52">Indieinabox\Services\FollowService::isFollower</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Services/FollowService.php.html#62">Indieinabox\Services\FollowService::getFollowers</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Services/FollowService.php.html#72">Indieinabox\Services\FollowService::getDistinctInboxes</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Services/InboxService.php.html#24">Indieinabox\Services\InboxService::__construct</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Services/IngestInteractionService.php.html#144">Indieinabox\Services\IngestInteractionService::ingestWebmention</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Services/InstallService.php.html#23">Indieinabox\Services\InstallService::__construct</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Services/InstallService.php.html#145">Indieinabox\Services\InstallService::migrateDatabase</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Services/MediaProxyService.php.html#375">Indieinabox\Services\MediaProxyService::rewriteHtmlMedia</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Services/MediaProxyService.php.html#488">Indieinabox\Services\MediaProxyService::mimeToExtension</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Services/MediaProxyService.php.html#510">Indieinabox\Services\MediaProxyService::getMetaPath</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Services/MicrosubFilterService.php.html#215">Indieinabox\Services\MicrosubFilterService::shouldMute</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Services/MicrosubFilterService.php.html#221">Indieinabox\Services\MicrosubFilterService::shouldAutoArchive</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Services/MicrosubFilterService.php.html#227">Indieinabox\Services\MicrosubFilterService::shouldDrop</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Services/MicrosubFilterService.php.html#233">Indieinabox\Services\MicrosubFilterService::getFilters</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Services/MicrosubFilterService.php.html#239">Indieinabox\Services\MicrosubFilterService::addFilter</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Services/MicrosubFilterService.php.html#245">Indieinabox\Services\MicrosubFilterService::deleteFilter</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Services/MicrosubService.php.html#69">Indieinabox\Services\MicrosubService::getFilterService</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Services/MicrosubService.php.html#79">Indieinabox\Services\MicrosubService::getChannels</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Services/ModerationService.php.html#43">Indieinabox\Services\ModerationService::getRepository</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Services/ModerationService.php.html#76">Indieinabox\Services\ModerationService::deleteInteraction</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Services/ModerationService.php.html#86">Indieinabox\Services\ModerationService::listInteractions</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Services/ShortlinkService.php.html#27">Indieinabox\Services\ShortlinkService::__construct</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Services/UpdateService.php.html#44">Indieinabox\Services\UpdateService::getVersionsDir</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Services/UpdateService.php.html#69">Indieinabox\Services\UpdateService::backupCurrentVersion</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Services/UpdateService.php.html#74">Indieinabox\Services\UpdateService::rollback</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Services/UpdateService.php.html#79">Indieinabox\Services\UpdateService::getLocalBackups</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Services/UpdateService.php.html#89">Indieinabox\Services\UpdateService::processScheduledUpdate</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Services/WebPushService.php.html#43">Indieinabox\Services\WebPushService::ensureSubscriptionsTable</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Services/WebPushService.php.html#57">Indieinabox\Services\WebPushService::getVapidPublicKey</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Services/WebPushService.php.html#215">Indieinabox\Services\WebPushService::unsubscribe</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Services/WebPushService.php.html#341">Indieinabox\Services\WebPushService::base64UrlEncode</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Services/WebmentionService.php.html#30">Indieinabox\Services\WebmentionService::queue</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+      </tbody>
+     </table>
+      </div>
+     </div>
+    </div>
+   </section>
+  </main>
+  <footer>
+   <p class="credits">Generated by <a href="https://github.com/sebastianbergmann/php-code-coverage" target="_top">php-code-coverage 14.3.1</a> using <a href="https://www.php.net/" target="_top">PHP 8.4.27</a> and <a href="https://phpunit.de/">PHPUnit 13.3.1</a> at Mon Oct 26 6:16:30 UTC 2026.</p>
+  </footer>
+ </body>
+</html>

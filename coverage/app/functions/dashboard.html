@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboard for /workspace/lumen/indieinabox/app/functions</title>
+  <link rel="stylesheet" href="../../_css/style.css?v=14.3.1">
+  <link rel="stylesheet" href="../../_css/custom.css">
+ </head>
+ <body>
+  <header class="masthead">
+   <nav aria-label="Breadcrumb">
+    <ol class="breadcrumbs">
+     <li><a href="../../index.html">/workspace/lumen/indieinabox</a></li>
+     <li><a href="../index.html">app</a></li>
+     <li><a href="index.html">functions</a></li>
+     <li class="current">Dashboard</li>
+    </ol>
+   </nav>
+   <ul class="tabs">
+    <li><a href="../../index.html" aria-current="page">Files</a></li>
+    <li><a href="../../_classes/dashboard.html">Classes</a></li>
+   </ul>
+  </header>
+  <main class="dashboard">
+   <section>
+    <h2>Classes</h2>
+    <div class="panel">
+     <div class="chart">
+      <p class="hint">Line coverage against cyclomatic complexity. Bubble size is the number of executable lines; hover for details, click to navigate.</p>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400" preserveAspectRatio="xMidYMid meet">
+ <style>
+  .bubble-success { fill: var(--coverage-success-bar); opacity: 0.7; }
+  .bubble-warning { fill: var(--coverage-warning-bar); opacity: 0.7; }
+  .bubble-danger { fill: var(--coverage-danger-bar); opacity: 0.7; }
+  .bubble-success:hover, .bubble-warning:hover, .bubble-danger:hover { opacity: 1; stroke: var(--text); stroke-width: 1.5; }
+  .chart-grid { stroke: var(--border); stroke-width: 0.5; stroke-dasharray: 4,4; opacity: 0.5; }
+  .chart-axis { stroke: var(--border); stroke-width: 1; }
+  .chart-label { fill: var(--text); font-size: 11px; font-family: var(--font-sans); }
+  .chart-title { fill: var(--text); font-size: 12px; font-family: var(--font-sans); }
+ </style>
+ <line x1="60.0" y1="20" x2="60.0" y2="350" class="chart-grid"/>
+ <text x="60.0" y="368" text-anchor="middle" class="chart-label">0%</text>
+ <line x1="204.0" y1="20" x2="204.0" y2="350" class="chart-grid"/>
+ <text x="204.0" y="368" text-anchor="middle" class="chart-label">20%</text>
+ <line x1="348.0" y1="20" x2="348.0" y2="350" class="chart-grid"/>
+ <text x="348.0" y="368" text-anchor="middle" class="chart-label">40%</text>
+ <line x1="492.0" y1="20" x2="492.0" y2="350" class="chart-grid"/>
+ <text x="492.0" y="368" text-anchor="middle" class="chart-label">60%</text>
+ <line x1="636.0" y1="20" x2="636.0" y2="350" class="chart-grid"/>
+ <text x="636.0" y="368" text-anchor="middle" class="chart-label">80%</text>
+ <line x1="780.0" y1="20" x2="780.0" y2="350" class="chart-grid"/>
+ <text x="780.0" y="368" text-anchor="middle" class="chart-label">100%</text>
+ <line x1="60" y1="350.0" x2="780" y2="350.0" class="chart-grid"/>
+ <text x="52" y="350.0" text-anchor="end" dominant-baseline="middle" class="chart-label">0</text>
+ <line x1="60" y1="284.0" x2="780" y2="284.0" class="chart-grid"/>
+ <text x="52" y="284.0" text-anchor="end" dominant-baseline="middle" class="chart-label">50</text>
+ <line x1="60" y1="218.0" x2="780" y2="218.0" class="chart-grid"/>
+ <text x="52" y="218.0" text-anchor="end" dominant-baseline="middle" class="chart-label">100</text>
+ <line x1="60" y1="152.0" x2="780" y2="152.0" class="chart-grid"/>
+ <text x="52" y="152.0" text-anchor="end" dominant-baseline="middle" class="chart-label">150</text>
+ <line x1="60" y1="86.0" x2="780" y2="86.0" class="chart-grid"/>
+ <text x="52" y="86.0" text-anchor="end" dominant-baseline="middle" class="chart-label">200</text>
+ <line x1="60" y1="20.0" x2="780" y2="20.0" class="chart-grid"/>
+ <text x="52" y="20.0" text-anchor="end" dominant-baseline="middle" class="chart-label">250</text>
+ <line x1="60" y1="20" x2="60" y2="350" class="chart-axis"/>
+ <line x1="60" y1="350" x2="780" y2="350" class="chart-axis"/>
+ <text x="420.0" y="395" text-anchor="middle" class="chart-title">Line Coverage (%)</text>
+ <text x="15" y="185.0" text-anchor="middle" transform="rotate(-90, 15, 185.0)" class="chart-title">Cyclomatic Complexity</text>
+ <a href="beautify-html.php.html#32"><circle cx="397.3" cy="103.2" r="20.0" class="bubble-danger"><title>Beautify_Html — Coverage: 46.8% | Lines: 444 | Complexity: 187</title></circle></a>
+ <a href="HtmlMinifier.php.html#7"><circle cx="655.0" cy="294.6" r="11.4" class="bubble-warning"><title>Indieinabox\HtmlMinifier — Coverage: 82.6% | Lines: 144 | Complexity: 42</title></circle></a>
+</svg>
+     </div>
+     <div>
+      <p class="hint">Sorted by descending <abbr title="Change Risk Anti-Patterns">CRAP</abbr> index.</p>
+      <div class="scrollbox">
+     <table class="crap">
+      <thead>
+       <tr>
+        <th scope="col">Class</th>
+        <th scope="col" class="number"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+        <th scope="col" class="number">Coverage</th>
+       </tr>
+      </thead>
+      <tbody>
+       <tr><td><a href="beautify-html.php.html#32">Beautify_Html</a></td><td class="number">5438.34</td><td class="number">46.8%</td></tr>
+       <tr><td><a href="HtmlMinifier.php.html#7">Indieinabox\HtmlMinifier</a></td><td class="number">51.23</td><td class="number">82.6%</td></tr>
+      </tbody>
+     </table>
+      </div>
+     </div>
+    </div>
+   </section>
+   <section>
+    <h2>Methods</h2>
+    <div class="panel">
+     <div class="chart">
+      <p class="hint">Line coverage against cyclomatic complexity. Bubble size is the number of executable lines; hover for details, click to navigate.</p>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400" preserveAspectRatio="xMidYMid meet">
+ <style>
+  .bubble-success { fill: var(--coverage-success-bar); opacity: 0.7; }
+  .bubble-warning { fill: var(--coverage-warning-bar); opacity: 0.7; }
+  .bubble-danger { fill: var(--coverage-danger-bar); opacity: 0.7; }
+  .bubble-success:hover, .bubble-warning:hover, .bubble-danger:hover { opacity: 1; stroke: var(--text); stroke-width: 1.5; }
+  .chart-grid { stroke: var(--border); stroke-width: 0.5; stroke-dasharray: 4,4; opacity: 0.5; }
+  .chart-axis { stroke: var(--border); stroke-width: 1; }
+  .chart-label { fill: var(--text); font-size: 11px; font-family: var(--font-sans); }
+  .chart-title { fill: var(--text); font-size: 12px; font-family: var(--font-sans); }
+ </style>
+ <line x1="60.0" y1="20" x2="60.0" y2="350" class="chart-grid"/>
+ <text x="60.0" y="368" text-anchor="middle" class="chart-label">0%</text>
+ <line x1="204.0" y1="20" x2="204.0" y2="350" class="chart-grid"/>
+ <text x="204.0" y="368" text-anchor="middle" class="chart-label">20%</text>
+ <line x1="348.0" y1="20" x2="348.0" y2="350" class="chart-grid"/>
+ <text x="348.0" y="368" text-anchor="middle" class="chart-label">40%</text>
+ <line x1="492.0" y1="20" x2="492.0" y2="350" class="chart-grid"/>
+ <text x="492.0" y="368" text-anchor="middle" class="chart-label">60%</text>
+ <line x1="636.0" y1="20" x2="636.0" y2="350" class="chart-grid"/>
+ <text x="636.0" y="368" text-anchor="middle" class="chart-label">80%</text>
+ <line x1="780.0" y1="20" x2="780.0" y2="350" class="chart-grid"/>
+ <text x="780.0" y="368" text-anchor="middle" class="chart-label">100%</text>
+ <line x1="60" y1="350.0" x2="780" y2="350.0" class="chart-grid"/>
+ <text x="52" y="350.0" text-anchor="end" dominant-baseline="middle" class="chart-label">0</text>
+ <line x1="60" y1="284.0" x2="780" y2="284.0" class="chart-grid"/>
+ <text x="52" y="284.0" text-anchor="end" dominant-baseline="middle" class="chart-label">10</text>
+ <line x1="60" y1="218.0" x2="780" y2="218.0" class="chart-grid"/>
+ <text x="52" y="218.0" text-anchor="end" dominant-baseline="middle" class="chart-label">20</text>
+ <line x1="60" y1="152.0" x2="780" y2="152.0" class="chart-grid"/>
+ <text x="52" y="152.0" text-anchor="end" dominant-baseline="middle" class="chart-label">30</text>
+ <line x1="60" y1="86.0" x2="780" y2="86.0" class="chart-grid"/>
+ <text x="52" y="86.0" text-anchor="end" dominant-baseline="middle" class="chart-label">40</text>
+ <line x1="60" y1="20.0" x2="780" y2="20.0" class="chart-grid"/>
+ <text x="52" y="20.0" text-anchor="end" dominant-baseline="middle" class="chart-label">50</text>
+ <line x1="60" y1="20" x2="60" y2="350" class="chart-axis"/>
+ <line x1="60" y1="350" x2="780" y2="350" class="chart-axis"/>
+ <text x="420.0" y="395" text-anchor="middle" class="chart-title">Line Coverage (%)</text>
+ <text x="15" y="185.0" text-anchor="middle" transform="rotate(-90, 15, 185.0)" class="chart-title">Cyclomatic Complexity</text>
+ <a href="beautify-html.php.html#349"><circle cx="479.3" cy="72.8" r="20.0" class="bubble-warning"><title>Beautify_Html::get_tag — Coverage: 58.2% | Lines: 91 | Complexity: 42</title></circle></a>
+ <a href="beautify-html.php.html#751"><circle cx="407.9" cy="145.4" r="19.8" class="bubble-danger"><title>Beautify_Html::beautify — Coverage: 48.3% | Lines: 89 | Complexity: 31</title></circle></a>
+ <a href="beautify-html.php.html#116"><circle cx="248.9" cy="270.8" r="16.4" class="bubble-danger"><title>Beautify_Html::set_options — Coverage: 26.2% | Lines: 61 | Complexity: 12</title></circle></a>
+ <a href="HtmlMinifier.php.html#22"><circle cx="780.0" cy="343.4" r="14.1" class="bubble-success"><title>Indieinabox\HtmlMinifier::__construct — Coverage: 100.0% | Lines: 45 | Complexity: 1</title></circle></a>
+ <a href="beautify-html.php.html#558"><circle cx="60.0" cy="290.6" r="11.1" class="bubble-danger"><title>Beautify_Html::get_unformatted — Coverage: 0.0% | Lines: 28 | Complexity: 9</title></circle></a>
+ <a href="beautify-html.php.html#507"><circle cx="60.0" cy="284.0" r="10.9" class="bubble-danger"><title>Beautify_Html::get_comment — Coverage: 0.0% | Lines: 27 | Complexity: 10</title></circle></a>
+ <a href="beautify-html.php.html#227"><circle cx="681.8" cy="284.0" r="9.8" class="bubble-warning"><title>Beautify_Html::get_content — Coverage: 86.4% | Lines: 22 | Complexity: 10</title></circle></a>
+ <a href="HtmlMinifier.php.html#93"><circle cx="745.7" cy="323.6" r="9.6" class="bubble-success"><title>Indieinabox\HtmlMinifier::walk — Coverage: 95.2% | Lines: 21 | Complexity: 4</title></circle></a>
+ <a href="HtmlMinifier.php.html#156"><circle cx="173.7" cy="330.2" r="9.1" class="bubble-danger"><title>Indieinabox\HtmlMinifier::removeMeta — Coverage: 15.8% | Lines: 19 | Complexity: 3</title></circle></a>
+ <a href="beautify-html.php.html#89"><circle cx="780.0" cy="317.0" r="8.6" class="bubble-success"><title>Beautify_Html::__construct — Coverage: 100.0% | Lines: 17 | Complexity: 5</title></circle></a>
+ <a href="beautify-html.php.html#620"><circle cx="525.9" cy="297.2" r="8.6" class="bubble-warning"><title>Beautify_Html::get_token — Coverage: 64.7% | Lines: 17 | Complexity: 8</title></circle></a>
+ <a href="beautify-html.php.html#306"><circle cx="677.1" cy="303.8" r="7.8" class="bubble-warning"><title>Beautify_Html::retrieve_tag — Coverage: 85.7% | Lines: 14 | Complexity: 7</title></circle></a>
+ <a href="beautify-html.php.html#204"><circle cx="720.0" cy="284.0" r="7.3" class="bubble-success"><title>Beautify_Html::traverse_whitespace — Coverage: 91.7% | Lines: 12 | Complexity: 10</title></circle></a>
+ <a href="beautify-html.php.html#270"><circle cx="60.0" cy="323.6" r="7.0" class="bubble-danger"><title>Beautify_Html::get_contents_to — Coverage: 0.0% | Lines: 11 | Complexity: 4</title></circle></a>
+ <a href="beautify-html.php.html#662"><circle cx="190.9" cy="297.2" r="7.0" class="bubble-danger"><title>Beautify_Html::is_unformatted — Coverage: 18.2% | Lines: 11 | Complexity: 8</title></circle></a>
+ <a href="HtmlMinifier.php.html#72"><circle cx="700.0" cy="323.6" r="6.3" class="bubble-warning"><title>Indieinabox\HtmlMinifier::minify — Coverage: 88.9% | Lines: 9 | Complexity: 4</title></circle></a>
+ <a href="beautify-html.php.html#330"><circle cx="60.0" cy="317.0" r="6.3" class="bubble-danger"><title>Beautify_Html::indent_to_tag — Coverage: 0.0% | Lines: 9 | Complexity: 5</title></circle></a>
+ <a href="HtmlMinifier.php.html#210"><circle cx="780.0" cy="317.0" r="5.9" class="bubble-success"><title>Indieinabox\HtmlMinifier::compact — Coverage: 100.0% | Lines: 8 | Complexity: 5</title></circle></a>
+ <a href="HtmlMinifier.php.html#228"><circle cx="780.0" cy="310.4" r="5.9" class="bubble-success"><title>Indieinabox\HtmlMinifier::buildHtml — Coverage: 100.0% | Lines: 8 | Complexity: 6</title></circle></a>
+ <a href="beautify-html.php.html#721"><circle cx="510.0" cy="310.4" r="5.9" class="bubble-warning"><title>Beautify_Html::print_token_raw — Coverage: 62.5% | Lines: 8 | Complexity: 6</title></circle></a>
+ <a href="beautify-html.php.html#291"><circle cx="574.3" cy="336.8" r="5.5" class="bubble-warning"><title>Beautify_Html::record_tag — Coverage: 71.4% | Lines: 7 | Complexity: 2</title></circle></a>
+ <a href="HtmlMinifier.php.html#246"><circle cx="780.0" cy="343.4" r="5.1" class="bubble-success"><title>Indieinabox\HtmlMinifier::findName — Coverage: 100.0% | Lines: 6 | Complexity: 1</title></circle></a>
+ <a href="HtmlMinifier.php.html#146"><circle cx="780.0" cy="343.4" r="4.7" class="bubble-success"><title>Indieinabox\HtmlMinifier::toElement — Coverage: 100.0% | Lines: 5 | Complexity: 1</title></circle></a>
+ <a href="HtmlMinifier.php.html#190"><circle cx="636.0" cy="330.2" r="4.7" class="bubble-warning"><title>Indieinabox\HtmlMinifier::addChevrons — Coverage: 80.0% | Lines: 5 | Complexity: 3</title></circle></a>
+ <a href="HtmlMinifier.php.html#257"><circle cx="204.0" cy="323.6" r="4.7" class="bubble-danger"><title>Indieinabox\HtmlMinifier::setSkip — Coverage: 20.0% | Lines: 5 | Complexity: 4</title></circle></a>
+ <a href="beautify-html.php.html#691"><circle cx="780.0" cy="317.0" r="4.7" class="bubble-success"><title>Beautify_Html::print_newline — Coverage: 100.0% | Lines: 5 | Complexity: 5</title></circle></a>
+ <a href="beautify-html.php.html#710"><circle cx="780.0" cy="317.0" r="4.7" class="bubble-success"><title>Beautify_Html::print_token — Coverage: 100.0% | Lines: 5 | Complexity: 5</title></circle></a>
+ <a href="beautify-html.php.html#652"><circle cx="60.0" cy="330.2" r="4.2" class="bubble-danger"><title>Beautify_Html::get_full_indent — Coverage: 0.0% | Lines: 4 | Complexity: 3</title></circle></a>
+ <a href="HtmlMinifier.php.html#181"><circle cx="780.0" cy="336.8" r="4.0" class="bubble-success"><title>Indieinabox\HtmlMinifier::stripWhitespace — Coverage: 100.0% | Lines: 3 | Complexity: 2</title></circle></a>
+ <a href="HtmlMinifier.php.html#201"><circle cx="540.0" cy="336.8" r="4.0" class="bubble-warning"><title>Indieinabox\HtmlMinifier::removeSelfSlash — Coverage: 66.7% | Lines: 3 | Complexity: 2</title></circle></a>
+ <a href="HtmlMinifier.php.html#270"><circle cx="780.0" cy="343.4" r="4.0" class="bubble-success"><title>Indieinabox\HtmlMinifier::minifyHard — Coverage: 100.0% | Lines: 3 | Complexity: 1</title></circle></a>
+ <a href="beautify-html.php.html#702"><circle cx="780.0" cy="336.8" r="4.0" class="bubble-success"><title>Beautify_Html::print_indentation — Coverage: 100.0% | Lines: 3 | Complexity: 2</title></circle></a>
+ <a href="beautify-html.php.html#744"><circle cx="60.0" cy="336.8" r="4.0" class="bubble-danger"><title>Beautify_Html::unindent — Coverage: 0.0% | Lines: 2 | Complexity: 2</title></circle></a>
+ <a href="HtmlMinifier.php.html#128"><circle cx="60.0" cy="343.4" r="4.0" class="bubble-danger"><title>Indieinabox\HtmlMinifier::removeComments — Coverage: 0.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="HtmlMinifier.php.html#134"><circle cx="780.0" cy="343.4" r="4.0" class="bubble-success"><title>Indieinabox\HtmlMinifier::contains — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="HtmlMinifier.php.html#140"><circle cx="780.0" cy="336.8" r="4.0" class="bubble-success"><title>Indieinabox\HtmlMinifier::toType — Coverage: 100.0% | Lines: 1 | Complexity: 2</title></circle></a>
+ <a href="HtmlMinifier.php.html#278"><circle cx="780.0" cy="343.4" r="4.0" class="bubble-success"><title>Indieinabox\HtmlMinifier::minifyKeepSpaces — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="beautify-html.php.html#739"><circle cx="780.0" cy="343.4" r="4.0" class="bubble-success"><title>Beautify_Html::indent — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+</svg>
+     </div>
+     <div>
+      <p class="hint">Sorted by descending <abbr title="Change Risk Anti-Patterns">CRAP</abbr> index.</p>
+      <div class="scrollbox">
+     <table class="crap">
+      <thead>
+       <tr>
+        <th scope="col">Method</th>
+        <th scope="col" class="number"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+        <th scope="col" class="number">Coverage</th>
+       </tr>
+      </thead>
+      <tbody>
+       <tr><td><a href="beautify-html.php.html#349">Beautify_Html::get_tag</a></td><td class="number">170.45</td><td class="number">58.2%</td></tr>
+       <tr><td><a href="beautify-html.php.html#751">Beautify_Html::beautify</a></td><td class="number">163.69</td><td class="number">48.3%</td></tr>
+       <tr><td><a href="beautify-html.php.html#507">Beautify_Html::get_comment</a></td><td class="number">110</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="beautify-html.php.html#558">Beautify_Html::get_unformatted</a></td><td class="number">90</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="beautify-html.php.html#116">Beautify_Html::set_options</a></td><td class="number">69.81</td><td class="number">26.2%</td></tr>
+       <tr><td><a href="beautify-html.php.html#662">Beautify_Html::is_unformatted</a></td><td class="number">43.05</td><td class="number">18.2%</td></tr>
+       <tr><td><a href="beautify-html.php.html#330">Beautify_Html::indent_to_tag</a></td><td class="number">30</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="beautify-html.php.html#270">Beautify_Html::get_contents_to</a></td><td class="number">20</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="HtmlMinifier.php.html#257">Indieinabox\HtmlMinifier::setSkip</a></td><td class="number">12.19</td><td class="number">20.0%</td></tr>
+       <tr><td><a href="beautify-html.php.html#652">Beautify_Html::get_full_indent</a></td><td class="number">12</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="beautify-html.php.html#620">Beautify_Html::get_token</a></td><td class="number">10.81</td><td class="number">64.7%</td></tr>
+       <tr><td><a href="beautify-html.php.html#227">Beautify_Html::get_content</a></td><td class="number">10.25</td><td class="number">86.4%</td></tr>
+       <tr><td><a href="beautify-html.php.html#204">Beautify_Html::traverse_whitespace</a></td><td class="number">10.06</td><td class="number">91.7%</td></tr>
+       <tr><td><a href="HtmlMinifier.php.html#156">Indieinabox\HtmlMinifier::removeMeta</a></td><td class="number">8.37</td><td class="number">15.8%</td></tr>
+       <tr><td><a href="beautify-html.php.html#721">Beautify_Html::print_token_raw</a></td><td class="number">7.90</td><td class="number">62.5%</td></tr>
+       <tr><td><a href="beautify-html.php.html#306">Beautify_Html::retrieve_tag</a></td><td class="number">7.14</td><td class="number">85.7%</td></tr>
+       <tr><td><a href="HtmlMinifier.php.html#228">Indieinabox\HtmlMinifier::buildHtml</a></td><td class="number">6</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="beautify-html.php.html#744">Beautify_Html::unindent</a></td><td class="number">6</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="HtmlMinifier.php.html#210">Indieinabox\HtmlMinifier::compact</a></td><td class="number">5</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="beautify-html.php.html#89">Beautify_Html::__construct</a></td><td class="number">5</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="beautify-html.php.html#691">Beautify_Html::print_newline</a></td><td class="number">5</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="beautify-html.php.html#710">Beautify_Html::print_token</a></td><td class="number">5</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="HtmlMinifier.php.html#72">Indieinabox\HtmlMinifier::minify</a></td><td class="number">4.02</td><td class="number">88.9%</td></tr>
+       <tr><td><a href="HtmlMinifier.php.html#93">Indieinabox\HtmlMinifier::walk</a></td><td class="number">4</td><td class="number">95.2%</td></tr>
+       <tr><td><a href="HtmlMinifier.php.html#190">Indieinabox\HtmlMinifier::addChevrons</a></td><td class="number">3.07</td><td class="number">80.0%</td></tr>
+       <tr><td><a href="HtmlMinifier.php.html#201">Indieinabox\HtmlMinifier::removeSelfSlash</a></td><td class="number">2.15</td><td class="number">66.7%</td></tr>
+       <tr><td><a href="beautify-html.php.html#291">Beautify_Html::record_tag</a></td><td class="number">2.09</td><td class="number">71.4%</td></tr>
+       <tr><td><a href="HtmlMinifier.php.html#128">Indieinabox\HtmlMinifier::removeComments</a></td><td class="number">2</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="HtmlMinifier.php.html#140">Indieinabox\HtmlMinifier::toType</a></td><td class="number">2</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="HtmlMinifier.php.html#181">Indieinabox\HtmlMinifier::stripWhitespace</a></td><td class="number">2</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="beautify-html.php.html#702">Beautify_Html::print_indentation</a></td><td class="number">2</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="HtmlMinifier.php.html#22">Indieinabox\HtmlMinifier::__construct</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="HtmlMinifier.php.html#134">Indieinabox\HtmlMinifier::contains</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="HtmlMinifier.php.html#146">Indieinabox\HtmlMinifier::toElement</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="HtmlMinifier.php.html#246">Indieinabox\HtmlMinifier::findName</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="HtmlMinifier.php.html#270">Indieinabox\HtmlMinifier::minifyHard</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="HtmlMinifier.php.html#278">Indieinabox\HtmlMinifier::minifyKeepSpaces</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="beautify-html.php.html#739">Beautify_Html::indent</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+      </tbody>
+     </table>
+      </div>
+     </div>
+    </div>
+   </section>
+  </main>
+  <footer>
+   <p class="credits">Generated by <a href="https://github.com/sebastianbergmann/php-code-coverage" target="_top">php-code-coverage 14.3.1</a> using <a href="https://www.php.net/" target="_top">PHP 8.4.27</a> and <a href="https://phpunit.de/">PHPUnit 13.3.1</a> at Mon Oct 26 6:16:30 UTC 2026.</p>
+  </footer>
+ </body>
+</html>

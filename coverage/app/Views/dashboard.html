@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboard for /workspace/lumen/indieinabox/app/Views</title>
+  <link rel="stylesheet" href="../../_css/style.css?v=14.3.1">
+  <link rel="stylesheet" href="../../_css/custom.css">
+ </head>
+ <body>
+  <header class="masthead">
+   <nav aria-label="Breadcrumb">
+    <ol class="breadcrumbs">
+     <li><a href="../../index.html">/workspace/lumen/indieinabox</a></li>
+     <li><a href="../index.html">app</a></li>
+     <li><a href="index.html">Views</a></li>
+     <li class="current">Dashboard</li>
+    </ol>
+   </nav>
+   <ul class="tabs">
+    <li><a href="../../index.html" aria-current="page">Files</a></li>
+    <li><a href="../../_classes/dashboard.html">Classes</a></li>
+   </ul>
+  </header>
+  <main class="dashboard">
+   <section>
+    <h2>Classes</h2>
+    <div class="panel">
+     <div class="chart">
+      <p class="hint">Line coverage against cyclomatic complexity. Bubble size is the number of executable lines; hover for details, click to navigate.</p>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400" preserveAspectRatio="xMidYMid meet">
+ <style>
+  .bubble-success { fill: var(--coverage-success-bar); opacity: 0.7; }
+  .bubble-warning { fill: var(--coverage-warning-bar); opacity: 0.7; }
+  .bubble-danger { fill: var(--coverage-danger-bar); opacity: 0.7; }
+  .bubble-success:hover, .bubble-warning:hover, .bubble-danger:hover { opacity: 1; stroke: var(--text); stroke-width: 1.5; }
+  .chart-grid { stroke: var(--border); stroke-width: 0.5; stroke-dasharray: 4,4; opacity: 0.5; }
+  .chart-axis { stroke: var(--border); stroke-width: 1; }
+  .chart-label { fill: var(--text); font-size: 11px; font-family: var(--font-sans); }
+  .chart-title { fill: var(--text); font-size: 12px; font-family: var(--font-sans); }
+ </style>
+ <line x1="60.0" y1="20" x2="60.0" y2="350" class="chart-grid"/>
+ <text x="60.0" y="368" text-anchor="middle" class="chart-label">0%</text>
+ <line x1="204.0" y1="20" x2="204.0" y2="350" class="chart-grid"/>
+ <text x="204.0" y="368" text-anchor="middle" class="chart-label">20%</text>
+ <line x1="348.0" y1="20" x2="348.0" y2="350" class="chart-grid"/>
+ <text x="348.0" y="368" text-anchor="middle" class="chart-label">40%</text>
+ <line x1="492.0" y1="20" x2="492.0" y2="350" class="chart-grid"/>
+ <text x="492.0" y="368" text-anchor="middle" class="chart-label">60%</text>
+ <line x1="636.0" y1="20" x2="636.0" y2="350" class="chart-grid"/>
+ <text x="636.0" y="368" text-anchor="middle" class="chart-label">80%</text>
+ <line x1="780.0" y1="20" x2="780.0" y2="350" class="chart-grid"/>
+ <text x="780.0" y="368" text-anchor="middle" class="chart-label">100%</text>
+ <line x1="60" y1="350.0" x2="780" y2="350.0" class="chart-grid"/>
+ <text x="52" y="350.0" text-anchor="end" dominant-baseline="middle" class="chart-label">0</text>
+ <line x1="60" y1="240.0" x2="780" y2="240.0" class="chart-grid"/>
+ <text x="52" y="240.0" text-anchor="end" dominant-baseline="middle" class="chart-label">50</text>
+ <line x1="60" y1="130.0" x2="780" y2="130.0" class="chart-grid"/>
+ <text x="52" y="130.0" text-anchor="end" dominant-baseline="middle" class="chart-label">100</text>
+ <line x1="60" y1="20.0" x2="780" y2="20.0" class="chart-grid"/>
+ <text x="52" y="20.0" text-anchor="end" dominant-baseline="middle" class="chart-label">150</text>
+ <line x1="60" y1="20" x2="60" y2="350" class="chart-axis"/>
+ <line x1="60" y1="350" x2="780" y2="350" class="chart-axis"/>
+ <text x="420.0" y="395" text-anchor="middle" class="chart-title">Line Coverage (%)</text>
+ <text x="15" y="185.0" text-anchor="middle" transform="rotate(-90, 15, 185.0)" class="chart-title">Cyclomatic Complexity</text>
+ <a href="Admin/ConfigView.php.html#12"><circle cx="730.5" cy="114.6" r="20.0" class="bubble-success"><title>Indieinabox\Views\Admin\ConfigView — Coverage: 93.1% | Lines: 1092 | Complexity: 107</title></circle></a>
+ <a href="Admin/AdminLayoutView.php.html#14"><circle cx="777.0" cy="321.4" r="16.2" class="bubble-success"><title>Indieinabox\Views\Admin\AdminLayoutView — Coverage: 99.6% | Lines: 713 | Complexity: 13</title></circle></a>
+ <a href="Admin/ModerationView.php.html#11"><circle cx="629.7" cy="312.6" r="11.5" class="bubble-warning"><title>Indieinabox\Views\Admin\ModerationView — Coverage: 79.1% | Lines: 364 | Complexity: 17</title></circle></a>
+ <a href="Admin/MicrosubReaderView.php.html#11"><circle cx="780.0" cy="347.8" r="10.8" class="bubble-success"><title>Indieinabox\Views\Admin\MicrosubReaderView — Coverage: 100.0% | Lines: 319 | Complexity: 1</title></circle></a>
+ <a href="Admin/MicropubClientView.php.html#11"><circle cx="780.0" cy="347.8" r="7.7" class="bubble-success"><title>Indieinabox\Views\Admin\MicropubClientView — Coverage: 100.0% | Lines: 162 | Complexity: 1</title></circle></a>
+ <a href="DiscoveryView.php.html#14"><circle cx="640.1" cy="275.2" r="7.1" class="bubble-warning"><title>Indieinabox\Views\DiscoveryView — Coverage: 80.6% | Lines: 139 | Complexity: 34</title></circle></a>
+ <a href="SearchView.php.html#15"><circle cx="537.4" cy="299.4" r="5.8" class="bubble-warning"><title>Indieinabox\Views\SearchView — Coverage: 66.3% | Lines: 92 | Complexity: 23</title></circle></a>
+ <a href="ArchiveView.php.html#14"><circle cx="420.0" cy="332.4" r="4.0" class="bubble-danger"><title>Indieinabox\Views\ArchiveView — Coverage: 50.0% | Lines: 42 | Complexity: 8</title></circle></a>
+ <a href="Client/UnifiedClientView.php.html#15"><circle cx="780.0" cy="347.8" r="4.0" class="bubble-success"><title>Indieinabox\Views\Client\UnifiedClientView — Coverage: 100.0% | Lines: 17 | Complexity: 1</title></circle></a>
+</svg>
+     </div>
+     <div>
+      <p class="hint">Sorted by descending <abbr title="Change Risk Anti-Patterns">CRAP</abbr> index.</p>
+      <div class="scrollbox">
+     <table class="crap">
+      <thead>
+       <tr>
+        <th scope="col">Class</th>
+        <th scope="col" class="number"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+        <th scope="col" class="number">Coverage</th>
+       </tr>
+      </thead>
+      <tbody>
+       <tr><td><a href="Admin/ConfigView.php.html#12">Indieinabox\Views\Admin\ConfigView</a></td><td class="number">110.71</td><td class="number">93.1%</td></tr>
+       <tr><td><a href="SearchView.php.html#15">Indieinabox\Views\SearchView</a></td><td class="number">43.24</td><td class="number">66.3%</td></tr>
+       <tr><td><a href="DiscoveryView.php.html#14">Indieinabox\Views\DiscoveryView</a></td><td class="number">42.47</td><td class="number">80.6%</td></tr>
+       <tr><td><a href="Admin/ModerationView.php.html#11">Indieinabox\Views\Admin\ModerationView</a></td><td class="number">19.63</td><td class="number">79.1%</td></tr>
+       <tr><td><a href="ArchiveView.php.html#14">Indieinabox\Views\ArchiveView</a></td><td class="number">16.00</td><td class="number">50.0%</td></tr>
+       <tr><td><a href="Admin/AdminLayoutView.php.html#14">Indieinabox\Views\Admin\AdminLayoutView</a></td><td class="number">13</td><td class="number">99.6%</td></tr>
+       <tr><td><a href="Admin/MicropubClientView.php.html#11">Indieinabox\Views\Admin\MicropubClientView</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="Admin/MicrosubReaderView.php.html#11">Indieinabox\Views\Admin\MicrosubReaderView</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="Client/UnifiedClientView.php.html#15">Indieinabox\Views\Client\UnifiedClientView</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+      </tbody>
+     </table>
+      </div>
+     </div>
+    </div>
+   </section>
+   <section>
+    <h2>Methods</h2>
+    <div class="panel">
+     <div class="chart">
+      <p class="hint">Line coverage against cyclomatic complexity. Bubble size is the number of executable lines; hover for details, click to navigate.</p>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400" preserveAspectRatio="xMidYMid meet">
+ <style>
+  .bubble-success { fill: var(--coverage-success-bar); opacity: 0.7; }
+  .bubble-warning { fill: var(--coverage-warning-bar); opacity: 0.7; }
+  .bubble-danger { fill: var(--coverage-danger-bar); opacity: 0.7; }
+  .bubble-success:hover, .bubble-warning:hover, .bubble-danger:hover { opacity: 1; stroke: var(--text); stroke-width: 1.5; }
+  .chart-grid { stroke: var(--border); stroke-width: 0.5; stroke-dasharray: 4,4; opacity: 0.5; }
+  .chart-axis { stroke: var(--border); stroke-width: 1; }
+  .chart-label { fill: var(--text); font-size: 11px; font-family: var(--font-sans); }
+  .chart-title { fill: var(--text); font-size: 12px; font-family: var(--font-sans); }
+ </style>
+ <line x1="60.0" y1="20" x2="60.0" y2="350" class="chart-grid"/>
+ <text x="60.0" y="368" text-anchor="middle" class="chart-label">0%</text>
+ <line x1="204.0" y1="20" x2="204.0" y2="350" class="chart-grid"/>
+ <text x="204.0" y="368" text-anchor="middle" class="chart-label">20%</text>
+ <line x1="348.0" y1="20" x2="348.0" y2="350" class="chart-grid"/>
+ <text x="348.0" y="368" text-anchor="middle" class="chart-label">40%</text>
+ <line x1="492.0" y1="20" x2="492.0" y2="350" class="chart-grid"/>
+ <text x="492.0" y="368" text-anchor="middle" class="chart-label">60%</text>
+ <line x1="636.0" y1="20" x2="636.0" y2="350" class="chart-grid"/>
+ <text x="636.0" y="368" text-anchor="middle" class="chart-label">80%</text>
+ <line x1="780.0" y1="20" x2="780.0" y2="350" class="chart-grid"/>
+ <text x="780.0" y="368" text-anchor="middle" class="chart-label">100%</text>
+ <line x1="60" y1="350.0" x2="780" y2="350.0" class="chart-grid"/>
+ <text x="52" y="350.0" text-anchor="end" dominant-baseline="middle" class="chart-label">0</text>
+ <line x1="60" y1="240.0" x2="780" y2="240.0" class="chart-grid"/>
+ <text x="52" y="240.0" text-anchor="end" dominant-baseline="middle" class="chart-label">50</text>
+ <line x1="60" y1="130.0" x2="780" y2="130.0" class="chart-grid"/>
+ <text x="52" y="130.0" text-anchor="end" dominant-baseline="middle" class="chart-label">100</text>
+ <line x1="60" y1="20.0" x2="780" y2="20.0" class="chart-grid"/>
+ <text x="52" y="20.0" text-anchor="end" dominant-baseline="middle" class="chart-label">150</text>
+ <line x1="60" y1="20" x2="60" y2="350" class="chart-axis"/>
+ <line x1="60" y1="350" x2="780" y2="350" class="chart-axis"/>
+ <text x="420.0" y="395" text-anchor="middle" class="chart-title">Line Coverage (%)</text>
+ <text x="15" y="185.0" text-anchor="middle" transform="rotate(-90, 15, 185.0)" class="chart-title">Cyclomatic Complexity</text>
+ <a href="Admin/ConfigView.php.html#221"><circle cx="721.8" cy="123.4" r="20.0" class="bubble-success"><title>Indieinabox\Views\Admin\ConfigView::renderConfig — Coverage: 91.9% | Lines: 915 | Complexity: 103</title></circle></a>
+ <a href="Admin/AdminLayoutView.php.html#24"><circle cx="777.0" cy="321.4" r="17.7" class="bubble-success"><title>Indieinabox\Views\Admin\AdminLayoutView::render — Coverage: 99.6% | Lines: 713 | Complexity: 13</title></circle></a>
+ <a href="Admin/ModerationView.php.html#22"><circle cx="629.7" cy="312.6" r="12.6" class="bubble-warning"><title>Indieinabox\Views\Admin\ModerationView::render — Coverage: 79.1% | Lines: 364 | Complexity: 17</title></circle></a>
+ <a href="Admin/MicrosubReaderView.php.html#19"><circle cx="780.0" cy="347.8" r="11.8" class="bubble-success"><title>Indieinabox\Views\Admin\MicrosubReaderView::render — Coverage: 100.0% | Lines: 319 | Complexity: 1</title></circle></a>
+ <a href="Admin/ConfigView.php.html#17"><circle cx="775.9" cy="341.2" r="8.8" class="bubble-success"><title>Indieinabox\Views\Admin\ConfigView::renderBootstrap — Coverage: 99.4% | Lines: 177 | Complexity: 4</title></circle></a>
+ <a href="Admin/MicropubClientView.php.html#19"><circle cx="780.0" cy="347.8" r="8.4" class="bubble-success"><title>Indieinabox\Views\Admin\MicropubClientView::render — Coverage: 100.0% | Lines: 162 | Complexity: 1</title></circle></a>
+ <a href="DiscoveryView.php.html#23"><circle cx="640.1" cy="275.2" r="7.8" class="bubble-warning"><title>Indieinabox\Views\DiscoveryView::render — Coverage: 80.6% | Lines: 139 | Complexity: 34</title></circle></a>
+ <a href="SearchView.php.html#24"><circle cx="537.4" cy="299.4" r="6.3" class="bubble-warning"><title>Indieinabox\Views\SearchView::render — Coverage: 66.3% | Lines: 92 | Complexity: 23</title></circle></a>
+ <a href="ArchiveView.php.html#23"><circle cx="420.0" cy="332.4" r="4.3" class="bubble-danger"><title>Indieinabox\Views\ArchiveView::render — Coverage: 50.0% | Lines: 42 | Complexity: 8</title></circle></a>
+ <a href="Client/UnifiedClientView.php.html#24"><circle cx="780.0" cy="347.8" r="4.0" class="bubble-success"><title>Indieinabox\Views\Client\UnifiedClientView::render — Coverage: 100.0% | Lines: 17 | Complexity: 1</title></circle></a>
+</svg>
+     </div>
+     <div>
+      <p class="hint">Sorted by descending <abbr title="Change Risk Anti-Patterns">CRAP</abbr> index.</p>
+      <div class="scrollbox">
+     <table class="crap">
+      <thead>
+       <tr>
+        <th scope="col">Method</th>
+        <th scope="col" class="number"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+        <th scope="col" class="number">Coverage</th>
+       </tr>
+      </thead>
+      <tbody>
+       <tr><td><a href="Admin/ConfigView.php.html#221">Indieinabox\Views\Admin\ConfigView::renderConfig</a></td><td class="number">108.61</td><td class="number">91.9%</td></tr>
+       <tr><td><a href="SearchView.php.html#24">Indieinabox\Views\SearchView::render</a></td><td class="number">43.24</td><td class="number">66.3%</td></tr>
+       <tr><td><a href="DiscoveryView.php.html#23">Indieinabox\Views\DiscoveryView::render</a></td><td class="number">42.47</td><td class="number">80.6%</td></tr>
+       <tr><td><a href="Admin/ModerationView.php.html#22">Indieinabox\Views\Admin\ModerationView::render</a></td><td class="number">19.63</td><td class="number">79.1%</td></tr>
+       <tr><td><a href="ArchiveView.php.html#23">Indieinabox\Views\ArchiveView::render</a></td><td class="number">16.00</td><td class="number">50.0%</td></tr>
+       <tr><td><a href="Admin/AdminLayoutView.php.html#24">Indieinabox\Views\Admin\AdminLayoutView::render</a></td><td class="number">13</td><td class="number">99.6%</td></tr>
+       <tr><td><a href="Admin/ConfigView.php.html#17">Indieinabox\Views\Admin\ConfigView::renderBootstrap</a></td><td class="number">4</td><td class="number">99.4%</td></tr>
+       <tr><td><a href="Admin/MicropubClientView.php.html#19">Indieinabox\Views\Admin\MicropubClientView::render</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="Admin/MicrosubReaderView.php.html#19">Indieinabox\Views\Admin\MicrosubReaderView::render</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="Client/UnifiedClientView.php.html#24">Indieinabox\Views\Client\UnifiedClientView::render</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+      </tbody>
+     </table>
+      </div>
+     </div>
+    </div>
+   </section>
+  </main>
+  <footer>
+   <p class="credits">Generated by <a href="https://github.com/sebastianbergmann/php-code-coverage" target="_top">php-code-coverage 14.3.1</a> using <a href="https://www.php.net/" target="_top">PHP 8.4.27</a> and <a href="https://phpunit.de/">PHPUnit 13.3.1</a> at Mon Oct 26 6:16:30 UTC 2026.</p>
+  </footer>
+ </body>
+</html>

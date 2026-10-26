@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboard for Indieinabox\Repositories</title>
+  <link rel="stylesheet" href="../../../_css/style.css?v=14.3.1">
+  <link rel="stylesheet" href="../../../_css/custom.css">
+ </head>
+ <body>
+  <header class="masthead">
+   <nav aria-label="Breadcrumb">
+    <ol class="breadcrumbs">
+     <li><a href="../../index.html">(Global)</a></li>
+     <li><a href="../index.html">Indieinabox</a></li>
+     <li><a href="index.html">Repositories</a></li>
+     <li class="current">Dashboard</li>
+    </ol>
+   </nav>
+   <ul class="tabs">
+    <li><a href="../../../dashboard.html">Files</a></li>
+    <li><a href="../../../_classes/index.html" aria-current="page">Classes</a></li>
+   </ul>
+  </header>
+  <main class="dashboard">
+   <section>
+    <h2>Classes</h2>
+    <div class="panel">
+     <div class="chart">
+      <p class="hint">Line coverage against cyclomatic complexity. Bubble size is the number of executable lines; hover for details, click to navigate.</p>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400" preserveAspectRatio="xMidYMid meet">
+ <style>
+  .bubble-success { fill: var(--coverage-success-bar); opacity: 0.7; }
+  .bubble-warning { fill: var(--coverage-warning-bar); opacity: 0.7; }
+  .bubble-danger { fill: var(--coverage-danger-bar); opacity: 0.7; }
+  .bubble-success:hover, .bubble-warning:hover, .bubble-danger:hover { opacity: 1; stroke: var(--text); stroke-width: 1.5; }
+  .chart-grid { stroke: var(--border); stroke-width: 0.5; stroke-dasharray: 4,4; opacity: 0.5; }
+  .chart-axis { stroke: var(--border); stroke-width: 1; }
+  .chart-label { fill: var(--text); font-size: 11px; font-family: var(--font-sans); }
+  .chart-title { fill: var(--text); font-size: 12px; font-family: var(--font-sans); }
+ </style>
+ <line x1="60.0" y1="20" x2="60.0" y2="350" class="chart-grid"/>
+ <text x="60.0" y="368" text-anchor="middle" class="chart-label">0%</text>
+ <line x1="204.0" y1="20" x2="204.0" y2="350" class="chart-grid"/>
+ <text x="204.0" y="368" text-anchor="middle" class="chart-label">20%</text>
+ <line x1="348.0" y1="20" x2="348.0" y2="350" class="chart-grid"/>
+ <text x="348.0" y="368" text-anchor="middle" class="chart-label">40%</text>
+ <line x1="492.0" y1="20" x2="492.0" y2="350" class="chart-grid"/>
+ <text x="492.0" y="368" text-anchor="middle" class="chart-label">60%</text>
+ <line x1="636.0" y1="20" x2="636.0" y2="350" class="chart-grid"/>
+ <text x="636.0" y="368" text-anchor="middle" class="chart-label">80%</text>
+ <line x1="780.0" y1="20" x2="780.0" y2="350" class="chart-grid"/>
+ <text x="780.0" y="368" text-anchor="middle" class="chart-label">100%</text>
+ <line x1="60" y1="350.0" x2="780" y2="350.0" class="chart-grid"/>
+ <text x="52" y="350.0" text-anchor="end" dominant-baseline="middle" class="chart-label">0</text>
+ <line x1="60" y1="284.0" x2="780" y2="284.0" class="chart-grid"/>
+ <text x="52" y="284.0" text-anchor="end" dominant-baseline="middle" class="chart-label">20</text>
+ <line x1="60" y1="218.0" x2="780" y2="218.0" class="chart-grid"/>
+ <text x="52" y="218.0" text-anchor="end" dominant-baseline="middle" class="chart-label">40</text>
+ <line x1="60" y1="152.0" x2="780" y2="152.0" class="chart-grid"/>
+ <text x="52" y="152.0" text-anchor="end" dominant-baseline="middle" class="chart-label">60</text>
+ <line x1="60" y1="86.0" x2="780" y2="86.0" class="chart-grid"/>
+ <text x="52" y="86.0" text-anchor="end" dominant-baseline="middle" class="chart-label">80</text>
+ <line x1="60" y1="20.0" x2="780" y2="20.0" class="chart-grid"/>
+ <text x="52" y="20.0" text-anchor="end" dominant-baseline="middle" class="chart-label">100</text>
+ <line x1="60" y1="20" x2="60" y2="350" class="chart-axis"/>
+ <line x1="60" y1="350" x2="780" y2="350" class="chart-axis"/>
+ <text x="420.0" y="395" text-anchor="middle" class="chart-title">Line Coverage (%)</text>
+ <text x="15" y="185.0" text-anchor="middle" transform="rotate(-90, 15, 185.0)" class="chart-title">Cyclomatic Complexity</text>
+ <a href="../../../app/Repositories/SqliteSettingsRepository.php.html#15"><circle cx="601.1" cy="86.0" r="20.0" class="bubble-warning"><title>Indieinabox\Repositories\SqliteSettingsRepository — Coverage: 75.2% | Lines: 157 | Complexity: 80</title></circle></a>
+ <a href="../../../app/Repositories/FileInteractionRepository.php.html#15"><circle cx="689.3" cy="165.2" r="18.0" class="bubble-warning"><title>Indieinabox\Repositories\FileInteractionRepository — Coverage: 87.4% | Lines: 127 | Complexity: 56</title></circle></a>
+ <a href="../../../app/Repositories/FileSystemContentRepository.php.html#15"><circle cx="706.8" cy="158.6" r="17.3" class="bubble-warning"><title>Indieinabox\Repositories\FileSystemContentRepository — Coverage: 89.8% | Lines: 118 | Complexity: 58</title></circle></a>
+ <a href="../../../app/Repositories/SqliteMicrosubRepository.php.html#15"><circle cx="780.0" cy="260.9" r="14.7" class="bubble-success"><title>Indieinabox\Repositories\SqliteMicrosubRepository — Coverage: 100.0% | Lines: 85 | Complexity: 27</title></circle></a>
+ <a href="../../../app/Repositories/SqliteActivityPubRepository.php.html#15"><circle cx="735.0" cy="244.4" r="14.3" class="bubble-success"><title>Indieinabox\Repositories\SqliteActivityPubRepository — Coverage: 93.8% | Lines: 80 | Complexity: 32</title></circle></a>
+</svg>
+     </div>
+     <div>
+      <p class="hint">Sorted by descending <abbr title="Change Risk Anti-Patterns">CRAP</abbr> index.</p>
+      <div class="scrollbox">
+     <table class="crap">
+      <thead>
+       <tr>
+        <th scope="col">Class</th>
+        <th scope="col" class="number"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+        <th scope="col" class="number">Coverage</th>
+       </tr>
+      </thead>
+      <tbody>
+       <tr><td><a href="../../../app/Repositories/SqliteSettingsRepository.php.html#15">Indieinabox\Repositories\SqliteSettingsRepository</a></td><td class="number">178.10</td><td class="number">75.2%</td></tr>
+       <tr><td><a href="../../../app/Repositories/FileInteractionRepository.php.html#15">Indieinabox\Repositories\FileInteractionRepository</a></td><td class="number">62.27</td><td class="number">87.4%</td></tr>
+       <tr><td><a href="../../../app/Repositories/FileSystemContentRepository.php.html#15">Indieinabox\Repositories\FileSystemContentRepository</a></td><td class="number">61.54</td><td class="number">89.8%</td></tr>
+       <tr><td><a href="../../../app/Repositories/SqliteActivityPubRepository.php.html#15">Indieinabox\Repositories\SqliteActivityPubRepository</a></td><td class="number">32.25</td><td class="number">93.8%</td></tr>
+       <tr><td><a href="../../../app/Repositories/SqliteMicrosubRepository.php.html#15">Indieinabox\Repositories\SqliteMicrosubRepository</a></td><td class="number">27</td><td class="number">100.0%</td></tr>
+      </tbody>
+     </table>
+      </div>
+     </div>
+    </div>
+   </section>
+   <section>
+    <h2>Methods</h2>
+    <div class="panel">
+     <div class="chart">
+      <p class="hint">Line coverage against cyclomatic complexity. Bubble size is the number of executable lines; hover for details, click to navigate.</p>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400" preserveAspectRatio="xMidYMid meet">
+ <style>
+  .bubble-success { fill: var(--coverage-success-bar); opacity: 0.7; }
+  .bubble-warning { fill: var(--coverage-warning-bar); opacity: 0.7; }
+  .bubble-danger { fill: var(--coverage-danger-bar); opacity: 0.7; }
+  .bubble-success:hover, .bubble-warning:hover, .bubble-danger:hover { opacity: 1; stroke: var(--text); stroke-width: 1.5; }
+  .chart-grid { stroke: var(--border); stroke-width: 0.5; stroke-dasharray: 4,4; opacity: 0.5; }
+  .chart-axis { stroke: var(--border); stroke-width: 1; }
+  .chart-label { fill: var(--text); font-size: 11px; font-family: var(--font-sans); }
+  .chart-title { fill: var(--text); font-size: 12px; font-family: var(--font-sans); }
+ </style>
+ <line x1="60.0" y1="20" x2="60.0" y2="350" class="chart-grid"/>
+ <text x="60.0" y="368" text-anchor="middle" class="chart-label">0%</text>
+ <line x1="204.0" y1="20" x2="204.0" y2="350" class="chart-grid"/>
+ <text x="204.0" y="368" text-anchor="middle" class="chart-label">20%</text>
+ <line x1="348.0" y1="20" x2="348.0" y2="350" class="chart-grid"/>
+ <text x="348.0" y="368" text-anchor="middle" class="chart-label">40%</text>
+ <line x1="492.0" y1="20" x2="492.0" y2="350" class="chart-grid"/>
+ <text x="492.0" y="368" text-anchor="middle" class="chart-label">60%</text>
+ <line x1="636.0" y1="20" x2="636.0" y2="350" class="chart-grid"/>
+ <text x="636.0" y="368" text-anchor="middle" class="chart-label">80%</text>
+ <line x1="780.0" y1="20" x2="780.0" y2="350" class="chart-grid"/>
+ <text x="780.0" y="368" text-anchor="middle" class="chart-label">100%</text>
+ <line x1="60" y1="350.0" x2="780" y2="350.0" class="chart-grid"/>
+ <text x="52" y="350.0" text-anchor="end" dominant-baseline="middle" class="chart-label">0</text>
+ <line x1="60" y1="240.0" x2="780" y2="240.0" class="chart-grid"/>
+ <text x="52" y="240.0" text-anchor="end" dominant-baseline="middle" class="chart-label">10</text>
+ <line x1="60" y1="130.0" x2="780" y2="130.0" class="chart-grid"/>
+ <text x="52" y="130.0" text-anchor="end" dominant-baseline="middle" class="chart-label">20</text>
+ <line x1="60" y1="20.0" x2="780" y2="20.0" class="chart-grid"/>
+ <text x="52" y="20.0" text-anchor="end" dominant-baseline="middle" class="chart-label">30</text>
+ <line x1="60" y1="20" x2="60" y2="350" class="chart-axis"/>
+ <line x1="60" y1="350" x2="780" y2="350" class="chart-axis"/>
+ <text x="420.0" y="395" text-anchor="middle" class="chart-title">Line Coverage (%)</text>
+ <text x="15" y="185.0" text-anchor="middle" transform="rotate(-90, 15, 185.0)" class="chart-title">Cyclomatic Complexity</text>
+ <a href="../../../app/Repositories/SqliteSettingsRepository.php.html#88"><circle cx="438.0" cy="64.0" r="20.0" class="bubble-warning"><title>Indieinabox\Repositories\SqliteSettingsRepository::all — Coverage: 52.5% | Lines: 40 | Complexity: 26</title></circle></a>
+ <a href="../../../app/Repositories/FileInteractionRepository.php.html#112"><circle cx="738.9" cy="196.0" r="18.7" class="bubble-success"><title>Indieinabox\Repositories\FileInteractionRepository::listByStatus — Coverage: 94.3% | Lines: 35 | Complexity: 14</title></circle></a>
+ <a href="../../../app/Repositories/FileInteractionRepository.php.html#164"><circle cx="605.5" cy="218.0" r="18.2" class="bubble-warning"><title>Indieinabox\Repositories\FileInteractionRepository::updateStatus — Coverage: 75.8% | Lines: 33 | Complexity: 12</title></circle></a>
+ <a href="../../../app/Repositories/FileSystemContentRepository.php.html#215"><circle cx="714.5" cy="207.0" r="18.2" class="bubble-success"><title>Indieinabox\Repositories\FileSystemContentRepository::query — Coverage: 90.9% | Lines: 33 | Complexity: 13</title></circle></a>
+ <a href="../../../app/Repositories/FileInteractionRepository.php.html#64"><circle cx="673.3" cy="218.0" r="16.4" class="bubble-warning"><title>Indieinabox\Repositories\FileInteractionRepository::findByPageSlug — Coverage: 85.2% | Lines: 27 | Complexity: 12</title></circle></a>
+ <a href="../../../app/Repositories/SqliteSettingsRepository.php.html#30"><circle cx="630.0" cy="196.0" r="15.5" class="bubble-warning"><title>Indieinabox\Repositories\SqliteSettingsRepository::get — Coverage: 79.2% | Lines: 24 | Complexity: 14</title></circle></a>
+ <a href="../../../app/Repositories/SqliteMicrosubRepository.php.html#150"><circle cx="780.0" cy="306.0" r="13.4" class="bubble-success"><title>Indieinabox\Repositories\SqliteMicrosubRepository::addFilter — Coverage: 100.0% | Lines: 18 | Complexity: 4</title></circle></a>
+ <a href="../../../app/Repositories/SqliteSettingsRepository.php.html#241"><circle cx="652.9" cy="284.0" r="13.0" class="bubble-warning"><title>Indieinabox\Repositories\SqliteSettingsRepository::saveTranslations — Coverage: 82.4% | Lines: 17 | Complexity: 6</title></circle></a>
+ <a href="../../../app/Repositories/SqliteSettingsRepository.php.html#272"><circle cx="652.9" cy="284.0" r="13.0" class="bubble-warning"><title>Indieinabox\Repositories\SqliteSettingsRepository::saveUrlTranslations — Coverage: 82.4% | Lines: 17 | Complexity: 6</title></circle></a>
+ <a href="../../../app/Repositories/FileSystemContentRepository.php.html#87"><circle cx="732.0" cy="262.0" r="12.2" class="bubble-success"><title>Indieinabox\Repositories\FileSystemContentRepository::buildFrontmatterMarkdown — Coverage: 93.3% | Lines: 15 | Complexity: 8</title></circle></a>
+ <a href="../../../app/Repositories/FileSystemContentRepository.php.html#181"><circle cx="684.0" cy="240.0" r="12.2" class="bubble-warning"><title>Indieinabox\Repositories\FileSystemContentRepository::scan — Coverage: 86.7% | Lines: 15 | Complexity: 10</title></circle></a>
+ <a href="../../../app/Repositories/SqliteSettingsRepository.php.html#154"><circle cx="677.1" cy="262.0" r="11.8" class="bubble-warning"><title>Indieinabox\Repositories\SqliteSettingsRepository::getTranslations — Coverage: 85.7% | Lines: 14 | Complexity: 8</title></circle></a>
+ <a href="../../../app/Repositories/SqliteSettingsRepository.php.html#179"><circle cx="780.0" cy="295.0" r="11.4" class="bubble-success"><title>Indieinabox\Repositories\SqliteSettingsRepository::getUrlTranslations — Coverage: 100.0% | Lines: 13 | Complexity: 5</title></circle></a>
+ <a href="../../../app/Repositories/FileSystemContentRepository.php.html#20"><circle cx="720.0" cy="284.0" r="11.0" class="bubble-success"><title>Indieinabox\Repositories\FileSystemContentRepository::__construct — Coverage: 91.7% | Lines: 12 | Complexity: 6</title></circle></a>
+ <a href="../../../app/Repositories/FileSystemContentRepository.php.html#114"><circle cx="518.2" cy="317.0" r="10.5" class="bubble-warning"><title>Indieinabox\Repositories\FileSystemContentRepository::parseFrontmatterMarkdown — Coverage: 63.6% | Lines: 11 | Complexity: 3</title></circle></a>
+ <a href="../../../app/Repositories/SqliteSettingsRepository.php.html#203"><circle cx="780.0" cy="295.0" r="10.5" class="bubble-success"><title>Indieinabox\Repositories\SqliteSettingsRepository::getKinds — Coverage: 100.0% | Lines: 11 | Complexity: 5</title></circle></a>
+ <a href="../../../app/Repositories/SqliteActivityPubRepository.php.html#65"><circle cx="708.0" cy="306.0" r="10.0" class="bubble-success"><title>Indieinabox\Repositories\SqliteActivityPubRepository::getDistinctInboxes — Coverage: 90.0% | Lines: 10 | Complexity: 4</title></circle></a>
+ <a href="../../../app/Repositories/SqliteActivityPubRepository.php.html#130"><circle cx="636.0" cy="317.0" r="10.0" class="bubble-warning"><title>Indieinabox\Repositories\SqliteActivityPubRepository::getActivities — Coverage: 80.0% | Lines: 10 | Complexity: 3</title></circle></a>
+ <a href="../../../app/Repositories/SqliteActivityPubRepository.php.html#177"><circle cx="780.0" cy="317.0" r="10.0" class="bubble-success"><title>Indieinabox\Repositories\SqliteActivityPubRepository::getFlowerbedFollowerInboxes — Coverage: 100.0% | Lines: 10 | Complexity: 3</title></circle></a>
+ <a href="../../../app/Repositories/SqliteMicrosubRepository.php.html#132"><circle cx="780.0" cy="306.0" r="10.0" class="bubble-success"><title>Indieinabox\Repositories\SqliteMicrosubRepository::getFilters — Coverage: 100.0% | Lines: 10 | Complexity: 4</title></circle></a>
+ <a href="../../../app/Repositories/SqliteSettingsRepository.php.html#70"><circle cx="492.0" cy="306.0" r="10.0" class="bubble-warning"><title>Indieinabox\Repositories\SqliteSettingsRepository::set — Coverage: 60.0% | Lines: 10 | Complexity: 4</title></circle></a>
+ <a href="../../../app/Repositories/FileSystemContentRepository.php.html#63"><circle cx="780.0" cy="317.0" r="9.5" class="bubble-success"><title>Indieinabox\Repositories\FileSystemContentRepository::generateUniqueSlug — Coverage: 100.0% | Lines: 9 | Complexity: 3</title></circle></a>
+ <a href="../../../app/Repositories/SqliteMicrosubRepository.php.html#71"><circle cx="780.0" cy="339.0" r="9.5" class="bubble-success"><title>Indieinabox\Repositories\SqliteMicrosubRepository::addSubscription — Coverage: 100.0% | Lines: 9 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Repositories/SqliteMicrosubRepository.php.html#118"><circle cx="780.0" cy="339.0" r="9.5" class="bubble-success"><title>Indieinabox\Repositories\SqliteMicrosubRepository::ensureFiltersTable — Coverage: 100.0% | Lines: 9 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Repositories/SqliteSettingsRepository.php.html#223"><circle cx="540.0" cy="306.0" r="9.5" class="bubble-warning"><title>Indieinabox\Repositories\SqliteSettingsRepository::saveKinds — Coverage: 66.7% | Lines: 9 | Complexity: 4</title></circle></a>
+ <a href="../../../app/Repositories/FileInteractionRepository.php.html#217"><circle cx="780.0" cy="306.0" r="8.9" class="bubble-success"><title>Indieinabox\Repositories\FileInteractionRepository::save — Coverage: 100.0% | Lines: 8 | Complexity: 4</title></circle></a>
+ <a href="../../../app/Repositories/FileSystemContentRepository.php.html#39"><circle cx="690.0" cy="273.0" r="8.9" class="bubble-warning"><title>Indieinabox\Repositories\FileSystemContentRepository::resolveTargetDirectory — Coverage: 87.5% | Lines: 8 | Complexity: 7</title></circle></a>
+ <a href="../../../app/Repositories/FileSystemContentRepository.php.html#132"><circle cx="780.0" cy="328.0" r="8.4" class="bubble-success"><title>Indieinabox\Repositories\FileSystemContentRepository::save — Coverage: 100.0% | Lines: 7 | Complexity: 2</title></circle></a>
+ <a href="../../../app/Repositories/SqliteActivityPubRepository.php.html#94"><circle cx="780.0" cy="328.0" r="7.7" class="bubble-success"><title>Indieinabox\Repositories\SqliteActivityPubRepository::getPendingOutbox — Coverage: 100.0% | Lines: 6 | Complexity: 2</title></circle></a>
+ <a href="../../../app/Repositories/SqliteMicrosubRepository.php.html#50"><circle cx="780.0" cy="339.0" r="7.7" class="bubble-success"><title>Indieinabox\Repositories\SqliteMicrosubRepository::deleteChannel — Coverage: 100.0% | Lines: 6 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Repositories/SqliteMicrosubRepository.php.html#90"><circle cx="780.0" cy="328.0" r="7.7" class="bubble-success"><title>Indieinabox\Repositories\SqliteMicrosubRepository::getSubscriptionType — Coverage: 100.0% | Lines: 6 | Complexity: 2</title></circle></a>
+ <a href="../../../app/Repositories/FileInteractionRepository.php.html#26"><circle cx="780.0" cy="306.0" r="7.1" class="bubble-success"><title>Indieinabox\Repositories\FileInteractionRepository::getDataDir — Coverage: 100.0% | Lines: 5 | Complexity: 4</title></circle></a>
+ <a href="../../../app/Repositories/FileInteractionRepository.php.html#233"><circle cx="636.0" cy="317.0" r="7.1" class="bubble-warning"><title>Indieinabox\Repositories\FileInteractionRepository::delete — Coverage: 80.0% | Lines: 5 | Complexity: 3</title></circle></a>
+ <a href="../../../app/Repositories/SqliteActivityPubRepository.php.html#84"><circle cx="780.0" cy="339.0" r="7.1" class="bubble-success"><title>Indieinabox\Repositories\SqliteActivityPubRepository::enqueueOutbox — Coverage: 100.0% | Lines: 5 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Repositories/SqliteActivityPubRepository.php.html#120"><circle cx="780.0" cy="339.0" r="7.1" class="bubble-success"><title>Indieinabox\Repositories\SqliteActivityPubRepository::recordActivity — Coverage: 100.0% | Lines: 5 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Repositories/SqliteActivityPubRepository.php.html#158"><circle cx="780.0" cy="339.0" r="7.1" class="bubble-success"><title>Indieinabox\Repositories\SqliteActivityPubRepository::addFlowerbedFollower — Coverage: 100.0% | Lines: 5 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Repositories/FileInteractionRepository.php.html#36"><circle cx="780.0" cy="328.0" r="6.3" class="bubble-success"><title>Indieinabox\Repositories\FileInteractionRepository::getNotificationsDir — Coverage: 100.0% | Lines: 4 | Complexity: 2</title></circle></a>
+ <a href="../../../app/Repositories/FileInteractionRepository.php.html#45"><circle cx="780.0" cy="328.0" r="6.3" class="bubble-success"><title>Indieinabox\Repositories\FileInteractionRepository::getSpamDir — Coverage: 100.0% | Lines: 4 | Complexity: 2</title></circle></a>
+ <a href="../../../app/Repositories/FileInteractionRepository.php.html#54"><circle cx="600.0" cy="328.0" r="6.3" class="bubble-warning"><title>Indieinabox\Repositories\FileInteractionRepository::getInboxDir — Coverage: 75.0% | Lines: 4 | Complexity: 2</title></circle></a>
+ <a href="../../../app/Repositories/FileSystemContentRepository.php.html#155"><circle cx="780.0" cy="317.0" r="6.3" class="bubble-success"><title>Indieinabox\Repositories\FileSystemContentRepository::findByPath — Coverage: 100.0% | Lines: 4 | Complexity: 3</title></circle></a>
+ <a href="../../../app/Repositories/SqliteActivityPubRepository.php.html#24"><circle cx="780.0" cy="295.0" r="6.3" class="bubble-success"><title>Indieinabox\Repositories\SqliteActivityPubRepository::getDb — Coverage: 100.0% | Lines: 4 | Complexity: 5</title></circle></a>
+ <a href="../../../app/Repositories/SqliteActivityPubRepository.php.html#34"><circle cx="780.0" cy="339.0" r="6.3" class="bubble-success"><title>Indieinabox\Repositories\SqliteActivityPubRepository::addFollower — Coverage: 100.0% | Lines: 4 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Repositories/SqliteActivityPubRepository.php.html#147"><circle cx="420.0" cy="317.0" r="6.3" class="bubble-danger"><title>Indieinabox\Repositories\SqliteActivityPubRepository::getActivityCount — Coverage: 50.0% | Lines: 4 | Complexity: 3</title></circle></a>
+ <a href="../../../app/Repositories/SqliteActivityPubRepository.php.html#168"><circle cx="780.0" cy="339.0" r="6.3" class="bubble-success"><title>Indieinabox\Repositories\SqliteActivityPubRepository::removeFlowerbedFollower — Coverage: 100.0% | Lines: 4 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Repositories/SqliteMicrosubRepository.php.html#24"><circle cx="780.0" cy="295.0" r="6.3" class="bubble-success"><title>Indieinabox\Repositories\SqliteMicrosubRepository::getDb — Coverage: 100.0% | Lines: 4 | Complexity: 5</title></circle></a>
+ <a href="../../../app/Repositories/SqliteMicrosubRepository.php.html#41"><circle cx="780.0" cy="339.0" r="6.3" class="bubble-success"><title>Indieinabox\Repositories\SqliteMicrosubRepository::createChannel — Coverage: 100.0% | Lines: 4 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Repositories/SqliteMicrosubRepository.php.html#62"><circle cx="780.0" cy="328.0" r="6.3" class="bubble-success"><title>Indieinabox\Repositories\SqliteMicrosubRepository::getSubscriptions — Coverage: 100.0% | Lines: 4 | Complexity: 2</title></circle></a>
+ <a href="../../../app/Repositories/SqliteMicrosubRepository.php.html#101"><circle cx="780.0" cy="339.0" r="6.3" class="bubble-success"><title>Indieinabox\Repositories\SqliteMicrosubRepository::removeSubscription — Coverage: 100.0% | Lines: 4 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Repositories/SqliteMicrosubRepository.php.html#110"><circle cx="780.0" cy="339.0" r="6.3" class="bubble-success"><title>Indieinabox\Repositories\SqliteMicrosubRepository::countSubscriptionsByUrl — Coverage: 100.0% | Lines: 4 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Repositories/SqliteMicrosubRepository.php.html#178"><circle cx="780.0" cy="339.0" r="6.3" class="bubble-success"><title>Indieinabox\Repositories\SqliteMicrosubRepository::deleteFilter — Coverage: 100.0% | Lines: 4 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Repositories/FileSystemContentRepository.php.html#166"><circle cx="780.0" cy="328.0" r="5.5" class="bubble-success"><title>Indieinabox\Repositories\FileSystemContentRepository::delete — Coverage: 100.0% | Lines: 3 | Complexity: 2</title></circle></a>
+ <a href="../../../app/Repositories/SqliteActivityPubRepository.php.html#50"><circle cx="780.0" cy="339.0" r="5.5" class="bubble-success"><title>Indieinabox\Repositories\SqliteActivityPubRepository::isFollower — Coverage: 100.0% | Lines: 3 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Repositories/SqliteActivityPubRepository.php.html#112"><circle cx="780.0" cy="339.0" r="5.5" class="bubble-success"><title>Indieinabox\Repositories\SqliteActivityPubRepository::pruneOutbox — Coverage: 100.0% | Lines: 3 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Repositories/FileInteractionRepository.php.html#20"><circle cx="780.0" cy="339.0" r="4.5" class="bubble-success"><title>Indieinabox\Repositories\FileInteractionRepository::__construct — Coverage: 100.0% | Lines: 2 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Repositories/SqliteActivityPubRepository.php.html#43"><circle cx="780.0" cy="339.0" r="4.5" class="bubble-success"><title>Indieinabox\Repositories\SqliteActivityPubRepository::removeFollower — Coverage: 100.0% | Lines: 2 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Repositories/SqliteActivityPubRepository.php.html#58"><circle cx="780.0" cy="328.0" r="4.5" class="bubble-success"><title>Indieinabox\Repositories\SqliteActivityPubRepository::getFollowers — Coverage: 100.0% | Lines: 2 | Complexity: 2</title></circle></a>
+ <a href="../../../app/Repositories/SqliteActivityPubRepository.php.html#105"><circle cx="780.0" cy="339.0" r="4.5" class="bubble-success"><title>Indieinabox\Repositories\SqliteActivityPubRepository::updateOutboxStatus — Coverage: 100.0% | Lines: 2 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Repositories/SqliteMicrosubRepository.php.html#34"><circle cx="780.0" cy="328.0" r="4.5" class="bubble-success"><title>Indieinabox\Repositories\SqliteMicrosubRepository::getChannels — Coverage: 100.0% | Lines: 2 | Complexity: 2</title></circle></a>
+ <a href="../../../app/Repositories/FileSystemContentRepository.php.html#175"><circle cx="780.0" cy="339.0" r="4.0" class="bubble-success"><title>Indieinabox\Repositories\FileSystemContentRepository::exists — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Repositories/SqliteActivityPubRepository.php.html#19"><circle cx="780.0" cy="339.0" r="4.0" class="bubble-success"><title>Indieinabox\Repositories\SqliteActivityPubRepository::__construct — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Repositories/SqliteMicrosubRepository.php.html#19"><circle cx="780.0" cy="339.0" r="4.0" class="bubble-success"><title>Indieinabox\Repositories\SqliteMicrosubRepository::__construct — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Repositories/SqliteSettingsRepository.php.html#19"><circle cx="780.0" cy="339.0" r="4.0" class="bubble-success"><title>Indieinabox\Repositories\SqliteSettingsRepository::__construct — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Repositories/SqliteSettingsRepository.php.html#24"><circle cx="780.0" cy="339.0" r="4.0" class="bubble-success"><title>Indieinabox\Repositories\SqliteSettingsRepository::getDb — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+</svg>
+     </div>
+     <div>
+      <p class="hint">Sorted by descending <abbr title="Change Risk Anti-Patterns">CRAP</abbr> index.</p>
+      <div class="scrollbox">
+     <table class="crap">
+      <thead>
+       <tr>
+        <th scope="col">Method</th>
+        <th scope="col" class="number"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+        <th scope="col" class="number">Coverage</th>
+       </tr>
+      </thead>
+      <tbody>
+       <tr><td><a href="../../../app/Repositories/SqliteSettingsRepository.php.html#88">Indieinabox\Repositories\SqliteSettingsRepository::all</a></td><td class="number">98.45</td><td class="number">52.5%</td></tr>
+       <tr><td><a href="../../../app/Repositories/SqliteSettingsRepository.php.html#30">Indieinabox\Repositories\SqliteSettingsRepository::get</a></td><td class="number">15.77</td><td class="number">79.2%</td></tr>
+       <tr><td><a href="../../../app/Repositories/FileInteractionRepository.php.html#164">Indieinabox\Repositories\FileInteractionRepository::updateStatus</a></td><td class="number">14.05</td><td class="number">75.8%</td></tr>
+       <tr><td><a href="../../../app/Repositories/FileInteractionRepository.php.html#112">Indieinabox\Repositories\FileInteractionRepository::listByStatus</a></td><td class="number">14.04</td><td class="number">94.3%</td></tr>
+       <tr><td><a href="../../../app/Repositories/FileSystemContentRepository.php.html#215">Indieinabox\Repositories\FileSystemContentRepository::query</a></td><td class="number">13.13</td><td class="number">90.9%</td></tr>
+       <tr><td><a href="../../../app/Repositories/FileInteractionRepository.php.html#64">Indieinabox\Repositories\FileInteractionRepository::findByPageSlug</a></td><td class="number">12.47</td><td class="number">85.2%</td></tr>
+       <tr><td><a href="../../../app/Repositories/FileSystemContentRepository.php.html#181">Indieinabox\Repositories\FileSystemContentRepository::scan</a></td><td class="number">10.24</td><td class="number">86.7%</td></tr>
+       <tr><td><a href="../../../app/Repositories/SqliteSettingsRepository.php.html#154">Indieinabox\Repositories\SqliteSettingsRepository::getTranslations</a></td><td class="number">8.19</td><td class="number">85.7%</td></tr>
+       <tr><td><a href="../../../app/Repositories/FileSystemContentRepository.php.html#87">Indieinabox\Repositories\FileSystemContentRepository::buildFrontmatterMarkdown</a></td><td class="number">8.02</td><td class="number">93.3%</td></tr>
+       <tr><td><a href="../../../app/Repositories/FileSystemContentRepository.php.html#39">Indieinabox\Repositories\FileSystemContentRepository::resolveTargetDirectory</a></td><td class="number">7.10</td><td class="number">87.5%</td></tr>
+       <tr><td><a href="../../../app/Repositories/SqliteSettingsRepository.php.html#241">Indieinabox\Repositories\SqliteSettingsRepository::saveTranslations</a></td><td class="number">6.20</td><td class="number">82.4%</td></tr>
+       <tr><td><a href="../../../app/Repositories/SqliteSettingsRepository.php.html#272">Indieinabox\Repositories\SqliteSettingsRepository::saveUrlTranslations</a></td><td class="number">6.20</td><td class="number">82.4%</td></tr>
+       <tr><td><a href="../../../app/Repositories/FileSystemContentRepository.php.html#20">Indieinabox\Repositories\FileSystemContentRepository::__construct</a></td><td class="number">6.02</td><td class="number">91.7%</td></tr>
+       <tr><td><a href="../../../app/Repositories/SqliteSettingsRepository.php.html#70">Indieinabox\Repositories\SqliteSettingsRepository::set</a></td><td class="number">5.02</td><td class="number">60.0%</td></tr>
+       <tr><td><a href="../../../app/Repositories/SqliteActivityPubRepository.php.html#24">Indieinabox\Repositories\SqliteActivityPubRepository::getDb</a></td><td class="number">5</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Repositories/SqliteMicrosubRepository.php.html#24">Indieinabox\Repositories\SqliteMicrosubRepository::getDb</a></td><td class="number">5</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Repositories/SqliteSettingsRepository.php.html#179">Indieinabox\Repositories\SqliteSettingsRepository::getUrlTranslations</a></td><td class="number">5</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Repositories/SqliteSettingsRepository.php.html#203">Indieinabox\Repositories\SqliteSettingsRepository::getKinds</a></td><td class="number">5</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Repositories/SqliteSettingsRepository.php.html#223">Indieinabox\Repositories\SqliteSettingsRepository::saveKinds</a></td><td class="number">4.59</td><td class="number">66.7%</td></tr>
+       <tr><td><a href="../../../app/Repositories/SqliteActivityPubRepository.php.html#147">Indieinabox\Repositories\SqliteActivityPubRepository::getActivityCount</a></td><td class="number">4.12</td><td class="number">50.0%</td></tr>
+       <tr><td><a href="../../../app/Repositories/SqliteActivityPubRepository.php.html#65">Indieinabox\Repositories\SqliteActivityPubRepository::getDistinctInboxes</a></td><td class="number">4.02</td><td class="number">90.0%</td></tr>
+       <tr><td><a href="../../../app/Repositories/FileInteractionRepository.php.html#26">Indieinabox\Repositories\FileInteractionRepository::getDataDir</a></td><td class="number">4</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Repositories/FileInteractionRepository.php.html#217">Indieinabox\Repositories\FileInteractionRepository::save</a></td><td class="number">4</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Repositories/SqliteMicrosubRepository.php.html#132">Indieinabox\Repositories\SqliteMicrosubRepository::getFilters</a></td><td class="number">4</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Repositories/SqliteMicrosubRepository.php.html#150">Indieinabox\Repositories\SqliteMicrosubRepository::addFilter</a></td><td class="number">4</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Repositories/FileSystemContentRepository.php.html#114">Indieinabox\Repositories\FileSystemContentRepository::parseFrontmatterMarkdown</a></td><td class="number">3.43</td><td class="number">63.6%</td></tr>
+       <tr><td><a href="../../../app/Repositories/FileInteractionRepository.php.html#233">Indieinabox\Repositories\FileInteractionRepository::delete</a></td><td class="number">3.07</td><td class="number">80.0%</td></tr>
+       <tr><td><a href="../../../app/Repositories/SqliteActivityPubRepository.php.html#130">Indieinabox\Repositories\SqliteActivityPubRepository::getActivities</a></td><td class="number">3.07</td><td class="number">80.0%</td></tr>
+       <tr><td><a href="../../../app/Repositories/FileSystemContentRepository.php.html#63">Indieinabox\Repositories\FileSystemContentRepository::generateUniqueSlug</a></td><td class="number">3</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Repositories/FileSystemContentRepository.php.html#155">Indieinabox\Repositories\FileSystemContentRepository::findByPath</a></td><td class="number">3</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Repositories/SqliteActivityPubRepository.php.html#177">Indieinabox\Repositories\SqliteActivityPubRepository::getFlowerbedFollowerInboxes</a></td><td class="number">3</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Repositories/FileInteractionRepository.php.html#54">Indieinabox\Repositories\FileInteractionRepository::getInboxDir</a></td><td class="number">2.06</td><td class="number">75.0%</td></tr>
+       <tr><td><a href="../../../app/Repositories/FileInteractionRepository.php.html#36">Indieinabox\Repositories\FileInteractionRepository::getNotificationsDir</a></td><td class="number">2</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Repositories/FileInteractionRepository.php.html#45">Indieinabox\Repositories\FileInteractionRepository::getSpamDir</a></td><td class="number">2</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Repositories/FileSystemContentRepository.php.html#132">Indieinabox\Repositories\FileSystemContentRepository::save</a></td><td class="number">2</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Repositories/FileSystemContentRepository.php.html#166">Indieinabox\Repositories\FileSystemContentRepository::delete</a></td><td class="number">2</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Repositories/SqliteActivityPubRepository.php.html#58">Indieinabox\Repositories\SqliteActivityPubRepository::getFollowers</a></td><td class="number">2</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Repositories/SqliteActivityPubRepository.php.html#94">Indieinabox\Repositories\SqliteActivityPubRepository::getPendingOutbox</a></td><td class="number">2</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Repositories/SqliteMicrosubRepository.php.html#34">Indieinabox\Repositories\SqliteMicrosubRepository::getChannels</a></td><td class="number">2</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Repositories/SqliteMicrosubRepository.php.html#62">Indieinabox\Repositories\SqliteMicrosubRepository::getSubscriptions</a></td><td class="number">2</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Repositories/SqliteMicrosubRepository.php.html#90">Indieinabox\Repositories\SqliteMicrosubRepository::getSubscriptionType</a></td><td class="number">2</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Repositories/FileInteractionRepository.php.html#20">Indieinabox\Repositories\FileInteractionRepository::__construct</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Repositories/FileSystemContentRepository.php.html#175">Indieinabox\Repositories\FileSystemContentRepository::exists</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Repositories/SqliteActivityPubRepository.php.html#19">Indieinabox\Repositories\SqliteActivityPubRepository::__construct</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Repositories/SqliteActivityPubRepository.php.html#34">Indieinabox\Repositories\SqliteActivityPubRepository::addFollower</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Repositories/SqliteActivityPubRepository.php.html#43">Indieinabox\Repositories\SqliteActivityPubRepository::removeFollower</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Repositories/SqliteActivityPubRepository.php.html#50">Indieinabox\Repositories\SqliteActivityPubRepository::isFollower</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Repositories/SqliteActivityPubRepository.php.html#84">Indieinabox\Repositories\SqliteActivityPubRepository::enqueueOutbox</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Repositories/SqliteActivityPubRepository.php.html#105">Indieinabox\Repositories\SqliteActivityPubRepository::updateOutboxStatus</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Repositories/SqliteActivityPubRepository.php.html#112">Indieinabox\Repositories\SqliteActivityPubRepository::pruneOutbox</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Repositories/SqliteActivityPubRepository.php.html#120">Indieinabox\Repositories\SqliteActivityPubRepository::recordActivity</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Repositories/SqliteActivityPubRepository.php.html#158">Indieinabox\Repositories\SqliteActivityPubRepository::addFlowerbedFollower</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Repositories/SqliteActivityPubRepository.php.html#168">Indieinabox\Repositories\SqliteActivityPubRepository::removeFlowerbedFollower</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Repositories/SqliteMicrosubRepository.php.html#19">Indieinabox\Repositories\SqliteMicrosubRepository::__construct</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Repositories/SqliteMicrosubRepository.php.html#41">Indieinabox\Repositories\SqliteMicrosubRepository::createChannel</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Repositories/SqliteMicrosubRepository.php.html#50">Indieinabox\Repositories\SqliteMicrosubRepository::deleteChannel</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Repositories/SqliteMicrosubRepository.php.html#71">Indieinabox\Repositories\SqliteMicrosubRepository::addSubscription</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Repositories/SqliteMicrosubRepository.php.html#101">Indieinabox\Repositories\SqliteMicrosubRepository::removeSubscription</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Repositories/SqliteMicrosubRepository.php.html#110">Indieinabox\Repositories\SqliteMicrosubRepository::countSubscriptionsByUrl</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Repositories/SqliteMicrosubRepository.php.html#118">Indieinabox\Repositories\SqliteMicrosubRepository::ensureFiltersTable</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Repositories/SqliteMicrosubRepository.php.html#178">Indieinabox\Repositories\SqliteMicrosubRepository::deleteFilter</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Repositories/SqliteSettingsRepository.php.html#19">Indieinabox\Repositories\SqliteSettingsRepository::__construct</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Repositories/SqliteSettingsRepository.php.html#24">Indieinabox\Repositories\SqliteSettingsRepository::getDb</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+      </tbody>
+     </table>
+      </div>
+     </div>
+    </div>
+   </section>
+  </main>
+  <footer>
+   <p class="credits">Generated by <a href="https://github.com/sebastianbergmann/php-code-coverage" target="_top">php-code-coverage 14.3.1</a> using <a href="https://www.php.net/" target="_top">PHP 8.4.27</a> and <a href="https://phpunit.de/">PHPUnit 13.3.1</a> at Mon Oct 26 6:16:30 UTC 2026.</p>
+  </footer>
+ </body>
+</html>

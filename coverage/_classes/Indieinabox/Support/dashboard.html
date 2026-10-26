@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboard for Indieinabox\Support</title>
+  <link rel="stylesheet" href="../../../_css/style.css?v=14.3.1">
+  <link rel="stylesheet" href="../../../_css/custom.css">
+ </head>
+ <body>
+  <header class="masthead">
+   <nav aria-label="Breadcrumb">
+    <ol class="breadcrumbs">
+     <li><a href="../../index.html">(Global)</a></li>
+     <li><a href="../index.html">Indieinabox</a></li>
+     <li><a href="index.html">Support</a></li>
+     <li class="current">Dashboard</li>
+    </ol>
+   </nav>
+   <ul class="tabs">
+    <li><a href="../../../dashboard.html">Files</a></li>
+    <li><a href="../../../_classes/index.html" aria-current="page">Classes</a></li>
+   </ul>
+  </header>
+  <main class="dashboard">
+   <section>
+    <h2>Classes</h2>
+    <div class="panel">
+     <div class="chart">
+      <p class="hint">Line coverage against cyclomatic complexity. Bubble size is the number of executable lines; hover for details, click to navigate.</p>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400" preserveAspectRatio="xMidYMid meet">
+ <style>
+  .bubble-success { fill: var(--coverage-success-bar); opacity: 0.7; }
+  .bubble-warning { fill: var(--coverage-warning-bar); opacity: 0.7; }
+  .bubble-danger { fill: var(--coverage-danger-bar); opacity: 0.7; }
+  .bubble-success:hover, .bubble-warning:hover, .bubble-danger:hover { opacity: 1; stroke: var(--text); stroke-width: 1.5; }
+  .chart-grid { stroke: var(--border); stroke-width: 0.5; stroke-dasharray: 4,4; opacity: 0.5; }
+  .chart-axis { stroke: var(--border); stroke-width: 1; }
+  .chart-label { fill: var(--text); font-size: 11px; font-family: var(--font-sans); }
+  .chart-title { fill: var(--text); font-size: 12px; font-family: var(--font-sans); }
+ </style>
+ <line x1="60.0" y1="20" x2="60.0" y2="350" class="chart-grid"/>
+ <text x="60.0" y="368" text-anchor="middle" class="chart-label">0%</text>
+ <line x1="204.0" y1="20" x2="204.0" y2="350" class="chart-grid"/>
+ <text x="204.0" y="368" text-anchor="middle" class="chart-label">20%</text>
+ <line x1="348.0" y1="20" x2="348.0" y2="350" class="chart-grid"/>
+ <text x="348.0" y="368" text-anchor="middle" class="chart-label">40%</text>
+ <line x1="492.0" y1="20" x2="492.0" y2="350" class="chart-grid"/>
+ <text x="492.0" y="368" text-anchor="middle" class="chart-label">60%</text>
+ <line x1="636.0" y1="20" x2="636.0" y2="350" class="chart-grid"/>
+ <text x="636.0" y="368" text-anchor="middle" class="chart-label">80%</text>
+ <line x1="780.0" y1="20" x2="780.0" y2="350" class="chart-grid"/>
+ <text x="780.0" y="368" text-anchor="middle" class="chart-label">100%</text>
+ <line x1="60" y1="350.0" x2="780" y2="350.0" class="chart-grid"/>
+ <text x="52" y="350.0" text-anchor="end" dominant-baseline="middle" class="chart-label">0</text>
+ <line x1="60" y1="240.0" x2="780" y2="240.0" class="chart-grid"/>
+ <text x="52" y="240.0" text-anchor="end" dominant-baseline="middle" class="chart-label">100</text>
+ <line x1="60" y1="130.0" x2="780" y2="130.0" class="chart-grid"/>
+ <text x="52" y="130.0" text-anchor="end" dominant-baseline="middle" class="chart-label">200</text>
+ <line x1="60" y1="20.0" x2="780" y2="20.0" class="chart-grid"/>
+ <text x="52" y="20.0" text-anchor="end" dominant-baseline="middle" class="chart-label">300</text>
+ <line x1="60" y1="20" x2="60" y2="350" class="chart-axis"/>
+ <line x1="60" y1="350" x2="780" y2="350" class="chart-axis"/>
+ <text x="420.0" y="395" text-anchor="middle" class="chart-title">Line Coverage (%)</text>
+ <text x="15" y="185.0" text-anchor="middle" transform="rotate(-90, 15, 185.0)" class="chart-title">Cyclomatic Complexity</text>
+ <a href="../../../app/Support/Yaml.php.html#41"><circle cx="523.9" cy="56.3" r="20.0" class="bubble-warning"><title>Indieinabox\Support\Yaml — Coverage: 64.4% | Lines: 506 | Complexity: 267</title></circle></a>
+ <a href="../../../app/Support/DateFormatter.php.html#20"><circle cx="718.9" cy="302.7" r="9.2" class="bubble-success"><title>Indieinabox\Support\DateFormatter — Coverage: 91.5% | Lines: 106 | Complexity: 43</title></circle></a>
+ <a href="../../../app/Support/TextParser.php.html#13"><circle cx="550.0" cy="324.7" r="7.5" class="bubble-warning"><title>Indieinabox\Support\TextParser — Coverage: 68.1% | Lines: 72 | Complexity: 23</title></circle></a>
+ <a href="../../../app/Support/FileUtils.php.html#12"><circle cx="655.4" cy="319.2" r="6.4" class="bubble-warning"><title>Indieinabox\Support\FileUtils — Coverage: 82.7% | Lines: 52 | Complexity: 28</title></circle></a>
+ <a href="../../../app/Support/HtmlUtils.php.html#15"><circle cx="720.0" cy="343.4" r="4.4" class="bubble-success"><title>Indieinabox\Support\HtmlUtils — Coverage: 91.7% | Lines: 24 | Complexity: 6</title></circle></a>
+</svg>
+     </div>
+     <div>
+      <p class="hint">Sorted by descending <abbr title="Change Risk Anti-Patterns">CRAP</abbr> index.</p>
+      <div class="scrollbox">
+     <table class="crap">
+      <thead>
+       <tr>
+        <th scope="col">Class</th>
+        <th scope="col" class="number"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+        <th scope="col" class="number">Coverage</th>
+       </tr>
+      </thead>
+      <tbody>
+       <tr><td><a href="../../../app/Support/Yaml.php.html#41">Indieinabox\Support\Yaml</a></td><td class="number">3476.14</td><td class="number">64.4%</td></tr>
+       <tr><td><a href="../../../app/Support/DateFormatter.php.html#20">Indieinabox\Support\DateFormatter</a></td><td class="number">44.13</td><td class="number">91.5%</td></tr>
+       <tr><td><a href="../../../app/Support/TextParser.php.html#13">Indieinabox\Support\TextParser</a></td><td class="number">40.24</td><td class="number">68.1%</td></tr>
+       <tr><td><a href="../../../app/Support/FileUtils.php.html#12">Indieinabox\Support\FileUtils</a></td><td class="number">32.06</td><td class="number">82.7%</td></tr>
+       <tr><td><a href="../../../app/Support/HtmlUtils.php.html#15">Indieinabox\Support\HtmlUtils</a></td><td class="number">6.02</td><td class="number">91.7%</td></tr>
+      </tbody>
+     </table>
+      </div>
+     </div>
+    </div>
+   </section>
+   <section>
+    <h2>Methods</h2>
+    <div class="panel">
+     <div class="chart">
+      <p class="hint">Line coverage against cyclomatic complexity. Bubble size is the number of executable lines; hover for details, click to navigate.</p>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400" preserveAspectRatio="xMidYMid meet">
+ <style>
+  .bubble-success { fill: var(--coverage-success-bar); opacity: 0.7; }
+  .bubble-warning { fill: var(--coverage-warning-bar); opacity: 0.7; }
+  .bubble-danger { fill: var(--coverage-danger-bar); opacity: 0.7; }
+  .bubble-success:hover, .bubble-warning:hover, .bubble-danger:hover { opacity: 1; stroke: var(--text); stroke-width: 1.5; }
+  .chart-grid { stroke: var(--border); stroke-width: 0.5; stroke-dasharray: 4,4; opacity: 0.5; }
+  .chart-axis { stroke: var(--border); stroke-width: 1; }
+  .chart-label { fill: var(--text); font-size: 11px; font-family: var(--font-sans); }
+  .chart-title { fill: var(--text); font-size: 12px; font-family: var(--font-sans); }
+ </style>
+ <line x1="60.0" y1="20" x2="60.0" y2="350" class="chart-grid"/>
+ <text x="60.0" y="368" text-anchor="middle" class="chart-label">0%</text>
+ <line x1="204.0" y1="20" x2="204.0" y2="350" class="chart-grid"/>
+ <text x="204.0" y="368" text-anchor="middle" class="chart-label">20%</text>
+ <line x1="348.0" y1="20" x2="348.0" y2="350" class="chart-grid"/>
+ <text x="348.0" y="368" text-anchor="middle" class="chart-label">40%</text>
+ <line x1="492.0" y1="20" x2="492.0" y2="350" class="chart-grid"/>
+ <text x="492.0" y="368" text-anchor="middle" class="chart-label">60%</text>
+ <line x1="636.0" y1="20" x2="636.0" y2="350" class="chart-grid"/>
+ <text x="636.0" y="368" text-anchor="middle" class="chart-label">80%</text>
+ <line x1="780.0" y1="20" x2="780.0" y2="350" class="chart-grid"/>
+ <text x="780.0" y="368" text-anchor="middle" class="chart-label">100%</text>
+ <line x1="60" y1="350.0" x2="780" y2="350.0" class="chart-grid"/>
+ <text x="52" y="350.0" text-anchor="end" dominant-baseline="middle" class="chart-label">0</text>
+ <line x1="60" y1="267.5" x2="780" y2="267.5" class="chart-grid"/>
+ <text x="52" y="267.5" text-anchor="end" dominant-baseline="middle" class="chart-label">10</text>
+ <line x1="60" y1="185.0" x2="780" y2="185.0" class="chart-grid"/>
+ <text x="52" y="185.0" text-anchor="end" dominant-baseline="middle" class="chart-label">20</text>
+ <line x1="60" y1="102.5" x2="780" y2="102.5" class="chart-grid"/>
+ <text x="52" y="102.5" text-anchor="end" dominant-baseline="middle" class="chart-label">30</text>
+ <line x1="60" y1="20.0" x2="780" y2="20.0" class="chart-grid"/>
+ <text x="52" y="20.0" text-anchor="end" dominant-baseline="middle" class="chart-label">40</text>
+ <line x1="60" y1="20" x2="60" y2="350" class="chart-axis"/>
+ <line x1="60" y1="350" x2="780" y2="350" class="chart-axis"/>
+ <text x="420.0" y="395" text-anchor="middle" class="chart-title">Line Coverage (%)</text>
+ <text x="15" y="185.0" text-anchor="middle" transform="rotate(-90, 15, 185.0)" class="chart-title">Cyclomatic Complexity</text>
+ <a href="../../../app/Support/DateFormatter.php.html#61"><circle cx="736.6" cy="77.8" r="20.0" class="bubble-success"><title>Indieinabox\Support\DateFormatter::localizeddate — Coverage: 94.0% | Lines: 83 | Complexity: 33</title></circle></a>
+ <a href="../../../app/Support/Yaml.php.html#572"><circle cx="504.7" cy="53.0" r="18.1" class="bubble-warning"><title>Indieinabox\Support\Yaml::toType — Coverage: 61.8% | Lines: 68 | Complexity: 36</title></circle></a>
+ <a href="../../../app/Support/Yaml.php.html#706"><circle cx="382.8" cy="152.0" r="16.7" class="bubble-danger"><title>Indieinabox\Support\Yaml::inlineEscape — Coverage: 44.8% | Lines: 58 | Complexity: 24</title></circle></a>
+ <a href="../../../app/Support/Yaml.php.html#892"><circle cx="540.0" cy="152.0" r="15.7" class="bubble-warning"><title>Indieinabox\Support\Yaml::addArray — Coverage: 66.7% | Lines: 51 | Complexity: 24</title></circle></a>
+ <a href="../../../app/Support/Yaml.php.html#415"><circle cx="698.2" cy="226.2" r="14.6" class="bubble-warning"><title>Indieinabox\Support\Yaml::loadWithSource — Coverage: 88.6% | Lines: 44 | Complexity: 15</title></circle></a>
+ <a href="../../../app/Support/Yaml.php.html#294"><circle cx="726.7" cy="102.5" r="11.4" class="bubble-success"><title>Indieinabox\Support\Yaml::dumpNode — Coverage: 92.6% | Lines: 27 | Complexity: 30</title></circle></a>
+ <a href="../../../app/Support/TextParser.php.html#119"><circle cx="240.0" cy="308.8" r="10.8" class="bubble-danger"><title>Indieinabox\Support\TextParser::decodeUtf8Codepoint — Coverage: 25.0% | Lines: 24 | Complexity: 5</title></circle></a>
+ <a href="../../../app/Support/FileUtils.php.html#71"><circle cx="564.0" cy="259.2" r="9.8" class="bubble-warning"><title>Indieinabox\Support\FileUtils::recursiveRmdir — Coverage: 70.0% | Lines: 20 | Complexity: 11</title></circle></a>
+ <a href="../../../app/Support/TextParser.php.html#76"><circle cx="636.0" cy="300.5" r="9.8" class="bubble-warning"><title>Indieinabox\Support\TextParser::utf8ToAscii — Coverage: 80.0% | Lines: 20 | Complexity: 6</title></circle></a>
+ <a href="../../../app/Support/Yaml.php.html#530"><circle cx="552.6" cy="284.0" r="9.6" class="bubble-warning"><title>Indieinabox\Support\Yaml::parseLine — Coverage: 68.4% | Lines: 19 | Complexity: 8</title></circle></a>
+ <a href="../../../app/Support/Yaml.php.html#188"><circle cx="690.0" cy="284.0" r="8.8" class="bubble-warning"><title>Indieinabox\Support\Yaml::dump — Coverage: 87.5% | Lines: 16 | Complexity: 8</title></circle></a>
+ <a href="../../../app/Support/Yaml.php.html#1339"><circle cx="600.0" cy="300.5" r="8.8" class="bubble-warning"><title>Indieinabox\Support\Yaml::returnKeyValuePair — Coverage: 75.0% | Lines: 16 | Complexity: 6</title></circle></a>
+ <a href="../../../app/Support/HtmlUtils.php.html#23"><circle cx="732.0" cy="325.2" r="8.5" class="bubble-success"><title>Indieinabox\Support\HtmlUtils::beautify — Coverage: 93.3% | Lines: 15 | Complexity: 3</title></circle></a>
+ <a href="../../../app/Support/FileUtils.php.html#37"><circle cx="677.1" cy="284.0" r="8.2" class="bubble-warning"><title>Indieinabox\Support\FileUtils::getDirContents — Coverage: 85.7% | Lines: 14 | Complexity: 8</title></circle></a>
+ <a href="../../../app/Support/FileUtils.php.html#117"><circle cx="728.6" cy="300.5" r="8.2" class="bubble-success"><title>Indieinabox\Support\FileUtils::copyDirectory — Coverage: 92.9% | Lines: 14 | Complexity: 6</title></circle></a>
+ <a href="../../../app/Support/Yaml.php.html#1396"><circle cx="214.3" cy="267.5" r="8.2" class="bubble-danger"><title>Indieinabox\Support\Yaml::nodeContainsGroup — Coverage: 21.4% | Lines: 14 | Complexity: 10</title></circle></a>
+ <a href="../../../app/Support/Yaml.php.html#358"><circle cx="226.2" cy="292.2" r="7.9" class="bubble-danger"><title>Indieinabox\Support\Yaml::doLiteralBlock — Coverage: 23.1% | Lines: 13 | Complexity: 7</title></circle></a>
+ <a href="../../../app/Support/Yaml.php.html#1042"><circle cx="613.8" cy="292.2" r="7.9" class="bubble-warning"><title>Indieinabox\Support\Yaml::addLiteralLine — Coverage: 76.9% | Lines: 13 | Complexity: 7</title></circle></a>
+ <a href="../../../app/Support/DateFormatter.php.html#36"><circle cx="714.5" cy="300.5" r="7.3" class="bubble-success"><title>Indieinabox\Support\DateFormatter::timeAgo — Coverage: 90.9% | Lines: 11 | Complexity: 6</title></circle></a>
+ <a href="../../../app/Support/Yaml.php.html#234"><circle cx="780.0" cy="317.0" r="6.9" class="bubble-success"><title>Indieinabox\Support\Yaml::yamlize — Coverage: 100.0% | Lines: 10 | Complexity: 4</title></circle></a>
+ <a href="../../../app/Support/Yaml.php.html#264"><circle cx="708.0" cy="317.0" r="6.9" class="bubble-success"><title>Indieinabox\Support\Yaml::yamlizeArray — Coverage: 90.0% | Lines: 10 | Complexity: 4</title></circle></a>
+ <a href="../../../app/Support/Yaml.php.html#1012"><circle cx="564.0" cy="308.8" r="6.9" class="bubble-warning"><title>Indieinabox\Support\Yaml::greedilyNeedNextLine — Coverage: 70.0% | Lines: 10 | Complexity: 5</title></circle></a>
+ <a href="../../../app/Support/DateFormatter.php.html#179"><circle cx="780.0" cy="325.2" r="6.6" class="bubble-success"><title>Indieinabox\Support\DateFormatter::sortByDate — Coverage: 100.0% | Lines: 9 | Complexity: 3</title></circle></a>
+ <a href="../../../app/Support/HtmlUtils.php.html#52"><circle cx="700.0" cy="325.2" r="6.6" class="bubble-warning"><title>Indieinabox\Support\HtmlUtils::minify — Coverage: 88.9% | Lines: 9 | Complexity: 3</title></circle></a>
+ <a href="../../../app/Support/TextParser.php.html#53"><circle cx="780.0" cy="325.2" r="6.6" class="bubble-success"><title>Indieinabox\Support\TextParser::unaccent — Coverage: 100.0% | Lines: 9 | Complexity: 3</title></circle></a>
+ <a href="../../../app/Support/TextParser.php.html#178"><circle cx="780.0" cy="333.5" r="6.6" class="bubble-success"><title>Indieinabox\Support\TextParser::slugize — Coverage: 100.0% | Lines: 9 | Complexity: 2</title></circle></a>
+ <a href="../../../app/Support/Yaml.php.html#843"><circle cx="60.0" cy="325.2" r="6.6" class="bubble-danger"><title>Indieinabox\Support\Yaml::referenceContentsByAlias — Coverage: 0.0% | Lines: 9 | Complexity: 3</title></circle></a>
+ <a href="../../../app/Support/Yaml.php.html#1110"><circle cx="780.0" cy="325.2" r="6.6" class="bubble-success"><title>Indieinabox\Support\Yaml::getParentPathByIndent — Coverage: 100.0% | Lines: 9 | Complexity: 3</title></circle></a>
+ <a href="../../../app/Support/Yaml.php.html#1243"><circle cx="460.0" cy="308.8" r="6.6" class="bubble-warning"><title>Indieinabox\Support\Yaml::unquote — Coverage: 55.6% | Lines: 9 | Complexity: 5</title></circle></a>
+ <a href="../../../app/Support/Yaml.php.html#390"><circle cx="690.0" cy="292.2" r="6.2" class="bubble-warning"><title>Indieinabox\Support\Yaml::doFolding — Coverage: 87.5% | Lines: 8 | Complexity: 7</title></circle></a>
+ <a href="../../../app/Support/Yaml.php.html#988"><circle cx="600.0" cy="308.8" r="6.2" class="bubble-warning"><title>Indieinabox\Support\Yaml::startsLiteralBlock — Coverage: 75.0% | Lines: 8 | Complexity: 5</title></circle></a>
+ <a href="../../../app/Support/Yaml.php.html#1136"><circle cx="60.0" cy="308.8" r="6.2" class="bubble-danger"><title>Indieinabox\Support\Yaml::clearBiggerPathValues — Coverage: 0.0% | Lines: 8 | Complexity: 5</title></circle></a>
+ <a href="../../../app/Support/Yaml.php.html#1194"><circle cx="600.0" cy="308.8" r="6.2" class="bubble-warning"><title>Indieinabox\Support\Yaml::isArrayElement — Coverage: 75.0% | Lines: 8 | Complexity: 5</title></circle></a>
+ <a href="../../../app/Support/Yaml.php.html#869"><circle cx="60.0" cy="325.2" r="5.8" class="bubble-danger"><title>Indieinabox\Support\Yaml::addArrayInline — Coverage: 0.0% | Lines: 7 | Complexity: 3</title></circle></a>
+ <a href="../../../app/Support/Yaml.php.html#1161"><circle cx="574.3" cy="317.0" r="5.8" class="bubble-warning"><title>Indieinabox\Support\Yaml::isComment — Coverage: 71.4% | Lines: 7 | Complexity: 4</title></circle></a>
+ <a href="../../../app/Support/Yaml.php.html#1377"><circle cx="677.1" cy="333.5" r="5.8" class="bubble-warning"><title>Indieinabox\Support\Yaml::returnArrayElement — Coverage: 85.7% | Lines: 7 | Complexity: 2</title></circle></a>
+ <a href="../../../app/Support/TextParser.php.html#34"><circle cx="780.0" cy="317.0" r="5.4" class="bubble-success"><title>Indieinabox\Support\TextParser::extractHashtags — Coverage: 100.0% | Lines: 6 | Complexity: 4</title></circle></a>
+ <a href="../../../app/Support/Yaml.php.html#1075"><circle cx="660.0" cy="317.0" r="5.4" class="bubble-warning"><title>Indieinabox\Support\Yaml::revertLiteralPlaceHolder — Coverage: 83.3% | Lines: 6 | Complexity: 4</title></circle></a>
+ <a href="../../../app/Support/Yaml.php.html#158"><circle cx="780.0" cy="333.5" r="4.9" class="bubble-success"><title>Indieinabox\Support\Yaml::removeComments — Coverage: 100.0% | Lines: 5 | Complexity: 2</title></circle></a>
+ <a href="../../../app/Support/Yaml.php.html#825"><circle cx="636.0" cy="325.2" r="4.9" class="bubble-warning"><title>Indieinabox\Support\Yaml::literalBlockContinues — Coverage: 80.0% | Lines: 5 | Complexity: 3</title></circle></a>
+ <a href="../../../app/Support/Yaml.php.html#1226"><circle cx="60.0" cy="325.2" r="4.9" class="bubble-danger"><title>Indieinabox\Support\Yaml::isLiteral — Coverage: 0.0% | Lines: 5 | Complexity: 3</title></circle></a>
+ <a href="../../../app/Support/Yaml.php.html#1278"><circle cx="60.0" cy="341.8" r="4.9" class="bubble-danger"><title>Indieinabox\Support\Yaml::returnMappedSequence — Coverage: 0.0% | Lines: 5 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Support/FileUtils.php.html#20"><circle cx="780.0" cy="325.2" r="4.4" class="bubble-success"><title>Indieinabox\Support\FileUtils::recursiveKsort — Coverage: 100.0% | Lines: 4 | Complexity: 3</title></circle></a>
+ <a href="../../../app/Support/Yaml.php.html#512"><circle cx="780.0" cy="333.5" r="4.4" class="bubble-success"><title>Indieinabox\Support\Yaml::loadFromString — Coverage: 100.0% | Lines: 4 | Complexity: 2</title></circle></a>
+ <a href="../../../app/Support/Yaml.php.html#1294"><circle cx="780.0" cy="341.8" r="4.4" class="bubble-success"><title>Indieinabox\Support\Yaml::returnMappedValue — Coverage: 100.0% | Lines: 4 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Support/Yaml.php.html#1429"><circle cx="60.0" cy="325.2" r="4.4" class="bubble-danger"><title>Indieinabox\Support\Yaml::addGroup — Coverage: 0.0% | Lines: 4 | Complexity: 3</title></circle></a>
+ <a href="../../../app/Support/DateFormatter.php.html#26"><circle cx="60.0" cy="341.8" r="4.0" class="bubble-danger"><title>Indieinabox\Support\DateFormatter::setConfig — Coverage: 0.0% | Lines: 3 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Support/TextParser.php.html#163"><circle cx="540.0" cy="333.5" r="4.0" class="bubble-warning"><title>Indieinabox\Support\TextParser::loadUtf8Bank — Coverage: 66.7% | Lines: 3 | Complexity: 2</title></circle></a>
+ <a href="../../../app/Support/Yaml.php.html#497"><circle cx="540.0" cy="333.5" r="4.0" class="bubble-warning"><title>Indieinabox\Support\Yaml::loadFromFile — Coverage: 66.7% | Lines: 3 | Complexity: 2</title></circle></a>
+ <a href="../../../app/Support/Yaml.php.html#1095"><circle cx="780.0" cy="333.5" r="4.0" class="bubble-success"><title>Indieinabox\Support\Yaml::stripIndent — Coverage: 100.0% | Lines: 3 | Complexity: 2</title></circle></a>
+ <a href="../../../app/Support/Yaml.php.html#112"><circle cx="420.0" cy="333.5" r="4.0" class="bubble-danger"><title>Indieinabox\Support\Yaml::__construct — Coverage: 50.0% | Lines: 2 | Complexity: 2</title></circle></a>
+ <a href="../../../app/Support/Yaml.php.html#1446"><circle cx="60.0" cy="341.8" r="4.0" class="bubble-danger"><title>Indieinabox\Support\Yaml::stripGroup — Coverage: 0.0% | Lines: 2 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Support/TextParser.php.html#23"><circle cx="780.0" cy="341.8" r="4.0" class="bubble-success"><title>Indieinabox\Support\TextParser::arrayGet — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Support/Yaml.php.html#125"><circle cx="780.0" cy="341.8" r="4.0" class="bubble-success"><title>Indieinabox\Support\Yaml::load — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Support/Yaml.php.html#136"><circle cx="780.0" cy="341.8" r="4.0" class="bubble-success"><title>Indieinabox\Support\Yaml::loadString — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Support/Yaml.php.html#147"><circle cx="780.0" cy="341.8" r="4.0" class="bubble-success"><title>Indieinabox\Support\Yaml::loadFile — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Support/Yaml.php.html#1182"><circle cx="780.0" cy="341.8" r="4.0" class="bubble-success"><title>Indieinabox\Support\Yaml::isEmpty — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Support/Yaml.php.html#1215"><circle cx="60.0" cy="341.8" r="4.0" class="bubble-danger"><title>Indieinabox\Support\Yaml::isHashElement — Coverage: 0.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Support/Yaml.php.html#1267"><circle cx="780.0" cy="333.5" r="4.0" class="bubble-success"><title>Indieinabox\Support\Yaml::startsMappedSequence — Coverage: 100.0% | Lines: 1 | Complexity: 2</title></circle></a>
+ <a href="../../../app/Support/Yaml.php.html#1308"><circle cx="780.0" cy="341.8" r="4.0" class="bubble-success"><title>Indieinabox\Support\Yaml::startsMappedValue — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../../app/Support/Yaml.php.html#1319"><circle cx="780.0" cy="333.5" r="4.0" class="bubble-success"><title>Indieinabox\Support\Yaml::isPlainArray — Coverage: 100.0% | Lines: 1 | Complexity: 2</title></circle></a>
+ <a href="../../../app/Support/Yaml.php.html#1328"><circle cx="60.0" cy="341.8" r="4.0" class="bubble-danger"><title>Indieinabox\Support\Yaml::returnPlainArray — Coverage: 0.0% | Lines: 1 | Complexity: 1</title></circle></a>
+</svg>
+     </div>
+     <div>
+      <p class="hint">Sorted by descending <abbr title="Change Risk Anti-Patterns">CRAP</abbr> index.</p>
+      <div class="scrollbox">
+     <table class="crap">
+      <thead>
+       <tr>
+        <th scope="col">Method</th>
+        <th scope="col" class="number"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+        <th scope="col" class="number">Coverage</th>
+       </tr>
+      </thead>
+      <tbody>
+       <tr><td><a href="../../../app/Support/Yaml.php.html#706">Indieinabox\Support\Yaml::inlineEscape</a></td><td class="number">120.74</td><td class="number">44.8%</td></tr>
+       <tr><td><a href="../../../app/Support/Yaml.php.html#572">Indieinabox\Support\Yaml::toType</a></td><td class="number">108.44</td><td class="number">61.8%</td></tr>
+       <tr><td><a href="../../../app/Support/Yaml.php.html#1396">Indieinabox\Support\Yaml::nodeContainsGroup</a></td><td class="number">58.51</td><td class="number">21.4%</td></tr>
+       <tr><td><a href="../../../app/Support/Yaml.php.html#892">Indieinabox\Support\Yaml::addArray</a></td><td class="number">45.33</td><td class="number">66.7%</td></tr>
+       <tr><td><a href="../../../app/Support/DateFormatter.php.html#61">Indieinabox\Support\DateFormatter::localizeddate</a></td><td class="number">33.24</td><td class="number">94.0%</td></tr>
+       <tr><td><a href="../../../app/Support/Yaml.php.html#294">Indieinabox\Support\Yaml::dumpNode</a></td><td class="number">30.37</td><td class="number">92.6%</td></tr>
+       <tr><td><a href="../../../app/Support/Yaml.php.html#1136">Indieinabox\Support\Yaml::clearBiggerPathValues</a></td><td class="number">30</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="../../../app/Support/Yaml.php.html#358">Indieinabox\Support\Yaml::doLiteralBlock</a></td><td class="number">29.30</td><td class="number">23.1%</td></tr>
+       <tr><td><a href="../../../app/Support/TextParser.php.html#119">Indieinabox\Support\TextParser::decodeUtf8Codepoint</a></td><td class="number">15.55</td><td class="number">25.0%</td></tr>
+       <tr><td><a href="../../../app/Support/Yaml.php.html#415">Indieinabox\Support\Yaml::loadWithSource</a></td><td class="number">15.33</td><td class="number">88.6%</td></tr>
+       <tr><td><a href="../../../app/Support/FileUtils.php.html#71">Indieinabox\Support\FileUtils::recursiveRmdir</a></td><td class="number">14.27</td><td class="number">70.0%</td></tr>
+       <tr><td><a href="../../../app/Support/Yaml.php.html#843">Indieinabox\Support\Yaml::referenceContentsByAlias</a></td><td class="number">12</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="../../../app/Support/Yaml.php.html#869">Indieinabox\Support\Yaml::addArrayInline</a></td><td class="number">12</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="../../../app/Support/Yaml.php.html#1226">Indieinabox\Support\Yaml::isLiteral</a></td><td class="number">12</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="../../../app/Support/Yaml.php.html#1429">Indieinabox\Support\Yaml::addGroup</a></td><td class="number">12</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="../../../app/Support/Yaml.php.html#530">Indieinabox\Support\Yaml::parseLine</a></td><td class="number">10.02</td><td class="number">68.4%</td></tr>
+       <tr><td><a href="../../../app/Support/FileUtils.php.html#37">Indieinabox\Support\FileUtils::getDirContents</a></td><td class="number">8.19</td><td class="number">85.7%</td></tr>
+       <tr><td><a href="../../../app/Support/Yaml.php.html#188">Indieinabox\Support\Yaml::dump</a></td><td class="number">8.12</td><td class="number">87.5%</td></tr>
+       <tr><td><a href="../../../app/Support/Yaml.php.html#1042">Indieinabox\Support\Yaml::addLiteralLine</a></td><td class="number">7.60</td><td class="number">76.9%</td></tr>
+       <tr><td><a href="../../../app/Support/Yaml.php.html#1243">Indieinabox\Support\Yaml::unquote</a></td><td class="number">7.19</td><td class="number">55.6%</td></tr>
+       <tr><td><a href="../../../app/Support/Yaml.php.html#390">Indieinabox\Support\Yaml::doFolding</a></td><td class="number">7.10</td><td class="number">87.5%</td></tr>
+       <tr><td><a href="../../../app/Support/Yaml.php.html#1339">Indieinabox\Support\Yaml::returnKeyValuePair</a></td><td class="number">6.56</td><td class="number">75.0%</td></tr>
+       <tr><td><a href="../../../app/Support/TextParser.php.html#76">Indieinabox\Support\TextParser::utf8ToAscii</a></td><td class="number">6.29</td><td class="number">80.0%</td></tr>
+       <tr><td><a href="../../../app/Support/DateFormatter.php.html#36">Indieinabox\Support\DateFormatter::timeAgo</a></td><td class="number">6.03</td><td class="number">90.9%</td></tr>
+       <tr><td><a href="../../../app/Support/FileUtils.php.html#117">Indieinabox\Support\FileUtils::copyDirectory</a></td><td class="number">6.01</td><td class="number">92.9%</td></tr>
+       <tr><td><a href="../../../app/Support/Yaml.php.html#1012">Indieinabox\Support\Yaml::greedilyNeedNextLine</a></td><td class="number">5.68</td><td class="number">70.0%</td></tr>
+       <tr><td><a href="../../../app/Support/Yaml.php.html#988">Indieinabox\Support\Yaml::startsLiteralBlock</a></td><td class="number">5.39</td><td class="number">75.0%</td></tr>
+       <tr><td><a href="../../../app/Support/Yaml.php.html#1194">Indieinabox\Support\Yaml::isArrayElement</a></td><td class="number">5.39</td><td class="number">75.0%</td></tr>
+       <tr><td><a href="../../../app/Support/Yaml.php.html#1161">Indieinabox\Support\Yaml::isComment</a></td><td class="number">4.37</td><td class="number">71.4%</td></tr>
+       <tr><td><a href="../../../app/Support/Yaml.php.html#1075">Indieinabox\Support\Yaml::revertLiteralPlaceHolder</a></td><td class="number">4.07</td><td class="number">83.3%</td></tr>
+       <tr><td><a href="../../../app/Support/Yaml.php.html#264">Indieinabox\Support\Yaml::yamlizeArray</a></td><td class="number">4.02</td><td class="number">90.0%</td></tr>
+       <tr><td><a href="../../../app/Support/TextParser.php.html#34">Indieinabox\Support\TextParser::extractHashtags</a></td><td class="number">4</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Support/Yaml.php.html#234">Indieinabox\Support\Yaml::yamlize</a></td><td class="number">4</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Support/Yaml.php.html#825">Indieinabox\Support\Yaml::literalBlockContinues</a></td><td class="number">3.07</td><td class="number">80.0%</td></tr>
+       <tr><td><a href="../../../app/Support/HtmlUtils.php.html#52">Indieinabox\Support\HtmlUtils::minify</a></td><td class="number">3.01</td><td class="number">88.9%</td></tr>
+       <tr><td><a href="../../../app/Support/DateFormatter.php.html#179">Indieinabox\Support\DateFormatter::sortByDate</a></td><td class="number">3</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Support/FileUtils.php.html#20">Indieinabox\Support\FileUtils::recursiveKsort</a></td><td class="number">3</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Support/HtmlUtils.php.html#23">Indieinabox\Support\HtmlUtils::beautify</a></td><td class="number">3.00</td><td class="number">93.3%</td></tr>
+       <tr><td><a href="../../../app/Support/TextParser.php.html#53">Indieinabox\Support\TextParser::unaccent</a></td><td class="number">3</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Support/Yaml.php.html#1110">Indieinabox\Support\Yaml::getParentPathByIndent</a></td><td class="number">3</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Support/Yaml.php.html#112">Indieinabox\Support\Yaml::__construct</a></td><td class="number">2.50</td><td class="number">50.0%</td></tr>
+       <tr><td><a href="../../../app/Support/TextParser.php.html#163">Indieinabox\Support\TextParser::loadUtf8Bank</a></td><td class="number">2.15</td><td class="number">66.7%</td></tr>
+       <tr><td><a href="../../../app/Support/Yaml.php.html#497">Indieinabox\Support\Yaml::loadFromFile</a></td><td class="number">2.15</td><td class="number">66.7%</td></tr>
+       <tr><td><a href="../../../app/Support/Yaml.php.html#1377">Indieinabox\Support\Yaml::returnArrayElement</a></td><td class="number">2.01</td><td class="number">85.7%</td></tr>
+       <tr><td><a href="../../../app/Support/DateFormatter.php.html#26">Indieinabox\Support\DateFormatter::setConfig</a></td><td class="number">2</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="../../../app/Support/TextParser.php.html#178">Indieinabox\Support\TextParser::slugize</a></td><td class="number">2</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Support/Yaml.php.html#158">Indieinabox\Support\Yaml::removeComments</a></td><td class="number">2</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Support/Yaml.php.html#512">Indieinabox\Support\Yaml::loadFromString</a></td><td class="number">2</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Support/Yaml.php.html#1095">Indieinabox\Support\Yaml::stripIndent</a></td><td class="number">2</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Support/Yaml.php.html#1215">Indieinabox\Support\Yaml::isHashElement</a></td><td class="number">2</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="../../../app/Support/Yaml.php.html#1267">Indieinabox\Support\Yaml::startsMappedSequence</a></td><td class="number">2</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Support/Yaml.php.html#1278">Indieinabox\Support\Yaml::returnMappedSequence</a></td><td class="number">2</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="../../../app/Support/Yaml.php.html#1319">Indieinabox\Support\Yaml::isPlainArray</a></td><td class="number">2</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Support/Yaml.php.html#1328">Indieinabox\Support\Yaml::returnPlainArray</a></td><td class="number">2</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="../../../app/Support/Yaml.php.html#1446">Indieinabox\Support\Yaml::stripGroup</a></td><td class="number">2</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="../../../app/Support/TextParser.php.html#23">Indieinabox\Support\TextParser::arrayGet</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Support/Yaml.php.html#125">Indieinabox\Support\Yaml::load</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Support/Yaml.php.html#136">Indieinabox\Support\Yaml::loadString</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Support/Yaml.php.html#147">Indieinabox\Support\Yaml::loadFile</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Support/Yaml.php.html#1182">Indieinabox\Support\Yaml::isEmpty</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Support/Yaml.php.html#1294">Indieinabox\Support\Yaml::returnMappedValue</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../../app/Support/Yaml.php.html#1308">Indieinabox\Support\Yaml::startsMappedValue</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+      </tbody>
+     </table>
+      </div>
+     </div>
+    </div>
+   </section>
+  </main>
+  <footer>
+   <p class="credits">Generated by <a href="https://github.com/sebastianbergmann/php-code-coverage" target="_top">php-code-coverage 14.3.1</a> using <a href="https://www.php.net/" target="_top">PHP 8.4.27</a> and <a href="https://phpunit.de/">PHPUnit 13.3.1</a> at Mon Oct 26 6:16:30 UTC 2026.</p>
+  </footer>
+ </body>
+</html>

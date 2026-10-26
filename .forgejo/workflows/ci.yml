@@ -78,14 +78,14 @@ jobs:
           XDEBUG_MODE: coverage
         run: |
           mkdir -p coverage
-          ./vendor/bin/pest \
+          php -d memory_limit=1G ./vendor/bin/pest \
             --coverage-clover coverage/clover.xml \
             --coverage-html coverage/html \
             --log-junit coverage/junit.xml
 
       - name: "PEST — Compiled suite"
         run: |
-          TEST_COMPILED=true ./vendor/bin/pest
+          TEST_COMPILED=true php -d memory_limit=1G ./vendor/bin/pest
 
       # ── Coverage summary & Pages deployment ──────────────────────────────
       - name: "Publish Test Summary"

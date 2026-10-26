@@ -3,6 +3,8 @@
 ## [Unreleased]
 
 ### Fixes
+  - (ci) aumentar memory_limit do PHP para testes de cobertura no pest (closes #9)
+  - (ci) adicionar flag -n ao sniffer para ignorar warnings de PHP 8.5 (closes #8)
   - (ci) tornar caminhos de auditoria de CI relativos (closes #3)
 
 ### Features

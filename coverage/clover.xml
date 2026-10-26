@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1792995390">
-  <project timestamp="1792995390" name="Clover Coverage">
+<coverage generated="1793019190">
+  <project timestamp="1793019190" name="Clover Coverage">
     <package name="Indieinabox\ActivityPub">
       <file name="/workspace/lumen/indieinabox/app/ActivityPub/ActivityBuilder.php">
         <class name="Indieinabox\ActivityPub\ActivityBuilder" namespace="Indieinabox\ActivityPub">
@@ -3478,8 +3478,8 @@
         <line num="108" type="stmt" count="485"/>
         <line num="109" type="stmt" count="139"/>
         <line num="111" type="stmt" count="346"/>
-        <line num="117" type="method" name="isConnected" visibility="public" complexity="1" crap="1" count="66"/>
-        <line num="119" type="stmt" count="66"/>
+        <line num="117" type="method" name="isConnected" visibility="public" complexity="1" crap="1" count="67"/>
+        <line num="119" type="stmt" count="67"/>
         <line num="125" type="method" name="disconnect" visibility="public" complexity="2" crap="2" count="853"/>
         <line num="127" type="stmt" count="853"/>
         <line num="128" type="stmt" count="853"/>
@@ -21291,7 +21291,7 @@
       </file>
       <file name="/workspace/lumen/indieinabox/app/Theme/ThemeManager.php">
         <class name="Indieinabox\Theme\ThemeManager" namespace="Indieinabox\Theme">
-          <metrics complexity="90" methods="14" coveredmethods="6" conditionals="0" coveredconditionals="0" statements="198" coveredstatements="86" elements="212" coveredelements="92"/>
+          <metrics complexity="90" methods="14" coveredmethods="6" conditionals="0" coveredconditionals="0" statements="198" coveredstatements="129" elements="212" coveredelements="135"/>
         </class>
         <line num="28" type="method" name="loadView" visibility="public" complexity="4" crap="5.50" count="68"/>
         <line num="30" type="stmt" count="68"/>
@@ -21398,71 +21398,71 @@
         <line num="241" type="stmt" count="1"/>
         <line num="251" type="method" name="validateManifest" visibility="public" complexity="1" crap="1" count="1"/>
         <line num="253" type="stmt" count="1"/>
-        <line num="262" type="method" name="checkManifest" visibility="public" complexity="11" crap="11" count="3"/>
-        <line num="264" type="stmt" count="3"/>
-        <line num="266" type="stmt" count="3"/>
+        <line num="262" type="method" name="checkManifest" visibility="public" complexity="11" crap="11" count="4"/>
+        <line num="264" type="stmt" count="4"/>
+        <line num="266" type="stmt" count="4"/>
         <line num="267" type="stmt" count="1"/>
-        <line num="270" type="stmt" count="3"/>
+        <line num="270" type="stmt" count="4"/>
         <line num="271" type="stmt" count="1"/>
-        <line num="274" type="stmt" count="3"/>
+        <line num="274" type="stmt" count="4"/>
         <line num="275" type="stmt" count="3"/>
         <line num="276" type="stmt" count="3"/>
         <line num="277" type="stmt" count="1"/>
-        <line num="282" type="stmt" count="3"/>
-        <line num="283" type="stmt" count="3"/>
-        <line num="284" type="stmt" count="3"/>
-        <line num="285" type="stmt" count="3"/>
-        <line num="296" type="method" name="installFromZip" visibility="public" complexity="18" crap="304.65" count="1"/>
+        <line num="282" type="stmt" count="4"/>
+        <line num="283" type="stmt" count="4"/>
+        <line num="284" type="stmt" count="4"/>
+        <line num="285" type="stmt" count="4"/>
+        <line num="296" type="method" name="installFromZip" visibility="public" complexity="18" crap="23.69" count="1"/>
         <line num="298" type="stmt" count="1"/>
-        <line num="299" type="stmt" count="1"/>
-        <line num="302" type="stmt" count="0"/>
-        <line num="303" type="stmt" count="0"/>
+        <line num="299" type="stmt" count="0"/>
+        <line num="302" type="stmt" count="1"/>
+        <line num="303" type="stmt" count="1"/>
         <line num="304" type="stmt" count="0"/>
-        <line num="307" type="stmt" count="0"/>
-        <line num="308" type="stmt" count="0"/>
-        <line num="310" type="stmt" count="0"/>
-        <line num="311" type="stmt" count="0"/>
-        <line num="312" type="stmt" count="0"/>
-        <line num="313" type="stmt" count="0"/>
-        <line num="314" type="stmt" count="0"/>
-        <line num="315" type="stmt" count="0"/>
-        <line num="319" type="stmt" count="0"/>
+        <line num="307" type="stmt" count="1"/>
+        <line num="308" type="stmt" count="1"/>
+        <line num="310" type="stmt" count="1"/>
+        <line num="311" type="stmt" count="1"/>
+        <line num="312" type="stmt" count="1"/>
+        <line num="313" type="stmt" count="1"/>
+        <line num="314" type="stmt" count="1"/>
+        <line num="315" type="stmt" count="1"/>
+        <line num="319" type="stmt" count="1"/>
         <line num="320" type="stmt" count="0"/>
         <line num="321" type="stmt" count="0"/>
         <line num="322" type="stmt" count="0"/>
-        <line num="325" type="stmt" count="0"/>
+        <line num="325" type="stmt" count="1"/>
         <line num="326" type="stmt" count="0"/>
         <line num="327" type="stmt" count="0"/>
-        <line num="330" type="stmt" count="0"/>
-        <line num="331" type="stmt" count="0"/>
-        <line num="332" type="stmt" count="0"/>
+        <line num="330" type="stmt" count="1"/>
+        <line num="331" type="stmt" count="1"/>
+        <line num="332" type="stmt" count="1"/>
         <line num="333" type="stmt" count="0"/>
         <line num="334" type="stmt" count="0"/>
-        <line num="336" type="stmt" count="0"/>
-        <line num="339" type="stmt" count="0"/>
-        <line num="340" type="stmt" count="0"/>
-        <line num="341" type="stmt" count="0"/>
-        <line num="342" type="stmt" count="0"/>
-        <line num="343" type="stmt" count="0"/>
-        <line num="344" type="stmt" count="0"/>
+        <line num="336" type="stmt" count="1"/>
+        <line num="339" type="stmt" count="1"/>
+        <line num="340" type="stmt" count="1"/>
+        <line num="341" type="stmt" count="1"/>
+        <line num="342" type="stmt" count="1"/>
+        <line num="343" type="stmt" count="1"/>
+        <line num="344" type="stmt" count="1"/>
         <line num="345" type="stmt" count="0"/>
         <line num="346" type="stmt" count="0"/>
-        <line num="350" type="stmt" count="0"/>
-        <line num="351" type="stmt" count="0"/>
-        <line num="352" type="stmt" count="0"/>
-        <line num="354" type="stmt" count="0"/>
+        <line num="350" type="stmt" count="1"/>
+        <line num="351" type="stmt" count="1"/>
+        <line num="352" type="stmt" count="1"/>
+        <line num="354" type="stmt" count="1"/>
         <line num="355" type="stmt" count="0"/>
-        <line num="357" type="stmt" count="0"/>
-        <line num="359" type="stmt" count="0"/>
-        <line num="360" type="stmt" count="0"/>
-        <line num="362" type="stmt" count="0"/>
-        <line num="364" type="stmt" count="0"/>
+        <line num="357" type="stmt" count="1"/>
+        <line num="359" type="stmt" count="1"/>
+        <line num="360" type="stmt" count="1"/>
+        <line num="362" type="stmt" count="1"/>
+        <line num="364" type="stmt" count="1"/>
         <line num="365" type="stmt" count="0"/>
-        <line num="368" type="stmt" count="0"/>
-        <line num="369" type="stmt" count="0"/>
-        <line num="370" type="stmt" count="0"/>
-        <line num="371" type="stmt" count="0"/>
-        <line num="372" type="stmt" count="0"/>
+        <line num="368" type="stmt" count="1"/>
+        <line num="369" type="stmt" count="1"/>
+        <line num="370" type="stmt" count="1"/>
+        <line num="371" type="stmt" count="1"/>
+        <line num="372" type="stmt" count="1"/>
         <line num="384" type="method" name="installFromGit" visibility="public" complexity="11" crap="132" count="0"/>
         <line num="386" type="stmt" count="0"/>
         <line num="387" type="stmt" count="0"/>
@@ -21493,19 +21493,19 @@
         <line num="428" type="stmt" count="0"/>
         <line num="429" type="stmt" count="0"/>
         <line num="430" type="stmt" count="0"/>
-        <line num="442" type="method" name="activateTheme" visibility="public" complexity="8" crap="72" count="0"/>
-        <line num="444" type="stmt" count="0"/>
-        <line num="445" type="stmt" count="0"/>
+        <line num="442" type="method" name="activateTheme" visibility="public" complexity="8" crap="9.30" count="1"/>
+        <line num="444" type="stmt" count="1"/>
+        <line num="445" type="stmt" count="1"/>
         <line num="446" type="stmt" count="0"/>
-        <line num="447" type="stmt" count="0"/>
-        <line num="449" type="stmt" count="0"/>
+        <line num="447" type="stmt" count="1"/>
+        <line num="449" type="stmt" count="1"/>
         <line num="450" type="stmt" count="0"/>
-        <line num="453" type="stmt" count="0"/>
-        <line num="454" type="stmt" count="0"/>
-        <line num="457" type="stmt" count="0"/>
+        <line num="453" type="stmt" count="1"/>
+        <line num="454" type="stmt" count="1"/>
+        <line num="457" type="stmt" count="1"/>
         <line num="458" type="stmt" count="0"/>
-        <line num="461" type="stmt" count="0"/>
-        <metrics loc="464" ncloc="360" classes="1" methods="14" coveredmethods="6" conditionals="0" coveredconditionals="0" statements="198" coveredstatements="86" elements="212" coveredelements="92"/>
+        <line num="461" type="stmt" count="1"/>
+        <metrics loc="464" ncloc="360" classes="1" methods="14" coveredmethods="6" conditionals="0" coveredconditionals="0" statements="198" coveredstatements="129" elements="212" coveredelements="135"/>
       </file>
       <file name="/workspace/lumen/indieinabox/app/Theme/ThemeStarterService.php">
         <class name="Indieinabox\Theme\ThemeStarterService" namespace="Indieinabox\Theme">
@@ -27060,6 +27060,6 @@
       <line num="17" type="stmt" count="1"/>
       <metrics loc="18" ncloc="14" classes="0" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="2" coveredstatements="2" elements="2" coveredelements="2"/>
     </file>
-    <metrics files="269" loc="56693" ncloc="48096" classes="236" methods="1472" coveredmethods="752" conditionals="0" coveredconditionals="0" statements="23928" coveredstatements="18316" elements="25400" coveredelements="19068"/>
+    <metrics files="269" loc="56693" ncloc="48096" classes="236" methods="1472" coveredmethods="752" conditionals="0" coveredconditionals="0" statements="23928" coveredstatements="18359" elements="25400" coveredelements="19111"/>
   </project>
 </coverage>

@@ -158,7 +158,16 @@ it('installs theme from ZIP archive and activates it', function () {
     file_put_contents($sourceTheme . '/views/home.php', '<h1>Clean Home</h1>');
 
     $zipFile = $this->tempDir . '/theme.zip';
-    exec(sprintf('cd %s && zip -r %s . 2>&1', escapeshellarg($this->tempDir . '/src_theme'), escapeshellarg($zipFile)));
+    if (class_exists(\ZipArchive::class)) {
+        $zip = new \ZipArchive();
+        if ($zip->open($zipFile, \ZipArchive::CREATE | \ZipArchive::OVERWRITE) === true) {
+            $zip->addFile($sourceTheme . '/theme.json', 'theme.json');
+            $zip->addFile($sourceTheme . '/views/home.php', 'views/home.php');
+            $zip->close();
+        }
+    } else {
+        exec(sprintf('cd %s && zip -r %s . 2>&1', escapeshellarg($this->tempDir . '/src_theme'), escapeshellarg($zipFile)));
+    }
 
     $manager = new ThemeManager();
     $result = $manager->installFromZip($zipFile, $themesDir);

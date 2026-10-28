@@ -23,3 +23,5 @@ Garantir que o job `nightly-release` no workflow de CI (`.forgejo/workflows/ci.y
 
 ## 4. Resultados de Validação
 - Falha original no Run 22 comprovada pelo log do Forgejo (404 ao tentar deletar asset via rota incompatível por release órfã).
+- Teste unitário `tests/Unit/Support/WorkflowConfigTest.php` aprovado com 2 testes e 6 asserções comprovando o uso de `github.api_url` e remoção de referências legadas a `codeberg.org`.
+- Linter e suíte de testes aprovados.

@@ -17,6 +17,7 @@ Garantir que requisições HTTP internas de loopback (`127.0.0.1`, `localhost`) 
 - Auditoria Gosplan (`cccp check --strict`) mantendo 100% de conformidade.
 
 ## 4. Resultados de Validação
+- Teste unitário `tests/Unit/Http/ProxyIsolationTest.php` aprovado garantindo integridade de delimitadores de bypass.
 - Reprodução exata de falha Red Test obtida configurando `http_proxy=http://172.17.0.1:3142` (com `403 Configuration error`).
 - Validação Green Test aprovada em 19 asserções tanto no teste padrão sob `XDEBUG_MODE=coverage` quanto no modo compilado (`TEST_COMPILED=true`).
 - `composer sniffer` aprovado com 100% dos 270 arquivos.

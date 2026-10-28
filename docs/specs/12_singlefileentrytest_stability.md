@@ -15,3 +15,7 @@ Garantir execução determinística do teste de integração `tests/Integration/
 ## 3. Critérios de Aceitação
 - Teste `tests/Integration/SingleFileEntryTest.php` aprovado com 100% de sucesso mesmo com `XDEBUG_MODE=coverage`.
 - Auditoria Gosplan (`cccp check --strict`) mantendo 100% de conformidade.
+
+## 4. Resultados de Validação
+- `SingleFileEntryTest.php` aprovado localmente com 19 asserções em 2.52s com `XDEBUG_MODE=coverage`.
+

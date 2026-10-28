@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 ### Fixes
+  - (test) estabilizar servidor embutido em singlefileentrytest (closes #12)
   - (ci) formalizar extensao ext-gmp, configurar psalm taint handlers e conformidade gost (closes #11)
   - (ci) aumentar memory_limit do PHP para testes de cobertura no pest (closes #9)
   - (ci) adicionar flag -n ao sniffer para ignorar warnings de PHP 8.5 (closes #8)

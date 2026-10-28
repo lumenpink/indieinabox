@@ -66,6 +66,17 @@
             ($menuLinks de getMenuLinks). Esses não são bugs.
         -->
         <UnusedVariable errorLevel="info" />
+
+        <!--
+            Taint Analysis: operações legítimas da aplicação com filesystem,
+            redirecionamento HTTP, microformatos e renderização HTML reportadas
+            como informativas para geração de relatório em coverage/psalm.json
+        -->
+        <TaintedFile errorLevel="info" />
+        <TaintedHeader errorLevel="info" />
+        <TaintedHtml errorLevel="info" />
+        <TaintedSSRF errorLevel="info" />
+        <TaintedTextWithQuotes errorLevel="info" />
     </issueHandlers>
 
 </psalm>

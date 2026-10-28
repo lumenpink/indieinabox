@@ -13,6 +13,7 @@
     "prefer-stable": true,
     "require": {
         "php": ">=8.2",
+        "ext-gmp": "*",
         "mf2/mf2": "^0.5.0"
     },
     "require-dev": {

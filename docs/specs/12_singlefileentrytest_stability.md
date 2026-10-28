@@ -18,4 +18,6 @@ Garantir execução determinística do teste de integração `tests/Integration/
 
 ## 4. Resultados de Validação
 - `SingleFileEntryTest.php` aprovado localmente com 19 asserções em 2.52s com `XDEBUG_MODE=coverage`.
+- Tolerância de socket e flush de stream verificados com sucesso para o runner.
+
 

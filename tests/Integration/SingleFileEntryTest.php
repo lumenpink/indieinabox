@@ -34,7 +34,7 @@ function getFreeIntegrationPort(int $startPort = 9100): int
     return $startPort;
 }
 
-function waitForServer(string $host, int $maxAttempts = 60, int $sleepMicroseconds = 50000): bool
+function waitForServer(string $host, int $maxAttempts = 100, int $sleepMicroseconds = 50000): bool
 {
     for ($i = 0; $i < $maxAttempts; $i++) {
         set_error_handler(static fn() => true);
@@ -189,15 +189,28 @@ PHP
     $srvCmd1 = "exec php -S $host1 " . escapeshellarg($integrationSandbox . '/indieinabox.php');
     $process1 = proc_open($srvCmd1, $descriptorspec, $pipes1);
 
+    // Mock a source page linking to target page before starting static server
+    $sourceContent = '<html><body><a href="https://example.com/about">Linked!</a></body></html>';
+    file_put_contents($integrationSandbox . '/public_html/source_post.html', $sourceContent);
+
     // Server 2 (Static server for the source link to avoid deadlock)
     $process2 = null;
     $pipes2 = null;
     $srvCmd2 = "exec php -S $host2 -t " . escapeshellarg($integrationSandbox . '/public_html');
     $process2 = proc_open($srvCmd2, $descriptorspec, $pipes2);
 
-    // Wait for both servers to be ready to accept connections (up to 3 seconds)
+    // Wait for both servers to be ready to accept connections (up to 5 seconds)
     expect(waitForServer($host1))->toBeTrue('Failed to start router server on ' . $host1);
     expect(waitForServer($host2))->toBeTrue('Failed to start static server on ' . $host2);
+
+    $sourceUrl = "http://$host2/source_post.html";
+    $targetUrl = "https://example.com/about";
+
+    // Warm up server 2 and verify it is actively serving the fixture
+    $warmupContext = stream_context_create(['http' => ['timeout' => 5, 'ignore_errors' => true]]);
+    $warmupResponse = @file_get_contents($sourceUrl, false, $warmupContext);
+    expect($warmupResponse)->toBeString('Static server 2 failed to serve warmup fixture')
+        ->and($warmupResponse)->toContain('https://example.com/about');
 
     try {
         // A. Verify GET help page endpoint
@@ -213,13 +226,6 @@ PHP
             ->and($getResponse)->toContain('Webmention Endpoint');
 
         // B. Verify POST webmention endpoint with target validation
-        // Mock a source page linking to target page on server 2
-        $sourceContent = '<html><body><a href="https://example.com/about">Linked!</a></body></html>';
-        file_put_contents($integrationSandbox . '/public_html/source_post.html', $sourceContent);
-
-        $sourceUrl = "http://$host2/source_post.html";
-        $targetUrl = "https://example.com/about";
-
         // POST request options
         $postData = http_build_query([
             'source' => $sourceUrl,
@@ -256,6 +262,7 @@ PHP
             ->and($json['message'] ?? '')->toContain('Webmention accepted');
 
         // Run background worker to process the queued webmention
+        usleep(100000); // Allow HTTP connection to flush
         $cronCmd = 'cd ' . escapeshellarg($integrationSandbox) . ' && php indieinabox.php cron 2>&1';
         $cronOut = shell_exec($cronCmd);
 

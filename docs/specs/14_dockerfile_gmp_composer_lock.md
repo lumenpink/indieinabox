@@ -19,3 +19,6 @@ Garantir que a compilação do container Docker (`docker/Dockerfile`) conclua co
 
 ## 4. Resultados de Validação
 - Falha original reproduzida localmente (Red Test): Composer rejeitando instalação por ausência de `ext-gmp`.
+- Teste unitário `tests/Unit/Support/DockerConfigTest.php` aprovado com 2 testes e 5 asserções.
+- Compilação do container Docker `docker build -f docker/Dockerfile .` executada e finalizada com 100% de sucesso (30/30 etapas concluídas sem erro).
+- Sincronização do lockfile validada.

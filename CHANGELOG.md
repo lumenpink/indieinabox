@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 ### Fixes
+  - (ci) corrigir api_url e limpeza de release/assets no nightly-release (closes #15)
   - (docker) instalar ext-gmp no builder e sincronizar composer.lock (closes #14)
   - (test) isolar loopback com no_proxy no singlefileentrytest (closes #13)
   - (test) estabilizar servidor embutido em singlefileentrytest (closes #12)

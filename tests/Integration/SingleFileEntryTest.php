@@ -171,6 +171,11 @@ PHP
         ->and($indexHtml)->toContain('Welcome home!');
 
     // 5. Test Web Mode: Run PHP built-in servers
+    $origNoProxy = getenv('no_proxy');
+    $origNoProxyUpper = getenv('NO_PROXY');
+    putenv('no_proxy=127.0.0.1,localhost');
+    putenv('NO_PROXY=127.0.0.1,localhost');
+
     $port1 = getFreeIntegrationPort(9100);
     $host1 = "127.0.0.1:$port1";
 
@@ -263,7 +268,7 @@ PHP
 
         // Run background worker to process the queued webmention
         usleep(100000); // Allow HTTP connection to flush
-        $cronCmd = 'cd ' . escapeshellarg($integrationSandbox) . ' && php indieinabox.php cron 2>&1';
+        $cronCmd = 'cd ' . escapeshellarg($integrationSandbox) . ' && no_proxy=127.0.0.1,localhost NO_PROXY=127.0.0.1,localhost php indieinabox.php cron 2>&1';
         $cronOut = shell_exec($cronCmd);
 
         // Check that webmention data is created correctly in Markdown
@@ -286,6 +291,18 @@ PHP
         expect($savedData['source'])->toBe($sourceUrl);
         expect($savedData['target'])->toBe($targetUrl);
     } finally {
+        // Restore proxy settings
+        if (isset($origNoProxy) && $origNoProxy !== false) {
+            putenv("no_proxy=$origNoProxy");
+        } else {
+            putenv('no_proxy');
+        }
+        if (isset($origNoProxyUpper) && $origNoProxyUpper !== false) {
+            putenv("NO_PROXY=$origNoProxyUpper");
+        } else {
+            putenv('NO_PROXY');
+        }
+
         // Terminate background web server processes
         if (isset($pipes1)) {
             foreach ($pipes1 as $pipe) {

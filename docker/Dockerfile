@@ -4,7 +4,8 @@
 FROM php:8.5-cli-alpine AS builder
 
 # Instala ferramentas de compilação, git e dependências para extensões
-RUN apk add --no-cache bash curl git unzip nodejs npm
+RUN apk add --no-cache bash curl git unzip nodejs npm gmp-dev \
+    && docker-php-ext-install gmp
 
 # Instala Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer

@@ -330,29 +330,36 @@ jobs:
       - name: "Delete Nightly Git Tag and Release"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          API_URL: ${{ env.GITHUB_API_URL || 'https://codeberg.org/api/v1' }}
+          API_URL: ${{ github.api_url || 'https://gambi.2lp.in/api/v1' }}
           REPO: ${{ github.repository }}
         run: |
-          # Delete remote git tag — forces softprops to CREATE (not UPDATE) the release,
-          # guaranteeing a fresh created_at timestamp.
-          git push --delete origin nightly 2>/dev/null \
-            && echo "Remote nightly tag deleted" \
-            || echo "Remote nightly tag not found (first run?)"
+          # 1. Query existing nightly release via Forgejo API before deleting the tag
+          echo "Checking existing nightly release on $API_URL/repos/$REPO..."
+          REL_INFO=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
+            "$API_URL/repos/$REPO/releases/tags/nightly" || true)
+          REL_ID=$(echo "$REL_INFO" | php -r '$d = json_decode(file_get_contents("php://stdin"), true); echo $d["id"] ?? "";')
 
-          # Delete the existing nightly release via API
-          REL_ID=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
-            "$API_URL/repos/$REPO/releases/tags/nightly" | php -r '$d = json_decode(file_get_contents("php://stdin"), true); echo $d["id"] ?? "";')
           if [ -n "$REL_ID" ] && [ "$REL_ID" != "null" ]; then
-            echo "Deleting nightly release ID: $REL_ID"
-            if curl -sf -X DELETE -H "Authorization: token $GITHUB_TOKEN" \
-              "$API_URL/repos/$REPO/releases/$REL_ID"; then
-              echo "Release deleted successfully"
-            else
-              echo "Warning: Failed to delete release $REL_ID" >&2
+            echo "Found existing nightly release (ID: $REL_ID)"
+            # Prune existing assets via Forgejo API endpoint (/releases/{release_id}/assets/{asset_id})
+            ASSET_ID=$(echo "$REL_INFO" | php -r '$d = json_decode(file_get_contents("php://stdin"), true); foreach($d["assets"] ?? [] as $a) { if(($a["name"] ?? "") === "indieinabox.php") { echo $a["id"]; break; } }')
+            if [ -n "$ASSET_ID" ] && [ "$ASSET_ID" != "null" ]; then
+              echo "Pruning existing asset ID: $ASSET_ID"
+              curl -s -X DELETE -H "Authorization: token $GITHUB_TOKEN" \
+                "$API_URL/repos/$REPO/releases/$REL_ID/assets/$ASSET_ID" || true
             fi
+
+            echo "Deleting existing nightly release (ID: $REL_ID)..."
+            curl -sf -X DELETE -H "Authorization: token $GITHUB_TOKEN" \
+              "$API_URL/repos/$REPO/releases/$REL_ID" || echo "Warning: Failed to delete release $REL_ID" >&2
           else
             echo "No existing nightly release found"
           fi
+
+          # 2. Delete remote git tag — forces softprops to CREATE a clean release
+          git push --delete origin nightly 2>/dev/null \
+            && echo "Remote nightly tag deleted" \
+            || echo "Remote nightly tag not found (first run?)"
 
       - name: "Create Annotated Nightly Tag"
         run: |

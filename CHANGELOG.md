@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 ### Fixes
+  - (docker) instalar ext-gmp no builder e sincronizar composer.lock (closes #14)
   - (test) isolar loopback com no_proxy no singlefileentrytest (closes #13)
   - (test) estabilizar servidor embutido em singlefileentrytest (closes #12)
   - (ci) formalizar extensao ext-gmp, configurar psalm taint handlers e conformidade gost (closes #11)
